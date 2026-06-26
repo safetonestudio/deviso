@@ -40,7 +40,17 @@ export async function POST(req: NextRequest) {
       await updatePlan(sub.customer as string, "free", "canceled");
       break;
     }
-  }
+    case "checkout.session.completed": {
+      const session = event.data.object as Stripe.Checkout.Session;
+      const invoiceId = session.metadata?.invoice_id;
+      if (invoiceId && session.payment_status === "paid") {
+        await supabaseAdmin
+          .from("invoices")
+          .update({ status: "paid" })
+          .eq("id", invoiceId);
+      }
+      break;
+    }
 
   return NextResponse.json({ received: true });
 }

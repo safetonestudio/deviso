@@ -33,6 +33,7 @@ export default function InvoiceDetailPage() {
   const [loading, setLoading] = useState(true);
   const [downloading, setDownloading] = useState(false);
   const [markingPaid, setMarkingPaid] = useState(false);
+  const [generatingLink, setGeneratingLink] = useState(false);
 
   useEffect(() => {
     fetch(`/api/invoices/${id}`)
@@ -68,6 +69,20 @@ export default function InvoiceDetailPage() {
     setMarkingPaid(false);
   }
 
+  async function handlePaymentLink() {
+    setGeneratingLink(true);
+    const res = await fetch(`/api/invoices/${id}/payment-link`, { method: "POST" });
+    const data = await res.json();
+    if (res.ok && data.url) {
+      await navigator.clipboard.writeText(data.url);
+      setInvoice((prev) => prev ? { ...prev, payment_link_url: data.url, status: "sent" } : prev);
+      alert("Lien de paiement copié dans le presse-papier !");
+    } else {
+      alert("Erreur lors de la création du lien");
+    }
+    setGeneratingLink(false);
+  }
+
   async function handleDelete() {
     if (!confirm("Supprimer cette facture définitivement ?")) return;
     await fetch(`/api/invoices/${id}`, { method: "DELETE" });
@@ -96,6 +111,12 @@ export default function InvoiceDetailPage() {
           </p>
         </div>
         <div className="flex gap-2">
+          {invoice.status !== "paid" && invoice.status !== "cancelled" && (
+            <button onClick={handlePaymentLink} disabled={generatingLink}
+              className="bg-indigo-600 hover:bg-indigo-700 disabled:opacity-50 text-white text-sm font-medium px-3 py-1.5 rounded-lg transition-colors flex items-center gap-1.5">
+              {generatingLink ? "Génération…" : invoice.payment_link_url ? "🔗 Copier le lien" : "💳 Lien de paiement"}
+            </button>
+          )}
           {invoice.status === "draft" && (
             <button onClick={handleMarkPaid} disabled={markingPaid}
               className="bg-green-600 hover:bg-green-700 disabled:opacity-50 text-white text-sm font-medium px-3 py-1.5 rounded-lg transition-colors">
