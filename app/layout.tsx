@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import "./globals.css";
 import { ServiceWorkerRegistration } from "@/components/ServiceWorker";
+import { Analytics } from "@vercel/analytics/react";
 
 export const metadata: Metadata = {
   title: "Deviso — Votre devis en 30 secondes",
@@ -39,6 +40,7 @@ export default function RootLayout({
       <body className="bg-white text-slate-900 antialiased">
         <ServiceWorkerRegistration />
         {children}
+        <Analytics />
       </body>
     </html>
   );
