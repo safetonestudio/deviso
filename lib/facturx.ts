@@ -7,17 +7,18 @@
  * 2. Génère le XML CII avec invoice-xml.ts
  * 3. Utilise pdf-lib pour embarquer le XML dans le PDF
  */
-import { renderToBuffer } from "@react-pdf/renderer";
+import { renderToBuffer, Document } from "@react-pdf/renderer";
 import { PDFDocument } from "pdf-lib";
 import React from "react";
 import { InvoicePDF } from "./invoice-pdf";
 import { generateFacturXml } from "./invoice-xml";
 import type { Invoice } from "@/types";
+import type { ReactElement } from "react";
 
 export async function generateFacturXPdf(invoice: Invoice): Promise<Buffer> {
   // 1. Génération du PDF visuel (React PDF → Buffer)
   const pdfBuffer = await renderToBuffer(
-    React.createElement(InvoicePDF, { invoice })
+    React.createElement(InvoicePDF, { invoice }) as ReactElement<React.ComponentProps<typeof Document>>
   );
 
   // 2. Génération du XML CII
