@@ -1,4 +1,52 @@
 import Link from "next/link";
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Logiciel de devis IA pour freelances — Devis en 30 secondes",
+  description:
+    "Créez des devis professionnels en 30 secondes grâce à l'IA. Signature client en ligne, facturation électronique Factur-X conforme 2026/2027. Gratuit pour commencer.",
+  alternates: {
+    canonical: "https://getdeviso.fr",
+  },
+};
+
+const jsonLd = {
+  "@context": "https://schema.org",
+  "@type": "SoftwareApplication",
+  name: "Deviso",
+  applicationCategory: "BusinessApplication",
+  operatingSystem: "Web",
+  url: "https://getdeviso.fr",
+  description:
+    "Logiciel de devis et facturation IA pour freelances et auto-entrepreneurs français. Générez des devis professionnels en 30 secondes, envoyez-les pour signature et créez des factures électroniques Factur-X conformes.",
+  offers: [
+    {
+      "@type": "Offer",
+      name: "Gratuit",
+      price: "0",
+      priceCurrency: "EUR",
+    },
+    {
+      "@type": "Offer",
+      name: "Pro",
+      price: "49",
+      priceCurrency: "EUR",
+      billingIncrement: "P1M",
+    },
+  ],
+  featureList: [
+    "Génération de devis par IA",
+    "Signature électronique client",
+    "Facturation électronique Factur-X",
+    "Conformité droit français",
+    "Devis illimités",
+  ],
+  inLanguage: "fr",
+  audience: {
+    "@type": "Audience",
+    audienceType: "Freelances et auto-entrepreneurs français",
+  },
+};
 
 const features = [
   {
@@ -110,6 +158,10 @@ const pricingPlans = [
 export default function LandingPage() {
   return (
     <div className="min-h-screen bg-white">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
       {/* ── Navbar ── */}
       <nav className="fixed top-0 left-0 right-0 z-50 bg-white/90 backdrop-blur-md border-b border-slate-100">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
