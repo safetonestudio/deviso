@@ -40,7 +40,7 @@ export async function GET(_req: NextRequest, { params }: Params) {
       .eq("id", id);
   }
 
-  return new NextResponse(pdfBuffer, {
+  return new NextResponse(new Uint8Array(pdfBuffer), {
     headers: {
       "Content-Type": "application/pdf",
       "Content-Disposition": `attachment; filename="${filename}"`,
