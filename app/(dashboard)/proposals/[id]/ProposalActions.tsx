@@ -1,6 +1,7 @@
 "use client";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 import type { Proposal } from "@/types";
 
 interface Props {
@@ -74,6 +75,14 @@ export default function ProposalActions({ proposal, shareUrl, compact = false }:
         >
           {sending ? "..." : "📤 Marquer envoyé"}
         </button>
+      )}
+      {["signed", "sent", "viewed"].includes(proposal.status) && (
+        <Link
+          href={`/invoices/new?from_proposal=${proposal.id}`}
+          className="text-sm font-semibold px-4 py-2 rounded-xl bg-green-600 text-white hover:bg-green-700 transition-colors"
+        >
+          🧾 Convertir en facture
+        </Link>
       )}
       <button
         onClick={handleDelete}

@@ -2,7 +2,12 @@
 
 import { useState, useEffect } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
-import type { Proposal } from "@/types";
+import type { Proposal, ProposalItem } from "@/types";
+import { v4 as uuidv4 } from "uuid";
+
+function fmt(n: number) {
+  return new Intl.NumberFormat("fr-FR", { style: "currency", currency: "EUR" }).format(n);
+}
 
 export default function NewInvoicePage() {
   const router = useRouter();
@@ -13,18 +18,24 @@ export default function NewInvoicePage() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
-  // Infos vendeur
+  // Vendeur
   const [sellerCompany, setSellerCompany] = useState("");
   const [sellerSiren, setSellerSiren] = useState("");
   const [sellerAddress, setSellerAddress] = useState("");
   const [sellerTva, setSellerTva] = useState("");
 
-  // Infos client
+  // Client
   const [clientName, setClientName] = useState("");
   const [clientEmail, setClientEmail] = useState("");
   const [clientCompany, setClientCompany] = useState("");
   const [clientSiren, setClientSiren] = useState("");
   const [clientAddress, setClientAddress] = useState("");
+
+  // Lignes
+  const [items, setItems] = useState<ProposalItem[]>([
+    { id: uuidv4(), description: "", quantity: 1, unit: "forfait", unit_price: 0, total: 0 },
+  ]);
+  const [tvaRate, setTvaRate] = useState(20);
 
   // Mentions légales 2026
   const [operationCategory, setOperationCategory] = useState<"services" | "goods" | "mixed">("services");
@@ -33,7 +44,13 @@ export default function NewInvoicePage() {
   // Dates
   const [issueDate, setIssueDate] = useState(new Date().toISOString().slice(0, 10));
   const [dueDate, setDueDate] = useState("");
+  const [paymentTerms, setPaymentTerms] = useState("30 jours net");
 
+  // Calculs
+  const totalHt = items.reduce((sum, item) => sum + item.total, 0);
+  const totalTtc = totalHt * (1 + tvaRate / 100);
+
+  // Pré-remplissage depuis un devis
   useEffect(() => {
     if (!proposalId) return;
     fetch(`/api/proposals/${proposalId}`)
@@ -45,9 +62,53 @@ export default function NewInvoicePage() {
           setClientName(p.client_name || "");
           setClientEmail(p.client_email || "");
           setClientCompany(p.client_company || "");
+          setItems(p.items.length > 0 ? p.items : items);
+          setTvaRate(p.tva_rate || 20);
+          setPaymentTerms(p.payment_terms || "30 jours net");
         }
       });
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [proposalId]);
+
+  // Pré-remplissage profil vendeur
+  useEffect(() => {
+    fetch("/api/profile")
+      .then((r) => r.json())
+      .then((d) => {
+        if (d.profile) {
+          setSellerCompany(d.profile.company_name || d.profile.full_name || "");
+          setSellerSiren(d.profile.siret || "");
+          setSellerAddress(d.profile.address || "");
+          setSellerTva(d.profile.tva_number || "");
+        }
+      })
+      .catch(() => {});
+  }, []);
+
+  function updateItem(id: string, field: keyof ProposalItem, value: string | number) {
+    setItems((prev) =>
+      prev.map((item) => {
+        if (item.id !== id) return item;
+        const updated = { ...item, [field]: value };
+        if (field === "quantity" || field === "unit_price") {
+          updated.total = Number(updated.quantity) * Number(updated.unit_price);
+        }
+        return updated;
+      })
+    );
+  }
+
+  function addItem() {
+    setItems((prev) => [
+      ...prev,
+      { id: uuidv4(), description: "", quantity: 1, unit: "forfait", unit_price: 0, total: 0 },
+    ]);
+  }
+
+  function removeItem(id: string) {
+    if (items.length === 1) return;
+    setItems((prev) => prev.filter((i) => i.id !== id));
+  }
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -65,16 +126,15 @@ export default function NewInvoicePage() {
       seller_siren: sellerSiren || null,
       seller_address: sellerAddress || null,
       seller_tva_number: sellerTva || null,
-      items: proposal?.items || [],
-      total_ht: proposal?.total_ht || 0,
-      tva_rate: proposal?.tva_rate || 20,
-      total_ttc: proposal?.total_ttc || 0,
+      items,
+      total_ht: totalHt,
+      tva_rate: tvaRate,
+      total_ttc: totalTtc,
       operation_category: operationCategory,
       payment_on_debit: paymentOnDebit,
       issue_date: issueDate,
       due_date: dueDate || null,
-      payment_terms: proposal?.payment_terms || null,
-      notes: proposal?.notes || null,
+      payment_terms: paymentTerms || null,
     };
 
     const res = await fetch("/api/invoices", {
@@ -98,7 +158,7 @@ export default function NewInvoicePage() {
         <h1 className="text-2xl font-bold text-slate-900">Nouvelle facture</h1>
         {proposal && (
           <p className="text-slate-500 text-sm mt-1">
-            Générée depuis le devis&nbsp;: <span className="font-medium">{proposal.title}</span>
+            Générée depuis le devis : <span className="font-medium">{proposal.title}</span>
           </p>
         )}
       </div>
@@ -168,6 +228,82 @@ export default function NewInvoicePage() {
           </div>
         </section>
 
+        {/* Lignes de facturation */}
+        <section className="bg-white rounded-xl border border-slate-200 p-5 space-y-4">
+          <h2 className="font-semibold text-slate-800">Lignes de facturation</h2>
+          <div className="space-y-3">
+            {items.map((item) => (
+              <div key={item.id} className="grid grid-cols-12 gap-2 items-start">
+                <div className="col-span-5">
+                  <input
+                    value={item.description}
+                    onChange={(e) => updateItem(item.id, "description", e.target.value)}
+                    placeholder="Description de la prestation"
+                    required
+                    className="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-brand-500"
+                  />
+                </div>
+                <div className="col-span-2">
+                  <input
+                    type="number"
+                    min="0"
+                    step="0.01"
+                    value={item.quantity}
+                    onChange={(e) => updateItem(item.id, "quantity", parseFloat(e.target.value) || 0)}
+                    placeholder="Qté"
+                    className="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-brand-500"
+                  />
+                </div>
+                <div className="col-span-2">
+                  <input
+                    type="number"
+                    min="0"
+                    step="0.01"
+                    value={item.unit_price}
+                    onChange={(e) => updateItem(item.id, "unit_price", parseFloat(e.target.value) || 0)}
+                    placeholder="Prix HT"
+                    className="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-brand-500"
+                  />
+                </div>
+                <div className="col-span-2 py-2 text-sm font-semibold text-slate-700 text-right">
+                  {fmt(item.total)}
+                </div>
+                <div className="col-span-1 flex justify-end">
+                  <button type="button" onClick={() => removeItem(item.id)}
+                    className="text-red-400 hover:text-red-600 text-lg leading-none py-2">
+                    ×
+                  </button>
+                </div>
+              </div>
+            ))}
+          </div>
+
+          <button type="button" onClick={addItem}
+            className="text-sm text-brand-600 font-medium hover:text-brand-700 transition-colors">
+            + Ajouter une ligne
+          </button>
+
+          {/* TVA + Totaux */}
+          <div className="border-t border-slate-100 pt-4 flex justify-between items-end">
+            <div>
+              <label className="block text-xs font-medium text-slate-600 mb-1">Taux TVA (%)</label>
+              <input
+                type="number"
+                min="0"
+                max="100"
+                value={tvaRate}
+                onChange={(e) => setTvaRate(parseFloat(e.target.value) || 0)}
+                className="w-24 border border-slate-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-brand-500"
+              />
+            </div>
+            <div className="text-right space-y-1 text-sm">
+              <div className="text-slate-500">Total HT : <span className="font-medium text-slate-800">{fmt(totalHt)}</span></div>
+              <div className="text-slate-500">TVA {tvaRate}% : <span className="font-medium text-slate-800">{fmt(totalTtc - totalHt)}</span></div>
+              <div className="font-bold text-base text-slate-900">Total TTC : <span className="text-brand-600">{fmt(totalTtc)}</span></div>
+            </div>
+          </div>
+        </section>
+
         {/* Mentions légales 2026 */}
         <section className="bg-blue-50 border border-blue-100 rounded-xl p-5 space-y-4">
           <h2 className="font-semibold text-blue-900">Mentions obligatoires 2026</h2>
@@ -193,7 +329,7 @@ export default function NewInvoicePage() {
 
         {/* Dates */}
         <section className="bg-white rounded-xl border border-slate-200 p-5 space-y-4">
-          <h2 className="font-semibold text-slate-800">Dates</h2>
+          <h2 className="font-semibold text-slate-800">Dates & conditions</h2>
           <div className="grid grid-cols-2 gap-3">
             <div>
               <label className="block text-xs font-medium text-slate-600 mb-1">Date d&apos;émission</label>
@@ -203,6 +339,12 @@ export default function NewInvoicePage() {
             <div>
               <label className="block text-xs font-medium text-slate-600 mb-1">Date d&apos;échéance</label>
               <input type="date" value={dueDate} onChange={(e) => setDueDate(e.target.value)}
+                className="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-brand-500" />
+            </div>
+            <div className="col-span-2">
+              <label className="block text-xs font-medium text-slate-600 mb-1">Conditions de paiement</label>
+              <input value={paymentTerms} onChange={(e) => setPaymentTerms(e.target.value)}
+                placeholder="30 jours net"
                 className="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-brand-500" />
             </div>
           </div>
