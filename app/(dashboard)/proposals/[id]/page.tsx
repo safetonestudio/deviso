@@ -1,175 +1,189 @@
 import { notFound } from "next/navigation";
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
+import { createClient as createAdminClient } from "@supabase/supabase-js";
+import { getWorkspaceUserId } from "@/lib/workspace";
 import ProposalActions from "./ProposalActions";
-import type { Proposal } from "@/types";
+import ShareSection from "./ShareSection";
+import { ProposalPreviewWrapper } from "@/components/ProposalPreviewWrapper";
+import { GuidedTourBanner } from "@/components/GuidedTourBanner";
+import type { Proposal, Profile } from "@/types";
+
+const supabaseAdmin = createAdminClient(
+  process.env.NEXT_PUBLIC_SUPABASE_URL!,
+  process.env.SUPABASE_SERVICE_ROLE_KEY!
+);
 
 function fmt(n: number) {
   return new Intl.NumberFormat("fr-FR", { style: "currency", currency: "EUR" }).format(n);
 }
 
 const STATUS_LABELS: Record<string, { label: string; color: string }> = {
-  draft:    { label: "Brouillon",  color: "bg-slate-100 text-slate-700" },
-  sent:     { label: "Envoyé",     color: "bg-blue-100 text-blue-700" },
-  viewed:   { label: "Consulté",   color: "bg-yellow-100 text-yellow-700" },
-  signed:   { label: "Signé ✓",   color: "bg-green-100 text-green-700" },
-  declined: { label: "Refusé",     color: "bg-red-100 text-red-700" },
+  draft:    { label: "Brouillon",  color: "bg-ds-elevated text-gray-400" },
+  sent:     { label: "Envoyé",     color: "bg-blue-500/10 text-blue-400" },
+  viewed:   { label: "Consulté",   color: "bg-amber-500/10 text-amber-400" },
+  signed:   { label: "Signé ✓",   color: "bg-emerald-500/10 text-emerald-400" },
+  declined: { label: "Refusé",     color: "bg-red-500/10 text-red-400" },
 };
+
+const PROFILE_FIELDS = "full_name, company_name, email, phone, address, siret, tva_number, proposal_template, proposal_color, plan, subdomain";
 
 export default async function ProposalDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
+  if (!user) notFound();
 
-  const { data, error } = await supabase
+  const workspaceId = await getWorkspaceUserId(user.id);
+  const isOwner = user.id === workspaceId;
+
+  const { data, error } = await supabaseAdmin
     .from("proposals")
     .select("*")
     .eq("id", id)
-    .eq("user_id", user!.id)
+    .eq("user_id", workspaceId)
     .single();
 
   if (error || !data) notFound();
 
   const proposal = data as Proposal;
+
+  // Fetch owner profile (company info + template + require_approval + subdomain)
+  const { data: ownerProfile } = await supabaseAdmin
+    .from("profiles")
+    .select(`${PROFILE_FIELDS}, require_approval`)
+    .eq("id", workspaceId)
+    .single();
+
+  const requireApproval: boolean = ownerProfile?.require_approval ?? false;
+
+  // If the proposal was created by a collaborator, merge their personal info
+  let mergedProfile: Partial<Profile> | null = ownerProfile ?? null;
+  if (proposal.created_by && proposal.created_by !== workspaceId) {
+    const { data: creatorProfile } = await supabaseAdmin
+      .from("profiles")
+      .select("full_name, email, phone")
+      .eq("id", proposal.created_by)
+      .single();
+    if (creatorProfile) {
+      mergedProfile = {
+        ...ownerProfile,
+        full_name: creatorProfile.full_name,
+        email: creatorProfile.email,
+        phone: creatorProfile.phone,
+      };
+    }
+  }
+
   const status = STATUS_LABELS[proposal.status] || STATUS_LABELS.draft;
-  const baseUrl = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000";
-  const shareUrl = `${baseUrl}/p/${proposal.share_token}`;
+
+  // Share URL: use custom subdomain for Pro users who have one configured
+  const appUrl = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000";
+  const ownerSubdomain = ownerProfile?.subdomain;
+  const shareBase =
+    ownerSubdomain && ownerProfile?.plan === "pro"
+      ? `https://${ownerSubdomain}.getdeviso.fr`
+      : appUrl;
+  const shareUrl = `${shareBase}/p/${proposal.share_token}`;
+
+  // Approval banner config
+  const approvalStatus = proposal.approval_status;
+  const showPendingBanner = proposal.status === "draft" && approvalStatus === "pending_review";
+  const showApprovedBanner = proposal.status === "draft" && approvalStatus === "approved";
+  const showRejectedBanner = proposal.status === "draft" && approvalStatus === "rejected";
 
   return (
-    <div className="max-w-4xl mx-auto">
-      {/* Header */}
-      <div className="flex items-start justify-between mb-6">
-        <div>
-          <Link href="/proposals" className="text-sm text-slate-400 hover:text-slate-600 transition-colors">
-            ← Tous les devis
-          </Link>
-          <h1 className="text-2xl font-extrabold text-slate-900 mt-2">{proposal.title}</h1>
-          <div className="flex items-center gap-3 mt-2">
-            <span className={`text-xs font-semibold px-2.5 py-1 rounded-full ${status.color}`}>
-              {status.label}
-            </span>
-            <span className="text-sm text-slate-400">
-              Créé le {new Date(proposal.created_at).toLocaleDateString("fr-FR")}
-            </span>
-            {proposal.viewed_at && (
-              <span className="text-sm text-yellow-600">
-                · Consulté le {new Date(proposal.viewed_at).toLocaleDateString("fr-FR")}
+    <div className="max-w-5xl mx-auto">
+      <GuidedTourBanner pageKey="proposals_detail" />
+      {/* Retour */}
+      <Link href="/proposals" className="text-sm text-gray-500 hover:text-gray-400 transition-colors mb-5 inline-block">
+        ← Tous les devis
+      </Link>
+
+      {/* Layout deux colonnes */}
+      <div className="grid grid-cols-1 lg:grid-cols-[1fr_260px] gap-6 items-start">
+
+        {/* ── Colonne gauche : document ── */}
+        <div className="min-w-0">
+          {/* Header : titre + statuts + dates */}
+          <div className="mb-5">
+            <div className="flex items-center gap-3 flex-wrap mb-1">
+              <h1 className="text-3xl font-semibold text-white tracking-tight">{proposal.title}</h1>
+              {proposal.proposal_number && (
+                <span className="text-xs font-mono font-semibold text-gray-400 bg-ds-elevated px-2 py-0.5 rounded">
+                  {proposal.proposal_number}
+                </span>
+              )}
+              <span className={`text-xs font-semibold px-2.5 py-1 rounded-full ${status.color}`}>
+                {status.label}
               </span>
-            )}
+              {approvalStatus === "pending_review" && (
+                <span className="text-xs font-semibold px-2.5 py-1 rounded-full bg-amber-500/10 text-amber-400">
+                  ⏳ En attente de validation
+                </span>
+              )}
+              {approvalStatus === "approved" && proposal.status === "draft" && (
+                <span className="text-xs font-semibold px-2.5 py-1 rounded-full bg-emerald-500/10 text-emerald-400">
+                  ✓ Approuvé
+                </span>
+              )}
+              {approvalStatus === "rejected" && (
+                <span className="text-xs font-semibold px-2.5 py-1 rounded-full bg-red-500/10 text-red-400">
+                  ✗ Validation refusée
+                </span>
+              )}
+            </div>
+            <p className="text-sm text-gray-500">
+              Créé le {new Date(proposal.created_at).toLocaleDateString("fr-FR")}
+              {proposal.viewed_at && (
+                <span className="text-amber-400"> · Consulté le {new Date(proposal.viewed_at).toLocaleDateString("fr-FR")}</span>
+              )}
+            </p>
           </div>
-        </div>
-        <ProposalActions proposal={proposal} shareUrl={shareUrl} />
-      </div>
 
-      {/* Devis card — rendu PDF */}
-      <div id="proposal-print" className="bg-white rounded-2xl border border-slate-200 p-8 mb-6">
-        {/* Header devis */}
-        <div className="flex justify-between items-start mb-8 pb-6 border-b border-slate-100">
-          <div>
-            <div className="text-2xl font-black text-brand-600 mb-1">DEVIS</div>
-            <div className="text-sm text-slate-500">
-              {new Date(proposal.created_at).toLocaleDateString("fr-FR", {
-                year: "numeric", month: "long", day: "numeric",
-              })}
-            </div>
-            {proposal.valid_until && (
-              <div className="text-sm text-slate-500">
-                Valable jusqu&apos;au{" "}
-                {new Date(proposal.valid_until).toLocaleDateString("fr-FR")}
-              </div>
-            )}
-          </div>
-          <div className="text-right">
-            <div className="font-bold text-slate-900 text-lg">
-              {proposal.client_company || proposal.client_name || "Client"}
-            </div>
-            {proposal.client_name && proposal.client_company && (
-              <div className="text-sm text-slate-500">{proposal.client_name}</div>
-            )}
-            {proposal.client_email && (
-              <div className="text-sm text-slate-400">{proposal.client_email}</div>
-            )}
-          </div>
-        </div>
-
-        {/* Lignes */}
-        <table className="w-full mb-6">
-          <thead>
-            <tr className="border-b border-slate-200">
-              <th className="text-left text-xs font-semibold text-slate-400 uppercase tracking-wide pb-2">Prestation</th>
-              <th className="text-center text-xs font-semibold text-slate-400 uppercase tracking-wide pb-2">Qté</th>
-              <th className="text-center text-xs font-semibold text-slate-400 uppercase tracking-wide pb-2">Unité</th>
-              <th className="text-right text-xs font-semibold text-slate-400 uppercase tracking-wide pb-2">Prix HT</th>
-              <th className="text-right text-xs font-semibold text-slate-400 uppercase tracking-wide pb-2">Total HT</th>
-            </tr>
-          </thead>
-          <tbody className="divide-y divide-slate-100">
-            {proposal.items.map((item, i) => (
-              <tr key={i}>
-                <td className="py-3 text-sm text-slate-700 pr-4">{item.description}</td>
-                <td className="py-3 text-sm text-slate-500 text-center">{item.quantity}</td>
-                <td className="py-3 text-sm text-slate-500 text-center">{item.unit}</td>
-                <td className="py-3 text-sm text-slate-500 text-right">{fmt(item.unit_price)}</td>
-                <td className="py-3 text-sm font-medium text-slate-900 text-right">{fmt(item.total)}</td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-
-        {/* Totaux */}
-        <div className="flex justify-end">
-          <div className="w-56 space-y-1.5">
-            <div className="flex justify-between text-sm text-slate-500">
-              <span>Total HT</span>
-              <span>{fmt(proposal.total_ht)}</span>
-            </div>
-            <div className="flex justify-between text-sm text-slate-500">
-              <span>TVA {proposal.tva_rate}%</span>
-              <span>{fmt(proposal.total_ttc - proposal.total_ht)}</span>
-            </div>
-            <div className="flex justify-between text-base font-extrabold text-slate-900 border-t border-slate-200 pt-1.5">
-              <span>Total TTC</span>
-              <span className="text-brand-600">{fmt(proposal.total_ttc)}</span>
-            </div>
-          </div>
-        </div>
-
-        {/* Notes */}
-        {(proposal.payment_terms || proposal.notes) && (
-          <div className="mt-6 pt-6 border-t border-slate-100 space-y-2">
-            {proposal.payment_terms && (
-              <p className="text-sm text-slate-500">
-                <span className="font-medium text-slate-700">Paiement : </span>
-                {proposal.payment_terms}
+          {/* Approval info banners */}
+          {showPendingBanner && isOwner && (
+            <div className="mb-5 bg-amber-500/10 border border-amber-500/20 rounded-xl px-5 py-4">
+              <p className="text-sm font-semibold text-amber-400 mb-0.5">En attente de votre validation</p>
+              <p className="text-xs text-amber-400/70">
+                Un collaborateur a soumis ce devis pour approbation. Vérifiez le contenu, puis approuvez ou refusez.
               </p>
-            )}
-            {proposal.notes && (
-              <p className="text-sm text-slate-400">{proposal.notes}</p>
-            )}
-          </div>
-        )}
+            </div>
+          )}
+          {showRejectedBanner && !isOwner && (
+            <div className="mb-5 bg-red-500/10 border border-red-500/20 rounded-xl px-5 py-4">
+              <p className="text-sm font-semibold text-red-400 mb-0.5">Validation refusée</p>
+              <p className="text-xs text-red-400/70">
+                Le propriétaire a refusé ce devis. Modifiez-le et soumettez-le à nouveau.
+              </p>
+            </div>
+          )}
+          {showApprovedBanner && !isOwner && (
+            <div className="mb-5 bg-emerald-500/10 border border-emerald-500/20 rounded-xl px-5 py-4">
+              <p className="text-sm font-semibold text-emerald-400 mb-0.5">Devis approuvé ✓</p>
+              <p className="text-xs text-emerald-400/70">
+                Ce devis a été approuvé. Vous pouvez le marquer comme envoyé.
+              </p>
+            </div>
+          )}
 
-        {/* Branding Deviso (viral loop) */}
-        <div className="mt-8 pt-4 border-t border-slate-100 text-center">
-          <p className="text-xs text-slate-300">
-            Devis créé avec{" "}
-            <a href="https://deviso.fr" className="text-brand-400 hover:underline">
-              Deviso
-            </a>{" "}
-            — l&apos;outil de devis IA pour freelances
-          </p>
-        </div>
-      </div>
-
-      {/* Lien de partage */}
-      <div className="bg-brand-50 rounded-2xl border border-brand-100 p-5">
-        <div className="flex items-start justify-between gap-4">
-          <div>
-            <div className="font-semibold text-slate-900 text-sm mb-1">🔗 Lien de partage client</div>
-            <div className="text-xs text-slate-500 font-mono truncate max-w-sm">{shareUrl}</div>
+          {/* Document devis */}
+          <div id="proposal-print">
+            <ProposalPreviewWrapper proposal={proposal} profile={mergedProfile} showBranding={mergedProfile?.plan === "free"} cgvText={mergedProfile?.cgv_text} />
           </div>
-          <ProposalActions proposal={proposal} shareUrl={shareUrl} compact />
+
+          {/* Section partage + email */}
+          <ShareSection proposal={proposal} shareUrl={shareUrl} profile={mergedProfile} />
         </div>
+
+        {/* ── Colonne droite : panel d'actions ── */}
+        <ProposalActions
+          proposal={proposal}
+          shareUrl={shareUrl}
+          isOwner={isOwner}
+          requireApproval={requireApproval}
+          panel={true}
+        />
       </div>
     </div>
   );

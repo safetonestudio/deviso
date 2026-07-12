@@ -36,7 +36,7 @@ export function welcomeEmailHtml(firstName: string): string {
                 Bienvenue ${name} 👋
               </p>
               <p style="margin:0 0 24px;font-size:15px;color:#64748b;line-height:1.6;">
-                Ton compte Deviso est actif. Tu peux maintenant créer des devis professionnels en quelques secondes grâce à l'IA — et les envoyer à tes clients pour signature.
+                Ton compte Deviso est actif. Tu peux maintenant créer des devis professionnels en quelques secondes grâce à l'IA, et les envoyer à tes clients pour signature.
               </p>
 
               <!-- Features -->

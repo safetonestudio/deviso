@@ -2,6 +2,20 @@ import { createServerClient } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";
 
 export async function middleware(request: NextRequest) {
+  const hostname = request.headers.get("host") || "";
+
+  // Detect custom subdomain requests (e.g. monagence.getdeviso.fr)
+  // Skip auth logic entirely, these are public-facing proposal views
+  const isSubdomain =
+    hostname.endsWith(".getdeviso.fr") &&
+    !hostname.startsWith("www.") &&
+    hostname !== "getdeviso.fr";
+
+  if (isSubdomain) {
+    // Let all subdomain traffic through untouched
+    return NextResponse.next();
+  }
+
   let supabaseResponse = NextResponse.next({ request });
 
   const supabase = createServerClient(
@@ -37,9 +51,12 @@ export async function middleware(request: NextRequest) {
     return NextResponse.redirect(new URL("/dashboard", request.url));
   }
 
+  // Expose pathname to server components (used for onboarding redirect check)
+  supabaseResponse.headers.set("x-pathname", request.nextUrl.pathname);
+
   return supabaseResponse;
 }
 
 export const config = {
-  matcher: ["/((?!_next/static|_next/image|favicon.ico|api/|p/).*)"],
+  matcher: ["/((?!_next/static|_next/image|favicon.ico|api/|p/).*)" ],
 };

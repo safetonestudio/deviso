@@ -26,21 +26,18 @@ function esc(s: string | null | undefined): string {
     .replace(/'/g, "&apos;");
 }
 
-export function generateFacturXml(invoice: Invoice): string {
+export function generateFacturXml(invoice: Invoice, linkedInvoiceNumber?: string | null): string {
   const issueDate = xmlDate(invoice.issue_date);
   const dueDate = invoice.due_date ? xmlDate(invoice.due_date) : null;
 
   // Calcul TVA
   const tvaAmount = xmlAmount(invoice.total_ttc - invoice.total_ht);
 
-  // Catégorie TVA selon le type d'opération
-  // S = Services, G = Goods (biens), M = Mixed
-  const taxCategoryMap: Record<string, string> = {
-    services: "S",
-    goods: "S",
-    mixed: "S",
-  };
-  const taxCategory = taxCategoryMap[invoice.operation_category] || "S";
+  // Catégorie TVA selon le régime
+  // E = Exempt (franchise art. 293 B CGI, exonération)
+  // S = Standard (assujetti à TVA, taux normal/réduit)
+  const isFranchise = invoice.tva_rate === 0;
+  const taxCategory = isFranchise ? "E" : "S";
 
   const lines = invoice.items
     .map((item, idx) => {
@@ -65,6 +62,7 @@ export function generateFacturXml(invoice: Invoice): string {
         <ram:ApplicableTradeTax>
           <ram:TypeCode>VAT</ram:TypeCode>
           <ram:CategoryCode>${taxCategory}</ram:CategoryCode>
+          ${isFranchise ? "<ram:ExemptionReason>TVA non applicable, art. 293 B du CGI</ram:ExemptionReason>" : ""}
           <ram:RateApplicablePercent>${invoice.tva_rate}</ram:RateApplicablePercent>
         </ram:ApplicableTradeTax>
         <ram:SpecifiedTradeSettlementLineMonetarySummation>
@@ -108,6 +106,9 @@ export function generateFacturXml(invoice: Invoice): string {
     <!-- ── Accord commercial ── -->
     <ram:ApplicableHeaderTradeAgreement>
 
+      <!-- Référence à la facture d'acompte (pour les factures de solde) -->
+      ${linkedInvoiceNumber ? `<ram:InvoiceReferencedDocument><ram:IssuerAssignedID>${esc(linkedInvoiceNumber)}</ram:IssuerAssignedID></ram:InvoiceReferencedDocument>` : ""}
+
       <!-- Vendeur (Seller) -->
       <ram:SellerTradeParty>
         <ram:Name>${esc(invoice.seller_company || invoice.seller_name || "")}</ram:Name>
@@ -139,6 +140,7 @@ export function generateFacturXml(invoice: Invoice): string {
         <ram:TypeCode>VAT</ram:TypeCode>
         <ram:BasisAmount>${xmlAmount(invoice.total_ht)}</ram:BasisAmount>
         <ram:CategoryCode>${taxCategory}</ram:CategoryCode>
+        ${isFranchise ? "<ram:ExemptionReason>TVA non applicable, art. 293 B du CGI</ram:ExemptionReason>" : ""}
         <ram:RateApplicablePercent>${invoice.tva_rate}</ram:RateApplicablePercent>
         ${invoice.payment_on_debit ? "<ram:DueDateTypeCode>72</ram:DueDateTypeCode>" : ""}
       </ram:ApplicableTradeTax>

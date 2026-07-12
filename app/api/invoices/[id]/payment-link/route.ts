@@ -1,67 +1,56 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
-import { stripe } from "@/lib/stripe";
 
 type Params = { params: Promise<{ id: string }> };
 
+/**
+ * Cette route ne crée PLUS de Payment Link sur le compte Stripe de Deviso.
+ * Elle retourne simplement le lien de paiement configuré dans le profil de l'utilisateur.
+ * Les paiements arrivent DIRECTEMENT chez l'utilisateur, Deviso n'intervient pas.
+ */
 export async function POST(_req: NextRequest, { params }: Params) {
   const { id } = await params;
   const supabase = await createClient();
   const { data: { user }, error: authError } = await supabase.auth.getUser();
   if (authError || !user) return NextResponse.json({ error: "Non autorisé" }, { status: 401 });
 
-  // Récupérer la facture
-  const { data: invoice, error } = await supabase
+  // Vérifier que la facture appartient à l'utilisateur
+  const { data: invoice, error: invoiceError } = await supabase
     .from("invoices")
-    .select("*")
+    .select("id, payment_link_url")
     .eq("id", id)
     .eq("user_id", user.id)
     .single();
 
-  if (error || !invoice) return NextResponse.json({ error: "Facture introuvable" }, { status: 404 });
-
-  // Si un lien existe déjà, le retourner directement
-  if (invoice.payment_link_url) {
-    return NextResponse.json({ url: invoice.payment_link_url });
+  if (invoiceError || !invoice) {
+    return NextResponse.json({ error: "Facture introuvable" }, { status: 404 });
   }
 
-  // Créer un Price Stripe à usage unique pour cette facture
-  const price = await stripe.prices.create({
-    unit_amount: Math.round(invoice.total_ttc * 100), // centimes
-    currency: "eur",
-    product_data: {
-      name: `Facture ${invoice.invoice_number}`,
-      metadata: { invoice_id: id },
-    },
-  });
+  // Récupérer le lien de paiement depuis le profil de l'utilisateur
+  const { data: profile } = await supabase
+    .from("profiles")
+    .select("payment_method, payment_link_profile")
+    .eq("id", user.id)
+    .single();
 
-  // Créer le Payment Link
-  const paymentLink = await stripe.paymentLinks.create({
-    line_items: [{ price: price.id, quantity: 1 }],
-    metadata: {
-      invoice_id: id,
-      user_id: user.id,
-    },
-    after_completion: {
-      type: "redirect",
-      redirect: {
-        url: `${process.env.NEXT_PUBLIC_APP_URL}/dashboard/invoices/${id}?paid=1`,
+  const profileLink = profile?.payment_link_profile;
+
+  if (!profileLink) {
+    return NextResponse.json(
+      {
+        error: "PAYMENT_NOT_CONFIGURED",
+        message: "Configurez votre lien de paiement dans l'onglet Paiements de votre dashboard.",
       },
-    },
-    payment_method_types: ["card"],
-    billing_address_collection: "auto",
-  });
+      { status: 400 }
+    );
+  }
 
-  // Sauvegarder l'URL en base
+  // Mettre à jour la facture avec le lien (pour l'affichage)
   await supabase
     .from("invoices")
-    .update({
-      payment_link_url: paymentLink.url,
-      stripe_payment_link_id: paymentLink.id,
-      status: "sent",
-    })
+    .update({ payment_link_url: profileLink, status: "sent" })
     .eq("id", id)
     .eq("user_id", user.id);
 
-  return NextResponse.json({ url: paymentLink.url });
+  return NextResponse.json({ url: profileLink });
 }

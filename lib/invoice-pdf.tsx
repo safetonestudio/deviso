@@ -228,8 +228,8 @@ export function InvoicePDF({ invoice }: Props) {
     <Document
       title={`Facture ${invoice.invoice_number}`}
       author={invoice.seller_company || invoice.seller_name || "Deviso"}
-      subject={`Facture ${invoice.invoice_number} — ${invoice.client_company || invoice.client_name || ""}`}
-      creator="Deviso — deviso.fr"
+      subject={`Facture ${invoice.invoice_number}, ${invoice.client_company || invoice.client_name || ""}`}
+      creator="Deviso, deviso.fr"
       producer="Deviso Factur-X Generator"
     >
       <Page size="A4" style={styles.page}>
@@ -382,11 +382,11 @@ export function InvoicePDF({ invoice }: Props) {
         <View style={styles.notesBox}>
           <Text style={styles.notesLabel}>Mentions légales</Text>
           <Text style={styles.notesText}>
-            Facture soumise à TVA — Taux applicable :{" "}
+            Facture soumise à TVA, Taux applicable :{" "}
             {invoice.tva_rate}%
             {invoice.payment_on_debit
-              ? " — TVA acquittée sur les débits (art. 1693 bis CGI)"
-              : " — TVA acquittée sur les encaissements"}
+              ? ", TVA acquittée sur les débits (art. 1693 bis CGI)"
+              : ", TVA acquittée sur les encaissements"}
             {"\n"}
             Nature de l&apos;opération :{" "}
             {invoice.operation_category === "services"
@@ -411,7 +411,7 @@ export function InvoicePDF({ invoice }: Props) {
               : ""}
           </Text>
           <Text style={styles.facturxBadge}>
-            ✦ Factur-X BASIC — Conforme réforme 2026
+            ✦ Factur-X BASIC, Conforme réforme 2026
           </Text>
         </View>
       </Page>

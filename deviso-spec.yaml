@@ -1,0 +1,673 @@
+product_overview:
+  name: Deviso
+  url: https://getdeviso.fr
+  description: >
+    SaaS B2B francais de gestion commerciale pour independants.
+    Permet la creation de devis via IA en langage naturel, leur envoi pour
+    signature electronique, la conversion en facture Factur-X, et le suivi
+    du pipeline commercial. Integre la conformite legale francaise (TVA,
+    mentions obligatoires, art. 293 B CGI).
+  target_users:
+    primary: freelances, micro-entrepreneurs, auto-entrepreneurs francais
+    secondary: petites agences 1-10 personnes
+    excluded: grandes entreprises, comptables, ERP
+  core_value_proposition:
+    - devis professionnel en 30 secondes via IA
+    - conformite legale automatique (TVA, mentions 2026)
+    - signature electronique client via lien public
+    - pipeline devis -> facture Factur-X en 1 clic
+
+core_pipeline:
+  step_by_step_flow:
+    1: "Utilisateur decrit projet en langage naturel (brief)"
+    2: "IA (OpenAI) genere titre + lignes + totaux + conditions"
+    3: "Utilisateur revise lignes/prix/TVA"
+    4: "Utilisateur ajoute informations client (optionnel)"
+    5: "Devis sauvegarde en statut DRAFT"
+    6: "Utilisateur envoie devis -> email client + lien public share_token"
+    7: "Statut passe a SENT"
+    8: "Client ouvre le lien -> statut passe a VIEWED"
+    9: "Client signe electroniquement -> statut passe a SIGNED"
+    10: "Relance automatique si pas de signature a J+3"
+    11: "Utilisateur cree facture depuis le devis signe"
+    12: "Facture generee avec donnees prefillees du devis"
+    13: "Facture envoyee au client (email + PDF Factur-X)"
+    14: "Lien de paiement Stripe optionnel"
+    15: "Facture marquee PAID manuellement"
+    16: "CA visible dans stats et dashboard"
+
+information_architecture:
+  navigation:
+    structure: sidebar fixe desktop + drawer mobile
+    sections:
+      main:
+        - label: "Tableau de bord"
+          path: /dashboard
+          icon: LayoutDashboard
+        - label: "Mes devis"
+          path: /proposals
+          icon: FileText
+        - label: "Nouveau devis"
+          path: /proposals/new
+          icon: Sparkles
+          accent: true
+      facturation:
+        - label: "Mes factures"
+          path: /invoices
+          icon: Receipt
+        - label: "Nouvelle facture"
+          path: /invoices/new
+          icon: Plus
+      administratif:
+        - label: "Time tracking"
+          path: /time-tracking
+          icon: Clock
+        - label: "Declarations URSSAF"
+          path: /urssaf
+          icon: Building2
+        - label: "Catalogue Pro"
+          path: /catalogue
+          icon: Package
+          gated: pro
+        - label: "CRM Clients"
+          path: /crm
+          icon: Users
+        - label: "Statistiques"
+          path: /stats
+          icon: BarChart3
+          gated: pro
+        - label: "Equipe"
+          path: /team
+          icon: UsersRound
+          gated: pro
+      compte:
+        - label: "Mon profil"
+          path: /profil
+          icon: User
+        - label: "Abonnement"
+          path: /billing
+          icon: CreditCard
+  auth_pages:
+    - /login
+    - /signup
+    - /forgot-password
+    - /reset-password
+  public_pages:
+    - / (landing)
+    - /p/[token] (devis public pour signature client)
+    - /join/[token] (invitation equipe)
+    - /cgu
+    - /confidentialite
+    - /mentions-legales
+
+modules:
+  dashboard:
+    purpose: >
+      Vue d'ensemble de l'activite commerciale. Point d'entree principal
+      apres connexion. Oriente vers creation et suivi rapide.
+    structure_layers:
+      primary: "Hero KPI — CA signe (revenue total) + nb devis envoyes en attente"
+      action: "2 CTAs cote a cote — Nouveau devis (primary) + Nouvelle facture (secondary)"
+      insight: "4 KPI cards — total devis / envoyes / signes / CA signe"
+      secondary: "Table des 10 derniers devis avec statut et montant"
+    inputs:
+      - proposals (10 derniers, user_id)
+      - profiles (plan)
+    outputs:
+      - stats calcules cote serveur (total, sent, signed, revenue)
+      - UpgradeBanner si plan free
+    connected_modules:
+      - proposals (lien vers liste et creation)
+      - invoices (lien creation directe)
+      - billing (upgrade banner)
+    gating:
+      free: banner upgrade visible avec compteur X/10 devis
+      paid: banner masque
+
+  quotes_ai:
+    purpose: >
+      Module de creation de devis en 3 etapes via IA.
+      Objectif: reduire le temps de creation a 30 secondes.
+    pages:
+      list: /proposals
+      new: /proposals/new
+      detail: /proposals/[id]
+    features:
+      list_page:
+        - tableau responsive (desktop) / cards (mobile)
+        - colonnes: titre / client / montant TTC / statut / date / lien
+        - badges statut semantiques (draft/sent/viewed/signed/declined)
+        - empty state avec CTA creation
+        - UpgradeBanner si plan free (compteur mensuel)
+      new_page:
+        step_1_brief:
+          - textarea libre (min 10 caracteres)
+          - exemples de briefs pre-affiches
+          - bouton "Generer avec l'IA"
+          - spinner pendant generation
+        step_2_review:
+          - titre editable
+          - grille de lignes editables (description / qte / unite / prix HT)
+          - suppression/ajout de lignes
+          - picker catalogue (si items en base)
+          - select TVA (5 regimes)
+          - mention auto franchise TVA si taux 0
+          - totaux (HT / TVA / TTC) calcules en temps reel
+          - conditions paiement editables
+          - notes/mentions editables
+          - bouton "Recommencer"
+        step_3_client:
+          - nom / email / entreprise / SIREN (B2B 2026) / adresse
+          - recapitulatif (titre, nb lignes, total, TVA, validite)
+          - bouton Sauvegarder
+        error_states:
+          - LIMIT_REACHED (10/10 devis free) -> UpgradeButton
+          - erreur OpenAI -> message texte
+      detail_page:
+        - affichage complet du devis
+        - actions: envoyer email / copier lien / telecharger PDF / convertir en facture / relancer
+        - historique statut
+        - editable si statut DRAFT
+    ai_behavior:
+      provider: OpenAI API
+      input: brief en langage naturel (francais)
+      output:
+        - title: string
+        - items: [{description, quantity, unit, unit_price, total}]
+        - total_ht: number
+        - tva_rate: number (herite du profil utilisateur)
+        - total_ttc: number
+        - valid_days: number
+        - payment_terms: string
+        - notes: string
+      tva_override: taux du profil utilisateur applique apres generation
+    data_flow:
+      create: POST /api/proposals -> sauvegarde en DB statut DRAFT
+      send: POST /api/proposals/[id]/send-email -> email Resend + share_token genere
+      remind: POST /api/proposals/[id]/remind -> email de relance Resend
+      sign: public /p/[token] -> client signe -> PATCH statut SIGNED
+      generate: POST /api/proposals/generate -> OpenAI -> GeneratedProposal
+    limits:
+      free: 10 devis/mois (calcul sur created_at >= debut du mois en cours)
+      paid: illimite
+
+  clients:
+    purpose: >
+      CRM leger pour centraliser les contacts clients et visualiser
+      leur historique commercial.
+    page: /crm
+    features:
+      - liste de contacts avec stats (nb devis, CA total)
+      - recherche par nom/email/entreprise
+      - slide-over panel lateral pour details + edition
+      - CRUD complet (create / read / update / delete)
+      - notes libres par contact
+      - tags
+    business_logic:
+      - contacts crees manuellement (pas d'import automatique depuis devis)
+      - pas de liaison automatique entre CRM et proposals
+      - CA client calcule depuis invoices (si disponible)
+    connected_modules:
+      - invoices (CA par client)
+      - proposals (historique client - non lie automatiquement)
+    gating: accessible tous plans (pas de gating strict)
+
+  invoices:
+    purpose: >
+      Creation et envoi de factures electroniques conformes
+      Factur-X (norme obligatoire B2B France 2026/2027).
+    pages:
+      list: /invoices
+      new: /invoices/new
+      detail: /invoices/[id]
+    features:
+      creation:
+        - creation depuis un devis signe (prefillage complet)
+        - creation depuis time tracking (prefillage lignes + client)
+        - creation manuelle from scratch
+        - informations vendeur (entreprise, SIREN, adresse, TVA intracommunautaire)
+        - informations client (nom, email, entreprise, SIREN B2B 2026, adresse)
+        - lignes de facturation (description / qte / prix HT)
+        - 5 regimes TVA
+        - mentions obligatoires 2026: nature operation (services/biens/mixte)
+        - TVA sur debits ou encaissements (art. 1693 bis CGI)
+        - dates: emission + echeance
+        - conditions paiement
+      sending:
+        - generation PDF Factur-X embarque
+        - envoi email client via Resend
+        - lien de paiement Stripe (optionnel)
+        - telechargement PDF manuel
+      statuts: [draft, sent, paid, cancelled]
+    compliance:
+      facturx: PDF/A-3 avec metadonnees XML embarquees
+      mentions_auto:
+        - numero de facture sequentiel
+        - date emission
+        - SIREN vendeur
+        - TVA si applicable
+        - "TVA non applicable art. 293 B CGI" si franchise
+        - nature operation (2026)
+        - modalite TVA si applicable (debits/encaissements)
+    gating:
+      free: module facture non accessible (redirection vers upgrade)
+      paid: accessible
+
+  pipeline:
+    purpose: >
+      Suivi des statuts des devis depuis creation jusqu'a signature.
+      Pas de vue pipeline Kanban dediee - suivi via liste et dashboard.
+    states:
+      draft: devis cree, non envoye
+      sent: email envoye au client avec lien de signature
+      viewed: client a ouvert le lien public
+      signed: client a signe electroniquement
+      declined: client a refuse (action manuelle ou future feature)
+    transitions:
+      draft_to_sent: envoi email -> generation share_token
+      sent_to_viewed: client ouvre /p/[token] -> PATCH automatique
+      viewed_to_signed: client signe sur page publique -> PATCH
+      any_to_declined: action manuelle utilisateur
+    automations:
+      reminder: cron job -> envoie relance si statut SENT et pas de reponse J+3
+    notes:
+      - pas de vue Kanban dediee actuellement
+      - suivi uniquement via liste et dashboard
+
+  analytics:
+    purpose: >
+      Statistiques avancees de performance commerciale.
+      Reserve plan Pro.
+    page: /stats
+    metrics:
+      - ca_ytd: CA encaisse (factures paid) depuis debut annee
+      - ca_previsionnel: CA des devis envoyes/vus non encore signes
+      - conversion_rate: (devis signes / devis envoyes) * 100
+      - avg_proposal: valeur moyenne des devis
+      - monthly_ca: tableau CA sur 12 derniers mois (bar chart CSS custom)
+      - top_clients: top N clients par CA encaisse (depuis invoices paid)
+      - proposals_total / proposals_signed: compteurs bruts
+    insights:
+      - label de performance conversion (Excellent/Bon/A ameliorer/Travaille ton pitch)
+      - barre de progression visuelle taux conversion
+    calculations:
+      - CA YTD: somme total_ttc des invoices statut PAID depuis 01/01/annee courante
+      - CA previsionnel: somme total_ttc des proposals statut SENT ou VIEWED
+      - conversion_rate: calcule cote serveur dans /api/stats
+    gating:
+      free: retour 403 -> page upgrade
+      solo: retour 403 -> page upgrade
+      pro: acces complet
+
+  service_library:
+    purpose: >
+      Catalogue de prestations recurrentes pour eviter la ressaisie
+      dans les devis. Reserve plan Pro.
+    page: /catalogue
+    features:
+      - CRUD des prestations (nom, description, unite, prix unitaire HT)
+      - picker dans l'etape review du nouveau devis
+      - ajout en 1 clic depuis catalogue vers lignes du devis
+    usage_in_ai:
+      - catalogue charge au moment de l'etape review
+      - pas injecte dans le prompt IA (pas de suggestion automatique)
+      - insertion manuelle via bouton "Depuis le catalogue"
+    gating:
+      free: acces liste mais impossible de creer (UpgradeButton)
+      solo: acces liste mais impossible de creer (UpgradeButton)
+      pro: CRUD complet
+
+  settings:
+    profil_page:
+      path: /profil
+      sections:
+        identite:
+          - full_name
+          - company_name
+          - siret
+          - address
+        tva:
+          - tva_regime (franchise | normal | intermediaire | reduit | super_reduit)
+          - tva_number (intracommunautaire, desactive si franchise)
+        logo:
+          - upload image -> stockage Supabase Storage
+          - preview en temps reel
+        mentions_legales:
+          - champ libre pour mentions personnalisees
+        apparence:
+          - theme (dark uniquement actuellement)
+        abonnement:
+          - affichage plan actuel
+          - boutons upgrade Solo/Pro -> redirige vers /billing
+    billing_page:
+      path: /billing
+      features:
+        - affichage plan actuel avec badge colore
+        - bouton "Gerer / Annuler" -> Stripe Customer Portal
+        - cartes upgrade (Solo 19€/mois, Pro 29€/mois)
+        - boutons "Choisir Solo" / "Choisir Pro" -> Stripe Checkout
+        - message succes si ?upgraded=1
+        - gestion erreur portal (customer ID invalide -> recreation automatique)
+
+pricing_model:
+  free:
+    price_eur: 0
+    limits:
+      proposals_per_month: 10
+      invoices: false
+      logo: false
+      signature: false
+      catalogue: false
+      stats: false
+      team: false
+      time_tracking_to_invoice: false
+  solo:
+    price_eur: 19
+    stripe_price_id: price_1TmtlsC7DMFvUE5Oa3dsFvFZ
+    limits:
+      proposals: unlimited
+      invoices: true
+      logo: true
+      signature: true
+      catalogue: false
+      stats: false
+      team: false
+      time_tracking_to_invoice: true
+      urssaf: true
+      relances_auto: true
+  pro:
+    price_eur: 29
+    stripe_price_id: price_1TmtoOC7DMFvUE5ONRi07YgD
+    extra_seat_price_eur: 15
+    limits:
+      proposals: unlimited
+      invoices: true
+      logo: true
+      signature: true
+      catalogue: true
+      stats: true
+      team: true
+      time_tracking_to_invoice: true
+      urssaf: true
+      relances_auto: true
+      export_fec: true
+  feature_gating_logic:
+    storage: profiles.plan column (free | solo | pro)
+    check_method: server-side dans chaque API route et page
+    frontend_feedback: UpgradeBanner (inline) + UpgradeButton (CTA)
+    hard_block:
+      - POST /api/proposals retourne 403 LIMIT_REACHED si count >= 10 et plan free
+      - GET /api/stats retourne 403 si plan != pro
+      - /catalogue creation bloquee si plan != pro
+    soft_block:
+      - /invoices/new accessible mais creation echoue si plan free
+    inconsistency:
+      - /team accessible a tous mais invitation impossible si plan != pro
+      - /crm accessible a tous plans (pas de gating explicite)
+
+data_model:
+  entities:
+    profile:
+      pk: id (uuid, FK auth.users)
+      fields:
+        - full_name
+        - company_name
+        - email
+        - plan (free | solo | pro)
+        - stripe_customer_id
+        - siret
+        - address
+        - tva_number
+        - tva_regime
+        - logo_url
+      relations:
+        - 1:N proposals
+        - 1:N invoices
+        - 1:N crm_contacts
+        - 1:N time_entries
+        - 1:N catalog_items
+        - 1:N team_members (as owner)
+
+    quote:
+      table: proposals
+      pk: id (uuid)
+      fk: user_id -> profiles.id
+      fields:
+        - title
+        - client_name / client_email / client_company / client_address / client_siren
+        - items (jsonb: [{id, description, quantity, unit, unit_price, total}])
+        - total_ht / tva_rate / total_ttc
+        - status (draft | sent | viewed | signed | declined)
+        - valid_until
+        - payment_terms
+        - notes
+        - ai_brief
+        - share_token (uuid, genere a l'envoi)
+        - created_at
+      relations:
+        - 1:N invoices (une facture peut venir d'un devis)
+
+    invoice:
+      table: invoices
+      pk: id (uuid)
+      fk:
+        - user_id -> profiles.id
+        - proposal_id -> proposals.id (nullable)
+      fields:
+        - invoice_number (sequentiel)
+        - client_name / client_email / client_company / client_siren / client_address
+        - seller_company / seller_siren / seller_address / seller_tva_number
+        - items (jsonb: meme structure que proposals)
+        - total_ht / tva_rate / total_ttc
+        - status (draft | sent | paid | cancelled)
+        - issue_date / due_date
+        - payment_terms
+        - operation_category (services | goods | mixed)
+        - payment_on_debit (boolean)
+        - created_at
+      relations:
+        - N:1 proposals (nullable)
+        - N:1 profiles
+
+    crm_contact:
+      table: crm_contacts
+      pk: id (uuid)
+      fk: user_id -> profiles.id
+      fields:
+        - name / email / company / phone / address
+        - notes
+        - tags (jsonb ou text[])
+      relations:
+        - pas de FK directe vers proposals ou invoices
+
+    time_entry:
+      table: time_entries
+      pk: id (uuid)
+      fk: user_id -> profiles.id
+      fields:
+        - client_name
+        - description
+        - hours
+        - rate (prix/heure)
+        - date
+        - billed (boolean)
+        - invoice_id (nullable, FK invoices.id)
+
+    catalog_item:
+      table: catalog_items
+      pk: id (uuid)
+      fk: user_id -> profiles.id
+      fields:
+        - name
+        - description
+        - unit
+        - unit_price
+
+    team_member:
+      table: team_members
+      pk: id (uuid)
+      fk: owner_id -> profiles.id
+      fields:
+        - email
+        - role
+        - status (pending | active)
+        - invite_token (uuid)
+
+  relationships:
+    - profiles 1:N proposals
+    - profiles 1:N invoices
+    - proposals 1:N invoices (via proposal_id)
+    - profiles 1:N crm_contacts
+    - profiles 1:N time_entries
+    - time_entries N:1 invoices (via invoice_id)
+    - profiles 1:N catalog_items
+    - profiles 1:N team_members
+
+user_flows:
+  - name: "Creation devis IA"
+    steps:
+      1: Aller sur /proposals/new
+      2: Etape Brief -> saisir description projet
+      3: Cliquer "Generer" -> appel POST /api/proposals/generate
+      4: OpenAI retourne GeneratedProposal
+      5: Etape Review -> modifier lignes / TVA / conditions
+      6: Optionnel: ajouter items depuis catalogue
+      7: Etape Client -> saisir infos client (optionnel)
+      8: Cliquer "Enregistrer" -> POST /api/proposals
+      9: Redirection vers /proposals/[id]
+    modules_involved: [quotes_ai, service_library]
+    error_cases:
+      - brief trop court (< 10 chars) -> validation client
+      - erreur OpenAI -> message d'erreur etape 2
+      - LIMIT_REACHED (plan free) -> UpgradeButton a l'etape 7
+
+  - name: "Envoi devis pour signature"
+    steps:
+      1: Aller sur /proposals/[id]
+      2: Cliquer "Envoyer"
+      3: POST /api/proposals/[id]/send-email
+      4: Serveur: generation share_token (si absent) + PATCH status=sent
+      5: Resend envoie email client avec lien /p/[token]
+      6: Client ouvre lien -> PATCH status=viewed
+      7: Client signe -> PATCH status=signed
+    modules_involved: [quotes_ai, pipeline]
+
+  - name: "Conversion devis en facture"
+    steps:
+      1: Sur /proposals/[id] (statut signed recommande)
+      2: Cliquer "Creer la facture"
+      3: Redirection vers /invoices/new?from_proposal=[id]
+      4: useEffect charge le devis -> prefillage complet
+      5: Utilisateur complete dates + mentions 2026
+      6: Cliquer "Creer la facture" -> POST /api/invoices
+      7: Redirection vers /invoices/[id]
+    modules_involved: [quotes_ai, invoices]
+
+  - name: "Time tracking vers facture"
+    steps:
+      1: Creer entrees de temps sur /time-tracking
+      2: Selectionner entrees a facturer
+      3: Cliquer "Creer la facture"
+      4: Redirection vers /invoices/new?from_time=1&client_name=X&items=...
+      5: useEffect prefille les lignes depuis query params
+      6: Creer la facture normalement
+      7: POST /api/time-entries/mark-billed -> marque les entrees comme billees
+    modules_involved: [time_tracking, invoices]
+
+  - name: "Upgrade plan"
+    steps:
+      1: Cliquer CTA upgrade (banner / billing page)
+      2: POST /api/stripe/checkout avec {plan: "solo" | "pro"}
+      3: Serveur: recupere ou cree Stripe Customer
+      4: Cree session Stripe Checkout
+      5: Redirection vers Stripe hosted checkout
+      6: Apres paiement: Stripe webhook checkout.session.completed
+      7: Webhook: PATCH profiles.plan = solo | pro
+      8: Redirection vers /billing?upgraded=1
+    modules_involved: [billing, settings]
+
+edge_cases:
+  - description: "Customer Stripe invalide (ID test en mode live)"
+    impact: "Portail Stripe retourne 'No such customer'"
+    resolution: >
+      Route /api/stripe/portal detecte l'erreur, remet stripe_customer_id a null,
+      recrée un customer Stripe live, puis recrée la session portail.
+
+  - description: "Devis genere sans client puis envoye"
+    impact: "Email envoye avec client_email null -> erreur Resend"
+    resolution: "Validation requise avant envoi (a verifier)"
+
+  - description: "TVA du profil non configuree"
+    impact: "tva_rate defaut a 0 (franchise) meme si utilisateur est assujetti"
+    resolution: "Utilisateur doit configurer son regime dans /profil"
+
+  - description: "share_token absent sur devis SENT"
+    impact: "Lien de signature non fonctionnel"
+    resolution: "Token genere a l'envoi s'il est absent"
+
+  - description: "Plan free avec plus de 10 devis crees avant la limite"
+    impact: "Devis existants visibles, nouveau devis bloque"
+    resolution: "Compteur base sur mois en cours (pas total)"
+
+inconsistencies_detected:
+  - issue: "CRM non lie aux proposals ni aux invoices"
+    location: crm_contacts table
+    severity: medium
+    detail: >
+      Les contacts CRM sont crees manuellement et n'ont pas de FK vers proposals
+      ou invoices. Pas de creation automatique de contact a l'envoi d'un devis.
+
+  - issue: "Deux routes webhook Stripe"
+    location: /api/stripe/webhook et /api/webhooks/stripe
+    severity: low
+    detail: "Duplication potentielle. A verifier laquelle est active en production."
+
+  - issue: "Module /crm accessible plan free sans gating"
+    location: /crm page + /api/crm
+    severity: low
+    detail: "Pas de restriction plan sur le CRM alors que le YAML business le range en Pro."
+
+  - issue: "Statut DECLINED non gere dans le flow automatique"
+    location: proposals status
+    severity: low
+    detail: "DECLINED existe en DB et dans les badges UI mais pas de flow pour le declencher automatiquement."
+
+  - issue: "Telechargement PDF facture - verification plan manquante"
+    location: /api/invoices/[id]/download
+    severity: medium
+    detail: "A verifier si la route verifie le plan avant de generer le PDF."
+
+  - issue: "/team accessible en lecture a tous les plans"
+    location: /team page
+    severity: low
+    detail: "La page team est visible mais l'invitation est bloquee si plan != pro."
+
+removed_or_redundant_features:
+  - feature: "ThemeToggle (bouton dark/light)"
+    reason: "Supprime lors du revamp - dashboard toujours en dark mode maintenant"
+
+  - feature: "startCheckout server action dans dashboard"
+    reason: "Remplace par Link vers /billing pour simplifier le flow"
+
+  - feature: "Prix hardcodes '49€' dans plusieurs pages"
+    reason: "Ancien prix, supprime et remplace par redirect vers /billing"
+
+notes:
+  technical_observations:
+    - framework: "Next.js 15 App Router - melange Server Components (pages) et Client Components (forms)"
+    - auth_middleware: "Edge middleware protege /dashboard/* avec redirect /login"
+    - supabase_clients: "Deux clients distincts - server (cookies) et client (browser)"
+    - pdf_generation: "react-pdf/renderer pour rendu + pdf-lib pour embedding Factur-X XML"
+    - ai_generation: "Appel OpenAI synchrone cote serveur - pas de streaming"
+    - stripe_mode: "Exclusivement LIVE - pas d'environnement test separe"
+    - dark_mode: "Toujours dark - DashboardThemeProvider simplifie en wrapper passthrough"
+    - design_tokens: "Custom Tailwind tokens ds-bg/ds-surface/ds-elevated/ds-border dans tailwind.config.ts"
+
+  product_observations:
+    - "Le core pipeline (brief -> devis -> signature -> facture) est complet et fonctionnel"
+    - "Le CRM est un feature secondaire sous-developpe (pas de liaison auto avec devis)"
+    - "Les stats sont exclusivement Pro - bloque la retention des plans inférieurs"
+    - "L'onboarding post-inscription n'est pas guide (page /onboarding existe mais flow peu structure)"
+    - "Pas de notifications in-app - tout passe par email"
+    - "Le time tracking est fonctionnel mais isole (pas de suivi par projet)"
+    - "L'export FEC existe (GET /api/export/fec) mais peu mis en avant dans la navigation"

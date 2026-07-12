@@ -1,0 +1,422 @@
+product:
+  name: Deviso
+  url: https://getdeviso.fr
+  tagline: "Logiciel de devis IA pour freelances — Devis en 30 secondes"
+  description: >
+    Deviso est un SaaS B2B ciblant les freelances, micro-entrepreneurs et
+    petites agences françaises. Il permet de créer des devis professionnels
+    en 30 secondes grâce à l'IA, de les envoyer pour signature électronique,
+    et de gérer l'ensemble du cycle commercial (devis → facture → paiement).
+  status: live
+  stage: early_growth
+  market: France
+
+target_users:
+  primary:
+    - freelances développeurs, designers, consultants
+    - micro-entrepreneurs (auto-entrepreneurs)
+    - petites agences (1–10 personnes)
+  pain_points:
+    - perte de temps à créer des devis sur Word/Google Docs
+    - devis non conformes au droit français
+    - pas de suivi (ouverture, signature, relances)
+    - facturation électronique Factur-X obligatoire dès 2026/2027
+  jobs_to_be_done:
+    - créer un devis professionnel rapidement
+    - l'envoyer et savoir quand il est ouvert/signé
+    - convertir un devis en facture en 1 clic
+    - rester conforme légalement sans effort
+
+business_model:
+  type: freemium SaaS
+  currency: EUR
+  plans:
+    free:
+      price: 0
+      limits:
+        - 10 devis par mois
+        - génération IA incluse
+        - PDF téléchargeable
+        - watermark "Créé avec Deviso"
+      restrictions:
+        - pas de factures
+        - pas de logo personnalisé
+        - pas de signature électronique client
+    solo:
+      price: 19
+      period: mois
+      stripe_price_id: price_1TmtlsC7DMFvUE5Oa3dsFvFZ
+      features:
+        - devis illimités
+        - factures illimitées
+        - génération IA illimitée
+        - logo et marque personnalisés
+        - signature électronique client
+        - relances automatiques (J+3)
+        - time tracking vers facture
+        - déclarations URSSAF
+        - email transactionnel facture
+        - support prioritaire
+    pro:
+      price: 29
+      period: mois
+      stripe_price_id: price_1TmtoOC7DMFvUE5ONRi07YgD
+      features:
+        - tout Solo inclus
+        - multi-utilisateurs (jusqu'à 10 sièges)
+        - +15€ par siège supplémentaire
+        - CRM client avec historique complet
+        - catalogue de prestations sauvegardées
+        - templates de devis personnalisés
+        - export comptable CSV FEC-compatible
+        - statistiques avancées (taux de signature, CA prévisionnel)
+    enterprise:
+      price: sur_devis
+      contact: contact@getdeviso.fr
+      features:
+        - équipe >10 personnes
+        - onboarding dédié
+        - contrat annuel
+        - SLA garanti
+        - support prioritaire
+        - facturation centralisée
+
+tech_stack:
+  framework: Next.js 15 (App Router)
+  language: TypeScript
+  styling: Tailwind CSS v3
+  auth_and_db: Supabase
+  payments: Stripe (mode live)
+  email: Resend
+  ai: OpenAI API
+  pdf: react-pdf/renderer + pdf-lib
+  hosting: Vercel
+  analytics: Vercel Analytics
+
+database:
+  provider: Supabase (PostgreSQL)
+  main_tables:
+    profiles:
+      description: données utilisateur + plan
+      key_columns:
+        - id (uuid, FK auth.users)
+        - full_name
+        - company_name
+        - email
+        - plan (free | solo | pro)
+        - stripe_customer_id
+        - siret
+        - address
+        - tva_number
+        - tva_regime (franchise | normal | intermediaire | reduit | super_reduit)
+        - logo_url
+    proposals:
+      description: devis générés par l'IA ou manuels
+      key_columns:
+        - id
+        - user_id
+        - title
+        - client_name
+        - client_email
+        - client_company
+        - client_address
+        - client_siren
+        - items (jsonb — liste de lignes)
+        - total_ht
+        - tva_rate
+        - total_ttc
+        - status (draft | sent | viewed | signed | declined)
+        - valid_until
+        - payment_terms
+        - notes
+        - ai_brief
+        - share_token (pour lien public de signature)
+        - created_at
+    invoices:
+      description: factures électroniques Factur-X
+      key_columns:
+        - id
+        - user_id
+        - proposal_id (optionnel, FK proposals)
+        - invoice_number
+        - client_name / client_email / client_company
+        - seller_company / seller_siren / seller_address
+        - items (jsonb)
+        - total_ht / tva_rate / total_ttc
+        - status (draft | sent | paid | cancelled)
+        - issue_date / due_date
+        - payment_terms
+        - operation_category (services | goods | mixed)
+        - payment_on_debit (boolean)
+    crm_contacts:
+      description: clients CRM
+      key_columns:
+        - id
+        - user_id
+        - name / email / company / phone / address
+        - notes
+        - tags
+    time_entries:
+      description: entrées de time tracking
+      key_columns:
+        - id
+        - user_id
+        - client_name
+        - description
+        - hours
+        - rate
+        - date
+        - billed (boolean)
+        - invoice_id (optionnel)
+    catalog_items:
+      description: prestations sauvegardées (plan Pro)
+      key_columns:
+        - id
+        - user_id
+        - name
+        - description
+        - unit
+        - unit_price
+    team_members:
+      description: membres d'équipe (plan Pro)
+      key_columns:
+        - id
+        - owner_id
+        - email
+        - role
+        - status (pending | active)
+        - invite_token
+
+modules:
+  proposals:
+    description: Création de devis via IA (brief naturel → devis complet)
+    flow:
+      - step_1_brief: l'utilisateur décrit le projet en langage naturel
+      - step_2_review: l'IA génère titre + lignes + totaux, l'utilisateur révise
+      - step_3_client: informations client ajoutées
+      - save: devis sauvegardé en brouillon
+    features:
+      - génération IA via OpenAI
+      - catalogue de prestations préremplissable
+      - calcul TVA automatique
+      - statuts (draft/sent/viewed/signed/declined)
+      - lien de partage public pour signature
+      - relance automatique J+3 si non signé
+      - conversion en facture en 1 clic
+    limits:
+      free: 10 devis par mois
+      paid: illimité
+
+  invoices:
+    description: Facturation électronique conforme Factur-X (norme 2026/2027)
+    features:
+      - création depuis un devis ou from scratch
+      - mentions légales obligatoires 2026 (nature opération, TVA sur débits)
+      - génération PDF Factur-X embarqué
+      - envoi par email via Resend
+      - lien de paiement (Stripe)
+      - relance manuelle
+    compliance:
+      - Factur-X standard
+      - mentions TVA (franchise art. 293 B CGI)
+      - SIREN client B2B obligatoire 2026
+
+  crm:
+    description: CRM léger pour gérer les contacts clients
+    features:
+      - liste de contacts
+      - statistiques par client (CA, nb devis)
+      - slide-over panel pour détails/édition
+      - notes et tags
+
+  time_tracking:
+    description: Suivi du temps facturable
+    features:
+      - entrées de temps (client, description, heures, taux)
+      - calcul automatique du montant
+      - marquage "facturé"
+      - export vers une facture en 1 clic
+
+  urssaf:
+    description: Aide aux déclarations de chiffre d'affaires URSSAF
+    features:
+      - calcul du CA déclarable par trimestre/mois
+      - sélection de la période
+      - copie du montant
+
+  catalogue:
+    description: Bibliothèque de prestations récurrentes (plan Pro)
+    features:
+      - CRUD des prestations
+      - réutilisables dans les devis via picker
+
+  stats:
+    description: Statistiques avancées (plan Pro)
+    features:
+      - CA mensuel sur 12 mois (bar chart)
+      - CA encaissé YTD
+      - CA prévisionnel
+      - taux de conversion devis
+      - valeur moyenne d'un devis
+      - top clients par CA
+
+  team:
+    description: Gestion multi-utilisateurs (plan Pro)
+    features:
+      - invitation par email
+      - statuts (pending | active)
+      - révocation
+
+  billing:
+    description: Gestion de l'abonnement Stripe
+    features:
+      - affichage du plan actuel
+      - upgrade vers Solo ou Pro (Stripe Checkout)
+      - accès portail de facturation Stripe (gérer/annuler)
+    stripe_integration:
+      mode: live
+      account: acct_1Tme0gC7DMFvUE5O
+      webhook_events:
+        - checkout.session.completed
+        - customer.subscription.updated
+        - customer.subscription.deleted
+
+  profil:
+    description: Paramètres du compte
+    features:
+      - identité (nom, société, SIREN, adresse)
+      - TVA (régime, numéro intracommunautaire)
+      - logo (upload)
+      - mentions légales personnalisées
+
+auth:
+  provider: Supabase Auth
+  methods:
+    - email + password
+  flows:
+    - inscription → email de bienvenue (Resend)
+    - connexion
+    - mot de passe oublié → lien de réinitialisation
+    - reset password
+  middleware: Next.js edge middleware (protection des routes /dashboard/*)
+
+design_system:
+  theme: dark premium
+  colors:
+    background: "#0B0F19"
+    surface: "#111827"
+    surface_elevated: "#1F2937"
+    border: "#2A3446"
+    primary: "#4F46E5"
+    primary_hover: "#5B5FF6"
+    text_primary: "#F9FAFB"
+    text_secondary: "#9CA3AF"
+    text_muted: "#6B7280"
+    success: "#22C55E"
+    warning: "#F59E0B"
+    danger: "#EF4444"
+    info: "#38BDF8"
+  typography:
+    family: "Inter, system-ui, sans-serif"
+    max_weights: [400, 500, 600]
+    scale:
+      h1: "text-2xl font-semibold"
+      h2: "text-xl font-semibold"
+      h3: "text-lg font-medium"
+      body: "text-sm"
+      caption: "text-xs"
+  icons: lucide-react
+  components:
+    - PageHeader
+    - KpiCard (avec delta +/-)
+    - EmptyState
+    - Badge (draft/sent/viewed/signed/declined/paid)
+    - SidebarNav (Lucide icons, active state indigo)
+    - MobileNav (drawer)
+    - UpgradeBanner
+    - UpgradeButton
+
+navigation:
+  sidebar_sections:
+    main:
+      - Tableau de bord (/dashboard)
+      - Mes devis (/proposals)
+      - Nouveau devis (/proposals/new) [accent indigo]
+    facturation:
+      - Mes factures (/invoices)
+      - Nouvelle facture (/invoices/new)
+    administratif:
+      - Time tracking (/time-tracking)
+      - Déclarations URSSAF (/urssaf)
+      - Catalogue Pro (/catalogue)
+      - CRM Clients (/crm)
+      - Statistiques (/stats)
+      - Équipe (/team)
+    compte:
+      - Mon profil (/profil)
+      - Abonnement (/billing)
+
+known_issues_resolved:
+  - portail Stripe: auto-recréation du customer si ID invalide (test vs live)
+  - layout padding: pt-14 sur mobile pour la topbar fixed
+  - dark mode: toujours dark (pas de toggle light), DashboardThemeProvider simplifié
+  - nav active state: composant client SidebarNav avec usePathname()
+  - emojis → icônes Lucide dans toute la nav et les composants
+
+current_limitations:
+  - pas d'onboarding guidé step-by-step après inscription
+  - pas de notifications in-app
+  - pas d'intégration comptable directe (ex: Pennylane, Qonto)
+  - pas de devis multi-langues
+  - pas d'envoi groupé
+  - pas d'application mobile native
+
+legal_compliance:
+  country: France
+  - CGU (Conditions Générales d'Utilisation)
+  - Politique de confidentialité (RGPD)
+  - Mentions légales
+  - Factur-X: norme de facturation électronique obligatoire B2B dès 2026
+  - TVA: gestion des régimes (franchise, normal, intermédiaire, réduit, super-réduit)
+  - art. 293 B CGI: franchise en base de TVA pour auto-entrepreneurs
+
+api_routes:
+  public:
+    - GET /api/public/proposals/[token] — devis public pour signature client
+    - POST /api/stripe/webhook — webhook Stripe (checkout + subscription)
+    - POST /api/webhooks/stripe — webhook Stripe alternatif
+  protected:
+    - GET/POST /api/proposals
+    - GET/PUT/DELETE /api/proposals/[id]
+    - POST /api/proposals/generate — génération IA
+    - POST /api/proposals/[id]/send-email
+    - POST /api/proposals/[id]/remind
+    - GET/POST /api/invoices
+    - GET/PUT/DELETE /api/invoices/[id]
+    - GET /api/invoices/[id]/download — PDF Factur-X
+    - POST /api/invoices/[id]/send-email
+    - POST /api/invoices/[id]/payment-link
+    - GET/PUT /api/profile
+    - POST /api/profile/logo
+    - GET /api/stats
+    - GET/POST/DELETE /api/crm
+    - GET/POST/DELETE /api/catalog / /api/catalog/[id]
+    - GET/POST /api/time-entries
+    - POST /api/time-entries/mark-billed
+    - GET/POST /api/team / /api/team/[memberId]
+    - GET /api/team/accept/[token]
+    - GET /api/urssaf
+    - GET /api/export/fec — export comptable FEC
+    - POST /api/stripe/checkout — création session Stripe Checkout
+    - POST /api/stripe/portal — accès portail billing Stripe
+    - GET /api/cron/send-reminders — cron relances automatiques
+
+emails:
+  provider: Resend
+  types:
+    - bienvenue à l'inscription
+    - lien de signature devis (envoi au client)
+    - relance automatique J+3 (si devis non signé)
+    - envoi de facture au client
+    - invitation équipe (lien d'acceptation)
+    - reset de mot de passe (via Supabase)

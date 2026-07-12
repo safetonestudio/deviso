@@ -1,6 +1,7 @@
 import type { Config } from "tailwindcss";
 
 const config: Config = {
+  darkMode: "class",
   content: [
     "./pages/**/*.{js,ts,jsx,tsx,mdx}",
     "./components/**/*.{js,ts,jsx,tsx,mdx}",
@@ -22,9 +23,19 @@ const config: Config = {
           900: "#312e81",
           950: "#1e1b4b",
         },
+        ds: {
+          bg:       "var(--ds-bg)",
+          surface:  "var(--ds-surface)",
+          elevated: "var(--ds-elevated)",
+          border:   "var(--ds-border)",
+        },
       },
       fontFamily: {
         sans: ["Inter", "system-ui", "sans-serif"],
+      },
+      boxShadow: {
+        "ds-sm":   "var(--ds-shadow-sm)",
+        "ds-card": "var(--ds-shadow-card)",
       },
       animation: {
         "fade-in": "fadeIn 0.5s ease-in-out",

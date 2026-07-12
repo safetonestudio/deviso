@@ -21,7 +21,34 @@ export async function GET(_req: NextRequest, { params }: Params) {
   if (error || !data) return NextResponse.json({ error: "Facture introuvable" }, { status: 404 });
 
   const invoice = data as Invoice;
-  const pdfBuffer = await generateFacturXPdf(invoice);
+  const { data: profileData } = await supabase
+    .from("profiles")
+    .select("proposal_color, payment_method, payment_link_provider, payment_link_profile, bank_iban, bank_bic, bank_account_name")
+    .eq("id", user.id)
+    .single();
+
+  const accentColor = profileData?.proposal_color ?? undefined;
+  const paymentInfo = profileData ? {
+    method: (profileData.payment_method || "none") as "none" | "link" | "bank" | "both",
+    linkProvider: profileData.payment_link_provider,
+    linkUrl: profileData.payment_link_profile,
+    bankIban: profileData.bank_iban,
+    bankBic: profileData.bank_bic,
+    bankAccountName: profileData.bank_account_name,
+  } : undefined;
+
+  // Pour les factures de solde : récupérer le numéro de la facture d'acompte liée
+  let linkedInvoiceNumber: string | null = null;
+  if (invoice.invoice_type === "solde" && invoice.linked_invoice_id) {
+    const { data: linkedInv } = await supabase
+      .from("invoices")
+      .select("invoice_number")
+      .eq("id", invoice.linked_invoice_id)
+      .single();
+    linkedInvoiceNumber = linkedInv?.invoice_number ?? null;
+  }
+
+  const pdfBuffer = await generateFacturXPdf(invoice, accentColor, paymentInfo, linkedInvoiceNumber);
   const filename = facturxFilename(invoice);
 
   // Sauvegarde optionnelle du chemin en BDD (best-effort)

@@ -16,3 +16,12 @@ npm-debug.log*
 
 .vercel
 .env*
+
+# Docs internes avec secrets - ne jamais commiter
+CLAUDE.md
+STATUS.md
+audit-*.md
+stripe_backup_code.txt
+database_pwd.txt
+battlecard-*.html
+vercel-deploy.log

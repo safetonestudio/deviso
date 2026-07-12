@@ -1,6 +1,6 @@
 /**
  * Génère un fichier Factur-X (PDF avec XML CII embarqué)
- * Implémentation 100% pure JS — aucun module natif requis
+ * Implémentation 100% pure JS, aucun module natif requis
  *
  * Flow :
  * 1. Génère le PDF visuel avec @react-pdf/renderer
@@ -10,25 +10,25 @@
 import { renderToBuffer, Document } from "@react-pdf/renderer";
 import { PDFDocument } from "pdf-lib";
 import React from "react";
-import { InvoicePDF } from "./invoice-pdf";
+import { InvoicePDF, PaymentInfo } from "./invoice-pdf";
 import { generateFacturXml } from "./invoice-xml";
 import type { Invoice } from "@/types";
 import type { ReactElement } from "react";
 
-export async function generateFacturXPdf(invoice: Invoice): Promise<Buffer> {
+export async function generateFacturXPdf(invoice: Invoice, accentColor?: string, paymentInfo?: PaymentInfo, linkedInvoiceNumber?: string | null): Promise<Buffer> {
   // 1. Génération du PDF visuel (React PDF → Buffer)
   const pdfBuffer = await renderToBuffer(
-    React.createElement(InvoicePDF, { invoice }) as ReactElement<React.ComponentProps<typeof Document>>
+    React.createElement(InvoicePDF, { invoice, accentColor, paymentInfo, linkedInvoiceNumber }) as ReactElement<React.ComponentProps<typeof Document>>
   );
 
   // 2. Génération du XML CII
-  const xml = generateFacturXml(invoice);
+  const xml = generateFacturXml(invoice, linkedInvoiceNumber);
   const xmlBytes = new TextEncoder().encode(xml);
 
   // 3. Chargement du PDF avec pdf-lib
   const pdfDoc = await PDFDocument.load(pdfBuffer);
 
-  // 4. Embarquement du XML — le standard Factur-X impose le nom "factur-x.xml"
+  // 4. Embarquement du XML, le standard Factur-X impose le nom "factur-x.xml"
   await pdfDoc.attach(xmlBytes, "factur-x.xml", {
     mimeType: "application/xml",
     description: "Factur-X BASIC Invoice Data",
@@ -40,9 +40,9 @@ export async function generateFacturXPdf(invoice: Invoice): Promise<Buffer> {
   pdfDoc.setTitle(`Facture ${invoice.invoice_number}`);
   pdfDoc.setAuthor(invoice.seller_company || invoice.seller_name || "Deviso");
   pdfDoc.setSubject(
-    `Facture ${invoice.invoice_number} — ${invoice.client_company || invoice.client_name || ""}`
+    `Facture ${invoice.invoice_number}, ${invoice.client_company || invoice.client_name || ""}`
   );
-  pdfDoc.setCreator("Deviso — deviso.fr");
+  pdfDoc.setCreator("Deviso, deviso.fr");
   pdfDoc.setProducer("Deviso Factur-X Generator");
   pdfDoc.setKeywords(["Factur-X", "BASIC", "Invoice", invoice.invoice_number]);
 
