@@ -327,7 +327,7 @@ export function BlogPost({
             </div>
           </div>
           <div className="flex items-center justify-between text-xs text-gray-600">
-            <p>© 2026 Deviso · SAS au capital de 1 000 € · SIRET en cours d&apos;immatriculation</p>
+            <p>© 2026 Deviso · SafeTone Studio · SIREN 103 340 857</p>
             <Link href="/" className="text-gray-500 hover:text-gray-300 transition-colors">getdeviso.fr</Link>
           </div>
         </div>

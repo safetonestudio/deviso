@@ -320,6 +320,9 @@ export default async function MetierTarifsPage({ params }: Props) {
           <Link href="/login" className="hover:text-gray-500 transition-colors">
             Connexion
           </Link>
+          <Link href="/mentions-legales" className="hover:text-gray-500 transition-colors">
+            Mentions légales
+          </Link>
         </footer>
       </div>
     </div>

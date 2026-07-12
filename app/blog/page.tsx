@@ -393,6 +393,7 @@ export default function BlogIndex() {
             <Link href="/login" className="hover:text-gray-400 transition-colors">Connexion</Link>
             <Link href="/cgu" className="hover:text-gray-400 transition-colors">CGU</Link>
             <Link href="/confidentialite" className="hover:text-gray-400 transition-colors">Confidentialite</Link>
+            <Link href="/mentions-legales" className="hover:text-gray-400 transition-colors">Mentions légales</Link>
           </div>
         </div>
       </footer>

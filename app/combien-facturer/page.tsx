@@ -276,6 +276,8 @@ export default function CombienFacturerPage() {
             <Link href="/blog" className="hover:text-gray-500 transition-colors">Blog</Link>
             {" · "}
             <Link href="/login" className="hover:text-gray-500 transition-colors">Connexion</Link>
+            {" · "}
+            <Link href="/mentions-legales" className="hover:text-gray-500 transition-colors">Mentions légales</Link>
           </p>
         </footer>
       </div>

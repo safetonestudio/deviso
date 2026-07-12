@@ -246,7 +246,7 @@ export default function Page() {
 
       <footer className="border-t border-ds-border py-10 px-4 sm:px-6">
         <div className="max-w-6xl mx-auto flex items-center justify-between text-xs text-gray-600">
-          <p>© 2026 Deviso · SAS au capital de 1 000 € · SIRET en cours d&apos;immatriculation</p>
+          <p>© 2026 Deviso · SafeTone Studio · SIREN 103 340 857</p>
           <Link href="/" className="text-gray-500 hover:text-gray-300 transition-colors">getdeviso.fr</Link>
         </div>
       </footer>
