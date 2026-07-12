@@ -1,5 +1,42 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createAdminClient } from "@/lib/supabase/admin";
+import { createHash } from "crypto";
+
+/**
+ * Piste d'audit e-signature : hash SHA-256 du contenu du devis figé au
+ * moment de la signature. Champs stables uniquement (pas de status/updated_at).
+ */
+function computeSignatureHash(proposal: Record<string, unknown>, signerName: string | undefined, signedAt: string): string {
+  const frozen = {
+    id: proposal.id,
+    proposal_number: proposal.proposal_number,
+    title: proposal.title,
+    client_name: proposal.client_name,
+    client_email: proposal.client_email,
+    client_company: proposal.client_company,
+    client_address: proposal.client_address,
+    client_siren: proposal.client_siren,
+    description: proposal.description,
+    items: proposal.items,
+    total_ht: proposal.total_ht,
+    tva_rate: proposal.tva_rate,
+    total_ttc: proposal.total_ttc,
+    valid_until: proposal.valid_until,
+    payment_terms: proposal.payment_terms,
+    notes: proposal.notes,
+    created_at: proposal.created_at,
+    signer_name: signerName ?? null,
+    signed_at: signedAt,
+  };
+  return createHash("sha256").update(JSON.stringify(frozen)).digest("hex");
+}
+
+/** IP réelle du client derrière Vercel (x-forwarded-for = "client, proxy1, ..."). */
+function clientIp(req: NextRequest): string | null {
+  const xff = req.headers.get("x-forwarded-for");
+  if (xff) return xff.split(",")[0].trim();
+  return req.headers.get("x-real-ip");
+}
 
 type Params = { params: Promise<{ token: string }> };
 
@@ -43,7 +80,7 @@ export async function POST(req: NextRequest, { params }: Params) {
 
   const { data: proposal, error } = await admin
     .from("proposals")
-    .select("id, status, user_id, client_email, client_name, title")
+    .select("*")
     .eq("share_token", token)
     .single();
 
@@ -61,10 +98,15 @@ export async function POST(req: NextRequest, { params }: Params) {
   }
 
   if (action === "sign") {
+    // Horodatage serveur + piste d'audit (IP, user-agent, hash du document figé)
+    const signedAt = new Date().toISOString();
     const updateData: Record<string, unknown> = {
       status: "signed",
       approval_status: "approved",
-      signed_at: new Date().toISOString(),
+      signed_at: signedAt,
+      signer_ip: clientIp(req),
+      signer_user_agent: req.headers.get("user-agent")?.slice(0, 500) ?? null,
+      signature_hash: computeSignatureHash(proposal, signerName, signedAt),
     };
     if (signerName) updateData.signer_name = signerName;
 

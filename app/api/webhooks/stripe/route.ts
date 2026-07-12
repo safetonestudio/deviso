@@ -30,6 +30,20 @@ export async function POST(req: NextRequest) {
 
   const supabase = createAdminClient();
 
+  // Idempotence : Stripe peut renvoyer le même événement plusieurs fois.
+  // INSERT sur la PK event_id — en cas de conflit (code 23505), déjà traité → on ignore.
+  const { error: dedupError } = await supabase
+    .from("stripe_processed_events")
+    .insert({ event_id: event.id });
+  if (dedupError) {
+    if (dedupError.code === "23505") {
+      return NextResponse.json({ received: true, duplicate: true });
+    }
+    // Erreur inattendue sur la dédup : on loggue mais on traite quand même
+    // (les handlers actuels sont idempotents par nature).
+    console.error("stripe_processed_events insert error:", dedupError);
+  }
+
   switch (event.type) {
 
     // ── Paiement initial réussi ──────────────────────────────────────────

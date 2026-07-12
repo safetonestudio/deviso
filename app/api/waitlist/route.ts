@@ -7,7 +7,8 @@ export async function POST(req: NextRequest) {
   if (!email || !email.includes("@")) {
     return NextResponse.json({ error: "Email invalide" }, { status: 400 });
   }
-  if (!["free", "solo", "pro"].includes(plan)) {
+  // Le plan Free permanent a été supprimé (30/06/2026) — seuls solo/pro sont commercialisés.
+  if (!["solo", "pro"].includes(plan)) {
     return NextResponse.json({ error: "Plan invalide" }, { status: 400 });
   }
 

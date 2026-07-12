@@ -16,7 +16,8 @@ export default function PublicProposalPage() {
   const [done, setDone] = useState<"signed" | "declined" | null>(null);
   const [signError, setSignError] = useState<string | null>(null);
 
-  // Champs e-signature avancée (Pro)
+  // Champs e-signature avec piste d'audit (Pro) — IP, user-agent, horodatage
+  // serveur et hash SHA-256 capturés côté API. Pas « avancée » au sens eIDAS.
   const [signerName, setSignerName] = useState("");
   const [confirmed, setConfirmed] = useState(false);
 
@@ -144,7 +145,7 @@ export default function PublicProposalPage() {
           <div className="bg-white rounded-2xl border border-ds-border p-6 space-y-5">
 
             {isAdvancedSign ? (
-              /* ── Signature avancée Pro ── */
+              /* ── Signature avec piste d'audit (Pro) ── */
               <>
                 <div>
                   <p className="text-slate-800 font-semibold text-base mb-0.5">Signature électronique</p>

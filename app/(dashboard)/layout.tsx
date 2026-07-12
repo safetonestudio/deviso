@@ -31,6 +31,9 @@ export default async function DashboardLayout({ children }: { children: React.Re
     supabase.from("profiles").select("plan").eq("id", workspaceUserId).single(),
   ]);
 
+  // NOTE : "free" n'est plus un plan commercialisé (supprimé le 30/06/2026).
+  // C'est l'état transitoire d'un compte sans abonnement (avant souscription,
+  // ou après expiration) — les gates Solo/Pro s'appliquent alors partout.
   const plan = workspacePlan?.plan ?? "free";
 
   // Redirect new owners to onboarding if they haven't set their company name yet

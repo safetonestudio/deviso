@@ -176,20 +176,92 @@ create trigger invoices_updated_at
   before update on public.invoices
   for each row execute procedure public.set_updated_at();
 
--- Auto-incrément numéro de facture par utilisateur
+-- ── Numérotation atomique des documents ────────────────────────────────
+-- Table de séquences par user/type/année. Obligation légale : séquence
+-- continue qui ne recule jamais, même en cas de suppression de document.
+-- Accès service-role uniquement (EXECUTE révoqué pour anon/authenticated/PUBLIC).
+create table if not exists public.document_sequences (
+  user_id   uuid not null references public.profiles(id) on delete cascade,
+  doc_type  text not null,
+  year      int  not null,
+  last_seq  int  not null default 0,
+  primary key (user_id, doc_type, year)
+);
+
+alter table public.document_sequences enable row level security;
+-- Pas de policy : intentionnel. Manipulée uniquement via next_document_seq() (service role).
+comment on table public.document_sequences is 'Accès service-role uniquement via next_document_seq(). RLS activé sans policy : intentionnel. Séquence continue légale — ne jamais exposer au client.';
+
+create or replace function public.next_document_seq(p_user_id uuid, p_doc_type text)
+returns integer
+language plpgsql
+security definer
+set search_path to 'public'
+as $$
+declare
+  v_year int := extract(year from current_date)::int;
+  v_seq  int;
+begin
+  -- INSERT ... ON CONFLICT DO UPDATE est atomique : pas de race condition possible.
+  -- La séquence ne décrémente jamais même si des documents sont supprimés.
+  insert into document_sequences (user_id, doc_type, year, last_seq)
+  values (p_user_id, p_doc_type, v_year, 1)
+  on conflict (user_id, doc_type, year)
+  do update set last_seq = document_sequences.last_seq + 1
+  returning last_seq into v_seq;
+
+  return v_seq;
+end;
+$$;
+
 create or replace function public.next_invoice_number(p_user_id uuid)
-returns text as $$
+returns text
+language plpgsql
+security definer
+set search_path to 'public'
+as $$
 declare
   v_year text := to_char(current_date, 'YYYY');
-  v_count int;
+  v_seq  int  := next_document_seq(p_user_id, 'invoice');
 begin
-  select count(*) + 1 into v_count
-  from public.invoices
-  where user_id = p_user_id
-    and extract(year from created_at) = extract(year from current_date);
-  return v_year || '-' || lpad(v_count::text, 3, '0');
+  return v_year || '-' || lpad(v_seq::text, 3, '0');
 end;
-$$ language plpgsql security definer;
+$$;
+
+create or replace function public.next_acompte_number(p_user_id uuid)
+returns text
+language plpgsql
+security definer
+set search_path to 'public'
+as $$
+declare
+  v_year text := to_char(current_date, 'YYYY');
+  v_seq  int  := next_document_seq(p_user_id, 'invoice_acompte');
+begin
+  return 'AC-' || v_year || '-' || lpad(v_seq::text, 3, '0');
+end;
+$$;
+
+create or replace function public.next_proposal_number(p_user_id uuid)
+returns text
+language plpgsql
+security definer
+set search_path to 'public'
+as $$
+declare
+  v_year text := to_char(current_date, 'YYYY');
+  v_seq  int  := next_document_seq(p_user_id, 'proposal');
+begin
+  return 'D-' || v_year || '-' || lpad(v_seq::text, 3, '0');
+end;
+$$;
+
+-- Fonctions internes : jamais appelables depuis l'API REST (anon/authenticated).
+-- Le client service-role (supabaseAdmin) conserve son grant explicite.
+revoke execute on function public.next_invoice_number(uuid) from public, anon, authenticated;
+revoke execute on function public.next_acompte_number(uuid) from public, anon, authenticated;
+revoke execute on function public.next_proposal_number(uuid) from public, anon, authenticated;
+revoke execute on function public.next_document_seq(uuid, text) from public, anon, authenticated;
 
 -- ── Index ──────────────────────────────────────────────────────────────
 create index if not exists proposals_user_id_idx on public.proposals(user_id);
