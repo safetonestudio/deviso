@@ -151,7 +151,7 @@ export function PricingSection() {
         <div className="flex flex-wrap items-center justify-center gap-6 mt-10 text-xs text-gray-600">
           <span className="flex items-center gap-1.5"><span className="text-emerald-400">✓</span> 14 jours gratuits, sans carte</span>
           <span className="flex items-center gap-1.5"><span className="text-emerald-400">✓</span> Résiliable en 1 clic</span>
-          <span className="flex items-center gap-1.5"><span className="text-emerald-400">✓</span> Données sécurisées en France</span>
+          <span className="flex items-center gap-1.5"><span className="text-emerald-400">✓</span> Données chiffrées, hébergées en Europe</span>
           <span className="flex items-center gap-1.5"><span className="text-emerald-400">✓</span> Support par chat inclus</span>
         </div>
       </div>
