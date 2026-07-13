@@ -1,4 +1,4 @@
-/**
+﻿/**
  * Génère le PDF visuel d'une facture avec @react-pdf/renderer
  * Ce PDF sera ensuite enrichi avec le XML CII pour produire un Factur-X
  *
@@ -227,11 +227,16 @@ const styles = StyleSheet.create({
 });
 
 function fmt(n: number) {
+  // Intl fr-FR utilise l'espace fine insécable (U+202F) comme séparateur de
+  // milliers — glyphe absent de Helvetica dans @react-pdf, qui rend "/" à la
+  // place. On normalise vers une espace classique.
   return new Intl.NumberFormat("fr-FR", {
     style: "currency",
     currency: "EUR",
     minimumFractionDigits: 2,
-  }).format(n);
+  })
+    .format(n)
+    .replace(/[\u202F\u00A0]/g, " ");
 }
 
 function fmtDate(d: string) {
@@ -526,7 +531,7 @@ export function InvoicePDF({ invoice, accentColor, paymentInfo, linkedInvoiceNum
               : ""}
           </Text>
           <Text style={[styles.facturxBadge, { color: accent }]}>
-            ✦ Factur-X BASIC, Conforme réforme 2026
+            Factur-X BASIC — Conforme réforme 2026
           </Text>
         </View>
       </Page>
