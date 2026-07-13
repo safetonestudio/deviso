@@ -3,6 +3,7 @@ import { useState, Suspense } from "react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
+import { PasswordChecklist, isPasswordValid } from "@/components/PasswordChecklist";
 
 function SignupForm() {
   const router = useRouter();
@@ -18,8 +19,8 @@ function SignupForm() {
 
   const handleSignup = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (password.length < 8) {
-      setError("Le mot de passe doit contenir au moins 8 caractères.");
+    if (!isPasswordValid(password)) {
+      setError("Le mot de passe ne respecte pas toutes les exigences ci-dessous.");
       return;
     }
     setLoading(true);
@@ -124,9 +125,10 @@ function SignupForm() {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 required
-                placeholder="8 caractères minimum"
+                placeholder="12 caractères minimum"
                 className="w-full px-4 py-3 rounded-xl bg-ds-bg border border-ds-border text-white placeholder:text-gray-600 focus:outline-none focus:border-indigo-500 text-sm transition"
               />
+              <PasswordChecklist password={password} />
             </div>
 
             <button

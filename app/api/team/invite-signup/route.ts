@@ -10,8 +10,17 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "Paramètres manquants" }, { status: 400 });
   }
 
-  if (password.length < 8) {
-    return NextResponse.json({ error: "Le mot de passe doit contenir au moins 8 caractères." }, { status: 400 });
+  // Même politique que la checklist client (components/PasswordChecklist.tsx)
+  if (
+    password.length < 12 ||
+    !/[A-Z]/.test(password) ||
+    !/[0-9]/.test(password) ||
+    !/[^A-Za-z0-9]/.test(password)
+  ) {
+    return NextResponse.json(
+      { error: "Le mot de passe doit contenir au moins 12 caractères, dont 1 majuscule, 1 chiffre et 1 caractère spécial." },
+      { status: 400 }
+    );
   }
 
   const admin = createAdminClient();

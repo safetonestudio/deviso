@@ -3,6 +3,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/client";
+import { PasswordChecklist, isPasswordValid } from "@/components/PasswordChecklist";
 
 export default function ResetPasswordPage() {
   const router = useRouter();
@@ -18,8 +19,8 @@ export default function ResetPasswordPage() {
       setError("Les mots de passe ne correspondent pas.");
       return;
     }
-    if (password.length < 8) {
-      setError("Le mot de passe doit contenir au moins 8 caractères.");
+    if (!isPasswordValid(password)) {
+      setError("Le mot de passe ne respecte pas toutes les exigences ci-dessous.");
       return;
     }
     setLoading(true);
@@ -48,7 +49,7 @@ export default function ResetPasswordPage() {
         <div className="bg-ds-surface rounded-2xl border border-ds-border p-8">
           <h1 className="text-2xl font-semibold text-white mb-1">Nouveau mot de passe</h1>
           <p className="text-gray-400 text-sm mb-6">
-            Choisis un mot de passe sécurisé d&apos;au moins 8 caractères.
+            Choisis un mot de passe robuste — toutes les cases doivent être vertes.
           </p>
 
           {error && (
@@ -70,6 +71,7 @@ export default function ResetPasswordPage() {
                 placeholder="••••••••"
                 className="w-full px-4 py-3 rounded-xl bg-ds-bg border border-ds-border text-white placeholder:text-gray-600 focus:outline-none focus:border-indigo-500 text-sm transition"
               />
+              <PasswordChecklist password={password} />
             </div>
             <div>
               <label className="block text-sm font-medium text-gray-300 mb-1.5">
