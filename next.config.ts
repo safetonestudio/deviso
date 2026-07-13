@@ -31,8 +31,8 @@ const securityHeaders = [
 ];
 
 const nextConfig: NextConfig = {
-  typescript: { ignoreBuildErrors: true },
-  eslint: { ignoreDuringBuilds: true },
+  // Erreurs TypeScript corrigées le 13/07/2026 — le build est strict désormais.
+  typescript: { ignoreBuildErrors: false },
   images: {
     remotePatterns: [
       { protocol: "https", hostname: "**.supabase.co" },
@@ -61,7 +61,6 @@ export default withSentryConfig(nextConfig, {
 
   // Réduire la taille du bundle en production
   widenClientFileUpload: true,
-  hideSourceMaps: true,
   disableLogger: true,
   automaticVercelMonitors: false,
 });

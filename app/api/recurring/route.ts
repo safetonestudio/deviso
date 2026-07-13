@@ -30,7 +30,7 @@ async function resolveOwner(userId: string): Promise<{ ownerId: string; isPro: b
     .single();
 
   if (membership?.owner_id) {
-    const ownerPlan = (membership as { profiles?: { plan: string } | null }).profiles?.plan;
+    const ownerPlan = (membership as unknown as { profiles?: { plan: string } | null }).profiles?.plan;
     return { ownerId: membership.owner_id, isPro: ownerPlan === "pro" };
   }
 

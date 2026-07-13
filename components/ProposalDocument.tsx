@@ -5,8 +5,8 @@ import type { Proposal, Profile } from "@/types";
 export type ProposalTemplate = "classic" | "modern" | "epure";
 
 export interface ProposalProfile extends Partial<Profile> {
-  proposal_template?: string;
-  proposal_color?: string;
+  proposal_template?: string | null;
+  proposal_color?: string | null;
 }
 
 interface Props {

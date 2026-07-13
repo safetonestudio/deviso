@@ -1,6 +1,13 @@
 /**
  * Génère le PDF visuel d'une facture avec @react-pdf/renderer
  * Ce PDF sera ensuite enrichi avec le XML CII pour produire un Factur-X
+ *
+ * Features :
+ * - Couleur d'accent personnalisée (Pro) via prop accentColor
+ * - Section « Modalités de paiement » (IBAN / lien de paiement) via prop paymentInfo
+ * - Formatage des durées : quantity 2.25 + unit "heure" → "2h15" (fmtQty)
+ * - Mentions légales : L441-10 C.Com. (Loi PACTE), SIRET, franchise TVA art. 293 B CGI
+ * - Factures d'acompte / de solde : bandeau type + référence facture liée (linkedInvoiceNumber)
  */
 import {
   Document,
@@ -8,7 +15,6 @@ import {
   Text,
   View,
   StyleSheet,
-  Font,
 } from "@react-pdf/renderer";
 import type { Invoice } from "@/types";
 
@@ -18,6 +24,15 @@ const SLATE_900 = "#0f172a";
 const SLATE_600 = "#475569";
 const SLATE_400 = "#94a3b8";
 const SLATE_100 = "#f1f5f9";
+
+export interface PaymentInfo {
+  method?: string | null; // "none" | "link" | "bank" | "both"
+  linkProvider?: string | null;
+  linkUrl?: string | null;
+  bankIban?: string | null;
+  bankBic?: string | null;
+  bankAccountName?: string | null;
+}
 
 const styles = StyleSheet.create({
   page: {
@@ -38,7 +53,6 @@ const styles = StyleSheet.create({
   brandName: {
     fontSize: 22,
     fontFamily: "Helvetica-Bold",
-    color: BRAND,
     letterSpacing: 1,
   },
   invoiceLabel: {
@@ -52,6 +66,18 @@ const styles = StyleSheet.create({
     fontSize: 8.5,
     textAlign: "right",
     marginTop: 2,
+  },
+  // Bandeau acompte / solde
+  typeBanner: {
+    borderRadius: 4,
+    paddingVertical: 6,
+    paddingHorizontal: 10,
+    marginBottom: 16,
+  },
+  typeBannerText: {
+    fontSize: 8.5,
+    fontFamily: "Helvetica-Bold",
+    color: "#ffffff",
   },
   // Parties
   partiesRow: {
@@ -88,7 +114,6 @@ const styles = StyleSheet.create({
   },
   tableHeader: {
     flexDirection: "row",
-    backgroundColor: BRAND,
     borderRadius: 4,
     paddingVertical: 7,
     paddingHorizontal: 8,
@@ -144,7 +169,6 @@ const styles = StyleSheet.create({
   totalRowFinal: {
     flexDirection: "row",
     justifyContent: "space-between",
-    backgroundColor: BRAND,
     borderRadius: 4,
     paddingVertical: 7,
     paddingHorizontal: 8,
@@ -193,7 +217,6 @@ const styles = StyleSheet.create({
   },
   facturxBadge: {
     fontSize: 7,
-    color: BRAND,
     fontFamily: "Helvetica-Bold",
   },
   divider: {
@@ -219,24 +242,63 @@ function fmtDate(d: string) {
   });
 }
 
-interface Props {
-  invoice: Invoice;
+/**
+ * Formate une quantité selon l'unité.
+ * "heure" + quantité non entière → notation horaire : 2.25 → "2h15", 0.25 → "15min".
+ * Sinon → nombre brut sans zéros superflus.
+ */
+export function fmtQty(quantity: number, unit: string): string {
+  if (unit === "heure" && !Number.isInteger(quantity)) {
+    const hours = Math.floor(quantity);
+    const minutes = Math.round((quantity - hours) * 60);
+    if (hours === 0) return `${minutes}min`;
+    return `${hours}h${String(minutes).padStart(2, "0")}`;
+  }
+  return Number.isInteger(quantity) ? String(quantity) : String(quantity);
 }
 
-export function InvoicePDF({ invoice }: Props) {
+interface Props {
+  invoice: Invoice;
+  accentColor?: string;
+  paymentInfo?: PaymentInfo;
+  linkedInvoiceNumber?: string | null;
+}
+
+export function InvoicePDF({ invoice, accentColor, paymentInfo, linkedInvoiceNumber }: Props) {
+  const accent = accentColor || BRAND;
+  const isFranchise = invoice.tva_rate === 0;
+  const isAcompte = invoice.invoice_type === "acompte";
+  const isSolde = invoice.invoice_type === "solde";
+  const linkedNumber = linkedInvoiceNumber ?? invoice.linked_invoice_number ?? null;
+
+  const showBank =
+    paymentInfo &&
+    (paymentInfo.method === "bank" || paymentInfo.method === "both") &&
+    paymentInfo.bankIban;
+  const showLink =
+    paymentInfo &&
+    (paymentInfo.method === "link" || paymentInfo.method === "both") &&
+    paymentInfo.linkUrl;
+
+  const title = isAcompte
+    ? "FACTURE D'ACOMPTE"
+    : isSolde
+    ? "FACTURE DE SOLDE"
+    : "FACTURE";
+
   return (
     <Document
       title={`Facture ${invoice.invoice_number}`}
       author={invoice.seller_company || invoice.seller_name || "Deviso"}
       subject={`Facture ${invoice.invoice_number}, ${invoice.client_company || invoice.client_name || ""}`}
-      creator="Deviso, deviso.fr"
+      creator="Deviso, getdeviso.fr"
       producer="Deviso Factur-X Generator"
     >
       <Page size="A4" style={styles.page}>
         {/* ── Header ── */}
         <View style={styles.header}>
           <View>
-            <Text style={styles.brandName}>FACTURE</Text>
+            <Text style={[styles.brandName, { color: accent }]}>{title}</Text>
             <Text style={{ fontSize: 8, color: SLATE_400, marginTop: 2 }}>
               {invoice.seller_company || invoice.seller_name || ""}
             </Text>
@@ -254,6 +316,30 @@ export function InvoicePDF({ invoice }: Props) {
           </View>
         </View>
 
+        {/* ── Bandeau acompte / solde ── */}
+        {isAcompte && (
+          <View style={[styles.typeBanner, { backgroundColor: accent }]}>
+            <Text style={styles.typeBannerText}>
+              Facture d&apos;acompte
+              {invoice.deposit_percentage
+                ? ` — ${invoice.deposit_percentage}% du montant total de la prestation`
+                : ""}
+              . Le solde fera l&apos;objet d&apos;une facture distincte.
+            </Text>
+          </View>
+        )}
+        {isSolde && (
+          <View style={[styles.typeBanner, { backgroundColor: accent }]}>
+            <Text style={styles.typeBannerText}>
+              Facture de solde
+              {linkedNumber
+                ? ` — vient en déduction de la facture d'acompte n° ${linkedNumber}`
+                : ""}
+              .
+            </Text>
+          </View>
+        )}
+
         <View style={styles.divider} />
 
         {/* ── Parties ── */}
@@ -268,7 +354,7 @@ export function InvoicePDF({ invoice }: Props) {
             )}
             {invoice.seller_siren && (
               <Text style={styles.partyDetail}>
-                SIREN : {invoice.seller_siren}
+                SIRET : {invoice.seller_siren}
               </Text>
             )}
             {invoice.seller_tva_number && (
@@ -297,7 +383,7 @@ export function InvoicePDF({ invoice }: Props) {
             )}
             {invoice.client_siren && (
               <Text style={[styles.partyDetail, { textAlign: "right" }]}>
-                SIREN : {invoice.client_siren}
+                SIRET : {invoice.client_siren}
               </Text>
             )}
           </View>
@@ -305,7 +391,7 @@ export function InvoicePDF({ invoice }: Props) {
 
         {/* ── Tableau ── */}
         <View style={styles.table}>
-          <View style={styles.tableHeader}>
+          <View style={[styles.tableHeader, { backgroundColor: accent }]}>
             <Text style={[styles.tableHeaderText, styles.colDesc]}>
               Prestation
             </Text>
@@ -328,7 +414,7 @@ export function InvoicePDF({ invoice }: Props) {
                 {item.description}
               </Text>
               <Text style={[styles.cellText, styles.colQty]}>
-                {item.quantity}
+                {fmtQty(item.quantity, item.unit)}
               </Text>
               <Text style={[styles.cellText, styles.colUnit]}>{item.unit}</Text>
               <Text style={[styles.cellText, styles.colPrice]}>
@@ -349,12 +435,14 @@ export function InvoicePDF({ invoice }: Props) {
               <Text style={styles.totalValue}>{fmt(invoice.total_ht)}</Text>
             </View>
             <View style={styles.totalRow}>
-              <Text style={styles.totalLabel}>TVA {invoice.tva_rate}%</Text>
+              <Text style={styles.totalLabel}>
+                {isFranchise ? "TVA non applicable" : `TVA ${invoice.tva_rate}%`}
+              </Text>
               <Text style={styles.totalValue}>
                 {fmt(invoice.total_ttc - invoice.total_ht)}
               </Text>
             </View>
-            <View style={styles.totalRowFinal}>
+            <View style={[styles.totalRowFinal, { backgroundColor: accent }]}>
               <Text style={styles.totalLabelFinal}>Total TTC</Text>
               <Text style={styles.totalValueFinal}>
                 {fmt(invoice.total_ttc)}
@@ -362,6 +450,31 @@ export function InvoicePDF({ invoice }: Props) {
             </View>
           </View>
         </View>
+
+        {/* ── Modalités de paiement ── */}
+        {(showBank || showLink) && (
+          <View style={styles.notesBox}>
+            <Text style={styles.notesLabel}>Modalités de paiement</Text>
+            {showBank && (
+              <Text style={styles.notesText}>
+                Virement bancaire
+                {paymentInfo?.bankAccountName
+                  ? ` — Titulaire : ${paymentInfo.bankAccountName}`
+                  : ""}
+                {"\n"}
+                IBAN : {paymentInfo?.bankIban}
+                {paymentInfo?.bankBic ? `\nBIC : ${paymentInfo.bankBic}` : ""}
+              </Text>
+            )}
+            {showLink && (
+              <Text style={styles.notesText}>
+                Paiement en ligne sécurisé
+                {paymentInfo?.linkProvider ? ` (${paymentInfo.linkProvider})` : ""} :{" "}
+                {paymentInfo?.linkUrl}
+              </Text>
+            )}
+          </View>
+        )}
 
         {/* ── Notes / Conditions ── */}
         {(invoice.payment_terms || invoice.notes) && (
@@ -382,11 +495,13 @@ export function InvoicePDF({ invoice }: Props) {
         <View style={styles.notesBox}>
           <Text style={styles.notesLabel}>Mentions légales</Text>
           <Text style={styles.notesText}>
-            Facture soumise à TVA, Taux applicable :{" "}
-            {invoice.tva_rate}%
-            {invoice.payment_on_debit
-              ? ", TVA acquittée sur les débits (art. 1693 bis CGI)"
-              : ", TVA acquittée sur les encaissements"}
+            {isFranchise
+              ? "TVA non applicable, art. 293 B du CGI"
+              : `Facture soumise à TVA, Taux applicable : ${invoice.tva_rate}%${
+                  invoice.payment_on_debit
+                    ? ", TVA acquittée sur les débits (art. 1693 bis CGI)"
+                    : ", TVA acquittée sur les encaissements"
+                }`}
             {"\n"}
             Nature de l&apos;opération :{" "}
             {invoice.operation_category === "services"
@@ -398,7 +513,7 @@ export function InvoicePDF({ invoice }: Props) {
             En cas de retard de paiement, des pénalités de retard sont
             exigibles dès le lendemain de la date d&apos;échéance au taux de
             3× le taux légal en vigueur, ainsi qu&apos;une indemnité forfaitaire
-            de 40€ pour frais de recouvrement (Art. L441-6 C.Com.).
+            de 40€ pour frais de recouvrement (Art. L441-10 C.Com.).
           </Text>
         </View>
 
@@ -407,10 +522,10 @@ export function InvoicePDF({ invoice }: Props) {
           <Text style={styles.footerText}>
             {invoice.seller_company || invoice.seller_name || ""} •{" "}
             {invoice.seller_siren
-              ? `SIREN ${invoice.seller_siren}`
+              ? `SIRET ${invoice.seller_siren}`
               : ""}
           </Text>
-          <Text style={styles.facturxBadge}>
+          <Text style={[styles.facturxBadge, { color: accent }]}>
             ✦ Factur-X BASIC, Conforme réforme 2026
           </Text>
         </View>

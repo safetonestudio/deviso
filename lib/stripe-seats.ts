@@ -70,9 +70,9 @@ export async function removeSeatFromSubscription(ownerId: string): Promise<void>
   if (!seatItem) return;
 
   if ((seatItem.quantity ?? 0) <= 1) {
-    await stripe.subscriptionItems.delete(seatItem.id, {
+    await stripe.subscriptionItems.del(seatItem.id, {
       proration_behavior: "create_prorations",
-    } as Parameters<typeof stripe.subscriptionItems.delete>[1]);
+    });
   } else {
     await stripe.subscriptionItems.update(seatItem.id, {
       quantity: (seatItem.quantity ?? 1) - 1,

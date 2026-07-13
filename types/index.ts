@@ -162,6 +162,9 @@ export interface Invoice {
   // Chorus Pro (B2G)
   chorus_pro_ref: string | null;
   chorus_pro_submitted_at: string | null;
+  chorus_pro_status: string | null;
+  chorus_pro_status_date: string | null;
+  chorus_pro_motif_rejet: string | null;
   created_at: string;
   updated_at: string;
 }

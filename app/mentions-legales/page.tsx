@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+﻿import type { Metadata } from "next";
 import Link from "next/link";
 
 export const metadata: Metadata = {
@@ -31,7 +31,7 @@ export default function MentionsLegalesPage() {
             SIREN : 103 340 857<br />
             Adresse : 24 avenue de Gradignan, 33850 Léognan, France<br />
             Téléphone : +33 7 63 08 04 34<br />
-            Email : <a href="mailto:safetonestudio@proton.me" className="text-indigo-600 hover:underline">safetonestudio@proton.me</a>
+            Email : <a href="mailto:support@getdeviso.fr" className="text-indigo-600 hover:underline">support@getdeviso.fr</a>
           </p>
         </section>
 

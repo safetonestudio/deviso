@@ -10,12 +10,12 @@
  */
 
 import { useState, useEffect } from "react";
-import { ProposalDocument } from "@/components/ProposalDocument";
-import type { Proposal, Profile } from "@/types";
+import { ProposalDocument, type ProposalProfile } from "@/components/ProposalDocument";
+import type { Proposal } from "@/types";
 
 interface Props {
   proposal: Proposal;
-  profile: Profile | null;
+  profile: ProposalProfile | null;
   showBranding: boolean;
   cgvText?: string | null;
 }

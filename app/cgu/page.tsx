@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+﻿import type { Metadata } from "next";
 import Link from "next/link";
 
 export const metadata: Metadata = {
@@ -125,8 +125,8 @@ export default function CguPage() {
           <h2 className="text-xl font-semibold text-white mb-3">11. Contact</h2>
           <p className="text-gray-400 leading-relaxed">
             Pour toute question relative aux présentes CGU :{" "}
-            <a href="mailto:safetonestudio@proton.me" className="text-indigo-600 hover:underline">
-              safetonestudio@proton.me
+            <a href="mailto:support@getdeviso.fr" className="text-indigo-600 hover:underline">
+              support@getdeviso.fr
                        </a>
           </p>
         </section>
