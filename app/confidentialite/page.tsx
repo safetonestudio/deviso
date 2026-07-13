@@ -49,11 +49,11 @@ export default function ConfidentialitePage() {
           <h2 className="text-xl font-semibold text-white mb-3">3. Finalités du traitement</h2>
           <p className="text-gray-400 leading-relaxed">
             Vos données sont utilisées pour :<br /><br />
-           , Fournir et améliorer le service Deviso ;<br />
-           , Gérer votre compte et votre abonnement ;<br />
-           , Envoyer des emails transactionnels (confirmation de compte, factures, relances) ;<br />
-           , Assurer la sécurité et prévenir les fraudes ;<br />
-           , Respecter nos obligations légales.
+            – Fournir et améliorer le service Deviso ;<br />
+            – Gérer votre compte et votre abonnement ;<br />
+            – Envoyer des emails transactionnels (confirmation de compte, factures, relances) ;<br />
+            – Assurer la sécurité et prévenir les fraudes ;<br />
+            – Respecter nos obligations légales.
           </p>
         </section>
 
@@ -61,9 +61,9 @@ export default function ConfidentialitePage() {
           <h2 className="text-xl font-semibold text-white mb-3">4. Base légale</h2>
           <p className="text-gray-400 leading-relaxed">
             Le traitement de vos données est fondé sur :<br /><br />
-           , L&apos;<strong>exécution du contrat</strong> (fourniture du service) ;<br />
-           , Le <strong>respect d&apos;obligations légales</strong> (facturation, comptabilité) ;<br />
-           , Notre <strong>intérêt légitime</strong> (amélioration du service, sécurité).
+            – L&apos;<strong>exécution du contrat</strong> (fourniture du service) ;<br />
+            – Le <strong>respect d&apos;obligations légales</strong> (facturation, comptabilité) ;<br />
+            – Notre <strong>intérêt légitime</strong> (amélioration du service, sécurité).
           </p>
         </section>
 
@@ -93,12 +93,12 @@ export default function ConfidentialitePage() {
           <h2 className="text-xl font-semibold text-white mb-3">7. Vos droits</h2>
           <p className="text-gray-400 leading-relaxed">
             Conformément au RGPD et à la loi Informatique et Libertés, vous disposez des droits suivants :<br /><br />
-           , <strong>Droit d&apos;accès</strong> : obtenir une copie de vos données ;<br />
-           , <strong>Droit de rectification</strong> : corriger des données inexactes ;<br />
-           , <strong>Droit à l&apos;effacement</strong> : demander la suppression de vos données ;<br />
-           , <strong>Droit à la portabilité</strong> : recevoir vos données dans un format structuré ;<br />
-           , <strong>Droit d&apos;opposition</strong> : vous opposer à certains traitements ;<br />
-           , <strong>Droit à la limitation</strong> : restreindre temporairement le traitement.<br /><br />
+            – <strong>Droit d&apos;accès</strong> : obtenir une copie de vos données ;<br />
+            – <strong>Droit de rectification</strong> : corriger des données inexactes ;<br />
+            – <strong>Droit à l&apos;effacement</strong> : demander la suppression de vos données ;<br />
+            – <strong>Droit à la portabilité</strong> : recevoir vos données dans un format structuré ;<br />
+            – <strong>Droit d&apos;opposition</strong> : vous opposer à certains traitements ;<br />
+            – <strong>Droit à la limitation</strong> : restreindre temporairement le traitement.<br /><br />
             Pour exercer ces droits, contactez-nous à{" "}
             <a href="mailto:safetonestudio@proton.me" className="text-indigo-600 hover:underline">
               safetonestudio@proton.me

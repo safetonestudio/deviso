@@ -55,10 +55,10 @@ export default function CguPage() {
         <section className="mb-8">
           <h2 className="text-xl font-semibold text-white mb-3">4. Plans tarifaires</h2>
           <p className="text-gray-400 leading-relaxed">
-            Deviso propose trois formules :<br /><br />
+            Deviso propose deux formules :<br /><br />
             Deviso ne propose pas de plan gratuit permanent. Tout abonnement inclut un <strong>essai gratuit de 14 jours</strong> sans carte bancaire requise.<br /><br />
             <strong>Plan Solo</strong> : 18 €/mois HT (ou 172,80 €/an, soit 14,40 €/mois). Inclut : factures Factur-X, logo personnalisé, signature électronique, relances auto, exports comptables.<br /><br />
-            <strong>Plan Pro</strong> : 34 €/mois HT (ou 326,40 €/an, soit 27,20 €/mois). Inclut tout Solo + multi-utilisateurs (2 membres inclus, +5 €/mois/siège supplémentaire), catalogue partagé, domaine d&apos;envoi personnalisé, accès Chorus Pro B2G.<br /><br />
+            <strong>Plan Pro</strong> : 34 €/mois HT (ou 326,40 €/an, soit 27,20 €/mois). Inclut tout Solo + multi-utilisateurs (3 utilisateurs inclus — le titulaire du compte et 2 membres —, +5 €/mois/utilisateur supplémentaire), catalogue partagé, domaine d&apos;envoi personnalisé, accès Chorus Pro B2G.<br /><br />
             Les tarifs annuels représentent une remise de 20 % par rapport au tarif mensuel.
             Le paiement s&apos;effectue par carte bancaire via la plateforme sécurisée Stripe, à l&apos;issue de la période d&apos;essai.
             L&apos;abonnement est résiliable à tout moment depuis le compte utilisateur, avec effet à la fin de la période en cours.
@@ -69,10 +69,10 @@ export default function CguPage() {
           <h2 className="text-xl font-semibold text-white mb-3">5. Obligations de l&apos;utilisateur</h2>
           <p className="text-gray-400 leading-relaxed">
             L&apos;utilisateur s&apos;engage à :<br /><br />
-           , Fournir des informations exactes lors de la création de son compte ;<br />
-           , Utiliser le service uniquement dans le cadre d&apos;une activité professionnelle légale ;<br />
-           , Ne pas tenter de contourner les limites de son plan ;<br />
-           , Ne pas utiliser le service à des fins frauduleuses ou illicites.
+            – Fournir des informations exactes lors de la création de son compte ;<br />
+            – Utiliser le service uniquement dans le cadre d&apos;une activité professionnelle légale ;<br />
+            – Ne pas tenter de contourner les limites de son plan ;<br />
+            – Ne pas utiliser le service à des fins frauduleuses ou illicites.
           </p>
         </section>
 
