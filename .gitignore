@@ -25,3 +25,7 @@ stripe_backup_code.txt
 database_pwd.txt
 battlecard-*.html
 vercel-deploy.log
+
+# Artefacts de build TypeScript
+tsconfig.tsbuildinfo
+.tmp-fxtest/

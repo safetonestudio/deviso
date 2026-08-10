@@ -8,8 +8,12 @@
  * 3. Utilise pdf-lib pour embarquer le XML dans le PDF
  */
 import { renderToBuffer, Document } from "@react-pdf/renderer";
-import { PDFDocument, PDFName, AFRelationship } from "pdf-lib";
+import { PDFDocument, PDFName, PDFArray, PDFDict, PDFNumber, PDFHexString, PDFRawStream, AFRelationship } from "pdf-lib";
 import React from "react";
+import fs from "fs";
+import path from "path";
+import crypto from "crypto";
+import zlib from "zlib";
 import { InvoicePDF, PaymentInfo } from "./invoice-pdf";
 import { generateFacturXml } from "./invoice-xml";
 import type { Invoice } from "@/types";
@@ -48,13 +52,181 @@ export async function generateFacturXPdf(invoice: Invoice, accentColor?: string,
   pdfDoc.setProducer("Deviso Factur-X Generator");
   pdfDoc.setKeywords(["Factur-X", "EN 16931", "Invoice", invoice.invoice_number]);
 
-  // 6. Métadonnées XMP Factur-X : c'est ce bloc qui permet à un logiciel
-  //    destinataire d'identifier le PDF comme une facture Factur-X et de savoir
-  //    quel fichier joint contient les données structurées.
+  // 6. Exigences PDF/A-3 (archivage long terme) :
+  //    - le fichier joint doit être référencé depuis /AF du catalogue
+  //    - un OutputIntent avec profil ICC doit décrire l'espace colorimétrique
+  //    - le document doit porter un identifiant stable
+  remapNonEmbeddedFonts(pdfDoc);
+  addAssociatedFilesToCatalog(pdfDoc);
+  addSRgbOutputIntent(pdfDoc);
+  setDocumentId(pdfDoc, invoice);
+
+  // 7. Métadonnées XMP : identifient le PDF comme facture Factur-X et
+  //    déclarent la conformité PDF/A-3B.
   setFacturXXmpMetadata(pdfDoc, invoice);
 
   const result = await pdfDoc.save();
   return Buffer.from(result);
+}
+
+/** Une police est incorporée si son descripteur porte un FontFile. */
+function isFontEmbedded(pdfDoc: PDFDocument, font: PDFDict): boolean {
+  let desc = font.lookup(PDFName.of("FontDescriptor"));
+  if (!(desc instanceof PDFDict)) {
+    const descendants = font.lookup(PDFName.of("DescendantFonts"));
+    if (descendants instanceof PDFArray && descendants.size() > 0) {
+      const first = pdfDoc.context.lookup(descendants.get(0));
+      if (first instanceof PDFDict) desc = first.lookup(PDFName.of("FontDescriptor"));
+    }
+  }
+  if (!(desc instanceof PDFDict)) return false;
+  return (
+    desc.has(PDFName.of("FontFile")) ||
+    desc.has(PDFName.of("FontFile2")) ||
+    desc.has(PDFName.of("FontFile3"))
+  );
+}
+
+/**
+ * Supprime des ressources toute police non incorporée.
+ *
+ * @react-pdf déclare systématiquement Helvetica dans les ressources de page et
+ * émet quelques opérateurs `Tf` la sélectionnant, sans jamais dessiner de glyphe
+ * avec. Or PDF/A interdit qu'une police non incorporée figure dans les
+ * ressources, même inutilisée. On réécrit donc ces sélections vers une police
+ * embarquée (Liberation Sans, métriquement compatible : aucun impact visuel)
+ * puis on retire l'entrée.
+ */
+function remapNonEmbeddedFonts(pdfDoc: PDFDocument): void {
+  for (const page of pdfDoc.getPages()) {
+    const resources = page.node.Resources();
+    const fonts = resources?.lookup(PDFName.of("Font"));
+    if (!(fonts instanceof PDFDict)) continue;
+
+    const nonEmbedded: string[] = [];
+    let fallback: string | null = null;
+
+    for (const [key, value] of fonts.entries()) {
+      const font = pdfDoc.context.lookup(value);
+      if (!(font instanceof PDFDict)) continue;
+      const name = key.asString(); // ex. "/F1"
+      if (isFontEmbedded(pdfDoc, font)) {
+        if (!fallback) fallback = name;
+      } else {
+        nonEmbedded.push(name);
+      }
+    }
+
+    if (!nonEmbedded.length || !fallback) continue;
+
+    // Réécriture du flux de contenu : "/F1 8 Tf" → "/F3 8 Tf"
+    const contentsRef = page.node.get(PDFName.of("Contents"));
+    const contents = pdfDoc.context.lookup(contentsRef);
+    const parts: PDFRawStream[] = [];
+    if (contents instanceof PDFRawStream) parts.push(contents);
+    else if (contents instanceof PDFArray) {
+      for (let i = 0; i < contents.size(); i++) {
+        const s = pdfDoc.context.lookup(contents.get(i));
+        if (s instanceof PDFRawStream) parts.push(s);
+      }
+    }
+    if (!parts.length) continue;
+
+    const decoded = parts.map((s) => {
+      const raw = Buffer.from(s.contents);
+      const filter = s.dict.get(PDFName.of("Filter"))?.toString() ?? "";
+      return filter.includes("FlateDecode") ? zlib.inflateSync(raw) : raw;
+    });
+
+    let text = Buffer.concat(decoded).toString("latin1");
+    for (const name of nonEmbedded) {
+      const escaped = name.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+      text = text.replace(new RegExp(`${escaped}(\\s+[\\d.]+\\s+Tf)`, "g"), `${fallback}$1`);
+    }
+
+    const newStream = pdfDoc.context.flateStream(Buffer.from(text, "latin1"));
+    page.node.set(PDFName.of("Contents"), pdfDoc.context.register(newStream));
+
+    for (const name of nonEmbedded) fonts.delete(PDFName.of(name.slice(1)));
+  }
+}
+
+/**
+ * PDF/A-3 impose que tout fichier embarqué soit aussi référencé dans le tableau
+ * /AF du catalogue (Associated Files). pdf-lib ne remplit que l'arbre de noms
+ * EmbeddedFiles ; on complète ici.
+ */
+function addAssociatedFilesToCatalog(pdfDoc: PDFDocument): void {
+  // lookup() typé lève si la clé est absente : on inspecte sans contrainte
+  // puis on vérifie le type nous-mêmes.
+  const names = pdfDoc.catalog.lookup(PDFName.of("Names"));
+  if (!(names instanceof PDFDict)) return;
+  const embedded = names.lookup(PDFName.of("EmbeddedFiles"));
+  if (!(embedded instanceof PDFDict)) return;
+  const list = embedded.lookup(PDFName.of("Names"));
+  if (!(list instanceof PDFArray)) return;
+
+  const af = pdfDoc.context.obj([]);
+  // L'arbre alterne [nom, référence, nom, référence…] : on ne garde que les réfs.
+  for (let i = 1; i < list.size(); i += 2) {
+    const ref = list.get(i);
+    if (ref) af.push(ref);
+  }
+  if (af.size() > 0) pdfDoc.catalog.set(PDFName.of("AF"), af);
+}
+
+/**
+ * OutputIntent sRGB : décrit l'espace colorimétrique de référence du document.
+ * Sans lui, les couleurs ne sont pas reproductibles à l'identique dans le temps,
+ * ce que PDF/A n'admet pas.
+ *
+ * Le profil est en ICC v2.2 : PDF/A-3 s'appuie sur PDF 1.7, qui ne reconnaît
+ * pas les profils ICC v4.3 et supérieurs.
+ */
+function addSRgbOutputIntent(pdfDoc: PDFDocument): void {
+  const iccPath = path.join(process.cwd(), "assets", "color", "sRGB-IEC61966-2.1.icc");
+  let icc: Buffer;
+  try {
+    icc = fs.readFileSync(iccPath);
+  } catch {
+    // Profil introuvable : on renonce à l'OutputIntent plutôt que de produire
+    // un PDF qui se déclarerait PDF/A sans en remplir les conditions.
+    return;
+  }
+
+  const iccStream = pdfDoc.context.stream(icc, {
+    N: PDFNumber.of(3), // 3 composantes = RGB
+    Length: icc.length,
+  });
+  const iccRef = pdfDoc.context.register(iccStream);
+
+  const outputIntent = pdfDoc.context.obj({
+    Type: PDFName.of("OutputIntent"),
+    S: PDFName.of("GTS_PDFA1"),
+    OutputConditionIdentifier: PDFHexString.fromText("sRGB IEC61966-2.1"),
+    Info: PDFHexString.fromText("sRGB IEC61966-2.1"),
+    RegistryName: PDFHexString.fromText("http://www.color.org"),
+    DestOutputProfile: iccRef,
+  });
+
+  pdfDoc.catalog.set(
+    PDFName.of("OutputIntents"),
+    pdfDoc.context.obj([pdfDoc.context.register(outputIntent)])
+  );
+}
+
+/**
+ * Identifiant de document (/ID) : exigé par PDF/A. Dérivé du numéro de facture
+ * pour rester stable si la même facture est régénérée.
+ */
+function setDocumentId(pdfDoc: PDFDocument, invoice: Invoice): void {
+  const hash = crypto
+    .createHash("md5")
+    .update(`deviso:${invoice.id ?? ""}:${invoice.invoice_number}`)
+    .digest("hex")
+    .toUpperCase();
+  const id = PDFHexString.of(hash);
+  pdfDoc.context.trailerInfo.ID = pdfDoc.context.obj([id, id]);
 }
 
 /**
@@ -64,10 +236,9 @@ export async function generateFacturXPdf(invoice: Invoice, accentColor?: string,
  * joint et le profil de conformité — c'est la signature qui distingue un
  * Factur-X d'un simple PDF avec une pièce jointe.
  *
- * Note : on ne revendique pas `pdfaid:part = 3` (PDF/A-3). L'archivage PDF/A
- * exige l'incorporation de toutes les polices et un profil ICC, ce que la
- * génération actuelle (polices Helvetica standard) ne fournit pas encore.
- * Annoncer une conformité PDF/A non atteinte serait une fausse déclaration.
+ * `pdfaid:part = 3` / `conformance = B` est déclaré car les conditions sont
+ * désormais réunies : polices incorporées (Liberation Sans), OutputIntent sRGB,
+ * fichiers associés référencés dans /AF, identifiant de document présent.
  */
 function setFacturXXmpMetadata(pdfDoc: PDFDocument, invoice: Invoice): void {
   const esc = (s: string) =>
@@ -76,6 +247,15 @@ function setFacturXXmpMetadata(pdfDoc: PDFDocument, invoice: Invoice): void {
   const xmp = `<?xpacket begin="﻿" id="W5M0MpCehiHzreSzNTczkc9d"?>
 <x:xmpmeta xmlns:x="adobe:ns:meta/">
   <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
+    <rdf:Description rdf:about="" xmlns:pdfaid="http://www.aiim.org/pdfa/ns/id/">
+      <pdfaid:part>3</pdfaid:part>
+      <pdfaid:conformance>B</pdfaid:conformance>
+    </rdf:Description>
+    <rdf:Description rdf:about="" xmlns:xmp="http://ns.adobe.com/xap/1.0/">
+      <xmp:CreatorTool>Deviso, getdeviso.fr</xmp:CreatorTool>
+      <xmp:CreateDate>${new Date(invoice.issue_date).toISOString().replace(/\.\d{3}Z$/, "Z")}</xmp:CreateDate>
+      <xmp:ModifyDate>${new Date().toISOString().replace(/\.\d{3}Z$/, "Z")}</xmp:ModifyDate>
+    </rdf:Description>
     <rdf:Description rdf:about="" xmlns:dc="http://purl.org/dc/elements/1.1/">
       <dc:title><rdf:Alt><rdf:li xml:lang="x-default">Facture ${esc(invoice.invoice_number)}</rdf:li></rdf:Alt></dc:title>
       <dc:creator><rdf:Seq><rdf:li>${esc(invoice.seller_company || invoice.seller_name || "Deviso")}</rdf:li></rdf:Seq></dc:creator>

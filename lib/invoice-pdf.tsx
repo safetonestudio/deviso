@@ -15,9 +15,50 @@ import {
   Text,
   View,
   StyleSheet,
+  Font,
 } from "@react-pdf/renderer";
+import path from "path";
 import type { Invoice } from "@/types";
 import { digitsOnly, parseAddress, resolveVatNumber } from "./facturx-helpers";
+
+/**
+ * Polices incorporées au PDF.
+ *
+ * PDF/A-3 interdit de dépendre des polices installées sur la machine du lecteur :
+ * tout doit être embarqué. Les 14 polices « standard » PDF (Helvetica…) ne le sont
+ * jamais, d'où le passage à Liberation Sans — métriquement compatible avec
+ * Helvetica, donc le rendu des factures existantes est inchangé.
+ */
+const FONT_DIR = path.join(process.cwd(), "assets", "fonts");
+
+const FONT_REGULAR = path.join(FONT_DIR, "LiberationSans-Regular.ttf");
+const FONT_BOLD = path.join(FONT_DIR, "LiberationSans-Bold.ttf");
+
+Font.register({
+  family: "LiberationSans",
+  fonts: [
+    { src: FONT_REGULAR, fontWeight: 400 },
+    { src: FONT_BOLD, fontWeight: 700 },
+  ],
+});
+
+// Filet de sécurité PDF/A : @react-pdf retombe sur Helvetica pour certains
+// nœuds (runs de texte vides, polices manquantes). Helvetica étant une police
+// « standard » jamais incorporée au fichier, sa seule présence dans les
+// ressources d'une page suffit à casser la conformité PDF/A. On redirige donc
+// ces noms vers nos fichiers embarqués.
+Font.register({
+  family: "Helvetica",
+  fonts: [
+    { src: FONT_REGULAR, fontWeight: 400 },
+    { src: FONT_BOLD, fontWeight: 700 },
+  ],
+});
+Font.register({ family: "Helvetica-Bold", src: FONT_BOLD });
+
+// Césure désactivée : le comportement par défaut coupe les mots français
+// de façon incorrecte dans les libellés de prestation.
+Font.registerHyphenationCallback((word) => [word]);
 
 /**
  * Libellé exact de l'identifiant : SIRET (14 chiffres, établissement) ou
@@ -59,7 +100,7 @@ export interface PaymentInfo {
 
 const styles = StyleSheet.create({
   page: {
-    fontFamily: "Helvetica",
+    fontFamily: "LiberationSans",
     fontSize: 9,
     color: SLATE_900,
     paddingTop: 40,
@@ -74,18 +115,21 @@ const styles = StyleSheet.create({
     marginBottom: 32,
   },
   brandName: {
+    fontFamily: "LiberationSans",
     fontSize: 22,
-    fontFamily: "Helvetica-Bold",
+    fontWeight: 700,
     letterSpacing: 1,
   },
   invoiceLabel: {
+    fontFamily: "LiberationSans",
     fontSize: 11,
-    fontFamily: "Helvetica-Bold",
+    fontWeight: 700,
     color: SLATE_900,
     textAlign: "right",
   },
   invoiceMeta: {
     color: SLATE_600,
+    fontFamily: "LiberationSans",
     fontSize: 8.5,
     textAlign: "right",
     marginTop: 2,
@@ -98,8 +142,9 @@ const styles = StyleSheet.create({
     marginBottom: 16,
   },
   typeBannerText: {
+    fontFamily: "LiberationSans",
     fontSize: 8.5,
-    fontFamily: "Helvetica-Bold",
+    fontWeight: 700,
     color: "#ffffff",
   },
   // Parties
@@ -113,20 +158,23 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   partyLabel: {
+    fontFamily: "LiberationSans",
     fontSize: 7,
-    fontFamily: "Helvetica-Bold",
+    fontWeight: 700,
     color: SLATE_400,
     textTransform: "uppercase",
     letterSpacing: 0.8,
     marginBottom: 5,
   },
   partyName: {
+    fontFamily: "LiberationSans",
     fontSize: 10,
-    fontFamily: "Helvetica-Bold",
+    fontWeight: 700,
     color: SLATE_900,
     marginBottom: 2,
   },
   partyDetail: {
+    fontFamily: "LiberationSans",
     fontSize: 8.5,
     color: SLATE_600,
     lineHeight: 1.5,
@@ -143,7 +191,8 @@ const styles = StyleSheet.create({
     marginBottom: 2,
   },
   tableHeaderText: {
-    fontFamily: "Helvetica-Bold",
+    fontWeight: 700,
+    fontFamily: "LiberationSans",
     fontSize: 7.5,
     color: "#ffffff",
     textTransform: "uppercase",
@@ -165,12 +214,14 @@ const styles = StyleSheet.create({
   colPrice: { flex: 1.5, textAlign: "right" },
   colTotal: { flex: 1.5, textAlign: "right" },
   cellText: {
+    fontFamily: "LiberationSans",
     fontSize: 8.5,
     color: SLATE_600,
   },
   cellTextBold: {
+    fontFamily: "LiberationSans",
     fontSize: 8.5,
-    fontFamily: "Helvetica-Bold",
+    fontWeight: 700,
     color: SLATE_900,
   },
   // Totaux
@@ -197,10 +248,14 @@ const styles = StyleSheet.create({
     paddingHorizontal: 8,
     marginTop: 4,
   },
-  totalLabel: { fontSize: 8.5, color: SLATE_600 },
-  totalValue: { fontSize: 8.5, color: SLATE_600 },
-  totalLabelFinal: { fontSize: 9, fontFamily: "Helvetica-Bold", color: "#ffffff" },
-  totalValueFinal: { fontSize: 9, fontFamily: "Helvetica-Bold", color: "#ffffff" },
+  totalLabel: { fontFamily: "LiberationSans",
+    fontSize: 8.5, color: SLATE_600 },
+  totalValue: { fontFamily: "LiberationSans",
+    fontSize: 8.5, color: SLATE_600 },
+  totalLabelFinal: { fontFamily: "LiberationSans",
+    fontSize: 9, fontWeight: 700, color: "#ffffff" },
+  totalValueFinal: { fontFamily: "LiberationSans",
+    fontSize: 9, fontWeight: 700, color: "#ffffff" },
   // Notes
   notesBox: {
     backgroundColor: SLATE_100,
@@ -209,14 +264,16 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   },
   notesLabel: {
+    fontFamily: "LiberationSans",
     fontSize: 7,
-    fontFamily: "Helvetica-Bold",
+    fontWeight: 700,
     color: SLATE_400,
     textTransform: "uppercase",
     letterSpacing: 0.8,
     marginBottom: 4,
   },
   notesText: {
+    fontFamily: "LiberationSans",
     fontSize: 8,
     color: SLATE_600,
     lineHeight: 1.6,
@@ -235,12 +292,14 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   footerText: {
+    fontFamily: "LiberationSans",
     fontSize: 7,
     color: SLATE_400,
   },
   facturxBadge: {
+    fontFamily: "LiberationSans",
     fontSize: 7,
-    fontFamily: "Helvetica-Bold",
+    fontWeight: 700,
   },
   divider: {
     height: 1,
@@ -320,6 +379,50 @@ export function InvoicePDF({ invoice, accentColor, paymentInfo, linkedInvoiceNum
     : isSolde
     ? "FACTURE DE SOLDE"
     : "FACTURE";
+
+  /**
+   * Les textes multi-lignes sont assemblés ici plutôt qu'en JSX.
+   *
+   * Un <Text> à enfants multiples fait émettre à @react-pdf un run de texte
+   * vide dans la police par défaut (Helvetica), non incorporée — ce qui suffit
+   * à invalider la conformité PDF/A. Un enfant unique de type chaîne l'évite.
+   */
+  const bankText = [
+    `Virement bancaire${paymentInfo?.bankAccountName ? ` — Titulaire : ${paymentInfo.bankAccountName}` : ""}`,
+    `IBAN : ${paymentInfo?.bankIban ?? ""}`,
+    paymentInfo?.bankBic ? `BIC : ${paymentInfo.bankBic}` : "",
+  ]
+    .filter(Boolean)
+    .join("\n");
+
+  const linkText = `Paiement en ligne sécurisé${
+    paymentInfo?.linkProvider ? ` (${paymentInfo.linkProvider})` : ""
+  } : ${paymentInfo?.linkUrl ?? ""}`;
+
+  const operationLabel =
+    invoice.operation_category === "services"
+      ? "Prestation de services"
+      : invoice.operation_category === "goods"
+      ? "Livraison de biens"
+      : "Livraison de biens et prestation de services";
+
+  const legalText = [
+    isFranchise
+      ? "TVA non applicable, art. 293 B du CGI"
+      : `Facture soumise à TVA, Taux applicable : ${invoice.tva_rate}%${
+          invoice.payment_on_debit
+            ? ", TVA acquittée sur les débits (art. 1693 bis CGI)"
+            : ", TVA acquittée sur les encaissements"
+        }`,
+    `Nature de l'opération : ${operationLabel}`,
+    "En cas de retard de paiement, des pénalités de retard sont exigibles dès le lendemain de la date d'échéance au taux de 3× le taux légal en vigueur, ainsi qu'une indemnité forfaitaire de 40€ pour frais de recouvrement (Art. L441-10 C.Com.).",
+    "Aucun escompte accordé pour paiement anticipé.",
+  ].join("\n");
+
+  const sellerId = idLabel(invoice.seller_siren);
+  const footerText = `${invoice.seller_company || invoice.seller_name || ""}${
+    sellerId ? ` • ${sellerId}` : ""
+  }`;
 
   return (
     <Document
@@ -489,24 +592,8 @@ export function InvoicePDF({ invoice, accentColor, paymentInfo, linkedInvoiceNum
         {(showBank || showLink) && (
           <View style={styles.notesBox}>
             <Text style={styles.notesLabel}>Modalités de paiement</Text>
-            {showBank && (
-              <Text style={styles.notesText}>
-                Virement bancaire
-                {paymentInfo?.bankAccountName
-                  ? ` — Titulaire : ${paymentInfo.bankAccountName}`
-                  : ""}
-                {"\n"}
-                IBAN : {paymentInfo?.bankIban}
-                {paymentInfo?.bankBic ? `\nBIC : ${paymentInfo.bankBic}` : ""}
-              </Text>
-            )}
-            {showLink && (
-              <Text style={styles.notesText}>
-                Paiement en ligne sécurisé
-                {paymentInfo?.linkProvider ? ` (${paymentInfo.linkProvider})` : ""} :{" "}
-                {paymentInfo?.linkUrl}
-              </Text>
-            )}
+            {showBank && <Text style={styles.notesText}>{bankText}</Text>}
+            {showLink && <Text style={styles.notesText}>{linkText}</Text>}
           </View>
         )}
 
@@ -515,9 +602,7 @@ export function InvoicePDF({ invoice, accentColor, paymentInfo, linkedInvoiceNum
           <View style={styles.notesBox}>
             <Text style={styles.notesLabel}>Conditions & notes</Text>
             {invoice.payment_terms && (
-              <Text style={styles.notesText}>
-                Paiement : {invoice.payment_terms}
-              </Text>
+              <Text style={styles.notesText}>{`Paiement : ${invoice.payment_terms}`}</Text>
             )}
             {invoice.notes && (
               <Text style={styles.notesText}>{invoice.notes}</Text>
@@ -528,37 +613,12 @@ export function InvoicePDF({ invoice, accentColor, paymentInfo, linkedInvoiceNum
         {/* ── Mentions légales 2026 ── */}
         <View style={styles.notesBox}>
           <Text style={styles.notesLabel}>Mentions légales</Text>
-          <Text style={styles.notesText}>
-            {isFranchise
-              ? "TVA non applicable, art. 293 B du CGI"
-              : `Facture soumise à TVA, Taux applicable : ${invoice.tva_rate}%${
-                  invoice.payment_on_debit
-                    ? ", TVA acquittée sur les débits (art. 1693 bis CGI)"
-                    : ", TVA acquittée sur les encaissements"
-                }`}
-            {"\n"}
-            Nature de l&apos;opération :{" "}
-            {invoice.operation_category === "services"
-              ? "Prestation de services"
-              : invoice.operation_category === "goods"
-              ? "Livraison de biens"
-              : "Livraison de biens et prestation de services"}
-            {"\n"}
-            En cas de retard de paiement, des pénalités de retard sont
-            exigibles dès le lendemain de la date d&apos;échéance au taux de
-            3× le taux légal en vigueur, ainsi qu&apos;une indemnité forfaitaire
-            de 40€ pour frais de recouvrement (Art. L441-10 C.Com.).
-            {"\n"}
-            Aucun escompte accordé pour paiement anticipé.
-          </Text>
+          <Text style={styles.notesText}>{legalText}</Text>
         </View>
 
         {/* ── Footer ── */}
         <View style={styles.footer} fixed>
-          <Text style={styles.footerText}>
-            {invoice.seller_company || invoice.seller_name || ""}
-            {idLabel(invoice.seller_siren) ? ` • ${idLabel(invoice.seller_siren)}` : ""}
-          </Text>
+          <Text style={styles.footerText}>{footerText}</Text>
           <Text style={[styles.facturxBadge, { color: accent }]}>
             Factur-X EN 16931 — Conforme réforme 2026
           </Text>

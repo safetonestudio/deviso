@@ -39,6 +39,13 @@ const nextConfig: NextConfig = {
     ],
   },
   serverExternalPackages: ["@react-pdf/renderer"],
+  // Les polices et le profil ICC sont lus au runtime pour produire des PDF/A-3.
+  // Sans cette directive, ils ne sont pas embarqués dans les fonctions Vercel
+  // et la génération retomberait silencieusement sur un PDF non conforme.
+  outputFileTracingIncludes: {
+    "/api/invoices/**": ["./assets/**"],
+    "/api/cron/**": ["./assets/**"],
+  },
   async headers() {
     return [
       {
