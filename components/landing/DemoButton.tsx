@@ -19,9 +19,20 @@ export function DemoButton({ className, label = "Voir la démo" }: DemoButtonPro
 
     try {
       const res = await fetch("/api/demo/start", { method: "POST" });
+
       if (!res.ok) {
         const body = await res.json().catch(() => ({}));
-        throw new Error(body.error || "Erreur lors du démarrage de la démo");
+        // On affiche le message renvoyé par l'API tel quel : le masquer derrière
+        // un « réessaie dans quelques secondes » générique donnait une consigne
+        // fausse en cas de limite horaire, et laissait croire à un blocage.
+        setError(
+          body.error ||
+            (res.status === 429
+              ? "Trop de démos lancées depuis cette connexion. Réessayez dans une heure."
+              : "La démo n'a pas pu démarrer. Réessayez dans quelques instants.")
+        );
+        setLoading(false);
+        return;
       }
 
       const { access_token, refresh_token } = await res.json();
@@ -30,8 +41,8 @@ export function DemoButton({ className, label = "Voir la démo" }: DemoButtonPro
       router.push(
         `/auth/demo-callback#access_token=${access_token}&refresh_token=${refresh_token}&token_type=bearer`
       );
-    } catch (err: any) {
-      setError("Une erreur est survenue. Réessaie dans quelques secondes.");
+    } catch {
+      setError("Connexion impossible. Vérifiez votre réseau et réessayez.");
       setLoading(false);
     }
   };

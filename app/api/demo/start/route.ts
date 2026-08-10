@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createAdminClient } from "@/lib/supabase/admin";
+import { purgeExpiredDemoAccounts } from "@/lib/demo-cleanup";
 
 // ─── Helpers date ─────────────────────────────────────────────────────────────
 const now = new Date();
@@ -841,6 +842,18 @@ async function seedDemoData(userId: string) {
 export async function POST(req: NextRequest) {
   const admin = createAdminClient();
 
+  // Ménage opportuniste : le cron Vercel ne passe qu'une fois par jour (limite
+  // du plan Hobby). En purgeant ici, les comptes expirés disparaissent au rythme
+  // du trafic, et non 24 h plus tard. Non bloquant en cas d'échec.
+  try {
+    const purge = await purgeExpiredDemoAccounts(admin, { maxDeletions: 10 });
+    if (purge.errors > 0) {
+      console.error(`[demo] purge : ${purge.errors} suppression(s) en échec`);
+    }
+  } catch (e) {
+    console.error("[demo] purge ignorée :", e);
+  }
+
   // ── Rate limit : 3 démos par IP par heure ────────────────────────────────
   const ip =
     req.headers.get("x-forwarded-for")?.split(",")[0]?.trim() ||
@@ -857,9 +870,16 @@ export async function POST(req: NextRequest) {
 
   const totalAttempts = (rateRows ?? []).reduce((sum, r) => sum + (r.count ?? 1), 0);
 
-  if (totalAttempts >= 3) {
+  // 10/h et non 3/h : derrière un NAT opérateur (mobile, réseau d'entreprise),
+  // de nombreux visiteurs partagent la même IP publique. Une limite trop basse
+  // bloquerait des prospects légitimes. Le risque reste borné : les comptes
+  // sont purgés au bout de 2 h, à chaque lancement de démo.
+  if (totalAttempts >= 10) {
     return NextResponse.json(
-      { error: "Trop de démos lancées depuis cette adresse. Réessayez dans une heure." },
+      {
+        error:
+          "Trop de démos lancées depuis cette connexion internet. Réessayez dans une heure, ou créez un compte d'essai gratuit.",
+      },
       { status: 429 }
     );
   }

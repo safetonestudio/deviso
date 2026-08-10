@@ -1,40 +1,30 @@
 import { NextResponse } from "next/server";
 import { createAdminClient } from "@/lib/supabase/admin";
+import { purgeExpiredDemoAccounts } from "@/lib/demo-cleanup";
 
-// Supprime les comptes démo de plus de 2h
+/**
+ * Filet de sécurité quotidien pour la suppression des comptes de démonstration.
+ *
+ * Le vrai ménage se fait au lancement de chaque démo (voir /api/demo/start) :
+ * le plan Vercel Hobby ne déclenche les tâches planifiées qu'une fois par jour,
+ * ce qui laisserait sinon vivre un compte jusqu'à ~24 h au lieu de 2 h.
+ */
 export async function GET(req: Request) {
   const auth = req.headers.get("authorization");
   if (auth !== `Bearer ${process.env.CRON_SECRET}`) {
     return new Response("Unauthorized", { status: 401 });
   }
+
   const admin = createAdminClient();
-  const cutoff = new Date(Date.now() - 2 * 60 * 60 * 1000).toISOString();
+  const result = await purgeExpiredDemoAccounts(admin, { maxDeletions: 200 });
 
-  // Lister tous les utilisateurs (Supabase ne filtre pas par email côté admin)
-  const { data, error } = await admin.auth.admin.listUsers({ perPage: 1000 });
-  if (error) {
-    console.error("[cleanup-demo] listUsers:", error);
-    return NextResponse.json({ error: error.message }, { status: 500 });
-  }
-
-  const demoUsers = (data.users ?? []).filter(
-    (u) =>
-      u.email?.endsWith("@deviso.internal") &&
-      u.created_at < cutoff
+  console.log(
+    `[cleanup-demo] ${result.deleted}/${result.expired} comptes supprimés` +
+      (result.errors ? ` — ${result.errors} échec(s)` : "")
   );
 
-  let deleted = 0;
-  for (const u of demoUsers) {
-    // Supprimer données liées (au cas où pas de cascade)
-    await admin.from("proposals").delete().eq("user_id", u.id);
-    await admin.from("invoices").delete().eq("user_id", u.id);
-    await admin.from("team_members").delete().eq("owner_id", u.id);
-    await admin.from("recurring_invoices").delete().eq("user_id", u.id);
-    // Supprimer le compte auth (cascade sur profiles)
-    const { error: delErr } = await admin.auth.admin.deleteUser(u.id);
-    if (!delErr) deleted++;
-  }
-
-  console.log(`[cleanup-demo] supprimé ${deleted}/${demoUsers.length} comptes démo`);
-  return NextResponse.json({ deleted, total: demoUsers.length });
+  // Un échec de suppression doit être visible : c'est ainsi qu'une contrainte
+  // de clé étrangère bloquante est passée inaperçue pendant plusieurs jours.
+  const status = result.errors > 0 ? 500 : 200;
+  return NextResponse.json(result, { status });
 }
