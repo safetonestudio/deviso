@@ -17,6 +17,29 @@ import {
   StyleSheet,
 } from "@react-pdf/renderer";
 import type { Invoice } from "@/types";
+import { digitsOnly, parseAddress, resolveVatNumber } from "./facturx-helpers";
+
+/**
+ * Libellé exact de l'identifiant : SIRET (14 chiffres, établissement) ou
+ * SIREN (9, entreprise). Afficher « SIRET » devant un SIREN serait faux.
+ */
+function idLabel(value: string | null | undefined): string | null {
+  const d = digitsOnly(value);
+  if (d.length === 14) return `SIRET : ${d}`;
+  if (d.length === 9) return `SIREN : ${d}`;
+  return value ? `SIRET : ${value}` : null;
+}
+
+/** Adresse sur plusieurs lignes : rue puis « CP Ville », comme sur un courrier. */
+function addressLines(raw: string | null | undefined): string[] {
+  const a = parseAddress(raw);
+  const lines: string[] = [];
+  if (a.street) lines.push(a.street);
+  const cityLine = [a.postcode, a.city].filter(Boolean).join(" ");
+  if (cityLine) lines.push(cityLine);
+  if (!lines.length && raw) lines.push(raw);
+  return lines;
+}
 
 // Palette de couleurs
 const BRAND = "#4f46e5";
@@ -275,6 +298,13 @@ export function InvoicePDF({ invoice, accentColor, paymentInfo, linkedInvoiceNum
   const isAcompte = invoice.invoice_type === "acompte";
   const isSolde = invoice.invoice_type === "solde";
   const linkedNumber = linkedInvoiceNumber ?? invoice.linked_invoice_number ?? null;
+  // Même n° de TVA que celui injecté dans le XML : le PDF lisible et les données
+  // structurées doivent dire strictement la même chose.
+  const sellerVatDisplay = resolveVatNumber(
+    invoice.seller_tva_number,
+    invoice.seller_siren,
+    isFranchise
+  ).value;
 
   const showBank =
     paymentInfo &&
@@ -354,18 +384,14 @@ export function InvoicePDF({ invoice, accentColor, paymentInfo, linkedInvoiceNum
             <Text style={styles.partyName}>
               {invoice.seller_company || invoice.seller_name || ""}
             </Text>
-            {invoice.seller_address && (
-              <Text style={styles.partyDetail}>{invoice.seller_address}</Text>
+            {addressLines(invoice.seller_address).map((l, i) => (
+              <Text key={i} style={styles.partyDetail}>{l}</Text>
+            ))}
+            {idLabel(invoice.seller_siren) && (
+              <Text style={styles.partyDetail}>{idLabel(invoice.seller_siren)}</Text>
             )}
-            {invoice.seller_siren && (
-              <Text style={styles.partyDetail}>
-                SIRET : {invoice.seller_siren}
-              </Text>
-            )}
-            {invoice.seller_tva_number && (
-              <Text style={styles.partyDetail}>
-                N° TVA : {invoice.seller_tva_number}
-              </Text>
+            {sellerVatDisplay && (
+              <Text style={styles.partyDetail}>N° TVA : {sellerVatDisplay}</Text>
             )}
           </View>
 
@@ -381,14 +407,17 @@ export function InvoicePDF({ invoice, accentColor, paymentInfo, linkedInvoiceNum
                 {invoice.client_name}
               </Text>
             )}
-            {invoice.client_address && (
+            {addressLines(invoice.client_address).map((l, i) => (
+              <Text key={i} style={[styles.partyDetail, { textAlign: "right" }]}>{l}</Text>
+            ))}
+            {idLabel(invoice.client_siren) && (
               <Text style={[styles.partyDetail, { textAlign: "right" }]}>
-                {invoice.client_address}
+                {idLabel(invoice.client_siren)}
               </Text>
             )}
-            {invoice.client_siren && (
+            {invoice.client_vat_number && (
               <Text style={[styles.partyDetail, { textAlign: "right" }]}>
-                SIRET : {invoice.client_siren}
+                N° TVA : {invoice.client_vat_number}
               </Text>
             )}
           </View>
@@ -519,16 +548,16 @@ export function InvoicePDF({ invoice, accentColor, paymentInfo, linkedInvoiceNum
             exigibles dès le lendemain de la date d&apos;échéance au taux de
             3× le taux légal en vigueur, ainsi qu&apos;une indemnité forfaitaire
             de 40€ pour frais de recouvrement (Art. L441-10 C.Com.).
+            {"\n"}
+            Aucun escompte accordé pour paiement anticipé.
           </Text>
         </View>
 
         {/* ── Footer ── */}
         <View style={styles.footer} fixed>
           <Text style={styles.footerText}>
-            {invoice.seller_company || invoice.seller_name || ""} •{" "}
-            {invoice.seller_siren
-              ? `SIRET ${invoice.seller_siren}`
-              : ""}
+            {invoice.seller_company || invoice.seller_name || ""}
+            {idLabel(invoice.seller_siren) ? ` • ${idLabel(invoice.seller_siren)}` : ""}
           </Text>
           <Text style={[styles.facturxBadge, { color: accent }]}>
             Factur-X BASIC — Conforme réforme 2026

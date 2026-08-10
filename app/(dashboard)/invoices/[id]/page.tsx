@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import Link from "next/link";
 import { GuidedTourBanner } from "@/components/GuidedTourBanner";
+import { FacturXCompliance } from "@/components/FacturXCompliance";
 import type { Invoice } from "@/types";
 
 const STATUS_LABEL: Record<string, string> = {
@@ -357,6 +358,11 @@ export default function InvoiceDetailPage() {
       <Link href="/invoices" className="text-sm text-gray-500 hover:text-gray-400 transition-colors mb-5 inline-block">
         ← Retour aux factures
       </Link>
+
+      {/* Conformité Factur-X : ce qui manquerait pour la télétransmission */}
+      <div className="mb-5">
+        <FacturXCompliance invoice={invoice} />
+      </div>
 
       {/* Layout deux colonnes */}
       <div className="grid grid-cols-1 lg:grid-cols-[1fr_260px] gap-6 items-start">

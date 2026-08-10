@@ -159,6 +159,7 @@ export interface Invoice {
   linked_invoice_id: string | null;
   linked_invoice_number: string | null; // jointure virtuelle (non stockée, enrichie à la volée)
   deposit_percentage: number | null;
+  client_vat_number: string | null;
   // Chorus Pro (B2G)
   chorus_pro_ref: string | null;
   chorus_pro_submitted_at: string | null;

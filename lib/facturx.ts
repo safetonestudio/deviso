@@ -22,7 +22,7 @@ export async function generateFacturXPdf(invoice: Invoice, accentColor?: string,
   );
 
   // 2. Génération du XML CII
-  const xml = generateFacturXml(invoice, linkedInvoiceNumber);
+  const xml = generateFacturXml(invoice, linkedInvoiceNumber, paymentInfo);
   const xmlBytes = new TextEncoder().encode(xml);
 
   // 3. Chargement du PDF avec pdf-lib
