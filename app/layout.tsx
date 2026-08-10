@@ -1,7 +1,9 @@
 import type { Metadata, Viewport } from "next";
 import "./globals.css";
 import { ServiceWorkerRegistration } from "@/components/ServiceWorker";
-import { Analytics } from "@vercel/analytics/react";
+// Sous-chemin /next (et non /react) : il branche le suivi sur le routeur de
+// Next.js, sinon les changements de page côté client ne sont pas comptabilisés.
+import { Analytics } from "@vercel/analytics/next";
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://getdeviso.fr"),
