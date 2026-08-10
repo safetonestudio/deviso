@@ -106,7 +106,7 @@ export function PricingSection() {
             >
               Essayer gratuitement 14 jours →
             </Link>
-            <p className="text-center text-xs text-gray-600 mt-2">Sans carte bancaire</p>
+            <p className="text-center text-xs text-gray-400 mt-2">Sans carte bancaire</p>
           </div>
 
           {/* ── Pro ── */}
@@ -142,13 +142,13 @@ export function PricingSection() {
             >
               Essayer gratuitement 14 jours →
             </Link>
-            <p className="text-center text-xs text-gray-600 mt-2">Sans carte bancaire</p>
+            <p className="text-center text-xs text-gray-400 mt-2">Sans carte bancaire</p>
           </div>
 
         </div>
 
         {/* Réassurance */}
-        <div className="flex flex-wrap items-center justify-center gap-6 mt-10 text-xs text-gray-600">
+        <div className="flex flex-wrap items-center justify-center gap-6 mt-10 text-xs text-gray-400">
           <span className="flex items-center gap-1.5"><span className="text-emerald-400">✓</span> 14 jours gratuits, sans carte</span>
           <span className="flex items-center gap-1.5"><span className="text-emerald-400">✓</span> Résiliable en 1 clic</span>
           <span className="flex items-center gap-1.5"><span className="text-emerald-400">✓</span> Données chiffrées, hébergées en Europe</span>

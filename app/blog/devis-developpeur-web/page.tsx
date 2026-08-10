@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { BlogPost } from "@/components/blog/BlogPost";
 
 export const metadata: Metadata = {
-  title: "Devis développeur web freelance : guide complet 2026 | Deviso",
+  title: "Devis développeur web freelance : le guide",
   description:
     "Comment rédiger un devis de développement web freelance : mentions obligatoires, TJM vs forfait, scope creep, Chorus Pro. Exemple concret inclus.",
   alternates: { canonical: "https://getdeviso.fr/blog/devis-developpeur-web" },

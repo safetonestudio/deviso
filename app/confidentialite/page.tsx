@@ -128,7 +128,7 @@ export default function ConfidentialitePage() {
         </section>
 
         <div className="mt-10 pt-6 border-t border-ds-border text-sm text-gray-500">
-          <Link href="/" className="hover:text-gray-400 transition-colors">← Retour à l&apos;accueil</Link>
+          <Link href="/" className="hover:text-white transition-colors">← Retour à l&apos;accueil</Link>
         </div>
       </main>
     </div>

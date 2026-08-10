@@ -206,7 +206,7 @@ export function FreelanceLanding({
               className="w-full sm:w-auto text-gray-300 font-semibold px-8 py-4 rounded-xl text-lg border border-ds-border hover:bg-ds-surface transition-all text-center"
             />
           </div>
-          <p className="text-sm text-gray-600">
+          <p className="text-sm text-gray-400">
             Démo instantanée · Aucune carte bancaire · Compte Pro complet pré-rempli
           </p>
         </div>

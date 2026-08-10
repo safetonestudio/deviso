@@ -2,9 +2,9 @@ import type { Metadata } from "next";
 import { FreelanceLanding } from "@/components/landing/FreelanceLanding";
 
 export const metadata: Metadata = {
-  title: "Devis et facturation pour traducteurs freelances | Deviso",
+  title: "Devis et facturation pour traducteurs freelances",
   description:
-    "Génère un devis de traduction en 30 secondes. Tarif au mot ou à la page, délai, paires de langues, révisions, devis professionnels avec signature électronique. Essai gratuit.",
+    "Devis de traduction en 30 secondes : tarif au mot ou à la page, délai, paires de langues, révisions, signature électronique. Essai gratuit.",
   alternates: { canonical: "https://getdeviso.fr/freelance-traducteur" },
   openGraph: {
     title: "Devis traducteur freelance en 30 secondes | Deviso",

@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { FreelanceLanding } from "@/components/landing/FreelanceLanding";
 
 export const metadata: Metadata = {
-  title: "Devis et facturation pour graphistes freelances | Deviso",
+  title: "Devis et facturation pour graphistes freelances",
   description:
     "Génère un devis de graphiste en 30 secondes grâce à l'IA. Signature électronique, facture Factur-X conforme 2026, relances automatiques. Essai gratuit.",
   alternates: { canonical: "https://getdeviso.fr/freelance-graphiste" },

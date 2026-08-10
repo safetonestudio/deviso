@@ -4,9 +4,9 @@ import { NavbarMobile } from "@/components/NavbarMobile";
 import { WaitlistButton } from "@/components/landing/WaitlistButton";
 
 export const metadata: Metadata = {
-  title: "Gérer les impayés en freelance : relance, mise en demeure, tribunal | Deviso",
+  title: "Gérer les impayés en freelance : les 4 étapes",
   description:
-    "Comment récupérer vos factures impayées en freelance : de la relance amiable à l'injonction de payer. Étapes concrètes, modèles de lettres et conseils pour se protéger dès le devis.",
+    "Récupérer une facture impayée en freelance : relance amiable, mise en demeure, injonction de payer. Étapes concrètes et protection dès le devis.",
   alternates: { canonical: "https://getdeviso.fr/blog/gerer-impayes-freelance" },
   openGraph: {
     title: "Gérer les impayés en freelance : relance, mise en demeure, tribunal",
@@ -93,7 +93,7 @@ export default function Page() {
       <article className="pt-36 pb-20 px-4 sm:px-6">
         <div className="max-w-3xl mx-auto">
 
-          <nav className="flex items-center gap-2 text-xs text-gray-600 mb-8">
+          <nav className="flex items-center gap-2 text-xs text-gray-400 mb-8">
             <Link href="/" className="hover:text-gray-400">Accueil</Link>
             <span>/</span>
             <Link href="/blog" className="hover:text-gray-400">Blog</Link>
@@ -104,7 +104,7 @@ export default function Page() {
           <div className="mb-10">
             <div className="flex items-center gap-3 mb-4">
               <span className="text-xs px-2.5 py-1 rounded-full bg-rose-500/10 text-rose-300 border border-rose-500/20 font-medium">Problèmes freelance</span>
-              <span className="text-xs text-gray-600">29 juin 2026 · 7 min</span>
+              <span className="text-xs text-gray-400">29 juin 2026 · 7 min</span>
             </div>
             <h1 className="text-3xl sm:text-4xl font-semibold text-white leading-tight mb-4">
               Gérer les impayés en freelance : de la relance à l&apos;injonction de payer
@@ -237,7 +237,7 @@ export default function Page() {
           </div>
 
           <div className="mt-14 pt-8 border-t border-ds-border">
-            <p className="text-xs text-gray-600 mb-4">Guides par métier</p>
+            <p className="text-xs text-gray-400 mb-4">Guides par métier</p>
             <div className="flex flex-wrap gap-2">
               {metierLinks.map((m) => (
                 <Link key={m.href} href={m.href} className="text-xs px-3 py-1.5 rounded-lg bg-ds-surface border border-ds-border text-gray-500 hover:text-gray-300 hover:border-indigo-500/30 transition-all">{m.label}</Link>
@@ -249,7 +249,7 @@ export default function Page() {
       </article>
 
       <footer className="border-t border-ds-border py-10 px-4 sm:px-6">
-        <div className="max-w-6xl mx-auto flex items-center justify-between text-xs text-gray-600">
+        <div className="max-w-6xl mx-auto flex items-center justify-between text-xs text-gray-400">
           <p>© 2026 Deviso · SafeTone Studio · SIREN 103 340 857</p>
           <Link href="/" className="text-gray-500 hover:text-gray-300 transition-colors">getdeviso.fr</Link>
         </div>

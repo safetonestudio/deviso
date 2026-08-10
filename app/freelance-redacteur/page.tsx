@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { FreelanceLanding } from "@/components/landing/FreelanceLanding";
 
 export const metadata: Metadata = {
-  title: "Devis et facturation pour rédacteurs freelances | Deviso",
+  title: "Devis et facturation pour rédacteurs freelances",
   description:
     "Génère un devis de rédaction web ou copywriting en 30 secondes. Relances automatiques, signature électronique, widget CA URSSAF. Essai gratuit.",
   alternates: { canonical: "https://getdeviso.fr/freelance-redacteur" },

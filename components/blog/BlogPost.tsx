@@ -220,7 +220,7 @@ export function BlogPost({
                 <p className="text-indigo-400 font-semibold text-lg">{exampleTotal}</p>
               </div>
             </div>
-            <p className="text-xs text-gray-600 mt-3 italic">{exampleNote}</p>
+            <p className="text-xs text-gray-400 mt-3 italic">{exampleNote}</p>
           </section>
 
           {/* ── Section 3 : Erreurs fréquentes ── */}
@@ -326,7 +326,7 @@ export function BlogPost({
               </ul>
             </div>
           </div>
-          <div className="flex items-center justify-between text-xs text-gray-600">
+          <div className="flex items-center justify-between text-xs text-gray-400">
             <p>© 2026 Deviso · SafeTone Studio · SIREN 103 340 857</p>
             <Link href="/" className="text-gray-500 hover:text-gray-300 transition-colors">getdeviso.fr</Link>
           </div>

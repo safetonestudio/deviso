@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { FreelanceLanding } from "@/components/landing/FreelanceLanding";
 
 export const metadata: Metadata = {
-  title: "Devis et facturation pour photographes freelances | Deviso",
+  title: "Devis et facturation pour photographes freelances",
   description:
     "Génère un devis photo en 30 secondes avec droits d'auteur, retouches et frais inclus. Acompte & solde, Factur-X conforme 2026. Essai gratuit.",
   alternates: { canonical: "https://getdeviso.fr/freelance-photographe" },

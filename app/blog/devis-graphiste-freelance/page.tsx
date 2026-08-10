@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { BlogPost } from "@/components/blog/BlogPost";
 
 export const metadata: Metadata = {
-  title: "Devis graphiste freelance : mentions obligatoires | Deviso",
+  title: "Devis graphiste freelance : mentions obligatoires",
   description:
     "Tout ce qu'un devis de graphiste freelance doit contenir : mentions légales, droits de cession, acompte, révisions. Exemple concret + erreurs à éviter.",
   alternates: { canonical: "https://getdeviso.fr/blog/devis-graphiste-freelance" },

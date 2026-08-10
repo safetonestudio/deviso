@@ -115,7 +115,7 @@ export function TjmSimulator({ defaultTjm = 350, defaultJours = 15 }: TjmSimulat
             onChange={(e) => handleJours(e.target.value)}
             className="w-full accent-indigo-500"
           />
-          <div className="flex justify-between text-xs text-gray-600 mt-1">
+          <div className="flex justify-between text-xs text-gray-400 mt-1">
             <span>5 j</span>
             <span className="text-indigo-400 font-semibold">{jours} j / mois</span>
             <span>22 j</span>

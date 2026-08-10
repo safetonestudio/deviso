@@ -4,9 +4,9 @@ import { NavbarMobile } from "@/components/NavbarMobile";
 import { WaitlistButton } from "@/components/landing/WaitlistButton";
 
 export const metadata: Metadata = {
-  title: "E-reporting freelance 2026 : l'obligation B2C dont personne ne parle",
+  title: "E-reporting freelance 2026 : l'obligation B2C",
   description:
-    "La facturation électronique ne concerne que le B2B ? Faux. Si vous avez des clients particuliers, vous avez une obligation d'e-reporting. Ce que les freelances B2C doivent faire avant le 1er septembre 2027.",
+    "La facturation électronique ne concerne pas que le B2B. Si vous facturez des particuliers, l'e-reporting vous oblige aussi. Ce qu'il faut faire avant 2027.",
   alternates: { canonical: "https://getdeviso.fr/blog/e-reporting-freelance-2026" },
   openGraph: {
     title: "E-reporting freelance 2026 : l'obligation B2C oubliée",
@@ -88,12 +88,12 @@ export default function EReportingFreelancePage() {
       </nav>
 
       <main className="max-w-3xl mx-auto px-4 sm:px-6 pt-36 pb-20">
-        <nav className="flex items-center gap-2 text-xs text-gray-600 mb-8">
-          <Link href="/" className="hover:text-gray-400 transition-colors">Accueil</Link>
+        <nav className="flex items-center gap-2 text-xs text-gray-400 mb-8">
+          <Link href="/" className="hover:text-white transition-colors">Accueil</Link>
           <span>/</span>
-          <Link href="/blog" className="hover:text-gray-400 transition-colors">Blog</Link>
+          <Link href="/blog" className="hover:text-white transition-colors">Blog</Link>
           <span>/</span>
-          <Link href="/blog/facturation-electronique-2026" className="hover:text-gray-400 transition-colors">Réforme 2026</Link>
+          <Link href="/blog/facturation-electronique-2026" className="hover:text-white transition-colors">Réforme 2026</Link>
           <span>/</span>
           <span className="text-gray-400">E-reporting</span>
         </nav>
@@ -101,7 +101,7 @@ export default function EReportingFreelancePage() {
         <div className="mb-10">
           <div className="flex items-center gap-3 mb-4">
             <span className="text-xs font-semibold text-amber-400 bg-amber-500/10 border border-amber-500/20 rounded-full px-3 py-1">Réforme 2026 · E-reporting</span>
-            <span className="text-xs text-gray-600">7 min · Mis à jour juillet 2026</span>
+            <span className="text-xs text-gray-400">7 min · Mis à jour juillet 2026</span>
           </div>
           <h1 className="text-3xl sm:text-4xl font-bold text-white leading-tight mb-4">
             E-reporting freelance 2026 : l&apos;obligation B2C dont personne ne parle
@@ -349,7 +349,7 @@ export default function EReportingFreelancePage() {
         </div>
 
         <footer className="border-t border-ds-border pt-8">
-          <Link href="/blog" className="text-xs text-gray-600 hover:text-gray-400 transition-colors">← Retour au blog</Link>
+          <Link href="/blog" className="text-xs text-gray-400 hover:text-white transition-colors">← Retour au blog</Link>
         </footer>
       </main>
     </div>

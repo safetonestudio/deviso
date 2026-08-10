@@ -151,9 +151,29 @@ function SignupForm() {
   );
 }
 
+/**
+ * Idem login : useSearchParams() force le rendu client, donc le HTML servi ne
+ * contient que ce fallback. Il porte le H1 pour rester lisible par les crawlers.
+ */
+function SignupSkeleton() {
+  return (
+    <div className="min-h-screen bg-ds-bg flex items-center justify-center px-4">
+      <div className="w-full max-w-md">
+        <div className="text-center mb-8">
+          <span className="font-bold text-xl text-white">Deviso</span>
+        </div>
+        <div className="bg-ds-surface rounded-2xl border border-ds-border p-8">
+          <h1 className="text-2xl font-extrabold text-white mb-1">Créer un compte</h1>
+          <p className="text-gray-400 text-sm">Chargement…</p>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 export default function SignupPage() {
   return (
-    <Suspense fallback={<div className="min-h-screen bg-ds-bg" />}>
+    <Suspense fallback={<SignupSkeleton />}>
       <SignupForm />
     </Suspense>
   );

@@ -2,9 +2,9 @@ import type { Metadata } from "next";
 import { FreelanceLanding } from "@/components/landing/FreelanceLanding";
 
 export const metadata: Metadata = {
-  title: "Devis et facturation pour artisans BTP | Deviso",
+  title: "Devis et facturation pour artisans BTP",
   description:
-    "Génère un devis de chantier en 30 secondes avec les bons taux de TVA et la mention garantie décennale. Factur-X conforme 2026, acompte & solde. Essai gratuit.",
+    "Devis de chantier en 30 secondes avec les bons taux de TVA et la garantie décennale. Factur-X 2026, acompte et solde. Essai gratuit.",
   alternates: { canonical: "https://getdeviso.fr/freelance-artisan" },
   openGraph: {
     title: "Devis artisan BTP en 30 secondes | Deviso",

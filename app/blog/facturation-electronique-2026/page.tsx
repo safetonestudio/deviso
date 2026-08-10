@@ -4,9 +4,9 @@ import { NavbarMobile } from "@/components/NavbarMobile";
 import { WaitlistButton } from "@/components/landing/WaitlistButton";
 
 export const metadata: Metadata = {
-  title: "Facturation électronique 2026 : le guide complet pour freelances et indépendants",
+  title: "Facturation électronique 2026 : le guide",
   description:
-    "Tout ce que vous devez savoir sur la réforme de facturation électronique 2026 : qui est concerné, à quelle date, quel format, et comment vous préparer. Guide complet pour freelances, auto-entrepreneurs et TPE.",
+    "Réforme facturation électronique 2026 : qui est concerné, à quelle date, quel format et comment se préparer. Guide pour freelances et micro-entrepreneurs.",
   alternates: { canonical: "https://getdeviso.fr/blog/facturation-electronique-2026" },
   openGraph: {
     title: "Facturation électronique 2026 : le guide complet pour freelances",
@@ -113,10 +113,10 @@ export default function FacturationElectronique2026Page() {
       <main className="max-w-3xl mx-auto px-4 sm:px-6 pt-36 pb-20">
 
         {/* Breadcrumb */}
-        <nav className="flex items-center gap-2 text-xs text-gray-600 mb-8">
-          <Link href="/" className="hover:text-gray-400 transition-colors">Accueil</Link>
+        <nav className="flex items-center gap-2 text-xs text-gray-400 mb-8">
+          <Link href="/" className="hover:text-white transition-colors">Accueil</Link>
           <span>/</span>
-          <Link href="/blog" className="hover:text-gray-400 transition-colors">Blog</Link>
+          <Link href="/blog" className="hover:text-white transition-colors">Blog</Link>
           <span>/</span>
           <span className="text-gray-400">Réforme 2026</span>
         </nav>
@@ -125,7 +125,7 @@ export default function FacturationElectronique2026Page() {
         <div className="mb-10">
           <div className="flex items-center gap-3 mb-4">
             <span className="text-xs font-semibold text-amber-400 bg-amber-500/10 border border-amber-500/20 rounded-full px-3 py-1">⚡ Urgent, 1er sept. 2026</span>
-            <span className="text-xs text-gray-600">10 min de lecture · Mis à jour juillet 2026</span>
+            <span className="text-xs text-gray-400">10 min de lecture · Mis à jour juillet 2026</span>
           </div>
           <h1 className="text-3xl sm:text-4xl font-bold text-white leading-tight mb-4">
             Facturation électronique 2026 : le guide complet pour freelances et indépendants
@@ -376,12 +376,12 @@ export default function FacturationElectronique2026Page() {
 
         {/* Footer métiers */}
         <footer className="border-t border-ds-border pt-8">
-          <p className="text-xs text-gray-600 mb-4">Deviso, logiciel de devis et facturation pour freelances</p>
+          <p className="text-xs text-gray-400 mb-4">Deviso, logiciel de devis et facturation pour freelances</p>
           <div className="flex flex-wrap gap-x-4 gap-y-2">
             {metierLinks.map(({ label, href }) => (
-              <Link key={href} href={href} className="text-xs text-gray-600 hover:text-gray-400 transition-colors">{label}</Link>
+              <Link key={href} href={href} className="text-xs text-gray-400 hover:text-white transition-colors">{label}</Link>
             ))}
-            <Link href="/blog" className="text-xs text-gray-600 hover:text-gray-400 transition-colors">← Blog</Link>
+            <Link href="/blog" className="text-xs text-gray-400 hover:text-white transition-colors">← Blog</Link>
           </div>
         </footer>
       </main>

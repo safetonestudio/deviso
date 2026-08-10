@@ -2,9 +2,9 @@ import type { Metadata } from "next";
 import { FreelanceLanding } from "@/components/landing/FreelanceLanding";
 
 export const metadata: Metadata = {
-  title: "Devis et facturation pour community managers freelances | Deviso",
+  title: "Devis et facturation community manager",
   description:
-    "Génère un devis de gestion réseaux sociaux en 30 secondes. Forfaits mensuels, reporting, création de contenus, devis clairs et signés électroniquement. Essai gratuit.",
+    "Devis de gestion des réseaux sociaux en 30 secondes : forfaits mensuels, reporting, création de contenus, signature en ligne. Essai gratuit.",
   alternates: { canonical: "https://getdeviso.fr/freelance-community-manager" },
   openGraph: {
     title: "Devis community manager freelance en 30 secondes | Deviso",

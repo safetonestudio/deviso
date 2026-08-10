@@ -2,9 +2,9 @@ import type { Metadata } from "next";
 import { BlogPost } from "@/components/blog/BlogPost";
 
 export const metadata: Metadata = {
-  title: "Devis artisan BTP : TVA réduite, garantie décennale, exemple | Deviso",
+  title: "Devis artisan BTP : TVA réduite et décennale",
   description:
-    "Comment rédiger un devis d'artisan BTP : taux de TVA selon les travaux, mention garantie décennale obligatoire, acompte. Exemple concret et erreurs à éviter.",
+    "Devis d'artisan BTP : taux de TVA selon les travaux, mention garantie décennale, acompte. Exemple concret et erreurs à éviter.",
   alternates: { canonical: "https://getdeviso.fr/blog/devis-artisan-btp" },
   openGraph: {
     title: "Devis artisan BTP : TVA réduite, garantie décennale, exemple",

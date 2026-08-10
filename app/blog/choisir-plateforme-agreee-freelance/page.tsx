@@ -4,9 +4,9 @@ import { NavbarMobile } from "@/components/NavbarMobile";
 import { WaitlistButton } from "@/components/landing/WaitlistButton";
 
 export const metadata: Metadata = {
-  title: "Comment choisir sa plateforme agréée (PDP) quand on est freelance, Guide 2026",
+  title: "Choisir sa plateforme agréée (PDP) en freelance",
   description:
-    "Le portail public (PPF) est abandonné. Seules les Plateformes de Dématérialisation Partenaires (PDP) privées subsistent. Comment choisir la bonne pour votre activité freelance ?",
+    "Le portail public (PPF) est abandonné : seules les plateformes agréées privées subsistent. 5 critères pour choisir la bonne quand on est freelance.",
   alternates: { canonical: "https://getdeviso.fr/blog/choisir-plateforme-agreee-freelance" },
   openGraph: {
     title: "Comment choisir sa plateforme agréée (PDP) en tant que freelance",
@@ -89,12 +89,12 @@ export default function ChoisirPlateformeAgreeePage() {
       </nav>
 
       <main className="max-w-3xl mx-auto px-4 sm:px-6 pt-36 pb-20">
-        <nav className="flex items-center gap-2 text-xs text-gray-600 mb-8">
-          <Link href="/" className="hover:text-gray-400 transition-colors">Accueil</Link>
+        <nav className="flex items-center gap-2 text-xs text-gray-400 mb-8">
+          <Link href="/" className="hover:text-white transition-colors">Accueil</Link>
           <span>/</span>
-          <Link href="/blog" className="hover:text-gray-400 transition-colors">Blog</Link>
+          <Link href="/blog" className="hover:text-white transition-colors">Blog</Link>
           <span>/</span>
-          <Link href="/blog/facturation-electronique-2026" className="hover:text-gray-400 transition-colors">Réforme 2026</Link>
+          <Link href="/blog/facturation-electronique-2026" className="hover:text-white transition-colors">Réforme 2026</Link>
           <span>/</span>
           <span className="text-gray-400">Plateforme agréée</span>
         </nav>
@@ -102,7 +102,7 @@ export default function ChoisirPlateformeAgreeePage() {
         <div className="mb-10">
           <div className="flex items-center gap-3 mb-4">
             <span className="text-xs font-semibold text-indigo-400 bg-indigo-500/10 border border-indigo-500/20 rounded-full px-3 py-1">Réforme 2026 · PDP</span>
-            <span className="text-xs text-gray-600">8 min · Mis à jour juillet 2026</span>
+            <span className="text-xs text-gray-400">8 min · Mis à jour juillet 2026</span>
           </div>
           <h1 className="text-3xl sm:text-4xl font-bold text-white leading-tight mb-4">
             Comment choisir sa plateforme agréée (PDP) quand on est freelance ou indépendant
@@ -279,7 +279,7 @@ export default function ChoisirPlateformeAgreeePage() {
         </div>
 
         <footer className="border-t border-ds-border pt-8">
-          <Link href="/blog" className="text-xs text-gray-600 hover:text-gray-400 transition-colors">← Retour au blog</Link>
+          <Link href="/blog" className="text-xs text-gray-400 hover:text-white transition-colors">← Retour au blog</Link>
         </footer>
       </main>
     </div>

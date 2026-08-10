@@ -4,7 +4,7 @@ import { NavbarMobile } from "@/components/NavbarMobile";
 import { WaitlistButton } from "@/components/landing/WaitlistButton";
 
 export const metadata: Metadata = {
-  title: "Blog Deviso, Guides devis et facturation pour freelances",
+  title: "Guides devis et facturation pour freelances",
   description:
     "Guides pratiques sur la facturation freelance en France : mentions obligatoires, droits d'auteur, OPCO, Factur-X, Chorus Pro. Par métier et par sujet.",
   alternates: { canonical: "https://getdeviso.fr/blog" },
@@ -273,7 +273,7 @@ export default function BlogIndex() {
                     <span className="text-xs px-2.5 py-1 rounded-full font-medium border bg-amber-500/10 text-amber-300 border-amber-500/20">
                       Réforme 2026
                     </span>
-                    <span className="text-xs text-gray-600">5 guides · urgent</span>
+                    <span className="text-xs text-gray-400">5 guides · urgent</span>
                   </div>
                   <h2 className="text-white font-semibold text-lg leading-snug mb-2 group-open:text-amber-200 transition-colors">
                     Facturation électronique 2026 : tout ce que les freelances doivent savoir
@@ -300,7 +300,7 @@ export default function BlogIndex() {
                       </div>
                       <p className="text-gray-600 text-xs">{article.description}</p>
                     </div>
-                    <span className="text-xs text-gray-700 flex-shrink-0 whitespace-nowrap">{article.readingTime} min</span>
+                    <span className="text-xs text-gray-400 flex-shrink-0 whitespace-nowrap">{article.readingTime} min</span>
                     <span className="text-gray-700 group-hover/item:text-amber-400 transition-colors flex-shrink-0 text-sm">→</span>
                   </Link>
                 ))}
@@ -315,7 +315,7 @@ export default function BlogIndex() {
                     <span className="text-xs px-2.5 py-1 rounded-full font-medium border bg-indigo-500/10 text-indigo-300 border-indigo-500/20">
                       Devis par métier
                     </span>
-                    <span className="text-xs text-gray-600">10 guides</span>
+                    <span className="text-xs text-gray-400">10 guides</span>
                   </div>
                   <h2 className="text-white font-semibold text-lg leading-snug mb-2 group-open:text-indigo-200 transition-colors">
                     Devis par métier : guide complet par profession
@@ -340,7 +340,7 @@ export default function BlogIndex() {
                       <p className="text-white text-sm font-medium group-hover/item:text-indigo-200 transition-colors">{article.label}</p>
                       <p className="text-gray-600 text-xs mt-0.5">{article.description}</p>
                     </div>
-                    <span className="text-xs text-gray-700 flex-shrink-0">{article.readingTime} min</span>
+                    <span className="text-xs text-gray-400 flex-shrink-0">{article.readingTime} min</span>
                     <span className="text-gray-700 group-hover/item:text-indigo-400 transition-colors flex-shrink-0 text-sm">→</span>
                   </Link>
                 ))}
@@ -364,7 +364,7 @@ export default function BlogIndex() {
                     }`}>
                       {article.profession}
                     </span>
-                    <span className="text-xs text-gray-600">{article.readingTime} min</span>
+                    <span className="text-xs text-gray-400">{article.readingTime} min</span>
                   </div>
                   <h3 className="text-white font-semibold leading-snug mb-2 group-hover:text-indigo-200 transition-colors text-sm">
                     {article.title}
@@ -386,14 +386,14 @@ export default function BlogIndex() {
       {/* Footer links */}
       <footer className="border-t border-ds-border py-8 px-4 sm:px-6">
         <div className="max-w-4xl mx-auto">
-          <div className="flex flex-wrap gap-x-6 gap-y-2 text-xs text-gray-600">
-            <Link href="/" className="hover:text-gray-400 transition-colors">Accueil</Link>
-            <Link href="/blog" className="hover:text-gray-400 transition-colors">Blog</Link>
-            <Link href="/combien-facturer" className="hover:text-gray-400 transition-colors">Tarifs freelance</Link>
-            <Link href="/login" className="hover:text-gray-400 transition-colors">Connexion</Link>
-            <Link href="/cgu" className="hover:text-gray-400 transition-colors">CGU</Link>
-            <Link href="/confidentialite" className="hover:text-gray-400 transition-colors">Confidentialite</Link>
-            <Link href="/mentions-legales" className="hover:text-gray-400 transition-colors">Mentions légales</Link>
+          <div className="flex flex-wrap gap-x-6 gap-y-2 text-xs text-gray-400">
+            <Link href="/" className="hover:text-white transition-colors">Accueil</Link>
+            <Link href="/blog" className="hover:text-white transition-colors">Blog</Link>
+            <Link href="/combien-facturer" className="hover:text-white transition-colors">Tarifs freelance</Link>
+            <Link href="/login" className="hover:text-white transition-colors">Connexion</Link>
+            <Link href="/cgu" className="hover:text-white transition-colors">CGU</Link>
+            <Link href="/confidentialite" className="hover:text-white transition-colors">Confidentialite</Link>
+            <Link href="/mentions-legales" className="hover:text-white transition-colors">Mentions légales</Link>
           </div>
         </div>
       </footer>

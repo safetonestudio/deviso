@@ -165,7 +165,7 @@ export default async function MetierTarifsPage({ params }: Props) {
             />
           </div>
 
-          <div className="text-xs text-gray-600 flex items-center gap-2">
+          <div className="text-xs text-gray-400 flex items-center gap-2">
             <span>Source : Malt Barometre 2026 · Tarifs HT, en €/jour · Marche francais · Mis a jour juillet 2026</span>
           </div>
         </div>
@@ -310,7 +310,7 @@ export default async function MetierTarifsPage({ params }: Props) {
         </section>
 
         {/* Footer */}
-        <footer className="border-t border-ds-border pt-6 pb-2 text-xs text-gray-700 flex flex-wrap gap-4">
+        <footer className="border-t border-ds-border pt-6 pb-2 text-xs text-gray-400 flex flex-wrap gap-4">
           <Link href="/" className="hover:text-gray-500 transition-colors">Accueil</Link>
           <Link href="/combien-facturer" className="hover:text-gray-500 transition-colors">Tarifs freelance</Link>
           <Link href={data.landingHref} className="hover:text-gray-500 transition-colors">

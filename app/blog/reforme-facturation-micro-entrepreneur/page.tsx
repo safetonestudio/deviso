@@ -4,9 +4,9 @@ import { NavbarMobile } from "@/components/NavbarMobile";
 import { WaitlistButton } from "@/components/landing/WaitlistButton";
 
 export const metadata: Metadata = {
-  title: "Micro-entrepreneur et réforme facturation 2026 : ce qui change vraiment",
+  title: "Micro-entrepreneur : la réforme 2026 expliquée",
   description:
-    "Vous êtes auto-entrepreneur ou micro-entrepreneur ? Voici ce que la réforme de facturation électronique 2026-2027 change concrètement pour vous : franchise TVA, Factur-X, plateforme agréée.",
+    "Micro-entrepreneur : ce que la réforme de facturation électronique change vraiment pour vous. Franchise TVA, Factur-X, plateforme agréée, calendrier.",
   alternates: { canonical: "https://getdeviso.fr/blog/reforme-facturation-micro-entrepreneur" },
   openGraph: {
     title: "Micro-entrepreneur et réforme facturation 2026 : ce qui change vraiment",
@@ -90,12 +90,12 @@ export default function ReformeFacturationMicroEntrepreneurPage() {
 
       <main className="max-w-3xl mx-auto px-4 sm:px-6 pt-36 pb-20">
 
-        <nav className="flex items-center gap-2 text-xs text-gray-600 mb-8">
-          <Link href="/" className="hover:text-gray-400 transition-colors">Accueil</Link>
+        <nav className="flex items-center gap-2 text-xs text-gray-400 mb-8">
+          <Link href="/" className="hover:text-white transition-colors">Accueil</Link>
           <span>/</span>
-          <Link href="/blog" className="hover:text-gray-400 transition-colors">Blog</Link>
+          <Link href="/blog" className="hover:text-white transition-colors">Blog</Link>
           <span>/</span>
-          <Link href="/blog/facturation-electronique-2026" className="hover:text-gray-400 transition-colors">Réforme 2026</Link>
+          <Link href="/blog/facturation-electronique-2026" className="hover:text-white transition-colors">Réforme 2026</Link>
           <span>/</span>
           <span className="text-gray-400">Micro-entrepreneur</span>
         </nav>
@@ -103,7 +103,7 @@ export default function ReformeFacturationMicroEntrepreneurPage() {
         <div className="mb-10">
           <div className="flex items-center gap-3 mb-4">
             <span className="text-xs font-semibold text-indigo-400 bg-indigo-500/10 border border-indigo-500/20 rounded-full px-3 py-1">Réforme 2026 · Micro-entrepreneur</span>
-            <span className="text-xs text-gray-600">7 min · Mis à jour juillet 2026</span>
+            <span className="text-xs text-gray-400">7 min · Mis à jour juillet 2026</span>
           </div>
           <h1 className="text-3xl sm:text-4xl font-bold text-white leading-tight mb-4">
             Micro-entrepreneur : ce que la réforme de facturation 2026 change vraiment pour toi
@@ -283,7 +283,7 @@ export default function ReformeFacturationMicroEntrepreneurPage() {
         </div>
 
         <footer className="border-t border-ds-border pt-8">
-          <Link href="/blog" className="text-xs text-gray-600 hover:text-gray-400 transition-colors">← Retour au blog</Link>
+          <Link href="/blog" className="text-xs text-gray-400 hover:text-white transition-colors">← Retour au blog</Link>
         </footer>
       </main>
     </div>

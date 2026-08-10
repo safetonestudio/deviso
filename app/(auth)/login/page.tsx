@@ -157,9 +157,30 @@ function LoginForm() {
   );
 }
 
+/**
+ * Le formulaire utilise useSearchParams(), ce qui force le rendu côté client :
+ * seul le fallback de Suspense figure dans le HTML servi. Sans titre dedans, la
+ * page apparaît « sans H1 » aux crawlers. Le fallback porte donc le H1.
+ */
+function LoginSkeleton() {
+  return (
+    <div className="min-h-screen bg-ds-bg flex items-center justify-center px-4">
+      <div className="w-full max-w-md">
+        <div className="text-center mb-8">
+          <span className="font-semibold text-xl text-white">Deviso</span>
+        </div>
+        <div className="bg-ds-surface rounded-2xl border border-ds-border p-8">
+          <h1 className="text-2xl font-semibold text-white mb-1">Connexion</h1>
+          <p className="text-gray-400 text-sm">Chargement…</p>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 export default function LoginPage() {
   return (
-    <Suspense fallback={<div className="min-h-screen bg-ds-bg" />}>
+    <Suspense fallback={<LoginSkeleton />}>
       <LoginForm />
     </Suspense>
   );

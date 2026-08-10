@@ -8,7 +8,7 @@ import { PricingSection } from "@/components/landing/PricingSection";
 export const metadata: Metadata = {
   title: "Deviso, Logiciel devis et facturation pour freelances français",
   description:
-    "Créez vos devis en 30 secondes avec l'IA, facturez en Factur-X conforme 2026, relances automatiques, suivi CA URSSAF. Essai gratuit 14 jours, sans carte bancaire.",
+    "Créez vos devis en 30 secondes avec l'IA, facturez en Factur-X conforme 2026, relances automatiques, suivi du CA URSSAF. Essai gratuit 14 jours.",
   alternates: {
     canonical: "https://getdeviso.fr",
   },
@@ -172,7 +172,7 @@ export default function LandingPage() {
             />
           </div>
 
-          <p className="text-xs text-gray-600">
+          <p className="text-xs text-gray-400">
             Démo instantanée · 14 jours gratuits · Sans carte bancaire
           </p>
         </div>
@@ -189,7 +189,7 @@ export default function LandingPage() {
               </div>
             </div>
             <div className="p-6 text-white">
-              <div className="mb-3 text-xs text-gray-600 font-medium uppercase tracking-wider">
+              <div className="mb-3 text-xs text-gray-400 font-medium uppercase tracking-wider">
                 Décris ton projet
               </div>
               <div className="bg-white/[0.04] rounded-lg p-4 border border-white/[0.06] mb-4">

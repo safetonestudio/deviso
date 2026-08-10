@@ -4,9 +4,9 @@ import { NavbarMobile } from "@/components/NavbarMobile";
 import { WaitlistButton } from "@/components/landing/WaitlistButton";
 
 export const metadata: Metadata = {
-  title: "Checklist réforme facturation 2026 : êtes-vous prêt ? (7 points à vérifier)",
+  title: "Checklist réforme facturation 2026 : 7 points",
   description:
-    "La réforme de la facturation électronique entre en vigueur le 1er septembre 2026. En 7 points clés, vérifiez si vous êtes prêt : logiciel, format Factur-X, PDP, e-reporting, mentions légales et plus.",
+    "Réforme facturation électronique 2026 : 7 points à vérifier pour être prêt. Logiciel, format Factur-X, plateforme agréée, e-reporting, mentions légales.",
   alternates: { canonical: "https://getdeviso.fr/blog/checklist-reforme-facturation-2026" },
   openGraph: {
     title: "Checklist réforme facturation 2026 pour freelances",
@@ -159,12 +159,12 @@ export default function ChecklistReforme2026Page() {
       </nav>
 
       <main className="max-w-3xl mx-auto px-4 sm:px-6 pt-36 pb-20">
-        <nav className="flex items-center gap-2 text-xs text-gray-600 mb-8">
-          <Link href="/" className="hover:text-gray-400 transition-colors">Accueil</Link>
+        <nav className="flex items-center gap-2 text-xs text-gray-400 mb-8">
+          <Link href="/" className="hover:text-white transition-colors">Accueil</Link>
           <span>/</span>
-          <Link href="/blog" className="hover:text-gray-400 transition-colors">Blog</Link>
+          <Link href="/blog" className="hover:text-white transition-colors">Blog</Link>
           <span>/</span>
-          <Link href="/blog/facturation-electronique-2026" className="hover:text-gray-400 transition-colors">Réforme 2026</Link>
+          <Link href="/blog/facturation-electronique-2026" className="hover:text-white transition-colors">Réforme 2026</Link>
           <span>/</span>
           <span className="text-gray-400">Checklist</span>
         </nav>
@@ -172,7 +172,7 @@ export default function ChecklistReforme2026Page() {
         <div className="mb-10">
           <div className="flex items-center gap-3 mb-4">
             <span className="text-xs font-semibold text-indigo-400 bg-indigo-500/10 border border-indigo-500/20 rounded-full px-3 py-1">Réforme 2026 · Checklist</span>
-            <span className="text-xs text-gray-600">10 min · Mis à jour juillet 2026</span>
+            <span className="text-xs text-gray-400">10 min · Mis à jour juillet 2026</span>
           </div>
           <h1 className="text-3xl sm:text-4xl font-bold text-white leading-tight mb-4">
             Checklist réforme facturation 2026 : 7 points à vérifier pour être prêt
@@ -191,7 +191,7 @@ export default function ChecklistReforme2026Page() {
           <div className="h-2 bg-ds-elevated rounded-full overflow-hidden">
             <div className="h-full w-0 bg-gradient-to-r from-indigo-600 to-violet-500 rounded-full" style={{ width: "0%" }} />
           </div>
-          <p className="text-xs text-gray-600 mt-3 italic">Cochez les points au fur et à mesure dans cet article pour évaluer votre préparation.</p>
+          <p className="text-xs text-gray-400 mt-3 italic">Cochez les points au fur et à mesure dans cet article pour évaluer votre préparation.</p>
         </div>
 
         {/* Légende urgence */}
@@ -303,11 +303,11 @@ export default function ChecklistReforme2026Page() {
             Deviso génère déjà des factures Factur-X au profil EN 16931. L&apos;intégration PDP arrive avant septembre 2027. Essayez gratuitement pendant 14 jours, sans carte bancaire.
           </p>
           <WaitlistButton plan="free" label="Essayer Deviso gratuitement →" className="inline-flex items-center gap-2 bg-indigo-600 hover:bg-indigo-500 text-white font-semibold px-6 py-3 rounded-xl transition-colors text-sm" />
-          <p className="text-xs text-gray-600 mt-3">Factur-X inclus · PDP avant sept. 2027 · E-reporting géré automatiquement</p>
+          <p className="text-xs text-gray-400 mt-3">Factur-X inclus · PDP avant sept. 2027 · E-reporting géré automatiquement</p>
         </div>
 
         <footer className="border-t border-ds-border pt-8">
-          <Link href="/blog" className="text-xs text-gray-600 hover:text-gray-400 transition-colors">← Retour au blog</Link>
+          <Link href="/blog" className="text-xs text-gray-400 hover:text-white transition-colors">← Retour au blog</Link>
         </footer>
       </main>
     </div>

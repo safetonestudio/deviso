@@ -2,9 +2,9 @@ import type { Metadata } from "next";
 import { FreelanceLanding } from "@/components/landing/FreelanceLanding";
 
 export const metadata: Metadata = {
-  title: "Devis et facturation pour coachs freelances | Deviso",
+  title: "Devis et facturation pour coachs freelances",
   description:
-    "Génère un devis de coaching ou d'accompagnement en 30 secondes. Séances individuelles, programmes, ateliers, signature électronique, relances auto. Essai gratuit.",
+    "Devis de coaching en 30 secondes : séances, programmes, ateliers. Signature électronique et relances automatiques. Essai gratuit.",
   alternates: { canonical: "https://getdeviso.fr/freelance-coach" },
   openGraph: {
     title: "Devis coach freelance en 30 secondes | Deviso",

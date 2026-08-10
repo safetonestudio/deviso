@@ -2,9 +2,9 @@ import type { Metadata } from "next";
 import { BlogPost } from "@/components/blog/BlogPost";
 
 export const metadata: Metadata = {
-  title: "Devis traducteur freelance : tarification, révisions, droits sur la traduction | Deviso",
+  title: "Devis traducteur freelance : tarifs et droits",
   description:
-    "Comment rédiger un devis de traduction freelance : tarifer au mot ou à la page, inclure les révisions, gérer les droits sur la traduction et les tarifs urgence. Exemple et erreurs à éviter.",
+    "Devis de traduction : tarifer au mot ou à la page, inclure les révisions, droits sur la traduction, tarif urgence. Exemple et erreurs à éviter.",
   alternates: { canonical: "https://getdeviso.fr/blog/devis-traducteur-freelance" },
   openGraph: {
     title: "Devis traducteur freelance : tarification, révisions, droits sur la traduction",

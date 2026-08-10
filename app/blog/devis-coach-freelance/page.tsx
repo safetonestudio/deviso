@@ -2,9 +2,9 @@ import type { Metadata } from "next";
 import { BlogPost } from "@/components/blog/BlogPost";
 
 export const metadata: Metadata = {
-  title: "Devis coach freelance : TVA, conditions abandon programme, exemple | Deviso",
+  title: "Devis coach freelance : TVA, abandon, exemple",
   description:
-    "Comment rédiger un devis de coaching freelance : TVA franchise ou exonération, conditions d'abandon et de remboursement, séances vs programmes. Exemple et erreurs à éviter.",
+    "Devis de coaching : TVA franchise ou exonération, conditions d'abandon et de remboursement, séances vs programmes. Exemple et erreurs à éviter.",
   alternates: { canonical: "https://getdeviso.fr/blog/devis-coach-freelance" },
   openGraph: {
     title: "Devis coach freelance : TVA, conditions abandon programme, exemple",

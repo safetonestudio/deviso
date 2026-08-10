@@ -4,9 +4,9 @@ import { NavbarMobile } from "@/components/NavbarMobile";
 import { WaitlistButton } from "@/components/landing/WaitlistButton";
 
 export const metadata: Metadata = {
-  title: "Comment fixer ses tarifs en freelance : TJM, méthodes, erreurs à éviter | Deviso",
+  title: "Fixer ses tarifs en freelance : TJM et méthodes",
   description:
-    "Comment calculer son TJM en freelance ? Les 3 méthodes, les erreurs classiques (syndrome de l'imposteur, sous-évaluation des charges), et comment augmenter ses tarifs sans perdre ses clients.",
+    "Calculer son TJM en freelance : 3 méthodes, les erreurs classiques, et comment augmenter ses tarifs sans perdre ses clients.",
   alternates: { canonical: "https://getdeviso.fr/blog/fixer-ses-tarifs-freelance" },
   openGraph: {
     title: "Comment fixer ses tarifs en freelance : TJM, méthodes, erreurs à éviter",
@@ -93,7 +93,7 @@ export default function Page() {
       <article className="pt-36 pb-20 px-4 sm:px-6">
         <div className="max-w-3xl mx-auto">
 
-          <nav className="flex items-center gap-2 text-xs text-gray-600 mb-8">
+          <nav className="flex items-center gap-2 text-xs text-gray-400 mb-8">
             <Link href="/" className="hover:text-gray-400">Accueil</Link>
             <span>/</span>
             <Link href="/blog" className="hover:text-gray-400">Blog</Link>
@@ -104,7 +104,7 @@ export default function Page() {
           <div className="mb-10">
             <div className="flex items-center gap-3 mb-4">
               <span className="text-xs px-2.5 py-1 rounded-full bg-emerald-500/10 text-emerald-300 border border-emerald-500/20 font-medium">Problèmes freelance</span>
-              <span className="text-xs text-gray-600">29 juin 2026 · 7 min</span>
+              <span className="text-xs text-gray-400">29 juin 2026 · 7 min</span>
             </div>
             <h1 className="text-3xl sm:text-4xl font-semibold text-white leading-tight mb-4">
               Comment fixer ses tarifs en freelance : TJM, méthodes et erreurs à éviter
@@ -133,7 +133,7 @@ export default function Page() {
                     <p>÷ Jours facturables / mois (17 sur 20) : 17 jours</p>
                     <p className="border-t border-ds-border pt-1 mt-1 text-indigo-400 font-bold">= TJM minimum : 321 €/jour</p>
                   </div>
-                  <p className="text-xs text-gray-600 mt-3">Ajoutez une marge de 20-30% pour les périodes creuses, les formations, les imprévus. TJM recommandé ici : ~400€/jour.</p>
+                  <p className="text-xs text-gray-400 mt-3">Ajoutez une marge de 20-30% pour les périodes creuses, les formations, les imprévus. TJM recommandé ici : ~400€/jour.</p>
                 </div>
 
                 <div className="bg-ds-surface border border-ds-border rounded-xl p-6">
@@ -150,7 +150,7 @@ export default function Page() {
                     <h3 className="font-semibold text-white">La méthode de la valeur délivrée (value-based pricing)</h3>
                   </div>
                   <p className="text-gray-400 text-sm leading-relaxed mb-3">Au lieu de facturer votre temps, vous facturez la valeur que vous créez pour le client. Un consultant qui aide une PME à gagner 100 000€ de CA supplémentaire peut facturer 20 000€ de mission, même si ça lui a pris 20 jours. C&apos;est la méthode la plus rentable, mais elle requiert une bonne compréhension de l&apos;impact de votre travail et la capacité à le quantifier.</p>
-                  <p className="text-xs text-gray-600">Particulièrement adaptée aux consultants, coachs business, spécialistes SEO, experts en conversion.</p>
+                  <p className="text-xs text-gray-400">Particulièrement adaptée aux consultants, coachs business, spécialistes SEO, experts en conversion.</p>
                 </div>
               </div>
             </section>
@@ -240,7 +240,7 @@ export default function Page() {
           </div>
 
           <div className="mt-14 pt-8 border-t border-ds-border">
-            <p className="text-xs text-gray-600 mb-4">Guides par métier</p>
+            <p className="text-xs text-gray-400 mb-4">Guides par métier</p>
             <div className="flex flex-wrap gap-2">
               {metierLinks.map((m) => (
                 <Link key={m.href} href={m.href} className="text-xs px-3 py-1.5 rounded-lg bg-ds-surface border border-ds-border text-gray-500 hover:text-gray-300 hover:border-indigo-500/30 transition-all">{m.label}</Link>
@@ -252,7 +252,7 @@ export default function Page() {
       </article>
 
       <footer className="border-t border-ds-border py-10 px-4 sm:px-6">
-        <div className="max-w-6xl mx-auto flex items-center justify-between text-xs text-gray-600">
+        <div className="max-w-6xl mx-auto flex items-center justify-between text-xs text-gray-400">
           <p>© 2026 Deviso · SafeTone Studio · SIREN 103 340 857</p>
           <Link href="/" className="text-gray-500 hover:text-gray-300 transition-colors">getdeviso.fr</Link>
         </div>

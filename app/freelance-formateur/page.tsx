@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { FreelanceLanding } from "@/components/landing/FreelanceLanding";
 
 export const metadata: Metadata = {
-  title: "Devis et facturation pour formateurs indépendants | Deviso",
+  title: "Devis et facturation pour formateurs indépendants",
   description:
     "Génère un devis de formation en 30 secondes avec tous les éléments OPCO requis. Acompte & solde, Factur-X conforme 2026. Essai gratuit.",
   alternates: { canonical: "https://getdeviso.fr/freelance-formateur" },

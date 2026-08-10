@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { BlogPost } from "@/components/blog/BlogPost";
 
 export const metadata: Metadata = {
-  title: "Devis consultant indépendant : propale, TJM, livrables | Deviso",
+  title: "Devis consultant indépendant : propale et TJM",
   description:
     "Comment rédiger une proposition commerciale de consultant indépendant : livrables, TJM, confidentialité, grands comptes. Exemple et erreurs à éviter.",
   alternates: { canonical: "https://getdeviso.fr/blog/devis-consultant-independant" },

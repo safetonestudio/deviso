@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { BlogPost } from "@/components/blog/BlogPost";
 
 export const metadata: Metadata = {
-  title: "Devis photographe freelance : droits d'auteur, acompte, exemple | Deviso",
+  title: "Devis photographe : droits d'auteur et acompte",
   description:
     "Comment rédiger un devis de photographe freelance : droits d'utilisation, retouches, frais de déplacement, acompte. Exemple concret et erreurs à éviter.",
   alternates: { canonical: "https://getdeviso.fr/blog/devis-photographe-freelance" },

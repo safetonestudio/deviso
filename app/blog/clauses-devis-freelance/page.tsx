@@ -4,9 +4,9 @@ import { NavbarMobile } from "@/components/NavbarMobile";
 import { WaitlistButton } from "@/components/landing/WaitlistButton";
 
 export const metadata: Metadata = {
-  title: "Les clauses indispensables dans un devis freelance, Guide complet 2026",
+  title: "Clauses indispensables d'un devis freelance",
   description:
-    "Périmètre, acompte, révisions, propriété intellectuelle, résiliation, NDA, toutes les clauses à inclure dans votre devis freelance pour vous protéger juridiquement. Guide complet avec exemples de formulations.",
+    "Périmètre, acompte, révisions, propriété intellectuelle, résiliation : les 9 clauses à mettre dans un devis freelance, avec formulations prêtes à l'emploi.",
   alternates: { canonical: "https://getdeviso.fr/blog/clauses-devis-freelance" },
   openGraph: {
     title: "Les clauses indispensables dans un devis freelance, Guide complet 2026",
@@ -304,10 +304,10 @@ export default function Page() {
         <div className="max-w-3xl mx-auto">
 
           {/* Breadcrumb */}
-          <nav className="flex items-center gap-2 text-xs text-gray-600 mb-8">
-            <Link href="/" className="hover:text-gray-400 transition-colors">Accueil</Link>
+          <nav className="flex items-center gap-2 text-xs text-gray-400 mb-8">
+            <Link href="/" className="hover:text-white transition-colors">Accueil</Link>
             <span>/</span>
-            <Link href="/blog" className="hover:text-gray-400 transition-colors">Blog</Link>
+            <Link href="/blog" className="hover:text-white transition-colors">Blog</Link>
             <span>/</span>
             <span className="text-gray-400">Clauses devis freelance</span>
           </nav>
@@ -316,7 +316,7 @@ export default function Page() {
           <div className="mb-10">
             <div className="flex items-center gap-3 mb-4">
               <span className="text-xs px-2.5 py-1 rounded-full bg-indigo-500/10 text-indigo-300 border border-indigo-500/20 font-medium">Guide complet</span>
-              <span className="text-xs text-gray-600">29 juin 2026 · 10 min</span>
+              <span className="text-xs text-gray-400">29 juin 2026 · 10 min</span>
             </div>
             <h1 className="text-3xl sm:text-4xl font-semibold text-white leading-tight mb-4">
               Les clauses indispensables dans un devis freelance
@@ -360,7 +360,7 @@ export default function Page() {
                   <span className={`font-mono text-2xl font-bold ${numColorMap[clause.color]}`}>{clause.num}</span>
                   <div>
                     <h2 className="text-xl font-semibold text-white">{clause.title}</h2>
-                    <span className="text-xs text-gray-600">Risque couvert : {clause.risk}</span>
+                    <span className="text-xs text-gray-400">Risque couvert : {clause.risk}</span>
                   </div>
                 </div>
 
@@ -374,7 +374,7 @@ export default function Page() {
 
                 {/* Professions */}
                 <div className="mb-4">
-                  <p className="text-xs text-gray-600 mb-2">Particulièrement important pour :</p>
+                  <p className="text-xs text-gray-400 mb-2">Particulièrement important pour :</p>
                   <div className="flex flex-wrap gap-2">
                     {clause.professions.map((p) => (
                       <Link
@@ -427,7 +427,7 @@ export default function Page() {
 
           {/* Métiers */}
           <div className="mt-16 pt-8 border-t border-ds-border">
-            <p className="text-xs text-gray-600 mb-4">Guides par métier</p>
+            <p className="text-xs text-gray-400 mb-4">Guides par métier</p>
             <div className="flex flex-wrap gap-2">
               {metierLinks.map((m) => (
                 <Link
@@ -478,7 +478,7 @@ export default function Page() {
               </ul>
             </div>
           </div>
-          <div className="flex items-center justify-between text-xs text-gray-600">
+          <div className="flex items-center justify-between text-xs text-gray-400">
             <p>© 2026 Deviso · SafeTone Studio · SIREN 103 340 857</p>
             <Link href="/" className="text-gray-500 hover:text-gray-300 transition-colors">getdeviso.fr</Link>
           </div>

@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { BlogPost } from "@/components/blog/BlogPost";
 
 export const metadata: Metadata = {
-  title: "Devis rédacteur web freelance : tarifs, révisions, droits | Deviso",
+  title: "Devis rédacteur web : tarifs et droits",
   description:
     "Comment rédiger un devis de rédaction web ou copywriting : tarif au mot ou à la page, révisions, cession de droits, relances. Exemple et erreurs à éviter.",
   alternates: { canonical: "https://getdeviso.fr/blog/devis-redacteur-web" },

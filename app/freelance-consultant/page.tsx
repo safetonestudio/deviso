@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { FreelanceLanding } from "@/components/landing/FreelanceLanding";
 
 export const metadata: Metadata = {
-  title: "Devis et facturation pour consultants freelances | Deviso",
+  title: "Devis et facturation pour consultants freelances",
   description:
     "Génère un devis de mission de conseil en 30 secondes. Facture Factur-X conforme 2026, Chorus Pro B2G, suivi CA en temps réel. Essai gratuit.",
   alternates: { canonical: "https://getdeviso.fr/freelance-consultant" },

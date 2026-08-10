@@ -2,9 +2,9 @@ import type { Metadata } from "next";
 import { BlogPost } from "@/components/blog/BlogPost";
 
 export const metadata: Metadata = {
-  title: "Devis community manager freelance : périmètre, forfait mensuel, erreurs | Deviso",
+  title: "Devis community manager : forfait et périmètre",
   description:
-    "Comment rédiger un devis de community manager freelance : définir le périmètre exact (plateformes, posts, visuels), forfaits mensuels, conditions de résiliation. Exemple et erreurs à éviter.",
+    "Devis de community manager : définir le périmètre (plateformes, posts, visuels), forfait mensuel, résiliation. Exemple et erreurs à éviter.",
   alternates: { canonical: "https://getdeviso.fr/blog/devis-community-manager" },
   openGraph: {
     title: "Devis community manager freelance : périmètre, forfait mensuel, erreurs",

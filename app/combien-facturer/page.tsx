@@ -6,7 +6,7 @@ import { TARIFS_DATA } from "@/lib/tarifs-data";
 export const metadata: Metadata = {
   title: "Combien facturer en freelance ? TJM par métier 2026",
   description:
-    "Découvrez les TJM (tarifs journaliers moyens) par métier en France : graphiste, développeur, consultant, photographe, formateur et plus. Simulateur de revenus inclus.",
+    "TJM par métier en France : graphiste, développeur, consultant, photographe, formateur et plus. Simulateur de revenus freelance inclus.",
   alternates: { canonical: "https://getdeviso.fr/combien-facturer" },
   openGraph: {
     title: "Combien facturer en freelance ? TJM par métier 2026",
@@ -136,7 +136,7 @@ export default function CombienFacturerPage() {
               </tbody>
             </table>
           </div>
-          <p className="text-xs text-gray-600 mt-3">
+          <p className="text-xs text-gray-400 mt-3">
             Sources : Malt Baromètre 2026, URSSAF. Tarifs hors TVA, en €/jour.
           </p>
         </section>
@@ -269,7 +269,7 @@ export default function CombienFacturerPage() {
               </Link>
             ))}
           </div>
-          <p className="text-xs text-gray-700 mt-4">
+          <p className="text-xs text-gray-400 mt-4">
             © {new Date().getFullYear()} Deviso ·{" "}
             <Link href="/" className="hover:text-gray-500 transition-colors">Accueil</Link>
             {" · "}

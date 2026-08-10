@@ -2,9 +2,9 @@ import type { Metadata } from "next";
 import { BlogPost } from "@/components/blog/BlogPost";
 
 export const metadata: Metadata = {
-  title: "Devis formateur indépendant : mentions OPCO, exemple 2026 | Deviso",
+  title: "Devis formateur : mentions OPCO et exemple",
   description:
-    "Comment rédiger un devis de formation professionnelle : mentions obligatoires OPCO, objectifs pédagogiques, acompte/solde, Factur-X. Exemple et erreurs à éviter.",
+    "Devis de formation : mentions OPCO obligatoires, objectifs pédagogiques, acompte et solde. Exemple concret et erreurs à éviter.",
   alternates: { canonical: "https://getdeviso.fr/blog/devis-formateur-independant" },
   openGraph: {
     title: "Devis formateur indépendant : mentions OPCO et exemple 2026",
