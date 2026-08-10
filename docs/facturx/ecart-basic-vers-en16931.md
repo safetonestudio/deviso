@@ -1,4 +1,21 @@
-# Factur-X : écart entre l'implémentation actuelle (BASIC) et EN 16931
+# Factur-X : migration du profil BASIC vers EN 16931
+
+> ✅ **RÉSOLU le 13/07/2026.** Le générateur produit désormais du EN 16931 valide.
+> Cas vérifiés contre le validateur officiel : B2B TVA 20 % (170 contrôles),
+> franchise art. 293 B (165), facture de solde avec acompte lié (168) —
+> 0 erreur, 0 avertissement sur les trois.
+>
+> Découverte lors de la migration : **BR-E-02** impose un identifiant fiscal
+> vendeur même en franchise de TVA. Sans n° de TVA, il faut fournir BT-32
+> (`SpecifiedTaxRegistration` avec `schemeID="FC"`) = le SIREN. Sans cela, toutes
+> les factures de micro-entrepreneurs en franchise étaient rejetées.
+>
+> Le document ci-dessous décrit l'analyse initiale et reste la référence des
+> règles à respecter.
+
+---
+
+## Analyse initiale (avant migration)
 
 Analyse réalisée le 13/07/2026 en soumettant le XML réellement produit par `lib/invoice-xml.ts` au validateur officiel de Super PDP (`POST https://api.superpdp.tech/v1.beta/validation_reports`), puis en corrigeant les erreurs une par une jusqu'à obtenir un document valide.
 
