@@ -909,7 +909,7 @@ const ARTICLES: Record<string, Article> = {
             facture de mars en décembre, c&apos;est bien plus laborieux que de l&apos;identifier dans le mois.
           </Warning>
           <Note>
-            Les factures Deviso sont au format <B>Factur-X EN 16931</B> (PDF avec données XML
+            Les factures Deviso sont au format <B>Factur-X EN 16931</B> (PDF/A-3 avec données XML
             embarquées), conformes à la réforme de facturation électronique 2026.
           </Note>
         </Section>

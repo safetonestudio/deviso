@@ -488,7 +488,7 @@ export default function InvoiceDetailPage() {
             <div>
               <p className="text-sm font-semibold text-indigo-300">Factur-X EN 16931 · Conforme réforme 2026</p>
               <p className="text-xs text-indigo-400">
-                PDF avec XML CII embarqué ·{" "}
+                PDF/A-3 avec XML CII embarqué ·{" "}
                 {invoice.payment_on_debit ? "TVA sur débits" : "TVA sur encaissements"} ·{" "}
                 {invoice.operation_category === "services" ? "Prestations de services" :
                  invoice.operation_category === "goods" ? "Livraison de biens" : "Mixte"}

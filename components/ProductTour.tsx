@@ -21,7 +21,7 @@ const STEPS_OWNER = [
   {
     target: "invoices",
     title: "Factures Factur-X conformes 2026",
-    body: "Convertis un devis signé en facture en un clic. Deviso génère un PDF Factur-X au profil EN 16931, la norme obligatoire en France à partir de 2026. Tu peux créer des factures d'acompte (ex. 30 % à la commande) et de solde liées entre elles, avec numérotation automatique. En Pro, programme des factures récurrentes pour tes abonnements et contrats mensuels. Pour les marchés publics, dépose ta facture directement sur Chorus Pro en un clic depuis la facture.",
+    body: "Convertis un devis signé en facture en un clic. Deviso génère un PDF/A-3 Factur-X au profil EN 16931, la norme obligatoire en France à partir de 2026. Tu peux créer des factures d'acompte (ex. 30 % à la commande) et de solde liées entre elles, avec numérotation automatique. En Pro, programme des factures récurrentes pour tes abonnements et contrats mensuels. Pour les marchés publics, dépose ta facture directement sur Chorus Pro en un clic depuis la facture.",
   },
   {
     target: "paiements",
@@ -72,7 +72,7 @@ const STEPS_MEMBER = [
   {
     target: "invoices",
     title: "Factures Factur-X conformes 2026",
-    body: "Convertis un devis signé en facture en un clic. Deviso génère un PDF Factur-X au profil EN 16931, la norme obligatoire en France à partir de 2026. Tu peux créer des factures d'acompte et de solde liées entre elles, avec numérotation automatique.",
+    body: "Convertis un devis signé en facture en un clic. Deviso génère un PDF/A-3 Factur-X au profil EN 16931, la norme obligatoire en France à partir de 2026. Tu peux créer des factures d'acompte et de solde liées entre elles, avec numérotation automatique.",
   },
   {
     target: "catalogue",
