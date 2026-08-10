@@ -1,4 +1,7 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
+/* Inter est chargée via next/font (voir app/layout.tsx) : la police est
+   auto-hébergée au build. Un @import vers fonts.googleapis.com serait bloqué
+   par notre CSP, ralentirait le rendu et enverrait l'IP de chaque visiteur
+   à Google — incompatible avec nos engagements RGPD. */
 
 @tailwind base;
 @tailwind components;

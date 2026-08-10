@@ -1,5 +1,15 @@
 import type { Metadata, Viewport } from "next";
+import { Inter } from "next/font/google";
 import "./globals.css";
+
+// Police téléchargée et servie depuis notre domaine au moment du build :
+// aucune requête vers Google côté visiteur, aucun ajustement de CSP requis.
+const inter = Inter({
+  subsets: ["latin"],
+  weight: ["300", "400", "500", "600", "700", "800", "900"],
+  display: "swap",
+  variable: "--font-inter",
+});
 import { ServiceWorkerRegistration } from "@/components/ServiceWorker";
 // Sous-chemin /next (et non /react) : il branche le suivi sur le routeur de
 // Next.js, sinon les changements de page côté client ne sont pas comptabilisés.
@@ -85,7 +95,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="fr">
+    <html lang="fr" className={inter.variable}>
       <body className="bg-[#080808] text-white antialiased">
         <ServiceWorkerRegistration />
         {children}
