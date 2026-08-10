@@ -560,7 +560,7 @@ export function InvoicePDF({ invoice, accentColor, paymentInfo, linkedInvoiceNum
             {idLabel(invoice.seller_siren) ? ` • ${idLabel(invoice.seller_siren)}` : ""}
           </Text>
           <Text style={[styles.facturxBadge, { color: accent }]}>
-            Factur-X BASIC — Conforme réforme 2026
+            Factur-X EN 16931 — Conforme réforme 2026
           </Text>
         </View>
       </Page>

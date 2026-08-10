@@ -45,7 +45,7 @@ async function seedDemoData(userId: string) {
     seller_company: "Studio Créatif MD",
     seller_siren: "82134756100018",
     seller_address: "12 rue de la Paix, 75001 Paris",
-    seller_tva_number: "FR82134756100",
+    seller_tva_number: "FR01821347561",
   };
 
   // ── Clients récurrents ──────────────────────────────────────────────────────
@@ -154,6 +154,7 @@ async function seedDemoData(userId: string) {
       client_email: "contact@agence-lumiere.fr",
       client_company: "Agence Lumière",
       client_address: "45 avenue des Arts, 69001 Lyon",
+      client_siren: "812345678",
       items: [
         { id: crypto.randomUUID(), description: "Audit UX complet", quantity: 1, unit: "forfait", unit_price: 800, total: 800 },
         { id: crypto.randomUUID(), description: "Création logo + charte graphique", quantity: 1, unit: "forfait", unit_price: 1800, total: 1800 },
@@ -183,6 +184,7 @@ async function seedDemoData(userId: string) {
       client_email: "numerique@saint-cloud.fr",
       client_company: "Mairie de Saint-Cloud",
       client_address: "2 place Charles de Gaulle, 92210 Saint-Cloud",
+      client_siren: "219202100",
       items: [
         { id: crypto.randomUUID(), description: "Audit UX complet du portail citoyen", quantity: 1, unit: "forfait", unit_price: 800, total: 800 },
         { id: crypto.randomUUID(), description: "Maquettes Figma (wireframes → haute fidélité)", quantity: 1, unit: "forfait", unit_price: 1200, total: 1200 },
@@ -211,6 +213,7 @@ async function seedDemoData(userId: string) {
       client_email: "hello@startupx.io",
       client_company: "StartupX",
       client_address: "12 rue du Faubourg, 75011 Paris",
+      client_siren: "903456712",
       items: [
         { id: crypto.randomUUID(), description: "Refonte UI site web (8 pages clés)", quantity: 1, unit: "forfait", unit_price: 2000, total: 2000 },
         { id: crypto.randomUUID(), description: "Landing page complète (page acquisition)", quantity: 1, unit: "forfait", unit_price: 1500, total: 1500 },
@@ -240,6 +243,7 @@ async function seedDemoData(userId: string) {
       client_email: "contact@boutique-elegance.fr",
       client_company: "Boutique Élégance",
       client_address: "22 rue du Commerce, 31000 Toulouse",
+      client_siren: "754321896",
       items: [
         { id: crypto.randomUUID(), description: "Audit UX complet boutique en ligne", quantity: 1, unit: "forfait", unit_price: 800, total: 800 },
         { id: crypto.randomUUID(), description: "Refonte UI site web (12 pages clés)", quantity: 1, unit: "forfait", unit_price: 2000, total: 2000 },
@@ -269,6 +273,7 @@ async function seedDemoData(userId: string) {
       client_email: "contact@cabinetmartin.fr",
       client_company: "Cabinet Martin & Associés",
       client_address: "8 place de la Bourse, 33000 Bordeaux",
+      client_siren: "442198735",
       items: [
         { id: crypto.randomUUID(), description: "Formation design intra-entreprise, 2 journées × 7h", quantity: 14, unit: "heure", unit_price: 200, total: 2800 },
         { id: crypto.randomUUID(), description: "Supports de cours personnalisés (création)", quantity: 1, unit: "forfait", unit_price: 400, total: 400 },
@@ -303,6 +308,7 @@ async function seedDemoData(userId: string) {
       client_email: "contact@agence-lumiere.fr",
       client_company: "Agence Lumière",
       client_address: "45 avenue des Arts, 69001 Lyon",
+      client_siren: "812345678",
       items: [
         { id: crypto.randomUUID(), description: "Création logo + charte graphique", quantity: 1, unit: "forfait", unit_price: 1800, total: 1800 },
       ],
@@ -325,6 +331,7 @@ async function seedDemoData(userId: string) {
       client_email: "hello@startupx.io",
       client_company: "StartupX",
       client_address: "12 rue du Faubourg, 75011 Paris",
+      client_siren: "903456712",
       items: [
         { id: crypto.randomUUID(), description: "Consulting UX / design, Juillet–Août 2025", quantity: 12, unit: "heure", unit_price: 150, total: 1800 },
       ],
@@ -347,6 +354,7 @@ async function seedDemoData(userId: string) {
       client_email: "contact@cabinetmartin.fr",
       client_company: "Cabinet Martin & Associés",
       client_address: "8 place de la Bourse, 33000 Bordeaux",
+      client_siren: "442198735",
       items: [
         { id: crypto.randomUUID(), description: "Audit UX complet site cabinet", quantity: 1, unit: "forfait", unit_price: 800, total: 800 },
         { id: crypto.randomUUID(), description: "Maquettes Figma (wireframes → haute fidélité)", quantity: 1, unit: "forfait", unit_price: 1200, total: 1200 },
@@ -369,6 +377,7 @@ async function seedDemoData(userId: string) {
       client_email: "contact@agence-lumiere.fr",
       client_company: "Agence Lumière",
       client_address: "45 avenue des Arts, 69001 Lyon",
+      client_siren: "812345678",
       items: [
         { id: crypto.randomUUID(), description: "Landing page complète (refonte page services)", quantity: 1, unit: "forfait", unit_price: 1500, total: 1500 },
       ],
@@ -391,6 +400,7 @@ async function seedDemoData(userId: string) {
       client_email: "contact@boutique-elegance.fr",
       client_company: "Boutique Élégance",
       client_address: "22 rue du Commerce, 31000 Toulouse",
+      client_siren: "754321896",
       items: [
         { id: crypto.randomUUID(), description: "Refonte UI boutique en ligne (8 pages clés)", quantity: 1, unit: "forfait", unit_price: 2000, total: 2000 },
         { id: crypto.randomUUID(), description: "Droits de cession (web + réseaux)", quantity: 1, unit: "forfait", unit_price: 600, total: 600 },
@@ -413,6 +423,7 @@ async function seedDemoData(userId: string) {
       client_email: "hello@startupx.io",
       client_company: "StartupX",
       client_address: "12 rue du Faubourg, 75011 Paris",
+      client_siren: "903456712",
       items: [
         { id: crypto.randomUUID(), description: "Refonte UI site web StartupX (6 pages)", quantity: 1, unit: "forfait", unit_price: 2000, total: 2000 },
       ],
@@ -435,6 +446,7 @@ async function seedDemoData(userId: string) {
       client_email: "contact@agence-lumiere.fr",
       client_company: "Agence Lumière",
       client_address: "45 avenue des Arts, 69001 Lyon",
+      client_siren: "812345678",
       items: [
         { id: crypto.randomUUID(), description: "Formation design intra-entreprise, 8h", quantity: 8, unit: "heure", unit_price: 200, total: 1600 },
       ],
@@ -456,6 +468,7 @@ async function seedDemoData(userId: string) {
       client_email: "contact@cabinetmartin.fr",
       client_company: "Cabinet Martin & Associés",
       client_address: "8 place de la Bourse, 33000 Bordeaux",
+      client_siren: "442198735",
       items: [
         { id: crypto.randomUUID(), description: "Consulting UX / design, Oct.–Nov. 2025", quantity: 10, unit: "heure", unit_price: 150, total: 1500 },
       ],
@@ -478,6 +491,7 @@ async function seedDemoData(userId: string) {
       client_email: "hello@startupx.io",
       client_company: "StartupX",
       client_address: "12 rue du Faubourg, 75011 Paris",
+      client_siren: "903456712",
       items: [
         { id: crypto.randomUUID(), description: "Maquettes Figma nouvelle app (wireframes → haute fidélité)", quantity: 1, unit: "forfait", unit_price: 1200, total: 1200 },
         { id: crypto.randomUUID(), description: "Droits de cession (web + réseaux)", quantity: 1, unit: "forfait", unit_price: 600, total: 600 },
@@ -503,6 +517,7 @@ async function seedDemoData(userId: string) {
       client_email: "contact@boutique-elegance.fr",
       client_company: "Boutique Élégance",
       client_address: "22 rue du Commerce, 31000 Toulouse",
+      client_siren: "754321896",
       items: [
         { id: crypto.randomUUID(), description: "Landing page complète, Collection printemps 2026", quantity: 1, unit: "forfait", unit_price: 1500, total: 1500 },
       ],
@@ -525,6 +540,7 @@ async function seedDemoData(userId: string) {
       client_email: "contact@cabinetmartin.fr",
       client_company: "Cabinet Martin & Associés",
       client_address: "8 place de la Bourse, 33000 Bordeaux",
+      client_siren: "442198735",
       items: [
         { id: crypto.randomUUID(), description: "Audit UX complet site cabinet (refonte partielle)", quantity: 1, unit: "forfait", unit_price: 800, total: 800 },
         { id: crypto.randomUUID(), description: "Consulting UX / design, Suivi recommandations", quantity: 6, unit: "heure", unit_price: 150, total: 900 },
@@ -548,6 +564,7 @@ async function seedDemoData(userId: string) {
       client_email: "contact@agence-lumiere.fr",
       client_company: "Agence Lumière",
       client_address: "45 avenue des Arts, 69001 Lyon",
+      client_siren: "812345678",
       items: [
         { id: crypto.randomUUID(), description: "Refonte UI site web Agence Lumière", quantity: 1, unit: "forfait", unit_price: 2000, total: 2000 },
         { id: crypto.randomUUID(), description: "Landing page complète (page cas clients)", quantity: 1, unit: "forfait", unit_price: 1500, total: 1500 },
@@ -571,6 +588,7 @@ async function seedDemoData(userId: string) {
       client_email: "hello@startupx.io",
       client_company: "StartupX",
       client_address: "12 rue du Faubourg, 75011 Paris",
+      client_siren: "903456712",
       items: [
         { id: crypto.randomUUID(), description: "Formation design intra-entreprise, 8h", quantity: 8, unit: "heure", unit_price: 200, total: 1600 },
         { id: crypto.randomUUID(), description: "Consulting UX / design, Workshop produit", quantity: 4, unit: "heure", unit_price: 150, total: 600 },
@@ -594,6 +612,7 @@ async function seedDemoData(userId: string) {
       client_email: "contact@boutique-elegance.fr",
       client_company: "Boutique Élégance",
       client_address: "22 rue du Commerce, 31000 Toulouse",
+      client_siren: "754321896",
       items: [
         { id: crypto.randomUUID(), description: "Maquettes Figma collection été, desktop + mobile", quantity: 1, unit: "forfait", unit_price: 1200, total: 1200 },
         { id: crypto.randomUUID(), description: "Droits de cession (web + réseaux)", quantity: 1, unit: "forfait", unit_price: 600, total: 600 },
@@ -616,6 +635,7 @@ async function seedDemoData(userId: string) {
       client_email: "numerique@saint-cloud.fr",
       client_company: "Mairie de Saint-Cloud",
       client_address: "2 place Charles de Gaulle, 92210 Saint-Cloud",
+      client_siren: "219202100",
       items: [
         { id: crypto.randomUUID(), description: "Audit UX portail citoyen", quantity: 1, unit: "forfait", unit_price: 800, total: 800 },
         { id: crypto.randomUUID(), description: "Maquettes Figma portail citoyen (wireframes → haute fidélité)", quantity: 1, unit: "forfait", unit_price: 1200, total: 1200 },
@@ -642,6 +662,7 @@ async function seedDemoData(userId: string) {
       client_email: "contact@agence-lumiere.fr",
       client_company: "Agence Lumière",
       client_address: "45 avenue des Arts, 69001 Lyon",
+      client_siren: "812345678",
       items: [
         { id: crypto.randomUUID(), description: "Création logo + charte graphique (client référencé Agence Lumière)", quantity: 1, unit: "forfait", unit_price: 1800, total: 1800 },
       ],
@@ -663,6 +684,7 @@ async function seedDemoData(userId: string) {
       client_email: "contact@cabinetmartin.fr",
       client_company: "Cabinet Martin & Associés",
       client_address: "8 place de la Bourse, 33000 Bordeaux",
+      client_siren: "442198735",
       items: [
         { id: crypto.randomUUID(), description: "Retouches et révisions, Charte graphique", quantity: 4, unit: "heure", unit_price: 90, total: 360 },
         { id: crypto.randomUUID(), description: "Consulting UX, Bilan semestriel", quantity: 2, unit: "heure", unit_price: 150, total: 300 },
@@ -686,6 +708,7 @@ async function seedDemoData(userId: string) {
       client_email: "contact@boutique-elegance.fr",
       client_company: "Boutique Élégance",
       client_address: "22 rue du Commerce, 31000 Toulouse",
+      client_siren: "754321896",
       items: [
         { id: crypto.randomUUID(), description: "Refonte e-commerce Boutique Élégance, Acompte 30%", quantity: 1, unit: "forfait", unit_price: 1380, total: 1380 },
       ],
@@ -707,6 +730,7 @@ async function seedDemoData(userId: string) {
       client_email: "hello@startupx.io",
       client_company: "StartupX",
       client_address: "12 rue du Faubourg, 75011 Paris",
+      client_siren: "903456712",
       items: [
         { id: crypto.randomUUID(), description: "Maintenance et support technique, Juin 2026", quantity: 1, unit: "forfait", unit_price: 400, total: 400 },
       ],
@@ -751,6 +775,7 @@ async function seedDemoData(userId: string) {
       client_email: "hello@startupx.io",
       client_company: "StartupX",
       client_address: "12 rue du Faubourg, 75011 Paris",
+      client_siren: "903456712",
       items: [
         { id: crypto.randomUUID(), description: "Maintenance et support technique mensuel", quantity: 1, unit: "forfait", unit_price: 400, total: 400 },
       ],

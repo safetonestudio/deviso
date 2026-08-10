@@ -486,9 +486,9 @@ export default function InvoiceDetailPage() {
           <div className="bg-indigo-500/10 border border-indigo-500/20 rounded-xl px-5 py-3 flex items-center gap-3">
             <span className="text-indigo-400 text-lg">✦</span>
             <div>
-              <p className="text-sm font-semibold text-indigo-300">Factur-X BASIC · Conforme réforme 2026</p>
+              <p className="text-sm font-semibold text-indigo-300">Factur-X EN 16931 · Conforme réforme 2026</p>
               <p className="text-xs text-indigo-400">
-                PDF/A-3 avec XML CII embarqué ·{" "}
+                PDF avec XML CII embarqué ·{" "}
                 {invoice.payment_on_debit ? "TVA sur débits" : "TVA sur encaissements"} ·{" "}
                 {invoice.operation_category === "services" ? "Prestations de services" :
                  invoice.operation_category === "goods" ? "Livraison de biens" : "Mixte"}

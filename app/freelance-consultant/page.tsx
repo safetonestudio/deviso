@@ -37,7 +37,7 @@ export default function Page() {
         {
           icon: "🏢",
           title: "Les grands comptes veulent du Factur-X",
-          desc: "Banques, assurances, grands groupes, la facture électronique B2B devient obligatoire dès 2026. Deviso génère du Factur-X BASIC natif, sans effort de ta part.",
+          desc: "Banques, assurances, grands groupes, la facture électronique B2B devient obligatoire dès 2026. Deviso génère du Factur-X EN 16931 natif, sans effort de ta part.",
         },
         {
           icon: "📊",

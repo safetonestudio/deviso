@@ -224,7 +224,7 @@ export default function InvoicesPage() {
       <div className="flex flex-wrap items-start justify-between gap-3 mb-8">
         <div>
           <h1 className="text-3xl font-semibold text-white tracking-tight">Mes factures</h1>
-          <p className="text-gray-400 text-sm mt-1">Factur-X BASIC, PDF/A-3 conforme réforme 2026</p>
+          <p className="text-gray-400 text-sm mt-1">Factur-X EN 16931, conforme réforme 2026</p>
         </div>
         <div className="flex items-center gap-2 flex-wrap">
           {isPro && tab === "invoices" && (

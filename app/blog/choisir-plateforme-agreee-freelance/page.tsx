@@ -195,7 +195,7 @@ export default function ChoisirPlateformeAgreeePage() {
             <div className="bg-ds-surface border border-ds-border rounded-xl p-5 space-y-3">
               {[
                 "Êtes-vous immatriculé PDP par la DGFiP ? Quelle est votre date d'immatriculation ?",
-                "Acceptez-vous le format Factur-X BASIC pour les petits volumes ?",
+                "Acceptez-vous le format Factur-X au profil EN 16931 ?",
                 "Quel est le coût pour une activité de 5 à 30 factures B2B par mois ?",
                 "Comment gérez-vous les factures en franchise de TVA (article 293B CGI) ?",
                 "Avez-vous une intégration avec [votre logiciel de facturation] ?",
@@ -216,7 +216,7 @@ export default function ChoisirPlateformeAgreeePage() {
               Deviso est en cours d&apos;intégration avec des PDP certifiées. L&apos;objectif est que vous n&apos;ayez <strong className="text-white">rien à faire</strong> : vous créez votre facture dans Deviso comme aujourd&apos;hui, et la transmission à la DGFiP via PDP se fait automatiquement.
             </p>
             <p className="mt-3">
-              En attendant, vos factures Deviso sont déjà au format Factur-X BASIC, le format que la PDP recevra et transmettra. Pas de travail de conversion, pas de reformatage. La donnée structurée est déjà là.
+              En attendant, vos factures Deviso sont déjà au format Factur-X EN 16931, le format que la PDP recevra et transmettra. Pas de travail de conversion, pas de reformatage. La donnée structurée est déjà là.
             </p>
             <p className="mt-3">
               Le calendrier Deviso : intégration PDP opérationnelle au <strong className="text-white">1er trimestre 2027</strong>, avant l&apos;obligation de septembre 2027.

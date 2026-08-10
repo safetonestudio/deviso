@@ -56,9 +56,9 @@ const CHECKLIST: ChecklistItem[] = [
     title: "Vérifier que votre logiciel de facturation supporte le Factur-X",
     description: "Le format Factur-X (PDF/A-3 + XML EN 16931) est le format pivot de la réforme pour les PME et indépendants. Si votre logiciel génère des PDF classiques ou des factures Word, il n'est pas conforme.",
     urgency: "high",
-    action: "Contacter l'éditeur de votre logiciel et demander : « Générez-vous des factures Factur-X BASIC conformes à la norme EN 16931 ? »",
+    action: "Contacter l'éditeur de votre logiciel et demander : « Générez-vous des factures Factur-X au profil EN 16931 ? »",
     details: [
-      "Factur-X BASIC = le profil adapté aux PME et indépendants",
+      "Factur-X EN 16931 = le profil recommandé pour les PME et indépendants",
       "Factur-X MINIMUM = très simplifié, limité à certains cas",
       "XRechnung, UBL = autres formats admis mais moins courants en France",
     ],
@@ -300,7 +300,7 @@ export default function ChecklistReforme2026Page() {
         <div className="rounded-2xl bg-indigo-500/[0.06] border border-indigo-500/20 p-8 text-center mb-14">
           <h2 className="text-xl font-bold text-white mb-3">Préparez-vous sans stress avec Deviso</h2>
           <p className="text-sm text-gray-400 mb-6 max-w-lg mx-auto">
-            Deviso génère déjà des factures Factur-X BASIC. L&apos;intégration PDP arrive avant septembre 2027. Essayez gratuitement pendant 14 jours, sans carte bancaire.
+            Deviso génère déjà des factures Factur-X au profil EN 16931. L&apos;intégration PDP arrive avant septembre 2027. Essayez gratuitement pendant 14 jours, sans carte bancaire.
           </p>
           <WaitlistButton plan="free" label="Essayer Deviso gratuitement →" className="inline-flex items-center gap-2 bg-indigo-600 hover:bg-indigo-500 text-white font-semibold px-6 py-3 rounded-xl transition-colors text-sm" />
           <p className="text-xs text-gray-600 mt-3">Factur-X inclus · PDP avant sept. 2027 · E-reporting géré automatiquement</p>

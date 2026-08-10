@@ -51,7 +51,7 @@ const jsonLd = {
         name: "Qu'est-ce que le format Factur-X ?",
         acceptedAnswer: {
           "@type": "Answer",
-          text: "Factur-X est le format hybride franco-allemand (PDF lisible + données XML structurées intégrées) reconnu comme standard en France. C'est le format accepté par la DGFiP et le plus simple à adopter pour les indépendants. Deviso génère automatiquement des factures au format Factur-X BASIC, aucune action n'est requise de votre part.",
+          text: "Factur-X est le format hybride franco-allemand (PDF lisible + données XML structurées intégrées) reconnu comme standard en France. C'est le format accepté par la DGFiP et le plus simple à adopter pour les indépendants. Deviso génère automatiquement des factures au format Factur-X EN 16931, aucune action n'est requise de votre part.",
         },
       },
       {
@@ -369,7 +369,7 @@ export default function FacturationElectronique2026Page() {
         <div className="rounded-2xl bg-indigo-500/[0.06] border border-indigo-500/20 p-8 text-center mb-14">
           <h2 className="text-xl font-bold text-white mb-3">Vos factures sont déjà conformes Factur-X</h2>
           <p className="text-sm text-gray-400 mb-6 max-w-lg mx-auto">
-            Deviso génère automatiquement des factures Factur-X BASIC, le format requis par la réforme. Aucune action de votre part, la conformité est intégrée.
+            Deviso génère automatiquement des factures Factur-X EN 16931, le format requis par la réforme. Aucune action de votre part, la conformité est intégrée.
           </p>
           <WaitlistButton plan="free" label="Essayer Deviso gratuitement →" className="inline-flex items-center gap-2 bg-indigo-600 hover:bg-indigo-500 text-white font-semibold px-6 py-3 rounded-xl transition-colors text-sm" />
         </div>

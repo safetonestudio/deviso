@@ -37,7 +37,7 @@ const CONTENT: Record<PageKey, { title: string; body: string }> = {
   },
   invoices: {
     title: "Tes factures",
-    body: "Tes factures sont générées au format Factur-X BASIC (PDF/A-3), conforme à la réforme de facturation électronique obligatoire en France à partir de 2026. Avant de créer ta première facture, configure ton moyen de paiement dans l'onglet \"Paiements clients\" : sans ça, la création est bloquée pour protéger tes clients. L'onglet \"Récurrentes\" (Pro) permet d'automatiser les factures mensuelles.",
+    body: "Tes factures sont générées au format Factur-X EN 16931, conforme à la réforme de facturation électronique obligatoire en France à partir de 2026. Avant de créer ta première facture, configure ton moyen de paiement dans l'onglet \"Paiements clients\" : sans ça, la création est bloquée pour protéger tes clients. L'onglet \"Récurrentes\" (Pro) permet d'automatiser les factures mensuelles.",
   },
   invoices_new: {
     title: "Créer une facture",
