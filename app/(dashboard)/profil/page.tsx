@@ -90,7 +90,11 @@ export default function ProfilPage() {
       full_name: profile.full_name ?? null,
       company_name: profile.company_name ?? null,
       siret: profile.siret ?? null,
-      address: profile.address ?? null,
+      // On envoie les champs séparés, jamais `address` : elle est recomposée par
+      // l'API. Renvoyer l'ancienne valeur composée écrasait la saisie.
+      address_street: profile.address_street ?? null,
+      address_postcode: profile.address_postcode ?? null,
+      address_city: profile.address_city ?? null,
       email: profile.email ?? null,
       phone: profile.phone ?? null,
       tva_number: profile.tva_number ?? null,
