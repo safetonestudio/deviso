@@ -101,7 +101,9 @@ export default function ProfilPage() {
       tva_regime: profile.tva_regime ?? null,
       proposal_template: profile.proposal_template ?? null,
       proposal_color: profile.proposal_color ?? null,
-      require_approval: profile.require_approval ?? null,
+      // `require_approval` se règle sur la page Équipe. Le renvoyer d'ici
+      // réécrivait la valeur chargée à l'ouverture de la page, annulant un
+      // changement fait entre-temps ailleurs.
     };
     const res = await fetch("/api/profile", {
       method: "PATCH",
