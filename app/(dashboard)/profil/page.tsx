@@ -743,7 +743,13 @@ Les présentes CGV sont soumises au droit français. Tout litige relève de la c
           <div>
             <h2 className="font-semibold text-white">Domaine d&apos;envoi personnalisé</h2>
             <p className="text-xs text-gray-500 mt-0.5">
-              Vos emails partiront depuis <span className="text-indigo-400 font-mono">devis@votredomaine.fr</span> et <span className="text-indigo-400 font-mono">facturation@votredomaine.fr</span> au lieu de noreply@getdeviso.fr.
+              {/* L'extension était codée en dur en .fr : un client en .com lisait
+                  un exemple faux et pouvait croire que son domaine était refusé.
+                  On reflète ce qu'il a saisi dès qu'il a saisi quelque chose. */}
+              Vos emails partiront depuis{" "}
+              <span className="text-indigo-400 font-mono">devis@{emailDomainInput || "votre-domaine.fr"}</span> et{" "}
+              <span className="text-indigo-400 font-mono">facturation@{emailDomainInput || "votre-domaine.fr"}</span>{" "}
+              au lieu de noreply@getdeviso.fr.
             </p>
           </div>
 
