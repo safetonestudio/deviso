@@ -45,6 +45,31 @@ export async function PATCH(req: NextRequest) {
   ];
   const updates = Object.fromEntries(Object.entries(body).filter(([k]) => allowed.includes(k)));
 
+  // `address` reste la forme affichable (PDF, en-têtes) mais n'est plus saisie
+  // directement : on la recompose depuis les champs structurés, dans un ordre
+  // canonique « rue, CP ville ». C'est ce qui rend l'extraction du code postal
+  // et de la ville déterministe côté Factur-X, au lieu de deviner dans du texte libre.
+  const touchesAddress = ["address_street", "address_postcode", "address_city"].some((k) => k in body);
+  if (touchesAddress) {
+    const { data: current } = await supabase
+      .from("profiles")
+      .select("address_street, address_postcode, address_city")
+      .eq("id", user.id)
+      .single();
+
+    const street   = (("address_street"   in body ? body.address_street   : current?.address_street)   as string | null)?.trim() || null;
+    const postcode = (("address_postcode" in body ? body.address_postcode : current?.address_postcode) as string | null)?.trim() || null;
+    const city     = (("address_city"     in body ? body.address_city     : current?.address_city)     as string | null)?.trim() || null;
+
+    updates.address_street = street;
+    updates.address_postcode = postcode;
+    updates.address_city = city;
+    updates.address_country = "FR";
+    updates.address = [street, [postcode, city].filter(Boolean).join(" ")]
+      .filter(Boolean)
+      .join(", ") || null;
+  }
+
   // ── Subdomain, Pro only ──
   if ("subdomain" in body) {
     const { data: profile } = await supabaseAdmin

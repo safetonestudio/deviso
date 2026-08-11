@@ -61,7 +61,12 @@ export interface Profile {
   full_name: string | null;
   company_name: string | null;
   siret: string | null;
+  /** Forme affichable, recomposée par l'API depuis les champs structurés ci-dessous. */
   address: string | null;
+  address_street: string | null;
+  address_postcode: string | null;
+  address_city: string | null;
+  address_country: string | null;
   email: string | null;
   phone: string | null;
   logo_url: string | null;

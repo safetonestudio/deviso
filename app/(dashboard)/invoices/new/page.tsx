@@ -610,7 +610,16 @@ export default function NewInvoicePage() {
               </div>
               <div className="col-span-2">
                 <label className="block text-xs font-medium text-gray-400 mb-1">Adresse de facturation</label>
-                <input value={clientAddress} onChange={(e) => setClientAddress(e.target.value)} className={inputCls} />
+                <input value={clientAddress} onChange={(e) => setClientAddress(e.target.value)} placeholder="5 rue Bossuet, 33140 Villenave-d'Ornon" className={inputCls} />
+                {/* Le code postal et la ville deviennent des éléments distincts du XML
+                    (BT-53, BT-52). Sans eux la Plateforme Agréée rejette la facture, et
+                    l'utilisateur n'a aucun moyen de le deviner depuis un champ libre. */}
+                {clientAddress.trim() !== "" && !/\d{5}/.test(clientAddress) && (
+                  <p className="mt-1 text-xs text-amber-200">
+                    Ajoutez le code postal et la ville — ils sont exigés pour l&apos;acheminement
+                    de la facture électronique.
+                  </p>
+                )}
               </div>
             </div>
           </section>

@@ -537,9 +537,21 @@ Les présentes CGV sont soumises au droit français. Tout litige relève de la c
               <label className="block text-xs font-medium text-gray-400 mb-1">Téléphone</label>
               <input value={profile.phone || ""} onChange={(e) => set("phone", e.target.value)} placeholder="+33 6 00 00 00 00" className={inputCls} />
             </div>
+            {/* Adresse en champs séparés : l'EN 16931 exige la rue (BT-35), le code
+                postal (BT-38) et la ville (BT-37) comme éléments distincts du XML.
+                Les déduire d'un champ libre par expression régulière produisait des
+                factures non conformes sans que personne ne le voie. */}
             <div className="col-span-2">
               <label className="block text-xs font-medium text-gray-400 mb-1">Adresse</label>
-              <input value={profile.address || ""} onChange={(e) => set("address", e.target.value)} placeholder="12 rue de la Paix, 75001 Paris" className={inputCls} />
+              <input value={profile.address_street || ""} onChange={(e) => set("address_street", e.target.value)} placeholder="24 Avenue de Gradignan" className={inputCls} />
+            </div>
+            <div>
+              <label className="block text-xs font-medium text-gray-400 mb-1">Code postal</label>
+              <input value={profile.address_postcode || ""} onChange={(e) => set("address_postcode", e.target.value)} placeholder="33170" inputMode="numeric" maxLength={10} className={inputCls} />
+            </div>
+            <div>
+              <label className="block text-xs font-medium text-gray-400 mb-1">Ville</label>
+              <input value={profile.address_city || ""} onChange={(e) => set("address_city", e.target.value)} placeholder="Gradignan" className={inputCls} />
             </div>
           </div>
         </section>
