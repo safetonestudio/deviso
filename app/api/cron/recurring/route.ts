@@ -119,6 +119,8 @@ export async function GET(req: NextRequest) {
 
         await resend.emails.send({
           from: "Deviso <noreply@getdeviso.fr>",
+          // Reply-To vers l'émetteur : sans lui, la réponse du client se perd.
+          ...(profile?.email ? { replyTo: profile.email } : {}),
           to: rec.client_email,
           subject: `Facture ${number}, ${amount}`,
           html,

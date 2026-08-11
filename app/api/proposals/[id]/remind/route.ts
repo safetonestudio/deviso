@@ -23,7 +23,7 @@ export async function POST(_req: NextRequest, { params }: Params) {
 
   const { data: profile } = await supabase
     .from("profiles")
-    .select("full_name, company_name")
+    .select("full_name, company_name, email")
     .eq("id", user.id)
     .single();
 
@@ -96,6 +96,8 @@ export async function POST(_req: NextRequest, { params }: Params) {
 
   const { error: emailError } = await resend.emails.send({
     from: "Deviso <noreply@getdeviso.fr>",
+    // Reply-To vers l'émetteur : sans lui, la réponse du client se perd.
+    ...(profile?.email ? { replyTo: profile.email } : {}),
     to: proposal.client_email,
     subject: `${urgency}, ${proposal.title} (${amount})`,
     html,

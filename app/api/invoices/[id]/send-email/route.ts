@@ -26,7 +26,7 @@ export async function POST(req: NextRequest, { params }: Params) {
 
   const { data: profileData } = await supabase
     .from("profiles")
-    .select("proposal_color, payment_method, payment_link_provider, payment_link_profile, bank_iban, bank_bic, bank_account_name, plan, company_name, full_name, email_domain, email_domain_verified")
+    .select("proposal_color, payment_method, payment_link_provider, payment_link_profile, bank_iban, bank_bic, bank_account_name, plan, company_name, full_name, email, email_domain, email_domain_verified")
     .eq("id", user.id)
     .single();
 
@@ -125,6 +125,8 @@ export async function POST(req: NextRequest, { params }: Params) {
 
   const { error: emailError } = await resend.emails.send({
     from: invoiceFrom,
+    // Idem : une question sur la facture doit atterrir chez l'émetteur.
+    ...(profileData?.email ? { replyTo: profileData.email } : {}),
     to: invoice.client_email,
     subject: `Votre facture de ${invoiceDisplayName} — ${invoice.invoice_number} (${amount})`,
     html,

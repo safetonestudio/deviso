@@ -20,6 +20,14 @@ export async function POST(req: NextRequest, { params }: Params) {
   if (!invoice) return NextResponse.json({ error: "Facture introuvable" }, { status: 404 });
   if (!invoice.client_email) return NextResponse.json({ error: "Email client manquant" }, { status: 400 });
 
+  // On charge le profil uniquement pour le Reply-To : une relance de paiement
+  // sans adresse de réponse valide est un aller simple vers l'impayé.
+  const { data: senderProfile } = await supabase
+    .from("profiles")
+    .select("email")
+    .eq("id", user.id)
+    .single();
+
   const clientName = invoice.client_company || invoice.client_name || "Client";
   const senderName = invoice.seller_company || invoice.seller_name || "Votre prestataire";
   const amount = new Intl.NumberFormat("fr-FR", { style: "currency", currency: "EUR" }).format(invoice.total_ttc);
@@ -85,6 +93,7 @@ export async function POST(req: NextRequest, { params }: Params) {
 
   const { error } = await resend.emails.send({
     from: "Deviso <noreply@getdeviso.fr>",
+    ...(senderProfile?.email ? { replyTo: senderProfile.email } : {}),
     to: invoice.client_email,
     subject: `${urgency}, Facture ${invoice.invoice_number} (${amount})`,
     html,

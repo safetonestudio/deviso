@@ -13,6 +13,8 @@ type OwnerProfile = {
   plan: string;
   full_name: string | null;
   company_name: string | null;
+  /** Adresse de réponse des relances automatiques. */
+  email: string | null;
   reminder_intervals: number[] | null;
   reminder_message: string | null;
 };
@@ -44,7 +46,7 @@ export async function GET(req: NextRequest) {
   // ── 1. Récupérer tous les profils Solo/Pro avec leurs config de relance ──
   const { data: ownerProfiles } = await supabase
     .from("profiles")
-    .select("id, plan, full_name, company_name, reminder_intervals, reminder_message")
+    .select("id, plan, full_name, company_name, email, reminder_intervals, reminder_message")
     .in("plan", ["solo", "pro"])
     .neq("is_demo", true);
 
@@ -92,6 +94,8 @@ export async function GET(req: NextRequest) {
 
     const { error: emailError } = await resend.emails.send({
       from: "Deviso <noreply@getdeviso.fr>",
+      // Reply-To vers l'émetteur : sans lui, la réponse du client se perd.
+      ...(profile?.email ? { replyTo: profile.email } : {}),
       to: invoice.client_email,
       subject: `${urgency}, Facture ${invoice.invoice_number} (${amount})`,
       html,
@@ -141,6 +145,8 @@ export async function GET(req: NextRequest) {
 
     const { error: emailError } = await resend.emails.send({
       from: "Deviso <noreply@getdeviso.fr>",
+      // Reply-To vers l'émetteur : sans lui, la réponse du client se perd.
+      ...(profile?.email ? { replyTo: profile.email } : {}),
       to: proposal.client_email,
       subject: `${urgency}, ${proposal.title} (${amount})`,
       html,

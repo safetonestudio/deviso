@@ -21,7 +21,7 @@ export async function POST(req: NextRequest, { params }: Params) {
   // Domaine email personnalisé (Pro)
   const { data: profileData } = await supabase
     .from("profiles")
-    .select("plan, company_name, email_domain, email_domain_verified")
+    .select("plan, company_name, email, email_domain, email_domain_verified")
     .eq("id", workspaceId)
     .single();
 
@@ -85,6 +85,9 @@ export async function POST(req: NextRequest, { params }: Params) {
 
   const { error } = await resend.emails.send({
     from: fromAddress,
+    // Sans Reply-To, une réponse du client part vers noreply@getdeviso.fr et se
+    // perd. C'est la boîte du freelance qui doit recevoir « ok pour le devis ».
+    ...(profileData?.email ? { replyTo: profileData.email } : {}),
     to,
     subject: `Devis de ${displayName} — ${proposalTitle || "nouvelle proposition"}`,
     html,
