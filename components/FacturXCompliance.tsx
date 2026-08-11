@@ -19,6 +19,12 @@ export function FacturXCompliance({ invoice }: { invoice: Invoice }) {
     clientSiren: invoice.client_siren,
     clientAddress: invoice.client_address,
     isFranchise: invoice.tva_rate === 0,
+    // Heuristique provisoire : sans raison sociale, le client est un particulier.
+    // Les obligations d'adressage (SIREN, adresse structurée) ne valent qu'en B2B —
+    // les réclamer à un freelance qui facture des particuliers afficherait une
+    // alerte rouge permanente et fausse. À remplacer par un vrai indicateur B2C
+    // sur la facture quand on traitera l'e-reporting (étape 5 du plan Super PDP).
+    isB2C: !invoice.client_company?.trim(),
   });
 
   const blocking = issues.filter((i) => i.blocking);
@@ -60,7 +66,10 @@ export function FacturXCompliance({ invoice }: { invoice: Invoice }) {
           </p>
           <ul className="mt-2 space-y-1">
             {blocking.map((i) => (
-              <li key={i.field} className="text-amber-200/80 text-xs flex gap-1.5">
+              // Pas d'opacité ici : les surcharges thème clair de globals.css sont
+              // une liste blanche de noms de classes exacts. `text-amber-200/80`
+              // n'y figurait pas et restait en jaune pâle, illisible sur fond clair.
+              <li key={i.field} className="text-amber-200 text-xs flex gap-1.5">
                 <span aria-hidden="true">•</span>
                 <span>{i.label}</span>
               </li>

@@ -177,6 +177,17 @@
 .light .text-red-400\/70    { color: rgb(220 38 38 / 0.7) !important; }
 .light .text-red-400\/80    { color: rgb(220 38 38 / 0.8) !important; }
 .light .text-pink-400\/70   { color: rgb(219 39 119 / 0.7) !important; }
+.light .text-violet-400\/70 { color: rgb(124 58 237 / 0.7) !important; }
+.light .text-blue-400\/60   { color: rgb(37 99 235 / 0.6) !important; }
+.light .text-indigo-400\/60 { color: rgb(79 70 229 / 0.6) !important; }
+.light .text-indigo-200\/70 { color: rgb(55 48 163 / 0.7) !important; }
+
+/* ⚠️ PIÈGE — ce bloc est une liste blanche de noms de classes EXACTS.
+   `text-amber-200` est surchargé, `text-amber-200/80` ne l'est pas : Tailwind
+   génère deux classes distinctes. Toute variante d'opacité doit être ajoutée
+   ici explicitement, sinon elle reste en pastel et devient illisible en thème
+   clair — sans qu'aucun test ne le signale. Avant d'utiliser une couleur claire
+   avec opacité dans le dashboard, vérifier qu'elle figure ci-dessus. */
 
 @keyframes spin { to { transform: rotate(360deg); } }
 .spinner { animation: spin 1s linear infinite; }
