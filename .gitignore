@@ -29,3 +29,4 @@ vercel-deploy.log
 # Artefacts de build TypeScript
 tsconfig.tsbuildinfo
 .tmp-fxtest/
+deploy.log 
