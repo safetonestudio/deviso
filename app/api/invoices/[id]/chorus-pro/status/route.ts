@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
+import { getWorkspaceUserId } from "@/lib/workspace";
 
 const PISTE_OAUTH_URL = "https://oauth.piste.gouv.fr/api/oauth/token";
 const PISTE_API_BASE = "https://api.piste.gouv.fr/cpro";
@@ -43,6 +44,10 @@ export async function GET(
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) return NextResponse.json({ error: "Non authentifié" }, { status: 401 });
 
+  // Les documents appartiennent à l'espace de travail, pas au collaborateur :
+  // filtrer sur user.id renvoyait 404 à tout membre d'équipe.
+  const workspaceId = await getWorkspaceUserId(user.id);
+
   const admin = createAdminClient();
 
   // Récupère la facture
@@ -50,7 +55,7 @@ export async function GET(
     .from("invoices")
     .select("id, invoice_number, chorus_pro_ref, chorus_pro_status, user_id")
     .eq("id", id)
-    .eq("user_id", user.id)
+    .eq("user_id", workspaceId)
     .single();
 
   if (!invoice) return NextResponse.json({ error: "Facture introuvable" }, { status: 404 });

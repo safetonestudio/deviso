@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
+import { getWorkspaceUserId } from "@/lib/workspace";
 
 type Params = { params: Promise<{ id: string }> };
 
@@ -14,12 +15,17 @@ export async function POST(_req: NextRequest, { params }: Params) {
   const { data: { user }, error: authError } = await supabase.auth.getUser();
   if (authError || !user) return NextResponse.json({ error: "Non autorisé" }, { status: 401 });
 
+  // Les documents appartiennent à l'espace de travail, pas au collaborateur :
+  // filtrer sur user.id renvoyait 404 à tout membre d'équipe, alors que la
+  // liste les affichait. Le plan Pro est vendu sur le multi-utilisateurs.
+  const workspaceId = await getWorkspaceUserId(user.id);
+
   // Vérifier que la facture appartient à l'utilisateur
   const { data: invoice, error: invoiceError } = await supabase
     .from("invoices")
     .select("id, payment_link_url")
     .eq("id", id)
-    .eq("user_id", user.id)
+    .eq("user_id", workspaceId)
     .single();
 
   if (invoiceError || !invoice) {
@@ -50,7 +56,7 @@ export async function POST(_req: NextRequest, { params }: Params) {
     .from("invoices")
     .update({ payment_link_url: profileLink, status: "sent" })
     .eq("id", id)
-    .eq("user_id", user.id);
+    .eq("user_id", workspaceId);
 
   return NextResponse.json({ url: profileLink });
 }

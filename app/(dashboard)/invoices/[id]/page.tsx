@@ -98,7 +98,14 @@ function ActionPanel({ invoice, id, router, hasChorusPro }: {
     if (res.ok && data.url) {
       await navigator.clipboard.writeText(data.url);
       setInv((prev) => prev ? { ...prev, payment_link_url: data.url, status: "sent" } : prev);
-      alert("Lien de paiement copié !");
+      // Le passage au statut « envoyée » n'est pas cosmétique : il inscrit la
+      // facture dans les relances automatiques. L'utilisateur doit le savoir,
+      // sinon son client reçoit un rappel pour une facture jamais reçue.
+      alert(
+        "Lien de paiement copié.\n\n" +
+          "La facture passe au statut « envoyée » : les relances automatiques " +
+          "s'appliqueront à partir de la date d'échéance."
+      );
     } else if (data.error === "PAYMENT_NOT_CONFIGURED") {
       if (confirm("Moyen de paiement non configuré.\n\nAller dans Paiements pour le configurer ?")) {
         window.location.href = "/paiements";

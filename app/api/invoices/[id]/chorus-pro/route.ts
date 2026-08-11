@@ -3,6 +3,7 @@ import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { generateFacturXPdf } from "@/lib/facturx";
 import type { Invoice } from "@/types";
+import { getWorkspaceUserId } from "@/lib/workspace";
 
 // ─── Config PISTE ────────────────────────────────────────────────────────────
 const PISTE_SANDBOX = false; // Production PISTE activée
@@ -144,6 +145,10 @@ export async function POST(
   if (!user)
     return NextResponse.json({ error: "Non authentifié" }, { status: 401 });
 
+  // Les documents appartiennent à l'espace de travail, pas au collaborateur :
+  // filtrer sur user.id renvoyait 404 à tout membre d'équipe.
+  const workspaceId = await getWorkspaceUserId(user.id);
+
   const admin = createAdminClient();
 
   // ── Facture
@@ -151,7 +156,7 @@ export async function POST(
     .from("invoices")
     .select("*")
     .eq("id", id)
-    .eq("user_id", user.id)
+    .eq("user_id", workspaceId)
     .single();
 
   if (invErr || !invoice)

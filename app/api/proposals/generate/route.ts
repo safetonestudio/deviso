@@ -145,7 +145,9 @@ export async function POST(req: NextRequest) {
       }
     }
 
-    // Rate limit journalier
+    // Rate limit journalier. Volontairement par utilisateur et non par espace
+    // de travail, contrairement aux documents : sinon un collaborateur pourrait
+    // épuiser le quota de toute l'équipe.
     const today = new Date().toISOString().split("T")[0];
     const { data: rl } = await supabaseAdmin
       .from("ai_rate_limits")

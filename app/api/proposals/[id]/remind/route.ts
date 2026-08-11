@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 import { resend } from "@/lib/resend";
 import { publicBaseUrl, proposalShareUrl } from "@/lib/public-url";
+import { getWorkspaceUserId } from "@/lib/workspace";
 
 type Params = { params: Promise<{ id: string }> };
 
@@ -11,11 +12,16 @@ export async function POST(_req: NextRequest, { params }: Params) {
   const { data: { user }, error: authError } = await supabase.auth.getUser();
   if (authError || !user) return NextResponse.json({ error: "Non autorisé" }, { status: 401 });
 
+  // Les documents appartiennent à l'espace de travail, pas au collaborateur :
+  // filtrer sur user.id renvoyait 404 à tout membre d'équipe, alors que la
+  // liste les affichait. Le plan Pro est vendu sur le multi-utilisateurs.
+  const workspaceId = await getWorkspaceUserId(user.id);
+
   const { data: proposal } = await supabase
     .from("proposals")
     .select("*")
     .eq("id", id)
-    .eq("user_id", user.id)
+    .eq("user_id", workspaceId)
     .single();
 
   if (!proposal) return NextResponse.json({ error: "Devis introuvable" }, { status: 404 });
