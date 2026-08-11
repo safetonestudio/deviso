@@ -81,12 +81,21 @@ export function FacturXCompliance({ invoice }: { invoice: Invoice }) {
               </li>
             ))}
           </ul>
+          {/* Le lien doit pointer là où la donnée se corrige. Renvoyer vers le profil
+              pour un SIREN client manquant envoyait l'utilisateur au mauvais endroit. */}
           <p className="mt-2.5 text-xs text-gray-500">
             L&apos;obligation d&apos;émettre des factures électroniques s&apos;applique aux TPE
             à partir de septembre 2027.{" "}
-            <Link href="/profil" className="text-indigo-400 hover:text-indigo-300 underline">
-              Compléter mon profil
-            </Link>
+            {issues.some((i) => i.field.startsWith("seller") || i.field === "tva_number") && (
+              <Link href="/profil" className="text-indigo-400 hover:text-indigo-300 underline">
+                Compléter mon profil
+              </Link>
+            )}
+            {issues.some((i) => i.field.startsWith("client")) && (
+              <span className="block mt-1">
+                Les informations du client se saisissent à la création de la facture.
+              </span>
+            )}
           </p>
         </div>
       </div>
