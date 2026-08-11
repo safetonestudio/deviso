@@ -25,18 +25,6 @@ export default function ProfilPage() {
   const logoInputRef = useRef<HTMLInputElement>(null);
   const [portalLoading, setPortalLoading] = useState(false);
 
-  // Email domain state (Pro)
-  type DnsRecord = { record: string; name: string; value: string; type: string; ttl: string; status: string; priority?: number };
-  const [emailDomain, setEmailDomain] = useState<string | null>(null);
-  const [emailDomainInput, setEmailDomainInput] = useState("");
-  const [emailDomainVerified, setEmailDomainVerified] = useState(false);
-  const [emailDomainStatus, setEmailDomainStatus] = useState<string>("");
-  const [emailDomainRecords, setEmailDomainRecords] = useState<DnsRecord[]>([]);
-  const [emailDomainLoading, setEmailDomainLoading] = useState(false);
-  const [emailDomainSaving, setEmailDomainSaving] = useState(false);
-  const [emailDomainVerifying, setEmailDomainVerifying] = useState(false);
-  const [emailDomainMsg, setEmailDomainMsg] = useState<{ type: "ok" | "err"; text: string } | null>(null);
-
   // Subdomain state
   const [subdomainInput, setSubdomainInput] = useState("");
   const [subdomainStatus, setSubdomainStatus] = useState<"idle" | "checking" | "available" | "taken" | "invalid">("idle");
@@ -75,11 +63,6 @@ export default function ProfilPage() {
           setSubdomainInput(d.profile.subdomain || "");
           setReminderIntervals(d.profile.reminder_intervals ?? [3, 7]);
           setReminderMessage(d.profile.reminder_message || "");
-          if (d.profile.plan === "pro" && d.profile.email_domain) {
-            setEmailDomain(d.profile.email_domain);
-            setEmailDomainInput(d.profile.email_domain);
-            setEmailDomainVerified(d.profile.email_domain_verified ?? false);
-          }
           // CGV
           setCgvText(d.profile.cgv_text || "");
           // Chorus Pro
@@ -92,66 +75,6 @@ export default function ProfilPage() {
       })
       .finally(() => setLoading(false));
   }, []);
-
-  async function loadEmailDomainRecords() {
-    setEmailDomainLoading(true);
-    const res = await fetch("/api/profile/email-domain").then((r) => r.json());
-    setEmailDomainRecords(res.records ?? []);
-    setEmailDomainVerified(res.verified ?? false);
-    setEmailDomainStatus(res.status ?? "");
-    setEmailDomainLoading(false);
-  }
-
-  async function handleSaveEmailDomain() {
-    setEmailDomainSaving(true);
-    setEmailDomainMsg(null);
-    const res = await fetch("/api/profile/email-domain", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ domain: emailDomainInput.trim().toLowerCase() }),
-    });
-    const data = await res.json();
-    if (!res.ok) {
-      setEmailDomainMsg({ type: "err", text: data.error || "Erreur." });
-    } else {
-      setEmailDomain(data.domain);
-      setEmailDomainRecords(data.records ?? []);
-      setEmailDomainVerified(data.verified ?? false);
-      setEmailDomainStatus(data.status ?? "");
-      setEmailDomainMsg({ type: "ok", text: "Domaine enregistré. Ajoutez les enregistrements DNS ci-dessous." });
-    }
-    setEmailDomainSaving(false);
-  }
-
-  async function handleVerifyEmailDomain() {
-    setEmailDomainVerifying(true);
-    setEmailDomainMsg(null);
-    const res = await fetch("/api/profile/email-domain?action=verify", { method: "POST" });
-    const data = await res.json();
-    if (!res.ok) {
-      setEmailDomainMsg({ type: "err", text: data.error || "Vérification échouée." });
-    } else {
-      setEmailDomainVerified(data.verified ?? false);
-      setEmailDomainStatus(data.status ?? "");
-      setEmailDomainRecords(data.records ?? []);
-      setEmailDomainMsg({
-        type: data.verified ? "ok" : "err",
-        text: data.verified ? "✓ Domaine vérifié ! Vos emails partiront depuis votre domaine." : "DNS pas encore propagés. Attendez quelques minutes puis réessayez.",
-      });
-    }
-    setEmailDomainVerifying(false);
-  }
-
-  async function handleDeleteEmailDomain() {
-    if (!confirm("Supprimer ce domaine ? Vos emails repartiront depuis noreply@getdeviso.fr.")) return;
-    await fetch("/api/profile/email-domain", { method: "DELETE" });
-    setEmailDomain(null);
-    setEmailDomainInput("");
-    setEmailDomainVerified(false);
-    setEmailDomainRecords([]);
-    setEmailDomainStatus("");
-    setEmailDomainMsg(null);
-  }
 
   function set(field: keyof Profile, value: string) {
     setProfile((p) => ({ ...p, [field]: value }));
@@ -737,149 +660,6 @@ Les présentes CGV sont soumises au droit français. Tout litige relève de la c
         </section>
       )}
 
-      {/* ── Domaine email personnalisé (Pro) ── */}
-      {profile.plan === "pro" ? (
-        <section className="bg-ds-surface border border-ds-border rounded-xl p-5 mt-6 space-y-4">
-          <div>
-            <h2 className="font-semibold text-white">Domaine d&apos;envoi personnalisé</h2>
-            <p className="text-xs text-gray-500 mt-0.5">
-              {/* L'extension était codée en dur en .fr : un client en .com lisait
-                  un exemple faux et pouvait croire que son domaine était refusé.
-                  On reflète ce qu'il a saisi dès qu'il a saisi quelque chose. */}
-              Vos emails partiront depuis{" "}
-              <span className="text-indigo-400 font-mono">devis@{emailDomainInput || "votre-domaine.fr"}</span> et{" "}
-              <span className="text-indigo-400 font-mono">facturation@{emailDomainInput || "votre-domaine.fr"}</span>{" "}
-              au lieu de noreply@getdeviso.fr.
-            </p>
-          </div>
-
-          {emailDomainVerified && emailDomain && (
-            <div className="flex items-center gap-2 bg-emerald-500/10 border border-emerald-500/20 rounded-lg px-3 py-2">
-              <span className="text-emerald-400 text-sm">✓</span>
-              <span className="text-sm text-emerald-300 font-mono">{emailDomain}</span>
-              <span className="text-xs text-emerald-500 ml-1">· Actif</span>
-              <div className="ml-auto flex gap-1.5 text-xs text-gray-500 font-mono">
-                <span>devis@{emailDomain}</span>
-                <span>·</span>
-                <span>facturation@{emailDomain}</span>
-              </div>
-            </div>
-          )}
-
-          <div>
-            <label className="block text-xs font-medium text-gray-400 mb-1.5">Votre domaine</label>
-            <div className="flex gap-2">
-              <input
-                type="text"
-                value={emailDomainInput}
-                onChange={(e) => setEmailDomainInput(e.target.value.trim().toLowerCase())}
-                placeholder="monentreprise.fr"
-                className="flex-1 bg-ds-bg border border-ds-border text-white placeholder:text-gray-600 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-indigo-500 font-mono"
-              />
-              <button
-                type="button"
-                onClick={handleSaveEmailDomain}
-                disabled={emailDomainSaving || !emailDomainInput}
-                className="px-4 py-2 bg-indigo-600 text-white text-sm font-semibold rounded-lg hover:bg-indigo-500 disabled:opacity-40 transition-colors"
-              >
-                {emailDomainSaving ? "Enregistrement…" : emailDomain ? "Mettre à jour" : "Enregistrer"}
-              </button>
-            </div>
-          </div>
-
-          {emailDomainMsg && (
-            <p className={`text-xs ${emailDomainMsg.type === "ok" ? "text-emerald-400" : "text-red-400"}`}>
-              {emailDomainMsg.text}
-            </p>
-          )}
-
-          {/* Enregistrements DNS */}
-          {emailDomain && emailDomainRecords.length === 0 && !emailDomainLoading && (
-            <button
-              type="button"
-              onClick={loadEmailDomainRecords}
-              className="text-xs text-indigo-400 hover:text-indigo-300 underline"
-            >
-              Afficher les enregistrements DNS à ajouter
-            </button>
-          )}
-
-          {emailDomainLoading && <p className="text-xs text-gray-500">Chargement…</p>}
-
-          {emailDomainRecords.length > 0 && (
-            <div className="space-y-3">
-              <div className="flex items-center justify-between">
-                <p className="text-xs font-semibold text-gray-400 uppercase tracking-wide">Enregistrements DNS à ajouter</p>
-                <span className={`text-xs font-medium px-2 py-0.5 rounded-full ${emailDomainVerified ? "bg-emerald-500/10 text-emerald-400" : "bg-amber-500/10 text-amber-400"}`}>
-                  {emailDomainVerified ? "✓ Vérifié" : emailDomainStatus === "pending" ? "En attente" : "Non vérifié"}
-                </span>
-              </div>
-              <p className="text-xs text-gray-500">
-                Ajoutez ces enregistrements dans votre gestionnaire DNS (OVH, Cloudflare, Namecheap…). La propagation peut prendre jusqu&apos;à 48h.
-              </p>
-              <div className="space-y-2">
-                {emailDomainRecords.map((rec, i) => (
-                  <div key={i} className="bg-ds-bg border border-ds-border rounded-lg p-3 text-xs font-mono space-y-1">
-                    <div className="flex gap-3 flex-wrap">
-                      <span className="text-indigo-400 font-semibold w-12 shrink-0">{rec.record}</span>
-                      <span className="text-gray-300 break-all">{rec.name}</span>
-                    </div>
-                    <div className="flex gap-3 flex-wrap">
-                      <span className="text-gray-500 w-12 shrink-0">Valeur</span>
-                      <span className="text-gray-300 break-all">{rec.value}</span>
-                    </div>
-                    {rec.priority !== undefined && (
-                      <div className="flex gap-3">
-                        <span className="text-gray-500 w-12 shrink-0">Priorité</span>
-                        <span className="text-gray-300">{rec.priority}</span>
-                      </div>
-                    )}
-                    <div className="flex gap-3">
-                      <span className="text-gray-500 w-12 shrink-0">TTL</span>
-                      <span className="text-gray-400">{rec.ttl}</span>
-                      <span className={`ml-auto px-1.5 py-0.5 rounded text-[10px] font-semibold ${rec.status === "verified" ? "bg-emerald-500/10 text-emerald-400" : "bg-ds-elevated text-gray-500"}`}>
-                        {rec.status === "verified" ? "✓" : "En attente"}
-                      </span>
-                    </div>
-                  </div>
-                ))}
-              </div>
-              {!emailDomainVerified && (
-                <button
-                  type="button"
-                  onClick={handleVerifyEmailDomain}
-                  disabled={emailDomainVerifying}
-                  className="px-4 py-2 bg-emerald-700 hover:bg-emerald-600 text-white text-sm font-semibold rounded-lg disabled:opacity-50 transition-colors"
-                >
-                  {emailDomainVerifying ? "Vérification…" : "Vérifier maintenant"}
-                </button>
-              )}
-            </div>
-          )}
-
-          {emailDomain && (
-            <button
-              type="button"
-              onClick={handleDeleteEmailDomain}
-              className="text-xs text-red-400 hover:text-red-300 transition-colors"
-            >
-              Supprimer ce domaine
-            </button>
-          )}
-        </section>
-      ) : (
-        <section className="bg-ds-elevated/50 border border-ds-border rounded-xl p-5 mt-6">
-          <div className="flex items-center justify-between gap-4">
-            <div>
-              <h2 className="font-semibold text-gray-300">Domaine d&apos;envoi personnalisé</h2>
-              <p className="text-xs text-gray-500 mt-0.5">
-                Envoyez vos devis et factures depuis <span className="font-mono">devis@votredomaine.fr</span> : réservé au plan Pro.
-              </p>
-            </div>
-            <span className="shrink-0 text-xs font-semibold bg-indigo-500/20 text-indigo-300 px-2.5 py-1 rounded-full">Pro</span>
-          </div>
-        </section>
-      )}
 
       {/* ── Relances programmables (Pro) ── */}
       {profile.plan === "pro" ? (

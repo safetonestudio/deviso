@@ -69,7 +69,7 @@ const CONTENT: Record<PageKey, { title: string; body: string }> = {
   },
   profil: {
     title: "Paramètres",
-    body: "Configure ton identité professionnelle : logo, coordonnées, SIRET, régime TVA et mentions légales. Ces informations apparaissent automatiquement sur tous tes devis et factures. En plan Pro, personnalise la couleur d'accent de tes documents, configure un domaine d'envoi email personnalisé (devis@tondomaine.fr / facturation@tondomaine.fr), et choisis un sous-domaine pour les liens de partage de tes devis.",
+    body: "Configure ton identité professionnelle : logo, coordonnées, SIRET, régime TVA et mentions légales. Ces informations apparaissent automatiquement sur tous tes devis et factures. En plan Pro, personnalise la couleur d'accent de tes documents et choisis un sous-domaine pour les liens de partage de tes devis (tonentreprise.getdeviso.fr).",
   },
 };
 

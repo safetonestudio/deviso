@@ -23,7 +23,7 @@ const PLAN_INFO = {
   pro: {
     label: "Pro",
     color: "bg-violet-500/20 text-violet-300",
-    description: "3 utilisateurs inclus · Tout Solo + relances auto, FEC, CRM, Analytics, catalogue, domaine custom · +5€/utilisateur supplémentaire",
+    description: "3 utilisateurs inclus · Tout Solo + relances auto, FEC, CRM, Analytics, catalogue, sous-domaine de partage · +5€/utilisateur supplémentaire",
   },
 };
 
@@ -227,7 +227,7 @@ export default function BillingPage() {
                   </p>
                   <span className="text-[10px] font-semibold px-1.5 py-0.5 rounded-md bg-violet-500/20 text-violet-300 border border-violet-500/30">RECOMMANDÉ</span>
                 </div>
-                <p className="text-sm text-gray-400">3 utilisateurs inclus · Catalogue, Équipe, CRM, Analytics, domaine custom</p>
+                <p className="text-sm text-gray-400">3 utilisateurs inclus · Catalogue, Équipe, CRM, Analytics, sous-domaine</p>
                 <p className="text-xs text-gray-500 mt-0.5">+5€/mois par utilisateur supplémentaire</p>
               </div>
               <button

@@ -21,8 +21,8 @@ const PRO_FEATURES = [
   "CRM Clients & Revenus + Analytics",
   "Gestion d'équipe, rôles et validation devis",
   "Catalogue prestations : forfaits & suivi du temps",
-  "Domaine d'envoi custom (devis@votredomaine.fr)",
-  "Sous-domaine et couleur d'accent PDF",
+  "Sous-domaine de partage (votremarque.getdeviso.fr)",
+  "Couleur d'accent sur vos PDF",
   "3 utilisateurs inclus · +5€/utilisateur supp.",
 ];
 

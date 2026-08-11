@@ -58,7 +58,7 @@ export default function CguPage() {
             Deviso propose deux formules :<br /><br />
             Deviso ne propose pas de plan gratuit permanent. Tout abonnement inclut un <strong>essai gratuit de 14 jours</strong> sans carte bancaire requise.<br /><br />
             <strong>Plan Solo</strong> : 18 €/mois HT (ou 172,80 €/an, soit 14,40 €/mois). Inclut : factures Factur-X, logo personnalisé, signature électronique, relances auto, exports comptables.<br /><br />
-            <strong>Plan Pro</strong> : 34 €/mois HT (ou 326,40 €/an, soit 27,20 €/mois). Inclut tout Solo + multi-utilisateurs (3 utilisateurs inclus — le titulaire du compte et 2 membres —, +5 €/mois/utilisateur supplémentaire), catalogue partagé, domaine d&apos;envoi personnalisé, accès Chorus Pro B2G.<br /><br />
+            <strong>Plan Pro</strong> : 34 €/mois HT (ou 326,40 €/an, soit 27,20 €/mois). Inclut tout Solo + multi-utilisateurs (3 utilisateurs inclus — le titulaire du compte et 2 membres —, +5 €/mois/utilisateur supplémentaire), catalogue partagé, sous-domaine de partage personnalisé, accès Chorus Pro B2G.<br /><br />
             Les tarifs annuels représentent une remise de 20 % par rapport au tarif mensuel.
             Le paiement s&apos;effectue par carte bancaire via la plateforme sécurisée Stripe, à l&apos;issue de la période d&apos;essai.
             L&apos;abonnement est résiliable à tout moment depuis le compte utilisateur, avec effet à la fin de la période en cours.

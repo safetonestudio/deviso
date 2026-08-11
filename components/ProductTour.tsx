@@ -53,7 +53,7 @@ const STEPS_OWNER = [
   {
     target: "profil",
     title: "Paramètres & personnalisation",
-    body: "Configure tout ce qui apparaît sur tes documents : logo, nom commercial, adresse, SIRET, numéro de TVA et régime fiscal. En Pro, choisis une couleur d'accent qui s'applique à tous tes devis et factures PDF, et connecte ton propre domaine d'envoi pour que tes emails partent depuis devis@tonentreprise.fr. Pour la facturation des marchés publics, renseigne tes identifiants Chorus Pro ici.",
+    body: "Configure tout ce qui apparaît sur tes documents : logo, nom commercial, adresse, SIRET, numéro de TVA et régime fiscal. En Pro, choisis une couleur d'accent qui s'applique à tous tes devis et factures PDF, et un sous-domaine pour que tes liens de devis pointent vers tonentreprise.getdeviso.fr. Pour la facturation des marchés publics, renseigne tes identifiants Chorus Pro ici.",
   },
 ];
 

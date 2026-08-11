@@ -18,18 +18,16 @@ export async function POST(req: NextRequest, { params }: Params) {
 
   const workspaceId = await getWorkspaceUserId(user.id);
 
-  // Domaine email personnalisé (Pro)
   const { data: profileData } = await supabase
     .from("profiles")
-    .select("plan, company_name, email, email_domain, email_domain_verified")
+    .select("company_name, email")
     .eq("id", workspaceId)
     .single();
 
-  const useCustomDomain = profileData?.plan === "pro" && profileData?.email_domain_verified && profileData?.email_domain;
+  // Le nom commercial de l'émetteur s'affiche dans le champ « De », l'adresse
+  // technique reste la nôtre. C'est ce que voit le client, et ça suffit.
   const displayName = profileData?.company_name || senderName || "Votre prestataire";
-  const fromAddress = useCustomDomain
-    ? `${displayName} <devis@${profileData.email_domain}>`
-    : `${displayName} <noreply@getdeviso.fr>`;
+  const fromAddress = `${displayName} <noreply@getdeviso.fr>`;
 
   const { data: proposal } = await supabase
     .from("proposals")

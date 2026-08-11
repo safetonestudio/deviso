@@ -57,6 +57,9 @@ export async function POST(_req: Request, { params }: Params) {
     .eq("id", user.id)
     .single();
 
+  // Volontairement le domaine racine et non le sous-domaine du propriétaire :
+  // ce lien mène au tableau de bord, qui n'est pas servi sous les sous-domaines.
+  // Seuls les documents destinés aux clients portent la marque de l'émetteur.
   const baseUrl = process.env.NEXT_PUBLIC_APP_URL || "https://getdeviso.fr";
   const proposalUrl = `${baseUrl}/proposals/${id}`;
 

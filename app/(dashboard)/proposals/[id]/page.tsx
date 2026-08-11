@@ -8,6 +8,7 @@ import ShareSection from "./ShareSection";
 import { ProposalPreviewWrapper } from "@/components/ProposalPreviewWrapper";
 import { GuidedTourBanner } from "@/components/GuidedTourBanner";
 import type { Proposal, Profile } from "@/types";
+import { publicBaseUrl, proposalShareUrl } from "@/lib/public-url";
 
 const supabaseAdmin = createAdminClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -77,14 +78,8 @@ export default async function ProposalDetailPage({ params }: { params: Promise<{
 
   const status = STATUS_LABELS[proposal.status] || STATUS_LABELS.draft;
 
-  // Share URL: use custom subdomain for Pro users who have one configured
-  const appUrl = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000";
-  const ownerSubdomain = ownerProfile?.subdomain;
-  const shareBase =
-    ownerSubdomain && ownerProfile?.plan === "pro"
-      ? `https://${ownerSubdomain}.getdeviso.fr`
-      : appUrl;
-  const shareUrl = `${shareBase}/p/${proposal.share_token}`;
+  // Une seule fonction décide de l'adresse publique, ici comme dans les relances.
+  const shareUrl = proposalShareUrl(publicBaseUrl(ownerProfile), proposal.share_token);
 
   // Approval banner config
   const approvalStatus = proposal.approval_status;

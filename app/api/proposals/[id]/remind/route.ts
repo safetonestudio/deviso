@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 import { resend } from "@/lib/resend";
+import { publicBaseUrl, proposalShareUrl } from "@/lib/public-url";
 
 type Params = { params: Promise<{ id: string }> };
 
@@ -23,7 +24,7 @@ export async function POST(_req: NextRequest, { params }: Params) {
 
   const { data: profile } = await supabase
     .from("profiles")
-    .select("full_name, company_name, email")
+    .select("full_name, company_name, email, subdomain, plan")
     .eq("id", user.id)
     .single();
 
@@ -31,8 +32,9 @@ export async function POST(_req: NextRequest, { params }: Params) {
   const senderName = profile?.company_name || profile?.full_name || "Votre prestataire";
   const amount = new Intl.NumberFormat("fr-FR", { style: "currency", currency: "EUR" }).format(proposal.total_ttc);
   const reminderNum = (proposal.reminder_count || 0) + 1;
-  const baseUrl = process.env.NEXT_PUBLIC_APP_URL || "https://getdeviso.fr";
-  const signUrl = `${baseUrl}/p/${proposal.share_token}`;
+  // Même adresse que le premier envoi : deux liens différents pour un même
+  // devis sèment le doute juste avant la signature.
+  const signUrl = proposalShareUrl(publicBaseUrl(profile), proposal.share_token);
 
   const urgency = reminderNum >= 3 ? "Dernier rappel" : reminderNum === 2 ? "2ème rappel" : "Rappel, Devis en attente";
   const borderColor = reminderNum >= 3 ? "#dc2626" : reminderNum === 2 ? "#d97706" : "#4f46e5";

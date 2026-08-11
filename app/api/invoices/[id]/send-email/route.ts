@@ -26,7 +26,7 @@ export async function POST(req: NextRequest, { params }: Params) {
 
   const { data: profileData } = await supabase
     .from("profiles")
-    .select("proposal_color, payment_method, payment_link_provider, payment_link_profile, bank_iban, bank_bic, bank_account_name, plan, company_name, full_name, email, email_domain, email_domain_verified")
+    .select("proposal_color, payment_method, payment_link_provider, payment_link_profile, bank_iban, bank_bic, bank_account_name, plan, company_name, full_name, email")
     .eq("id", user.id)
     .single();
 
@@ -118,10 +118,7 @@ export async function POST(req: NextRequest, { params }: Params) {
 </body>
 </html>`;
 
-  const useCustomDomain = profileData?.plan === "pro" && profileData?.email_domain_verified && profileData?.email_domain;
-  const invoiceFrom = useCustomDomain
-    ? `${invoiceDisplayName} <facturation@${profileData!.email_domain}>`
-    : `${invoiceDisplayName} <noreply@getdeviso.fr>`;
+  const invoiceFrom = `${invoiceDisplayName} <noreply@getdeviso.fr>`;
 
   const { error: emailError } = await resend.emails.send({
     from: invoiceFrom,

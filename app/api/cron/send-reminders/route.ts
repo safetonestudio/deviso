@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { resend } from "@/lib/resend";
+import { publicBaseUrl, proposalShareUrl } from "@/lib/public-url";
 
 // Vercel cron job, déclenché quotidiennement à 8h
 // Protégé par CRON_SECRET (Vercel l'injecte automatiquement)
@@ -15,6 +16,7 @@ type OwnerProfile = {
   company_name: string | null;
   /** Adresse de réponse des relances automatiques. */
   email: string | null;
+  subdomain: string | null;
   reminder_intervals: number[] | null;
   reminder_message: string | null;
 };
@@ -46,7 +48,7 @@ export async function GET(req: NextRequest) {
   // ── 1. Récupérer tous les profils Solo/Pro avec leurs config de relance ──
   const { data: ownerProfiles } = await supabase
     .from("profiles")
-    .select("id, plan, full_name, company_name, email, reminder_intervals, reminder_message")
+    .select("id, plan, full_name, company_name, email, subdomain, reminder_intervals, reminder_message")
     .in("plan", ["solo", "pro"])
     .neq("is_demo", true);
 
@@ -56,7 +58,6 @@ export async function GET(req: NextRequest) {
 
   const profileMap = Object.fromEntries(ownerProfiles.map((p) => [p.id, p])) as Record<string, OwnerProfile>;
   const eligibleIds = ownerProfiles.map((p) => p.id);
-  const baseUrl = process.env.NEXT_PUBLIC_APP_URL || "https://getdeviso.fr";
 
   // ── 2. Factures ──────────────────────────────────────────────────────────
   const { data: invoices } = await supabase
@@ -132,7 +133,7 @@ export async function GET(req: NextRequest) {
     const senderName = profile.company_name || profile.full_name || "Votre prestataire";
     const amount = new Intl.NumberFormat("fr-FR", { style: "currency", currency: "EUR" }).format(proposal.total_ttc);
     const reminderNum = (proposal.reminder_count || 0) + 1;
-    const signUrl = `${baseUrl}/p/${proposal.share_token}`;
+    const signUrl = proposalShareUrl(publicBaseUrl(profile), proposal.share_token);
     const urgency = reminderNum >= 3 ? "⚠️ Dernier rappel" : reminderNum === 2 ? "2ème rappel" : "Rappel, Devis en attente";
     const borderColor = reminderNum >= 3 ? "#dc2626" : reminderNum === 2 ? "#d97706" : "#4f46e5";
 

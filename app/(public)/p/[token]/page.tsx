@@ -25,6 +25,16 @@ export default function PublicProposalPage() {
     fetch(`/api/public/proposals/${token}`)
       .then((r) => r.json())
       .then((d) => {
+        // Le devis n'est servi que sous l'hôte de son émetteur. Un concurrent
+        // qui collerait ce jeton derrière son propre sous-domaine se ferait
+        // renvoyer vers l'adresse légitime, sans afficher le document sous sa marque.
+        // Limité aux hôtes de production : sur localhost et sur les préversions
+        // Vercel, rediriger vers getdeviso.fr rendrait la page intestable.
+        const host = typeof window !== "undefined" ? window.location.host : "";
+        if (d.canonicalHost && host.endsWith("getdeviso.fr") && host !== d.canonicalHost) {
+          window.location.replace(`https://${d.canonicalHost}/p/${token}`);
+          return;
+        }
         setProposal(d.proposal ?? null);
         setProfile(d.profile ?? null);
         setOwnerPlan(d.plan ?? "free");

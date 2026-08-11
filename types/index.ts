@@ -90,9 +90,6 @@ export interface Profile {
   bank_bic: string | null;
   bank_account_name: string | null;
   // Email domaine personnalisé (Pro)
-  email_domain: string | null;
-  email_domain_resend_id: string | null;
-  email_domain_verified: boolean;
   // Numérotation acomptes
   invoice_count_acompte: number;
   // Chorus Pro (B2G, Réforme 2026)

@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { createHash } from "crypto";
+import { publicBaseUrl } from "@/lib/public-url";
 
 /**
  * Piste d'audit e-signature : hash SHA-256 du contenu du devis figé au
@@ -56,7 +57,7 @@ export async function GET(_req: NextRequest, { params }: Params) {
 
   const { data: profile } = await admin
     .from("profiles")
-    .select("full_name, company_name, email, phone, address, siret, tva_number, tva_regime, logo_url, proposal_color, proposal_template, plan, cgv_text")
+    .select("full_name, company_name, email, phone, address, siret, tva_number, tva_regime, logo_url, proposal_color, proposal_template, plan, cgv_text, subdomain")
     .eq("id", proposal.user_id)
     .single();
 
@@ -65,7 +66,17 @@ export async function GET(_req: NextRequest, { params }: Params) {
     proposal.status = "viewed";
   }
 
-  return NextResponse.json({ proposal, profile: profile ?? null, plan: profile?.plan ?? "free" });
+  // Hôte sous lequel ce devis doit être servi. Sans ce contrôle, n'importe quel
+  // client Pro pouvait afficher le devis d'un autre sous sa propre marque en
+  // collant le jeton derrière son sous-domaine.
+  const canonicalHost = new URL(publicBaseUrl(profile)).host;
+
+  return NextResponse.json({
+    proposal,
+    profile: profile ?? null,
+    plan: profile?.plan ?? "free",
+    canonicalHost,
+  });
 }
 
 export async function POST(req: NextRequest, { params }: Params) {
@@ -122,14 +133,13 @@ export async function POST(req: NextRequest, { params }: Params) {
     try {
       const { data: profile } = await admin
         .from("profiles")
-        .select("email, full_name, company_name, email_domain, email_domain_verified, plan")
+        .select("email, full_name, company_name")
         .eq("id", proposal.user_id)
         .single();
       if (profile?.email) {
         const { resend } = await import("@/lib/resend");
         const displayName = profile.company_name || profile.full_name || "Deviso";
-        const useCustomDomain = profile.plan === "pro" && profile.email_domain_verified && profile.email_domain;
-        const fromAddress = useCustomDomain ? `${displayName} <noreply@${profile.email_domain}>` : "Deviso <noreply@getdeviso.fr>";
+        const fromAddress = "Deviso <noreply@getdeviso.fr>";
         await resend.emails.send({
           from: fromAddress,
           to: profile.email,
@@ -155,14 +165,13 @@ export async function POST(req: NextRequest, { params }: Params) {
     try {
       const { data: profile } = await admin
         .from("profiles")
-        .select("email, full_name, company_name, plan, email_domain, email_domain_verified")
+        .select("email, full_name, company_name")
         .eq("id", proposal.user_id)
         .single();
       if (profile?.email) {
         const { resend } = await import("@/lib/resend");
         const displayName = profile.company_name || profile.full_name || "Deviso";
-        const useCustomDomain = profile.plan === "pro" && profile.email_domain_verified && profile.email_domain;
-        const fromAddress = useCustomDomain ? `${displayName} <noreply@${profile.email_domain}>` : "Deviso <noreply@getdeviso.fr>";
+        const fromAddress = "Deviso <noreply@getdeviso.fr>";
         await resend.emails.send({
           from: fromAddress,
           to: profile.email,

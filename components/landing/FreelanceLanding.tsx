@@ -345,7 +345,7 @@ export function FreelanceLanding({
           <div className="grid sm:grid-cols-2 gap-4 text-left mb-10">
             {[
               { name: "Solo", price: "18€/mois", desc: "Factur-X, Chorus Pro, acompte/solde, sans branding Deviso. 14 jours d'essai gratuit.", highlight: false },
-              { name: "Pro", price: "34€/mois", desc: "Relances auto, CRM, équipe, exports FEC, domaine custom. 14 jours d'essai gratuit.", highlight: true },
+              { name: "Pro", price: "34€/mois", desc: "Relances auto, CRM, équipe, exports FEC, sous-domaine de partage. 14 jours d'essai gratuit.", highlight: true },
             ].map((p) => (
               <div
                 key={p.name}
