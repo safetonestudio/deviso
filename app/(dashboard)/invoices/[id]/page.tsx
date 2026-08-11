@@ -36,6 +36,7 @@ function ActionPanel({ invoice, id, router, hasChorusPro }: {
 }) {
   const [downloading, setDownloading] = useState(false);
   const [markingPaid, setMarkingPaid] = useState(false);
+  const [markingSent, setMarkingSent] = useState(false);
   const [generatingLink, setGeneratingLink] = useState(false);
   const [sendingReminder, setSendingReminder] = useState(false);
   const [sendingEmail, setSendingEmail] = useState(false);
@@ -97,15 +98,8 @@ function ActionPanel({ invoice, id, router, hasChorusPro }: {
     const data = await res.json();
     if (res.ok && data.url) {
       await navigator.clipboard.writeText(data.url);
-      setInv((prev) => prev ? { ...prev, payment_link_url: data.url, status: "sent" } : prev);
-      // Le passage au statut « envoyée » n'est pas cosmétique : il inscrit la
-      // facture dans les relances automatiques. L'utilisateur doit le savoir,
-      // sinon son client reçoit un rappel pour une facture jamais reçue.
-      alert(
-        "Lien de paiement copié.\n\n" +
-          "La facture passe au statut « envoyée » : les relances automatiques " +
-          "s'appliqueront à partir de la date d'échéance."
-      );
+      setInv((prev) => prev ? { ...prev, payment_link_url: data.url } : prev);
+      alert("Lien de paiement copié.");
     } else if (data.error === "PAYMENT_NOT_CONFIGURED") {
       if (confirm("Moyen de paiement non configuré.\n\nAller dans Paiements pour le configurer ?")) {
         window.location.href = "/paiements";
@@ -114,6 +108,23 @@ function ActionPanel({ invoice, id, router, hasChorusPro }: {
       alert(data.error || "Erreur");
     }
     setGeneratingLink(false);
+  }
+
+  // Contrepartie du retrait du changement de statut implicite : une facture
+  // remise autrement que par email (lien copié, remise en main propre) doit
+  // pouvoir être déclarée envoyée. Sans ça, relances et Chorus Pro restent
+  // inaccessibles, tous deux conditionnés au statut « envoyée ».
+  async function handleMarkSent() {
+    setMarkingSent(true);
+    const res = await fetch(`/api/invoices/${id}`, {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ status: "sent" }),
+    });
+    const data = await res.json();
+    if (res.ok) setInv(data.invoice);
+    else alert(data.error || "Erreur");
+    setMarkingSent(false);
   }
 
   async function handleSendEmail() {
@@ -179,6 +190,7 @@ function ActionPanel({ invoice, id, router, hasChorusPro }: {
   const canSendEmail = !!inv.client_email && inv.status !== "cancelled";
   const canPaymentLink = inv.status !== "paid" && inv.status !== "cancelled";
   const canMarkPaid = inv.status !== "paid" && inv.status !== "cancelled";
+  const canMarkSent = inv.status === "draft";
   const canRemind = inv.status === "sent" && !!inv.client_email;
   const canChorus = inv.status === "sent" && !chorusRef && hasChorusPro;
 
@@ -203,7 +215,7 @@ function ActionPanel({ invoice, id, router, hasChorusPro }: {
         )}
 
         {/* ── Groupe 2 : Paiement ── */}
-        {(canPaymentLink || canMarkPaid || canRemind) && (
+        {(canPaymentLink || canMarkPaid || canRemind || canMarkSent) && (
           <>
             <div className="h-px bg-ds-border my-3" />
             {canPaymentLink && (
@@ -214,6 +226,16 @@ function ActionPanel({ invoice, id, router, hasChorusPro }: {
               >
                 <span>💳</span>
                 <span>{generatingLink ? "Génération…" : inv.payment_link_url ? "Copier lien paiement" : "Lien de paiement"}</span>
+              </button>
+            )}
+            {canMarkSent && (
+              <button
+                onClick={handleMarkSent}
+                disabled={markingSent}
+                className="w-full text-sm font-medium px-4 py-2.5 rounded-lg border border-ds-border hover:bg-ds-elevated/60 text-gray-300 disabled:opacity-50 transition-colors text-left flex items-center gap-2"
+              >
+                <span>📨</span>
+                <span>{markingSent ? "Mise à jour…" : "Marquer comme envoyée"}</span>
               </button>
             )}
             {canMarkPaid && (

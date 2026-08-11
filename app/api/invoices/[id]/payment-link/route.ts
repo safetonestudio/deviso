@@ -51,10 +51,14 @@ export async function POST(_req: NextRequest, { params }: Params) {
     );
   }
 
-  // Mettre à jour la facture avec le lien (pour l'affichage)
+  // On mémorise le lien pour l'affichage, sans toucher au statut.
+  // Copier un lien n'est pas un acte de gestion : c'est à l'utilisateur de
+  // déclarer une facture envoyée, et surtout payée. Le faire à sa place
+  // l'inscrivait dans les relances automatiques et son client pouvait recevoir
+  // un rappel pour une facture jamais reçue.
   await supabase
     .from("invoices")
-    .update({ payment_link_url: profileLink, status: "sent" })
+    .update({ payment_link_url: profileLink })
     .eq("id", id)
     .eq("user_id", workspaceId);
 
