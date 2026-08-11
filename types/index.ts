@@ -33,7 +33,12 @@ export interface Proposal {
   client_name: string | null;
   client_email: string | null;
   client_company: string | null;
+  /** Forme affichable, dérivée des champs ci-dessous par l'API. */
   client_address: string | null;
+  client_street: string | null;
+  client_postcode: string | null;
+  client_city: string | null;
+  client_country: string | null;
   client_siren: string | null;
   description: string | null;
   items: ProposalItem[];
@@ -89,7 +94,6 @@ export interface Profile {
   bank_iban: string | null;
   bank_bic: string | null;
   bank_account_name: string | null;
-  // Email domaine personnalisé (Pro)
   // Numérotation acomptes
   invoice_count_acompte: number;
   // Chorus Pro (B2G, Réforme 2026)
@@ -127,13 +131,23 @@ export interface Invoice {
   client_email: string | null;
   client_company: string | null;
   client_siren: string | null;
+  /** Forme affichable, dérivée des champs ci-dessous par l'API. */
   client_address: string | null;
+  client_street: string | null;
+  client_postcode: string | null;
+  client_city: string | null;
+  client_country: string | null;
   delivery_address: string | null;
 
   seller_name: string | null;
   seller_company: string | null;
   seller_siren: string | null;
+  /** Forme affichable, dérivée des champs ci-dessous par l'API. */
   seller_address: string | null;
+  seller_street: string | null;
+  seller_postcode: string | null;
+  seller_city: string | null;
+  seller_country: string | null;
   seller_tva_number: string | null;
 
   items: ProposalItem[];

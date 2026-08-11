@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { checkInvoiceCompliance } from "@/lib/facturx-helpers";
 import type { Invoice } from "@/types";
+import { resolveAddress } from "@/lib/address";
 
 /**
  * Diagnostic de conformité Factur-X EN 16931 affiché sur la facture.
@@ -14,10 +15,19 @@ import type { Invoice } from "@/types";
 export function FacturXCompliance({ invoice }: { invoice: Invoice }) {
   const issues = checkInvoiceCompliance({
     sellerSiren: invoice.seller_siren,
-    sellerAddress: invoice.seller_address,
+    // On donne au contrôle la forme canonique issue des champs séparés : sinon
+    // il rejugeait un texte libre et pouvait signaler un code postal manquant
+    // alors qu'il était bien saisi, juste écrit autrement.
+    sellerAddress: resolveAddress(
+      { street: invoice.seller_street, postcode: invoice.seller_postcode, city: invoice.seller_city },
+      invoice.seller_address
+    ).formatted,
     sellerVatNumber: invoice.seller_tva_number,
     clientSiren: invoice.client_siren,
-    clientAddress: invoice.client_address,
+    clientAddress: resolveAddress(
+      { street: invoice.client_street, postcode: invoice.client_postcode, city: invoice.client_city },
+      invoice.client_address
+    ).formatted,
     isFranchise: invoice.tva_rate === 0,
     // Heuristique provisoire : sans raison sociale, le client est un particulier.
     // Les obligations d'adressage (SIREN, adresse structurée) ne valent qu'en B2B —

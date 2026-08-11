@@ -73,7 +73,9 @@ export default function NewProposalPage() {
   const [clientName, setClientName] = useState("");
   const [clientEmail, setClientEmail] = useState("");
   const [clientCompany, setClientCompany] = useState("");
-  const [clientAddress, setClientAddress] = useState("");
+  const [clientStreet, setClientStreet] = useState("");
+  const [clientPostcode, setClientPostcode] = useState("");
+  const [clientCity, setClientCity] = useState("");
   const [clientSiren, setClientSiren] = useState("");
 
   useEffect(() => {
@@ -260,7 +262,9 @@ export default function NewProposalPage() {
           client_name: clientName || null,
           client_email: clientEmail || null,
           client_company: clientCompany || null,
-          client_address: clientAddress || null,
+          client_street: clientStreet || null,
+          client_postcode: clientPostcode || null,
+          client_city: clientCity || null,
           client_siren: clientSiren || null,
           items: generated.items.map((i) => ({ ...i, id: uuidv4() })),
           total_ht: generated.total_ht,
@@ -639,9 +643,20 @@ export default function NewProposalPage() {
               <label className="block text-sm font-medium text-gray-300 mb-1.5">SIREN client <span className="text-blue-400 text-xs">(B2B 2026)</span></label>
               <input className={inputCls} placeholder="123 456 789" value={clientSiren} onChange={(e) => setClientSiren(e.target.value)} />
             </div>
+            {/* Code postal et ville en champs distincts : l'EN 16931 les exige
+                séparés dans le XML. Facultatifs — ils ne bloquent jamais
+                l'enregistrement, le manque est signalé sur la facture. */}
             <div className="sm:col-span-2">
               <label className="block text-sm font-medium text-gray-300 mb-1.5">Adresse du client</label>
-              <input className={inputCls} placeholder="12 rue de la Paix, 75001 Paris" value={clientAddress} onChange={(e) => setClientAddress(e.target.value)} />
+              <input className={inputCls} placeholder="12 rue de la Paix" value={clientStreet} onChange={(e) => setClientStreet(e.target.value)} />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-300 mb-1.5">Code postal</label>
+              <input className={inputCls} placeholder="75001" inputMode="numeric" maxLength={10} value={clientPostcode} onChange={(e) => setClientPostcode(e.target.value)} />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-300 mb-1.5">Ville</label>
+              <input className={inputCls} placeholder="Paris" value={clientCity} onChange={(e) => setClientCity(e.target.value)} />
             </div>
           </div>
 

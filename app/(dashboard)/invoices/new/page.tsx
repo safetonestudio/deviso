@@ -7,6 +7,7 @@ import type { Proposal, ProposalItem } from "@/types";
 import { v4 as uuidv4 } from "uuid";
 import { Clock, Package } from "lucide-react";
 import { GuidedTourBanner } from "@/components/GuidedTourBanner";
+import { splitAddress } from "@/lib/address";
 
 interface CatalogItem {
   id: string;
@@ -78,7 +79,9 @@ export default function NewInvoicePage() {
   // Vendeur
   const [sellerCompany, setSellerCompany] = useState("");
   const [sellerSiren, setSellerSiren] = useState("");
-  const [sellerAddress, setSellerAddress] = useState("");
+  const [sellerStreet, setSellerStreet] = useState("");
+  const [sellerPostcode, setSellerPostcode] = useState("");
+  const [sellerCity, setSellerCity] = useState("");
   const [sellerTva, setSellerTva] = useState("");
 
   // Client
@@ -86,7 +89,9 @@ export default function NewInvoicePage() {
   const [clientEmail, setClientEmail] = useState("");
   const [clientCompany, setClientCompany] = useState("");
   const [clientSiren, setClientSiren] = useState("");
-  const [clientAddress, setClientAddress] = useState("");
+  const [clientStreet, setClientStreet] = useState("");
+  const [clientPostcode, setClientPostcode] = useState("");
+  const [clientCity, setClientCity] = useState("");
 
   // Catalogue
   const [catalog, setCatalog] = useState<CatalogItem[]>([]);
@@ -124,7 +129,12 @@ export default function NewInvoicePage() {
         if (d.profile) {
           setSellerCompany(d.profile.company_name || d.profile.full_name || "");
           setSellerSiren(d.profile.siret || "");
-          setSellerAddress(d.profile.address || "");
+          // Champs structurés du profil ; repli sur l'ancien texte libre pour
+          // les comptes créés avant leur introduction.
+          const sellerParts = splitAddress(d.profile.address);
+          setSellerStreet(d.profile.address_street || sellerParts.street || "");
+          setSellerPostcode(d.profile.address_postcode || sellerParts.postcode || "");
+          setSellerCity(d.profile.address_city || sellerParts.city || "");
           setSellerTva(d.profile.tva_number || "");
           if (d.profile.tva_regime) {
             setTvaRate(REGIME_TO_RATE[d.profile.tva_regime] ?? 0);
@@ -180,7 +190,10 @@ export default function NewInvoicePage() {
     setClientEmail(p.client_email || "");
     setClientCompany(p.client_company || "");
     setClientSiren(p.client_siren || "");
-    setClientAddress(p.client_address || "");
+    const clientParts = splitAddress(p.client_address);
+    setClientStreet(p.client_street || clientParts.street || "");
+    setClientPostcode(p.client_postcode || clientParts.postcode || "");
+    setClientCity(p.client_city || clientParts.city || "");
     setTvaRate(p.tva_rate ?? 0);
     setPaymentTerms(p.payment_terms || "30 jours net");
 
@@ -343,10 +356,14 @@ export default function NewInvoicePage() {
         client_email: clientEmail,
         client_company: clientCompany,
         client_siren: clientSiren || null,
-        client_address: clientAddress || null,
+        client_street: clientStreet || null,
+        client_postcode: clientPostcode || null,
+        client_city: clientCity || null,
         seller_company: sellerCompany,
         seller_siren: sellerSiren || null,
-        seller_address: sellerAddress || null,
+        seller_street: sellerStreet || null,
+        seller_postcode: sellerPostcode || null,
+        seller_city: sellerCity || null,
         seller_tva_number: sellerTva || null,
         items,
         total_ht: totalHt,
@@ -575,7 +592,15 @@ export default function NewInvoicePage() {
               </div>
               <div className="col-span-2">
                 <label className="block text-xs font-medium text-gray-400 mb-1">Adresse</label>
-                <input value={sellerAddress} onChange={(e) => setSellerAddress(e.target.value)} className={inputCls} />
+                <input value={sellerStreet} onChange={(e) => setSellerStreet(e.target.value)} placeholder="24 Avenue de Gradignan" className={inputCls} />
+              </div>
+              <div>
+                <label className="block text-xs font-medium text-gray-400 mb-1">Code postal</label>
+                <input value={sellerPostcode} onChange={(e) => setSellerPostcode(e.target.value)} placeholder="33170" inputMode="numeric" maxLength={10} className={inputCls} />
+              </div>
+              <div>
+                <label className="block text-xs font-medium text-gray-400 mb-1">Ville</label>
+                <input value={sellerCity} onChange={(e) => setSellerCity(e.target.value)} placeholder="Gradignan" className={inputCls} />
               </div>
               <div>
                 <label className="block text-xs font-medium text-gray-400 mb-1">N° TVA intracommunautaire</label>
@@ -608,18 +633,20 @@ export default function NewInvoicePage() {
                 </label>
                 <input value={clientSiren} onChange={(e) => setClientSiren(e.target.value)} placeholder="123 456 789" className={inputCls} />
               </div>
+              {/* Code postal et ville séparés : l'EN 16931 les exige comme
+                  éléments distincts du XML (BT-53, BT-52). Facultatifs — rien
+                  ici ne doit empêcher de créer ou d'envoyer la facture. */}
               <div className="col-span-2">
                 <label className="block text-xs font-medium text-gray-400 mb-1">Adresse de facturation</label>
-                <input value={clientAddress} onChange={(e) => setClientAddress(e.target.value)} placeholder="5 rue Bossuet, 33140 Villenave-d'Ornon" className={inputCls} />
-                {/* Le code postal et la ville deviennent des éléments distincts du XML
-                    (BT-53, BT-52). Sans eux la Plateforme Agréée rejette la facture, et
-                    l'utilisateur n'a aucun moyen de le deviner depuis un champ libre. */}
-                {clientAddress.trim() !== "" && !/\d{5}/.test(clientAddress) && (
-                  <p className="mt-1 text-xs text-amber-200">
-                    Ajoutez le code postal et la ville — ils sont exigés pour l&apos;acheminement
-                    de la facture électronique.
-                  </p>
-                )}
+                <input value={clientStreet} onChange={(e) => setClientStreet(e.target.value)} placeholder="5 rue Bossuet" className={inputCls} />
+              </div>
+              <div>
+                <label className="block text-xs font-medium text-gray-400 mb-1">Code postal</label>
+                <input value={clientPostcode} onChange={(e) => setClientPostcode(e.target.value)} placeholder="33140" inputMode="numeric" maxLength={10} className={inputCls} />
+              </div>
+              <div>
+                <label className="block text-xs font-medium text-gray-400 mb-1">Ville</label>
+                <input value={clientCity} onChange={(e) => setClientCity(e.target.value)} placeholder="Villenave-d'Ornon" className={inputCls} />
               </div>
             </div>
           </section>

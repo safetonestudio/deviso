@@ -17,6 +17,7 @@ import {
   electronicAddress,
 } from "./facturx-helpers";
 import type { PaymentInfo } from "./invoice-pdf";
+import { resolveAddress } from "@/lib/address";
 
 function xmlDate(dateStr: string): string {
   return dateStr.replace(/-/g, "");
@@ -82,15 +83,25 @@ const LEGAL_NOTES: { code: string; content: string }[] = [
   { code: "AAB", content: "Aucun escompte accorde pour paiement anticipe" },
 ];
 
-/** Adresse postale structurée (BG-5 / BG-8). Ordre XSD strict. */
-function postalAddress(raw: string | null | undefined): string {
-  const a = parseAddress(raw);
+/**
+ * Adresse postale structurée (BG-5 / BG-8). Ordre XSD strict.
+ *
+ * On lit d'abord les colonnes séparées, saisies dans le formulaire. Le découpage
+ * du texte libre ne sert plus que de repli pour les documents créés avant leur
+ * introduction : deviner un code postal par expression régulière produisait des
+ * factures non conformes sans qu'aucun contrôle ne le signale.
+ */
+function postalAddress(
+  parts: { street?: string | null; postcode?: string | null; city?: string | null; country?: string | null },
+  raw: string | null | undefined
+): string {
+  const a = resolveAddress(parts, raw);
   return [
     "<ram:PostalTradeAddress>",
     a.postcode ? `<ram:PostcodeCode>${esc(a.postcode)}</ram:PostcodeCode>` : "",
     a.street ? `<ram:LineOne>${esc(a.street)}</ram:LineOne>` : "",
     a.city ? `<ram:CityName>${esc(a.city)}</ram:CityName>` : "",
-    `<ram:CountryID>${esc(a.country)}</ram:CountryID>`,
+    `<ram:CountryID>${esc(a.country || "FR")}</ram:CountryID>`,
     "</ram:PostalTradeAddress>",
   ].join("");
 }
@@ -184,7 +195,10 @@ export function generateFacturXml(
       <ram:SellerTradeParty>
         <ram:Name>${esc(invoice.seller_company || invoice.seller_name || "")}</ram:Name>
         ${sellerSiren ? `<ram:SpecifiedLegalOrganization><ram:ID schemeID="0002">${esc(sellerSiren)}</ram:ID></ram:SpecifiedLegalOrganization>` : ""}
-        ${postalAddress(invoice.seller_address)}
+        ${postalAddress(
+          { street: invoice.seller_street, postcode: invoice.seller_postcode, city: invoice.seller_city, country: invoice.seller_country },
+          invoice.seller_address
+        )}
         ${sellerEas ? `<ram:URIUniversalCommunication><ram:URIID schemeID="0225">${esc(sellerEas)}</ram:URIID></ram:URIUniversalCommunication>` : ""}
         ${
           sellerVat.value
@@ -199,7 +213,10 @@ export function generateFacturXml(
       <ram:BuyerTradeParty>
         <ram:Name>${esc(invoice.client_company || invoice.client_name || "")}</ram:Name>
         ${buyerSiren ? `<ram:SpecifiedLegalOrganization><ram:ID schemeID="0002">${esc(buyerSiren)}</ram:ID></ram:SpecifiedLegalOrganization>` : ""}
-        ${postalAddress(invoice.client_address)}
+        ${postalAddress(
+          { street: invoice.client_street, postcode: invoice.client_postcode, city: invoice.client_city, country: invoice.client_country },
+          invoice.client_address
+        )}
         ${buyerEas ? `<ram:URIUniversalCommunication><ram:URIID schemeID="0225">${esc(buyerEas)}</ram:URIID></ram:URIUniversalCommunication>` : ""}
         ${invoice.client_vat_number ? `<ram:SpecifiedTaxRegistration><ram:ID schemeID="VA">${esc(invoice.client_vat_number)}</ram:ID></ram:SpecifiedTaxRegistration>` : ""}
       </ram:BuyerTradeParty>

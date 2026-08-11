@@ -3,6 +3,7 @@ import { createClient } from "@/lib/supabase/server";
 import { v4 as uuidv4 } from "uuid";
 import type { ProposalItem } from "@/types";
 import { getWorkspaceUserId } from "@/lib/workspace";
+import { resolveAddress } from "@/lib/address";
 
 // GET /api/invoices
 export async function GET() {
@@ -72,6 +73,18 @@ export async function POST(req: NextRequest) {
     }
   }
 
+  // Adresses : on dérive la forme affichable des champs saisis, des deux côtés.
+  // Rien n'est requis — une facture doit pouvoir être créée avec une adresse
+  // incomplète, quitte à ce que la bannière de conformité le signale ensuite.
+  const clientAddr = resolveAddress(
+    { street: body.client_street, postcode: body.client_postcode, city: body.client_city },
+    body.client_address
+  );
+  const sellerAddr = resolveAddress(
+    { street: body.seller_street, postcode: body.seller_postcode, city: body.seller_city },
+    body.seller_address
+  );
+
   const itemsWithIds = ((body.items || []) as ProposalItem[]).map((item) => ({
     ...item,
     id: item.id || uuidv4(),
@@ -81,6 +94,16 @@ export async function POST(req: NextRequest) {
     .from("invoices")
     .insert({
       ...body,
+      client_street: clientAddr.street,
+      client_postcode: clientAddr.postcode,
+      client_city: clientAddr.city,
+      client_country: clientAddr.country,
+      client_address: clientAddr.formatted,
+      seller_street: sellerAddr.street,
+      seller_postcode: sellerAddr.postcode,
+      seller_city: sellerAddr.city,
+      seller_country: sellerAddr.country,
+      seller_address: sellerAddr.formatted,
       user_id: workspaceId,
       created_by: user.id,
       invoice_number: invoiceNumber,
