@@ -6,7 +6,11 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "check:forms": "node scripts/check-form-wiring.mjs",
+    "test:roles": "node scripts/e2e/two-roles.mjs",
+    "test:promises": "node scripts/e2e/promesses.mjs",
+    "verify": "npm run check:forms && npm run test:roles && npm run test:promises"
   },
   "dependencies": {
     "@react-pdf/renderer": "^4.3.0",
