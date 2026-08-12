@@ -44,7 +44,7 @@ export function SessionGuard() {
       // navigateur a été fermé puis rouvert. C'est donc un départ certain, pas
       // une inférence — on supprime le compte factice au lieu de se contenter
       // d'une déconnexion qui le laisserait en base jusqu'à expiration.
-      terminerDemo("/login");
+      terminerDemo();
       return;
     }
   }, [router]);

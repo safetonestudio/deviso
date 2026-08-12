@@ -16,7 +16,7 @@ const INTERVALLE_MS = 60_000;
  * diverger — c'est précisément le défaut qui a laissé le portail de facturation
  * sans garde-fou alors que le tunnel de paiement en avait un.
  */
-export async function terminerDemo(destination = "/demo-terminee") {
+export async function terminerDemo(destination = "/") {
   try {
     await fetch("/api/demo/end", { method: "POST" });
   } catch {
