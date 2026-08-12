@@ -89,7 +89,9 @@ export async function openSession(label) {
     return openSession(label);
   }
 
-  return { label, call, userId: me.body.profile.id, email: me.body.profile.email };
+  // `cookie` est exposé pour les téléchargements binaires : `call` lit la réponse
+  // en texte, ce qui corromprait un PDF.
+  return { label, call, cookie, userId: me.body.profile.id, email: me.body.profile.email };
 }
 
 /** Session anonyme, pour vérifier que les routes refusent bien ce qu'elles doivent refuser. */

@@ -33,3 +33,5 @@ deploy.log
 
 # Sessions de test réutilisées entre deux exécutions
 scripts/e2e/.sessions.json
+scripts/e2e/.facture-test.pdf
+scripts/e2e/sans-*.pdf
