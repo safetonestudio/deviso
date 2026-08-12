@@ -1,88 +1,91 @@
 /**
- * Contrôle : la navigation mobile et la barre latérale proposent la même chose.
+ * Contrôle : ordinateur et mobile affichent la MÊME navigation.
  *
- * Pourquoi ce contrôle existe. L'entrée « Factures reçues » a été ajoutée dans
- * `SidebarNav` et oubliée dans `MobileNav`. Résultat : la page existait, elle
- * était fonctionnelle, et elle était **inatteignable depuis un téléphone**.
- * Personne ne pouvait le voir en relisant le code — les deux fichiers se lisent
- * parfaitement, chacun de son côté.
+ * Historique de ce fichier, parce qu'il explique sa forme actuelle.
  *
- * C'est la même famille de défaut que tout le reste de ce projet : deux morceaux
- * corrects, pas reliés. Ici la jointure n'est pas technique mais humaine — il
- * faut penser à modifier les deux. Ce script s'en charge à notre place.
+ * Première version : elle comparait deux listes écrites à la main et vérifiait
+ * la **présence** de chaque entrée. Elle est passée au vert alors que la
+ * navigation mobile était réorganisée autrement — « Paiements clients » sous
+ * *Facturation* au lieu de *Gestion*, « Activité » sous *Clients*, la section
+ * *Gestion* purement absente. J'ai annoncé « les douze autres entrées
+ * concordent » sur la foi de ce vert. C'était faux : j'avais posé au contrôle
+ * une question plus étroite que celle qui comptait, puis lu sa réponse comme si
+ * elle répondait à la question large.
  *
- * Ce qu'il ne prouve pas : que le menu s'affiche correctement, ni qu'il est
- * utilisable au pouce. Cela demande un vrai téléphone.
+ * Version actuelle : la navigation vit dans `lib/navigation.ts`, un seul
+ * endroit, et les deux composants la consomment. Le contrôle ne compare donc
+ * plus deux listes — il vérifie qu'il n'en existe **qu'une**. C'est plus fort :
+ * on ne surveille pas une divergence, on la rend impossible.
+ *
+ * Ce qu'il ne prouve toujours pas : que le menu s'affiche correctement, qu'il
+ * tienne à l'écran, qu'il soit utilisable au pouce. Cela demande un téléphone
+ * et des yeux.
  *
  * Usage : node scripts/check-nav.mjs
  */
 
 import { readFileSync } from "node:fs";
 
-const FICHIERS = {
+const SOURCE = "lib/navigation.ts";
+const CONSOMMATEURS = {
   "barre latérale": "components/SidebarNav.tsx",
   "menu mobile": "components/MobileNav.tsx",
 };
 
-/** Extrait les entrées de navigation d'un fichier, sans exécuter le code. */
-function entrees(chemin) {
-  const source = readFileSync(chemin, "utf8");
-  const trouvees = new Map();
-  // Chaque entrée est un objet littéral sur une ligne contenant `href:`.
-  for (const bloc of source.match(/\{[^{}]*href:\s*"[^"]+"[^{}]*\}/g) ?? []) {
-    const href = bloc.match(/href:\s*"([^"]+)"/)[1];
-    trouvees.set(href, {
-      label: bloc.match(/label:\s*"([^"]+)"/)?.[1] ?? "?",
-      pro: /pro:\s*true/.test(bloc),
-      ownerOnly: /ownerOnly:\s*true/.test(bloc),
-    });
-  }
-  return trouvees;
-}
-
-const [nomA, nomB] = Object.keys(FICHIERS);
-const a = entrees(FICHIERS[nomA]);
-const b = entrees(FICHIERS[nomB]);
-
 let echecs = 0;
+const source = readFileSync(SOURCE, "utf8");
 
-for (const [nomSource, source, nomCible, cible] of [
-  [nomA, a, nomB, b],
-  [nomB, b, nomA, a],
-]) {
-  for (const [href, item] of source) {
-    if (!cible.has(href)) {
-      echecs++;
-      console.log(`✗ « ${item.label} » (${href}) est dans la ${nomSource}, absente du ${nomCible}`);
-      console.log(`    la page est alors inatteignable depuis ce support.`);
-    }
+// 1. Chaque composant consomme-t-il bien la source unique ?
+for (const [nom, chemin] of Object.entries(CONSOMMATEURS)) {
+  const code = readFileSync(chemin, "utf8");
+
+  if (!/from\s+"@\/lib\/navigation"/.test(code)) {
+    echecs++;
+    console.log(`✗ ${nom} (${chemin}) n'importe pas @/lib/navigation`);
+  }
+  if (!/\bNAVIGATION\b/.test(code)) {
+    echecs++;
+    console.log(`✗ ${nom} n'utilise pas NAVIGATION`);
+  }
+
+  // 2. A-t-il reconstitué sa propre liste à côté ? C'est ainsi que la
+  //    divergence était née la première fois.
+  const listeLocale = code.match(/const\s+\w*NAV\w*\s*(?::[^=]+)?=\s*\[/);
+  if (listeLocale) {
+    echecs++;
+    console.log(`✗ ${nom} redéfinit une liste de navigation : « ${listeLocale[0].trim()} »`);
+    console.log(`    c'est exactement ainsi que les deux navigations ont divergé.`);
+  }
+
+  // 3. A-t-il sa propre règle de « lien actif » ? Elles avaient aussi divergé.
+  if (/function\s+isActive\s*\(/.test(code)) {
+    echecs++;
+    console.log(`✗ ${nom} redéfinit isActive au lieu d'utiliser lienActif`);
   }
 }
 
-// Les conditions d'affichage doivent aussi concorder : une entrée réservée au
-// plan Pro d'un côté et ouverte à tous de l'autre, c'est une promesse tenue sur
-// un support et pas sur l'autre.
-for (const [href, item] of a) {
-  const autre = b.get(href);
-  if (!autre) continue;
-  for (const cle of ["label", "pro", "ownerOnly"]) {
-    if (item[cle] !== autre[cle]) {
-      echecs++;
-      console.log(`✗ ${href} — « ${cle} » diverge : ${nomA} = ${JSON.stringify(item[cle])}, ${nomB} = ${JSON.stringify(autre[cle])}`);
-    }
-  }
-}
-
-// Contre-épreuve : le contrôle doit savoir détecter une divergence.
-const temoin = new Map([["/x", { label: "X", pro: false, ownerOnly: false }]]);
-if (temoin.has("/y") || !temoin.has("/x")) {
-  console.log("✗ contre-épreuve : la comparaison ne fonctionne pas comme prévu.");
+// 4. La source elle-même doit rester cohérente : pas de doublon de chemin.
+const chemins = [...source.matchAll(/href:\s*"([^"]+)"/g)].map((m) => m[1]);
+const doublons = chemins.filter((h, i) => chemins.indexOf(h) !== i);
+if (doublons.length) {
   echecs++;
+  console.log(`✗ chemins en double dans ${SOURCE} : ${[...new Set(doublons)].join(", ")}`);
+}
+
+// Contre-épreuve : le contrôle sait-il repérer une liste locale ?
+const temoin = 'const NAV: NavItem[] = [\n  { href: "/x" },\n];';
+if (!/const\s+\w*NAV\w*\s*(?::[^=]+)?=\s*\[/.test(temoin)) {
+  echecs++;
+  console.log("✗ contre-épreuve : le motif ne détecte plus une liste locale.");
+} else {
+  console.log("Contre-épreuve : une liste de navigation locale serait bien détectée.");
 }
 
 console.log("");
 if (echecs > 0) {
-  console.log(`${echecs} divergence(s) entre les deux navigations.`);
+  console.log(`${echecs} problème(s) de navigation.`);
   process.exit(1);
 }
-console.log(`✓ Navigation — ${a.size} entrées, identiques sur ordinateur et mobile`);
+console.log(
+  `✓ Navigation — ${chemins.length} entrées, une seule source, consommée par les deux supports`
+);

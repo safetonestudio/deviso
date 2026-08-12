@@ -1,69 +1,18 @@
 "use client";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import {
-  LayoutDashboard, FileText, Receipt,
-  Package, Users, BarChart3,
-  Sparkles, UsersRound, Settings, Wallet, BookOpen, CreditCard, Inbox, LucideIcon,
-} from "lucide-react";
-
-type NavItem =
-  | { href: string; label: string; icon: LucideIcon; accent?: boolean; pro?: boolean; ownerOnly?: boolean; section?: never }
-  | { section: string; ownerOnly?: boolean; href?: never; label?: never; icon?: never; accent?: never; pro?: never; payment?: never };
-
-const NAV_ITEMS: NavItem[] = [
-  { href: "/dashboard",     label: "Accueil",           icon: LayoutDashboard },
-  { href: "/proposals/new", label: "Nouveau devis",     icon: Sparkles, accent: true },
-  { section: "Facturation" },
-  { href: "/proposals",     label: "Devis",             icon: FileText },
-  { href: "/invoices",      label: "Factures",          icon: Receipt },
-  // Factures reçues via la Plateforme Agréée. Placé juste après « Factures » :
-  // c'est le même objet métier, vu depuis l'autre bout.
-  { href: "/factures-recues", label: "Factures reçues", icon: Inbox, ownerOnly: true },
-  { section: "Clients", ownerOnly: true },
-  { href: "/crm",           label: "Mes clients",       icon: Users,     ownerOnly: true },
-  { section: "Pro" },
-  { href: "/catalogue",     label: "Catalogue",         icon: Package,    pro: true },
-  { href: "/team",          label: "Équipe",            icon: UsersRound, pro: true },
-  { section: "Gestion", ownerOnly: true },
-  { href: "/paiements",     label: "Paiements clients", icon: Wallet,    ownerOnly: true },
-  { href: "/stats",         label: "Activité",          icon: BarChart3, ownerOnly: true },
-  { section: "Compte" },
-  { href: "/profil",        label: "Paramètres",        icon: Settings,    ownerOnly: true },
-  { href: "/billing",       label: "Abonnement",        icon: CreditCard,  ownerOnly: true },
-  { href: "/prise-en-main", label: "Prise en main",    icon: BookOpen },
-];
-
-const TOUR_TARGETS: Record<string, string> = {
-  "/dashboard": "dashboard",
-  "/proposals": "proposals",
-  "/invoices":  "invoices",
-  "/paiements": "paiements",
-  "/crm":       "crm",
-  "/stats":     "stats",
-  "/catalogue": "catalogue",
-  "/team":      "team",
-  "/profil":         "profil",
-  "/prise-en-main":  "prise-en-main",
-};
+import { NAVIGATION, TOUR_TARGETS, estSection, lienActif } from "@/lib/navigation";
 
 export function SidebarNav({ isMember = false }: { isMember?: boolean }) {
   const pathname = usePathname();
 
-  function isActive(href: string) {
-    if (href === "/dashboard") return pathname === "/dashboard";
-    if (href === "/proposals/new") return pathname === "/proposals/new";
-    if (href === "/invoices/new") return pathname === "/invoices/new";
-    return pathname === href || pathname.startsWith(href + "/");
-  }
-
   return (
     <nav className="flex-1 p-4 space-y-0.5 overflow-y-auto">
-      {NAV_ITEMS.map((item, i) => {
+      {NAVIGATION.map((item, i) => {
         // Cacher les éléments réservés au propriétaire si c'est un membre
         if (isMember && item.ownerOnly) return null;
 
-        if ("section" in item && item.section) {
+        if (estSection(item)) {
           return (
             <div key={i} className="pt-4 pb-1">
               <p className="px-3 text-[10px] font-semibold text-gray-600 uppercase tracking-widest">
@@ -73,10 +22,8 @@ export function SidebarNav({ isMember = false }: { isMember?: boolean }) {
           );
         }
 
-        if (!item.href) return null;
-
-        const active = isActive(item.href);
-        const Icon = item.icon!;
+        const active = lienActif(item.href, pathname);
+        const Icon = item.icon;
 
         if (item.accent) {
           return (

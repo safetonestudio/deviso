@@ -5,37 +5,10 @@ import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 import { terminerDemo } from "@/components/DemoSession";
-import {
-  LayoutDashboard, FileText, Receipt,
-  Package, Users, BarChart3,
-  Sparkles, UsersRound, Settings, Wallet, BookOpen, CreditCard, Inbox, LucideIcon,
-  Menu, X,
-} from "lucide-react";
+import { Menu, X } from "lucide-react";
+import { NAVIGATION, estSection, lienActif } from "@/lib/navigation";
 import { NotificationBell } from "@/components/NotificationBell";
 
-type NavItem =
-  | { type: "section"; label: string; ownerOnly?: boolean }
-  | { type: "link"; href: string; icon: LucideIcon; label: string; accent?: boolean; pro?: boolean; ownerOnly?: boolean };
-
-const NAV: NavItem[] = [
-  { type: "link", href: "/dashboard",     icon: LayoutDashboard, label: "Accueil" },
-  { type: "section", label: "Facturation" },
-  { type: "link", href: "/proposals",     icon: FileText,        label: "Devis" },
-  { type: "link", href: "/proposals/new", icon: Sparkles,        label: "Nouveau devis", accent: true },
-  { type: "link", href: "/invoices",      icon: Receipt,         label: "Factures" },
-  { type: "link", href: "/factures-recues", icon: Inbox,         label: "Factures reçues", ownerOnly: true },
-  { type: "link", href: "/paiements",     icon: Wallet,          label: "Paiements clients", ownerOnly: true },
-  { type: "section", label: "Clients", ownerOnly: true },
-  { type: "link", href: "/crm",           icon: Users,           label: "Mes clients",  ownerOnly: true },
-  { type: "link", href: "/stats",         icon: BarChart3,       label: "Activité",     ownerOnly: true },
-  { type: "section", label: "Pro" },
-  { type: "link", href: "/catalogue",     icon: Package,         label: "Catalogue",    pro: true },
-  { type: "link", href: "/team",          icon: UsersRound,      label: "Équipe",       pro: true },
-  { type: "section", label: "Compte" },
-  { type: "link", href: "/profil",        icon: Settings,        label: "Paramètres",   ownerOnly: true },
-  { type: "link", href: "/billing",       icon: CreditCard,      label: "Abonnement",   ownerOnly: true },
-  { type: "link", href: "/prise-en-main", icon: BookOpen,        label: "Prise en main" },
-];
 
 interface MobileNavProps {
   initials: string;
@@ -70,14 +43,12 @@ export function MobileNav({ initials, userName, userEmail, isMember = false, isD
     return () => { document.body.style.overflow = ""; };
   }, [open]);
 
-  function isActive(href: string) {
-    if (href === "/dashboard") return pathname === "/dashboard";
-    if (href === "/proposals/new") return pathname === "/proposals/new";
-    return pathname === href || (href !== "/dashboard" && pathname.startsWith(href));
-  }
-
+  // `lienActif` est partagé avec la barre latérale. La version locale, ici,
+  // testait `pathname.startsWith(href)` sans barre finale : « /invoices »
+  // s'allumait aussi pour « /invoices-autre-chose ». Une divergence de plus,
+  // invisible tant qu'aucune route ne se ressemblait.
   const navLinkClass = (href: string, accent?: boolean) => {
-    const active = isActive(href);
+    const active = lienActif(href, pathname);
     if (accent) {
       return active
         ? "flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium bg-indigo-600 text-white"
@@ -123,14 +94,14 @@ export function MobileNav({ initials, userName, userEmail, isMember = false, isD
         </div>
 
         <nav className="flex-1 p-4 space-y-0.5 overflow-y-auto">
-          {NAV.map((item, i) => {
+          {NAVIGATION.map((item, i) => {
             // Cacher les éléments réservés au propriétaire si c'est un membre
             if (isMember && item.ownerOnly) return null;
 
-            if (item.type === "section") {
+            if (estSection(item)) {
               return (
                 <div key={i} className="pt-4 pb-1">
-                  <p className="px-3 text-[10px] font-semibold text-gray-600 uppercase tracking-widest">{item.label}</p>
+                  <p className="px-3 text-[10px] font-semibold text-gray-600 uppercase tracking-widest">{item.section}</p>
                 </div>
               );
             }
