@@ -42,7 +42,7 @@ export async function POST(_req: NextRequest, { params }: Params) {
   // devis sèment le doute juste avant la signature.
   const signUrl = proposalShareUrl(publicBaseUrl(profile), proposal.share_token);
 
-  const urgency = reminderNum >= 3 ? "Dernier rappel" : reminderNum === 2 ? "2ème rappel" : "Rappel, Devis en attente";
+  const urgency = reminderNum >= 3 ? "Dernier rappel" : reminderNum === 2 ? "2e rappel" : "Votre devis vous attend";
   const borderColor = reminderNum >= 3 ? "#dc2626" : reminderNum === 2 ? "#d97706" : "#4f46e5";
 
   const html = `<!DOCTYPE html>
@@ -111,7 +111,7 @@ export async function POST(_req: NextRequest, { params }: Params) {
     // Reply-To vers l'émetteur : sans lui, la réponse du client se perd.
     ...(profile?.email ? { replyTo: profile.email } : {}),
     to: proposal.client_email,
-    subject: `${urgency}, ${proposal.title} (${amount})`,
+    subject: `${urgency} · ${proposal.title} · ${amount}`,
     html,
   });
 

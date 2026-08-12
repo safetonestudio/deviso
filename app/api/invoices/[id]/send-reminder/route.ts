@@ -41,7 +41,7 @@ export async function POST(req: NextRequest, { params }: Params) {
     ? Math.max(0, Math.floor((Date.now() - new Date(invoice.due_date).getTime()) / (1000 * 60 * 60 * 24)))
     : 0;
   const reminderNum = (invoice.reminder_count || 0) + 1;
-  const urgency = reminderNum >= 3 ? "Dernier rappel" : reminderNum === 2 ? "2eme rappel" : "Rappel de paiement";
+  const urgency = reminderNum >= 3 ? "Dernier rappel" : reminderNum === 2 ? "2e rappel" : "Rappel de paiement";
   const borderColor = reminderNum >= 3 ? "#dc2626" : reminderNum === 2 ? "#d97706" : "#4f46e5";
   const btnColor = reminderNum >= 3 ? "#dc2626" : "#4f46e5";
 
@@ -105,7 +105,7 @@ export async function POST(req: NextRequest, { params }: Params) {
     from: `${senderName} <noreply@getdeviso.fr>`,
     ...(senderProfile?.email ? { replyTo: senderProfile.email } : {}),
     to: invoice.client_email,
-    subject: `${urgency}, Facture ${invoice.invoice_number} (${amount})`,
+    subject: `${urgency} · Facture ${invoice.invoice_number} · ${amount}`,
     html,
   });
 

@@ -84,7 +84,7 @@ export async function GET(req: NextRequest) {
     const amount = new Intl.NumberFormat("fr-FR", { style: "currency", currency: "EUR" }).format(invoice.total_ttc);
     const daysOverdue = Math.floor((Date.now() - new Date(invoice.due_date).getTime()) / DAY_MS);
     const reminderNum = (invoice.reminder_count || 0) + 1;
-    const urgency = reminderNum >= 3 ? "⚠️ Dernier rappel" : reminderNum === 2 ? "2ème rappel" : "Rappel de paiement";
+    const urgency = reminderNum >= 3 ? "Dernier rappel" : reminderNum === 2 ? "2e rappel" : "Rappel de paiement";
 
     const html = buildInvoiceReminderEmail({
       clientName, senderName, invoiceNumber: invoice.invoice_number,
@@ -102,7 +102,7 @@ export async function GET(req: NextRequest) {
       // Reply-To vers l'émetteur : sans lui, la réponse du client se perd.
       ...(profile?.email ? { replyTo: profile.email } : {}),
       to: invoice.client_email,
-      subject: `${urgency}, Facture ${invoice.invoice_number} (${amount})`,
+      subject: `${urgency} · Facture ${invoice.invoice_number} · ${amount}`,
       html,
     });
 
@@ -138,7 +138,7 @@ export async function GET(req: NextRequest) {
     const amount = new Intl.NumberFormat("fr-FR", { style: "currency", currency: "EUR" }).format(proposal.total_ttc);
     const reminderNum = (proposal.reminder_count || 0) + 1;
     const signUrl = proposalShareUrl(publicBaseUrl(profile), proposal.share_token);
-    const urgency = reminderNum >= 3 ? "⚠️ Dernier rappel" : reminderNum === 2 ? "2ème rappel" : "Rappel, Devis en attente";
+    const urgency = reminderNum >= 3 ? "Dernier rappel" : reminderNum === 2 ? "2e rappel" : "Votre devis vous attend";
     const borderColor = reminderNum >= 3 ? "#dc2626" : reminderNum === 2 ? "#d97706" : "#4f46e5";
 
     const html = buildProposalReminderEmail({
@@ -157,7 +157,7 @@ export async function GET(req: NextRequest) {
       // Reply-To vers l'émetteur : sans lui, la réponse du client se perd.
       ...(profile?.email ? { replyTo: profile.email } : {}),
       to: proposal.client_email,
-      subject: `${urgency}, ${proposal.title} (${amount})`,
+      subject: `${urgency} · ${proposal.title} · ${amount}`,
       html,
     });
 
