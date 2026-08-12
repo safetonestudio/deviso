@@ -422,7 +422,10 @@ export default function NewInvoicePage() {
       {!fromProposalParam && (
         <div className="bg-ds-surface border border-ds-border rounded-xl p-4 mb-5">
           <p className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-3">Type de facture</p>
-          <div className="grid grid-cols-3 gap-2">
+          {/* Trois tuiles portant chacune un libellé et une description :
+              sur un téléphone, trois colonnes ne laissent pas la place au
+              texte. Empilées en dessous de 640 px. */}
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
             {[
               { type: "standard" as const, label: "Standard", desc: "Facturation classique", icon: "📄" },
               { type: "acompte" as const,  label: "Acompte",  desc: "% d'un devis",          icon: "💰" },

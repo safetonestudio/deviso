@@ -84,7 +84,10 @@ export function CaUrssafWidget({ monthlyHT, currentMonth, currentYear }: Props) 
       {mode === "trimestre" && (
         <>
           {/* 4 blocs trimestriels */}
-          <div className="grid grid-cols-4 gap-2 mb-5">
+          {/* Quatre colonnes de montants sur un téléphone laissent moins de
+              80 px par cellule : un chiffre d'affaires n'y tient pas. Deux
+              colonnes en dessous de 640 px. */}
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 mb-5">
             {QUARTER_LABELS.map((label, q) => {
               const isCurrent = q === currentQuarter;
               const ca = quarterlyHT[q];
@@ -152,7 +155,10 @@ export function CaUrssafWidget({ monthlyHT, currentMonth, currentYear }: Props) 
       {/* ── VUE MENSUELLE, grille 4×3 de cartes (même style que trimestriel) ── */}
       {mode === "mensuel" && (
         <>
-          <div className="grid grid-cols-4 gap-2 mb-5">
+          {/* Quatre colonnes de montants sur un téléphone laissent moins de
+              80 px par cellule : un chiffre d'affaires n'y tient pas. Deux
+              colonnes en dessous de 640 px. */}
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 mb-5">
             {monthlyHT.map((ca, m) => {
               const isCurrent = m === currentMonth;
               const isFuture = m > currentMonth;

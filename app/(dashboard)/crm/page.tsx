@@ -226,17 +226,29 @@ export default function CRMPage() {
         </div>
       </div>
 
-      <div className="grid grid-cols-3 gap-4">
+      {/* `grid-cols-3` était figé : sur un téléphone la troisième tuile sortait
+          de l'écran et « CA encaissé » se coupait en plein milieu du montant.
+          Deux colonnes en dessous de 640 px, et le chiffre d'affaires prend
+          toute la largeur — c'est le plus long des trois, et le seul dont on
+          lit la valeur exacte plutôt que l'ordre de grandeur. */}
+      <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 sm:gap-4">
         {[
-          { label: "Clients", value: totalClients, icon: "👥" },
-          { label: "Devis signés", value: totalSigned, icon: "✅" },
-          { label: "CA encaissé", value: fmt(totalCA), icon: "💶" },
+          { label: "Clients", value: totalClients, icon: "👥", large: false },
+          { label: "Devis signés", value: totalSigned, icon: "✅", large: false },
+          { label: "CA encaissé", value: fmt(totalCA), icon: "💶", large: true },
         ].map((s) => (
-          <div key={s.label} className="bg-ds-surface border border-ds-border rounded-xl p-6 flex flex-col gap-4">
+          <div
+            key={s.label}
+            className={`bg-ds-surface border border-ds-border rounded-xl p-4 sm:p-6 flex flex-col gap-3 sm:gap-4 ${
+              s.large ? "col-span-2 sm:col-span-1" : ""
+            }`}
+          >
             <div className="w-8 h-8 flex items-center justify-center text-lg bg-ds-elevated rounded-lg">{s.icon}</div>
             <div>
               <div className="text-xs font-medium text-gray-600 uppercase tracking-wider mb-1">{s.label}</div>
-              <div className="text-3xl font-semibold text-white tabular-nums tracking-tight">{s.value}</div>
+              <div className="text-2xl sm:text-3xl font-semibold text-white tabular-nums tracking-tight break-words">
+                {s.value}
+              </div>
             </div>
           </div>
         ))}
@@ -409,18 +421,20 @@ export default function CRMPage() {
               <button onClick={() => { setSelected(null); setEditingPhone(false); }} className="text-gray-500 hover:text-gray-300 text-xl leading-none ml-3">&times;</button>
             </div>
 
-            <div className="grid grid-cols-3 gap-3 px-6 py-4 bg-ds-elevated/50 border-b border-ds-border">
-              <div className="text-center">
-                <div className="text-xl font-semibold text-white">{selected.nb_proposals}</div>
-                <div className="text-xs text-gray-500">Devis</div>
+            {/* Même correctif : trois montants côte à côte ne tiennent pas sur un
+                téléphone. Le nombre de devis, court, reste seul sur sa ligne. */}
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 px-4 sm:px-6 py-4 bg-ds-elevated/50 border-b border-ds-border">
+              <div className="flex justify-between sm:block sm:text-center">
+                <div className="text-xs text-gray-500 sm:order-2">Devis</div>
+                <div className="text-xl font-semibold text-white sm:order-1">{selected.nb_proposals}</div>
               </div>
-              <div className="text-center">
-                <div className="text-xl font-semibold text-emerald-400">{fmt(selected.ca_total)}</div>
-                <div className="text-xs text-gray-500">CA encaissé</div>
+              <div className="flex justify-between sm:block sm:text-center">
+                <div className="text-xs text-gray-500 sm:order-2">CA encaissé</div>
+                <div className="text-xl font-semibold text-emerald-400 sm:order-1">{fmt(selected.ca_total)}</div>
               </div>
-              <div className="text-center">
-                <div className="text-xl font-semibold text-blue-400">{fmt(selected.ca_pending)}</div>
-                <div className="text-xs text-gray-500">En attente</div>
+              <div className="flex justify-between sm:block sm:text-center">
+                <div className="text-xs text-gray-500 sm:order-2">En attente</div>
+                <div className="text-xl font-semibold text-blue-400 sm:order-1">{fmt(selected.ca_pending)}</div>
               </div>
             </div>
 
