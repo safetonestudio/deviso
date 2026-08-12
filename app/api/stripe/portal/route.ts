@@ -10,9 +10,18 @@ export async function POST() {
 
     const { data: profile } = await supabase
       .from("profiles")
-      .select("stripe_customer_id, email, full_name")
+      .select("stripe_customer_id, email, full_name, is_demo")
       .eq("id", user.id)
       .single();
+
+    // Même garde-fou que sur le tunnel de paiement : la démonstration ne doit
+    // jamais toucher le compte Stripe de production.
+    if (profile?.is_demo) {
+      return NextResponse.json(
+        { error: "La gestion de l'abonnement n'est pas disponible en mode démo." },
+        { status: 403 }
+      );
+    }
 
     let customerId = profile?.stripe_customer_id;
 
@@ -30,17 +39,19 @@ export async function POST() {
       }
     }
 
+    // On ne crée plus de client Stripe ici. Le portail sert à gérer un
+    // abonnement existant : sans abonnement, il n'y a rien à gérer, et créer un
+    // client à la volée remplissait le compte Stripe de production de fiches
+    // orphelines — notamment depuis les comptes de démonstration, purgés de la
+    // base au bout de deux heures mais jamais de Stripe.
     if (!customerId) {
-      const customer = await stripe.customers.create({
-        email: profile?.email || user.email,
-        name: profile?.full_name || undefined,
-        metadata: { supabase_user_id: user.id },
-      });
-      customerId = customer.id;
-      await supabase
-        .from("profiles")
-        .update({ stripe_customer_id: customerId })
-        .eq("id", user.id);
+      return NextResponse.json(
+        {
+          error: "NO_SUBSCRIPTION",
+          message: "Aucun abonnement à gérer pour le moment. Choisissez une formule pour commencer.",
+        },
+        { status: 400 }
+      );
     }
 
     const baseUrl = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000";

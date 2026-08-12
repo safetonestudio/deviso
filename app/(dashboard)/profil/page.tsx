@@ -135,8 +135,11 @@ export default function ProfilPage() {
     setPortalLoading(true);
     const res = await fetch("/api/stripe/portal", { method: "POST" });
     const data = await res.json();
-    if (data.url) window.location.href = data.url;
-    else { alert(data.error || "Erreur"); setPortalLoading(false); }
+    if (data.url) { window.location.href = data.url; return; }
+    // La route renvoie désormais un code plus un message lisible : afficher le
+    // code brut « NO_SUBSCRIPTION » à l'utilisateur n'aiderait personne.
+    alert(data.message || data.error || "Erreur");
+    setPortalLoading(false);
   }
 
   async function handleUpgrade(plan: "solo" | "pro") {
