@@ -9,6 +9,8 @@ import { NotificationBell } from "@/components/NotificationBell";
 import { SessionGuard } from "@/components/SessionGuard";
 import { SignOutButton } from "@/components/SignOutButton";
 import { DemoBanner } from "@/components/DemoSession";
+import { SuperPdpSync } from "@/components/SuperPdpSync";
+import { createAdminClient } from "@/lib/supabase/admin";
 import { SupportButton } from "@/components/SupportButton";
 import { PlanProvider } from "@/components/PlanContext";
 
@@ -27,10 +29,23 @@ export default async function DashboardLayout({ children }: { children: React.Re
   const workspaceUserId = await getWorkspaceUserId(user.id);
   const isMember = workspaceUserId !== user.id;
 
-  const [{ data: profile }, { data: workspacePlan }] = await Promise.all([
+  const [{ data: profile }, { data: workspacePlan }, { data: raccordement }] = await Promise.all([
     supabase.from("profiles").select("full_name, company_name, is_demo").eq("id", user.id).single(),
     supabase.from("profiles").select("plan").eq("id", workspaceUserId).single(),
+    // Le raccordement à la Plateforme Agréée vit dans une table sans politique
+    // RLS (elle contient un jeton d'un an) : lecture par la clé de service.
+    // On ne lit que le statut, jamais le jeton.
+    createAdminClient()
+      .from("superpdp_connections")
+      .select("session_status")
+      .eq("user_id", workspaceUserId)
+      .maybeSingle(),
   ]);
+
+  // On ne monte le déclencheur de synchronisation que pour les espaces
+  // réellement raccordés : sinon chaque chargement de page ferait un
+  // aller-retour inutile pour la quasi-totalité des comptes.
+  const synchroniserPdp = raccordement?.session_status === "verified";
 
   // NOTE : "free" n'est plus un plan commercialisé (supprimé le 30/06/2026).
   // C'est l'état transitoire d'un compte sans abonnement (avant souscription,
@@ -124,6 +139,7 @@ export default async function DashboardLayout({ children }: { children: React.Re
 
         <main className="flex-1 lg:ml-64 p-4 lg:p-8 min-w-0 pt-14">
           <SessionGuard />
+          {synchroniserPdp && <SuperPdpSync />}
           {/* Bandeau de démo : un seul, en haut du contenu, sur toutes les
               tailles d'écran. Il porte aussi le battement de cœur, donc il doit
               rester monté quelle que soit la page visitée. Le bouton de sortie
