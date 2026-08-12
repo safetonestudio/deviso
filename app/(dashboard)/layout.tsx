@@ -8,7 +8,7 @@ import { SidebarNav } from "@/components/SidebarNav";
 import { NotificationBell } from "@/components/NotificationBell";
 import { SessionGuard } from "@/components/SessionGuard";
 import { SignOutButton } from "@/components/SignOutButton";
-import { DemoSession } from "@/components/DemoSession";
+import { DemoBanner } from "@/components/DemoSession";
 import { SupportButton } from "@/components/SupportButton";
 import { PlanProvider } from "@/components/PlanContext";
 
@@ -97,15 +97,6 @@ export default async function DashboardLayout({ children }: { children: React.Re
               </a>
             )}
 
-            {/* Battement de cœur + sortie explicite. Rendu ici parce que la
-                barre latérale est présente sur tout le tableau de bord : la
-                session se signale vivante quelle que soit la page visitée. */}
-            {isDemo && (
-              <div className="mb-3">
-                <DemoSession />
-              </div>
-            )}
-
             {/* Toggle mode clair/sombre, juste au dessus du profil */}
             <ThemeToggle />
 
@@ -133,15 +124,12 @@ export default async function DashboardLayout({ children }: { children: React.Re
 
         <main className="flex-1 lg:ml-64 p-4 lg:p-8 min-w-0 pt-14">
           <SessionGuard />
-          {/* Bandeau démo inline (mobile uniquement, scroll avec la page) */}
-          {isDemo && (
-            <div className="lg:hidden mb-4 flex items-center justify-between gap-3 bg-amber-500/10 border border-amber-500/20 rounded-xl px-4 py-2.5">
-              <span className="text-xs text-amber-400 font-medium">🎮 Mode démo, données fictives</span>
-              <a href="/signup" className="text-xs font-semibold text-amber-400 underline underline-offset-2 shrink-0">
-                Créer mon compte →
-              </a>
-            </div>
-          )}
+          {/* Bandeau de démo : un seul, en haut du contenu, sur toutes les
+              tailles d'écran. Il porte aussi le battement de cœur, donc il doit
+              rester monté quelle que soit la page visitée. Le bouton de sortie
+              était auparavant dans la barre latérale, invisible sur mobile et
+              noyé parmi les réglages sur ordinateur. */}
+          {isDemo && <DemoBanner />}
           {children}
         </main>
       </div>
