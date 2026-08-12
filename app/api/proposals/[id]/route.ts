@@ -9,6 +9,11 @@ export async function GET(_req: NextRequest, { params }: Params) {
   const { id } = await params;
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
+  // Sans garde, un appel anonyme repartait avec 404 « devis introuvable » —
+  // la RLS bloquait la lecture — au lieu d'un franc 401.
+  if (!user) return NextResponse.json({ error: "Non autorisé" }, { status: 401 });
+
+  const workspaceId = await getWorkspaceUserId(user.id);
 
   const { data, error } = await supabase
     .from("proposals")
@@ -18,7 +23,11 @@ export async function GET(_req: NextRequest, { params }: Params) {
 
   if (error || !data) return NextResponse.json({ error: "Devis introuvable" }, { status: 404 });
 
-  if (data.user_id !== user?.id) {
+  // Comparaison à l'espace de travail, pas à la personne. Cette route comparait
+  // à `user.id` : un collaborateur recevait 403 sur les devis de son propre
+  // espace. Elle avait échappé à la correction d'hier parce qu'elle exprimait
+  // le contrôle autrement que les autres — d'où l'intérêt de la traversée.
+  if (data.user_id !== workspaceId) {
     return NextResponse.json({ error: "Accès refusé" }, { status: 403 });
   }
 
