@@ -4,7 +4,7 @@ import { usePathname } from "next/navigation";
 import {
   LayoutDashboard, FileText, Receipt,
   Package, Users, BarChart3,
-  Sparkles, UsersRound, Settings, Wallet, BookOpen, CreditCard, LucideIcon,
+  Sparkles, UsersRound, Settings, Wallet, BookOpen, CreditCard, Inbox, LucideIcon,
 } from "lucide-react";
 
 type NavItem =
@@ -17,6 +17,9 @@ const NAV_ITEMS: NavItem[] = [
   { section: "Facturation" },
   { href: "/proposals",     label: "Devis",             icon: FileText },
   { href: "/invoices",      label: "Factures",          icon: Receipt },
+  // Factures reçues via la Plateforme Agréée. Placé juste après « Factures » :
+  // c'est le même objet métier, vu depuis l'autre bout.
+  { href: "/factures-recues", label: "Factures reçues", icon: Inbox, ownerOnly: true },
   { section: "Clients", ownerOnly: true },
   { href: "/crm",           label: "Mes clients",       icon: Users,     ownerOnly: true },
   { section: "Pro" },
