@@ -1,11 +1,17 @@
 import { stripe } from "@/lib/stripe";
 import { createAdminClient } from "@/lib/supabase/admin";
+import { estCompteDemo } from "@/lib/stripe-guard";
 
 /**
  * Ajoute un siège à l'abonnement Stripe de l'owner (+5€/mois).
  * Si pas d'abonnement actif, ne fait rien (cas compte de test).
  */
 export async function addSeatToSubscription(ownerId: string): Promise<void> {
+  // Un compte de démonstration n'a normalement pas d'abonnement, donc la lecture
+  // ci-dessous s'arrêterait d'elle-même. On refuse explicitement quand même :
+  // cette protection ne doit pas dépendre d'un état de données.
+  if (await estCompteDemo(ownerId)) return;
+
   const admin = createAdminClient();
   const { data: profile } = await admin
     .from("profiles")
@@ -46,6 +52,11 @@ export async function addSeatToSubscription(ownerId: string): Promise<void> {
  * Retire un siège de l'abonnement Stripe de l'owner (-5€/mois).
  */
 export async function removeSeatFromSubscription(ownerId: string): Promise<void> {
+  // Un compte de démonstration n'a normalement pas d'abonnement, donc la lecture
+  // ci-dessous s'arrêterait d'elle-même. On refuse explicitement quand même :
+  // cette protection ne doit pas dépendre d'un état de données.
+  if (await estCompteDemo(ownerId)) return;
+
   const admin = createAdminClient();
   const { data: profile } = await admin
     .from("profiles")

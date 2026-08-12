@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 import { stripe } from "@/lib/stripe";
+import { MESSAGE_DEMO } from "@/lib/stripe-guard";
 
 export async function POST() {
   try {
@@ -18,7 +19,7 @@ export async function POST() {
     // jamais toucher le compte Stripe de production.
     if (profile?.is_demo) {
       return NextResponse.json(
-        { error: "La gestion de l'abonnement n'est pas disponible en mode démo." },
+        { error: "DEMO", message: MESSAGE_DEMO },
         { status: 403 }
       );
     }
