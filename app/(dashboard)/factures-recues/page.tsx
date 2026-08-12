@@ -50,6 +50,26 @@ const euros = (v: number | null, devise: string | null) =>
 const jour = (v: string | null) =>
   v ? new Date(v).toLocaleDateString("fr-FR", { day: "2-digit", month: "short", year: "numeric" }) : "—";
 
+/**
+ * Une facture est-elle réellement en retard de paiement ?
+ *
+ * L'échéance dépassée ne suffit pas. Une facture **encaissée** (212) est payée,
+ * et une facture **refusée** (210) ou **rejetée** (213) est annulée — le
+ * fournisseur doit passer un avoir. Les afficher en rouge réclamerait un
+ * paiement pour des factures qui n'ont plus lieu d'être payées, et noierait les
+ * vrais retards au milieu.
+ *
+ * Constaté sur une capture de Selim : une facture refusée gardait son échéance
+ * en rouge.
+ */
+const CLOTUREES = new Set(["fr:210", "fr:212", "fr:213"]);
+
+function estEnRetard(f: { payment_due_date: string | null; last_status_code: string | null }) {
+  if (!f.payment_due_date) return false;
+  if (f.last_status_code && CLOTUREES.has(f.last_status_code)) return false;
+  return new Date(f.payment_due_date) < new Date();
+}
+
 type Facture = {
   id: number;
   number: string | null;
@@ -146,9 +166,7 @@ export default async function FacturesRecues() {
           <section className="lg:hidden space-y-3 mt-6">
             {liste.map((f) => {
               const statut = f.last_status_code ? STATUTS[f.last_status_code] : undefined;
-              const enRetard =
-                f.payment_due_date && new Date(f.payment_due_date) < new Date() &&
-                f.last_status_code !== "fr:212";
+              const enRetard = estEnRetard(f);
               return (
                 <article
                   key={f.id}
@@ -224,9 +242,7 @@ export default async function FacturesRecues() {
               <tbody>
                 {liste.map((f) => {
                   const statut = f.last_status_code ? STATUTS[f.last_status_code] : undefined;
-                  const enRetard =
-                    f.payment_due_date && new Date(f.payment_due_date) < new Date() &&
-                    f.last_status_code !== "fr:212";
+                  const enRetard = estEnRetard(f);
                   return (
                     <tr key={f.id} className="border-b border-ds-border last:border-0 hover:bg-ds-elevated/40">
                       <td className="px-4 py-3 text-white font-medium">{f.seller_name ?? "—"}</td>
