@@ -1,11 +1,21 @@
 "use client";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
+import { terminerDemo } from "@/components/DemoSession";
 
-export function SignOutButton() {
+export function SignOutButton({ isDemo = false }: { isDemo?: boolean }) {
   const router = useRouter();
 
   const handleSignOut = async () => {
+    // Se déconnecter d'une démo, c'est la quitter. Sans cela le compte factice
+    // resterait en base jusqu'à expiration alors que l'utilisateur a clairement
+    // signifié son départ. On passe par le même chemin que le bouton dédié,
+    // plutôt que d'écrire une seconde fois la même logique.
+    if (isDemo) {
+      await terminerDemo();
+      return;
+    }
+
     // Nettoyer tous les flags de session
     localStorage.removeItem("deviso_no_persist");
     sessionStorage.removeItem("deviso_no_persist");

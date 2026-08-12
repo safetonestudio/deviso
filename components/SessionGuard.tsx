@@ -2,6 +2,7 @@
 import { useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
+import { terminerDemo } from "@/components/DemoSession";
 
 /**
  * SessionGuard, deux rôles :
@@ -39,8 +40,11 @@ export function SessionGuard() {
     const isDemoSession = sessionStorage.getItem("deviso_is_demo") === "1";
 
     if (isDemoLocal && !isDemoSession) {
-      localStorage.removeItem("deviso_is_demo");
-      supabase.auth.signOut().then(() => router.push("/login"));
+      // On sait ici que la session précédente est bel et bien terminée : le
+      // navigateur a été fermé puis rouvert. C'est donc un départ certain, pas
+      // une inférence — on supprime le compte factice au lieu de se contenter
+      // d'une déconnexion qui le laisserait en base jusqu'à expiration.
+      terminerDemo("/login");
       return;
     }
   }, [router]);

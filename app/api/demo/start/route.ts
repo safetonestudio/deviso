@@ -37,6 +37,10 @@ async function seedDemoData(userId: string) {
       bank_bic: "BNPAFRPPXXX",
       bank_account_name: "Studio Créatif MD",
       is_demo: true,
+      // Premier signe de vie. Sans valeur de départ, la démo serait considérée
+      // comme abandonnée avant même que le battement de cœur n'ait eu le temps
+      // de partir (il ne part qu'au bout d'une minute).
+      demo_last_seen_at: new Date().toISOString(),
       reminder_intervals: [3, 7, 14],
       require_approval: false,
     }, { onConflict: "id" });

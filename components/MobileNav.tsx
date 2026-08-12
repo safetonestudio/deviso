@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
+import { terminerDemo } from "@/components/DemoSession";
 import {
   LayoutDashboard, FileText, Receipt,
   Package, Users, BarChart3,
@@ -40,14 +41,22 @@ interface MobileNavProps {
   userName: string;
   userEmail: string;
   isMember?: boolean;
+  isDemo?: boolean;
 }
 
-export function MobileNav({ initials, userName, userEmail, isMember = false }: MobileNavProps) {
+export function MobileNav({ initials, userName, userEmail, isMember = false, isDemo = false }: MobileNavProps) {
   const [open, setOpen] = useState(false);
   const pathname = usePathname();
   const router = useRouter();
 
   async function handleSignOut() {
+    // Même règle que dans la barre latérale : quitter une démo supprime le
+    // compte factice. Le menu mobile est un chemin de sortie à part entière,
+    // pas une variante d'affichage.
+    if (isDemo) {
+      await terminerDemo();
+      return;
+    }
     const supabase = createClient();
     await supabase.auth.signOut();
     router.push("/login");

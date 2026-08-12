@@ -8,6 +8,7 @@ import { SidebarNav } from "@/components/SidebarNav";
 import { NotificationBell } from "@/components/NotificationBell";
 import { SessionGuard } from "@/components/SessionGuard";
 import { SignOutButton } from "@/components/SignOutButton";
+import { DemoSession } from "@/components/DemoSession";
 import { SupportButton } from "@/components/SupportButton";
 import { PlanProvider } from "@/components/PlanContext";
 
@@ -65,6 +66,7 @@ export default async function DashboardLayout({ children }: { children: React.Re
           userName={profile?.full_name || ""}
           userEmail={user.email || ""}
           isMember={isMember}
+          isDemo={isDemo}
         />
 
         <aside className="hidden lg:flex w-64 bg-ds-surface border-r border-ds-border flex-col fixed h-full">
@@ -95,6 +97,15 @@ export default async function DashboardLayout({ children }: { children: React.Re
               </a>
             )}
 
+            {/* Battement de cœur + sortie explicite. Rendu ici parce que la
+                barre latérale est présente sur tout le tableau de bord : la
+                session se signale vivante quelle que soit la page visitée. */}
+            {isDemo && (
+              <div className="mb-3">
+                <DemoSession />
+              </div>
+            )}
+
             {/* Toggle mode clair/sombre, juste au dessus du profil */}
             <ThemeToggle />
 
@@ -115,7 +126,7 @@ export default async function DashboardLayout({ children }: { children: React.Re
             {/* Actions profil */}
             <div className="space-y-0.5">
               <SupportButton />
-              <SignOutButton />
+              <SignOutButton isDemo={isDemo} />
             </div>
           </div>
         </aside>
