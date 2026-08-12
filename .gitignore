@@ -35,3 +35,7 @@ deploy.log
 scripts/e2e/.sessions.json
 scripts/e2e/.facture-test.pdf
 scripts/e2e/sans-*.pdf
+
+# Artefacts de traversee Super PDP (bac a sable)
+recue*.json
+facture-test.json
