@@ -8,19 +8,37 @@ import { SyncButton } from "./SyncButton";
 export const metadata: Metadata = { title: "Factures reçues" };
 export const dynamic = "force-dynamic";
 
-/** Nomenclature des statuts de cycle de vie de la réforme. */
-const STATUTS: Record<string, { texte: string; ton: "neutre" | "attention" | "bien" }> = {
-  "fr:202": { texte: "Reçue", ton: "neutre" },
+/**
+ * Statuts de cycle de vie, tableau 8 du dossier de spécifications externes de
+ * la DGFiP, version 3.2 du 30/04/2026.
+ *
+ * ⚠️ Cette table a d'abord été écrite de mémoire, et elle était décalée d'un
+ * cran à partir du code 204. Une facture **refusée** (210) s'affichait
+ * « Paiement transmis ». Recopiée depuis le document officiel le 12/08/2026 :
+ * ne pas la modifier sans rouvrir ce document.
+ *
+ * `obligatoire` reprend la colonne « Caractère » : quatre statuts seulement le
+ * sont — 200 et 213 posés par les plateformes, 210 par le destinataire, 212 par
+ * le fournisseur.
+ */
+const STATUTS: Record<
+  string,
+  { texte: string; ton: "neutre" | "attention" | "bien"; obligatoire?: boolean }
+> = {
+  "fr:200": { texte: "Déposée", ton: "neutre", obligatoire: true },
+  "fr:201": { texte: "Émise par la plateforme", ton: "neutre" },
+  "fr:202": { texte: "Reçue par la plateforme", ton: "neutre" },
   "fr:203": { texte: "Mise à disposition", ton: "neutre" },
-  "fr:204": { texte: "Approuvée", ton: "bien" },
-  "fr:205": { texte: "Approuvée partiellement", ton: "attention" },
-  "fr:206": { texte: "Litige", ton: "attention" },
-  "fr:207": { texte: "Suspendue", ton: "attention" },
-  "fr:208": { texte: "Complétée", ton: "neutre" },
-  "fr:209": { texte: "Refusée", ton: "attention" },
-  "fr:210": { texte: "Paiement transmis", ton: "neutre" },
-  "fr:211": { texte: "Encaissement partiel", ton: "neutre" },
-  "fr:212": { texte: "Encaissée", ton: "bien" },
+  "fr:204": { texte: "Prise en charge", ton: "neutre" },
+  "fr:205": { texte: "Approuvée", ton: "bien" },
+  "fr:206": { texte: "Approuvée partiellement", ton: "attention" },
+  "fr:207": { texte: "En litige", ton: "attention" },
+  "fr:208": { texte: "Suspendue", ton: "attention" },
+  "fr:209": { texte: "Complétée", ton: "neutre" },
+  "fr:210": { texte: "Refusée", ton: "attention", obligatoire: true },
+  "fr:211": { texte: "Paiement transmis", ton: "neutre" },
+  "fr:212": { texte: "Encaissée", ton: "bien", obligatoire: true },
+  "fr:213": { texte: "Rejetée", ton: "attention", obligatoire: true },
 };
 
 const euros = (v: number | null, devise: string | null) =>

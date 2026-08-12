@@ -72,6 +72,29 @@ export async function synchroniserFactures(userId: string): Promise<ResultatSync
   let entrantes = 0;
 
   try {
+    // Rattrapage de l'adresse de réception.
+    //
+    // Elle est renseignée au moment du raccordement, mais tout raccordement
+    // établi avant l'ajout de ce champ l'a laissée vide — et l'écran, qui
+    // n'affiche le bloc que si l'adresse existe, ne montrait alors rien du
+    // tout. Une migration ne pouvait pas la remplir : l'information est chez
+    // Super PDP, pas chez nous. On la récupère donc à la première occasion.
+    if (!conn.directory_address) {
+      const annuaire = await superpdpFetch(userId, "/directory_entries");
+      if (annuaire.ok) {
+        const body = (await annuaire.json()) as {
+          data?: { id?: number; identifier?: string; is_replyto?: boolean }[];
+        };
+        const ligne = (body.data ?? []).find((e) => !e.is_replyto);
+        if (ligne?.identifier) {
+          await saveConnection(userId, {
+            directory_address: ligne.identifier,
+            directory_id: ligne.id != null ? String(ligne.id) : null,
+          });
+        }
+      }
+    }
+
     for (let page = 0; page < PAGES_MAX; page++) {
       const params = new URLSearchParams();
       if (curseur) params.set("starting_after_id", String(curseur));

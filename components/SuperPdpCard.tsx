@@ -71,6 +71,8 @@ export function SuperPdpCard() {
   const params = useSearchParams();
   const [etat, setEtat] = useState<Etat | null>(null);
   const [chargement, setChargement] = useState(true);
+  const [debranchement, setDebranchement] = useState(false);
+  const [confirmation, setConfirmation] = useState(false);
 
   const retourCle = params.get("superpdp");
   const retourDetail = params.get("detail");
@@ -91,6 +93,17 @@ export function SuperPdpCard() {
   useEffect(() => {
     relire();
   }, [relire]);
+
+  const debrancher = async () => {
+    setDebranchement(true);
+    try {
+      await fetch("/api/superpdp/disconnect", { method: "POST" });
+      await relire();
+      setConfirmation(false);
+    } finally {
+      setDebranchement(false);
+    }
+  };
 
   // Fonctionnalité pas encore activée côté serveur : inutile d'afficher une
   // carte sur laquelle rien n'est cliquable.
@@ -179,6 +192,44 @@ export function SuperPdpCard() {
           <p className="text-xs text-gray-600 mt-1.5">
             Communiquez-la à vos clients pour qu&apos;ils puissent vous adresser leurs factures.
           </p>
+        </div>
+      )}
+
+      {/* Débranchement. Derrière une confirmation, parce que reprendre le
+          tunnel d'autorisation n'est pas anodin — et parce qu'à partir du
+          1er septembre 2026, se débrancher c'est cesser de pouvoir recevoir. */}
+      {(verifie || enAttente) && (
+        <div className="mt-4 pt-4 border-t border-ds-border">
+          {confirmation ? (
+            <div className="flex flex-wrap items-center justify-between gap-3">
+              <p className="text-xs text-gray-400 max-w-md">
+                Vous ne recevrez plus de factures dans Deviso. Votre ligne d&apos;annuaire reste
+                ouverte chez Super PDP&nbsp;: pour la fermer, passez par leur interface.
+              </p>
+              <div className="flex gap-2 shrink-0">
+                <button
+                  onClick={() => setConfirmation(false)}
+                  className="px-3 py-1.5 rounded-lg border border-ds-border text-gray-400 hover:text-white text-xs font-medium transition-colors"
+                >
+                  Annuler
+                </button>
+                <button
+                  onClick={debrancher}
+                  disabled={debranchement}
+                  className="px-3 py-1.5 rounded-lg bg-red-500/15 border border-red-500/30 text-red-400 hover:bg-red-500/25 text-xs font-semibold transition-colors disabled:opacity-60"
+                >
+                  {debranchement ? "Débranchement…" : "Confirmer"}
+                </button>
+              </div>
+            </div>
+          ) : (
+            <button
+              onClick={() => setConfirmation(true)}
+              className="text-xs text-gray-600 hover:text-red-400 transition-colors"
+            >
+              Débrancher mon entreprise
+            </button>
+          )}
         </div>
       )}
 
