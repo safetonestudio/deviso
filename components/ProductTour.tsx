@@ -110,10 +110,28 @@ export function ProductTour({ isMember = false }: { isMember?: boolean }) {
     }
   }, [storageKey]);
 
+  // `null` = aucune cible visible (téléphone) → carte centrée, sans flèche.
+  const [ancre, setAncre] = useState<"laterale" | null>("laterale");
+
   const updatePosition = useCallback((stepIndex: number) => {
     const el = document.querySelector(`[data-tour="${STEPS[stepIndex].target}"]`);
     if (!el) return;
     const rect = el.getBoundingClientRect();
+
+    // La visite pointe les entrées de la barre latérale, masquée sous 1024 px.
+    // L'élément reste dans le DOM mais sans dimensions : le calcul renvoyait
+    // zéro, et la bulle comme l'encadré atterrissaient collés en haut à gauche,
+    // la carte débordant de l'écran puisqu'elle est calée à `left: 264`, la
+    // largeur de la barre latérale. Constaté par Selim sur téléphone.
+    //
+    // Rien à désigner du doigt sur un téléphone : on centre la carte et on
+    // masque l'encadré et la flèche, qui pointeraient vers du vide.
+    const cibleInvisible = rect.width === 0 && rect.height === 0;
+    setAncre(cibleInvisible ? null : "laterale");
+    if (cibleInvisible) {
+      setHighlightStyle({ display: "none" });
+      return;
+    }
     // Clamper pour que le tooltip ne déborde pas en haut (hauteur estimée de la carte ≈220px)
     const CARD_HALF = 120;
     const MIN_TOP = CARD_HALF + 12;
@@ -165,15 +183,19 @@ export function ProductTour({ isMember = false }: { isMember?: boolean }) {
 
       {/* Tooltip card */}
       <div
-        className="fixed z-50 flex items-center pointer-events-none transition-all duration-300"
-        style={{
-          left: 264,
-          top: tooltipTop,
-          transform: "translateY(-50%)",
-        }}
+        className={
+          ancre
+            ? "fixed z-50 flex items-center pointer-events-none transition-all duration-300"
+            : "fixed z-50 inset-x-4 bottom-6 flex justify-center pointer-events-none"
+        }
+        style={
+          ancre
+            ? { left: 264, top: tooltipTop, transform: "translateY(-50%)" }
+            : undefined
+        }
       >
         {/* Arrow pointing left toward sidebar */}
-        <div
+        {ancre && <div
           className="shrink-0"
           style={{
             width: 0,
@@ -182,10 +204,10 @@ export function ProductTour({ isMember = false }: { isMember?: boolean }) {
             borderBottom: "8px solid transparent",
             borderRight: "8px solid #1F2937",
           }}
-        />
+        />}
 
         {/* Card, dark theme matching Deviso */}
-        <div className="pointer-events-auto bg-ds-elevated border border-ds-border rounded-xl shadow-2xl p-5 min-w-[260px] max-w-[340px]">
+        <div className={`pointer-events-auto bg-ds-elevated border border-ds-border rounded-xl shadow-2xl p-5 ${ancre ? "min-w-[260px] max-w-[340px]" : "w-full max-w-[420px]"}`}>
           <div className="flex items-start justify-between gap-2 mb-2">
             <div className="flex items-center gap-2 flex-wrap">
               <h3 className="font-semibold text-white text-sm leading-snug">{current.title}</h3>
