@@ -20,7 +20,23 @@ import { synchroniserFactures } from "@/lib/superpdp-sync";
  */
 const DELAI_MINIMAL_MS = 3 * 60 * 1000;
 
-export async function POST() {
+/**
+ * Délai plancher pour une demande explicite.
+ *
+ * Un clic n'est pas un automatisme : quelqu'un qui appuie sur « Vérifier
+ * maintenant » demande une action, et lui répondre « déjà vérifié » parce qu'une
+ * synchronisation de fond vient de tourner est incompréhensible de son point de
+ * vue — il n'a rien vu passer.
+ *
+ * Constaté par Selim : il ouvre la page, le déclencheur automatique part, il
+ * clique dans la foulée, et son **premier** clic est refusé.
+ *
+ * On garde malgré tout un plancher très court : il empêche de marteler l'API en
+ * cliquant en rafale, et il est trop bref pour qu'un humain le remarque.
+ */
+const DELAI_CLIC_MS = 10 * 1000;
+
+export async function POST(req: Request) {
   const supabase = await createClient();
   const {
     data: { user },
@@ -37,9 +53,14 @@ export async function POST() {
   // seront un jour et pas aujourd'hui. On répond calmement.
   if (!conn) return NextResponse.json({ synchronise: false, raison: "non_raccorde" });
 
+  // `explicite` distingue le clic de l'appel automatique au chargement de page.
+  const corps = await req.json().catch(() => ({}));
+  const explicite = corps?.explicite === true;
+  const delai = explicite ? DELAI_CLIC_MS : DELAI_MINIMAL_MS;
+
   if (conn.last_sync_at) {
     const depuis = Date.now() - new Date(conn.last_sync_at).getTime();
-    if (depuis < DELAI_MINIMAL_MS) {
+    if (depuis < delai) {
       return NextResponse.json({
         synchronise: false,
         raison: "trop_recent",

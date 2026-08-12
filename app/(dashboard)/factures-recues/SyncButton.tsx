@@ -20,11 +20,18 @@ export function SyncButton({ derniere }: { derniere: string | null }) {
     setEnCours(true);
     setMessage(null);
     try {
-      const r = await fetch("/api/superpdp/sync", { method: "POST" });
+      // `explicite` : le serveur applique alors un plancher de 10 s au lieu de
+      // 3 min. Sans cela, un clic tombant juste après la synchronisation
+      // automatique du chargement de page se voyait refuser.
+      const r = await fetch("/api/superpdp/sync", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ explicite: true }),
+      });
       const res = await r.json();
 
       if (res.raison === "trop_recent") {
-        setMessage("Déjà vérifié il y a moins de 3 minutes.");
+        setMessage("Vérification déjà en cours, patientez un instant.");
       } else if (res.raison === "verification_en_cours") {
         setMessage("Super PDP vérifie encore le rattachement de votre entreprise.");
       } else if (res.raison) {
