@@ -155,14 +155,43 @@ export async function getConnection(userId: string): Promise<SuperPdpConnection 
   return (data as SuperPdpConnection) ?? null;
 }
 
+/**
+ * Écrit sur le raccordement.
+ *
+ * ⚠️ Ne pas remplacer par un `upsert` inconditionnel, c'était le défaut initial.
+ * Un `upsert` PostgREST est un `INSERT … ON CONFLICT DO UPDATE` : PostgreSQL
+ * valide d'abord l'INSERT, donc une mise à jour partielle — n'écrire que
+ * `last_invoice_id`, par exemple — viole les contraintes NOT NULL de
+ * `refresh_token`, `session_status` et `connected_at` et échoue **avant même**
+ * d'atteindre la résolution de conflit.
+ *
+ * Constaté en traversée le 12/08/2026 : la première synchronisation a bien
+ * enregistré la facture reçue, mais le curseur est resté nul. La conséquence
+ * réelle aurait été plus grave qu'un compteur faux — sans curseur, chaque
+ * passage recommence depuis la première facture, et au-delà de la borne de
+ * pagination on cesse purement et simplement de recevoir les nouvelles. Le
+ * même défaut cassait la mise en cache du jeton d'accès, donc tous les appels
+ * d'API trente minutes après le raccordement.
+ *
+ * On distingue donc les deux cas : créer une ligne complète, ou modifier une
+ * ligne existante.
+ */
 export async function saveConnection(
   userId: string,
   patch: Partial<Omit<SuperPdpConnection, "user_id">> & { connected_at?: string }
 ) {
   const admin = createAdminClient();
-  const { error } = await admin
-    .from("superpdp_connections")
-    .upsert({ user_id: userId, ...patch }, { onConflict: "user_id" });
+
+  // Un patch qui porte le refresh token est une création (ou un rebranchement) :
+  // il contient de quoi satisfaire toutes les colonnes obligatoires.
+  const estComplet = typeof patch.refresh_token === "string";
+
+  const { error } = estComplet
+    ? await admin
+        .from("superpdp_connections")
+        .upsert({ user_id: userId, ...patch }, { onConflict: "user_id" })
+    : await admin.from("superpdp_connections").update(patch).eq("user_id", userId);
+
   if (error) throw new Error(`Enregistrement du raccordement impossible : ${error.message}`);
 }
 
