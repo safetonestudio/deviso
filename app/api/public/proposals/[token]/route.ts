@@ -98,7 +98,7 @@ export async function POST(req: NextRequest, { params }: Params) {
   if (error || !proposal) return NextResponse.json({ error: "Devis introuvable" }, { status: 404 });
 
   if (action !== "view" && (proposal.status === "signed" || proposal.status === "declined")) {
-    return NextResponse.json({ error: "Ce devis a deja ete traite." }, { status: 409 });
+    return NextResponse.json({ error: "Ce devis a déjà été traité." }, { status: 409 });
   }
 
   if (action === "view") {
@@ -143,8 +143,8 @@ export async function POST(req: NextRequest, { params }: Params) {
         await resend.emails.send({
           from: fromAddress,
           to: profile.email,
-          subject: `Devis signe : ${proposal.title || "votre devis"}`,
-          html: `<p>Bonjour,</p><p><strong>${signerName || proposal.client_name || "Votre client"}</strong> vient de signer votre devis <em>${proposal.title || ""}</em>.</p><p>Connectez-vous a <a href="https://getdeviso.fr/dashboard">votre espace Deviso</a> pour creer la facture.</p><p>L'equipe Deviso</p>`,
+          subject: `Devis signé : ${proposal.title || "votre devis"}`,
+          html: `<p>Bonjour,</p><p><strong>${signerName || proposal.client_name || "Votre client"}</strong> vient de signer votre devis <em>${proposal.title || ""}</em>.</p><p>Connectez-vous à <a href="https://getdeviso.fr/dashboard">votre espace Deviso</a> pour créer la facture.</p><p>L'équipe Deviso</p>`,
         });
       }
     } catch { /* non-blocking */ }
@@ -175,8 +175,8 @@ export async function POST(req: NextRequest, { params }: Params) {
         await resend.emails.send({
           from: fromAddress,
           to: profile.email,
-          subject: `Devis refuse : ${proposal.title || "votre devis"}`,
-          html: `<p>Bonjour,</p><p>Votre devis <em>${proposal.title || ""}</em> a ete refuse par le client.</p><p>Connectez-vous a <a href="https://getdeviso.fr/dashboard">votre espace Deviso</a> pour en savoir plus.</p><p>L'equipe Deviso</p>`,
+          subject: `Devis refusé : ${proposal.title || "votre devis"}`,
+          html: `<p>Bonjour,</p><p>Votre devis <em>${proposal.title || ""}</em> a été refusé par le client.</p><p>Connectez-vous à <a href="https://getdeviso.fr/dashboard">votre espace Deviso</a> pour en savoir plus.</p><p>L'équipe Deviso</p>`,
         });
       }
     } catch { /* non-blocking */ }

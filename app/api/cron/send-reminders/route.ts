@@ -94,7 +94,11 @@ export async function GET(req: NextRequest) {
     });
 
     const { error: emailError } = await resend.emails.send({
-      from: "Deviso <noreply@getdeviso.fr>",
+      // Le client a reçu le devis ou la facture au nom de son prestataire.
+      // Recevoir la relance de « Deviso », une société qu'il ne connaît pas,
+      // ressemble à une tentative d'hameçonnage et abîme la crédibilité de
+      // l'émetteur. Le nom commercial doit être le même partout.
+      from: `${senderName} <noreply@getdeviso.fr>`,
       // Reply-To vers l'émetteur : sans lui, la réponse du client se perd.
       ...(profile?.email ? { replyTo: profile.email } : {}),
       to: invoice.client_email,
@@ -145,7 +149,11 @@ export async function GET(req: NextRequest) {
     });
 
     const { error: emailError } = await resend.emails.send({
-      from: "Deviso <noreply@getdeviso.fr>",
+      // Le client a reçu le devis ou la facture au nom de son prestataire.
+      // Recevoir la relance de « Deviso », une société qu'il ne connaît pas,
+      // ressemble à une tentative d'hameçonnage et abîme la crédibilité de
+      // l'émetteur. Le nom commercial doit être le même partout.
+      from: `${senderName} <noreply@getdeviso.fr>`,
       // Reply-To vers l'émetteur : sans lui, la réponse du client se perd.
       ...(profile?.email ? { replyTo: profile.email } : {}),
       to: proposal.client_email,

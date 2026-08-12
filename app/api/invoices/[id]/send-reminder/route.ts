@@ -58,7 +58,7 @@ export async function POST(req: NextRequest, { params }: Params) {
         <tr><td style="padding:36px;">
           <p style="margin:0 0 6px;font-size:20px;font-weight:700;color:#0f172a;">Bonjour ${clientName},</p>
           <p style="margin:0 0 24px;font-size:15px;color:#64748b;line-height:1.6;">
-            <strong style="color:#0f172a;">${senderName}</strong> vous rappelle qu'une facture est en attente de reglement.
+            <strong style="color:#0f172a;">${senderName}</strong> vous rappelle qu'une facture est en attente de règlement.
           </p>
           <div style="background:#fef2f2;border:1px solid #fecaca;border-radius:12px;padding:20px;margin-bottom:28px;">
             <table width="100%" cellpadding="0" cellspacing="0">
@@ -67,7 +67,7 @@ export async function POST(req: NextRequest, { params }: Params) {
                 <td align="right" style="font-size:13px;font-weight:700;color:#0f172a;">${invoice.invoice_number}</td>
               </tr>
               <tr>
-                <td style="font-size:13px;color:#64748b;padding-top:8px;">Montant du</td>
+                <td style="font-size:13px;color:#64748b;padding-top:8px;">Montant dû</td>
                 <td align="right" style="font-size:18px;font-weight:800;color:#dc2626;padding-top:8px;">${amount}</td>
               </tr>
               ${daysOverdue > 0 ? `<tr>
@@ -84,11 +84,11 @@ export async function POST(req: NextRequest, { params }: Params) {
               </a>
             </td></tr>
           </table>` : ""}
-          <p style="margin:0;font-size:13px;color:#94a3b8;text-align:center;">En cas de paiement deja effectue, ignorez ce message.</p>
+          <p style="margin:0;font-size:13px;color:#94a3b8;text-align:center;">En cas de paiement déjà effectué, ignorez ce message.</p>
         </td></tr>
         <tr><td style="background:#f8fafc;padding:16px 36px;border-top:1px solid #e2e8f0;">
           <p style="margin:0;font-size:11px;color:#94a3b8;text-align:center;">
-            Envoye via <a href="https://getdeviso.fr" style="color:#4f46e5;text-decoration:none;">Deviso</a>
+            Envoyé via <a href="https://getdeviso.fr" style="color:#4f46e5;text-decoration:none;">Deviso</a>
           </p>
         </td></tr>
       </table>
@@ -98,7 +98,11 @@ export async function POST(req: NextRequest, { params }: Params) {
 </html>`;
 
   const { error } = await resend.emails.send({
-    from: "Deviso <noreply@getdeviso.fr>",
+    // Le client a reçu le devis ou la facture au nom de son prestataire.
+    // Recevoir la relance de « Deviso », une société qu'il ne connaît pas,
+    // ressemble à une tentative d'hameçonnage et abîme la crédibilité de
+    // l'émetteur. Le nom commercial doit être le même partout.
+    from: `${senderName} <noreply@getdeviso.fr>`,
     ...(senderProfile?.email ? { replyTo: senderProfile.email } : {}),
     to: invoice.client_email,
     subject: `${urgency}, Facture ${invoice.invoice_number} (${amount})`,

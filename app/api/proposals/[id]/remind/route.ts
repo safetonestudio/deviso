@@ -88,12 +88,12 @@ export async function POST(_req: NextRequest, { params }: Params) {
             </td></tr>
           </table>
           <p style="margin:0;font-size:13px;color:#94a3b8;text-align:center;">
-            Si vous avez deja repondu a ce devis, ignorez ce message.
+            Si vous avez déjà répondu à ce devis, ignorez ce message.
           </p>
         </td></tr>
         <tr><td style="background:#f8fafc;padding:16px 36px;border-top:1px solid #e2e8f0;">
           <p style="margin:0;font-size:11px;color:#94a3b8;text-align:center;">
-            Envoye via <a href="https://getdeviso.fr" style="color:#4f46e5;text-decoration:none;">Deviso</a>
+            Envoyé via <a href="https://getdeviso.fr" style="color:#4f46e5;text-decoration:none;">Deviso</a>
           </p>
         </td></tr>
       </table>
@@ -103,7 +103,11 @@ export async function POST(_req: NextRequest, { params }: Params) {
 </html>`;
 
   const { error: emailError } = await resend.emails.send({
-    from: "Deviso <noreply@getdeviso.fr>",
+    // Le client a reçu le devis ou la facture au nom de son prestataire.
+    // Recevoir la relance de « Deviso », une société qu'il ne connaît pas,
+    // ressemble à une tentative d'hameçonnage et abîme la crédibilité de
+    // l'émetteur. Le nom commercial doit être le même partout.
+    from: `${senderName} <noreply@getdeviso.fr>`,
     // Reply-To vers l'émetteur : sans lui, la réponse du client se perd.
     ...(profile?.email ? { replyTo: profile.email } : {}),
     to: proposal.client_email,

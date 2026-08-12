@@ -118,7 +118,11 @@ export async function GET(req: NextRequest) {
         const html = buildInvoiceEmail({ clientName, senderName, invoiceNumber: number, amount, brand, dueDate: dueDateFormatted });
 
         await resend.emails.send({
-          from: "Deviso <noreply@getdeviso.fr>",
+          // Le client a reçu le devis ou la facture au nom de son prestataire.
+          // Recevoir la relance de « Deviso », une société qu'il ne connaît pas,
+          // ressemble à une tentative d'hameçonnage et abîme la crédibilité de
+          // l'émetteur. Le nom commercial doit être le même partout.
+          from: `${profile?.company_name || profile?.full_name || "Deviso"} <noreply@getdeviso.fr>`,
           // Reply-To vers l'émetteur : sans lui, la réponse du client se perd.
           ...(profile?.email ? { replyTo: profile.email } : {}),
           to: rec.client_email,
