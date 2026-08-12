@@ -141,7 +141,18 @@ export async function POST(req: NextRequest, { params }: Params) {
     ],
   });
 
-  if (emailError) return NextResponse.json({ error: emailError.message }, { status: 500 });
+  if (emailError) {
+    // Le message de Resend est en anglais et parle de son API, pas du problème
+    // de l'utilisateur. On le journalise et on traduit ce qui est actionnable.
+    console.error("[invoices/send-email]", emailError.message);
+    const brut = emailError.message ?? "";
+    const message = /`to` field|email address/i.test(brut)
+      ? "L'adresse email du client est invalide. Corrigez-la sur la facture avant de renvoyer."
+      : /rate|limit/i.test(brut)
+        ? "Trop d'envois en peu de temps. Réessayez dans quelques minutes."
+        : "L'email n'a pas pu être envoyé. Réessayez dans quelques instants.";
+    return NextResponse.json({ error: message }, { status: 500 });
+  }
 
   await supabase.from("invoices").update({ status: "sent" }).eq("id", id).eq("status", "draft");
 

@@ -90,7 +90,16 @@ export async function POST(req: NextRequest, { params }: Params) {
     html,
   });
 
-  if (error) return NextResponse.json({ error: error.message }, { status: 500 });
+  if (error) {
+    console.error("[proposals/send-email]", error.message);
+    const brut = error.message ?? "";
+    const message = /`to` field|email address/i.test(brut)
+      ? "L'adresse email du destinataire est invalide."
+      : /rate|limit/i.test(brut)
+        ? "Trop d'envois en peu de temps. Réessayez dans quelques minutes."
+        : "L'email n'a pas pu être envoyé. Réessayez dans quelques instants.";
+    return NextResponse.json({ error: message }, { status: 500 });
+  }
 
   if (proposal.status === "draft") {
     await supabase.from("proposals").update({ status: "sent" }).eq("id", id);
