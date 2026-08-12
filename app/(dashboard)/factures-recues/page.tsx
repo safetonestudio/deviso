@@ -131,8 +131,75 @@ export default async function FacturesRecues() {
           </p>
         </section>
       ) : (
-        <section className="bg-ds-surface border border-ds-border rounded-xl overflow-hidden mt-6">
-          <div className="overflow-x-auto">
+        <>
+          {/* ── Téléphone : une carte par facture ───────────────────────────
+              Le tableau à sept colonnes débordait et imposait un défilement
+              horizontal. Constaté par Selim sur son téléphone : le bouton
+              « Télécharger » n'était atteignable qu'en faisant glisser, donc
+              seulement par quelqu'un qui savait déjà qu'il existait. Une action
+              qu'on ne trouve qu'en connaissant son existence n'existe pas.
+
+              L'ordre des informations suit celui du regard : qui m'écrit,
+              combien, pour quand. Le numéro de facture passe en dernier — il ne
+              sert qu'à retrouver la pièce, jamais à décider. */}
+          <section className="lg:hidden space-y-3 mt-6">
+            {liste.map((f) => {
+              const statut = f.last_status_code ? STATUTS[f.last_status_code] : undefined;
+              const enRetard =
+                f.payment_due_date && new Date(f.payment_due_date) < new Date() &&
+                f.last_status_code !== "fr:212";
+              return (
+                <article
+                  key={f.id}
+                  className="bg-ds-surface border border-ds-border rounded-xl p-4"
+                >
+                  <div className="flex items-start justify-between gap-3 mb-3">
+                    <div className="min-w-0">
+                      <p className="text-white font-semibold truncate">{f.seller_name ?? "—"}</p>
+                      <p className="text-xs text-gray-500 font-mono truncate mt-0.5">
+                        {f.number ?? "—"}
+                      </p>
+                    </div>
+                    <p className="text-white font-semibold whitespace-nowrap shrink-0">
+                      {euros(f.total_with_vat, f.currency_code)}
+                    </p>
+                  </div>
+
+                  <div className="flex items-center gap-2 flex-wrap text-xs mb-3">
+                    <span
+                      className={`px-2 py-0.5 rounded-full ${
+                        statut?.ton === "bien"
+                          ? "bg-emerald-500/15 text-emerald-400"
+                          : statut?.ton === "attention"
+                            ? "bg-amber-500/15 text-amber-400"
+                            : "bg-ds-elevated text-gray-400"
+                      }`}
+                    >
+                      {statut?.texte ?? f.last_status_code ?? "—"}
+                    </span>
+                    <span className={enRetard ? "text-red-400 font-medium" : "text-gray-500"}>
+                      {enRetard ? "En retard depuis le" : "Échéance"} {jour(f.payment_due_date)}
+                    </span>
+                  </div>
+
+                  {/* Pleine largeur : c'est la seule action de la carte, et le
+                      pouce doit la trouver sans viser. */}
+                  <a
+                    href={`/api/superpdp/invoices/${f.id}/download`}
+                    className="flex items-center justify-center gap-2 w-full px-3 py-2.5 rounded-lg border border-ds-border text-indigo-400 text-sm font-semibold hover:bg-ds-elevated transition-colors"
+                  >
+                    <svg className="w-4 h-4 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.8}>
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M3 16.5v2.25A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75V16.5M16.5 12 12 16.5m0 0L7.5 12m4.5 4.5V3" />
+                    </svg>
+                    Télécharger la facture
+                  </a>
+                </article>
+              );
+            })}
+          </section>
+
+          {/* ── Ordinateur : tableau ─────────────────────────────────────── */}
+          <section className="hidden lg:block bg-ds-surface border border-ds-border rounded-xl overflow-hidden mt-6">
             <table className="w-full text-sm">
               <thead>
                 <tr className="border-b border-ds-border text-left">
@@ -192,8 +259,8 @@ export default async function FacturesRecues() {
                 })}
               </tbody>
             </table>
-          </div>
-        </section>
+          </section>
+        </>
       )}
     </div>
   );
