@@ -5,6 +5,7 @@ import Image from "next/image";
 import type { Profile, TvaRegime } from "@/types";
 import { UpgradeBanner } from "@/components/UpgradeBanner";
 import { GuidedTourBanner } from "@/components/GuidedTourBanner";
+import { SuperPdpCard } from "@/components/SuperPdpCard";
 
 const TVA_REGIMES: { value: TvaRegime; label: string; rate: number; description: string }[] = [
   { value: "franchise",    label: "Franchise en base : TVA non applicable (art. 293 B CGI)", rate: 0,    description: "Micro-entrepreneur ou CA sous le seuil (36 800 €/an services)" },
@@ -914,6 +915,11 @@ Les présentes CGV sont soumises au droit français. Tout litige relève de la c
           {cgvSaved && <span className="text-xs text-emerald-400">✓ CGV enregistrées !</span>}
         </div>
       </section>
+
+      {/* Raccordement a la Plateforme Agreee. Place en fin de page : reglage
+          rare, mais l'echeance du 1er septembre 2026 le rend reperable par son
+          libelle plutot que par sa position. */}
+      <SuperPdpCard />
     </div>
   );
 }

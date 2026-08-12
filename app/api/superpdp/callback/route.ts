@@ -89,6 +89,13 @@ export async function GET(req: NextRequest) {
       session_status: status,
       last_error: null,
       connected_at: new Date().toISOString(),
+      // On garde le jeton d'accès qu'on vient d'obtenir. Sans cela, le tout
+      // premier appel d'API rafraîchirait immédiatement — donc ferait tourner
+      // le refresh token — alors qu'on en a un tout neuf, valable 30 minutes.
+      access_token: tokens.access_token,
+      access_token_expires_at: new Date(
+        Date.now() + (tokens.expires_in ?? 1800) * 1000
+      ).toISOString(),
     });
 
     return back(req, { superpdp: status === "verified" ? "connecte" : "en_attente" });

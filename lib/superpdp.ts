@@ -114,6 +114,31 @@ export interface SuperPdpConnection {
   directory_id: string | null;
   session_status: "pending" | "verified" | "error";
   last_error: string | null;
+  access_token: string | null;
+  access_token_expires_at: string | null;
+}
+
+/** Révoque un jeton (RFC 7009). Utilisé au débranchement. */
+export async function revokeToken(token: string): Promise<void> {
+  const cfg = superpdpConfig();
+  if (!cfg) return;
+  const basic = Buffer.from(`${cfg.clientId}:${cfg.clientSecret}`).toString("base64");
+  try {
+    await fetch(`${SUPERPDP_HOST}/oauth2/revoke`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/x-www-form-urlencoded",
+        Authorization: `Basic ${basic}`,
+      },
+      body: new URLSearchParams({ token, token_type_hint: "refresh_token" }),
+      cache: "no-store",
+    });
+  } catch {
+    // La révocation est un nettoyage courtois côté Super PDP. Si elle échoue,
+    // on efface quand même le raccordement de notre côté : laisser l'utilisateur
+    // bloqué sur un débranchement raté serait pire que laisser un jeton orphelin
+    // qui expirera de lui-même.
+  }
 }
 
 export async function getConnection(userId: string): Promise<SuperPdpConnection | null> {
@@ -143,13 +168,44 @@ export class SuperPdpNotConnected extends Error {}
 /** Super PDP vérifie le rattachement utilisateur/entreprise en différé. */
 export class SuperPdpSessionPending extends Error {}
 
+/** Marge avant expiration : on rafraîchit un peu en avance plutôt qu'au ras. */
+const MARGE_EXPIRATION_MS = 60_000;
+
 /**
- * Appelle l'API pour le compte d'un utilisateur.
+ * Renvoie un jeton d'accès valide, en rafraîchissant seulement si nécessaire.
  *
- * On rafraîchit le jeton à chaque appel plutôt que de mettre en cache un access
- * token : les routes sont rares (quelques appels par facture) et cela évite de
- * stocker un second secret. Le refresh token, lui, est valable environ un an.
+ * ⚠️ Ne pas revenir à « rafraîchir à chaque appel ». OAuth 2.1 **impose la
+ * rotation du refresh token** : l'ancien meurt dès qu'on s'en sert. Rafraîchir
+ * systématiquement multiplie donc les occasions de perdre le raccordement pour
+ * de bon — deux appels simultanés, ou une coupure entre la réponse de Super PDP
+ * et notre écriture en base, et l'utilisateur doit refaire tout le tunnel
+ * d'autorisation. Le jeton d'accès vit 30 minutes : on s'en sert.
  */
+async function accessTokenValide(conn: SuperPdpConnection): Promise<string> {
+  const expiration = conn.access_token_expires_at
+    ? new Date(conn.access_token_expires_at).getTime()
+    : 0;
+
+  if (conn.access_token && expiration - MARGE_EXPIRATION_MS > Date.now()) {
+    return conn.access_token;
+  }
+
+  const tokens = await refreshTokens(conn.refresh_token);
+  const dureeMs = (tokens.expires_in ?? 1800) * 1000;
+
+  await saveConnection(conn.user_id, {
+    // Rotation : on enregistre le nouveau refresh token s'il y en a un. S'il
+    // n'y en a pas, on garde l'ancien — l'écraser avec `undefined` couperait
+    // le raccordement.
+    ...(tokens.refresh_token ? { refresh_token: tokens.refresh_token } : {}),
+    access_token: tokens.access_token,
+    access_token_expires_at: new Date(Date.now() + dureeMs).toISOString(),
+  });
+
+  return tokens.access_token;
+}
+
+/** Appelle l'API pour le compte d'un utilisateur. */
 export async function superpdpFetch(
   userId: string,
   path: string,
@@ -158,19 +214,14 @@ export async function superpdpFetch(
   const conn = await getConnection(userId);
   if (!conn) throw new SuperPdpNotConnected("Compte non raccordé à Super PDP.");
 
-  const tokens = await refreshTokens(conn.refresh_token);
-
-  // Le serveur peut faire tourner le refresh token : on le conserve.
-  if (tokens.refresh_token && tokens.refresh_token !== conn.refresh_token) {
-    await saveConnection(userId, { refresh_token: tokens.refresh_token });
-  }
+  const accessToken = await accessTokenValide(conn);
 
   const res = await fetch(`${SUPERPDP_API}${path}`, {
     ...init,
     headers: {
       Accept: "application/json",
       ...(init.headers ?? {}),
-      Authorization: `Bearer ${tokens.access_token}`,
+      Authorization: `Bearer ${accessToken}`,
     },
     cache: "no-store",
   });
