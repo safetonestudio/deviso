@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { resend } from "@/lib/resend";
 import { publicBaseUrl, proposalShareUrl } from "@/lib/public-url";
+import { piedDePageMarque } from "@/lib/emails/branding";
 
 // Vercel cron job, déclenché quotidiennement à 8h
 // Protégé par CRON_SECRET (Vercel l'injecte automatiquement)
@@ -91,6 +92,7 @@ export async function GET(req: NextRequest) {
       amount, daysOverdue, paymentLinkUrl: invoice.payment_link_url,
       reminderNum, urgency,
       customMessage: profile.plan === "pro" ? profile.reminder_message : null,
+      plan: profile.plan,
     });
 
     const { error: emailError } = await resend.emails.send({
@@ -146,6 +148,7 @@ export async function GET(req: NextRequest) {
       amount, validUntil: proposal.valid_until, signUrl,
       reminderNum, urgency, borderColor,
       customMessage: profile.plan === "pro" ? profile.reminder_message : null,
+      plan: profile.plan,
     });
 
     const { error: emailError } = await resend.emails.send({
@@ -175,10 +178,10 @@ export async function GET(req: NextRequest) {
 
 // ── Email builders ────────────────────────────────────────────────────────────
 
-function buildProposalReminderEmail({ clientName, senderName, proposalTitle, amount, validUntil, signUrl, reminderNum, urgency, borderColor, customMessage }: {
+function buildProposalReminderEmail({ clientName, senderName, proposalTitle, amount, validUntil, signUrl, reminderNum, urgency, borderColor, customMessage, plan }: {
   clientName: string; senderName: string; proposalTitle: string; amount: string;
   validUntil: string | null; signUrl: string; reminderNum: number; urgency: string;
-  borderColor: string; customMessage: string | null;
+  borderColor: string; customMessage: string | null; plan: string | null;
 }) {
   const customBlock = customMessage
     ? `<div style="background:#f0fdf4;border:1px solid #bbf7d0;border-radius:10px;padding:16px;margin-bottom:20px;">
@@ -218,7 +221,7 @@ function buildProposalReminderEmail({ clientName, senderName, proposalTitle, amo
           </table>
         </td></tr>
         <tr><td style="background:#f8fafc;padding:16px 36px;border-top:1px solid #e2e8f0;">
-          <p style="margin:0;font-size:11px;color:#94a3b8;text-align:center;">Relance automatique via <a href="https://getdeviso.fr" style="color:#4f46e5;text-decoration:none;">Deviso</a></p>
+          ${piedDePageMarque(plan, "Relance automatique via")}
         </td></tr>
       </table>
     </td></tr>
@@ -227,10 +230,10 @@ function buildProposalReminderEmail({ clientName, senderName, proposalTitle, amo
 </html>`;
 }
 
-function buildInvoiceReminderEmail({ clientName, senderName, invoiceNumber, amount, daysOverdue, paymentLinkUrl, reminderNum, urgency, customMessage }: {
+function buildInvoiceReminderEmail({ clientName, senderName, invoiceNumber, amount, daysOverdue, paymentLinkUrl, reminderNum, urgency, customMessage, plan }: {
   clientName: string; senderName: string; invoiceNumber: string; amount: string;
   daysOverdue: number; paymentLinkUrl: string | null; reminderNum: number; urgency: string;
-  customMessage: string | null;
+  customMessage: string | null; plan: string | null;
 }) {
   const borderColor = reminderNum >= 3 ? "#dc2626" : reminderNum === 2 ? "#d97706" : "#4f46e5";
   const btnColor = reminderNum >= 3 ? "#dc2626" : "#4f46e5";
@@ -278,7 +281,7 @@ function buildInvoiceReminderEmail({ clientName, senderName, invoiceNumber, amou
         </td></tr>
         <tr><td style="background:#f8fafc;padding:16px 36px;border-top:1px solid #e2e8f0;">
           <p style="margin:0;font-size:11px;color:#94a3b8;text-align:center;">
-            Relance automatique envoyée via <a href="https://getdeviso.fr" style="color:#4f46e5;text-decoration:none;">Deviso</a>
+            ${piedDePageMarque(plan, "Relance automatique envoyée via")}
           </p>
         </td></tr>
       </table>

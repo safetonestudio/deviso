@@ -80,7 +80,30 @@ for (const f of fichiers) {
   });
 }
 
+// ── 3. Le pied de page « via Deviso » doit être conditionnel ────────────────
+// Décision du 12/08 : badge visible uniquement pour les inscrits sans essai.
+// L'essai de 14 jours donne la formule complète, badge retiré compris — c'est
+// ce que la grille tarifaire annonce. Un pied de page écrit en dur réintroduit
+// la marque chez un client payant, exactement ce qu'on vient de corriger.
+for (const f of fichiers) {
+  const src = readFileSync(f, "utf8");
+  if (!src.includes("resend.emails.send")) continue;
+  const chemin = f.replace(/\\/g, "/");
+  if (NOM_DEVISO_LEGITIME.some((l) => chemin.endsWith(l))) continue;
+
+  // Un lien vers getdeviso.fr en dur dans le HTML, hors du helper.
+  const enDur = src
+    .split("\n")
+    .some((l) => /href="https:\/\/getdeviso\.fr"/.test(l) && !l.includes("piedDePageMarque"));
+  if (enDur) {
+    console.error(
+      `✗ ${chemin} — pied de page « via Deviso » écrit en dur : il apparaîtra chez les abonnés. Utiliser piedDePageMarque().`
+    );
+    echecs++;
+  }
+}
+
 if (echecs === 0) {
-  console.log("✓ Emails clients — expéditeur au nom du prestataire, textes accentués");
+  console.log("✓ Emails clients — expéditeur au nom du prestataire, textes accentués, marque conditionnelle");
 }
 process.exit(echecs > 0 ? 1 : 0);

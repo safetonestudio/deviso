@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { generateFacturXPdf, facturxFilename } from "@/lib/facturx";
 import { resend } from "@/lib/resend";
+import { piedDePageMarque } from "@/lib/emails/branding";
 
 // Vercel cron, déclenché quotidiennement à 7h
 // Génère les factures récurrentes dont la date de facturation est arrivée
@@ -115,7 +116,7 @@ export async function GET(req: NextRequest) {
           ? new Date(due_date).toLocaleDateString("fr-FR", { day: "2-digit", month: "long", year: "numeric" })
           : null;
 
-        const html = buildInvoiceEmail({ clientName, senderName, invoiceNumber: number, amount, brand, dueDate: dueDateFormatted });
+        const html = buildInvoiceEmail({ clientName, senderName, invoiceNumber: number, amount, brand, dueDate: dueDateFormatted, plan: profile?.plan ?? null });
 
         await resend.emails.send({
           // Le client a reçu le devis ou la facture au nom de son prestataire.
@@ -172,8 +173,9 @@ function extractDays(terms: string): number {
   return match ? parseInt(match[1]) : 30;
 }
 
-function buildInvoiceEmail({ clientName, senderName, invoiceNumber, amount, brand, dueDate }: {
+function buildInvoiceEmail({ clientName, senderName, invoiceNumber, amount, brand, dueDate, plan }: {
   clientName: string; senderName: string; invoiceNumber: string; amount: string; brand: string; dueDate: string | null;
+  plan: string | null;
 }) {
   return `<!DOCTYPE html>
 <html lang="fr">
@@ -210,11 +212,9 @@ function buildInvoiceEmail({ clientName, senderName, invoiceNumber, amount, bran
             La facture Factur-X est jointe en PDF à cet email.
           </p>
         </td></tr>
-        <tr><td style="background:#f8fafc;padding:16px 36px;border-top:1px solid #e2e8f0;">
-          <p style="margin:0;font-size:11px;color:#94a3b8;text-align:center;">
-            Facture émise via <a href="https://getdeviso.fr" style="color:${brand};text-decoration:none;">Deviso</a>
-          </p>
-        </td></tr>
+        ${piedDePageMarque(plan, "Facture émise via", brand)
+          ? `<tr><td style="background:#f8fafc;padding:16px 36px;border-top:1px solid #e2e8f0;">${piedDePageMarque(plan, "Facture émise via", brand)}</td></tr>`
+          : ""}
       </table>
     </td></tr>
   </table>

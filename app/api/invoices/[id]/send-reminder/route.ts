@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 import { resend } from "@/lib/resend";
 import { getWorkspaceUserId } from "@/lib/workspace";
+import { piedDePageMarque } from "@/lib/emails/branding";
 
 type Params = { params: Promise<{ id: string }> };
 
@@ -30,7 +31,7 @@ export async function POST(req: NextRequest, { params }: Params) {
   // sans adresse de réponse valide est un aller simple vers l'impayé.
   const { data: senderProfile } = await supabase
     .from("profiles")
-    .select("email")
+    .select("email, plan")
     .eq("id", user.id)
     .single();
 
@@ -86,11 +87,9 @@ export async function POST(req: NextRequest, { params }: Params) {
           </table>` : ""}
           <p style="margin:0;font-size:13px;color:#94a3b8;text-align:center;">En cas de paiement déjà effectué, ignorez ce message.</p>
         </td></tr>
-        <tr><td style="background:#f8fafc;padding:16px 36px;border-top:1px solid #e2e8f0;">
-          <p style="margin:0;font-size:11px;color:#94a3b8;text-align:center;">
-            Envoyé via <a href="https://getdeviso.fr" style="color:#4f46e5;text-decoration:none;">Deviso</a>
-          </p>
-        </td></tr>
+        ${piedDePageMarque(senderProfile?.plan, "Envoyé via")
+          ? `<tr><td style="background:#f8fafc;padding:16px 36px;border-top:1px solid #e2e8f0;">${piedDePageMarque(senderProfile?.plan, "Envoyé via")}</td></tr>`
+          : ""}
       </table>
     </td></tr>
   </table>

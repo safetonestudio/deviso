@@ -3,6 +3,7 @@ import { createClient } from "@/lib/supabase/server";
 import { resend } from "@/lib/resend";
 import { publicBaseUrl, proposalShareUrl } from "@/lib/public-url";
 import { getWorkspaceUserId } from "@/lib/workspace";
+import { piedDePageMarque } from "@/lib/emails/branding";
 
 type Params = { params: Promise<{ id: string }> };
 
@@ -91,11 +92,9 @@ export async function POST(_req: NextRequest, { params }: Params) {
             Si vous avez déjà répondu à ce devis, ignorez ce message.
           </p>
         </td></tr>
-        <tr><td style="background:#f8fafc;padding:16px 36px;border-top:1px solid #e2e8f0;">
-          <p style="margin:0;font-size:11px;color:#94a3b8;text-align:center;">
-            Envoyé via <a href="https://getdeviso.fr" style="color:#4f46e5;text-decoration:none;">Deviso</a>
-          </p>
-        </td></tr>
+        ${piedDePageMarque(profile?.plan, "Envoyé via")
+          ? `<tr><td style="background:#f8fafc;padding:16px 36px;border-top:1px solid #e2e8f0;">${piedDePageMarque(profile?.plan, "Envoyé via")}</td></tr>`
+          : ""}
       </table>
     </td></tr>
   </table>

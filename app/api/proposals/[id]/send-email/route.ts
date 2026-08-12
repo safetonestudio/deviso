@@ -3,6 +3,7 @@ import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { getWorkspaceUserId, getWorkspaceProfile } from "@/lib/workspace";
 import { resend } from "@/lib/resend";
+import { piedDePageMarque } from "@/lib/emails/branding";
 
 type Params = { params: Promise<{ id: string }> };
 
@@ -18,9 +19,9 @@ export async function POST(req: NextRequest, { params }: Params) {
 
   const workspaceId = await getWorkspaceUserId(user.id);
 
-  const profileData = await getWorkspaceProfile<{ company_name: string | null, email: string | null }>(
+  const profileData = await getWorkspaceProfile<{ company_name: string | null; email: string | null; plan: string | null }>(
     workspaceId,
-    "company_name, email"
+    "company_name, email, plan"
   );
 
   // Le nom commercial de l'émetteur s'affiche dans le champ « De », l'adresse
@@ -67,9 +68,7 @@ export async function POST(req: NextRequest, { params }: Params) {
               </a>
             </td></tr>
           </table>
-          <p style="margin:24px 0 0;font-size:12px;color:#94a3b8;text-align:center;">
-            Ce devis a été créé via <a href="https://getdeviso.fr" style="color:#4f46e5;text-decoration:none;">Deviso</a>
-          </p>
+          ${piedDePageMarque(profileData?.plan, "Ce devis a été créé via")}
         </td></tr>
         <tr><td style="background:#f8fafc;padding:16px 36px;border-top:1px solid #e2e8f0;">
           <p style="margin:0;font-size:11px;color:#94a3b8;text-align:center;">Si vous n'attendiez pas ce devis, ignorez cet email.</p>

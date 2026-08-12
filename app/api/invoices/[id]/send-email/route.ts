@@ -4,6 +4,7 @@ import { generateFacturXPdf, facturxFilename } from "@/lib/facturx";
 import { resend } from "@/lib/resend";
 import type { Invoice } from "@/types";
 import { getWorkspaceUserId } from "@/lib/workspace";
+import { piedDePageMarque } from "@/lib/emails/branding";
 
 type Params = { params: Promise<{ id: string }> };
 
@@ -113,11 +114,9 @@ export async function POST(req: NextRequest, { params }: Params) {
             La facture Factur-X est jointe en PDF à cet email.
           </p>
         </td></tr>
-        <tr><td style="background:#f8fafc;padding:16px 36px;border-top:1px solid #e2e8f0;">
-          <p style="margin:0;font-size:11px;color:#94a3b8;text-align:center;">
-            Facture émise via <a href="https://getdeviso.fr" style="color:${brand};text-decoration:none;">Deviso</a>
-          </p>
-        </td></tr>
+        ${piedDePageMarque(profileData?.plan, "Facture émise via", brand)
+          ? `<tr><td style="background:#f8fafc;padding:16px 36px;border-top:1px solid #e2e8f0;">${piedDePageMarque(profileData?.plan, "Facture émise via", brand)}</td></tr>`
+          : ""}
       </table>
     </td></tr>
   </table>
