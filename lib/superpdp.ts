@@ -116,6 +116,7 @@ export interface SuperPdpConnection {
   last_error: string | null;
   access_token: string | null;
   access_token_expires_at: string | null;
+  directory_address: string | null;
 }
 
 /** Révoque un jeton (RFC 7009). Utilisé au débranchement. */

@@ -31,6 +31,8 @@ export async function GET() {
     connected: Boolean(conn),
     status: conn?.session_status ?? null,
     companyId: conn?.company_id ?? null,
+    // Ce que l'utilisateur communique à ses clients pour être joignable.
+    directoryAddress: conn?.directory_address ?? null,
     lastError: conn?.last_error ?? null,
   });
 }

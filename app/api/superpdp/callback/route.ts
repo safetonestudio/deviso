@@ -73,19 +73,46 @@ export async function GET(req: NextRequest) {
     let companyId: string | null = null;
     let status: "pending" | "verified" = "pending";
 
-    const me = await fetch(`${SUPERPDP_API}/companies/me`, {
-      headers: { Authorization: `Bearer ${tokens.access_token}`, Accept: "application/json" },
-      cache: "no-store",
-    });
+    const entetes = {
+      Authorization: `Bearer ${tokens.access_token}`,
+      Accept: "application/json",
+    };
+
+    const me = await fetch(`${SUPERPDP_API}/companies/me`, { headers: entetes, cache: "no-store" });
     if (me.ok) {
       const body = await me.json().catch(() => null);
-      companyId = body?.id ?? body?.company?.id ?? null;
+      companyId = body?.id != null ? String(body.id) : (body?.company?.id ?? null);
       status = "verified";
+    }
+
+    // Adresse de réception. C'est la seule information du raccordement qui
+    // intéresse l'utilisateur : c'est ce qu'il communique à ses clients.
+    // On écarte la ligne suffixée `_replyto`, adresse technique de retour pour
+    // les messages de cycle de vie — l'afficher ferait croire à deux adresses.
+    let directoryAddress: string | null = null;
+    let directoryId: string | null = null;
+    if (status === "verified") {
+      const annuaire = await fetch(`${SUPERPDP_API}/directory_entries`, {
+        headers: entetes,
+        cache: "no-store",
+      });
+      if (annuaire.ok) {
+        const body = await annuaire.json().catch(() => null);
+        const ligne = (body?.data ?? []).find(
+          (e: { is_replyto?: boolean }) => !e.is_replyto
+        );
+        if (ligne) {
+          directoryAddress = ligne.identifier ?? null;
+          directoryId = ligne.id != null ? String(ligne.id) : null;
+        }
+      }
     }
 
     await saveConnection(workspaceId, {
       refresh_token: tokens.refresh_token,
       company_id: companyId,
+      directory_id: directoryId,
+      directory_address: directoryAddress,
       session_status: status,
       last_error: null,
       connected_at: new Date().toISOString(),
