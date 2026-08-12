@@ -8,7 +8,7 @@ import { terminerDemo } from "@/components/DemoSession";
 import {
   LayoutDashboard, FileText, Receipt,
   Package, Users, BarChart3,
-  Sparkles, UsersRound, Settings, Wallet, BookOpen, CreditCard, LucideIcon,
+  Sparkles, UsersRound, Settings, Wallet, BookOpen, CreditCard, Inbox, LucideIcon,
   Menu, X,
 } from "lucide-react";
 import { NotificationBell } from "@/components/NotificationBell";
@@ -23,6 +23,7 @@ const NAV: NavItem[] = [
   { type: "link", href: "/proposals",     icon: FileText,        label: "Devis" },
   { type: "link", href: "/proposals/new", icon: Sparkles,        label: "Nouveau devis", accent: true },
   { type: "link", href: "/invoices",      icon: Receipt,         label: "Factures" },
+  { type: "link", href: "/factures-recues", icon: Inbox,         label: "Factures reçues", ownerOnly: true },
   { type: "link", href: "/paiements",     icon: Wallet,          label: "Paiements clients", ownerOnly: true },
   { type: "section", label: "Clients", ownerOnly: true },
   { type: "link", href: "/crm",           icon: Users,           label: "Mes clients",  ownerOnly: true },
