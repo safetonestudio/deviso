@@ -10,8 +10,10 @@
     "check:forms": "node scripts/check-form-wiring.mjs",
     "test:roles": "node scripts/e2e/two-roles.mjs",
     "test:promises": "node scripts/e2e/promesses.mjs",
-    "verify": "npm run check:forms && npm run check:emails && npm run test:roles && npm run test:promises",
-    "check:emails": "node scripts/check-emails.mjs"
+    "verify": "npm run check:forms && npm run check:emails && npm run test:roles && npm run test:promises && npm run test:crons",
+    "check:emails": "node scripts/check-emails.mjs",
+    "test:emails": "node scripts/e2e/emails.mjs",
+    "test:crons": "node scripts/e2e/crons.mjs"
   },
   "dependencies": {
     "@react-pdf/renderer": "^4.3.0",
