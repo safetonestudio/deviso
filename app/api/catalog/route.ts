@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
-import { getWorkspaceUserId } from "@/lib/workspace";
+import { getWorkspaceUserId, getWorkspaceProfile } from "@/lib/workspace";
 
 export async function GET() {
   const supabase = await createClient();
@@ -28,11 +28,10 @@ export async function POST(req: NextRequest) {
   if (authError || !user) return NextResponse.json({ error: "Non autorisé" }, { status: 401 });
   const workspaceId = await getWorkspaceUserId(user.id);
 
-  const { data: profile } = await supabase
-    .from("profiles")
-    .select("plan")
-    .eq("id", workspaceId)
-    .single();
+  const profile = await getWorkspaceProfile<{ plan: string | null }>(
+    workspaceId,
+    "plan"
+  );
 
   if (profile?.plan !== "pro") {
     return NextResponse.json({ error: "PLAN_REQUIRED", message: "Le catalogue nécessite le plan Pro." }, { status: 403 });

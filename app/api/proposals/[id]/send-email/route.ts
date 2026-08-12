@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
-import { getWorkspaceUserId } from "@/lib/workspace";
+import { getWorkspaceUserId, getWorkspaceProfile } from "@/lib/workspace";
 import { resend } from "@/lib/resend";
 
 type Params = { params: Promise<{ id: string }> };
@@ -18,11 +18,10 @@ export async function POST(req: NextRequest, { params }: Params) {
 
   const workspaceId = await getWorkspaceUserId(user.id);
 
-  const { data: profileData } = await supabase
-    .from("profiles")
-    .select("company_name, email")
-    .eq("id", workspaceId)
-    .single();
+  const profileData = await getWorkspaceProfile<{ company_name: string | null, email: string | null }>(
+    workspaceId,
+    "company_name, email"
+  );
 
   // Le nom commercial de l'émetteur s'affiche dans le champ « De », l'adresse
   // technique reste la nôtre. C'est ce que voit le client, et ça suffit.

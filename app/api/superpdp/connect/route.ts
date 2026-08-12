@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
-import { getWorkspaceUserId } from "@/lib/workspace";
+import { getWorkspaceUserId, getWorkspaceProfile } from "@/lib/workspace";
 import { toSiren } from "@/lib/facturx-helpers";
 import {
   SUPERPDP_HOST,
@@ -40,11 +40,10 @@ export async function GET() {
   // d'équipe connecte le compte du propriétaire de l'espace de travail.
   const workspaceId = await getWorkspaceUserId(user.id);
 
-  const { data: profile } = await supabase
-    .from("profiles")
-    .select("siret, company_name")
-    .eq("id", workspaceId)
-    .maybeSingle();
+  const profile = await getWorkspaceProfile<{ siret: string | null; company_name: string | null }>(
+    workspaceId,
+    "siret, company_name"
+  );
 
   const siren = toSiren(profile?.siret ?? null);
 

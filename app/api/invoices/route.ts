@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 import { v4 as uuidv4 } from "uuid";
 import type { ProposalItem } from "@/types";
-import { getWorkspaceUserId } from "@/lib/workspace";
+import { getWorkspaceUserId, getWorkspaceProfile } from "@/lib/workspace";
 import { resolveAddress } from "@/lib/address";
 
 // GET /api/invoices
@@ -30,11 +30,10 @@ export async function POST(req: NextRequest) {
 
   const workspaceId = await getWorkspaceUserId(user.id);
   // Bloquer les utilisateurs Free (pas de factures)
-  const { data: profile } = await supabase
-    .from("profiles")
-    .select("plan, payment_method")
-    .eq("id", workspaceId)
-    .single();
+  const profile = await getWorkspaceProfile<{ plan: string | null, payment_method: string | null }>(
+    workspaceId,
+    "plan, payment_method"
+  );
 
   if (!profile || profile.plan === "free") {
     return NextResponse.json(

@@ -14,12 +14,19 @@ export async function GET(_req: NextRequest, { params }: Params) {
   const { id } = await params;
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
+  // Cette route n'avait aucune garde : un appel anonyme filtrait sur
+  // `user?.id` valant undefined et repartait avec un 404 « facture
+  // introuvable » au lieu d'un 401. Pas de fuite, mais mon audit affirmait
+  // « 46 routes toutes protégées » — c'était faux.
+  if (!user) return NextResponse.json({ error: "Non autorisé" }, { status: 401 });
+
+  const workspaceId = await getWorkspaceUserId(user.id);
 
   const { data, error } = await supabase
     .from("invoices")
     .select("*")
     .eq("id", id)
-    .eq("user_id", user?.id)
+    .eq("user_id", workspaceId)
     .single();
 
   if (error || !data) return NextResponse.json({ error: "Facture introuvable" }, { status: 404 });

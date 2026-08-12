@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
-import { getWorkspaceUserId } from "@/lib/workspace";
+import { getWorkspaceUserId, getWorkspaceProfile } from "@/lib/workspace";
 
 // GET /api/templates, liste les modèles partagés du workspace
 export async function GET() {
@@ -10,11 +10,10 @@ export async function GET() {
 
   const workspaceId = await getWorkspaceUserId(user.id);
 
-  const { data: profile } = await supabase
-    .from("profiles")
-    .select("plan")
-    .eq("id", workspaceId)
-    .single();
+  const profile = await getWorkspaceProfile<{ plan: string | null }>(
+    workspaceId,
+    "plan"
+  );
 
   if (!["solo", "pro"].includes(profile?.plan ?? "")) {
     return NextResponse.json({ error: "PRO_REQUIRED" }, { status: 403 });
@@ -38,11 +37,10 @@ export async function POST(req: NextRequest) {
 
   const workspaceId = await getWorkspaceUserId(user.id);
 
-  const { data: profile } = await supabase
-    .from("profiles")
-    .select("plan")
-    .eq("id", workspaceId)
-    .single();
+  const profile = await getWorkspaceProfile<{ plan: string | null }>(
+    workspaceId,
+    "plan"
+  );
 
   if (!["solo", "pro"].includes(profile?.plan ?? "")) {
     return NextResponse.json({ error: "PRO_REQUIRED" }, { status: 403 });
