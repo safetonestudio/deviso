@@ -137,7 +137,13 @@ export default async function DashboardLayout({ children }: { children: React.Re
           </div>
         </aside>
 
-        <main className="flex-1 lg:ml-64 p-4 lg:p-8 min-w-0 pt-14">
+        {/* `pt-14` compensait exactement la barre fixe du haut, qui fait `h-14` :
+            le premier élément de chaque page commençait donc pile à sa limite
+            basse, collé, sans un pixel d'écart. Visible sur l'encadré de la
+            visite guidée, mais le défaut valait pour tous les écrans — c'est
+            simplement le premier élément qui le révèle.
+            On garde la compensation et on ajoute une vraie respiration. */}
+        <main className="flex-1 lg:ml-64 p-4 lg:p-8 min-w-0 pt-[4.5rem] lg:pt-8">
           <SessionGuard />
           {synchroniserPdp && <SuperPdpSync />}
           {/* Bandeau de démo : un seul, en haut du contenu, sur toutes les
