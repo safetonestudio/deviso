@@ -103,12 +103,22 @@ export async function POST(req: NextRequest) {
   const baseUrl = process.env.NEXT_PUBLIC_APP_URL || "https://getdeviso.fr";
   const inviteUrl = `${baseUrl}/join/${inviteToken}`;
 
-  await resend.emails.send({
-    from: "Deviso <noreply@getdeviso.fr>",
-    to: email,
-    subject: `${profile?.company_name || profile?.full_name || "Quelqu'un"} t'invite sur Deviso`,
-    html: inviteEmailHtml(profile?.full_name ?? "", profile?.company_name ?? "", inviteUrl),
-  });
+  // Les comptes de démonstration utilisent un domaine fictif : tenter de leur
+  // écrire produit un rejet dur qui dégrade la réputation d'envoi du domaine
+  // pour tous les vrais clients.
+  const estFictif = email.toLowerCase().endsWith("@deviso.internal");
 
-  return NextResponse.json({ success: true });
+  if (!estFictif) {
+    await resend.emails.send({
+      from: "Deviso <noreply@getdeviso.fr>",
+      to: email,
+      subject: `${profile?.company_name || profile?.full_name || "Quelqu'un"} t'invite sur Deviso`,
+      html: inviteEmailHtml(profile?.full_name ?? "", profile?.company_name ?? "", inviteUrl),
+    });
+  }
+
+  // Le lien est renvoyé pour que le propriétaire puisse le transmettre lui-même :
+  // la remise d'un email n'est jamais garantie, et une invitation perdue en
+  // indésirables bloque un collaborateur sans que personne ne comprenne pourquoi.
+  return NextResponse.json({ success: true, inviteUrl, emailEnvoye: !estFictif });
 }
