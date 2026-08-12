@@ -260,7 +260,60 @@ export default function CRMPage() {
           </Link>
         </div>
       ) : (
-        <div className="bg-ds-surface border border-ds-border rounded-xl overflow-hidden">
+        <>
+        {/* ── Téléphone : une carte par client ───────────────────────────────
+            Le tableau à six colonnes n'avait même pas de défilement horizontal :
+            il se comprimait dans la largeur de l'écran, les cellules débordaient
+            de leurs cadres et le texte se retrouvait tronqué. Constaté par Selim.
+
+            Les quatre indicateurs passent en grille de deux : sur un téléphone,
+            quatre colonnes de chiffres ne se lisent pas. Le chiffre d'affaires
+            reste seul en évidence — c'est la valeur qu'on cherche en ouvrant
+            cet écran. */}
+        <div className="lg:hidden space-y-3">
+          {filtered.map((c) => (
+            <article
+              key={c.key}
+              onClick={() => setSelected(c)}
+              className="bg-ds-surface border border-ds-border rounded-xl p-4 cursor-pointer"
+            >
+              <div className="flex items-start justify-between gap-3">
+                <div className="min-w-0">
+                  <div className="font-medium text-white truncate">{c.name}</div>
+                  {c.company && <div className="text-xs text-gray-500 truncate">{c.company}</div>}
+                  {c.email && <div className="text-xs text-gray-500 truncate">{c.email}</div>}
+                </div>
+                <div className="text-right shrink-0">
+                  <div className="font-semibold text-white whitespace-nowrap">{fmt(c.ca_total)}</div>
+                  <div className="text-[11px] text-gray-500">encaissé</div>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-2 gap-x-4 gap-y-1 mt-3 text-xs">
+                <div className="flex justify-between">
+                  <span className="text-gray-500">Devis</span>
+                  <span className="text-gray-300">{c.nb_proposals}</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-gray-500">Signés</span>
+                  <span className={c.nb_signed > 0 ? "text-emerald-400 font-semibold" : "text-gray-500"}>
+                    {c.nb_signed}
+                  </span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-gray-500">Factures</span>
+                  <span className="text-gray-300">{c.nb_invoices}</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-gray-500">Activité</span>
+                  <span className="text-gray-400">{fmtDate(c.last_activity)}</span>
+                </div>
+              </div>
+            </article>
+          ))}
+        </div>
+
+        <div className="hidden lg:block bg-ds-surface border border-ds-border rounded-xl overflow-hidden">
           <table className="w-full text-sm">
             <thead className="border-b border-ds-border">
               <tr>
@@ -296,6 +349,7 @@ export default function CRMPage() {
             </tbody>
           </table>
         </div>
+        </>
       )}
 
       {selected && (

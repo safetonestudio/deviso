@@ -363,7 +363,59 @@ export default function InvoicesPage() {
               </Link>
             </div>
           ) : (
-            <div className="bg-ds-surface border border-ds-border rounded-xl overflow-hidden overflow-x-auto">
+            <>
+            {/* ── Téléphone : une carte par facture ─────────────────────────
+                Le tableau à six colonnes se comprimait dans la largeur de
+                l'écran : le contenu débordait des cadres et se retrouvait
+                tronqué. Constaté par Selim. Sur la ligne du tableau, toute la
+                rangée est cliquable ; ici c'est la carte entière, avec le
+                téléchargement en action distincte pour qu'un pouce ne
+                déclenche pas l'un en visant l'autre. */}
+            <div className="lg:hidden space-y-3">
+              {invoices.map((inv) => (
+                <article
+                  key={inv.id}
+                  className="bg-ds-surface border border-ds-border rounded-xl p-4"
+                >
+                  <div
+                    onClick={() => router.push(`/invoices/${inv.id}`)}
+                    className="cursor-pointer"
+                  >
+                    <div className="flex items-start justify-between gap-3">
+                      <div className="min-w-0">
+                        <div className="font-medium text-white truncate">
+                          {inv.client_company || inv.client_name}
+                        </div>
+                        <div className="font-mono text-xs text-gray-500 truncate mt-0.5">
+                          {inv.invoice_number}
+                          {inv.invoice_type === "acompte" && " · acompte"}
+                          {inv.invoice_type === "solde" && " · solde"}
+                        </div>
+                      </div>
+                      <div className="font-semibold text-white whitespace-nowrap shrink-0">
+                        {fmt(inv.total_ttc)}
+                      </div>
+                    </div>
+
+                    <div className="flex items-center gap-2 flex-wrap mt-3 text-xs">
+                      <span className={`px-2 py-0.5 rounded-full font-medium ${STATUS_COLOR[inv.status] || ""}`}>
+                        {STATUS_LABEL[inv.status] || inv.status}
+                      </span>
+                      <span className="text-gray-500">{fmtDate(inv.issue_date)}</span>
+                    </div>
+                  </div>
+
+                  <button
+                    onClick={(e) => handleDownload(inv.id, e)}
+                    className="w-full mt-3 px-3 py-2.5 rounded-lg border border-ds-border text-indigo-400 text-sm font-semibold hover:bg-ds-elevated transition-colors"
+                  >
+                    Télécharger la facture
+                  </button>
+                </article>
+              ))}
+            </div>
+
+            <div className="hidden lg:block bg-ds-surface border border-ds-border rounded-xl overflow-hidden">
               <table className="w-full text-sm min-w-[600px]">
                 <thead>
                   <tr className="border-b border-ds-border text-gray-500 text-xs uppercase tracking-wide">
@@ -415,6 +467,7 @@ export default function InvoicesPage() {
                 </tbody>
               </table>
             </div>
+            </>
           )}
         </>
       )}
