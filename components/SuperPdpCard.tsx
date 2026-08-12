@@ -50,6 +50,22 @@ const RETOURS: Record<string, { ton: "ok" | "attente" | "erreur"; texte: string 
   erreur: { ton: "erreur", texte: "Le raccordement a échoué." },
 };
 
+/**
+ * Les messages d'erreur de Super PDP arrivent en anglais et en vocabulaire
+ * d'API. On traduit ceux qu'on a réellement rencontrés plutôt que d'afficher
+ * « No company found with these superpdp_company_number_scheme… » à un
+ * indépendant venu cocher une case de conformité.
+ */
+function traduire(detail: string): string {
+  if (/no company found/i.test(detail)) {
+    return (
+      "Super PDP ne reconnaît pas l'entreprise transmise. Reprenez le raccordement " +
+      "et saisissez vos informations directement dans leur formulaire."
+    );
+  }
+  return detail;
+}
+
 export function SuperPdpCard() {
   const params = useSearchParams();
   const [etat, setEtat] = useState<Etat | null>(null);
@@ -110,7 +126,7 @@ export function SuperPdpCard() {
           }`}
         >
           <p>{retour.texte}</p>
-          {retourDetail && <p className="text-xs opacity-80 mt-1 break-words">{retourDetail}</p>}
+          {retourDetail && <p className="text-xs opacity-80 mt-1 break-words">{traduire(retourDetail)}</p>}
         </div>
       )}
 

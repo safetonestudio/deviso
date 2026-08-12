@@ -67,7 +67,25 @@ export async function GET() {
   // l'erreur — le tunnel se serait simplement affiché vide, ce qu'on aurait mis
   // sur le compte du produit et non du code. Noms vérifiés dans la
   // documentation « Authentification » le 12/08/2026.
-  if (siren) {
+  //
+  // ⚠️ Le pré-remplissage de l'entreprise est **désactivé par défaut**, et ce
+  // n'est pas de la prudence de principe. Testé le 12/08/2026 : envoyer un
+  // numéro qui ne correspond à aucune entreprise connue de Super PDP ne se
+  // contente pas d'ignorer le paramètre, cela **interrompt tout le tunnel** —
+  // « No company found with these superpdp_company_number_scheme and
+  // superpdp_company_number ». En bac à sable c'est systématique, puisque les
+  // entreprises y sont fictives et ne portent pas de vrai SIREN.
+  //
+  // En production le risque reste entier pour toute entreprise que Super PDP ne
+  // connaît pas encore, c'est-à-dire tout nouvel utilisateur. Or le principe
+  // retenu sur ce projet est qu'aucun élément ne doit bloquer : mieux vaut que
+  // l'utilisateur saisisse son SIREN dans le tunnel que de le voir buter sur un
+  // message d'erreur en anglais. Le confort d'un champ pré-rempli ne vaut pas
+  // ce risque.
+  //
+  // Activable par `SUPERPDP_PREFILL_COMPANY=true` pour tester ce chemin une fois
+  // qu'on aura confirmé son comportement en réel auprès de Super PDP.
+  if (siren && process.env.SUPERPDP_PREFILL_COMPANY === "true") {
     params.set("superpdp_company_number", siren);
     params.set("superpdp_company_number_scheme", companyNumberScheme());
     // Adresse électronique de facturation créée si l'utilisateur active la
@@ -77,6 +95,8 @@ export async function GET() {
       params.set("superpdp_directory_entry_identifier", siren);
     }
   }
+
+  // `login_hint` ne pré-remplit qu'un champ texte : aucun risque de blocage.
   if (profile?.email) params.set("login_hint", profile.email);
 
   // Le point décisif pour nous. Sans ce paramètre l'interface laisse le choix
