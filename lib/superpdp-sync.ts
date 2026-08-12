@@ -39,6 +39,8 @@ export type ResultatSync = {
   recuperees: number;
   entrantes: number;
   jusquA: number | null;
+  /** Nombre de statuts mis à jour depuis les événements de cycle de vie. */
+  statuts?: number;
   /** Renseigné quand la synchronisation n'a pas pu se faire. */
   raison?: "non_raccorde" | "verification_en_cours" | "erreur";
   detail?: string;
@@ -180,10 +182,78 @@ export async function synchroniserFactures(userId: string): Promise<ResultatSync
     return { recuperees, entrantes, jusquA: curseur, raison: "erreur", detail };
   }
 
+  // Les statuts changent après coup : il faut aussi lire les événements.
+  const statuts = await synchroniserEvenements(userId);
+
   // Une synchronisation sans nouveauté est un succès, pas un non-événement :
   // on horodate quand même, sinon l'écran ne peut pas distinguer « rien de
   // nouveau » de « on n'a pas regardé depuis hier ».
   await saveConnection(userId, { last_sync_at: new Date().toISOString() });
 
-  return { recuperees, entrantes, jusquA: curseur };
+  return { recuperees, entrantes, jusquA: curseur, statuts };
+}
+
+type EvenementFacture = {
+  id: number;
+  invoice_id: number;
+  status_code?: string;
+  created_at?: string;
+};
+
+/**
+ * Synchronise les **événements** de cycle de vie.
+ *
+ * ⚠️ Ne pas supprimer en pensant que la synchronisation des factures suffit.
+ * C'est l'erreur commise le 12/08/2026 : le curseur `starting_after_id` ne
+ * ramène que les factures dont l'identifiant **dépasse** le dernier connu. Or
+ * un changement de statut ne crée pas une nouvelle facture, il crée un nouvel
+ * **événement**. Une facture déjà synchronisée n'est donc plus jamais relue.
+ *
+ * Constaté en traversée : une facture refusée continuait d'afficher « Reçue par
+ * la plateforme ». Les statuts se figeaient à leur valeur du jour d'arrivée —
+ * Refusée, Approuvée, Encaissée : rien n'aurait jamais remonté. La documentation
+ * de Super PDP le dit d'ailleurs explicitement, « pour les invoice_events, il
+ * faut procéder de la même manière ». Je ne l'avais pas fait.
+ *
+ * Second curseur, indépendant : les deux séquences n'avancent pas au même rythme.
+ */
+async function synchroniserEvenements(userId: string): Promise<number> {
+  const conn = await getConnection(userId);
+  if (!conn) return 0;
+
+  const admin = createAdminClient();
+  let curseur = conn.last_event_id ?? null;
+  let appliques = 0;
+
+  for (let page = 0; page < PAGES_MAX; page++) {
+    const params = new URLSearchParams();
+    if (curseur) params.set("starting_after_id", String(curseur));
+    const res = await superpdpFetch(userId, `/invoice_events${params.toString() ? `?${params}` : ""}`);
+    if (!res.ok) break;
+
+    const body = (await res.json()) as { data?: EvenementFacture[]; has_after?: boolean };
+    const lot = body.data ?? [];
+    if (lot.length === 0) break;
+
+    for (const ev of lot) {
+      if (ev.status_code) {
+        // Les événements arrivent par id croissant, donc le dernier appliqué
+        // pour une facture donnée est bien le plus récent.
+        const { error } = await admin
+          .from("superpdp_invoices")
+          .update({ last_status_code: ev.status_code })
+          .eq("id", ev.invoice_id)
+          .eq("user_id", userId);
+        // Un événement peut concerner une facture qu'on n'a pas encore : ce
+        // n'est pas une erreur, la prochaine synchronisation la ramènera.
+        if (!error) appliques++;
+      }
+      curseur = Math.max(curseur ?? 0, ev.id);
+    }
+
+    await saveConnection(userId, { last_event_id: curseur });
+    if (!body.has_after) break;
+  }
+
+  return appliques;
 }

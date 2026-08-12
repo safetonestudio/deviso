@@ -73,47 +73,85 @@ export function BoutonRefus({
   }
 
   return (
-    <div className="bg-ds-elevated/60 border border-red-500/20 rounded-lg p-3 mt-2 text-left">
-      <p className="text-xs text-gray-300 mb-2">
-        Refuser la facture de <strong className="text-white">{fournisseur}</strong>.
-        C&apos;est <strong className="text-red-400">définitif</strong> et cela porte sur la facture
-        entière : votre fournisseur devra procéder à une annulation comptable.
-      </p>
-
-      <label className="block text-xs text-gray-400 mb-1">Motif du refus</label>
-      <select
-        value={motif}
-        onChange={(e) => setMotif(e.target.value)}
-        className="w-full bg-ds-bg border border-ds-border text-white rounded-lg px-3 py-2 text-sm mb-2 focus:outline-none focus:border-indigo-500"
+    <>
+      <button
+        onClick={() => setOuvert(true)}
+        className="text-xs text-gray-600 hover:text-red-400 transition-colors whitespace-nowrap"
       >
-        <option value="">Choisir un motif…</option>
-        {MOTIFS_REFUS.map((m) => (
-          <option key={m.code} value={m.code}>
-            {m.libelle}
-          </option>
-        ))}
-      </select>
+        Refuser
+      </button>
 
-      {erreur && <p className="text-xs text-red-400 mb-2">{erreur}</p>}
+      {/* Fenêtre centrée plutôt que panneau déplié dans la cellule.
+          Première version : le formulaire s'ouvrait à l'intérieur de la case du
+          tableau. Il en débordait et se faisait couper — visible sur la capture
+          de Selim. Une cellule de tableau n'a pas la place d'accueillir un
+          formulaire, et lui en donner déformerait toute la ligne.
+          Une fenêtre modale règle aussi le cas du téléphone, où la liste de
+          motifs seule occupe plus que la hauteur d'écran. */}
+      <div
+        className="fixed inset-0 z-[70] flex items-end sm:items-center justify-center p-0 sm:p-4"
+        role="dialog"
+        aria-modal="true"
+        aria-label="Refuser une facture"
+      >
+        <div
+          className="absolute inset-0 bg-black/60 backdrop-blur-sm"
+          onClick={() => !enCours && setOuvert(false)}
+        />
 
-      <div className="flex gap-2">
-        <button
-          onClick={() => {
-            setOuvert(false);
-            setErreur(null);
-          }}
-          className="flex-1 px-3 py-2 rounded-lg border border-ds-border text-gray-400 hover:text-white text-xs font-medium transition-colors"
-        >
-          Annuler
-        </button>
-        <button
-          onClick={refuser}
-          disabled={!motif || enCours}
-          className="flex-1 px-3 py-2 rounded-lg bg-red-500/15 border border-red-500/30 text-red-400 hover:bg-red-500/25 text-xs font-semibold transition-colors disabled:opacity-40"
-        >
-          {enCours ? "Envoi…" : "Confirmer le refus"}
-        </button>
+        <div className="relative w-full sm:max-w-md bg-ds-surface border border-ds-border rounded-t-2xl sm:rounded-2xl p-5 shadow-xl">
+          <h2 className="text-white font-semibold mb-2">Refuser cette facture</h2>
+
+          <p className="text-sm text-gray-400 mb-4 leading-relaxed">
+            Facture de <strong className="text-white">{fournisseur}</strong>. Le refus est{" "}
+            <strong className="text-red-400">définitif</strong> et porte sur la facture entière :
+            votre fournisseur devra procéder à une annulation comptable.
+          </p>
+
+          <label className="block text-xs font-medium text-gray-400 mb-1.5">
+            Motif du refus
+          </label>
+          <select
+            value={motif}
+            onChange={(e) => setMotif(e.target.value)}
+            autoFocus
+            className="w-full bg-ds-bg border border-ds-border text-white rounded-lg px-3 py-2.5 text-sm mb-2 focus:outline-none focus:border-indigo-500"
+          >
+            <option value="">Choisir un motif…</option>
+            {MOTIFS_REFUS.map((m) => (
+              <option key={m.code} value={m.code}>
+                {m.libelle}
+              </option>
+            ))}
+          </select>
+          <p className="text-xs text-gray-600 mb-4">
+            La réforme n&apos;accepte que ces motifs : il n&apos;existe pas d&apos;option
+            « autre ».
+          </p>
+
+          {erreur && <p className="text-sm text-red-400 mb-3">{erreur}</p>}
+
+          <div className="flex gap-2">
+            <button
+              onClick={() => {
+                setOuvert(false);
+                setErreur(null);
+              }}
+              disabled={enCours}
+              className="flex-1 px-3 py-2.5 rounded-lg border border-ds-border text-gray-400 hover:text-white text-sm font-medium transition-colors disabled:opacity-50"
+            >
+              Annuler
+            </button>
+            <button
+              onClick={refuser}
+              disabled={!motif || enCours}
+              className="flex-1 px-3 py-2.5 rounded-lg bg-red-500/15 border border-red-500/30 text-red-400 hover:bg-red-500/25 text-sm font-semibold transition-colors disabled:opacity-40"
+            >
+              {enCours ? "Envoi…" : "Confirmer le refus"}
+            </button>
+          </div>
+        </div>
       </div>
-    </div>
+    </>
   );
 }
