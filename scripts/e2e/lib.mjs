@@ -11,8 +11,20 @@
  * d'excuse à ne pas la tester.
  */
 
+import { readFileSync, writeFileSync, existsSync } from "node:fs";
+
 export const BASE = process.env.E2E_BASE_URL || "https://getdeviso.fr";
 const PROJECT_REF = "mjhsafxzbufpughtxhnw";
+
+/**
+ * Les comptes de démonstration sont limités à dix par heure et par adresse IP —
+ * garde-fou légitime contre l'abus. La suite en consomme deux par exécution et
+ * se retrouvait bloquée au bout de cinq lancements. On réutilise donc les
+ * sessions tant qu'elles vivent, ce qui rend aussi la suite nettement plus rapide.
+ */
+const CACHE = new URL("./.sessions.json", import.meta.url);
+const lireCache = () => (existsSync(CACHE) ? JSON.parse(readFileSync(CACHE, "utf8")) : {});
+const ecrireCache = (o) => writeFileSync(CACHE, JSON.stringify(o, null, 2));
 
 /**
  * Le cookie de session attendu par @supabase/ssr : `base64-` suivi du JSON de
@@ -33,11 +45,23 @@ function cookieFor(tokens) {
 
 /** Ouvre une session de démonstration (plan Pro) et renvoie un client HTTP. */
 export async function openSession(label) {
-  const res = await fetch(`${BASE}/api/demo/start`, { method: "POST" });
-  if (!res.ok) {
-    throw new Error(`Création de session « ${label} » impossible : HTTP ${res.status}`);
+  const cache = lireCache();
+  let tokens = cache[label];
+
+  if (!tokens) {
+    const res = await fetch(`${BASE}/api/demo/start`, { method: "POST" });
+    if (res.status === 429) {
+      throw new Error(
+        `Limite de comptes de démonstration atteinte (10/h par IP). ` +
+          `Attendez, ou supprimez scripts/e2e/.sessions.json pour repartir de zéro.`
+      );
+    }
+    if (!res.ok) throw new Error(`Création de session « ${label} » impossible : HTTP ${res.status}`);
+    tokens = await res.json();
+    cache[label] = tokens;
+    ecrireCache(cache);
   }
-  const tokens = await res.json();
+
   const cookie = cookieFor(tokens);
 
   const call = async (path, init = {}) => {
@@ -57,7 +81,13 @@ export async function openSession(label) {
   };
 
   const me = await call("/api/profile");
-  if (me.status !== 200) throw new Error(`Session « ${label} » non authentifiée`);
+  if (me.status !== 200) {
+    // Le compte a expiré (purge à 2 h) : on vide le cache et on recommence.
+    const c = lireCache();
+    delete c[label];
+    ecrireCache(c);
+    return openSession(label);
+  }
 
   return { label, call, userId: me.body.profile.id, email: me.body.profile.email };
 }
@@ -82,6 +112,14 @@ export const anonymous = {
  * son acceptation est cassée, la suite le dit.
  */
 export async function linkAsTeamMember(owner, member) {
+  // Les sessions étant réutilisées d'une exécution à l'autre, le rattachement
+  // peut déjà exister. On ne le refait pas : réinviter réinitialiserait le jeton.
+  const equipe = await owner.call("/api/team");
+  const deja = (equipe.body?.members ?? []).some(
+    (m) => m.member_id === member.userId && m.status === "active"
+  );
+  if (deja) return { deja: true };
+
   const invite = await owner.call("/api/team", {
     method: "POST",
     body: JSON.stringify({ email: member.email }),

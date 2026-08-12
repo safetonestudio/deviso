@@ -30,3 +30,6 @@ vercel-deploy.log
 tsconfig.tsbuildinfo
 .tmp-fxtest/
 deploy.log 
+
+# Sessions de test réutilisées entre deux exécutions
+scripts/e2e/.sessions.json
