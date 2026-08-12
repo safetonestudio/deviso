@@ -8,7 +8,26 @@ export async function POST(req: NextRequest) {
   if (authError || !user) return NextResponse.json({ error: "Non autorisé" }, { status: 401 });
 
   const body = await req.json().catch(() => ({}));
-  const targetPlan: "solo" | "pro" = body.plan === "pro" ? "pro" : "solo";
+
+  // Rejet explicite plutôt que repli silencieux. La version précédente écrivait
+  // `body.plan === "pro" ? "pro" : "solo"` : n'importe quelle valeur inconnue
+  // devenait « solo ». Sur une route qui déclenche un prélèvement, une erreur du
+  // client aboutissait à abonner quelqu'un à une formule qu'il n'a pas demandée,
+  // sans le moindre message.
+  if (body.plan !== "solo" && body.plan !== "pro") {
+    return NextResponse.json(
+      { error: "Plan invalide", message: "Formule inconnue. Choisissez Solo ou Pro." },
+      { status: 400 }
+    );
+  }
+  if (body.billing !== undefined && body.billing !== "monthly" && body.billing !== "annual") {
+    return NextResponse.json(
+      { error: "Périodicité invalide", message: "Choisissez une facturation mensuelle ou annuelle." },
+      { status: 400 }
+    );
+  }
+
+  const targetPlan: "solo" | "pro" = body.plan;
   const billing: "monthly" | "annual" = body.billing === "annual" ? "annual" : "monthly";
   const priceId = billing === "annual" ? PLANS[targetPlan].annualPriceId : PLANS[targetPlan].priceId;
 
