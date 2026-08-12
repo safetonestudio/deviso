@@ -122,6 +122,12 @@ export type InvoiceStatus = "draft" | "sent" | "paid" | "cancelled";
 export type OperationCategory = "services" | "goods" | "mixed";
 
 export interface Invoice {
+  /** Identifiant de la facture chez la Plateforme Agréée, une fois transmise. */
+  superpdp_invoice_id?: string | null;
+  superpdp_status?: string | null;
+  superpdp_status_date?: string | null;
+  superpdp_error?: string | null;
+
   id: string;
   user_id: string;
   proposal_id: string | null;

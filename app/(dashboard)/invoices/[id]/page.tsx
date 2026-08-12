@@ -42,6 +42,8 @@ function ActionPanel({ invoice, id, router, hasChorusPro }: {
   const [sendingEmail, setSendingEmail] = useState(false);
   const [emailSent, setEmailSent] = useState(false);
   const [depositingChorus, setDepositingChorus] = useState(false);
+  const [emission, setEmission] = useState(false);
+  const [messagePdp, setMessagePdp] = useState<string | null>(null);
   const [chorusRef, setChorusRef] = useState<string | null>(invoice.chorus_pro_ref || null);
   const [chorusError, setChorusError] = useState<string | null>(null);
   const CHORUS_STATUS_MAP: Record<string, { label: string; color: string }> = {
@@ -192,7 +194,38 @@ function ActionPanel({ invoice, id, router, hasChorusPro }: {
   const canMarkPaid = inv.status !== "paid" && inv.status !== "cancelled";
   const canMarkSent = inv.status === "draft";
   const canRemind = inv.status === "sent" && !!inv.client_email;
+  /**
+   * Transmet la facture à la Plateforme Agréée.
+   *
+   * Les messages viennent du serveur et sont déjà en français : la route
+   * traduit les contrôles préalables (SIREN manquant) plutôt que de relayer le
+   * retour brut de Super PDP.
+   */
+  async function emettrePdp() {
+    setEmission(true);
+    setMessagePdp(null);
+    try {
+      const r = await fetch(`/api/superpdp/invoices/${inv.id}/emettre`, { method: "POST" });
+      const res = await r.json();
+      if (!r.ok) {
+        setMessagePdp(res.message ?? "La transmission n'a pas abouti.");
+        return;
+      }
+      window.location.reload();
+    } catch {
+      setMessagePdp("Connexion interrompue. Réessayez.");
+    } finally {
+      setEmission(false);
+    }
+  }
+
   const canChorus = inv.status === "sent" && !chorusRef && hasChorusPro;
+
+  // Émission vers la Plateforme Agréée. Une facture ne se transmet qu'une fois :
+  // un second envoi arriverait en double chez le client, qui la refuserait pour
+  // « DOUBLON ». D'où la condition sur l'absence d'identifiant.
+  const dejaTransmise = Boolean(inv.superpdp_invoice_id);
+  const peutEmettre = inv.status !== "draft" && inv.status !== "cancelled" && !dejaTransmise;
 
   return (
     <div className="bg-ds-surface border border-ds-border rounded-xl overflow-hidden sticky top-8">
@@ -271,6 +304,28 @@ function ActionPanel({ invoice, id, router, hasChorusPro }: {
           <span>↓</span>
           <span>{downloading ? "Génération…" : "Télécharger Factur-X PDF"}</span>
         </button>
+
+        {peutEmettre && (
+          <button
+            onClick={emettrePdp}
+            disabled={emission}
+            className="w-full text-sm font-medium px-4 py-2.5 rounded-lg border border-indigo-500/30 hover:bg-indigo-500/10 text-indigo-400 disabled:opacity-50 transition-colors text-left flex items-center gap-2"
+          >
+            <span>📡</span>
+            <span>{emission ? "Transmission…" : "Transmettre à la Plateforme Agréée"}</span>
+          </button>
+        )}
+
+        {dejaTransmise && (
+          <div className="w-full text-sm px-4 py-2.5 rounded-lg border border-emerald-500/20 bg-emerald-500/5 text-emerald-400 flex items-center gap-2">
+            <span>📡</span>
+            <span>Transmise à la Plateforme Agréée</span>
+          </div>
+        )}
+
+        {messagePdp && (
+          <p className="text-xs text-amber-400 px-1 leading-relaxed">{messagePdp}</p>
+        )}
 
         {canChorus && (
           <button
