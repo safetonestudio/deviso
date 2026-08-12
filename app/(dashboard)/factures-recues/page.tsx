@@ -4,6 +4,7 @@ import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { getWorkspaceUserId } from "@/lib/workspace";
 import { SyncButton } from "./SyncButton";
+import { BoutonRefus } from "./BoutonRefus";
 
 export const metadata: Metadata = { title: "Factures reçues" };
 export const dynamic = "force-dynamic";
@@ -193,6 +194,14 @@ export default async function FacturesRecues() {
                     </svg>
                     Télécharger la facture
                   </a>
+
+                  <div className="mt-2 text-center">
+                    <BoutonRefus
+                      factureId={f.id}
+                      fournisseur={f.seller_name ?? "ce fournisseur"}
+                      dejaRefusee={f.last_status_code === "fr:210"}
+                    />
+                  </div>
                 </article>
               );
             })}
@@ -246,13 +255,20 @@ export default async function FacturesRecues() {
                           {statut?.texte ?? f.last_status_code ?? "—"}
                         </span>
                       </td>
-                      <td className="px-4 py-3 text-right">
-                        <a
-                          href={`/api/superpdp/invoices/${f.id}/download`}
-                          className="text-xs text-indigo-400 hover:text-indigo-300 font-medium whitespace-nowrap"
-                        >
-                          Télécharger
-                        </a>
+                      <td className="px-4 py-3 text-right align-top">
+                        <div className="flex items-center justify-end gap-3">
+                          <a
+                            href={`/api/superpdp/invoices/${f.id}/download`}
+                            className="text-xs text-indigo-400 hover:text-indigo-300 font-medium whitespace-nowrap"
+                          >
+                            Télécharger
+                          </a>
+                          <BoutonRefus
+                            factureId={f.id}
+                            fournisseur={f.seller_name ?? "ce fournisseur"}
+                            dejaRefusee={f.last_status_code === "fr:210"}
+                          />
+                        </div>
                       </td>
                     </tr>
                   );
