@@ -39,8 +39,11 @@ export default async function ProposalsPage() {
   const p = proposals as Proposal[];
   const plan = profile?.plan ?? "free";
 
+  // Cadre commun des pages de liste, aligné sur « Factures » qui sert de
+  // référence. Cette page n'avait ni largeur ni centrage : elle s'étalait sur
+  // toute la fenêtre pendant que ses voisines étaient contenues.
   return (
-    <div>
+    <div className="max-w-5xl mx-auto">
       <GuidedTourBanner pageKey="proposals" />
       <PageHeader
         title="Mes devis"

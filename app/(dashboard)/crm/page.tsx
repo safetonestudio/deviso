@@ -216,8 +216,11 @@ export default function CRMPage() {
   const totalClients = clients.length;
   const totalSigned = clients.reduce((s, c) => s + c.nb_signed, 0);
 
+  // Cadre commun des pages de liste, aligné sur « Factures » qui sert de
+  // référence. Les formulaires (Paramètres, Paiements, Abonnement) restent
+  // volontairement plus étroits : une colonne courte se saisit mieux.
   return (
-    <div className="space-y-8">
+    <div className="space-y-8 max-w-5xl mx-auto">
       <GuidedTourBanner pageKey="crm" />
       <div className="flex items-center justify-between">
         <div>

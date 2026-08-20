@@ -123,8 +123,11 @@ export default function CataloguePage() {
     );
   }
 
+  // Cadre commun des pages de liste, aligné sur « Factures » qui sert de
+  // référence. Les formulaires (Paramètres, Paiements, Abonnement) restent
+  // volontairement plus étroits : une colonne courte se saisit mieux.
   return (
-    <div className="max-w-3xl mx-auto">
+    <div className="max-w-5xl mx-auto">
       <GuidedTourBanner pageKey="catalogue" />
 
       <div className="mb-8">

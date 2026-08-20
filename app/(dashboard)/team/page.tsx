@@ -186,8 +186,11 @@ export default function TeamPage() {
   const totalSeats = members.length;
   const atLimit = totalSeats >= 10;
 
+  // Cadre commun des pages de liste, aligné sur « Factures » qui sert de
+  // référence. Les formulaires (Paramètres, Paiements, Abonnement) restent
+  // volontairement plus étroits : une colonne courte se saisit mieux.
   return (
-    <div className="max-w-4xl mx-auto space-y-8">
+    <div className="max-w-5xl mx-auto space-y-8">
       <GuidedTourBanner pageKey="team" />
       {/* Header */}
       <div className="flex items-start justify-between gap-4">

@@ -111,8 +111,12 @@ export default async function FacturesRecues() {
   const raccorde = raccordement?.session_status === "verified";
   const liste = (factures ?? []) as Facture[];
 
+  // Cadre commun des pages de liste — `max-w-5xl mx-auto`, aligné sur
+  // « Factures » qui sert de référence. Ici seule la largeur était posée : sans
+  // `mx-auto` la page se collait à gauche pendant que les voisines étaient
+  // centrées.
   return (
-    <div className="max-w-5xl">
+    <div className="max-w-5xl mx-auto">
       <div className="flex flex-wrap items-start justify-between gap-4 mb-2">
         <div>
           <h1 className="text-2xl font-semibold text-white">Factures reçues</h1>
