@@ -1,20 +1,30 @@
 import { NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
+import { getWorkspaceUserId, getWorkspaceProfile } from "@/lib/workspace";
 
 // GET /api/team/pipeline, vue manager : pipeline de l'équipe par membre (Pro only)
+//
+// Oubliée lors du correctif du 12/08 (8a2563f) qui a résolu la même panne sur
+// catalog, invoices, proposals/send-email, superpdp/connect et templates :
+// cette route filtrait sur `user.id` directement au lieu de l'espace de
+// travail. Pour l'owner ça ne se voyait pas (son id EST celui de l'espace).
+// Pour un membre, ça cassait sur trois niveaux à la fois — plan lu sur son
+// propre profil (jamais "pro"), team_members et proposals filtrés sur un
+// owner_id qui n'existe pas pour lui — d'où l'écran vide, sans erreur visible.
 export async function GET() {
   const supabase = await createClient();
   const { data: { user }, error: authError } = await supabase.auth.getUser();
   if (authError || !user) return NextResponse.json({ error: "Non autorisé" }, { status: 401 });
 
-  const { data: profile } = await supabase
-    .from("profiles")
-    .select("plan")
-    .eq("id", user.id)
-    .single();
+  const workspaceId = await getWorkspaceUserId(user.id);
 
-  if (profile?.plan !== "pro") {
+  const ownerProfile = await getWorkspaceProfile<{ plan: string; email: string | null; full_name: string | null; company_name: string | null }>(
+    workspaceId,
+    "plan, email, full_name, company_name"
+  );
+
+  if (ownerProfile?.plan !== "pro") {
     return NextResponse.json({ error: "PLAN_REQUIRED" }, { status: 403 });
   }
 
@@ -24,7 +34,7 @@ export async function GET() {
   const { data: members } = await admin
     .from("team_members")
     .select("id, email, role, member_id, accepted_at")
-    .eq("owner_id", user.id)
+    .eq("owner_id", workspaceId)
     .eq("status", "active");
 
   // Récupère tous les profils des membres pour leurs noms
@@ -44,19 +54,19 @@ export async function GET() {
   );
 
   // Récupère tous les devis du workspace (owner + membres)
-  const allUserIds = [user.id, ...memberIds];
+  const allUserIds = [workspaceId, ...memberIds];
 
   const { data: proposals } = await admin
     .from("proposals")
     .select("id, status, total_ttc, total_ht, created_by, created_at, client_name, title")
-    .eq("user_id", user.id)
+    .eq("user_id", workspaceId)
     .order("created_at", { ascending: false });
 
   // Récupère les factures payées pour le CA réel
   const { data: invoices } = await admin
     .from("invoices")
     .select("id, status, total_ttc, created_by")
-    .eq("user_id", user.id)
+    .eq("user_id", workspaceId)
     .eq("status", "paid");
 
   // Dédupliquer et exclure les entrées corrompues (member_id = owner_id)
@@ -64,9 +74,9 @@ export async function GET() {
 
   // Agrège par membre
   const memberStats = uniqueUserIds.map((uid) => {
-    const isOwner = uid === user.id;
+    const isOwner = uid === workspaceId;
     const memberRecord = (members ?? []).find((m) => m.member_id === uid);
-    const memberProfile = profileMap[uid];
+    const memberProfile = isOwner ? ownerProfile : profileMap[uid];
 
     const myProposals = (proposals ?? []).filter((p) => p.created_by === uid);
     const myInvoices = (invoices ?? []).filter((i) => i.created_by === uid);
@@ -88,8 +98,8 @@ export async function GET() {
     return {
       uid,
       is_owner: isOwner,
-      email: isOwner ? user.email : memberRecord?.email ?? "",
-      name: memberProfile?.full_name || memberProfile?.company_name || (isOwner ? "Vous" : memberRecord?.email ?? ""),
+      email: isOwner ? ownerProfile?.email ?? "" : memberRecord?.email ?? "",
+      name: memberProfile?.full_name || memberProfile?.company_name || (uid === user.id ? "Vous" : memberRecord?.email ?? ownerProfile?.email ?? ""),
       joined_at: isOwner ? null : memberRecord?.accepted_at,
       stats: {
         proposals_total: myProposals.length,
