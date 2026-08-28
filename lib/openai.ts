@@ -1,9 +1,12 @@
 import OpenAI from "openai";
 import type { GeneratedProposal } from "@/types";
+import { lazyClient } from "@/lib/lazy-client";
 
-const openai = new OpenAI({
+// Construction paresseuse (voir lib/lazy-client.ts) : le SDK OpenAI lève une
+// exception dans son constructeur si la clé est absente.
+const openai = lazyClient(() => new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
-});
+}));
 
 /* ─────────────────────────────────────────────
    Types

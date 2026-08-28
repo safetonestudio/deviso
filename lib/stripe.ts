@@ -1,8 +1,12 @@
 import Stripe from "stripe";
+import { lazyClient } from "@/lib/lazy-client";
 
-export const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
+// Construction paresseuse (voir lib/lazy-client.ts) : évite qu'une clé
+// absente de l'environnement de build (Preview Vercel notamment) fasse
+// échouer tout le build plutôt que la seule route qui appelle Stripe.
+export const stripe = lazyClient(() => new Stripe(process.env.STRIPE_SECRET_KEY!, {
   apiVersion: "2025-02-24.acacia",
-});
+}));
 
 export const PLANS = {
   free: {

@@ -1,4 +1,5 @@
 import { Resend } from "resend";
+import { lazyClient } from "@/lib/lazy-client";
 
 /**
  * Client d'envoi — clé « Sending access », volontairement restreinte.
@@ -8,5 +9,9 @@ import { Resend } from "resend";
  * DNS, plafonnait le nombre de clients au plan Resend, et faisait porter au
  * compte Deviso la réputation d'envoi de domaines tiers. Le nom commercial dans
  * le champ « De » et le Reply-To vers l'émetteur couvrent le besoin réel.
+ *
+ * Construction paresseuse (voir lib/lazy-client.ts) : le SDK Resend lève une
+ * exception dans son constructeur si la clé est absente, ce qui faisait
+ * échouer le build entier plutôt que la seule route qui envoie l'email.
  */
-export const resend = new Resend(process.env.RESEND_API_KEY);
+export const resend = lazyClient(() => new Resend(process.env.RESEND_API_KEY));

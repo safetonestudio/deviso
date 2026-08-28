@@ -6,7 +6,7 @@ import { useIsMember } from "@/components/PlanContext";
 import { KpiCard } from "@/components/ui/KpiCard";
 import {
   UsersRound, TrendingUp, FileText, CheckCircle2,
-  Mail, Crown, ChevronRight, ShieldCheck, Check, Hourglass,
+  Mail, Crown, Send, ShieldCheck, Check, Hourglass,
 } from "lucide-react";
 
 interface Member {
@@ -209,7 +209,7 @@ export default function TeamPage() {
         <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
           {[
             { label: "CA encaissé", value: fmt(global.ca_encaisse), icon: TrendingUp },
-            { label: "Pipeline ouvert", value: fmt(global.ca_pipeline), icon: ChevronRight },
+            { label: "Pipeline ouvert", value: fmt(global.ca_pipeline), icon: Send },
             { label: "Devis signés", value: `${global.proposals_signed} / ${global.proposals_sent}`, icon: CheckCircle2 },
             { label: "Conversion équipe", value: `${global.conversion_rate}%`, icon: FileText },
           ].map(({ label, value, icon }) => (
