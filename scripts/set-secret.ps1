@@ -55,8 +55,30 @@ if ($valeur.Length -lt $LongueurMinimale) {
   throw "Valeur de $($valeur.Length) caractere(s), soit moins que le minimum attendu ($LongueurMinimale). Le collage a probablement echoue. Rien n'a ete modifie."
 }
 
-if ($valeur -match "[`r`n]") {
-  throw "La valeur contient un retour a la ligne : le collage a pris plusieurs lignes. Rien n'a ete modifie."
+# Le presse-papiers de Windows rapporte souvent des lignes vides autour de la
+# valeur : bouton "copier" d'une page web, selection qui deborde d'un cran, ou
+# simple retour a la ligne final. La v1 refusait tout, y compris ces cas ou la
+# valeur est parfaitement lisible. On ignore donc les lignes VIDES, et on ne
+# refuse que s'il reste vraiment plusieurs lignes porteuses de texte -- la, on
+# ne peut pas deviner laquelle est la cle.
+$lignes = @($valeur -split "`r?`n" | ForEach-Object { $_.Trim() } | Where-Object { $_ -ne "" })
+
+if ($lignes.Count -eq 0) {
+  throw "Le presse-papiers ne contient aucun texte. Rien n'a ete modifie."
+}
+
+if ($lignes.Count -gt 1) {
+  # Diagnostic sans jamais afficher le contenu : seulement les longueurs.
+  $detail = ($lignes | ForEach-Object { "$($_.Length) car." }) -join ", "
+  throw "Le presse-papiers contient $($lignes.Count) lignes de texte ($detail). Impossible de deviner laquelle est la cle : recopiez uniquement la valeur. Rien n'a ete modifie."
+}
+
+$valeur = $lignes[0]
+
+# Le controle de longueur ci-dessus portait sur la valeur brute, lignes vides
+# comprises. On le rejoue sur ce qui sera reellement enregistre.
+if ($valeur.Length -lt $LongueurMinimale) {
+  throw "Apres nettoyage, la valeur ne fait que $($valeur.Length) caractere(s), moins que le minimum attendu ($LongueurMinimale). Rien n'a ete modifie."
 }
 
 $sauvegarde = "$fichier.bak-$(Get-Date -Format yyyyMMdd-HHmmss)"
@@ -85,6 +107,15 @@ Write-Host "$Nom enregistree : $($pose.Length) caracteres, commence par $debut..
 Write-Host "Sauvegarde du fichier precedent : $(Split-Path $sauvegarde -Leaf)"
 
 if ($DepuisPressePapiers) {
-  Set-Clipboard -Value " "
-  Write-Host "Presse-papiers efface."
+  # Windows refuse parfois l'acces au presse-papiers quand un autre programme
+  # le tient verrouille. C'est une commodite, pas l'objet du script : elle ne
+  # doit jamais faire echouer une ecriture qui a REUSSI. La v1 le faisait, et
+  # rotate-keys.ps1 s'arretait alors que la cle etait posee (22/08/2026).
+  try {
+    Set-Clipboard -Value " " -ErrorAction Stop
+    Write-Host "Presse-papiers efface."
+  } catch {
+    Write-Host "Presse-papiers NON efface (Windows l'a refuse) - la valeur y est encore."
+    Write-Host "Sans importance pour l'enregistrement, qui a bien eu lieu."
+  }
 }

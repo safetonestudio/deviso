@@ -19,6 +19,7 @@ npm-debug.log*
 
 # Docs internes avec secrets - ne jamais commiter
 CLAUDE.md
+ARCHIVE.md
 STATUS.md
 audit-*.md
 stripe_backup_code.txt
