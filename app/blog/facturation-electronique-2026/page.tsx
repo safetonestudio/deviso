@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { NavbarMobile } from "@/components/NavbarMobile";
 import { WaitlistButton } from "@/components/landing/WaitlistButton";
+import { Zap } from "lucide-react";
 
 export const metadata: Metadata = {
   title: "Facturation électronique 2026 : le guide",
@@ -124,7 +125,7 @@ export default function FacturationElectronique2026Page() {
         {/* Header */}
         <div className="mb-10">
           <div className="flex items-center gap-3 mb-4">
-            <span className="text-xs font-semibold text-amber-400 bg-amber-500/10 border border-amber-500/20 rounded-full px-3 py-1">⚡ Urgent, 1er sept. 2026</span>
+            <span className="text-xs font-semibold text-amber-400 bg-amber-500/10 border border-amber-500/20 rounded-full px-3 py-1 inline-flex items-center gap-1.5"><Zap size={12} className="shrink-0" />Urgent, 1er sept. 2026</span>
             <span className="text-xs text-gray-400">10 min de lecture · Mis à jour juillet 2026</span>
           </div>
           <h1 className="text-3xl sm:text-4xl font-bold text-white leading-tight mb-4">

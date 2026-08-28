@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { NavbarMobile } from "@/components/NavbarMobile";
 import { WaitlistButton } from "@/components/landing/WaitlistButton";
+import { ClipboardList, TriangleAlert } from "lucide-react";
 
 export const metadata: Metadata = {
   title: "Scope creep freelance : s'en protéger au devis",
@@ -143,7 +144,7 @@ export default function Page() {
                   { title: "La pression relationnelle", desc: "Vous ne voulez pas décevoir. Vous voulez que le client soit content. Alors vous faites ce qu'il demande, même si c'est hors périmètre. Et le prix reste le même." },
                 ].map((item) => (
                   <div key={item.title} className="bg-ds-surface border border-ds-border rounded-xl p-5">
-                    <p className="font-semibold text-white mb-1 text-sm">⚠ {item.title}</p>
+                    <p className="font-semibold text-white mb-1 text-sm flex items-center gap-2"><TriangleAlert size={16} className="shrink-0 text-amber-400" />{item.title}</p>
                     <p className="text-gray-400 text-sm">{item.desc}</p>
                   </div>
                 ))}
@@ -210,7 +211,7 @@ export default function Page() {
 
             {/* Lien hub clauses */}
             <div className="bg-ds-surface border border-ds-border rounded-xl p-5 flex gap-4 items-start">
-              <span className="text-indigo-400 text-xl flex-shrink-0">📋</span>
+              <ClipboardList size={20} className="text-indigo-400 flex-shrink-0" />
               <div>
                 <p className="text-sm font-semibold text-white mb-1">Toutes les clauses à mettre dans votre devis</p>
                 <p className="text-xs text-gray-500 mb-3">Périmètre, acompte, révisions, propriété intellectuelle, résiliation, le guide complet avec formulations prêtes à l&apos;emploi.</p>

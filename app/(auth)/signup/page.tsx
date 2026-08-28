@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 import { PasswordChecklist, isPasswordValid } from "@/components/PasswordChecklist";
+import { MailCheck } from "lucide-react";
 
 function SignupForm() {
   const router = useRouter();
@@ -51,7 +52,7 @@ function SignupForm() {
     return (
       <div className="min-h-screen bg-ds-bg flex items-center justify-center px-4">
         <div className="w-full max-w-md text-center">
-          <div className="text-5xl mb-4">📬</div>
+          <MailCheck size={44} className="mx-auto mb-4 text-indigo-400" />
           <h2 className="text-2xl font-extrabold text-white mb-2">Vérifie tes emails</h2>
           <p className="text-gray-400 mb-6">
             On a envoyé un lien de confirmation à <strong className="text-white">{email}</strong>. Clique dessus pour

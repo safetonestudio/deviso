@@ -5,7 +5,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import type { Proposal, ProposalItem } from "@/types";
 import { v4 as uuidv4 } from "uuid";
-import { Clock, Package } from "lucide-react";
+import { Clock, Package, FileText, Coins, CircleCheck, TriangleAlert, type LucideIcon } from "lucide-react";
 import { GuidedTourBanner } from "@/components/GuidedTourBanner";
 import { splitAddress } from "@/lib/address";
 
@@ -427,10 +427,10 @@ export default function NewInvoicePage() {
               texte. Empilées en dessous de 640 px. */}
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
             {[
-              { type: "standard" as const, label: "Standard", desc: "Facturation classique", icon: "📄" },
-              { type: "acompte" as const,  label: "Acompte",  desc: "% d'un devis",          icon: "💰" },
-              { type: "solde" as const,    label: "Solde",    desc: "Reste après acompte",   icon: "✅" },
-            ].map(({ type, label, desc, icon }) => (
+              { type: "standard" as const, label: "Standard", desc: "Facturation classique", icon: FileText as LucideIcon },
+              { type: "acompte" as const,  label: "Acompte",  desc: "% d'un devis",          icon: Coins as LucideIcon },
+              { type: "solde" as const,    label: "Solde",    desc: "Reste après acompte",   icon: CircleCheck as LucideIcon },
+            ].map(({ type, label, desc, icon: Icon }) => (
               <button
                 key={type}
                 type="button"
@@ -441,7 +441,7 @@ export default function NewInvoicePage() {
                     : "border-ds-border hover:border-gray-600 hover:bg-ds-elevated"
                 }`}
               >
-                <div className="text-lg mb-1">{icon}</div>
+                <div className="mb-1"><Icon size={18} className={invoiceType === type ? "text-indigo-400" : "text-gray-400"} /></div>
                 <div className={`text-sm font-semibold ${invoiceType === type ? "text-indigo-300" : "text-white"}`}>{label}</div>
                 <div className="text-xs text-gray-500 mt-0.5">{desc}</div>
               </button>
@@ -525,7 +525,7 @@ export default function NewInvoicePage() {
       {/* ── Bannières contextuelles ── */}
       {invoiceType === "acompte" && (linkedProposalId || fromProposalParam) && (
         <div className="bg-emerald-500/10 border border-emerald-500/30 rounded-xl px-4 py-3 mb-6 flex items-start gap-3">
-          <span className="text-lg">💰</span>
+          <Coins size={18} className="shrink-0 mt-0.5 text-emerald-400" />
           <div>
             <p className="text-emerald-300 font-medium text-sm">Facture d'acompte, {depositPct}% de la prestation</p>
             <p className="text-emerald-400/70 text-xs mt-0.5">Numérotée AC-YYYY-NNN, indépendamment de la séquence standard.</p>
@@ -535,7 +535,7 @@ export default function NewInvoicePage() {
 
       {invoiceType === "solde" && (linkedProposalId || fromProposalParam) && (
         <div className="bg-indigo-500/10 border border-indigo-500/30 rounded-xl px-4 py-3 mb-6 flex items-start gap-3">
-          <span className="text-lg">✅</span>
+          <CircleCheck size={18} className="shrink-0 mt-0.5 text-indigo-400" />
           <div>
             <p className="text-indigo-300 font-medium text-sm">
               Facture de solde
@@ -548,7 +548,7 @@ export default function NewInvoicePage() {
             )}
             {!linkedInvoiceNumber && linkedProposalId && (
               <p className="text-amber-400 text-xs mt-0.5">
-                ⚠️ Aucune facture d'acompte trouvée pour ce devis, créez d'abord un acompte.
+                Aucune facture d'acompte trouvée pour ce devis, créez d'abord un acompte.
               </p>
             )}
           </div>
@@ -559,7 +559,7 @@ export default function NewInvoicePage() {
       {paymentConfigured === false && (
         <div className="bg-amber-500/10 border-2 border-amber-500/50 rounded-xl p-5 mb-6">
           <div className="flex items-start gap-3">
-            <span className="text-2xl">⚠️</span>
+            <TriangleAlert size={22} className="shrink-0 text-amber-400" />
             <div className="flex-1">
               <p className="font-semibold text-amber-300 mb-1">Configurez votre moyen de paiement avant de facturer</p>
               <p className="text-sm text-amber-400/80 mb-4">

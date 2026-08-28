@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { FreelanceLanding } from "@/components/landing/FreelanceLanding";
+import { BarChart3, Building2, ClipboardList } from "lucide-react";
 
 export const metadata: Metadata = {
   title: "Devis et facturation pour consultants freelances",
@@ -30,17 +31,17 @@ export default function Page() {
       heroSubtitle="Tu décris la mission, livrables, jours, contexte. L'IA rédige une proposition de conseil complète. Ton client signe en ligne, tu factures en Factur-X conforme."
       painPoints={[
         {
-          icon: "📋",
+          icon: ClipboardList,
           title: "Rédiger une propale prend autant de temps que la mission",
           desc: "Contexte, objectifs, livrables, jalons, tarif journalier, l'IA de Deviso structure tout ça en quelques secondes à partir d'une simple description de ta mission.",
         },
         {
-          icon: "🏢",
+          icon: Building2,
           title: "Les grands comptes veulent du Factur-X",
           desc: "Banques, assurances, grands groupes, la facture électronique B2B devient obligatoire dès 2026. Deviso génère du Factur-X EN 16931 natif, sans effort de ta part.",
         },
         {
-          icon: "📊",
+          icon: BarChart3,
           title: "Suivre ton CA par mission et par client",
           desc: "Avec plusieurs missions en parallèle, savoir où tu en es pour l'URSSAF devient complexe. Le widget CA de Deviso t'affiche tout en temps réel, mensuel et trimestriel.",
         },

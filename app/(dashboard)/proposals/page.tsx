@@ -75,7 +75,7 @@ export default async function ProposalsPage() {
         />
       ) : (
         <>
-          <div className="sm:hidden space-y-3">
+          <div className="lg:hidden space-y-3">
             {p.map((proposal) => {
               const s = STATUS[proposal.status as keyof typeof STATUS] || STATUS.draft;
               return (
@@ -102,7 +102,7 @@ export default async function ProposalsPage() {
             })}
           </div>
 
-          <div className="hidden sm:block bg-ds-surface border border-ds-border rounded-xl overflow-hidden">
+          <div className="hidden lg:block bg-ds-surface border border-ds-border rounded-xl overflow-hidden">
             <table className="w-full">
               <thead className="border-b border-ds-border">
                 <tr>

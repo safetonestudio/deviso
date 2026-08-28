@@ -5,7 +5,7 @@ import { GuidedTourBanner } from "@/components/GuidedTourBanner";
 import { useIsMember } from "@/components/PlanContext";
 import {
   UsersRound, TrendingUp, FileText, CheckCircle2,
-  Mail, Crown, ChevronRight, ShieldCheck,
+  Mail, Crown, ChevronRight, ShieldCheck, Check, Hourglass,
 } from "lucide-react";
 
 interface Member {
@@ -416,7 +416,43 @@ export default function TeamPage() {
               <p className="text-gray-400 text-sm">Aucun membre invité pour l&apos;instant.</p>
             </div>
           ) : (
-            <div className="bg-ds-surface border border-ds-border rounded-xl overflow-hidden">
+            <>
+            {/* Téléphone : une carte par membre. L'adresse email seule dépasse
+                déjà la largeur utile d'un écran de 390 px. */}
+            <div className="lg:hidden space-y-2">
+              {members.map((m) => (
+                <div key={m.id} className="bg-ds-surface border border-ds-border rounded-xl p-4">
+                  <div className="flex items-start justify-between gap-3">
+                    <div className="min-w-0 flex-1">
+                      <p className="font-medium text-white text-sm break-all">{m.email}</p>
+                      <p className="text-xs text-gray-500 mt-0.5">
+                        Invité le {fmtDate(m.invited_at)}
+                        {m.accepted_at ? ` · rejoint le ${fmtDate(m.accepted_at)}` : ""}
+                      </p>
+                    </div>
+                    <span className={`shrink-0 inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium ${
+                      m.status === "active"
+                        ? "bg-emerald-500/10 text-emerald-400 border border-emerald-500/20"
+                        : "bg-amber-500/10 text-amber-400 border border-amber-500/20"
+                    }`}>
+                      {m.status === "active"
+                        ? <span className="inline-flex items-center gap-1"><Check size={12} className="shrink-0" />Actif</span>
+                        : <span className="inline-flex items-center gap-1"><Hourglass size={12} className="shrink-0" />En attente</span>}
+                    </span>
+                  </div>
+                  {isOwner && (
+                    <button
+                      onClick={() => handleRemove(m.id)}
+                      className="mt-3 text-xs text-red-400 hover:text-red-300 font-medium transition-colors"
+                    >
+                      Retirer
+                    </button>
+                  )}
+                </div>
+              ))}
+            </div>
+
+            <div className="hidden lg:block bg-ds-surface border border-ds-border rounded-xl overflow-hidden">
               <table className="w-full text-sm">
                 <thead className="border-b border-ds-border">
                   <tr>
@@ -442,7 +478,9 @@ export default function TeamPage() {
                             ? "bg-emerald-500/10 text-emerald-400 border border-emerald-500/20"
                             : "bg-amber-500/10 text-amber-400 border border-amber-500/20"
                         }`}>
-                          {m.status === "active" ? "✓ Actif" : "⏳ En attente"}
+                          {m.status === "active"
+                            ? <span className="inline-flex items-center gap-1"><Check size={12} className="shrink-0" />Actif</span>
+                            : <span className="inline-flex items-center gap-1"><Hourglass size={12} className="shrink-0" />En attente</span>}
                         </span>
                       </td>
                       <td className="px-4 py-3 text-right text-gray-500 text-xs">{fmtDate(m.invited_at)}</td>
@@ -461,6 +499,7 @@ export default function TeamPage() {
                 </tbody>
               </table>
             </div>
+            </>
           )}
         </div>
       )}

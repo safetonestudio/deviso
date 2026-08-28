@@ -12,7 +12,7 @@ export function UpgradeButton({ plan = "solo", label, className }: UpgradeButton
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const defaultLabel = plan === "pro" ? "⚡ Passer Pro à 34€/mois" : "⚡ Passer Solo à 18€/mois";
+  const defaultLabel = plan === "pro" ? "Passer Pro à 34€/mois" : "Passer Solo à 18€/mois";
 
   async function handleUpgrade() {
     setLoading(true);

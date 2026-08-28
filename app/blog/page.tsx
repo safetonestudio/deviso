@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { NavbarMobile } from "@/components/NavbarMobile";
 import { WaitlistButton } from "@/components/landing/WaitlistButton";
+import { BarChart3, Camera, CircleCheck, Globe, GraduationCap, HardHat, Laptop, Link2, Palette, PenLine, RadioTower, Receipt, Smartphone, Target, Zap } from "lucide-react";
 
 export const metadata: Metadata = {
   title: "Guides devis et facturation pour freelances",
@@ -39,7 +40,7 @@ const reformeArticles = [
   {
     slug: "facturation-electronique-2026",
     title: "Guide complet réforme facturation électronique 2026",
-    icon: "⚡",
+    icon: Zap,
     description: "PPF abandonné, PDP obligatoire, Factur-X, calendrier, tout ce que les freelances doivent savoir",
     readingTime: 10,
     badge: "Guide pilier",
@@ -47,7 +48,7 @@ const reformeArticles = [
   {
     slug: "reforme-facturation-micro-entrepreneur",
     title: "Micro-entrepreneur : ce que la réforme change pour toi",
-    icon: "🧾",
+    icon: Receipt,
     description: "Franchise TVA ≠ exemption. Les 3 scénarios selon votre activité B2B/B2C",
     readingTime: 8,
     badge: "Micro-entrepreneur",
@@ -55,7 +56,7 @@ const reformeArticles = [
   {
     slug: "choisir-plateforme-agreee-freelance",
     title: "Choisir sa plateforme agréée (PDP) : guide comparatif",
-    icon: "🔗",
+    icon: Link2,
     description: "Le PPF est abandonné. 5 critères pour sélectionner la bonne PDP pour votre activité",
     readingTime: 8,
     badge: "PDP",
@@ -63,7 +64,7 @@ const reformeArticles = [
   {
     slug: "e-reporting-freelance-2026",
     title: "E-reporting : l'obligation B2C dont personne ne parle",
-    icon: "📡",
+    icon: RadioTower,
     description: "Si vous avez des clients particuliers, l'e-reporting TVA vous concerne aussi. Amendes : 250€/transaction",
     readingTime: 7,
     badge: "B2C",
@@ -71,7 +72,7 @@ const reformeArticles = [
   {
     slug: "checklist-reforme-facturation-2026",
     title: "Checklist réforme 2026 : êtes-vous prêt ?",
-    icon: "✅",
+    icon: CircleCheck,
     description: "7 points à vérifier pour ne rien rater, à partager avec votre comptable",
     readingTime: 10,
     badge: "Checklist",
@@ -83,70 +84,70 @@ const metierArticles = [
   {
     slug: "devis-graphiste-freelance",
     label: "Graphiste freelance",
-    icon: "🎨",
+    icon: Palette,
     description: "Droits de cession, révisions, formats livrés",
     readingTime: 6,
   },
   {
     slug: "devis-developpeur-web",
     label: "Développeur web",
-    icon: "💻",
+    icon: Laptop,
     description: "TJM vs forfait, scope creep, propriété du code",
     readingTime: 7,
   },
   {
     slug: "devis-consultant-independant",
     label: "Consultant indépendant",
-    icon: "📊",
+    icon: BarChart3,
     description: "Propale efficace, régie vs forfait, grands comptes",
     readingTime: 6,
   },
   {
     slug: "devis-photographe-freelance",
     label: "Photographe freelance",
-    icon: "📸",
+    icon: Camera,
     description: "Droits d'auteur, acompte, conditions d'annulation",
     readingTime: 5,
   },
   {
     slug: "devis-redacteur-web",
     label: "Rédacteur & copywriter",
-    icon: "✍️",
+    icon: PenLine,
     description: "Tarif au mot, révisions limitées, cession de droits",
     readingTime: 5,
   },
   {
     slug: "devis-formateur-independant",
     label: "Formateur indépendant",
-    icon: "🎓",
+    icon: GraduationCap,
     description: "Mentions OPCO, exonération TVA, Qualiopi",
     readingTime: 6,
   },
   {
     slug: "devis-artisan-btp",
     label: "Artisan BTP",
-    icon: "🏗️",
+    icon: HardHat,
     description: "TVA réduite, garantie décennale, acompte",
     readingTime: 7,
   },
   {
     slug: "devis-community-manager",
     label: "Community manager",
-    icon: "📱",
+    icon: Smartphone,
     description: "Périmètre, forfait mensuel, résiliation",
     readingTime: 6,
   },
   {
     slug: "devis-coach-freelance",
     label: "Coach freelance",
-    icon: "🎯",
+    icon: Target,
     description: "TVA, conditions d'abandon de programme",
     readingTime: 6,
   },
   {
     slug: "devis-traducteur-freelance",
     label: "Traducteur freelance",
-    icon: "🌐",
+    icon: Globe,
     description: "Tarif au mot, droits sur la traduction, urgences",
     readingTime: 7,
   },
@@ -293,7 +294,7 @@ export default function BlogIndex() {
                     href={`/blog/${article.slug}`}
                     className="flex items-center gap-4 px-6 py-4 hover:bg-ds-elevated transition-colors group/item"
                   >
-                    <span className="text-xl flex-shrink-0 w-8 text-center">{article.icon}</span>
+                    <span className="flex-shrink-0 w-8 flex justify-center text-indigo-400"><article.icon size={18} /></span>
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center gap-2 mb-0.5">
                         <p className="text-white text-sm font-medium group-hover/item:text-amber-200 transition-colors">{article.title}</p>
@@ -335,7 +336,7 @@ export default function BlogIndex() {
                     href={`/blog/${article.slug}`}
                     className="flex items-center gap-4 px-6 py-4 hover:bg-ds-elevated transition-colors group/item"
                   >
-                    <span className="text-xl flex-shrink-0 w-8 text-center">{article.icon}</span>
+                    <span className="flex-shrink-0 w-8 flex justify-center text-indigo-400"><article.icon size={18} /></span>
                     <div className="flex-1 min-w-0">
                       <p className="text-white text-sm font-medium group-hover/item:text-indigo-200 transition-colors">{article.label}</p>
                       <p className="text-gray-600 text-xs mt-0.5">{article.description}</p>

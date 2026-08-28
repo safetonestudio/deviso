@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { FreelanceLanding } from "@/components/landing/FreelanceLanding";
+import { BarChart3, Bell, PenLine } from "lucide-react";
 
 export const metadata: Metadata = {
   title: "Devis et facturation pour rédacteurs freelances",
@@ -30,17 +31,17 @@ export default function Page() {
       heroSubtitle="Tu décris la mission, articles, pages web, séquences email. L'IA génère un devis structuré avec les bons volumes et tarifs. Ton client signe, tu encaisses."
       painPoints={[
         {
-          icon: "✍️",
+          icon: PenLine,
           title: "Gérer 10 petits clients en même temps",
           desc: "Beaucoup de clients, des petits budgets, des délais serrés. Avec Deviso, chaque devis prend 30 secondes, et les relances partent automatiquement si le client ne répond pas.",
         },
         {
-          icon: "🔔",
+          icon: Bell,
           title: "Les clients oublient de signer, puis de payer",
           desc: "Deviso envoie des relances automatiques configurables à 3, 7 ou 14 jours. Tu ne cours plus après tes clients, Deviso le fait poliment à ta place.",
         },
         {
-          icon: "📊",
+          icon: BarChart3,
           title: "Savoir exactement où tu en es pour l'URSSAF",
           desc: "En auto-entrepreneur, tu dois surveiller ton CA trimestriel de près. Le widget Deviso t'affiche ton CA encaissé en temps réel, mensuel et trimestriel. Pas de mauvaise surprise.",
         },

@@ -2,6 +2,19 @@
 import { useState, useRef, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import {
+  Send,
+  Hourglass,
+  Bell,
+  Link2,
+  Download,
+  FileText,
+  Coins,
+  CircleCheck,
+  ChevronUp,
+  ChevronDown,
+  Check,
+} from "lucide-react";
 import type { Proposal } from "@/types";
 
 interface Props {
@@ -177,13 +190,13 @@ export default function ProposalActions({
                   disabled={submitting}
                   className="w-full bg-amber-500 hover:bg-amber-600 disabled:opacity-50 text-white text-sm font-semibold px-4 py-2.5 rounded-lg transition-colors text-left flex items-center gap-2"
                 >
-                  <span>📤</span>
+                  <Send size={17} className="shrink-0" />
                   <span>{submitting ? "Envoi…" : approvalStatus === "rejected" ? "Soumettre à nouveau" : "Soumettre pour validation"}</span>
                 </button>
               )}
               {approvalStatus === "pending_review" && (
                 <div className="flex items-center gap-2 px-4 py-2.5 rounded-lg bg-amber-500/10 border border-amber-500/20">
-                  <span className="text-amber-400 text-sm">⏳</span>
+                  <Hourglass size={16} className="shrink-0 text-amber-400" />
                   <span className="text-xs text-amber-300 font-medium">En attente de validation</span>
                 </div>
               )}
@@ -193,7 +206,7 @@ export default function ProposalActions({
                   disabled={sending}
                   className="w-full bg-indigo-600 hover:bg-indigo-500 disabled:opacity-50 text-white text-sm font-semibold px-4 py-2.5 rounded-lg transition-colors text-left flex items-center gap-2"
                 >
-                  <span>📤</span>
+                  <Send size={17} className="shrink-0" />
                   <span>{sending ? "…" : "Marquer envoyé"}</span>
                 </button>
               )}
@@ -208,7 +221,7 @@ export default function ProposalActions({
               disabled={sending}
               className="w-full bg-indigo-600 hover:bg-indigo-500 disabled:opacity-50 text-white text-sm font-semibold px-4 py-2.5 rounded-lg transition-colors text-left flex items-center gap-2"
             >
-              <span>📤</span>
+              <Send size={17} className="shrink-0" />
               <span>{sending ? "…" : "Marquer envoyé"}</span>
             </button>
           )}
@@ -219,7 +232,7 @@ export default function ProposalActions({
               disabled={reminding}
               className="w-full text-sm font-medium px-4 py-2.5 rounded-lg border border-amber-500/30 hover:bg-amber-500/10 text-amber-400 disabled:opacity-50 transition-colors text-left flex items-center gap-2"
             >
-              <span>🔔</span>
+              <Bell size={17} className="shrink-0" />
               <span>{reminding ? "Envoi…" : reminderCount > 0 ? `Relancer (${reminderCount}/3)` : "Relancer le client"}</span>
             </button>
           )}
@@ -230,14 +243,14 @@ export default function ProposalActions({
             onClick={copyLink}
             className="w-full text-sm font-medium px-4 py-2.5 rounded-lg border border-ds-border hover:bg-ds-elevated/60 text-gray-400 transition-colors text-left flex items-center gap-2"
           >
-            <span>🔗</span>
-            <span>{copied ? "✓ Lien copié !" : "Copier le lien client"}</span>
+            <Link2 size={17} className="shrink-0" />
+            <span className="flex items-center gap-1.5">{copied && <Check size={16} className="shrink-0" />}{copied ? "Lien copié !" : "Copier le lien client"}</span>
           </button>
           <button
             onClick={handlePrint}
             className="w-full no-print text-sm font-medium px-4 py-2.5 rounded-lg border border-ds-border hover:bg-ds-elevated/60 text-gray-400 transition-colors text-left flex items-center gap-2"
           >
-            <span>↓</span>
+            <Download size={17} className="shrink-0" />
             <span>Imprimer / PDF</span>
           </button>
 
@@ -251,7 +264,7 @@ export default function ProposalActions({
                   className="w-full text-sm font-semibold px-4 py-2.5 rounded-lg bg-emerald-600/10 border border-emerald-500/30 text-emerald-400 hover:bg-emerald-600/20 transition-colors text-left flex items-center justify-between"
                 >
                   <span>Convertir en facture</span>
-                  <span className="text-xs">{convertOpen ? "▲" : "▼"}</span>
+                  {convertOpen ? <ChevronUp size={16} className="shrink-0" /> : <ChevronDown size={16} className="shrink-0" />}
                 </button>
                 {convertOpen && (
                   <div className="mt-1 w-full bg-ds-surface border border-ds-border rounded-xl shadow-xl z-50 py-1 text-sm">
@@ -262,7 +275,7 @@ export default function ProposalActions({
                           className="flex items-center gap-2 px-4 py-2.5 hover:bg-ds-elevated transition-colors"
                           onClick={() => setConvertOpen(false)}
                         >
-                          <span>📄</span>
+                          <FileText size={18} className="shrink-0 text-gray-400" />
                           <div>
                             <div className="font-medium text-white">Facture standard</div>
                             <div className="text-xs text-gray-400">Règlement intégral</div>
@@ -272,7 +285,7 @@ export default function ProposalActions({
                           onClick={() => setAcompteMode(true)}
                           className="w-full flex items-center gap-2 px-4 py-2.5 hover:bg-ds-elevated transition-colors text-left"
                         >
-                          <span>💰</span>
+                          <Coins size={18} className="shrink-0 text-gray-400" />
                           <div>
                             <div className="font-medium text-white">Facture d'acompte</div>
                             <div className="text-xs text-gray-400">Versement partiel (AC-YYYY-NNN)</div>
@@ -283,7 +296,7 @@ export default function ProposalActions({
                           className="flex items-center gap-2 px-4 py-2.5 hover:bg-ds-elevated transition-colors"
                           onClick={() => setConvertOpen(false)}
                         >
-                          <span>✅</span>
+                          <CircleCheck size={18} className="shrink-0 text-gray-400" />
                           <div>
                             <div className="font-medium text-white">Facture de solde</div>
                             <div className="text-xs text-gray-400">Solde après acompte</div>
@@ -401,7 +414,7 @@ export default function ProposalActions({
             <button onClick={submitForApproval} disabled={submitting} className={BTN_AMBER}>{submitting ? "Envoi…" : approvalStatus === "rejected" ? "Soumettre à nouveau" : "Soumettre pour validation"}</button>
           )}
           {approvalStatus === "pending_review" && (
-            <span className="whitespace-nowrap text-sm font-medium px-3 py-1.5 rounded-lg bg-amber-500/10 text-amber-400 border border-amber-500/20">⏳ En attente</span>
+            <span className="inline-flex items-center gap-1.5 whitespace-nowrap text-sm font-medium px-3 py-1.5 rounded-lg bg-amber-500/10 text-amber-400 border border-amber-500/20"><Hourglass size={15} className="shrink-0" />En attente</span>
           )}
           {approvalStatus === "approved" && (
             <button onClick={markAsSent} disabled={sending} className={BTN_PRIMARY}>{sending ? "…" : "Marquer envoyé"}</button>
@@ -418,19 +431,19 @@ export default function ProposalActions({
       )}
       {canConvert && (
         <div className="relative" ref={dropdownRef}>
-          <button onClick={() => { setConvertOpen(!convertOpen); setAcompteMode(false); }} className={BTN_GREEN}>Convertir en facture ▾</button>
+          <button onClick={() => { setConvertOpen(!convertOpen); setAcompteMode(false); }} className={BTN_GREEN + " inline-flex items-center gap-1.5"}>Convertir en facture<ChevronDown size={16} className="shrink-0" /></button>
           {convertOpen && (
             <div className="absolute right-0 mt-1 w-56 bg-ds-surface border border-ds-border rounded-xl shadow-xl z-50 py-1 text-sm">
               {!acompteMode ? (
                 <>
                   <Link href={`/invoices/new?from_proposal=${proposal.id}`} className="flex items-center gap-2 px-4 py-2.5 hover:bg-ds-elevated transition-colors" onClick={() => setConvertOpen(false)}>
-                    <span>📄</span><div><div className="font-medium text-white">Facture standard</div><div className="text-xs text-gray-400">Règlement intégral</div></div>
+                    <FileText size={18} className="shrink-0 text-gray-400" /><div><div className="font-medium text-white">Facture standard</div><div className="text-xs text-gray-400">Règlement intégral</div></div>
                   </Link>
                   <button onClick={() => setAcompteMode(true)} className="w-full flex items-center gap-2 px-4 py-2.5 hover:bg-ds-elevated transition-colors text-left">
-                    <span>💰</span><div><div className="font-medium text-white">Facture d'acompte</div><div className="text-xs text-gray-400">Versement partiel</div></div>
+                    <Coins size={18} className="shrink-0 text-gray-400" /><div><div className="font-medium text-white">Facture d'acompte</div><div className="text-xs text-gray-400">Versement partiel</div></div>
                   </button>
                   <Link href={`/invoices/new?from_proposal=${proposal.id}&type=solde`} className="flex items-center gap-2 px-4 py-2.5 hover:bg-ds-elevated transition-colors" onClick={() => setConvertOpen(false)}>
-                    <span>✅</span><div><div className="font-medium text-white">Facture de solde</div><div className="text-xs text-gray-400">Solde après acompte</div></div>
+                    <CircleCheck size={18} className="shrink-0 text-gray-400" /><div><div className="font-medium text-white">Facture de solde</div><div className="text-xs text-gray-400">Solde après acompte</div></div>
                   </Link>
                 </>
               ) : (

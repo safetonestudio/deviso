@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { FreelanceLanding } from "@/components/landing/FreelanceLanding";
+import { Banknote, HardHat, ShieldCheck } from "lucide-react";
 
 export const metadata: Metadata = {
   title: "Devis et facturation pour artisans BTP",
@@ -30,17 +31,17 @@ export default function Page() {
       heroSubtitle="Tu décris les travaux, matériaux, surface, main d'œuvre. L'IA génère un devis complet avec les bons taux de TVA et la mention garantie décennale. Ton client signe, tu démarres le chantier."
       painPoints={[
         {
-          icon: "🏗️",
+          icon: HardHat,
           title: "La TVA à taux réduit, c'est risqué à mal appliquer",
           desc: "5,5% pour la rénovation énergétique, 10% pour les travaux courants, 20% pour le neuf, se tromper de taux expose à un redressement fiscal. L'IA de Deviso applique le bon taux selon la nature des travaux décrits.",
         },
         {
-          icon: "🛡️",
+          icon: ShieldCheck,
           title: "La garantie décennale doit apparaître sur chaque devis",
           desc: "Nom de l'assureur, numéro de police, zone géographique couverte, ces mentions sont obligatoires sur tout devis de travaux. Deviso les intègre automatiquement à partir de vos paramètres de profil.",
         },
         {
-          icon: "💸",
+          icon: Banknote,
           title: "Acompte à la commande, solde à la réception",
           desc: "30% à la signature pour acheter les matériaux, 70% à la fin du chantier. Deviso génère la facture d'acompte et la facture de solde automatiquement, avec numérotation conforme et PDFs prêts.",
         },

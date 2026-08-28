@@ -1,14 +1,36 @@
 import { notFound } from "next/navigation";
 import { MarkAsRead } from "./MarkAsRead";
 import Link from "next/link";
-import { ArrowLeft, Clock } from "lucide-react";
+import {
+  ArrowLeft,
+  Clock,
+  Lightbulb,
+  TriangleAlert,
+  Info,
+  Package,
+  Timer,
+  Tag,
+  PenLine,
+  Euro,
+  Ruler,
+  Scale,
+  Landmark,
+  Link2,
+  CircleCheck,
+  Crown,
+  User,
+  ClipboardList,
+  BarChart3,
+  Calendar,
+  type LucideIcon,
+} from "lucide-react";
 
 // ── Helper UI ─────────────────────────────────────────────────────
 
 function Tip({ children }: { children: React.ReactNode }) {
   return (
     <div className="flex gap-3 p-4 bg-indigo-500/10 border border-indigo-500/20 rounded-xl my-4">
-      <span className="shrink-0 mt-0.5 text-base leading-none">💡</span>
+      <Lightbulb size={18} className="shrink-0 mt-0.5 text-indigo-400" />
       <div className="text-sm text-indigo-200 leading-relaxed">{children}</div>
     </div>
   );
@@ -17,7 +39,7 @@ function Tip({ children }: { children: React.ReactNode }) {
 function Warning({ children }: { children: React.ReactNode }) {
   return (
     <div className="flex gap-3 p-4 bg-amber-500/10 border border-amber-500/20 rounded-xl my-4">
-      <span className="shrink-0 mt-0.5 text-base leading-none">⚠️</span>
+      <TriangleAlert size={18} className="shrink-0 mt-0.5 text-amber-400" />
       <div className="text-sm text-amber-200 leading-relaxed">{children}</div>
     </div>
   );
@@ -26,7 +48,7 @@ function Warning({ children }: { children: React.ReactNode }) {
 function Note({ children }: { children: React.ReactNode }) {
   return (
     <div className="flex gap-3 p-4 bg-ds-elevated border border-ds-border rounded-xl my-4">
-      <span className="shrink-0 mt-0.5 text-base leading-none">ℹ️</span>
+      <Info size={18} className="shrink-0 mt-0.5 text-gray-400" />
       <div className="text-sm text-gray-400 leading-relaxed">{children}</div>
     </div>
   );
@@ -89,10 +111,13 @@ function B({ children }: { children: React.ReactNode }) {
   return <span className="text-white font-medium">{children}</span>;
 }
 
-function Card({ icon, title, desc, accent = false }: { icon: string; title: string; desc: string; accent?: boolean }) {
+function Card({ icon: Icon, title, desc, accent = false }: { icon: LucideIcon; title: string; desc: string; accent?: boolean }) {
   return (
     <div className={`p-4 rounded-xl border ${accent ? "bg-violet-500/5 border-violet-500/20" : "bg-ds-surface border-ds-border"}`}>
-      <p className="text-sm font-medium text-white mb-1">{icon} {title}</p>
+      <p className="text-sm font-medium text-white mb-1 flex items-center gap-2">
+        <Icon size={17} className={accent ? "shrink-0 text-violet-400" : "shrink-0 text-indigo-400"} />
+        {title}
+      </p>
       <p className="text-xs text-gray-500 leading-relaxed">{desc}</p>
     </div>
   );
@@ -122,7 +147,7 @@ const ARTICLES: Record<string, Article> = {
           <Steps>
             <Step n={1} title="Devis → Nouveau devis">
               <p>
-                Clique sur <B>Devis</B> dans le menu de gauche, puis sur <B>Nouveau devis</B>{" "}
+                Clique sur <B>Devis</B> dans le menu, puis sur <B>Nouveau devis</B>{" "}
                 en haut à droite. Tu arrives directement dans l&apos;éditeur.
               </p>
             </Step>
@@ -302,19 +327,19 @@ const ARTICLES: Record<string, Article> = {
       <>
         <Note>
           Le catalogue de prestations est disponible sur le plan <B>Pro</B>.
-          Accède-y via <B>Services</B> dans le menu de gauche.
+          Accède-y via <B>Services</B> dans le menu.
         </Note>
 
         <Section title="Deux types de prestations">
           <p>Le catalogue distingue deux façons de facturer :</p>
           <div className="grid grid-cols-2 gap-3 mt-3">
             <Card
-              icon="📦"
+              icon={Package}
               title="À l'acte"
               desc="Prix fixe par unité. Ex : page web, logo, article, audit, journée de formation."
             />
             <Card
-              icon="⏱️"
+              icon={Timer}
               title="Taux horaire"
               desc="Prix à l'heure. Lors de l'ajout dans un devis, tu choisis la durée en tranches de 15 min."
               accent
@@ -389,7 +414,7 @@ const ARTICLES: Record<string, Article> = {
       <>
         <Note>
           Le catalogue de prestations est disponible sur le plan <B>Pro</B>.
-          Accède-y via <B>Services</B> dans le menu de gauche.
+          Accède-y via <B>Services</B> dans le menu.
         </Note>
 
         <Section title="Comment l'IA utilise ton catalogue">
@@ -412,28 +437,28 @@ const ARTICLES: Record<string, Article> = {
 
           <div className="space-y-3">
             <Card
-              icon="🏷️"
+              icon={Tag}
               title="Le nom de la prestation"
               desc="C'est le premier signal que lit l'IA. Un nom précis et reconnaissable guide directement la sélection. « Audit UX complet » est sans ambiguïté, « Prestation consulting » ne l'est pas."
             />
             <Card
-              icon="📝"
+              icon={PenLine}
               title="La description"
               desc="Elle permet à l'IA de comprendre le périmètre réel de la prestation. Plus elle est explicite (livrables, délai, cycle de révisions), plus le devis généré reflète fidèlement ce que tu proposes réellement."
             />
             <Card
-              icon="💶"
+              icon={Euro}
               title="Le prix unitaire"
               desc="L'IA utilise tes tarifs tels quels, pas de calcul, pas d'approximation. Un prix à jour évite les corrections manuelles systématiques et les montants incohérents entre devis."
               accent
             />
             <Card
-              icon="📐"
+              icon={Ruler}
               title="L'unité"
               desc="Forfait, jour, heure, page, livrable… L'unité détermine comment l'IA construit la ligne (quantité × prix). Une unité floue produit des lignes difficiles à justifier au client."
             />
             <Card
-              icon="⚖️"
+              icon={Scale}
               title="La granularité"
               desc="Trop peu de prestations oblige l'IA à regrouper des activités distinctes dans une seule ligne. Trop de variantes crée de l'ambiguïté. L'idéal : une entrée par type de mission clairement délimité."
             />
@@ -510,17 +535,17 @@ const ARTICLES: Record<string, Article> = {
           <p>Dans la section <B>Paiements</B>, tu définis ce qui apparaît sur chaque facture envoyée :</p>
           <div className="space-y-3 mt-3">
             <Card
-              icon="🏦"
+              icon={Landmark}
               title="Virement bancaire (IBAN)"
               desc="IBAN + BIC + titulaire. Le client vire directement. Aucune commission, délai de 1 à 3 jours ouvrés."
             />
             <Card
-              icon="🔗"
+              icon={Link2}
               title="Lien de paiement"
               desc="Un lien vers Stripe, Sumeria, PayPal… Le client paie par carte en ligne. Plus rapide, mais frais de transaction selon la plateforme."
             />
             <Card
-              icon="✅"
+              icon={CircleCheck}
               title="Les deux"
               desc="Le client choisit sa méthode. Recommandé pour maximiser les chances d'encaissement rapide."
             />
@@ -531,7 +556,7 @@ const ARTICLES: Record<string, Article> = {
           <Steps>
             <Step n={1} title="Ouvre la section Paiements">
               <p>
-                Dans le menu de gauche, clique sur <B>Paiements</B>.
+                Dans le menu, clique sur <B>Paiements</B>.
                 Tu arrives sur la page de configuration.
               </p>
             </Step>
@@ -761,12 +786,12 @@ const ARTICLES: Record<string, Article> = {
         <Section title="Les deux rôles">
           <div className="space-y-3 mt-1">
             <Card
-              icon="👑"
+              icon={Crown}
               title="Propriétaire"
               desc="Accès complet : facturation Deviso, paiements, clients, stats, paramètres, équipe."
             />
             <Card
-              icon="👤"
+              icon={User}
               title="Membre"
               desc="Peut créer des devis et factures, accéder au catalogue et modifier son profil. N'a pas accès à la facturation Deviso, aux stats globales ni aux paramètres de l'entreprise."
             />
@@ -848,17 +873,17 @@ const ARTICLES: Record<string, Article> = {
         <Section title="Les trois exports disponibles">
           <div className="space-y-3 mt-1">
             <Card
-              icon="📋"
+              icon={ClipboardList}
               title="Export FEC"
               desc="Fichier des Écritures Comptables. Format imposé par l'administration fiscale. Ton expert-comptable s'en sert pour clôturer l'exercice, et l'administration peut l'exiger en cas de contrôle."
             />
             <Card
-              icon="📊"
+              icon={BarChart3}
               title="Export CSV factures"
               desc="Toutes tes factures au format tableur (Excel / Google Sheets). Pratique pour un suivi personnel ou pour ton comptable."
             />
             <Card
-              icon="📅"
+              icon={Calendar}
               title="Récap mensuel"
               desc="Résumé mois par mois : CA, nombre de factures, montants HT et TVA. Idéal pour tes déclarations trimestrielles ou mensuelles."
             />

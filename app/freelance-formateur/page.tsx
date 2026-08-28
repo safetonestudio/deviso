@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { FreelanceLanding } from "@/components/landing/FreelanceLanding";
+import { Banknote, FileText, PenLine } from "lucide-react";
 
 export const metadata: Metadata = {
   title: "Devis et facturation pour formateurs indépendants",
@@ -30,17 +31,17 @@ export default function Page() {
       heroSubtitle="Tu décris la formation, thème, durée, public. L'IA génère un devis avec tous les éléments requis pour les OPCO. Acompte à la signature, solde après la session."
       painPoints={[
         {
-          icon: "📝",
+          icon: PenLine,
           title: "Les devis OPCO ont des exigences précises",
           desc: "Objectifs pédagogiques, modalités, durée, tarif HT/TTC, moyens d'évaluation, l'IA de Deviso intègre les mentions obligatoires dans le devis en 30 secondes.",
         },
         {
-          icon: "💸",
+          icon: Banknote,
           title: "30% à la commande, solde après la formation",
           desc: "Deviso génère automatiquement la facture d'acompte à la signature du devis, puis la facture de solde après la session. Numérotation conforme AC-/SLD-, PDFs prêts.",
         },
         {
-          icon: "📄",
+          icon: FileText,
           title: "Facture électronique pour les organismes financeurs",
           desc: "OPCO, Pôle Emploi, collectivités, la facturation électronique Factur-X est déjà obligatoire pour certains et le devient pour tous en 2026. Deviso est déjà conforme.",
         },

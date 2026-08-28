@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { NavbarMobile } from "@/components/NavbarMobile";
 import { WaitlistButton } from "@/components/landing/WaitlistButton";
+import { ShieldCheck } from "lucide-react";
 
 export const metadata: Metadata = {
   title: "Gérer les impayés en freelance : les 4 étapes",
@@ -215,7 +216,7 @@ export default function Page() {
 
             {/* Lien hub clauses */}
             <div className="bg-ds-surface border border-ds-border rounded-xl p-5 flex gap-4 items-start">
-              <span className="text-indigo-400 text-xl flex-shrink-0">🛡️</span>
+              <ShieldCheck size={20} className="text-indigo-400 flex-shrink-0" />
               <div>
                 <p className="text-sm font-semibold text-white mb-1">Prévenir les impayés dès le devis</p>
                 <p className="text-xs text-gray-500 mb-3">Clause d&apos;acompte, pénalités de retard, conditions de paiement, les clauses qui protègent votre trésorerie avant même de commencer.</p>

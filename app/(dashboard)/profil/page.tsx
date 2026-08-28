@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState, useCallback } from "react";
 import Image from "next/image";
+import { Building2 } from "lucide-react";
 import type { Profile, TvaRegime } from "@/types";
 import { UpgradeBanner } from "@/components/UpgradeBanner";
 import { GuidedTourBanner } from "@/components/GuidedTourBanner";
@@ -387,7 +388,7 @@ Les présentes CGV sont soumises au droit français. Tout litige relève de la c
                 profile.plan === "solo" ? "bg-indigo-500/20 text-indigo-300" :
                 "bg-ds-elevated text-gray-400"
               }`}>
-                {profile.plan === "pro" ? "⭐ Pro" : profile.plan === "solo" ? "🚀 Solo" : "🆓 Gratuit"}
+                {profile.plan === "pro" ? "Pro" : profile.plan === "solo" ? "Solo" : "Gratuit"}
               </span>
               {profile.subscription_status === "active" && <span className="text-xs text-emerald-400 font-medium">· Actif</span>}
               {profile.subscription_status && profile.subscription_status !== "active" && (
@@ -428,7 +429,7 @@ Les présentes CGV sont soumises au droit français. Tout litige relève de la c
               <div className="w-20 h-20 rounded-xl border border-ds-border bg-ds-elevated flex items-center justify-center overflow-hidden shrink-0">
                 {profile.logo_url
                   ? <Image src={profile.logo_url} alt="Logo" width={80} height={80} className="object-contain w-full h-full" unoptimized />
-                  : <span className="text-2xl text-gray-600">🏢</span>}
+                  : <Building2 size={26} className="text-gray-600" />}
               </div>
               <div>
                 <p className="text-sm text-gray-400 mb-2">PNG, JPG, WebP ou SVG · max 2 Mo<br />Apparaîtra sur tes devis et factures.</p>

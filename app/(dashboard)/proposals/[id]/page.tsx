@@ -9,6 +9,7 @@ import { ProposalPreviewWrapper } from "@/components/ProposalPreviewWrapper";
 import { GuidedTourBanner } from "@/components/GuidedTourBanner";
 import type { Proposal, Profile } from "@/types";
 import { publicBaseUrl, proposalShareUrl } from "@/lib/public-url";
+import { Hourglass } from "lucide-react";
 
 const supabaseAdmin = createAdminClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -114,7 +115,7 @@ export default async function ProposalDetailPage({ params }: { params: Promise<{
               </span>
               {approvalStatus === "pending_review" && (
                 <span className="text-xs font-semibold px-2.5 py-1 rounded-full bg-amber-500/10 text-amber-400">
-                  ⏳ En attente de validation
+                  <span className="inline-flex items-center gap-1.5"><Hourglass size={12} className="shrink-0" />En attente de validation</span>
                 </span>
               )}
               {approvalStatus === "approved" && proposal.status === "draft" && (

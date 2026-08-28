@@ -5,7 +5,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import type { Invoice } from "@/types";
 import { UpgradeBanner } from "@/components/UpgradeBanner";
-import { RefreshCw, Trash2, Plus, X, ChevronDown } from "lucide-react";
+import { RefreshCw, Trash2, Plus, X, ChevronDown, Download, Coins, CircleCheck, TriangleAlert, Lock } from "lucide-react";
 import { GuidedTourBanner } from "@/components/GuidedTourBanner";
 import { usePlan } from "@/components/PlanContext";
 
@@ -243,7 +243,7 @@ export default function InvoicesPage() {
                 disabled={exporting}
                 className="text-sm font-medium px-3 py-2 bg-ds-elevated hover:bg-gray-700 text-gray-300 disabled:opacity-50 transition-colors border-l border-ds-border"
               >
-                {exporting ? "Export…" : "⬇ FEC"}
+                <span className="inline-flex items-center gap-1.5">{!exporting && <Download size={16} className="shrink-0" />}{exporting ? "Export…" : "FEC"}</span>
               </button>
             </div>
           )}
@@ -281,7 +281,7 @@ export default function InvoicesPage() {
                       onClick={() => { setNewDropdownOpen(false); router.push("/invoices/new?type=acompte"); }}
                       className="w-full text-left px-4 py-3 hover:bg-ds-elevated transition-colors"
                     >
-                      <div className="text-sm font-medium text-emerald-400">💰 Facture d&apos;acompte</div>
+                      <div className="text-sm font-medium text-emerald-400 flex items-center gap-2"><Coins size={17} className="shrink-0" />Facture d&apos;acompte</div>
                       <div className="text-xs text-gray-500 mt-0.5">% du montant d&apos;un devis</div>
                     </button>
                     <div className="border-t border-ds-border" />
@@ -289,7 +289,7 @@ export default function InvoicesPage() {
                       onClick={() => { setNewDropdownOpen(false); router.push("/invoices/new?type=solde"); }}
                       className="w-full text-left px-4 py-3 hover:bg-ds-elevated transition-colors"
                     >
-                      <div className="text-sm font-medium text-indigo-400">✅ Facture de solde</div>
+                      <div className="text-sm font-medium text-indigo-400 flex items-center gap-2"><CircleCheck size={17} className="shrink-0" />Facture de solde</div>
                       <div className="text-xs text-gray-500 mt-0.5">Solde restant après acompte</div>
                     </button>
                   </div>
@@ -330,7 +330,7 @@ export default function InvoicesPage() {
       {/* Banner paiement non configuré */}
       {!isFree && !paymentConfigured && (
         <div className="bg-amber-500/10 border-2 border-amber-500/40 rounded-xl px-4 py-4 mb-5 flex items-start gap-3">
-          <span className="text-xl shrink-0">⚠️</span>
+          <TriangleAlert size={20} className="shrink-0 text-amber-400" />
           <div className="flex-1">
             <p className="font-semibold text-amber-300 text-sm">Vos clients ne savent pas comment vous payer</p>
             <p className="text-xs text-amber-400/80 mt-0.5 mb-3">Configurez votre moyen de paiement pour débloquer la création de factures.</p>
@@ -350,7 +350,7 @@ export default function InvoicesPage() {
             <div className="text-center py-16 text-gray-500">Chargement…</div>
           ) : isFree ? (
             <div className="text-center py-16 border border-dashed border-ds-border rounded-xl bg-ds-surface">
-              <div className="text-4xl mb-3">🔒</div>
+              <Lock size={32} className="mx-auto mb-3 text-gray-600" />
               <p className="text-white font-semibold">Les factures sont réservées au plan Solo</p>
               <p className="text-gray-500 text-sm mt-1">Passez Solo pour créer des factures électroniques Factur-X conformes.</p>
             </div>
@@ -477,7 +477,7 @@ export default function InvoicesPage() {
         <>
           {!isPro ? (
             <div className="text-center py-16 border border-dashed border-ds-border rounded-xl bg-ds-surface">
-              <div className="text-4xl mb-3">🔒</div>
+              <Lock size={32} className="mx-auto mb-3 text-gray-600" />
               <p className="text-white font-semibold">Factures récurrentes, Pro exclusif</p>
               <p className="text-gray-500 text-sm mt-1 max-w-sm mx-auto">
                 Automatisez vos abonnements et contrats. Deviso génère et envoie les factures à la bonne date, chaque mois.

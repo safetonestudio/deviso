@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useSearchParams } from "next/navigation";
+import { PartyPopper, TriangleAlert, Hourglass, Gift } from "lucide-react";
 
 type Profile = {
   plan: "free" | "solo" | "pro";
@@ -102,14 +103,14 @@ export default function BillingPage() {
 
       {searchParams.get("upgraded") === "1" && (
         <div className="bg-emerald-500/10 border border-emerald-500/20 rounded-xl px-5 py-4 mb-6 flex items-center gap-3">
-          <span className="text-2xl">🎉</span>
+          <PartyPopper size={22} className="shrink-0 text-emerald-400" />
           <p className="text-emerald-400 font-medium">Votre abonnement a bien été activé !</p>
         </div>
       )}
 
       {portalError && (
         <div className="bg-red-500/10 border border-red-500/20 rounded-xl px-5 py-4 mb-6">
-          <p className="text-red-400 text-sm font-medium">⚠️ {portalError}</p>
+          <p className="text-red-400 text-sm font-medium flex items-center gap-2"><TriangleAlert size={17} className="shrink-0" />{portalError}</p>
         </div>
       )}
 
@@ -145,7 +146,7 @@ export default function BillingPage() {
         {isTrialing && (
           <div className="mt-4 bg-amber-500/10 border border-amber-500/20 rounded-xl px-4 py-3 flex items-center justify-between gap-4">
             <p className="text-sm text-amber-200">
-              <span className="font-semibold">⏳ Essai en cours.</span>{" "}
+              <span className="font-semibold inline-flex items-center gap-1.5"><Hourglass size={16} className="shrink-0" />Essai en cours.</span>{" "}
               Ajoutez une carte maintenant pour continuer automatiquement à la fin des 14 jours — sans interruption.
             </p>
             <button
@@ -189,7 +190,7 @@ export default function BillingPage() {
 
           {/* Bandeau essai */}
           <div className="bg-indigo-500/10 border border-indigo-500/20 rounded-xl px-4 py-3 mb-4 flex items-center gap-3">
-            <span className="text-indigo-400 text-lg">🎁</span>
+            <Gift size={18} className="shrink-0 text-indigo-400" />
             <p className="text-sm text-indigo-300">
               <span className="font-semibold">14 jours gratuits</span>, sans carte bancaire requise pour démarrer. Résiliable à tout moment.
             </p>

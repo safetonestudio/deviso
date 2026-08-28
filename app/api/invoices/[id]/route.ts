@@ -94,7 +94,7 @@ export async function PATCH(req: NextRequest, { params }: Params) {
     await supabaseAdmin.from("notifications").insert({
       user_id: user.id,
       type: "invoice_paid",
-      title: "Facture marquée payée 💰",
+      title: "Facture marquée payée",
       body: `La facture ${invoiceNum} a été marquée comme payée.`,
       link: `/invoices/${id}`,
     });

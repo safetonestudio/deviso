@@ -16,7 +16,7 @@ export function inviteEmailHtml(ownerName: string, ownerCompany: string, inviteU
           </tr></table>
         </td></tr>
         <tr><td style="background:#fff;border-radius:16px;border:1px solid #e2e8f0;padding:40px 40px 32px;">
-          <p style="margin:0 0 8px;font-size:24px;font-weight:800;color:#0f172a;">Tu es invité(e) à rejoindre une équipe 👋</p>
+          <p style="margin:0 0 8px;font-size:24px;font-weight:800;color:#0f172a;">Tu es invité(e) à rejoindre une équipe</p>
           <p style="margin:0 0 24px;font-size:15px;color:#64748b;line-height:1.6;">
             <strong style="color:#0f172a;">${from}</strong> t'invite à rejoindre son espace de travail sur Deviso.
             Tu auras accès aux devis, factures et outils de l'équipe.

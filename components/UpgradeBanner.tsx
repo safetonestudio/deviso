@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { Zap } from "lucide-react";
 
 type BannerVariant = "proposal_limit" | "invoice_blocked" | "logo_blocked";
 
@@ -52,7 +53,7 @@ export function UpgradeBanner({ variant = "proposal_limit", count = 0 }: Upgrade
         disabled={loading}
         className="shrink-0 bg-white text-indigo-600 hover:bg-indigo-50 disabled:opacity-50 text-sm font-semibold px-4 py-2 rounded-lg transition-colors whitespace-nowrap"
       >
-        {loading ? "Redirection…" : "⚡ Passer Solo à 18€/mois"}
+        <span className="inline-flex items-center gap-1.5">{!loading && <Zap size={16} className="shrink-0" />}{loading ? "Redirection…" : "Passer Solo à 18€/mois"}</span>
       </button>
     </div>
   );

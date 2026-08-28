@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { FreelanceLanding } from "@/components/landing/FreelanceLanding";
+import { BarChart3, Bell, Smartphone } from "lucide-react";
 
 export const metadata: Metadata = {
   title: "Devis et facturation community manager",
@@ -30,17 +31,17 @@ export default function Page() {
       heroSubtitle="Tu décris la prestation, plateformes, volume de posts, création de visuels. L'IA structure un devis mensuel clair avec les bons livrables. Ton client signe, tu publies."
       painPoints={[
         {
-          icon: "📱",
+          icon: Smartphone,
           title: "Un devis vague = un client qui négocie tout",
           desc: "Combien de posts ? Quelles plateformes ? Les visuels sont inclus ? La publicité aussi ? Deviso structure automatiquement chaque livrable pour éviter les négociations en cours de mission.",
         },
         {
-          icon: "🔔",
+          icon: Bell,
           title: "Tes clients oublient de signer, puis de payer",
           desc: "Un client sans devis signé, c'est un client qui peut tout contester. Avec Deviso, il reçoit un lien sécurisé, signe en quelques secondes depuis son téléphone. Et si ça traîne, les relances partent automatiquement.",
         },
         {
-          icon: "📊",
+          icon: BarChart3,
           title: "Suivre ton CA de 10 clients en même temps",
           desc: "Avec plusieurs forfaits mensuels actifs, savoir exactement ce que tu encaisses pour l'URSSAF devient complexe. Le widget CA de Deviso t'affiche tout en temps réel, mensuel et trimestriel.",
         },

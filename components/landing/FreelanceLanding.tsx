@@ -3,6 +3,7 @@ import type { Metadata } from "next";
 import { NavbarMobile } from "@/components/NavbarMobile";
 import { DemoButton } from "@/components/landing/DemoButton";
 import { WaitlistButton } from "@/components/landing/WaitlistButton";
+import { Zap, PenLine, Bell, FileText, BarChart3, Receipt, Heart, type LucideIcon } from "lucide-react";
 
 export interface MockupLine {
   desc: string;
@@ -11,7 +12,7 @@ export interface MockupLine {
 }
 
 export interface PainPoint {
-  icon: string;
+  icon: LucideIcon;
   title: string;
   desc: string;
 }
@@ -56,32 +57,32 @@ const steps = [
 
 const features = [
   {
-    icon: "⚡",
+    icon: Zap as LucideIcon,
     title: "Devis par IA en 30 secondes",
     desc: "Tu décris ta mission en quelques phrases. L'IA génère un devis complet, chiffré, structuré, prêt à envoyer. Aucun logiciel concurrent ne fait ça.",
   },
   {
-    icon: "✍️",
+    icon: PenLine as LucideIcon,
     title: "Signature électronique",
     desc: "Ton client reçoit un lien sécurisé, ouvre le devis sur son téléphone et signe en quelques secondes. Tu es notifié instantanément.",
   },
   {
-    icon: "🔔",
+    icon: Bell as LucideIcon,
     title: "Relances automatiques",
     desc: "Après 3, 7 ou 14 jours sans réponse, Deviso relance ton client à ta place. Tu configures le délai et le message, Deviso s'occupe du reste.",
   },
   {
-    icon: "📄",
+    icon: FileText as LucideIcon,
     title: "Factur-X + Chorus Pro",
     desc: "Facture électronique conforme à la réforme 2026 en 1 clic. Dépôt Chorus Pro pour le secteur public directement depuis la facture.",
   },
   {
-    icon: "📊",
+    icon: BarChart3 as LucideIcon,
     title: "Widget CA URSSAF",
     desc: "Ton chiffre d'affaires mensuel et trimestriel affiché en temps réel. Tu sais exactement quoi déclarer, sans calculer.",
   },
   {
-    icon: "🧾",
+    icon: Receipt as LucideIcon,
     title: "Factures acompte & solde",
     desc: "Facturez en deux temps : un acompte à la commande, le solde à la livraison. Numérotation automatique, PDFs conformes générés.",
   },
@@ -232,7 +233,7 @@ export function FreelanceLanding({
                 </div>
                 <div className="flex items-center gap-3 mb-6">
                   <div className="flex-1 h-10 bg-indigo-600 rounded-lg flex items-center justify-center text-sm font-semibold">
-                    ⚡ Générer le devis
+                    <span className="inline-flex items-center gap-1.5"><Zap size={16} className="shrink-0" />Générer le devis</span>
                   </div>
                 </div>
                 <div className="bg-white rounded-xl p-4">
@@ -282,7 +283,7 @@ export function FreelanceLanding({
                 key={p.title}
                 className="bg-ds-surface/50 border border-ds-border rounded-2xl p-6 hover:border-indigo-500/30 hover:bg-ds-surface transition-all duration-200"
               >
-                <div className="bg-indigo-500/10 rounded-lg p-2 text-2xl mb-4 w-fit">{p.icon}</div>
+                <div className="bg-indigo-500/10 rounded-lg p-2 mb-4 w-fit text-indigo-400"><p.icon size={22} /></div>
                 <h3 className="text-lg font-semibold text-white mb-2">{p.title}</h3>
                 <p className="text-gray-400 text-sm leading-relaxed">{p.desc}</p>
               </div>
@@ -328,7 +329,7 @@ export function FreelanceLanding({
                 key={f.title}
                 className="bg-ds-surface/50 border border-ds-border rounded-2xl p-6 hover:border-indigo-500/30 hover:bg-ds-surface transition-all duration-200"
               >
-                <div className="bg-indigo-500/10 rounded-lg p-2 text-xl mb-4 w-fit">{f.icon}</div>
+                <div className="bg-indigo-500/10 rounded-lg p-2 mb-4 w-fit text-indigo-400"><f.icon size={20} /></div>
                 <h3 className="text-lg font-semibold text-white mb-2">{f.title}</h3>
                 <p className="text-gray-400 text-sm leading-relaxed">{f.desc}</p>
               </div>
@@ -433,7 +434,7 @@ export function FreelanceLanding({
             </div>
           </div>
           <div className="border-t border-zinc-900 pt-6 text-xs text-center">
-            © {new Date().getFullYear()} Deviso. Fait avec ❤️ en France.
+            © {new Date().getFullYear()} Deviso. Fait avec <Heart size={12} className="inline-block align-[-1px] fill-current text-red-500" aria-label="amour" /> en France.
           </div>
         </div>
       </footer>

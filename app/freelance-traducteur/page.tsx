@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { FreelanceLanding } from "@/components/landing/FreelanceLanding";
+import { BarChart3, Bell, PenLine } from "lucide-react";
 
 export const metadata: Metadata = {
   title: "Devis et facturation pour traducteurs freelances",
@@ -30,17 +31,17 @@ export default function Page() {
       heroSubtitle="Tu décris la mission, paire de langues, volume, délai. L'IA structure un devis complet avec les conditions de révision et de livraison. Ton client signe, tu traduis."
       painPoints={[
         {
-          icon: "📝",
+          icon: PenLine,
           title: "Tarifer au mot, à la page ou au forfait ?",
           desc: "Selon le type de document (technique, juridique, marketing) et la paire de langues, le mode de tarification change. L'IA de Deviso structure le devis selon le volume et le type de mission que tu décris.",
         },
         {
-          icon: "🔔",
+          icon: Bell,
           title: "Clients qui envoient le document après le devis",
           desc: "Impossible de chiffrer exactement sans voir le document, mais le client veut un prix avant. Avec Deviso, génère un devis estimatif signé en 30 secondes, puis émets un avenant si le volume réel s'écarte.",
         },
         {
-          icon: "📊",
+          icon: BarChart3,
           title: "Jongler entre plusieurs clients et délais serrés",
           desc: "Traductions express, deadlines multiples, relances, avec Deviso, chaque devis est suivi automatiquement. Tu sais en 1 coup d'œil quels documents attendent encore la signature et lesquels sont en retard de paiement.",
         },

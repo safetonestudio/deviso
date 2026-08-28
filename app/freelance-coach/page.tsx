@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { FreelanceLanding } from "@/components/landing/FreelanceLanding";
+import { BarChart3, Calendar, Target } from "lucide-react";
 
 export const metadata: Metadata = {
   title: "Devis et facturation pour coachs freelances",
@@ -30,17 +31,17 @@ export default function Page() {
       heroSubtitle="Tu décris l'accompagnement, nombre de séances, durée, objectifs. L'IA génère un devis complet avec les bonnes conditions et modalités de paiement. Ton client signe, tu accompagnes."
       painPoints={[
         {
-          icon: "🎯",
+          icon: Target,
           title: "Justifier le prix d'un accompagnement intangible",
           desc: "Contrairement à un produit physique, la valeur du coaching n'est pas évidente pour tous les clients. Deviso structure le devis avec les objectifs, livrables et résultats attendus, pour que la valeur soit claire avant même la signature.",
         },
         {
-          icon: "📅",
+          icon: Calendar,
           title: "Les clients qui abandonnent en cours de programme",
           desc: "Sans conditions claires dans le devis, un client peut arrêter après 2 séances et refuser de payer le reste. Deviso inclut automatiquement les conditions d'annulation et de remboursement dans chaque devis.",
         },
         {
-          icon: "📊",
+          icon: BarChart3,
           title: "Gérer 8 clients en même temps sans se noyer",
           desc: "Séances individuelles, programmes de groupe, ateliers ponctuels, avec Deviso, chaque devis est généré en 30 secondes et suivi automatiquement. Tu vois d'un coup d'œil qui a signé, qui a payé, qui relancer.",
         },

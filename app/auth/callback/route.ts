@@ -29,7 +29,7 @@ export async function GET(request: Request) {
             resend.emails.send({
               from: "noreply@getdeviso.fr",
               to: email,
-              subject: "Bienvenue sur Deviso 👋",
+              subject: "Bienvenue sur Deviso",
               html: welcomeEmailHtml(fullName),
             }).catch((err) => {
               console.error("[Resend] Erreur envoi email bienvenue:", err);

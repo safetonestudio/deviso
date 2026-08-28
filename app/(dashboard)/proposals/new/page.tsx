@@ -4,7 +4,7 @@ import { useRouter } from "next/navigation";
 import type { GeneratedProposal, ProposalItem } from "@/types";
 import { v4 as uuidv4 } from "uuid";
 import { UpgradeButton } from "@/components/UpgradeButton";
-import { LayoutTemplate, ChevronDown, ChevronUp, Clock, Package } from "lucide-react";
+import { LayoutTemplate, ChevronDown, ChevronUp, Clock, Package, Lightbulb, Zap, RotateCcw, Save } from "lucide-react";
 import { GuidedTourBanner } from "@/components/GuidedTourBanner";
 
 type Step = "brief" | "review" | "client";
@@ -374,7 +374,7 @@ export default function NewProposalPage() {
               Parle normalement. L&apos;IA comprend le contexte et génère un devis complet.
             </p>
             <div className="bg-ds-elevated/50 rounded-xl p-4 mb-4 text-sm text-gray-400 border border-ds-border">
-              <div className="font-semibold text-gray-300 mb-2">💡 Exemples de briefs</div>
+              <div className="font-semibold text-gray-300 mb-2 flex items-center gap-2"><Lightbulb size={17} className="shrink-0 text-indigo-400" />Exemples de briefs</div>
               <ul className="space-y-1.5">
                 <li>« Refonte site vitrine cabinet d&apos;avocats à Lyon, responsive, 5 pages, budget 4 500€, délai 3 semaines »</li>
                 <li>« Identité visuelle complète pour une startup fintech : logo, charte graphique, business card »</li>
@@ -401,7 +401,7 @@ export default function NewProposalPage() {
             >
               {generating ? (
                 <><span className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full spinner" />Génération en cours...</>
-              ) : "⚡ Générer le devis avec l'IA"}
+              ) : (<><Zap size={18} className="shrink-0" />Générer le devis avec l&apos;IA</>)}
             </button>
           </div>
         </div>
@@ -417,7 +417,7 @@ export default function NewProposalPage() {
                 <p className="text-gray-500 text-sm mt-0.5">Modifie les lignes si nécessaire</p>
               </div>
               <button onClick={() => { setStep("brief"); setGenerated(null); }} className="text-sm text-gray-500 hover:text-gray-400 transition-colors">
-                ↩ Recommencer
+                <span className="inline-flex items-center gap-1.5"><RotateCcw size={15} className="shrink-0" />Recommencer</span>
               </button>
             </div>
 
@@ -549,7 +549,7 @@ export default function NewProposalPage() {
           {/* ── Section Affinage IA ── */}
           <div className="bg-ds-surface rounded-xl border border-indigo-500/20 p-5">
             <div className="flex items-center gap-2 mb-3">
-              <span className="text-indigo-400">⚡</span>
+              <Zap size={17} className="shrink-0 text-indigo-400" />
               <span className="text-sm font-semibold text-indigo-300">Affiner avec l&apos;IA</span>
               <span className="text-xs text-gray-500">— dis ce que tu veux changer</span>
             </div>
@@ -596,7 +596,7 @@ export default function NewProposalPage() {
                     Affinage...
                   </>
                 ) : (
-                  "⚡ Affiner"
+                  <><Zap size={16} className="shrink-0" />Affiner</>
                 )}
               </button>
             </div>
@@ -672,7 +672,7 @@ export default function NewProposalPage() {
           <div className="flex gap-3">
             <button onClick={() => setStep("review")} className="flex-1 border border-ds-border text-gray-300 font-semibold py-3 rounded-xl hover:bg-ds-elevated transition-all">← Retour</button>
             <button onClick={handleSave} disabled={saving} className="flex-grow bg-indigo-600 text-white font-semibold py-3 rounded-xl hover:bg-indigo-500 disabled:opacity-60 transition-all flex items-center justify-center gap-2">
-              {saving ? <><span className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full spinner" />Sauvegarde...</> : "💾 Enregistrer le devis"}
+              {saving ? <><span className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full spinner" />Sauvegarde...</> : (<><Save size={18} className="shrink-0" />Enregistrer le devis</>)}
             </button>
           </div>
         </div>

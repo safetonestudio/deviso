@@ -1,5 +1,6 @@
 "use client";
 
+import { PenLine } from "lucide-react";
 import type { Proposal, Profile } from "@/types";
 
 export type ProposalTemplate = "classic" | "modern" | "epure";
@@ -212,7 +213,7 @@ function SignatureBlock({ proposal, p }: { proposal: Proposal; p: ReturnType<typ
   return (
     <div className={`mt-6 pt-4 border-t ${p.border}`}>
       <div className={`flex items-start gap-3 ${p.signatureBg} rounded-xl p-4`}>
-        <div className="text-emerald-500 mt-0.5 text-lg">✍️</div>
+        <PenLine size={18} className="text-emerald-500 mt-0.5 shrink-0" />
         <div>
           <p className={`text-xs font-semibold ${p.signatureTitle} uppercase tracking-wide mb-1`}>
             Signé électroniquement

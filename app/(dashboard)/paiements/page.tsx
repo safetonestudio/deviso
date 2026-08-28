@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Wallet, Link2, Building2, CheckCircle2, AlertTriangle, ExternalLink } from "lucide-react";
+import { Wallet, Link2, Building2, CheckCircle2, AlertTriangle, ExternalLink, Landmark, Minus, Sparkles, Lightbulb, type LucideIcon } from "lucide-react";
 import { GuidedTourBanner } from "@/components/GuidedTourBanner";
 import type { Profile } from "@/types";
 
@@ -210,10 +210,10 @@ export default function PaiementsPage() {
         <h2 className="font-semibold text-white mb-4">Comment souhaitez-vous être payé ?</h2>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
           {[
-            { value: "none",  icon: "—",  label: "Aucun", desc: "Ne pas afficher d'info de paiement" },
-            { value: "link",  icon: "🔗", label: "Lien en ligne", desc: "Stripe, PayPal, Wise, Sumeria…" },
-            { value: "bank",  icon: "🏦", label: "Virement IBAN", desc: "Le client fait un virement bancaire" },
-            { value: "both",  icon: "✦",  label: "Les deux", desc: "Lien en ligne + coordonnées bancaires" },
+            { value: "none",  icon: Minus as LucideIcon,    label: "Aucun", desc: "Ne pas afficher d'info de paiement" },
+            { value: "link",  icon: Link2 as LucideIcon,    label: "Lien en ligne", desc: "Stripe, PayPal, Wise, Sumeria…" },
+            { value: "bank",  icon: Landmark as LucideIcon, label: "Virement IBAN", desc: "Le client fait un virement bancaire" },
+            { value: "both",  icon: Sparkles as LucideIcon, label: "Les deux", desc: "Lien en ligne + coordonnées bancaires" },
           ].map((opt) => (
             <button
               key={opt.value}
@@ -224,7 +224,7 @@ export default function PaiementsPage() {
                   : "border-ds-border hover:border-zinc-600"
               }`}
             >
-              <div className="text-xl mb-1">{opt.icon}</div>
+              <div className="mb-1"><opt.icon size={18} className={method === opt.value ? "text-emerald-400" : "text-gray-400"} /></div>
               <div className="font-semibold text-white text-sm">{opt.label}</div>
               <div className="text-xs text-gray-500 mt-0.5">{opt.desc}</div>
               {method === opt.value && (
@@ -361,7 +361,7 @@ export default function PaiementsPage() {
           {/* RIB reminder */}
           <div className="bg-ds-elevated/50 border border-ds-border rounded-lg px-4 py-3 mt-4">
             <p className="text-xs text-gray-400 leading-relaxed">
-              💡 <strong className="text-gray-300">Où trouver ces informations ?</strong> Sur votre RIB (Relevé d'Identité Bancaire) disponible dans votre application bancaire sous "Mes comptes" → "Voir le RIB".
+              <Lightbulb size={16} className="inline-block align-text-bottom mr-1 text-indigo-400" /><strong className="text-gray-300">Où trouver ces informations ?</strong> Sur votre RIB (Relevé d'Identité Bancaire) disponible dans votre application bancaire sous "Mes comptes" → "Voir le RIB".
             </p>
           </div>
         </section>

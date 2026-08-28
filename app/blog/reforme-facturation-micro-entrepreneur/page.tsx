@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { NavbarMobile } from "@/components/NavbarMobile";
 import { WaitlistButton } from "@/components/landing/WaitlistButton";
+import { CircleX } from "lucide-react";
 
 export const metadata: Metadata = {
   title: "Micro-entrepreneur : la réforme 2026 expliquée",
@@ -118,7 +119,7 @@ export default function ReformeFacturationMicroEntrepreneurPage() {
           {/* Mythe 1 */}
           <section>
             <div className="bg-red-500/[0.06] border border-red-500/20 rounded-2xl p-6 mb-6">
-              <p className="text-sm font-bold text-red-400 mb-2">❌ Le mythe le plus répandu</p>
+              <p className="text-sm font-bold text-red-400 mb-2 flex items-center gap-2"><CircleX size={17} className="shrink-0" />Le mythe le plus répandu</p>
               <p className="text-sm text-gray-300">&quot;Je suis en franchise de TVA, donc la facturation électronique ne me concerne pas.&quot;</p>
             </div>
             <div className="bg-emerald-500/[0.06] border border-emerald-500/20 rounded-2xl p-6">

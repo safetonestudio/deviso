@@ -370,7 +370,7 @@ export default function StatsPage() {
                 <>
                   <div className="text-3xl font-bold text-white">{stats.avg_days_to_sign}<span className="text-sm text-gray-400 ml-1">j</span></div>
                   <div className="text-xs text-gray-500 mt-1">
-                    {stats.avg_days_to_sign <= 3 ? "🔥 Très rapide" : stats.avg_days_to_sign <= 7 ? "✓ Dans la moyenne" : stats.avg_days_to_sign <= 14 ? "Relance conseillée" : "⚠️ Long, optimise ton pitch"}
+                    {stats.avg_days_to_sign <= 3 ? "Très rapide" : stats.avg_days_to_sign <= 7 ? "Dans la moyenne" : stats.avg_days_to_sign <= 14 ? "Relance conseillée" : "Long, optimise ton pitch"}
                   </div>
                 </>
               ) : (

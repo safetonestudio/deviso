@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect, useRef, useCallback } from "react";
-import { Bell } from "lucide-react";
+import { Bell, PenLine, Eye, X, Coins, type LucideIcon } from "lucide-react";
 import { useRouter } from "next/navigation";
 
 interface Notification {
@@ -20,13 +20,13 @@ interface Props {
   placement?: "sidebar" | "topbar";
 }
 
-function typeIcon(type: string) {
+function typeIcon(type: string): LucideIcon {
   switch (type) {
-    case "proposal_signed":   return "✍️";
-    case "proposal_viewed":   return "👁️";
-    case "proposal_declined": return "✕";
-    case "invoice_paid":      return "💰";
-    default:                  return "🔔";
+    case "proposal_signed":   return PenLine;
+    case "proposal_viewed":   return Eye;
+    case "proposal_declined": return X;
+    case "invoice_paid":      return Coins;
+    default:                  return Bell;
   }
 }
 
@@ -151,7 +151,7 @@ export function NotificationBell({ placement = "sidebar" }: Props) {
                     !n.read ? "bg-indigo-500/5" : ""
                   }`}
                 >
-                  <span className="text-xl mt-0.5 shrink-0">{typeIcon(n.type)}</span>
+                  {(() => { const Icon = typeIcon(n.type); return <Icon size={17} className="mt-0.5 shrink-0 text-indigo-400" />; })()}
                   <div className="flex-1 min-w-0">
                     <p
                       className={`text-sm font-semibold leading-snug ${

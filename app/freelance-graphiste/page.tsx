@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { FreelanceLanding } from "@/components/landing/FreelanceLanding";
+import { Handshake, MailOpen, Palette } from "lucide-react";
 
 export const metadata: Metadata = {
   title: "Devis et facturation pour graphistes freelances",
@@ -30,17 +31,17 @@ export default function Page() {
       heroSubtitle="Tu décris la mission, logo, charte, intégration. L'IA génère un devis structuré et professionnel. Ton client signe en ligne, tu factures en 1 clic."
       painPoints={[
         {
-          icon: "🎨",
+          icon: Palette,
           title: "Chiffrer un projet créatif prend du temps",
           desc: "Décomposer une identité visuelle en lots, estimer les révisions, structurer les conditions, c'est un travail à part entière. Deviso le fait en 30 secondes à ta place.",
         },
         {
-          icon: "🤝",
+          icon: Handshake,
           title: "Les clients modifient après validation",
           desc: "Un devis signé électroniquement est un engagement. Deviso génère une preuve d'acceptation horodatée, les allers-retours sans fin appartiennent au passé.",
         },
         {
-          icon: "📬",
+          icon: MailOpen,
           title: "Les relances manuelles tombent dans l'oubli",
           desc: "Tu envoies le devis, le client disparaît. Deviso relance automatiquement après 3, 7 ou 14 jours. Tu ne perds plus une mission par oubli.",
         },

@@ -25,7 +25,7 @@ const STEPS_OWNER = [
   },
   {
     target: "paiements",
-    title: "💳 Paiements clients · à configurer en priorité",
+    title: "Paiements clients · à configurer en priorité",
     body: "Indique ici comment tes clients te paient. Choisis un lien de paiement en ligne (Stripe, PayPal, Wise, SumUp, Lydia…) ou ton IBAN/BIC pour les virements, ou les deux. Ces informations s'affichent automatiquement sur chaque facture PDF et dans les emails envoyés à tes clients. Sans configuration, la création de facture est bloquée. Deviso ne prend aucune commission et ne touche jamais l'argent de tes clients.",
   },
   {

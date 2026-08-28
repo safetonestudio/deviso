@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { FreelanceLanding } from "@/components/landing/FreelanceLanding";
+import { AlarmClock, Camera, Coins } from "lucide-react";
 
 export const metadata: Metadata = {
   title: "Devis et facturation pour photographes freelances",
@@ -30,17 +31,17 @@ export default function Page() {
       heroSubtitle="Tu décris le reportage, shooting, retouches, droits d'auteur. L'IA génère un devis complet avec tous les postes. Acompte à la commande, solde après remise des fichiers."
       painPoints={[
         {
-          icon: "📸",
+          icon: Camera,
           title: "Chiffrer shooting + retouches + droits, c'est complexe",
           desc: "Forfait shooting, post-production, droits d'utilisation, frais de déplacement, l'IA de Deviso structure automatiquement chaque poste à partir de ta description.",
         },
         {
-          icon: "💰",
+          icon: Coins,
           title: "L'acompte avant, le solde après livraison",
           desc: "Deviso génère une facture d'acompte à la signature du devis, puis la facture de solde quand tu livres les fichiers. Numérotation automatique, PDFs conformes.",
         },
         {
-          icon: "⏰",
+          icon: AlarmClock,
           title: "Facturer juste après l'événement, en déplacement",
           desc: "En 30 secondes depuis ton téléphone, tu envoies le devis pendant que tu ranges ton matériel. Ton client signe sur son téléphone, tu es payé plus vite.",
         },

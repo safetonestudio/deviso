@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { FreelanceLanding } from "@/components/landing/FreelanceLanding";
+import { Banknote, Landmark, Settings } from "lucide-react";
 
 export const metadata: Metadata = {
   title: "Devis et facturation pour développeurs freelances",
@@ -30,17 +31,17 @@ export default function Page() {
       heroSubtitle="Tu décris le projet, stack, fonctionnalités, délai. L'IA structure le devis en lots techniques. Ton client signe en ligne, tu factures acompte puis solde en 1 clic."
       painPoints={[
         {
-          icon: "⚙️",
+          icon: Settings,
           title: "Estimer un projet tech est un art",
           desc: "Décomposer en sprints, estimer les imprévus, chiffrer les intégrations tierces, ça prend des heures. L'IA de Deviso structure le devis en quelques secondes à partir de ta description.",
         },
         {
-          icon: "🏛️",
+          icon: Landmark,
           title: "Facturer le secteur public avec Chorus Pro",
           desc: "DSI, collectivités, ministères, le dépôt Chorus Pro est obligatoire. Deviso le fait en 1 clic directement depuis la facture, sans quitter l'interface.",
         },
         {
-          icon: "💸",
+          icon: Banknote,
           title: "Acompte à la commande, solde à la livraison",
           desc: "Deviso génère automatiquement une facture d'acompte puis une facture de solde, numérotées AC-/SLD-, avec les bons montants. Zéro calcul, zéro erreur.",
         },

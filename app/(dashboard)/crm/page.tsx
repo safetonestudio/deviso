@@ -2,7 +2,7 @@
 
 import { useEffect, useState, useMemo } from "react";
 import Link from "next/link";
-import { Phone, Pencil, Check, X } from "lucide-react";
+import { Phone, Pencil, Check, X, Users, CircleCheck, Euro, type LucideIcon } from "lucide-react";
 import { UpgradeButton } from "@/components/UpgradeButton";
 import { GuidedTourBanner } from "@/components/GuidedTourBanner";
 
@@ -185,7 +185,7 @@ export default function CRMPage() {
   if (!isPro) {
     return (
       <div className="max-w-lg mx-auto mt-24 text-center space-y-4">
-        <div className="text-4xl">👥</div>
+        <Users size={36} className="mx-auto text-gray-600" />
         <h1 className="text-2xl font-semibold text-white">Clients & Revenus</h1>
         <p className="text-gray-400">
           L&apos;historique complet par client est réservé au plan Pro.
@@ -236,9 +236,9 @@ export default function CRMPage() {
           lit la valeur exacte plutôt que l'ordre de grandeur. */}
       <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 sm:gap-4">
         {[
-          { label: "Clients", value: totalClients, icon: "👥", large: false },
-          { label: "Devis signés", value: totalSigned, icon: "✅", large: false },
-          { label: "CA encaissé", value: fmt(totalCA), icon: "💶", large: true },
+          { label: "Clients", value: totalClients, icon: Users as LucideIcon, large: false },
+          { label: "Devis signés", value: totalSigned, icon: CircleCheck as LucideIcon, large: false },
+          { label: "CA encaissé", value: fmt(totalCA), icon: Euro as LucideIcon, large: true },
         ].map((s) => (
           <div
             key={s.label}
@@ -246,7 +246,7 @@ export default function CRMPage() {
               s.large ? "col-span-2 sm:col-span-1" : ""
             }`}
           >
-            <div className="w-8 h-8 flex items-center justify-center text-lg bg-ds-elevated rounded-lg">{s.icon}</div>
+            <div className="w-8 h-8 flex items-center justify-center bg-ds-elevated rounded-lg text-indigo-400"><s.icon size={18} /></div>
             <div>
               <div className="text-xs font-medium text-gray-600 uppercase tracking-wider mb-1">{s.label}</div>
               <div className="text-2xl sm:text-3xl font-semibold text-white tabular-nums tracking-tight break-words">
@@ -267,7 +267,7 @@ export default function CRMPage() {
 
       {filtered.length === 0 ? (
         <div className="bg-ds-surface border border-ds-border rounded-xl p-16 text-center">
-          <div className="text-4xl mb-3">👥</div>
+          <Users size={32} className="mx-auto mb-3 text-gray-600" />
           <p className="text-gray-400 font-medium">Aucun client trouvé</p>
           <p className="text-sm text-gray-500 mt-1">Vos clients apparaîtront ici dès que vous créerez un devis ou une facture.</p>
           <Link href="/proposals/new" className="inline-block mt-4 px-4 py-2 bg-indigo-600 text-white text-sm font-medium rounded-lg hover:bg-indigo-500">

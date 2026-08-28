@@ -2,69 +2,105 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import { Clock, CheckCircle } from "lucide-react";
+import {
+  Clock,
+  CheckCircle,
+  Check,
+  FileText,
+  Receipt,
+  Package,
+  Sparkles,
+  Wallet,
+  Palette,
+  Bell,
+  UsersRound,
+  FileSpreadsheet,
+  LayoutDashboard,
+  Users,
+  BarChart3,
+  LayoutTemplate,
+  Settings,
+  type LucideIcon,
+} from "lucide-react";
 import { useGuidedTour } from "@/hooks/useGuidedTour";
 
-const GUIDES = [
+/**
+ * Icônes : `lucide-react` uniquement, jamais d'emoji.
+ *
+ * Les emoji sont rendus par la police du système : multicolores, et différents
+ * sur chaque appareil. À côté d'une barre latérale en lucide (monochrome, trait
+ * fin), ça fait deux identités visuelles dans la même page. Quand une entrée
+ * correspond à une page du menu, on reprend **la même icône que
+ * `lib/navigation.ts`** — l'utilisateur doit reconnaître la page au même dessin
+ * des deux côtés.
+ */
+
+const GUIDES: {
+  slug: string;
+  icon: LucideIcon;
+  title: string;
+  desc: string;
+  time: number;
+}[] = [
   {
     slug: "premier-devis",
-    emoji: "📄",
+    icon: FileText,
     title: "Créer son premier devis en 3 min",
     desc: "Étapes, raccourcis et bons réflexes pour un premier devis réussi.",
     time: 4,
   },
   {
     slug: "devis-a-facture",
-    emoji: "🧾",
+    icon: Receipt,
     title: "Du devis à la facture : acompte et solde",
     desc: "Transforme un devis accepté en facturation pro en 2 clics.",
     time: 4,
   },
   {
     slug: "catalogue-prestations",
-    emoji: "📦",
+    icon: Package,
     title: "Maîtriser son catalogue de prestations",
     desc: "Crée tes forfaits et taux horaires une fois, réutilise-les partout.",
     time: 3,
   },
   {
     slug: "catalogue-ia",
-    emoji: "🤖",
+    icon: Sparkles,
     title: "Catalogue & IA : pourquoi ça change tout",
     desc: "Un catalogue bien renseigné = des devis IA précis dès le premier jet.",
     time: 5,
   },
   {
     slug: "paiements-clients",
-    emoji: "💳",
+    icon: Wallet,
     title: "Configurer ses paiements clients",
     desc: "IBAN, lien de paiement : comment tes clients règlent depuis la facture.",
     time: 3,
   },
   {
     slug: "personnaliser-documents",
-    emoji: "🎨",
+    icon: Palette,
     title: "Personnaliser son profil et ses documents",
     desc: "Logo, couleurs, CGV : soigne ton image à chaque devis envoyé.",
     time: 3,
   },
   {
     slug: "suivre-relancer-devis",
-    emoji: "🔔",
+    icon: Bell,
     title: "Suivre et relancer ses devis",
     desc: "Sache exactement où en est chaque devis et relance au bon moment.",
     time: 4,
   },
   {
     slug: "gerer-equipe",
-    emoji: "👥",
+    icon: UsersRound,
     title: "Gérer son équipe sur Deviso",
     desc: "Inviter des membres, configurer les validations, comprendre les rôles.",
     time: 4,
   },
   {
     slug: "exports-comptables",
-    emoji: "📊",
+    icon: FileSpreadsheet,
     title: "Exporter sa comptabilité",
     desc: "FEC, CSV, récap mensuel : tout ce dont ton comptable a besoin.",
     time: 3,
@@ -73,16 +109,16 @@ const GUIDES = [
 
 const STORAGE_KEY = "deviso_guides_read";
 
-const PAGES = [
-  { icon: "🏠", label: "Tableau de bord", desc: "KPIs, alertes et vue d'ensemble de votre activité" },
-  { icon: "📄", label: "Devis", desc: "Créer, envoyer et suivre vos devis" },
-  { icon: "🧾", label: "Factures", desc: "Factures Factur-X, récurrentes et exports" },
-  { icon: "💳", label: "Paiements clients", desc: "Configurer vos moyens de paiement (IBAN, lien)" },
-  { icon: "👥", label: "Clients & Revenus", desc: "CRM automatique et suivi des revenus" },
-  { icon: "📊", label: "Performance", desc: "Analytics et exports comptables" },
-  { icon: "📁", label: "Modèles de devis", desc: "Créer des devis types réutilisables (Pro)" },
-  { icon: "👤", label: "Équipe", desc: "Multi-utilisateurs et validation (Pro)" },
-  { icon: "⚙️", label: "Paramètres", desc: "Profil, apparence et domaine email personnalisé" },
+const PAGES: { icon: LucideIcon; label: string; desc: string }[] = [
+  { icon: LayoutDashboard, label: "Tableau de bord", desc: "KPIs, alertes et vue d'ensemble de votre activité" },
+  { icon: FileText, label: "Devis", desc: "Créer, envoyer et suivre vos devis" },
+  { icon: Receipt, label: "Factures", desc: "Factures Factur-X, récurrentes et exports" },
+  { icon: Wallet, label: "Paiements clients", desc: "Configurer vos moyens de paiement (IBAN, lien)" },
+  { icon: Users, label: "Clients & Revenus", desc: "CRM automatique et suivi des revenus" },
+  { icon: BarChart3, label: "Performance", desc: "Analytics et exports comptables" },
+  { icon: LayoutTemplate, label: "Modèles de devis", desc: "Créer des devis types réutilisables (Pro)" },
+  { icon: UsersRound, label: "Équipe", desc: "Multi-utilisateurs et validation (Pro)" },
+  { icon: Settings, label: "Paramètres", desc: "Profil, apparence et domaine email personnalisé" },
 ];
 
 export default function PriseEnMainPage() {
@@ -138,7 +174,7 @@ export default function PriseEnMainPage() {
 
         {enabled && (
           <div className="mt-4 flex items-center gap-2 bg-indigo-500/10 border border-indigo-500/20 rounded-lg px-3 py-2">
-            <span className="text-indigo-400 text-sm">✓</span>
+            <Check size={16} className="text-indigo-400 shrink-0" />
             <span className="text-sm text-indigo-300">Mode guidé actif, des explications apparaissent sur toutes les pages</span>
           </div>
         )}
@@ -161,13 +197,16 @@ export default function PriseEnMainPage() {
         <div className="space-y-2">
           {GUIDES.map((guide) => {
             const isRead = readSlugs.has(guide.slug);
+            const Icon = guide.icon;
             return (
               <Link
                 key={guide.slug}
                 href={`/prise-en-main/${guide.slug}`}
                 className="flex items-center gap-4 bg-ds-surface hover:bg-ds-elevated border border-ds-border hover:border-indigo-500/30 rounded-xl px-4 py-3.5 transition-all group"
               >
-                <span className="text-xl shrink-0 w-7 text-center">{guide.emoji}</span>
+                <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-ds-elevated border border-ds-border text-indigo-400 group-hover:border-indigo-500/30 transition-colors">
+                  <Icon size={18} />
+                </span>
                 <div className="flex-1 min-w-0">
                   <p className="text-sm font-medium text-white group-hover:text-indigo-200 transition-colors leading-snug">
                     {guide.title}
@@ -202,18 +241,23 @@ export default function PriseEnMainPage() {
       <section className="bg-ds-surface border border-ds-border rounded-xl p-5">
         <h2 className="font-semibold text-white mb-4 text-sm">Pages couvertes par le mode guidé</h2>
         <div className="space-y-3">
-          {PAGES.map((page) => (
-            <div key={page.label} className="flex items-center gap-3 py-2 border-b border-ds-border last:border-0">
-              <span className="text-lg w-7 shrink-0 text-center">{page.icon}</span>
-              <div>
-                <p className="text-sm font-medium text-white">{page.label}</p>
-                <p className="text-xs text-gray-500">{page.desc}</p>
+          {PAGES.map((page) => {
+            const Icon = page.icon;
+            return (
+              <div key={page.label} className="flex items-center gap-3 py-2 border-b border-ds-border last:border-0">
+                <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-ds-elevated border border-ds-border text-gray-400">
+                  <Icon size={17} />
+                </span>
+                <div>
+                  <p className="text-sm font-medium text-white">{page.label}</p>
+                  <p className="text-xs text-gray-500">{page.desc}</p>
+                </div>
+                {enabled && (
+                  <span className="ml-auto text-xs text-indigo-400 font-medium shrink-0">Actif</span>
+                )}
               </div>
-              {enabled && (
-                <span className="ml-auto text-xs text-indigo-400 font-medium shrink-0">Actif</span>
-              )}
-            </div>
-          ))}
+            );
+          })}
         </div>
       </section>
 

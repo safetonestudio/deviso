@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
 import Image from "next/image";
 import { ProposalDocument } from "@/components/ProposalDocument";
+import { FileQuestion, CircleCheck, CircleX, PenLine } from "lucide-react";
 import type { Proposal, Profile } from "@/types";
 
 export default function PublicProposalPage() {
@@ -90,7 +91,7 @@ export default function PublicProposalPage() {
     return (
       <div className="min-h-screen bg-ds-elevated/30 flex items-center justify-center">
         <div className="text-center">
-          <p className="text-2xl mb-2">😕</p>
+          <FileQuestion size={30} className="mx-auto mb-2 text-gray-500" />
           <p className="text-gray-400 font-medium">Devis introuvable</p>
           <p className="text-gray-500 text-sm mt-1">Ce lien est invalide ou a expiré.</p>
         </div>
@@ -127,7 +128,7 @@ export default function PublicProposalPage() {
         {/* Statut */}
         {done === "signed" && (
           <div className="bg-green-50 border border-green-200 rounded-xl px-5 py-4 mb-6 flex items-center gap-3">
-            <span className="text-2xl">✅</span>
+            <CircleCheck size={24} className="shrink-0 text-green-600" />
             <div>
               <p className="font-semibold text-green-800">Devis signé</p>
               <p className="text-green-600 text-sm">
@@ -139,7 +140,7 @@ export default function PublicProposalPage() {
         )}
         {done === "declined" && (
           <div className="bg-red-500/10 border border-red-200 rounded-xl px-5 py-4 mb-6 flex items-center gap-3">
-            <span className="text-2xl">❌</span>
+            <CircleX size={24} className="shrink-0 text-red-600" />
             <div>
               <p className="font-semibold text-red-800">Devis refusé</p>
               <p className="text-red-400 text-sm">Votre réponse a bien été enregistrée.</p>
@@ -217,7 +218,7 @@ export default function PublicProposalPage() {
                     disabled={acting || !canSign}
                     className="flex-grow bg-indigo-600 text-white font-semibold py-3 px-8 rounded-xl hover:bg-indigo-700 disabled:opacity-40 disabled:cursor-not-allowed transition-colors text-sm"
                   >
-                    {acting ? "Enregistrement…" : "✍️ Signer le devis"}
+                    <span className="inline-flex items-center justify-center gap-2">{!acting && <PenLine size={17} className="shrink-0" />}{acting ? "Enregistrement…" : "Signer le devis"}</span>
                   </button>
                 </div>
 
@@ -250,7 +251,7 @@ export default function PublicProposalPage() {
                     disabled={acting}
                     className="flex-2 flex-grow bg-indigo-600 text-white font-semibold py-3 px-8 rounded-xl hover:bg-indigo-700 disabled:opacity-50 transition-colors"
                   >
-                    {acting ? "Enregistrement…" : "✍️ Accepter et signer"}
+                    <span className="inline-flex items-center justify-center gap-2">{!acting && <PenLine size={17} className="shrink-0" />}{acting ? "Enregistrement…" : "Accepter et signer"}</span>
                   </button>
                 </div>
               </>

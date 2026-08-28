@@ -5,6 +5,16 @@ import { useParams, useRouter } from "next/navigation";
 import Link from "next/link";
 import { GuidedTourBanner } from "@/components/GuidedTourBanner";
 import { FacturXCompliance } from "@/components/FacturXCompliance";
+import {
+  Send,
+  CreditCard,
+  MailCheck,
+  Check,
+  Bell,
+  Download,
+  RadioTower,
+  Landmark,
+} from "lucide-react";
 import type { Invoice } from "@/types";
 
 const STATUS_LABEL: Record<string, string> = {
@@ -242,8 +252,8 @@ function ActionPanel({ invoice, id, router, hasChorusPro }: {
             disabled={sendingEmail}
             className="w-full bg-indigo-600 hover:bg-indigo-500 disabled:opacity-50 text-white text-sm font-semibold px-4 py-2.5 rounded-lg transition-colors text-left flex items-center gap-2"
           >
-            <span>📤</span>
-            <span>{emailSent ? "✓ Envoyée !" : sendingEmail ? "Envoi en cours…" : "Envoyer au client"}</span>
+            <Send size={17} className="shrink-0" />
+            <span className="flex items-center gap-1.5">{emailSent && <Check size={16} className="shrink-0" />}{emailSent ? "Envoyée !" : sendingEmail ? "Envoi en cours…" : "Envoyer au client"}</span>
           </button>
         )}
 
@@ -257,7 +267,7 @@ function ActionPanel({ invoice, id, router, hasChorusPro }: {
                 disabled={generatingLink}
                 className="w-full text-sm font-medium px-4 py-2.5 rounded-lg border border-ds-border hover:bg-ds-elevated/60 text-gray-300 disabled:opacity-50 transition-colors text-left flex items-center gap-2"
               >
-                <span>💳</span>
+                <CreditCard size={17} className="shrink-0" />
                 <span>{generatingLink ? "Génération…" : inv.payment_link_url ? "Copier lien paiement" : "Lien de paiement"}</span>
               </button>
             )}
@@ -267,7 +277,7 @@ function ActionPanel({ invoice, id, router, hasChorusPro }: {
                 disabled={markingSent}
                 className="w-full text-sm font-medium px-4 py-2.5 rounded-lg border border-ds-border hover:bg-ds-elevated/60 text-gray-300 disabled:opacity-50 transition-colors text-left flex items-center gap-2"
               >
-                <span>📨</span>
+                <MailCheck size={17} className="shrink-0" />
                 <span>{markingSent ? "Mise à jour…" : "Marquer comme envoyée"}</span>
               </button>
             )}
@@ -277,7 +287,7 @@ function ActionPanel({ invoice, id, router, hasChorusPro }: {
                 disabled={markingPaid}
                 className="w-full text-sm font-medium px-4 py-2.5 rounded-lg border border-emerald-500/30 hover:bg-emerald-500/10 text-emerald-400 disabled:opacity-50 transition-colors text-left flex items-center gap-2"
               >
-                <span>✓</span>
+                <Check size={17} className="shrink-0" />
                 <span>{markingPaid ? "Mise à jour…" : "Marquer comme payée"}</span>
               </button>
             )}
@@ -287,7 +297,7 @@ function ActionPanel({ invoice, id, router, hasChorusPro }: {
                 disabled={sendingReminder}
                 className="w-full text-sm font-medium px-4 py-2.5 rounded-lg border border-amber-500/30 hover:bg-amber-500/10 text-amber-400 disabled:opacity-50 transition-colors text-left flex items-center gap-2"
               >
-                <span>🔔</span>
+                <Bell size={17} className="shrink-0" />
                 <span>{sendingReminder ? "Envoi…" : inv.reminder_count > 0 ? `Relancer (${inv.reminder_count}/3)` : "Relancer le client"}</span>
               </button>
             )}
@@ -301,7 +311,7 @@ function ActionPanel({ invoice, id, router, hasChorusPro }: {
           disabled={downloading}
           className="w-full text-sm font-medium px-4 py-2.5 rounded-lg border border-ds-border hover:bg-ds-elevated/60 text-gray-400 disabled:opacity-50 transition-colors text-left flex items-center gap-2"
         >
-          <span>↓</span>
+          <Download size={17} className="shrink-0" />
           <span>{downloading ? "Génération…" : "Télécharger Factur-X PDF"}</span>
         </button>
 
@@ -311,14 +321,14 @@ function ActionPanel({ invoice, id, router, hasChorusPro }: {
             disabled={emission}
             className="w-full text-sm font-medium px-4 py-2.5 rounded-lg border border-indigo-500/30 hover:bg-indigo-500/10 text-indigo-400 disabled:opacity-50 transition-colors text-left flex items-center gap-2"
           >
-            <span>📡</span>
+            <RadioTower size={17} className="shrink-0" />
             <span>{emission ? "Transmission…" : "Transmettre à la Plateforme Agréée"}</span>
           </button>
         )}
 
         {dejaTransmise && (
           <div className="w-full text-sm px-4 py-2.5 rounded-lg border border-emerald-500/20 bg-emerald-500/5 text-emerald-400 flex items-center gap-2">
-            <span>📡</span>
+            <RadioTower size={17} className="shrink-0" />
             <span>Transmise à la Plateforme Agréée</span>
           </div>
         )}
@@ -333,7 +343,7 @@ function ActionPanel({ invoice, id, router, hasChorusPro }: {
             disabled={depositingChorus}
             className="w-full text-sm font-medium px-4 py-2.5 rounded-lg border border-blue-500/30 hover:bg-blue-500/10 text-blue-400 disabled:opacity-50 transition-colors text-left flex items-center gap-2"
           >
-            <span>🏛</span>
+            <Landmark size={17} className="shrink-0" />
             <span>{depositingChorus ? "Dépôt en cours…" : "Déposer sur Chorus Pro"}</span>
           </button>
         )}
@@ -341,7 +351,7 @@ function ActionPanel({ invoice, id, router, hasChorusPro }: {
         {chorusRef && (
           <div className="rounded-lg bg-blue-500/10 border border-blue-500/20 overflow-hidden">
             <div className="flex items-center gap-2 px-4 py-2.5">
-              <span className="text-blue-400 text-sm">🏛</span>
+              <Landmark size={16} className="shrink-0 text-blue-400" />
               <div className="flex-1 min-w-0">
                 <p className="text-xs text-blue-300 font-medium">Chorus Pro #{chorusRef}</p>
                 {chorusStatus && (

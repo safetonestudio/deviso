@@ -2,6 +2,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/client";
+import { MailCheck } from "lucide-react";
 
 export default function ForgotPasswordPage() {
   const [email, setEmail] = useState("");
@@ -41,7 +42,7 @@ export default function ForgotPasswordPage() {
         <div className="bg-ds-surface rounded-2xl border border-ds-border p-8">
           {sent ? (
             <div className="text-center">
-              <div className="text-4xl mb-4">📬</div>
+              <MailCheck size={36} className="mx-auto mb-4 text-indigo-400" />
               <h1 className="text-xl font-semibold text-white mb-2">Email envoyé !</h1>
               <p className="text-gray-400 text-sm mb-6">
                 Un lien de réinitialisation a été envoyé à <strong className="text-white">{email}</strong>. Vérifie ta boîte mail.

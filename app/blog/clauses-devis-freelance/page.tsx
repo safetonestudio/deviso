@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { NavbarMobile } from "@/components/NavbarMobile";
 import { WaitlistButton } from "@/components/landing/WaitlistButton";
+import { Lightbulb } from "lucide-react";
 
 export const metadata: Metadata = {
   title: "Clauses indispensables d'un devis freelance",
@@ -390,7 +391,7 @@ export default function Page() {
 
                 {/* Tip */}
                 <div className="flex gap-3 bg-ds-elevated rounded-xl p-4 border border-ds-border">
-                  <span className="text-indigo-400 text-sm mt-0.5 flex-shrink-0">💡</span>
+                  <Lightbulb size={17} className="text-indigo-400 mt-0.5 flex-shrink-0" />
                   <p className="text-xs text-gray-400 leading-relaxed">{clause.tip}</p>
                 </div>
               </section>

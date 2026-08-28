@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useGuidedTour } from "@/hooks/useGuidedTour";
+import { Lightbulb } from "lucide-react";
 
 type PageKey =
   | "dashboard"
@@ -87,7 +88,7 @@ export function GuidedTourBanner({ pageKey }: GuidedTourBannerProps) {
 
   return (
     <div className="bg-indigo-500/8 border border-indigo-500/25 rounded-xl px-4 py-4 mb-6 flex items-start gap-3">
-      <span className="text-lg shrink-0 mt-0.5">💡</span>
+      <Lightbulb size={17} className="shrink-0 mt-0.5 text-indigo-400" />
       <div className="flex-1 min-w-0">
         <p className="font-semibold text-indigo-300 text-sm mb-1">{content.title}</p>
         <p className="text-xs text-indigo-200/70 leading-relaxed">{content.body}</p>

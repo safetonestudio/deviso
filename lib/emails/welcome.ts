@@ -33,7 +33,7 @@ export function welcomeEmailHtml(firstName: string): string {
             <td style="background:#fff;border-radius:16px;border:1px solid #e2e8f0;padding:40px 40px 32px;">
 
               <p style="margin:0 0 8px;font-size:24px;font-weight:800;color:#0f172a;">
-                Bienvenue ${name} 👋
+                Bienvenue ${name}
               </p>
               <p style="margin:0 0 24px;font-size:15px;color:#64748b;line-height:1.6;">
                 Ton compte Deviso est actif. Tu peux maintenant créer des devis professionnels en quelques secondes grâce à l'IA, et les envoyer à tes clients pour signature.
@@ -43,19 +43,19 @@ export function welcomeEmailHtml(firstName: string): string {
               <table width="100%" cellpadding="0" cellspacing="0" style="margin-bottom:28px;">
                 <tr>
                   <td style="padding:12px 0;border-bottom:1px solid #f1f5f9;">
-                    <span style="font-size:18px;">⚡</span>
+                    <span style="display:inline-block;width:6px;height:6px;border-radius:50%;background:#4f46e5;vertical-align:middle;"></span>
                     <span style="font-size:14px;color:#0f172a;font-weight:600;margin-left:10px;">Devis généré par IA en 30 secondes</span>
                   </td>
                 </tr>
                 <tr>
                   <td style="padding:12px 0;border-bottom:1px solid #f1f5f9;">
-                    <span style="font-size:18px;">✍️</span>
+                    <span style="display:inline-block;width:6px;height:6px;border-radius:50%;background:#4f46e5;vertical-align:middle;"></span>
                     <span style="font-size:14px;color:#0f172a;font-weight:600;margin-left:10px;">Signature client en ligne intégrée</span>
                   </td>
                 </tr>
                 <tr>
                   <td style="padding:12px 0;">
-                    <span style="font-size:18px;">🧾</span>
+                    <span style="display:inline-block;width:6px;height:6px;border-radius:50%;background:#4f46e5;vertical-align:middle;"></span>
                     <span style="font-size:14px;color:#0f172a;font-weight:600;margin-left:10px;">Factures Factur-X conformes 2026/2027</span>
                   </td>
                 </tr>

@@ -4,6 +4,7 @@ import { NavbarMobile } from "@/components/NavbarMobile";
 import { DemoButton } from "@/components/landing/DemoButton";
 import { WaitlistButton } from "@/components/landing/WaitlistButton";
 import { PricingSection } from "@/components/landing/PricingSection";
+import { Zap, PenLine, Bell, FileText, BarChart3, Timer, Heart, type LucideIcon } from "lucide-react";
 
 export const metadata: Metadata = {
   title: "Deviso, Logiciel devis et facturation pour freelances français",
@@ -47,32 +48,32 @@ const jsonLd = {
 
 const features = [
   {
-    icon: "⚡",
+    icon: Zap as LucideIcon,
     title: "Devis par IA en 30 secondes",
     desc: "Tu décris ta mission en quelques phrases. L'IA génère un devis complet, chiffré, structuré, prêt à envoyer. Aucun logiciel concurrent ne fait ça.",
   },
   {
-    icon: "✍️",
+    icon: PenLine as LucideIcon,
     title: "Signature électronique",
     desc: "Ton client reçoit un lien sécurisé, ouvre le devis sur son téléphone et signe en quelques secondes. Tu es notifié instantanément.",
   },
   {
-    icon: "🔔",
+    icon: Bell as LucideIcon,
     title: "Relances automatiques",
     desc: "Après 3, 7 ou 14 jours sans réponse, Deviso relance ton client à ta place. Tu configures le délai et le message, Deviso s'occupe du reste.",
   },
   {
-    icon: "📄",
+    icon: FileText as LucideIcon,
     title: "Factur-X + Chorus Pro",
     desc: "Facture électronique conforme à la réforme 2026 en 1 clic. Dépôt Chorus Pro pour le secteur public directement depuis la facture, sans quitter Deviso.",
   },
   {
-    icon: "📊",
+    icon: BarChart3 as LucideIcon,
     title: "Widget CA URSSAF",
     desc: "Ton chiffre d'affaires mensuel et trimestriel affiché en temps réel dans le tableau de bord. Tu sais exactement quoi déclarer, sans calculer.",
   },
   {
-    icon: "⏱️",
+    icon: Timer as LucideIcon,
     title: "Suivi du temps & catalogue",
     desc: "Facture à l'heure ou au forfait. Catalogue de prestations réutilisable en un clic, avec sélecteur de durée directement dans le devis.",
   },
@@ -202,7 +203,7 @@ export default function LandingPage() {
               </div>
               <div className="flex items-center gap-3 mb-5">
                 <div className="flex-1 h-9 bg-indigo-600 rounded-lg flex items-center justify-center text-sm font-semibold">
-                  ⚡ Générer le devis
+                  <span className="inline-flex items-center gap-1.5"><Zap size={16} className="shrink-0" />Générer le devis</span>
                 </div>
               </div>
               <div className="bg-white rounded-xl p-4">
@@ -277,7 +278,7 @@ export default function LandingPage() {
                 key={f.title}
                 className="bg-ds-surface border border-white/[0.07] rounded-xl p-5 hover:border-white/[0.14] transition-colors"
               >
-                <div className="text-xl mb-3" aria-hidden="true">{f.icon}</div>
+                <div className="mb-3 text-indigo-400" aria-hidden="true"><f.icon size={20} /></div>
                 <h3 className="text-sm font-semibold text-white mb-1.5">{f.title}</h3>
                 <p className="text-gray-500 text-sm leading-relaxed">{f.desc}</p>
               </div>
@@ -397,7 +398,7 @@ export default function LandingPage() {
             </div>
           </div>
           <div className="border-t border-white/[0.04] pt-6 text-xs text-center">
-            © {new Date().getFullYear()} Deviso. Fait avec ❤️ en France.
+            © {new Date().getFullYear()} Deviso. Fait avec <Heart size={12} className="inline-block align-[-1px] fill-current text-red-500" aria-label="amour" /> en France.
           </div>
         </div>
       </footer>

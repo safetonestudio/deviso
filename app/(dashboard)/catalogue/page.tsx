@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Clock, Package } from "lucide-react";
+import { Clock, Package, Tag, Timer, type LucideIcon } from "lucide-react";
 import { UpgradeButton } from "@/components/UpgradeButton";
 import { GuidedTourBanner } from "@/components/GuidedTourBanner";
 import { usePlan, useIsMember } from "@/components/PlanContext";
@@ -112,7 +112,7 @@ export default function CataloguePage() {
           <p className="text-gray-500 text-sm mt-1">Sauvegardez vos prestations pour les réutiliser en un clic.</p>
         </div>
         <div className="bg-ds-surface border border-ds-border rounded-xl p-10 text-center">
-          <div className="text-4xl mb-3">📦</div>
+          <Package size={32} className="mx-auto mb-3 text-gray-600" />
           <p className="text-white font-semibold mb-1">Fonctionnalité Pro</p>
           <p className="text-gray-500 text-sm mb-6">
             Créez votre catalogue de prestations et insérez-les en un clic dans vos devis.
@@ -237,7 +237,7 @@ export default function CataloguePage() {
       >
         {fixedItems.length === 0 ? (
           <EmptyState
-            icon="🏷️"
+            icon={Tag}
             text="Aucune prestation à l'acte"
             sub={isMember ? "Le propriétaire n'a pas encore créé de prestations à l'acte." : "Forfaits, livrables uniques, tarifs fixes…"}
             onAdd={isMember ? null : () => openCreate("fixed")}
@@ -271,7 +271,7 @@ export default function CataloguePage() {
       >
         {hourlyItems.length === 0 ? (
           <EmptyState
-            icon="⏱️"
+            icon={Timer}
             text="Aucun taux horaire défini"
             sub={isMember ? "Le propriétaire n'a pas encore défini de taux horaires." : "Conseil, développement, formation… Tout ce qui se facture au temps."}
             onAdd={isMember ? null : () => openCreate("hourly")}
@@ -337,12 +337,12 @@ function Section({
   );
 }
 
-function EmptyState({ icon, text, sub, onAdd, addLabel }: {
-  icon: string; text: string; sub: string; onAdd: (() => void) | null; addLabel: string;
+function EmptyState({ icon: Icon, text, sub, onAdd, addLabel }: {
+  icon: LucideIcon; text: string; sub: string; onAdd: (() => void) | null; addLabel: string;
 }) {
   return (
     <div className="text-center py-8 border border-dashed border-ds-border rounded-xl">
-      <div className="text-2xl mb-2">{icon}</div>
+      <Icon size={22} className="mx-auto mb-2 text-gray-600" />
       <p className="text-gray-400 text-sm font-medium">{text}</p>
       <p className="text-gray-600 text-xs mt-0.5">{sub}</p>
       {onAdd && (
