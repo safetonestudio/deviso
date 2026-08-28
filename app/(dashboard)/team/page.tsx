@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { GuidedTourBanner } from "@/components/GuidedTourBanner";
 import { useIsMember } from "@/components/PlanContext";
+import { KpiCard } from "@/components/ui/KpiCard";
 import {
   UsersRound, TrendingUp, FileText, CheckCircle2,
   Mail, Crown, ChevronRight, ShieldCheck, Check, Hourglass,
@@ -207,20 +208,12 @@ export default function TeamPage() {
       {global && (
         <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
           {[
-            { label: "CA encaissé", value: fmt(global.ca_encaisse), icon: TrendingUp, color: "text-emerald-400" },
-            { label: "Pipeline ouvert", value: fmt(global.ca_pipeline), icon: ChevronRight, color: "text-indigo-400" },
-            { label: "Devis signés", value: `${global.proposals_signed} / ${global.proposals_sent}`, icon: CheckCircle2, color: "text-blue-400" },
-            { label: "Conversion équipe", value: `${global.conversion_rate}%`, icon: FileText, color: "text-violet-400" },
-          ].map(({ label, value, icon: Icon, color }) => (
-            <div key={label} className="bg-ds-surface border border-ds-border rounded-xl p-5">
-              <div className="flex items-center gap-2 mb-3">
-                <div className="w-6 h-6 rounded-md flex items-center justify-center bg-ds-elevated">
-                  <Icon size={13} className="text-gray-500" />
-                </div>
-                <span className="text-xs font-medium text-gray-600 uppercase tracking-wider">{label}</span>
-              </div>
-              <p className="text-2xl font-semibold text-white tabular-nums tracking-tight">{value}</p>
-            </div>
+            { label: "CA encaissé", value: fmt(global.ca_encaisse), icon: TrendingUp },
+            { label: "Pipeline ouvert", value: fmt(global.ca_pipeline), icon: ChevronRight },
+            { label: "Devis signés", value: `${global.proposals_signed} / ${global.proposals_sent}`, icon: CheckCircle2 },
+            { label: "Conversion équipe", value: `${global.conversion_rate}%`, icon: FileText },
+          ].map(({ label, value, icon }) => (
+            <KpiCard key={label} label={label} value={value} icon={icon} />
           ))}
         </div>
       )}

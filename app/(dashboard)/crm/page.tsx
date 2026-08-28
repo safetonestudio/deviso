@@ -5,6 +5,7 @@ import Link from "next/link";
 import { Phone, Pencil, Check, X, Users, CircleCheck, Euro, type LucideIcon } from "lucide-react";
 import { UpgradeButton } from "@/components/UpgradeButton";
 import { GuidedTourBanner } from "@/components/GuidedTourBanner";
+import { KpiCard } from "@/components/ui/KpiCard";
 
 interface CRMProposal {
   id: string;
@@ -240,20 +241,13 @@ export default function CRMPage() {
           { label: "Devis signés", value: totalSigned, icon: CircleCheck as LucideIcon, large: false },
           { label: "CA encaissé", value: fmt(totalCA), icon: Euro as LucideIcon, large: true },
         ].map((s) => (
-          <div
+          <KpiCard
             key={s.label}
-            className={`bg-ds-surface border border-ds-border rounded-xl p-4 sm:p-6 flex flex-col gap-3 sm:gap-4 ${
-              s.large ? "col-span-2 sm:col-span-1" : ""
-            }`}
-          >
-            <div className="w-8 h-8 flex items-center justify-center bg-ds-elevated rounded-lg text-indigo-400"><s.icon size={18} /></div>
-            <div>
-              <div className="text-xs font-medium text-gray-600 uppercase tracking-wider mb-1">{s.label}</div>
-              <div className="text-2xl sm:text-3xl font-semibold text-white tabular-nums tracking-tight break-words">
-                {s.value}
-              </div>
-            </div>
-          </div>
+            label={s.label}
+            value={s.value}
+            icon={s.icon}
+            className={s.large ? "col-span-2 sm:col-span-1" : ""}
+          />
         ))}
       </div>
 

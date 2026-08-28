@@ -135,10 +135,10 @@ export default function StatsPage() {
       </div>
 
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-        <KpiCard label="CA encaissé (année)" value={fmt(stats.ca_ytd)} icon={TrendingUp} color="emerald" />
-        <KpiCard label="CA prévisionnel" value={fmt(stats.ca_previsionnel)} icon={Target} color="blue" />
-        <KpiCard label="Taux de conversion" value={`${stats.conversion_rate}%`} icon={Percent} color="indigo" />
-        <KpiCard label="Valeur moy. devis" value={fmt(stats.avg_proposal)} icon={FileText} color="zinc" />
+        <KpiCard label="CA encaissé (année)" value={fmt(stats.ca_ytd)} icon={TrendingUp} />
+        <KpiCard label="CA prévisionnel" value={fmt(stats.ca_previsionnel)} icon={Target} />
+        <KpiCard label="Taux de conversion" value={`${stats.conversion_rate}%`} icon={Percent} />
+        <KpiCard label="Valeur moy. devis" value={fmt(stats.avg_proposal)} icon={FileText} />
       </div>
 
       {/* CA mensuel, SVG area chart */}

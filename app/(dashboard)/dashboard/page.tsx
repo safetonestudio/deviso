@@ -203,7 +203,6 @@ export default async function DashboardPage() {
           label="Encours à encaisser"
           value={fmt(caToCollect)}
           icon={TrendingUp}
-          color={overdueAmount > 0 ? "amber" : caToCollect > 0 ? "indigo" : "zinc"}
           trend={overdueAmount > 0 ? `dont ${fmt(overdueAmount)} en retard` : sentInvoices.length > 0 ? `${sentInvoices.length} facture${sentInvoices.length > 1 ? "s" : ""} envoyée${sentInvoices.length > 1 ? "s" : ""}` : "Aucune en attente"}
         />
 
@@ -212,7 +211,6 @@ export default async function DashboardPage() {
           label="Devis en attente"
           value={pendingProposals.length > 0 ? fmt(totalDevisEnAttente) : "0"}
           icon={Send}
-          color={pendingProposals.length > 0 ? "blue" : "zinc"}
           trend={pendingProposals.length > 0
             ? `${pendingProposals.length} devis · plus ancien ${oldestDevisAge}j`
             : "Aucun devis en cours"}
@@ -223,7 +221,6 @@ export default async function DashboardPage() {
           label="Encaissé ce mois"
           value={fmt(caThisMonth)}
           icon={Euro}
-          color="emerald"
           trend={facturéThisMonth > caThisMonth
             ? `Facturé : ${fmt(facturéThisMonth)}`
             : facturéThisMonth > 0 ? "Tout encaissé ✓" : "Aucune facture ce mois"}
@@ -234,7 +231,6 @@ export default async function DashboardPage() {
           label="Signés à facturer"
           value={toInvoice.length > 0 ? fmt(toInvoiceAmount) : "0€"}
           icon={Clock}
-          color={toInvoice.length > 0 ? "amber" : "zinc"}
           trend={toInvoice.length > 0
             ? `${toInvoice.length} devis en attente`
             : "Tout est facturé ✓"}
