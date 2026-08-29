@@ -113,7 +113,10 @@ for (let i = 0; i < combien; i++) {
   const m = MODELES[i];
   const ht = Math.round(m.pu * m.q * 100) / 100;
   const ttc = Math.round(ht * 1.2 * 100) / 100;
-  const emission = jour(m.echeance - 30);
+  // BT-2 : la Plateforme Agréée refuse une date de facture postérieure à
+  // aujourd'hui. Une échéance lointaine ne doit donc pas repousser l'émission
+  // dans le futur — on la ramène à aujourd'hui au plus tard.
+  const emission = jour(Math.min(m.echeance - 30, 0));
 
   const creee = await appel("/api/invoices", {
     method: "POST",
@@ -123,8 +126,14 @@ for (let i = 0; i < combien; i++) {
       seller_street: "809 avenue du Languedoc",
       seller_postcode: "12100",
       seller_city: "Millau",
-      // Volontairement sans `client_directory_address` : on éprouve la
-      // résolution d'adresse telle qu'elle tourne en vrai, pas une saisie.
+      // L'adresse d'acheminement est donnée explicitement, et c'est
+      // indispensable ici. Les sociétés du bac à sable ne figurent pas à
+      // l'Annuaire national : la résolution retombe alors sur le SIREN nu,
+      // `0225:315143296` — que Tricatel ET Burger Queen partagent. La
+      // Plateforme Agréée accepte la facture, ne sait pas à qui la remettre, et
+      // la laisse à `api:uploaded` sans le dire. Six heures d'enquête le
+      // 29/08/2026 pour ça. Voir CLAUDE.md.
+      client_directory_address: "0225:315143296_57700",
       client_name: "Tricatel",
       client_company: "Tricatel",
       client_siren: SIREN_PARTAGE,

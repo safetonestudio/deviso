@@ -134,6 +134,7 @@ export type OperationCategory = "services" | "goods" | "mixed";
 export interface Invoice {
   /** Identifiant de la facture chez la Plateforme Agréée, une fois transmise. */
   superpdp_invoice_id?: string | null;
+  superpdp_adresse_source?: "saisie" | "annuaire" | "siren" | "aucune" | null;
   superpdp_status?: string | null;
   /** Horodatage d'envoi réussi du statut « Encaissée » (fr:212) à la Plateforme Agréée. */
   superpdp_encaisse_at?: string | null;

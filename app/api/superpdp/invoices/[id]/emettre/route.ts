@@ -165,6 +165,10 @@ export async function POST(req: NextRequest, ctx: { params: Promise<{ id: string
         superpdp_status: reponse.events?.at(-1)?.status_code ?? "api:uploaded",
         superpdp_status_date: new Date().toISOString(),
         superpdp_error: null,
+        // Conservé, pas seulement renvoyé : c'est ce qui permet, des jours plus
+        // tard, de savoir si une facture « transmise » l'a été à une adresse
+        // sûre ou à un SIREN nu qui peut ne désigner personne.
+        superpdp_adresse_source: sourceAdresse,
       })
       .eq("id", id)
       .eq("user_id", workspaceId);

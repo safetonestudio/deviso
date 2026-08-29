@@ -52,6 +52,7 @@ function etatPdp(inv: Invoice): {
   classe: string;
   aFaire: boolean;
   manques: string[];
+  alerte?: string;
 } | null {
   if (!transmissible(inv)) return null;
   if (inv.superpdp_encaisse_at)
@@ -60,8 +61,25 @@ function etatPdp(inv: Invoice): {
     return { texte: "Refusée par le client", classe: "bg-amber-500/10 text-amber-400", aFaire: false, manques: [] };
   if (inv.superpdp_status === "fr:213")
     return { texte: "Rejetée", classe: "bg-amber-500/10 text-amber-400", aFaire: false, manques: [] };
-  if (inv.superpdp_invoice_id)
+  if (inv.superpdp_invoice_id) {
+    // Une facture transmise à une adresse **déduite du SIREN** peut n'être
+    // jamais remise : si plusieurs entreprises partagent ce SIREN, la
+    // Plateforme Agréée l'accepte, ne sait pas à qui la donner, et ne le
+    // signale pas. Constaté le 29/08/2026 sur sept factures. Afficher
+    // « Transmise » tout court serait une promesse qu'on ne tient pas.
+    if (inv.superpdp_adresse_source === "siren")
+      return {
+        texte: "Transmise — adresse déduite",
+        classe: "bg-amber-500/10 text-amber-400",
+        aFaire: false,
+        manques: [],
+        alerte:
+          "L'adresse d'acheminement a été déduite du SIREN, faute d'entrée à l'Annuaire. " +
+          "Si le destinataire n'est pas joignable à cette adresse, la facture peut ne jamais lui être remise. " +
+          "Renseignez son adresse de facturation électronique pour lever le doute.",
+      };
     return { texte: "Transmise", classe: "bg-emerald-500/10 text-emerald-400", aFaire: false, manques: [] };
+  }
 
   // Une facture à laquelle il manque le SIREN du client ne peut pas partir.
   // Afficher « À transmettre » avec un bouton qui échouera serait un piège :
@@ -621,7 +639,7 @@ export default function InvoicesPage() {
                               );
                             return (
                               <span
-                                title={e.manques.length ? phraseManques(e.manques) : undefined}
+                                title={e.alerte ?? (e.manques.length ? phraseManques(e.manques) : undefined)}
                                 className={`inline-block px-2 py-0.5 rounded-full text-xs font-medium ${e.classe}`}
                               >
                                 {e.texte}
