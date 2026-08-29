@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
-import { getWorkspaceUserId } from "@/lib/workspace";
+import { getWorkspaceUserId, getWorkspaceProfile } from "@/lib/workspace";
 import { SyncButton } from "./SyncButton";
 import { BoutonRefus } from "./BoutonRefus";
 
@@ -92,6 +92,23 @@ export default async function FacturesRecues() {
   const workspaceId = await getWorkspaceUserId(user.id);
   const admin = createAdminClient();
 
+  // Quelle entreprise regarde-t-on, au juste.
+  //
+  // Le 29/08/2026, Selim a cherché pendant deux heures des factures reçues qui
+  // existaient bel et bien — sur son compte. Son navigateur était connecté au
+  // compte fournisseur, dont la boîte est vide par construction. Rien sur
+  // l'écran ne permettait de s'en apercevoir : l'adresse d'annuaire s'affichait
+  // bien, mais `0225:315143296_57700` et `..._57701` ne se distinguent que par
+  // un chiffre, et aucun humain ne retient ça.
+  //
+  // Une page qui montre le contenu d'un compte doit dire de quel compte il
+  // s'agit. C'est vrai pour quiconque a un compte de test à côté du sien.
+  const profil = await getWorkspaceProfile<{ company_name: string | null }>(
+    workspaceId,
+    "company_name"
+  );
+  const nomCompte = profil?.company_name?.trim() || user.email || "compte sans nom";
+
   const [{ data: raccordement }, { data: factures, error: erreurLecture }] = await Promise.all([
     admin
       .from("superpdp_connections")
@@ -122,6 +139,13 @@ export default async function FacturesRecues() {
           <h1 className="text-2xl font-semibold text-white">Factures reçues</h1>
           <p className="text-sm text-gray-500 mt-1">
             Les factures électroniques que vos fournisseurs vous adressent via la Plateforme Agréée.
+          </p>
+          <p className="text-xs text-gray-500 mt-2">
+            Compte affiché :{" "}
+            <span className="text-gray-300 font-medium">{nomCompte}</span>
+            {user.email && nomCompte !== user.email && (
+              <span className="text-gray-600"> · {user.email}</span>
+            )}
           </p>
         </div>
         {raccorde && <SyncButton derniere={raccordement?.last_sync_at ?? null} />}
