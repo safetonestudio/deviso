@@ -5,7 +5,7 @@ import { getWorkspaceUserId, getWorkspaceProfile } from "@/lib/workspace";
 import { superpdpFetch, getConnection, SuperPdpNotConnected, SuperPdpSessionPending } from "@/lib/superpdp";
 import { generateFacturXml } from "@/lib/invoice-xml";
 import { isB2CInvoice } from "@/lib/facturx-helpers";
-import { manquesPourEmission, phraseManques } from "@/lib/superpdp-precontrole";
+import { manquesPourEmission, phraseManques, transmissible } from "@/lib/superpdp-precontrole";
 import { natureOperation } from "@/lib/superpdp-nature";
 import { resoudreAdresseClient } from "@/lib/superpdp-annuaire";
 import type { Invoice } from "@/types";
@@ -67,6 +67,23 @@ export async function POST(req: NextRequest, ctx: { params: Promise<{ id: string
   // plateforme. La règle vit dans lib/superpdp-precontrole.ts et sert aussi à
   // l'interface : elle sait donc AVANT le clic si la transmission peut aboutir.
   const isB2C = isB2CInvoice(facture as unknown as Invoice);
+
+  // Un brouillon n'a pas d'existence, une facture annulée n'en a plus.
+  // `transmissible()` n'était appliqué que par la liste : un appel direct à
+  // cette route transmettait l'un ou l'autre à la Plateforme Agréée, de façon
+  // irréversible. Une règle qui ne vit que dans l'interface n'est pas une règle.
+  if (!transmissible(facture)) {
+    return NextResponse.json(
+      {
+        error: "Facture non transmissible",
+        message:
+          facture.status === "draft"
+            ? "Un brouillon ne peut pas être transmis. Envoyez d'abord la facture."
+            : "Une facture annulée ne peut pas être transmise.",
+      },
+      { status: 400 }
+    );
+  }
 
   const manques = manquesPourEmission(facture);
   if (manques.length) {
@@ -174,38 +191,102 @@ export async function POST(req: NextRequest, ctx: { params: Promise<{ id: string
     const texte = await res.text();
 
     if (!res.ok) {
-      // On conserve l'erreur : sans elle, l'utilisateur voit « échec » sans
-      // savoir quoi corriger, et nous non plus.
-      const detail = texte.slice(0, 1000);
+      // Une facture invalide et une panne de plateforme ne se disent pas
+      // pareil.
+      //
+      // La spec ne documente que deux échecs pour `POST /invoices` : `400
+      // bad_request` et `500 internal_server_error`, tous deux au format
+      // `http_ko` = `{ code, http_status_code, message }`. Les confondre sous
+      // « la Plateforme Agréée a refusé la facture » envoie l'utilisateur
+      // corriger une facture correcte pendant que le problème est chez eux.
+      //
+      // `message` porte l'avertissement « Do not use programmaticaly, there is
+      // no backward compatibility guarantee » : on l'affiche, on ne s'en sert
+      // pas pour décider. `code` est le seul champ exploitable, on le conserve.
+      let messagePdp: string | null = null;
+      let codePdp: number | null = null;
+      try {
+        const ko = JSON.parse(texte) as { code?: number; message?: string };
+        messagePdp = typeof ko.message === "string" ? ko.message : null;
+        codePdp = typeof ko.code === "number" ? ko.code : null;
+      } catch {
+        // Réponse non JSON : on garde le texte brut, c'est mieux que rien.
+      }
+
+      const panne = res.status >= 500;
+      const detail = (codePdp !== null ? `[${codePdp}] ` : "") + (messagePdp ?? texte.slice(0, 900));
+
       await admin
         .from("invoices")
-        .update({ superpdp_error: detail, superpdp_status_date: new Date().toISOString() })
+        .update({ superpdp_error: detail.slice(0, 1000), superpdp_status_date: new Date().toISOString() })
         .eq("id", id)
         .eq("user_id", workspaceId);
 
       console.error(`[superpdp/emettre] ${id} : HTTP ${res.status} ${detail.slice(0, 300)}`);
       return NextResponse.json(
         {
-          error: "Transmission refusée",
-          message:
-            "La Plateforme Agréée a refusé la facture. Le détail est enregistré sur la facture.",
+          error: panne ? "Plateforme indisponible" : "Facture refusée",
+          message: panne
+            ? "La Plateforme Agréée rencontre un incident. Votre facture n'a rien d'incorrect — réessayez dans quelques minutes."
+            : messagePdp
+              ? `La Plateforme Agréée a refusé la facture : ${messagePdp}`
+              : "La Plateforme Agréée a refusé la facture. Le détail est enregistré sur la facture.",
           detail,
+          code: codePdp,
+          reessayable: panne,
           // Remontée même en cas de refus : savoir d'où venait l'adresse du
           // destinataire est la première question qu'on se pose devant un rejet
           // d'acheminement, et la relire dans le XML coûte une session de
           // débogage.
           sourceAdresse,
         },
+        { status: panne ? 503 : 502 }
+      );
+    }
+
+    // La facture EXISTE désormais chez la Plateforme Agréée. Tout ce qui suit
+    // doit donc s'attacher à ne pas perdre son identifiant : sans lui, le
+    // garde-fou anti-doublon plus haut ne joue plus, et le prochain clic
+    // renvoie la même facture — le refus « DOUBLON » qu'on veut éviter.
+    let reponse: { id?: number; events?: { status_code?: string }[]; processing_rule?: string } = {};
+    try {
+      reponse = JSON.parse(texte);
+    } catch {
+      // Réponse 200 non JSON : l'émission a réussi mais on ne sait pas sous
+      // quel identifiant. Le dire est la seule attitude honnête — et le texte
+      // brut est conservé pour pouvoir retrouver la facture à la main.
+      console.error(`[superpdp/emettre] ${id} : réponse 200 illisible ${texte.slice(0, 300)}`);
+      await admin
+        .from("invoices")
+        .update({
+          superpdp_error: `Transmission acceptée mais réponse illisible : ${texte.slice(0, 800)}`,
+          superpdp_status_date: new Date().toISOString(),
+        })
+        .eq("id", id)
+        .eq("user_id", workspaceId);
+      return NextResponse.json(
+        {
+          error: "Réponse illisible",
+          message:
+            "La facture a été acceptée mais la Plateforme Agréée a renvoyé une réponse que nous n'avons pas su lire. " +
+            "Ne la retransmettez pas : elle risquerait d'arriver en double. Contactez-nous.",
+        },
         { status: 502 }
       );
     }
 
-    const reponse = JSON.parse(texte) as {
-      id?: number;
-      events?: { status_code?: string }[];
-    };
+    // `processing_rule` renvoyé est la règle QUE SUPER PDP A CALCULÉE, pas
+    // celle qu'on a déclarée. Un écart entre les deux est le seul signal
+    // objectif que notre classification B2B/B2C/B2BInt s'est trompée — notre
+    // détection du B2C reposant sur l'absence de raison sociale, elle peut se
+    // tromper en silence.
+    if (reponse.processing_rule && reponse.processing_rule !== nature) {
+      console.error(
+        `[superpdp/emettre] ${id} : nature déclarée ${nature}, calculée ${reponse.processing_rule}`
+      );
+    }
 
-    await admin
+    const { error: erreurEnregistrement } = await admin
       .from("invoices")
       .update({
         superpdp_invoice_id: reponse.id != null ? String(reponse.id) : null,
@@ -219,6 +300,23 @@ export async function POST(req: NextRequest, ctx: { params: Promise<{ id: string
       })
       .eq("id", id)
       .eq("user_id", workspaceId);
+
+    if (erreurEnregistrement) {
+      // Répondre « emise: true » ici serait le pire des deux mondes : la
+      // facture est partie, mais rien ne le note, donc le prochain clic la
+      // renverra. On préfère un message explicite qui interdit le second envoi.
+      console.error(`[superpdp/emettre] ${id} : identifiant non enregistré — ${erreurEnregistrement.message}`);
+      return NextResponse.json(
+        {
+          error: "Transmission non enregistrée",
+          message:
+            `La facture a bien été transmise (référence ${reponse.id}), mais Deviso n'a pas pu l'enregistrer. ` +
+            "Ne la retransmettez pas : elle arriverait en double chez votre client.",
+          superpdpId: reponse.id,
+        },
+        { status: 500 }
+      );
+    }
 
     // `sourceAdresse` remonte à l'appelant : c'est ce qui permet à l'interface
     // — et aux tests — de distinguer une adresse lue dans l'Annuaire d'un repli

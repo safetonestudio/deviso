@@ -391,6 +391,50 @@ verifier(
   `HTTP ${emissionSansSiren.status} ${doc(emissionSansSiren.body).slice(0, 220)}`
 );
 
+// Un brouillon ne doit pas pouvoir être transmis par un appel direct.
+// `transmissible()` ne vivait que dans l'interface : la route acceptait un
+// brouillon et l'envoyait, de façon irréversible.
+const brouillon = await creerFacture({
+  client_name: "Client Brouillon SARL", client_company: "Client Brouillon SARL",
+  client_siren: "552100554",
+  client_street: "1 rue du Test", client_postcode: "33000", client_city: "Bordeaux",
+  operation_category: "services",
+});
+const idBrouillon = brouillon.body?.invoice?.id;
+const emissionBrouillon = idBrouillon
+  ? await bq.call(`/api/superpdp/invoices/${idBrouillon}/emettre`, { method: "POST" })
+  : { status: 0, body: null };
+verifier(
+  "un brouillon ne peut pas être transmis, même par appel direct",
+  emissionBrouillon.status === 400 && /brouillon/i.test(doc(emissionBrouillon.body)),
+  `HTTP ${emissionBrouillon.status} ${doc(emissionBrouillon.body).slice(0, 200)}`
+);
+
+// Une facture à un client étranger relève du B2BInt, pas du circuit national —
+// et le pré-contrôle ne doit plus lui réclamer un SIREN français, qu'elle n'a
+// pas. C'était un blocage total pour un freelance à clientèle internationale.
+const etrangere = await creerFacture({
+  client_name: "Studio Bruxelles SPRL", client_company: "Studio Bruxelles SPRL",
+  client_street: "12 rue Neuve", client_postcode: "1000", client_city: "Bruxelles",
+  client_country: "BE",
+  operation_category: "services",
+});
+const idEtrangere = etrangere.body?.invoice?.id;
+if (idEtrangere) await bq.call(`/api/invoices/${idEtrangere}`, { method: "PATCH", body: doc({ status: "sent" }) });
+const emissionEtrangere = idEtrangere
+  ? await bq.call(`/api/superpdp/invoices/${idEtrangere}/emettre`, { method: "POST" })
+  : { status: 0, body: null };
+verifier(
+  "un client étranger n'est plus bloqué par l'absence de SIREN français",
+  emissionEtrangere.status !== 400 ||
+    !/SIREN de Studio Bruxelles/.test(doc(emissionEtrangere.body)),
+  `HTTP ${emissionEtrangere.status} ${doc(emissionEtrangere.body).slice(0, 260)}`
+);
+aVerifierAutrement(
+  "L'acheminement réel d'une facture B2BInt",
+  "le bac à sable n'a pas d'entreprise étrangère raccordée ; on vérifie que Deviso ne bloque plus et déclare la bonne nature."
+);
+
 // La colonne « Plateforme Agréée » ne s'affiche que si /status dit à la fois
 // « raccordé » et « vérifié ». Si cette forme change, la colonne disparaît en
 // silence et la transmission redevient invisible.

@@ -1,4 +1,4 @@
-import { toSiren } from "@/lib/facturx-helpers";
+import { toSiren, resolveVatNumber } from "@/lib/facturx-helpers";
 import { natureOperation } from "@/lib/superpdp-nature";
 
 /**
@@ -24,6 +24,12 @@ export function manquesPourEmission(facture: {
   client_company?: string | null;
   client_name?: string | null;
   client_country?: string | null;
+  seller_postcode?: string | null;
+  seller_city?: string | null;
+  seller_tva_number?: string | null;
+  client_postcode?: string | null;
+  client_city?: string | null;
+  tva_rate?: number | null;
   operation_category?: string | null;
 }): string[] {
   const manques: string[] = [];
@@ -56,6 +62,39 @@ export function manquesPourEmission(facture: {
   if (facture.operation_category === "mixed") {
     manques.push(
       "une catégorie d'opération unique : biens OU services, pas les deux sur la même facture"
+    );
+  }
+
+  // Les trois conditions que `checkInvoiceCompliance` qualifiait déjà de
+  // bloquantes, et que ce pré-contrôle ignorait.
+  //
+  // Le panneau de conformité affichait « serait rejetée par une Plateforme
+  // Agréée » en rouge pendant que la route laissait partir la facture. Elle
+  // revenait sous forme de 400 brut, alors que Deviso savait déjà écrire le
+  // message en français. Deux règles pour une seule question, c'est une de trop.
+  //
+  // On juge sur les champs STRUCTURÉS, comme le panneau : relire l'adresse
+  // formatée en texte libre signalait un code postal manquant alors qu'il était
+  // bien saisi, juste écrit autrement.
+  if (!facture.seller_postcode?.trim() || !facture.seller_city?.trim()) {
+    manques.push("votre adresse complète, avec code postal et ville (Paramètres)");
+  }
+
+  // Franchise en base : pas de TVA, donc pas de numéro intracommunautaire à
+  // exiger. Le panneau retient `tva_rate === 0` comme critère ; on reprend le
+  // même, pour que les deux ne puissent pas diverger.
+  if (facture.tva_rate !== 0) {
+    const tva = resolveVatNumber(facture.seller_tva_number, facture.seller_siren, false);
+    if (!tva.value) {
+      manques.push("votre numéro de TVA intracommunautaire (Paramètres)");
+    }
+  }
+
+  // L'adresse postale du destinataire n'est exigée que si la facture doit lui
+  // être acheminée : un particulier est identifié par son courriel.
+  if (nature !== "B2C" && (!facture.client_postcode?.trim() || !facture.client_city?.trim())) {
+    manques.push(
+      `l'adresse complète de ${facture.client_name || "votre client"}, avec code postal et ville`
     );
   }
 

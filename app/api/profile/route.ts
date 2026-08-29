@@ -143,11 +143,21 @@ export async function PATCH(req: NextRequest) {
   // enregistrement, en best-effort : le profil est déjà sauvegardé, un échec de
   // transmission ne doit pas le remettre en cause.
   if ("tva_regime" in updates || "tva_periodicite" in updates) {
-    const r = await pousserRegimeTva(user.id, {
+    // `getWorkspaceUserId`, pas `user.id`. Le raccordement appartient à
+    // l'espace de travail, et toutes les autres routes Super PDP l'indexent
+    // ainsi. Avec `user.id`, un collaborateur ne trouvait aucun raccordement,
+    // repartait avec `non_raccorde` — une raison explicitement exclue du
+    // journal juste en dessous — et le changement de périodicité partait dans
+    // le vide sans laisser la moindre trace.
+    const workspaceId = await getWorkspaceUserId(user.id);
+    const r = await pousserRegimeTva(workspaceId, {
       tva_regime: data.tva_regime,
       tva_periodicite: data.tva_periodicite,
     });
-    if (!r.ok && !["inconnu", "non_raccorde"].includes(r.raison)) {
+    if (!r.ok && r.raison !== "inconnu") {
+      // `non_raccorde` n'est plus filtré : maintenant que l'espace est le bon,
+      // cette raison signifie vraiment « pas de raccordement », ce qui mérite
+      // d'être vu quand elle arrive après un raccordement réussi.
       console.error(`[profile] régime de TVA non transmis à Super PDP : ${r.raison}`);
     }
   }

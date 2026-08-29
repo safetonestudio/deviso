@@ -234,6 +234,27 @@ export function SuperPdpCard() {
         </div>
       )}
 
+      {/* Le régime de TVA connu de la Plateforme Agréée.
+          `/api/superpdp/status` le lit chez EUX, et non dans notre copie,
+          précisément pour rendre visible une divergence. Le champ était calculé
+          à chaque appel puis jeté : la carte ne le déclarait même pas. Vide,
+          c'est la garantie que toute facture à un particulier sera refusée. */}
+      {verifie && !etat?.regimeTva && (
+        <div className="mt-4 bg-amber-500/10 border border-amber-500/30 rounded-lg px-4 py-3">
+          <p className="text-sm text-amber-300 font-medium">
+            Vos factures aux particuliers seront refusées
+          </p>
+          <p className="text-xs text-amber-400/80 mt-1">
+            La Plateforme Agréée ne connaît pas votre périodicité de déclaration de TVA. C&apos;est
+            elle qui commande le calendrier d&apos;e-reporting.{" "}
+            <a href="/profil#tva" className="underline hover:text-amber-300">
+              Renseignez-la dans votre profil
+            </a>
+            .
+          </p>
+        </div>
+      )}
+
       {/* Sans ligne d'annuaire, l'utilisateur n'était pas seulement mal
           informé : il n'avait aucun recours dans Deviso, et devait aller sur
           l'interface de Super PDP sans que rien ne le lui dise. */}

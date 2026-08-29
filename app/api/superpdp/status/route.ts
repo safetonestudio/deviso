@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
-import { getWorkspaceUserId } from "@/lib/workspace";
+import { getWorkspaceUserId, getWorkspaceProfile } from "@/lib/workspace";
+import { pousserRegimeTva } from "@/lib/superpdp-entreprise";
 import { getConnection, isSandbox, superpdpConfig, superpdpFetch, lireEtatSession, statutDepuisEtat, saveConnection } from "@/lib/superpdp";
 import { lireLigneAnnuaire, type EtatLigne } from "@/lib/superpdp-ligne-annuaire";
 
@@ -53,6 +54,28 @@ export async function GET() {
             session_status: reel,
             ...(reel === "verified" ? { last_error: null } : {}),
           });
+
+          // La vérification vient d'aboutir : c'est le moment de pousser le
+          // régime de TVA.
+          //
+          // Il n'était poussé qu'au retour du tunnel, et seulement si le compte
+          // en ressortait déjà `verified` — c'est-à-dire jamais dans le cas
+          // nominal, où la vérification prend un moment. Rien ne le rattrapait
+          // ensuite : il fallait que l'utilisateur rouvre son profil et
+          // réenregistre. Entre-temps, `vat_regime` restait vide chez Super PDP
+          // et toutes ses factures aux particuliers étaient refusées.
+          if (reel === "verified") {
+            const profil = await getWorkspaceProfile<{
+              tva_regime: string | null;
+              tva_periodicite: string | null;
+            }>(workspaceId, "tva_regime, tva_periodicite");
+            if (profil) {
+              const r = await pousserRegimeTva(workspaceId, profil);
+              if (!r.ok && r.raison !== "inconnu") {
+                console.error(`[superpdp/status] régime non poussé : ${r.raison}`);
+              }
+            }
+          }
         }
       }
     } catch {

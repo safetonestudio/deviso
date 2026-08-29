@@ -51,6 +51,40 @@ export function regimeSuperPdp(profil: {
   return null;
 }
 
+/**
+ * La fiche entreprise telle que la Plateforme Agréée la connaît.
+ *
+ * Tous ces champs sont marqués `required` par le schéma `company` : ce n'est
+ * pas de l'information optionnelle, c'est ce que la plateforme retient de nous.
+ * `env` en particulier dit `sandbox` ou `production` — comparer sa valeur à
+ * notre propre variable d'environnement est un contrôle gratuit contre le
+ * scénario où l'on croit tester alors qu'on émet pour de vrai.
+ */
+export type EntreprisePdp = {
+  id: number;
+  env: "sandbox" | "production";
+  number: string;
+  number_scheme: string;
+  formal_name: string;
+  trade_name: string;
+  address: string;
+  postcode: string;
+  city: string;
+  country: string;
+  vat_regime: VatRegime | "";
+  has_vat_on_debits: boolean;
+};
+
+export async function lireEntreprise(workspaceId: string): Promise<EntreprisePdp | null> {
+  try {
+    const res = await superpdpFetch(workspaceId, "/companies/me");
+    if (!res.ok) return null;
+    return (await res.json()) as EntreprisePdp;
+  } catch {
+    return null;
+  }
+}
+
 export type ResultatRegime =
   | { ok: true; regime: VatRegime }
   | { ok: false; raison: "inconnu" | "non_raccorde" | "verification_en_cours" | "refuse"; detail?: string };
@@ -70,10 +104,30 @@ export async function pousserRegimeTva(
   if (!regime) return { ok: false, raison: "inconnu" };
 
   try {
+    // `has_vat_on_debits` doit être renvoyé tel quel.
+    //
+    // Le schéma `company_patch` ne rend obligatoire que `vat_regime`, mais
+    // `has_vat_on_debits` y porte `"default": false`. Ne pas l'envoyer expose
+    // donc au comportement classique « champ absent = valeur par défaut » : une
+    // entreprise ayant opté pour la TVA sur les débits (art. 1693 bis CGI)
+    // verrait son option effacée à chaque enregistrement de profil, et
+    // l'exigibilité de sa TVA serait déclarée à tort à l'encaissement.
+    //
+    // On lit donc la valeur courante avant d'écrire. Si la lecture échoue, on
+    // s'abstient plutôt que d'envoyer une valeur inventée : mieux vaut ne pas
+    // mettre à jour le régime que corrompre l'option de l'utilisateur.
+    const entreprise = await lireEntreprise(workspaceId);
+    if (!entreprise) {
+      return { ok: false, raison: "refuse", detail: "Fiche entreprise illisible" };
+    }
+
     const res = await superpdpFetch(workspaceId, "/companies", {
       method: "PATCH",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ vat_regime: regime }),
+      body: JSON.stringify({
+        vat_regime: regime,
+        has_vat_on_debits: entreprise.has_vat_on_debits,
+      }),
     });
 
     if (!res.ok) {
