@@ -1,5 +1,5 @@
-import { toSiren, isB2CInvoice } from "@/lib/facturx-helpers";
-import type { Invoice } from "@/types";
+import { toSiren } from "@/lib/facturx-helpers";
+import { natureOperation } from "@/lib/superpdp-nature";
 
 /**
  * Ce qui manque à une facture pour pouvoir partir vers la Plateforme Agréée.
@@ -23,6 +23,7 @@ export function manquesPourEmission(facture: {
   client_siren?: string | null;
   client_company?: string | null;
   client_name?: string | null;
+  client_country?: string | null;
   operation_category?: string | null;
 }): string[] {
   const manques: string[] = [];
@@ -34,9 +35,20 @@ export function manquesPourEmission(facture: {
   // Un particulier n'a pas de SIREN — l'exiger bloquerait toute facture B2C.
   // Super PDP détecte le B2C autrement (note BAR + adresse email), voir
   // lib/invoice-xml.ts.
-  const isB2C = isB2CInvoice(facture as unknown as Invoice);
-  if (!isB2C && !toSiren(facture.client_siren)) {
+  //
+  // Une entreprise ÉTRANGÈRE n'a pas de SIREN non plus, et c'était un blocage
+  // pur : un freelance facturant un client belge ne pouvait rien transmettre.
+  // Le SIREN est un identifiant français ; on ne le réclame qu'aux Français.
+  const nature = natureOperation(facture);
+  if (nature === "B2B" && !toSiren(facture.client_siren)) {
     manques.push(`le SIREN de ${facture.client_name || "votre client"}`);
+  }
+
+  // En revanche, une opération internationale doit dire d'où vient le client :
+  // sans pays, elle ne serait pas classable, et Deviso la traiterait comme
+  // française par défaut — c'est-à-dire à tort.
+  if (nature === "B2BInt" && !facture.client_country?.trim()) {
+    manques.push(`le pays de ${facture.client_name || "votre client"}`);
   }
 
   // Documenté par Super PDP (page « E-reporting ») : les factures mélangeant

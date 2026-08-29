@@ -1,11 +1,12 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
-import { getWorkspaceUserId } from "@/lib/workspace";
+import { getWorkspaceUserId, getWorkspaceProfile } from "@/lib/workspace";
 import { superpdpFetch, getConnection, SuperPdpNotConnected, SuperPdpSessionPending } from "@/lib/superpdp";
 import { generateFacturXml } from "@/lib/invoice-xml";
 import { isB2CInvoice } from "@/lib/facturx-helpers";
 import { manquesPourEmission, phraseManques } from "@/lib/superpdp-precontrole";
+import { natureOperation } from "@/lib/superpdp-nature";
 import { resoudreAdresseClient } from "@/lib/superpdp-annuaire";
 import type { Invoice } from "@/types";
 
@@ -90,10 +91,48 @@ export async function POST(req: NextRequest, ctx: { params: Promise<{ id: string
       ? { adresse: null, source: "aucune" as const }
       : await resoudreAdresseClient(workspaceId, facture);
 
+    // Coordonnées bancaires et facture d'acompte liée.
+    //
+    // Elles étaient passées à `undefined` ici, et NULLE PART AILLEURS : le PDF
+    // téléchargé par le vendeur, celui envoyé par courriel et le dépôt Chorus
+    // Pro les renseignent tous les trois. La facture qui arrivait chez le
+    // client par la Plateforme Agréée était donc la seule à ne porter ni IBAN
+    // (BG-16 / BT-84) ni référence à l'acompte qu'elle solde (BG-3 / BT-25).
+    // Deux documents différents pour la même facture, et un client qui ne sait
+    // pas où payer.
+    const profil = await getWorkspaceProfile<{
+      payment_method: string | null;
+      payment_link_profile: string | null;
+      bank_iban: string | null;
+      bank_bic: string | null;
+      bank_account_name: string | null;
+    }>(workspaceId, "payment_method, payment_link_profile, bank_iban, bank_bic, bank_account_name");
+
+    const paiement = profil
+      ? {
+          method: profil.payment_method,
+          linkUrl: profil.payment_link_profile,
+          bankIban: profil.bank_iban,
+          bankBic: profil.bank_bic,
+          bankAccountName: profil.bank_account_name,
+        }
+      : undefined;
+
+    let numeroAcompte: string | null = null;
+    if (facture.invoice_type === "solde" && facture.linked_invoice_id) {
+      const { data: liee } = await admin
+        .from("invoices")
+        .select("invoice_number")
+        .eq("id", facture.linked_invoice_id)
+        .eq("user_id", workspaceId)
+        .maybeSingle();
+      numeroAcompte = liee?.invoice_number ?? null;
+    }
+
     const xml = generateFacturXml(
       facture as unknown as Invoice,
-      undefined,
-      undefined,
+      numeroAcompte,
+      paiement,
       connexion?.directory_address ?? null,
       connexion?.company_number ?? null,
       adresseClient
@@ -114,9 +153,17 @@ export async function POST(req: NextRequest, ctx: { params: Promise<{ id: string
     //
     // `external_id` : notre identifiant de facture, pour que leur côté et le
     // nôtre se rattachent sans dépendre du seul numéro de facture.
+    // La nature de l'opération, pays compris. `isB2C ? "B2C" : "B2B"` envoyait
+    // une facture à un client étranger dans le circuit national, qui n'a pas à
+    // l'acheminer. Voir lib/superpdp-nature.ts.
+    const nature = natureOperation(facture);
+
+    // `external_id` est plafonné à 36 caractères par la spec, et un UUID en
+    // fait exactement 36 : la marge est nulle. On tronque plutôt que de faire
+    // échouer toutes les émissions le jour où cet identifiant change de forme.
     const params = new URLSearchParams({
-      processing_rule: isB2C ? "B2C" : "B2B",
-      external_id: facture.id,
+      processing_rule: nature,
+      external_id: String(facture.id).slice(0, 36),
     });
 
     const res = await superpdpFetch(workspaceId, `/invoices?${params}`, {

@@ -27,6 +27,15 @@ type Etat = {
   status?: "pending" | "verified" | "error" | null;
   companyId?: string | null;
   directoryAddress?: string | null;
+  regimeTva?: string | null;
+  /** État réel de la ligne de réception. Voir lib/superpdp-ligne-annuaire.ts. */
+  ligne?:
+    | { etat: "joignable"; adresse: string }
+    | { etat: "programmee"; adresse: string; aPartirDu: string }
+    | { etat: "en_cours"; adresse: string }
+    | { etat: "en_erreur"; adresse: string; message: string | null }
+    | { etat: "absente" }
+    | null;
   lastError?: string | null;
 };
 
@@ -72,6 +81,8 @@ export function SuperPdpCard() {
   const [etat, setEtat] = useState<Etat | null>(null);
   const [chargement, setChargement] = useState(true);
   const [debranchement, setDebranchement] = useState(false);
+  const [ouverture, setOuverture] = useState(false);
+  const [messageLigne, setMessageLigne] = useState<string | null>(null);
   const [confirmation, setConfirmation] = useState(false);
 
   const retourCle = params.get("superpdp");
@@ -94,6 +105,27 @@ export function SuperPdpCard() {
     relire();
   }, [relire]);
 
+  const ouvrirLigne = async () => {
+    setOuverture(true);
+    setMessageLigne(null);
+    try {
+      const r = await fetch("/api/superpdp/ligne-annuaire", { method: "POST" });
+      const d = await r.json().catch(() => ({}));
+      if (!r.ok) {
+        setMessageLigne(d.message || d.error || "Ouverture impossible.");
+        return;
+      }
+      setMessageLigne(
+        d.dejaOuverte ? "Votre ligne est déjà ouverte." : "Ligne de réception ouverte."
+      );
+      await relire();
+    } catch {
+      setMessageLigne("Ouverture impossible : connexion interrompue.");
+    } finally {
+      setOuverture(false);
+    }
+  };
+
   const debrancher = async () => {
     setDebranchement(true);
     try {
@@ -111,6 +143,9 @@ export function SuperPdpCard() {
 
   const verifie = etat?.connected && etat.status === "verified";
   const enAttente = etat?.connected && etat.status === "pending";
+  const ligne = etat?.ligne ?? null;
+  const joignable = verifie && ligne?.etat === "joignable";
+  const ligneAOuvrir = verifie && (!ligne || ligne.etat === "absente" || ligne.etat === "en_erreur");
 
   return (
     <section className="bg-ds-surface border border-ds-border rounded-xl p-5 mt-6">
@@ -156,11 +191,29 @@ export function SuperPdpCard() {
             />
             <div className="min-w-0">
               <p className="text-sm text-white font-medium">
-                {verifie ? "Raccordé" : enAttente ? "Vérification en cours" : "Non raccordé"}
+                {verifie
+                  ? joignable
+                    ? "Raccordé"
+                    : "Raccordé, mais pas encore joignable"
+                  : enAttente
+                    ? "Vérification en cours"
+                    : "Non raccordé"}
               </p>
+              {/* « Raccordé » et « joignable » sont deux choses différentes, et
+                  les confondre était le mensonge le plus coûteux de cet écran :
+                  c'est la ligne d'annuaire, pas la session, qui permet à un
+                  fournisseur d'adresser une facture. */}
               <p className="text-xs text-gray-500 truncate">
                 {verifie
-                  ? "Vous pouvez recevoir des factures électroniques."
+                  ? ligne?.etat === "joignable"
+                    ? "Vous pouvez recevoir des factures électroniques."
+                    : ligne?.etat === "programmee"
+                      ? `Votre ligne de réception s'ouvre le ${new Date(ligne.aPartirDu).toLocaleDateString("fr-FR")}.`
+                      : ligne?.etat === "en_cours"
+                        ? "Votre ligne de réception est en cours d'ouverture."
+                        : ligne?.etat === "en_erreur"
+                          ? "Votre ligne de réception est en erreur : vous ne recevez rien."
+                          : "Aucune ligne de réception : vos fournisseurs ne peuvent pas vous joindre."
                   : enAttente
                     ? "Super PDP vérifie le rattachement de votre entreprise."
                     : "Vous ne pouvez pas encore recevoir de factures électroniques."}
@@ -178,6 +231,30 @@ export function SuperPdpCard() {
           >
             {verifie ? "Reconnecter" : enAttente ? "Relancer" : "Raccorder mon entreprise"}
           </a>
+        </div>
+      )}
+
+      {/* Sans ligne d'annuaire, l'utilisateur n'était pas seulement mal
+          informé : il n'avait aucun recours dans Deviso, et devait aller sur
+          l'interface de Super PDP sans que rien ne le lui dise. */}
+      {ligneAOuvrir && (
+        <div className="mt-4 bg-amber-500/10 border border-amber-500/30 rounded-lg px-4 py-3">
+          <p className="text-sm text-amber-300 font-medium">
+            Vos fournisseurs ne peuvent pas encore vous adresser de factures
+          </p>
+          <p className="text-xs text-amber-400/80 mt-1 mb-3">
+            {ligne?.etat === "en_erreur" && ligne.message
+              ? ligne.message
+              : "Votre entreprise est raccordée, mais aucune ligne n'est ouverte à l'annuaire. C'est elle qui vous rend joignable."}
+          </p>
+          <button
+            onClick={ouvrirLigne}
+            disabled={ouverture}
+            className="px-3 py-1.5 rounded-lg bg-amber-600 hover:bg-amber-500 text-white text-xs font-semibold transition-colors disabled:opacity-50"
+          >
+            {ouverture ? "Ouverture…" : "Ouvrir ma ligne de réception"}
+          </button>
+          {messageLigne && <p className="text-xs text-amber-300 mt-2">{messageLigne}</p>}
         </div>
       )}
 

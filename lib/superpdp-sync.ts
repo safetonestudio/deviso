@@ -34,6 +34,44 @@ import {
  *      les deux, l'affichage filtrera.
  */
 
+/**
+ * Le statut qui fait foi, parmi une liste d'événements.
+ *
+ * ⚠️ Ne pas simplifier en `events.at(-1)`. La spécification s'ouvre sur cet
+ * avertissement : « **this is not a state machine** — This property is an array
+ * of statuses. There is no formal state machine governing the transitions. »
+ *
+ * L'énumération mélange trois familles : les `fr:*` (cycle de vie officiel
+ * DGFiP), les `api:*` (internes Super PDP) et vingt-deux `ppf:*` qui sont des
+ * accusés d'acheminement vers le Portail Public de Facturation. Et la spec
+ * précise qu'ils arrivent EN MÊME TEMPS : « `ppf:refused` represents the event
+ * which is emitted at the same time as the `fr:210` event », suivi de son
+ * `-ack`. Prendre le dernier donne donc `ppf:refused-ack` là où l'utilisateur
+ * doit lire « Refusée ».
+ *
+ * Conséquences si on se trompe, toutes constatées en revue le 29/08/2026 : la
+ * pastille affiche un code brut, la facture refusée repasse « en retard » en
+ * rouge parce qu'elle n'est plus reconnue comme clôturée, et l'écran du
+ * fournisseur cesse d'afficher « Refusée par le client » — c'est-à-dire
+ * l'information qui l'oblige à passer un avoir.
+ *
+ * On retient donc le dernier `fr:*`, et à défaut le dernier `api:*` (une
+ * facture Peppol n'a que ceux-là). Les `ppf:*` sont de la traçabilité
+ * d'acheminement : ils n'ont rien à dire à l'utilisateur.
+ */
+export function statutQuiFaitFoi(
+  evenements: { status_code?: string | null }[] | null | undefined
+): string | null {
+  const codes = (evenements ?? []).map((e) => e?.status_code).filter(Boolean) as string[];
+  const officiels = codes.filter((c) => c.startsWith("fr:"));
+  if (officiels.length) return officiels[officiels.length - 1];
+  const internes = codes.filter((c) => c.startsWith("api:"));
+  return internes.length ? internes[internes.length - 1] : null;
+}
+
+/** Un statut `ppf:*` ne remplace jamais un statut lisible par l'utilisateur. */
+const estStatutAffichable = (code: string) => code.startsWith("fr:") || code.startsWith("api:");
+
 /** Borne de sécurité : une synchronisation ne doit pas tourner indéfiniment. */
 const PAGES_MAX = 20;
 
@@ -134,13 +172,13 @@ export async function synchroniserFactures(userId: string): Promise<ResultatSync
 
       const res = await superpdpFetch(userId, chemin);
       if (!res.ok) {
-        return {
-          recuperees,
-          entrantes,
-          jusquA: curseur,
-          raison: "erreur",
-          detail: `HTTP ${res.status} sur ${chemin}`,
-        };
+        // Sans cette écriture, un 500 persistant de la plateforme laissait
+        // l'écran afficher un raccordement sain pendant que plus rien
+        // n'arrivait — le cas que le bloc catch plus bas déclare inacceptable,
+        // mais qui passait par ce chemin-ci sans laisser de trace.
+        const detail = `HTTP ${res.status} sur ${chemin}`;
+        await saveConnection(userId, { last_error: detail.slice(0, 500) }).catch(() => {});
+        return { recuperees, entrantes, jusquA: curseur, raison: "erreur", detail };
       }
 
       const body = (await res.json()) as { data?: FactureListe[]; has_after?: boolean };
@@ -150,7 +188,23 @@ export async function synchroniserFactures(userId: string): Promise<ResultatSync
       for (const brute of lot) {
         // La liste ne porte pas le contenu : un appel de détail par facture.
         const d = await superpdpFetch(userId, `/invoices/${brute.id}`);
-        if (!d.ok) continue; // on n'interrompt pas tout le lot pour une facture
+        if (!d.ok) {
+          // ⚠️ Surtout pas `continue`. Le curseur est commun au lot : sauter
+          // cette facture et laisser les suivantes le faire avancer la rend
+          // INATTEIGNABLE pour toujours — `starting_after_id` ne ramène que les
+          // identifiants strictement supérieurs. L'utilisateur serait
+          // légalement destinataire d'une facture qu'il ne verra jamais, et
+          // rien ne le lui dirait.
+          //
+          // On arrête donc la page ici : le curseur reste sur la dernière
+          // facture réellement écrite, et le prochain passage reprend
+          // exactement là. Une panne passagère coûte un délai, pas une facture.
+          await saveConnection(userId, { last_invoice_id: curseur, last_sync_at: new Date().toISOString() });
+          return {
+            recuperees, entrantes, jusquA: curseur, raison: "erreur",
+            detail: `Détail de la facture ${brute.id} illisible (HTTP ${d.status}). Reprise au prochain passage.`,
+          };
+        }
 
         const facture = (await d.json()) as {
           en_invoice?: Record<string, unknown>;
@@ -160,7 +214,7 @@ export async function synchroniserFactures(userId: string): Promise<ResultatSync
         const totaux = (en.totals ?? {}) as Record<string, unknown>;
         const evenements = facture.events ?? [];
 
-        await admin.from("superpdp_invoices").upsert(
+        const { error: erreurEcriture } = await admin.from("superpdp_invoices").upsert(
           {
             id: brute.id,
             user_id: userId,
@@ -177,8 +231,7 @@ export async function synchroniserFactures(userId: string): Promise<ResultatSync
             total_vat: nombre(totaux.total_vat_amount),
             total_with_vat: nombre(totaux.total_with_vat),
             amount_due: nombre(totaux.amount_due_for_payment),
-            // Le dernier événement fait foi : ils sont rendus dans l'ordre.
-            last_status_code: evenements.at(-1)?.status_code ?? null,
+            last_status_code: statutQuiFaitFoi(evenements),
             en_invoice: en,
             received_at: brute.created_at ?? null,
             synced_at: new Date().toISOString(),
@@ -186,10 +239,24 @@ export async function synchroniserFactures(userId: string): Promise<ResultatSync
           { onConflict: "id" }
         );
 
+        // Le commentaire disait « le curseur n'avance qu'après écriture
+        // réussie » — mais l'erreur n'était pas lue, donc la garantie
+        // n'existait pas. Une contrainte violée, une colonne absente après
+        // migration, et la facture était perdue pendant que le compteur
+        // annonçait fièrement l'avoir récupérée.
+        if (erreurEcriture) {
+          await saveConnection(userId, {
+            last_invoice_id: curseur,
+            last_error: `Écriture de la facture ${brute.id} impossible : ${erreurEcriture.message}`.slice(0, 500),
+          });
+          return {
+            recuperees, entrantes, jusquA: curseur, raison: "erreur",
+            detail: `Écriture de la facture ${brute.id} impossible : ${erreurEcriture.message}`,
+          };
+        }
+
         recuperees++;
         if (brute.direction === "in") entrantes++;
-        // Le curseur n'avance qu'après écriture réussie : une interruption fait
-        // rejouer la facture au prochain passage plutôt que de la sauter.
         curseur = Math.max(curseur ?? 0, brute.id);
       }
 
@@ -233,7 +300,24 @@ export async function synchroniserFactures(userId: string): Promise<ResultatSync
   }
 
   // Les statuts changent après coup : il faut aussi lire les événements.
-  const statuts = await synchroniserEvenements(userId);
+  //
+  // Sous son propre filet : cet appel était HORS du try/catch ci-dessus, donc
+  // une session expirée ou une coupure réseau y remontait brute à l'appelant,
+  // sans `last_error`, sans horodatage, et sortait en 500 non typé côté route.
+  // La moitié de la fonction échappait à la journalisation d'échec que l'autre
+  // moitié soigne.
+  let statuts = 0;
+  try {
+    statuts = await synchroniserEvenements(userId);
+  } catch (err) {
+    const detail = err instanceof Error ? err.message : "Erreur inconnue";
+    console.error("[superpdp-sync/evenements]", detail);
+    await saveConnection(userId, {
+      last_error: `Lecture des statuts impossible : ${detail}`.slice(0, 500),
+      ...(/invalid_grant/i.test(detail) ? { session_status: "error" as const } : {}),
+    }).catch(() => {});
+    return { recuperees, entrantes, jusquA: curseur, raison: "erreur", detail };
+  }
 
   // Une synchronisation sans nouveauté est un succès, pas un non-événement :
   // on horodate quand même, sinon l'écran ne peut pas distinguer « rien de
@@ -285,14 +369,21 @@ async function synchroniserEvenements(userId: string): Promise<number> {
     const params = new URLSearchParams();
     if (curseur) params.set("starting_after_id", String(curseur));
     const res = await superpdpFetch(userId, `/invoice_events${params.toString() ? `?${params}` : ""}`);
-    if (!res.ok) break;
+    // Un `break` muet ici, c'était le mode de défaillance le plus coûteux du
+    // domaine : les refus, encaissements et rejets cessaient de remonter sans
+    // que rien ne le signale. On le fait remonter comme une erreur.
+    if (!res.ok) {
+      throw new Error(`HTTP ${res.status} sur /invoice_events`);
+    }
 
     const body = (await res.json()) as { data?: EvenementFacture[]; has_after?: boolean };
     const lot = body.data ?? [];
     if (lot.length === 0) break;
 
     for (const ev of lot) {
-      if (ev.status_code) {
+      // Un `ppf:*` fait avancer le curseur mais ne touche à aucun statut : il
+      // dit où en est l'acheminement administratif, pas où en est la facture.
+      if (ev.status_code && estStatutAffichable(ev.status_code)) {
         // Les événements arrivent par id croissant, donc le dernier appliqué
         // pour une facture donnée est bien le plus récent.
         const { error } = await admin
