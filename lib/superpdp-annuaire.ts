@@ -1,4 +1,4 @@
-import { superpdpFetch } from "@/lib/superpdp";
+import { SUPERPDP_API } from "@/lib/superpdp";
 import { toSiren } from "@/lib/facturx-helpers";
 
 /**
@@ -39,18 +39,31 @@ export type EntreeAnnuaire = {
  * Renvoie `null` — et non une exception — quand l'annuaire ne répond pas ou ne
  * connaît pas l'entreprise : une facture ne doit pas échouer parce qu'une
  * recherche d'agrément a échoué. L'appelant retombe alors sur le SIREN nu.
+ *
+ * ⚠️ Appel NON authentifié, et c'est délibéré. La spécification marque
+ * `GET /french_directory/entries` avec `"security": []`, seule route du lot
+ * avec `/french_directory/companies` à ne demander aucun jeton — l'Annuaire
+ * national est public.
+ *
+ * Passer par `superpdpFetch` exigeait un raccordement, rafraîchissait un jeton
+ * et levait `SuperPdpNotConnected` pour tout compte non raccordé : la
+ * résolution d'adresse ne se produisait donc JAMAIS pour l'immense majorité des
+ * utilisateurs, et le code retombait en silence sur `0225:<siren>` — la
+ * fabrication que ce fichier a précisément été écrit pour supprimer. Le
+ * `workspaceId` n'est plus nécessaire, il est conservé pour ne pas casser les
+ * appelants et pour le jour où une variante authentifiée serait utile.
  */
 export async function adresseAnnuaire(
-  workspaceId: string,
+  _workspaceId: string,
   siren: string | null | undefined
 ): Promise<string | null> {
   const numero = toSiren(siren);
   if (!numero) return null;
 
   try {
-    const res = await superpdpFetch(
-      workspaceId,
-      `/french_directory/entries?number=${encodeURIComponent(numero)}`
+    const res = await fetch(
+      `${SUPERPDP_API}/french_directory/entries?number=${encodeURIComponent(numero)}`,
+      { headers: { accept: "application/json" } }
     );
     if (!res.ok) return null;
 

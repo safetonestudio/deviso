@@ -21,30 +21,20 @@ Plus trois silences : erreurs HTTP non journalisées, synchronisation des
 
 ## À corriger, par ordre
 
-### Priorité 1 — mensonges restants
-- **`regimeTva` renvoyé par `/status` mais jamais affiché.** La route le lit
-  chez Super PDP précisément pour rendre visible une divergence, et la carte ne
-  déclare pas le champ. Vide = **les factures aux particuliers seront refusées**.
-- **`pousserRegimeTva` ne part jamais pour un compte arrivé en `pending`** — donc
-  pour le cas nominal. Rien ne le rattrape ensuite.
-- **`app/api/profile/route.ts` utilise `user.id` au lieu de `workspaceId`** pour
-  pousser le régime : pour un collaborateur, l'appel part dans le vide, et
-  l'échec est explicitement exclu du journal.
-- **`has_vat_on_debits` écrasé à `false`** à chaque `PATCH /companies` : Deviso
-  ne l'envoie pas et la spec lui donne `default: false`. Exigibilité de TVA
-  faussée pour qui a opté pour les débits.
+### Fait — priorités 1 et 2
 
-### Priorité 2 — robustesse de l'émission
-- Distinguer `400` (facture invalide) de `500` (panne plateforme) : aujourd'hui
-  les deux disent « refusée », et l'utilisateur modifie une facture correcte.
-- Lire `http_ko.code` plutôt que stocker le JSON brut.
-- Traiter le `401` dans `superpdpFetch` ; typer l'échec de rafraîchissement.
-- Vérifier l'erreur des écritures Supabase après émission : sans
-  `superpdp_invoice_id`, le garde-fou anti-doublon disparaît.
-- Aligner `manquesPourEmission` sur `checkInvoiceCompliance` : trois conditions
-  bloquantes (code postal vendeur, n° TVA, adresse client) passent le
-  pré-contrôle et se soldent par un 400 brut.
-- Appliquer `transmissible()` dans la route, pas seulement dans l'interface.
+| Défaut | Correctif |
+|---|---|
+| `has_vat_on_debits` écrasé à `false` à chaque `PATCH` | Valeur courante lue puis renvoyée ; abstention si la lecture échoue |
+| Régime de TVA jamais poussé pour un compte arrivé en attente | `/status` le pousse dès que la vérification aboutit |
+| `app/api/profile` visait `user.id` au lieu du workspace | Corrigé ; `non_raccorde` n'est plus filtré du journal |
+| `regimeTva` calculé puis jeté | La carte affiche l'avertissement : « Vos factures aux particuliers seront refusées » |
+| `400` et `500` confondus à l'émission | Distingués ; `http_ko.message` et `code` lus ; `reessayable` renvoyé |
+| Identifiant d'émission écrit sans vérifier l'erreur | Vérifié ; les deux cas d'échec interdisent explicitement la retransmission |
+| Trois conditions bloquantes ignorées par le pré-contrôle | Même règle que le panneau de conformité, sur les champs structurés |
+| `transmissible()` absent de la route | Appliqué côté serveur |
+| **Le pays du client ne pouvait jamais valoir autre chose que « FR »** | `resolveAddress` ne recevait pas `country` ; corrigé sur facture et devis, plus un sélecteur de pays dans le formulaire |
+| Annuaire français interrogé avec authentification | `security: []` dans la spec — appel public, la résolution fonctionne désormais pour les comptes non raccordés |
 
 ### Priorité 3 — exploiter l'API
 - **`POST /validation_reports`** : valider *avant* d'émettre. Sans
