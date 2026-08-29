@@ -1,0 +1,107 @@
+# Intégration Super PDP — ce qui reste, et ce que Selim seul peut confirmer
+
+Établi le 29/08/2026 après quatre audits croisés du code contre
+`docs/superpdp/openapi.json` (35 opérations, 10 utilisées). Ce document est la
+liste de travail ; `etat.md` dit ce qui est prouvé.
+
+## Corrigé et déployé
+
+| # | Défaut | Pourquoi ça comptait |
+|---|---|---|
+| 1 | « Raccordé » affiché sans ligne d'annuaire | L'entreprise se croyait joignable et ne l'était pas — la promesse même du produit au 1ᵉʳ septembre 2026 |
+| 2 | Une vérification en attente ne se débloquait jamais | Le cas nominal du KYB restait bloqué indéfiniment |
+| 3 | Perte silencieuse de factures reçues à la synchronisation | Destinataire légal d'une facture jamais vue |
+| 4 | `events.at(-1)` au lieu du dernier `fr:*` | Un refus s'affichait `ppf:refused-ack` et repassait « en retard » |
+| 5 | XML transmis sans IBAN ni référence d'acompte | Le client recevait une facture sans savoir où payer |
+| 6 | Client étranger émis en `B2B` + SIREN exigé | Blocage total pour un freelance à clientèle internationale |
+
+Plus trois silences : erreurs HTTP non journalisées, synchronisation des
+événements hors du `try/catch`, `break` muet sur l'échec de lecture des
+événements.
+
+## À corriger, par ordre
+
+### Priorité 1 — mensonges restants
+- **`regimeTva` renvoyé par `/status` mais jamais affiché.** La route le lit
+  chez Super PDP précisément pour rendre visible une divergence, et la carte ne
+  déclare pas le champ. Vide = **les factures aux particuliers seront refusées**.
+- **`pousserRegimeTva` ne part jamais pour un compte arrivé en `pending`** — donc
+  pour le cas nominal. Rien ne le rattrape ensuite.
+- **`app/api/profile/route.ts` utilise `user.id` au lieu de `workspaceId`** pour
+  pousser le régime : pour un collaborateur, l'appel part dans le vide, et
+  l'échec est explicitement exclu du journal.
+- **`has_vat_on_debits` écrasé à `false`** à chaque `PATCH /companies` : Deviso
+  ne l'envoie pas et la spec lui donne `default: false`. Exigibilité de TVA
+  faussée pour qui a opté pour les débits.
+
+### Priorité 2 — robustesse de l'émission
+- Distinguer `400` (facture invalide) de `500` (panne plateforme) : aujourd'hui
+  les deux disent « refusée », et l'utilisateur modifie une facture correcte.
+- Lire `http_ko.code` plutôt que stocker le JSON brut.
+- Traiter le `401` dans `superpdpFetch` ; typer l'échec de rafraîchissement.
+- Vérifier l'erreur des écritures Supabase après émission : sans
+  `superpdp_invoice_id`, le garde-fou anti-doublon disparaît.
+- Aligner `manquesPourEmission` sur `checkInvoiceCompliance` : trois conditions
+  bloquantes (code postal vendeur, n° TVA, adresse client) passent le
+  pré-contrôle et se soldent par un 400 brut.
+- Appliquer `transmissible()` dans la route, pas seulement dans l'interface.
+
+### Priorité 3 — exploiter l'API
+- **`POST /validation_reports`** : valider *avant* d'émettre. Sans
+  authentification, avec `failures[].location`. C'est la brique qui remplace le
+  JSON brut par « ligne 3 : BR-CO-10 non respectée ».
+- **`expand[]` + `limit=1000`** sur `GET /invoices` : supprime le N+1 (101
+  appels par page aujourd'hui), le risque d'expiration de la fonction, et les
+  deux tiers de la troncature à 2 000 factures.
+- **`GET /french_directory/*` est public** (`security: []`) : la résolution
+  d'adresse passe aujourd'hui par `superpdpFetch`, donc ne fonctionne pas pour
+  les comptes non raccordés — exactement les cas où elle servirait.
+- **`GET /french_directory/companies`** : rechercher un client par nom plutôt
+  que lui demander son SIREN.
+- **`fr:207` (litige)** : aujourd'hui la seule réponse offerte à une facture
+  douteuse est le refus, définitif. Ne proposer que l'option irréversible pousse
+  à l'utiliser à tort.
+- **`fr:211` (paiement transmis)** et une notion de « payée » sur les factures
+  reçues : sans elle, une facture réglée reste en rouge.
+- **Date d'encaissement** dans `fr:212` : Deviso envoie la date de l'appel. Qui
+  pointe le 29 un virement du 12 déclare une date fausse de 17 jours, sur la
+  donnée qui détermine l'exigibilité de la TVA.
+- **Écran « ce qui est déclaré au fisc »** (`GET /ereportings`) : c'est le seul
+  endroit où l'on apprend qu'une déclaration a été rejetée.
+
+### Priorité 4 — à cadrer
+E-reporting des recettes hors facture (`b2c_transactions`), achats
+internationaux (`b2bint_invoices` en `direction: in`), mandats
+d'autofacturation. Tous supposent un modèle de données que Deviso n'a pas.
+
+## Questions à poser à Super PDP
+
+Aucune ne se lève par déduction — et c'est en devinant une énumération que
+`vat_exemption` avait été manqué.
+
+1. `superpdp_send_and_receive` et `superpdp_directory_entry_identifier` :
+   paramètres d'`authorize` utilisés par Deviso, **absents de la spec**. Sont-ils
+   supportés ?
+2. Sens des codes `TLB1` / `TPS1` / `TNT1` / `TMA1` (`b2c_transaction.category_code`).
+3. Valeurs admises de `business_process` (`{id, type_id}`) et de
+   `tax_due_date_type_code` sur `b2bint_invoice`.
+4. `fr:220` est accepté à la création mais absent de l'énumération de lecture ;
+   `fr:501` est glosé mais absent des deux. Que valent-ils ?
+5. Découpage des périodes d'e-reporting pour `quarterly` et `simplified` — la
+   spec ne documente que le cas mensuel (par décades).
+6. `b2c_payment_subtotal.category_code` et `b2c_payment.company_id` sont
+   `required` mais absents des `properties` : bug de spec ?
+
+## Ce que Selim seul peut confirmer
+
+Ces points ne sont pas vérifiables depuis une traversée automatique. Chacun est
+formulé pour être testé en quelques secondes, avec le résultat attendu.
+
+| # | Quoi faire | Ce qu'on attend |
+|---|---|---|
+| C1 | Sur `/profil`, carte Plateforme Agréée | L'état doit dire « Raccordé » **et** décrire la ligne de réception. S'il dit « Raccordé, mais pas encore joignable », le bouton « Ouvrir ma ligne de réception » doit apparaître |
+| C2 | Cliquer « Ouvrir ma ligne de réception » si proposé | La ligne s'ouvre, l'adresse s'affiche |
+| C3 | Refuser une facture reçue (`/factures-recues`) | Le statut passe « Refusée », l'échéance cesse d'être rouge, et un second refus dit « déjà refusée ». Renseigner `E2E_REFUS_EMAIL`/`E2E_REFUS_PASSWORD` dans `.env.local` automatise ce test |
+| C4 | Créer une facture pour un client hors de France, la transmettre | Elle part en `B2BInt` et n'est plus bloquée par l'absence de SIREN |
+| C5 | Transmettre une facture de solde liée à un acompte | Le PDF reçu par le client porte l'IBAN et la référence de l'acompte |
+| C6 | Le tunnel de raccordement complet (débrancher puis reraccorder) | Redirection OAuth : impossible à automatiser |
