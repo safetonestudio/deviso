@@ -440,6 +440,22 @@ verifier(
   `HTTP ${recues.status} ${doc(recues.body).slice(0, 200)}`
 );
 
+// Le statut porté par NOTRE facture doit suivre celui de la plateforme.
+//
+// Défaut trouvé au bilan du 29/08/2026 : `invoices.superpdp_status` était écrit
+// une seule fois, à l'émission, avec `api:uploaded`, et plus jamais mis à jour.
+// 42 factures transmises, 42 figées, pendant que la plateforme était passée à
+// `fr:202`. Une facture REFUSÉE par le client (fr:210) s'affichait donc
+// « Transmise » en vert — et un refus oblige le fournisseur à passer un avoir.
+// Aucun test ne regardait ce champ : ils vérifiaient tous la table miroir.
+const factureApres = idB2b ? await bq.call(`/api/invoices/${idB2b}`) : { status: 0, body: null };
+const statutPorte = factureApres.body?.invoice?.superpdp_status ?? null;
+verifier(
+  "le statut de la facture suit la plateforme, il ne reste pas à api:uploaded",
+  typeof statutPorte === "string" && statutPorte.startsWith("fr:"),
+  `superpdp_status = ${statutPorte}`
+);
+
 // ── Téléchargement Factur-X ──────────────────────────────────────────────────
 console.log("");
 console.log("── Téléchargement Factur-X d'une facture de la plateforme ────");

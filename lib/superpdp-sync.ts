@@ -303,6 +303,27 @@ async function synchroniserEvenements(userId: string): Promise<number> {
         // Un événement peut concerner une facture qu'on n'a pas encore : ce
         // n'est pas une erreur, la prochaine synchronisation la ramènera.
         if (!error) appliques++;
+
+        // Et sur NOTRE facture, pas seulement sur la copie miroir.
+        //
+        // `invoices.superpdp_status` était écrit une fois, à l'émission, avec
+        // `api:uploaded`, et plus jamais touché. Constaté le 29/08/2026 : 42
+        // factures transmises, 42 figées à `api:uploaded`, pendant que la
+        // vérité côté Super PDP était `fr:202`. Conséquence : une facture
+        // **refusée par le client** (fr:210) continuait de s'afficher
+        // « Transmise » en vert dans la liste. Le code qui devait la signaler
+        // n'était jamais atteint, faute de données.
+        //
+        // C'est l'écran du fournisseur qui compte ici : il doit voir un refus,
+        // parce qu'un refus l'oblige à passer un avoir.
+        await admin
+          .from("invoices")
+          .update({
+            superpdp_status: ev.status_code,
+            superpdp_status_date: ev.created_at ?? new Date().toISOString(),
+          })
+          .eq("superpdp_invoice_id", String(ev.invoice_id))
+          .eq("user_id", userId);
       }
       curseur = Math.max(curseur ?? 0, ev.id);
     }
