@@ -37,13 +37,23 @@ comptes réels du bac à sable, avec de vraies factures.
 - Périodicité de TVA propagée ; la franchise devient `vat_exemption` seule
 - Téléchargement Factur-X : on lit les octets, pas l'en-tête
 
-`npm run verify` complet : **224 vérifications, 0 échec**.
+`npm run verify` complet : **224 vérifications, 0 échec**, plus les 4 du
+refus (`test:superpdp-refus`), désormais dans la suite.
 
 ## 3. Ce qui n'est pas couvert, et pourquoi
 
-- **Le refus abouti d'une facture reçue (`fr:210`).** L'acte est définitif et
-  oblige le fournisseur à une annulation comptable. Les garde-fous sont testés,
-  le succès se constate à la main.
+- **Le refus abouti d'une facture reçue (`fr:210`)** — partiellement couvert.
+  `npm run test:superpdp-refus` éprouve les garde-fous en production : motif
+  hors nomenclature rejeté avant tout appel, refus impossible sur une facture
+  qu'on a soi-même émise, facture d'un autre espace renvoyée introuvable et non
+  divulguée. Le refus **abouti** exige une session sur un compte destinataire ;
+  renseigner `E2E_REFUS_EMAIL` / `E2E_REFUS_PASSWORD` dans `.env.local` ferme la
+  boucle, y compris dans `npm run verify`.
+
+  Montage écarté au passage : faire qu'une entreprise s'adresse une facture à
+  elle-même pour tenir les deux bouts. La plateforme la **rejette** (`fr:213`),
+  vérifié sur la facture 375540. Une facture dont l'émetteur est le destinataire
+  n'existe pas pour elle.
 - **Le tunnel de raccordement** (connect → callback → déconnexion) : redirection
   OAuth, donc un navigateur.
 - **L'émission depuis une entreprise réelle** : le bac à sable et la production

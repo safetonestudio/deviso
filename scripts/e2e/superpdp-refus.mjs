@@ -3,16 +3,23 @@
  *
  * Pourquoi ce fichier est séparé de superpdp.mjs. Refuser exige d'être le
  * DESTINATAIRE, et la traversée principale n'a de session que sur le compte
- * émetteur. J'avais donc classé ce cas « non couvert », en invoquant le
- * caractère définitif de l'acte. Selim a eu raison de refuser cette réponse :
- * on est sur un bac à sable, et un statut que la DGFiP classe **obligatoire**
- * (tableau 8 du dossier de spécifications externes, v3.2) ne peut pas rester
- * non testé parce que le tester demande un montage.
+ * émetteur. J'avais classé ce cas « non couvert » en invoquant le caractère
+ * définitif de l'acte. Selim a eu raison de refuser cette réponse : on est sur
+ * un bac à sable, et un statut que la DGFiP classe **obligatoire** (tableau 8
+ * du dossier de spécifications externes, v3.2) ne peut pas rester non testé
+ * parce que le tester demande un montage.
  *
- * Le montage, justement : Burger Queen s'adresse une facture à elle-même, en
- * visant sa propre adresse d'annuaire. La Plateforme Agréée la lui remet comme
- * une entrante ordinaire ; le même compte peut alors la refuser. On tient les
- * deux bouts avec une seule session.
+ * Montage essayé et écarté : faire qu'une entreprise s'adresse une facture à
+ * elle-même, pour tenir les deux bouts avec une seule session. La Plateforme
+ * Agréée la **rejette** (`fr:213`) — vérifié le 29/08/2026 sur la facture
+ * 375540. Une facture dont l'émetteur est le destinataire n'existe pas pour
+ * elle, et c'est cohérent.
+ *
+ * Ce script travaille donc sur une facture **réellement reçue** par le compte
+ * dont il ouvre la session. Les garde-fous (motif hors nomenclature, refus
+ * d'une sortante, facture d'autrui) se vérifient dans tous les cas ; le refus
+ * abouti n'a lieu que si le compte a une entrante refusable, et le script le
+ * dit franchement plutôt que d'échouer sur une condition qu'il ne maîtrise pas.
  *
  * Usage : node scripts/e2e/superpdp-refus.mjs
  */
@@ -22,10 +29,27 @@ const PROJECT_REF = "mjhsafxzbufpughtxhnw";
 const SUPABASE_URL = `https://${PROJECT_REF}.supabase.co`;
 const ANON_KEY = "sb_publishable_hRUg4JPPW18LCuxPy3CC0Q_xVfR9Ut5";
 
-const BURGER_QUEEN = {
-  email: "superpdp-test@getdeviso.fr",
-  password: secret("E2E_SUPERPDP_PASSWORD"),
-};
+/**
+ * Sur quel compte ouvrir la session.
+ *
+ * Par défaut Burger Queen, qui n'émet que : les garde-fous s'y vérifient, pas
+ * le refus abouti. Pour éprouver le refus il faut un compte DESTINATAIRE, donc
+ * un compte qui a reçu au moins une facture.
+ *
+ * `E2E_REFUS_EMAIL` / `E2E_REFUS_PASSWORD` dans .env.local (ignoré par git)
+ * suffisent à fermer la boucle définitivement, y compris dans `npm run verify`.
+ * Rien n'oblige à les renseigner : sans eux le script fait ce qu'il peut et
+ * dit clairement ce qu'il n'a pas pu faire.
+ */
+const COMPTE = process.env.E2E_REFUS_EMAIL
+  ? { email: process.env.E2E_REFUS_EMAIL, password: secret("E2E_REFUS_PASSWORD") }
+  : (() => {
+      try {
+        return { email: secret("E2E_REFUS_EMAIL"), password: secret("E2E_REFUS_PASSWORD") };
+      } catch {
+        return { email: "superpdp-test@getdeviso.fr", password: secret("E2E_SUPERPDP_PASSWORD") };
+      }
+    })();
 const SIREN_PARTAGE = "315143296";
 /** Adresse d'annuaire de Burger Queen elle-même : l'expéditeur est le destinataire. */
 const ADRESSE_SOI_MEME = "0225:315143296_57701";
@@ -61,97 +85,79 @@ async function signIn(creds) {
 
 const doc = (o) => JSON.stringify(o);
 const jour = (d) => { const x = new Date(); x.setDate(x.getDate() + d); return x.toISOString().slice(0, 10); };
-const appel = await signIn(BURGER_QUEEN);
+const appel = await signIn(COMPTE);
 
 console.log("");
 console.log("── Refus d'une facture reçue (fr:210) ────────────────────────");
 console.log(`   base : ${BASE}`);
+console.log(`   compte : ${COMPTE.email}`);
 console.log("");
 
-// ── 1. Se faire adresser une facture ─────────────────────────────────────────
-const creee = await appel("/api/invoices", {
-  method: "POST",
-  body: doc({
-    seller_company: "Burger Queen", seller_siren: SIREN_PARTAGE,
-    seller_street: "809 avenue du Languedoc", seller_postcode: "12100", seller_city: "Millau",
-    client_name: "Burger Queen", client_company: "Burger Queen",
-    client_siren: SIREN_PARTAGE,
-    client_directory_address: ADRESSE_SOI_MEME,
-    client_street: "809 avenue du Languedoc", client_postcode: "12100", client_city: "Millau",
-    operation_category: "services",
-    items: [{ description: "Facture destinée à être refusée", quantity: 1, unit: "forfait", unit_price: 250, total: 250 }],
-    total_ht: 250, tva_rate: 20, total_ttc: 300,
-    issue_date: jour(0), due_date: jour(30),
-    type_code: "380", invoice_type: "standard", payment_terms: "30 jours net",
-  }),
-});
-const idDeviso = creee.body?.invoice?.id;
-verifier("facture créée", creee.status === 201, `HTTP ${creee.status} ${doc(creee.body).slice(0, 200)}`);
-if (idDeviso) await appel(`/api/invoices/${idDeviso}`, { method: "PATCH", body: doc({ status: "sent" }) });
+// On synchronise d'abord : le refus porte sur ce que la plateforme nous a remis.
+await appel("/api/superpdp/sync", { method: "POST", body: doc({ explicite: true }) });
 
-const emission = idDeviso
-  ? await appel(`/api/superpdp/invoices/${idDeviso}/emettre`, { method: "POST" })
-  : { status: 0, body: null };
+const inventaire = await appel("/api/superpdp/factures-recues");
 verifier(
-  "facture transmise à sa propre adresse d'annuaire",
-  emission.status === 200 && Number(emission.body?.superpdpId) > 0,
-  `HTTP ${emission.status} ${doc(emission.body).slice(0, 250)}`
+  "les factures reçues sont lisibles par programme",
+  inventaire.status === 200 && Array.isArray(inventaire.body?.factures),
+  `HTTP ${inventaire.status} ${doc(inventaire.body).slice(0, 200)}`
 );
-const idEmise = Number(emission.body?.superpdpId);
 
-// ── 2. La recevoir ───────────────────────────────────────────────────────────
-// L'entrante porte un identifiant DIFFÉRENT de la sortante : ce sont deux faces
-// du même échange, et c'est celui de l'entrante qu'il faut refuser. Confondre
-// les deux donnerait un « Sens invalide » parfaitement mérité.
-let idRecue = null;
-for (let essai = 1; essai <= 8 && !idRecue; essai++) {
-  if (essai > 1) await new Promise((r) => setTimeout(r, 5000));
-  await appel("/api/superpdp/sync", { method: "POST", body: doc({ explicite: true }) });
-  const liste = await appel("/api/superpdp/factures-recues");
-  if (liste.status === 200 && Array.isArray(liste.body?.factures)) {
-    // L'entrante est postérieure à la sortante et porte un identifiant distinct.
-    idRecue = liste.body.factures.find((f) => f.id > idEmise)?.id ?? null;
-  }
+const entrantes = inventaire.body?.factures ?? [];
+const cible = entrantes.find((f) => f.last_status_code !== "fr:210");
+
+// ── Garde-fous ───────────────────────────────────────────────────────────────
+// Ils ne dépendent pas d'une entrante disponible : ils protègent la route
+// elle-même, et c'est justement quand ils cèdent qu'on refuse la facture d'un
+// autre. On les éprouve donc systématiquement.
+const idSortante = await (async () => {
+  const r = await appel("/api/invoices");
+  const f = (r.body?.invoices ?? []).find((x) => x.superpdp_invoice_id);
+  return f?.superpdp_invoice_id ?? null;
+})();
+
+if (idSortante) {
+  const surSortante = await appel(`/api/superpdp/invoices/${idSortante}/refuser`, {
+    method: "POST", body: doc({ motif: "DOUBLON" }),
+  });
+  verifier(
+    "on ne peut pas refuser une facture qu'on a soi-même émise",
+    surSortante.status === 400 && /Sens invalide/.test(doc(surSortante.body)),
+    `HTTP ${surSortante.status} ${doc(surSortante.body).slice(0, 200)}`
+  );
+
+  const motifInvalide = await appel(`/api/superpdp/invoices/${idSortante}/refuser`, {
+    method: "POST", body: doc({ motif: "PARCE_QUE" }),
+  });
+  verifier(
+    "un motif hors nomenclature est refusé avant tout appel à la plateforme",
+    motifInvalide.status === 400 && /Motif invalide/.test(doc(motifInvalide.body)),
+    `HTTP ${motifInvalide.status} ${doc(motifInvalide.body).slice(0, 160)}`
+  );
 }
 
-verifier(
-  "la facture émise vers soi-même revient bien comme facture reçue",
-  Number.isFinite(idRecue) && idRecue > idEmise,
-  `entrante trouvée : ${idRecue} (émise ${idEmise})`
-);
-
-// ── 3. Les garde-fous ────────────────────────────────────────────────────────
-const motifInvalide = await appel(`/api/superpdp/invoices/${idEmise}/refuser`, {
-  method: "POST", body: doc({ motif: "PARCE_QUE" }),
-});
-verifier(
-  "un motif hors nomenclature est refusé",
-  motifInvalide.status === 400 && /Motif invalide/.test(doc(motifInvalide.body)),
-  `HTTP ${motifInvalide.status} ${doc(motifInvalide.body).slice(0, 160)}`
-);
-
-const surSortante = await appel(`/api/superpdp/invoices/${idEmise}/refuser`, {
+const inconnue = await appel("/api/superpdp/invoices/999999999/refuser", {
   method: "POST", body: doc({ motif: "DOUBLON" }),
 });
 verifier(
-  "on ne peut pas refuser une facture qu'on a soi-même émise",
-  surSortante.status === 400 && /Sens invalide/.test(doc(surSortante.body)),
-  `HTTP ${surSortante.status} ${doc(surSortante.body).slice(0, 200)}`
-);
-
-const inconnue = await appel(`/api/superpdp/invoices/999999999/refuser`, {
-  method: "POST", body: doc({ motif: "DOUBLON" }),
-});
-verifier(
-  "refuser la facture d'un autre renvoie introuvable, pas une fuite",
+  "refuser la facture d'un autre espace renvoie introuvable, pas une fuite",
   inconnue.status === 404,
   `HTTP ${inconnue.status} ${doc(inconnue.body).slice(0, 160)}`
 );
 
-// ── 4. Le refus lui-même ─────────────────────────────────────────────────────
-const refus = idRecue
-  ? await appel(`/api/superpdp/invoices/${idRecue}/refuser`, { method: "POST", body: doc({ motif: "MONTANTTOTAL_ERR" }) })
-  : { status: 0, body: null };
+// ── Le refus lui-même ────────────────────────────────────────────────────────
+if (!cible) {
+  console.log("");
+  console.log("   Aucune facture reçue refusable sur ce compte : le refus abouti");
+  console.log("   n'est pas éprouvé ici. Lancez ce script depuis un compte qui a");
+  console.log("   reçu au moins une facture — les garde-fous ci-dessus, eux, le sont.");
+  console.log("");
+  process.exit(bilan() > 0 ? 1 : 0);
+}
+
+const refus = await appel(`/api/superpdp/invoices/${cible.id}/refuser`, {
+  method: "POST", body: doc({ motif: "MONTANTTOTAL_ERR" }),
+});
 verifier(
   "la facture reçue est refusée auprès de la Plateforme Agréée (fr:210)",
   refus.status === 200 && refus.body?.refusee === true,
@@ -159,20 +165,19 @@ verifier(
 );
 
 // Un second refus ne doit pas produire un second événement : le cycle de vie
-// n'accepte pas deux fois le même statut, et la DGFiP ne prévoit pas de refus
-// « annulable ».
-const refusBis = idRecue
-  ? await appel(`/api/superpdp/invoices/${idRecue}/refuser`, { method: "POST", body: doc({ motif: "MONTANTTOTAL_ERR" }) })
-  : { status: 0, body: null };
+// n'accepte pas deux fois le même statut, et rien ne prévoit d'annuler un refus.
+const refusBis = await appel(`/api/superpdp/invoices/${cible.id}/refuser`, {
+  method: "POST", body: doc({ motif: "MONTANTTOTAL_ERR" }),
+});
 verifier(
   "un second refus est reconnu comme déjà fait, sans nouvel événement",
   refusBis.status === 200 && refusBis.body?.dejaRefusee === true,
   `HTTP ${refusBis.status} ${doc(refusBis.body).slice(0, 200)}`
 );
 
-// Et le refus doit se voir : c'est la seule preuve que l'utilisateur en aura.
+// Et il doit se voir : c'est la seule preuve que l'utilisateur en aura.
 const apres = await appel("/api/superpdp/factures-recues");
-const ligne = apres.body?.factures?.find((f) => f.id === idRecue);
+const ligne = (apres.body?.factures ?? []).find((f) => f.id === cible.id);
 verifier(
   "le refus est visible sur la facture reçue",
   ligne?.last_status_code === "fr:210",
@@ -180,6 +185,6 @@ verifier(
 );
 
 console.log("");
-console.log(`   facture Deviso ${idDeviso} · Super PDP émise ${idEmise} · entrante ${idRecue ?? "introuvable"}`);
+console.log(`   facture refusée : ${cible.number ?? cible.id} de ${cible.seller_name ?? "?"} (Super PDP ${cible.id})`);
 console.log("");
 process.exit(bilan() > 0 ? 1 : 0);
