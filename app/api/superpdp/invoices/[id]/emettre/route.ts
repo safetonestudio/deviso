@@ -4,7 +4,8 @@ import { createAdminClient } from "@/lib/supabase/admin";
 import { getWorkspaceUserId } from "@/lib/workspace";
 import { superpdpFetch, getConnection, SuperPdpNotConnected, SuperPdpSessionPending } from "@/lib/superpdp";
 import { generateFacturXml } from "@/lib/invoice-xml";
-import { toSiren, isB2CInvoice } from "@/lib/facturx-helpers";
+import { isB2CInvoice } from "@/lib/facturx-helpers";
+import { manquesPourEmission, phraseManques } from "@/lib/superpdp-precontrole";
 import { resoudreAdresseClient } from "@/lib/superpdp-annuaire";
 import type { Invoice } from "@/types";
 
@@ -62,38 +63,14 @@ export async function POST(req: NextRequest, ctx: { params: Promise<{ id: string
   }
 
   // Contrôles préalables, formulés en français plutôt que renvoyés bruts par la
-  // plateforme. Le principe retenu sur ce projet est qu'aucun champ n'est
-  // obligatoire à la création d'une facture ; la contrepartie est de dire
-  // clairement, au moment de l'émission, ce qui manque et pourquoi.
+  // plateforme. La règle vit dans lib/superpdp-precontrole.ts et sert aussi à
+  // l'interface : elle sait donc AVANT le clic si la transmission peut aboutir.
   const isB2C = isB2CInvoice(facture as unknown as Invoice);
 
-  const manques: string[] = [];
-  if (!toSiren(facture.seller_siren)) {
-    manques.push("votre SIREN (à renseigner dans Paramètres)");
-  }
-  // Un particulier n'a pas de SIREN — l'exiger bloquerait toute facture B2C.
-  // Super PDP détecte le B2C autrement (note BAR + adresse email), voir
-  // lib/invoice-xml.ts.
-  if (!isB2C && !toSiren(facture.client_siren)) {
-    manques.push(`le SIREN de ${facture.client_name || "votre client"}`);
-  }
-  // Documenté par Super PDP (page "E-reporting") : les factures mélangeant
-  // biens et services ne sont pas gérées par leur extraction d'e-reporting.
-  if (facture.operation_category === "mixed") {
-    manques.push(
-      "une catégorie d'opération unique : biens OU services, pas les deux sur la même facture"
-    );
-  }
+  const manques = manquesPourEmission(facture);
   if (manques.length) {
     return NextResponse.json(
-      {
-        error: "Informations manquantes",
-        message:
-          "Impossible de transmettre cette facture sans " +
-          manques.join(" et ") +
-          ". L'adresse de facturation électronique du destinataire en est déduite.",
-        manques,
-      },
+      { error: "Informations manquantes", message: phraseManques(manques), manques },
       { status: 400 }
     );
   }

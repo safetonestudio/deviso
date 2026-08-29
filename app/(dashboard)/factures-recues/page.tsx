@@ -127,6 +127,19 @@ export default async function FacturesRecues() {
         {raccorde && <SyncButton derniere={raccordement?.last_sync_at ?? null} />}
       </div>
 
+      {/* L'adresse de réception n'était visible que sur l'écran vide. C'est
+          pourtant l'information qu'un fournisseur demande, et on la demande
+          justement quand on a déjà des factures — pas quand on n'en a aucune.
+          Elle reste donc affichée en permanence, sélectionnable d'un geste. */}
+      {raccorde && raccordement?.directory_address && (
+        <p className="text-xs text-gray-500 mt-3">
+          Vos fournisseurs vous adressent leurs factures à{" "}
+          <span className="font-mono text-gray-300 select-all">
+            {raccordement.directory_address}
+          </span>
+        </p>
+      )}
+
       {!raccorde ? (
         // Pas de tableau vide trompeur : sans raccordement, l'absence de
         // factures ne veut pas dire qu'on n'en a pas reçu — elle veut dire

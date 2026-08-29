@@ -360,6 +360,49 @@ verifier(
   `HTTP ${emissionMixte.status} ${doc(emissionMixte.body).slice(0, 200)}`
 );
 
+// La liste des factures affiche « Transmission impossible » et nomme ce qui
+// bloque AVANT le clic, en appliquant la même règle que la route
+// (lib/superpdp-precontrole.ts). Elle a besoin pour cela que le refus arrive
+// sous forme de liste exploitable, pas seulement d'une phrase. Sans cette
+// assertion, un refus qui perdrait `manques` laisserait l'interface proposer un
+// bouton qui échoue — exactement le piège qu'on vient de retirer.
+verifier(
+  "le refus nomme ce qui manque, sous une forme exploitable par l'interface",
+  Array.isArray(emissionMixte.body?.manques) && emissionMixte.body.manques.length > 0,
+  `manques = ${doc(emissionMixte.body?.manques)}`
+);
+
+// Une facture B2B sans SIREN client : c'est le cas courant, celui qui faisait
+// découvrir le problème après le clic.
+const sansSiren = await creerFacture({
+  client_name: "Client Sans Siren SARL", client_company: "Client Sans Siren SARL",
+  client_street: "9 cours du Médoc", client_postcode: "33300", client_city: "Bordeaux",
+});
+const idSansSiren = sansSiren.body?.invoice?.id;
+if (idSansSiren) await bq.call(`/api/invoices/${idSansSiren}`, { method: "PATCH", body: doc({ status: "sent" }) });
+const emissionSansSiren = idSansSiren
+  ? await bq.call(`/api/superpdp/invoices/${idSansSiren}/emettre`, { method: "POST" })
+  : { status: 0, body: null };
+verifier(
+  "sans SIREN client, le refus désigne le client par son nom",
+  emissionSansSiren.status === 400 &&
+    Array.isArray(emissionSansSiren.body?.manques) &&
+    emissionSansSiren.body.manques.some((m) => /Client Sans Siren SARL/.test(m)),
+  `HTTP ${emissionSansSiren.status} ${doc(emissionSansSiren.body).slice(0, 220)}`
+);
+
+// La colonne « Plateforme Agréée » ne s'affiche que si /status dit à la fois
+// « raccordé » et « vérifié ». Si cette forme change, la colonne disparaît en
+// silence et la transmission redevient invisible.
+const statutColonne = await bq.call("/api/superpdp/status");
+verifier(
+  "le statut expose de quoi décider d'afficher la colonne de transmission",
+  statutColonne.status === 200 &&
+    statutColonne.body?.connected === true &&
+    statutColonne.body?.status === "verified",
+  `HTTP ${statutColonne.status} ${doc(statutColonne.body).slice(0, 200)}`
+);
+
 // ── Synchronisation ──────────────────────────────────────────────────────────
 console.log("");
 console.log("── Synchronisation avec la Plateforme Agréée ─────────────────");

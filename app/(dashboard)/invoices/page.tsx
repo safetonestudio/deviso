@@ -8,6 +8,7 @@ import { UpgradeBanner } from "@/components/UpgradeBanner";
 import { RefreshCw, Trash2, Plus, X, ChevronDown, Download, Coins, CircleCheck, TriangleAlert, Lock } from "lucide-react";
 import { GuidedTourBanner } from "@/components/GuidedTourBanner";
 import { usePlan } from "@/components/PlanContext";
+import { manquesPourEmission, phraseManques, transmissible } from "@/lib/superpdp-precontrole";
 
 const STATUS_LABEL: Record<string, string> = {
   draft: "Brouillon",
@@ -46,18 +47,32 @@ function fmtDate(d: string) {
  * l'administration, n'existe pas. Cet état doit se lire d'un coup d'œil sur la
  * liste, comme le statut de paiement.
  */
-function etatPdp(inv: Invoice): { texte: string; classe: string; aFaire: boolean } | null {
-  if (inv.status === "draft" || inv.status === "cancelled") return null;
+function etatPdp(inv: Invoice): {
+  texte: string;
+  classe: string;
+  aFaire: boolean;
+  manques: string[];
+} | null {
+  if (!transmissible(inv)) return null;
   if (inv.superpdp_encaisse_at)
-    return { texte: "Encaissement déclaré", classe: "bg-emerald-500/10 text-emerald-400", aFaire: false };
+    return { texte: "Encaissement déclaré", classe: "bg-emerald-500/10 text-emerald-400", aFaire: false, manques: [] };
   if (inv.superpdp_status === "fr:210")
-    return { texte: "Refusée par le client", classe: "bg-amber-500/10 text-amber-400", aFaire: false };
+    return { texte: "Refusée par le client", classe: "bg-amber-500/10 text-amber-400", aFaire: false, manques: [] };
   if (inv.superpdp_status === "fr:213")
-    return { texte: "Rejetée", classe: "bg-amber-500/10 text-amber-400", aFaire: false };
+    return { texte: "Rejetée", classe: "bg-amber-500/10 text-amber-400", aFaire: false, manques: [] };
   if (inv.superpdp_invoice_id)
-    return { texte: "Transmise", classe: "bg-emerald-500/10 text-emerald-400", aFaire: false };
-  return { texte: "À transmettre", classe: "bg-amber-500/10 text-amber-400", aFaire: true };
+    return { texte: "Transmise", classe: "bg-emerald-500/10 text-emerald-400", aFaire: false, manques: [] };
+
+  // Une facture à laquelle il manque le SIREN du client ne peut pas partir.
+  // Afficher « À transmettre » avec un bouton qui échouera serait un piège :
+  // on nomme ce qui bloque, à l'endroit où la personne le lit.
+  const manques = manquesPourEmission(inv);
+  if (manques.length)
+    return { texte: "Transmission impossible", classe: "bg-red-500/10 text-red-400", aFaire: false, manques };
+
+  return { texte: "À transmettre", classe: "bg-amber-500/10 text-amber-400", aFaire: true, manques: [] };
 }
+
 
 type RecurringInvoice = {
   id: string;
@@ -97,6 +112,10 @@ export default function InvoicesPage() {
   // ailleurs elle ne dirait rien de vrai, juste « à transmettre » pour tout,
   // sans moyen de le faire.
   const [raccordePdp, setRaccordePdp] = useState(false);
+  // Transmission en cours, par identifiant de facture : la liste reste
+  // utilisable pendant qu'une ligne part.
+  const [transmission, setTransmission] = useState<string | null>(null);
+  const [messagePdp, setMessagePdp] = useState<{ id: string; texte: string; ok: boolean } | null>(null);
   const [loading, setLoading] = useState(true);
   const [exportYear, setExportYear] = useState(new Date().getFullYear());
   const [exporting, setExporting] = useState(false);
@@ -147,6 +166,43 @@ export default function InvoicesPage() {
     setRecurring(r.recurring || []);
     setRecurringLoading(false);
   }
+
+  /**
+   * Transmet une facture depuis la liste.
+   *
+   * `stopPropagation` est indispensable : la ligne entière ouvre la facture au
+   * clic. Sans lui, transmettre ferait aussi changer de page, et la personne ne
+   * verrait jamais le résultat de ce qu'elle vient de déclencher.
+   */
+  async function transmettrePdp(inv: Invoice, e: React.MouseEvent) {
+    e.stopPropagation();
+    setTransmission(inv.id);
+    setMessagePdp(null);
+    try {
+      const r = await fetch(`/api/superpdp/invoices/${inv.id}/emettre`, { method: "POST" });
+      const d = await r.json().catch(() => ({}));
+      if (!r.ok) {
+        setMessagePdp({ id: inv.id, texte: d.message || d.error || "Transmission refusée", ok: false });
+        return;
+      }
+      // On met à jour la ligne sur place plutôt que de tout recharger : le
+      // retour visuel est immédiat, à l'endroit exact où la personne regarde.
+      setInvoices((prev) =>
+        prev.map((x) =>
+          x.id === inv.id ? { ...x, superpdp_invoice_id: d.superpdpId ?? "transmise" } : x
+        )
+      );
+      setMessagePdp({ id: inv.id, texte: "Transmise à la Plateforme Agréée.", ok: true });
+    } catch {
+      setMessagePdp({ id: inv.id, texte: "Transmission impossible : réseau indisponible.", ok: false });
+    } finally {
+      setTransmission(null);
+    }
+  }
+
+  const etatsPdp = raccordePdp ? invoices.map(etatPdp) : [];
+  const aTransmettre = etatsPdp.filter((e) => e?.aFaire).length;
+  const bloquees = etatsPdp.filter((e) => e && e.manques.length > 0).length;
 
   async function handleExportFEC() {
     setExporting(true);
@@ -377,6 +433,38 @@ export default function InvoicesPage() {
         <>
           {isFree && <UpgradeBanner variant="invoice_blocked" />}
 
+          {/* Combien de factures n'ont pas encore été transmises.
+              Sous la réforme, une facture émise et jamais transmise n'existe
+              pas pour l'administration. Ce compte doit se lire sans chercher,
+              comme un solde impayé — pas se déduire en parcourant la liste. */}
+          {raccordePdp && aTransmettre > 0 && (
+            <div className="bg-amber-500/10 border border-amber-500/30 rounded-xl px-4 py-3 mb-5 flex items-center gap-3">
+              <TriangleAlert size={18} className="shrink-0 text-amber-400" />
+              <p className="text-sm text-amber-300">
+                <span className="font-semibold">
+                  {aTransmettre} facture{aTransmettre > 1 ? "s" : ""} à transmettre
+                </span>{" "}
+                <span className="text-amber-400/80">
+                  à la Plateforme Agréée. Le bouton se trouve sur chaque ligne concernée.
+                </span>
+              </p>
+            </div>
+          )}
+
+          {raccordePdp && bloquees > 0 && (
+            <div className="bg-red-500/10 border border-red-500/30 rounded-xl px-4 py-3 mb-5 flex items-center gap-3">
+              <TriangleAlert size={18} className="shrink-0 text-red-400" />
+              <p className="text-sm text-red-300">
+                <span className="font-semibold">
+                  {bloquees} facture{bloquees > 1 ? "s" : ""} ne peu{bloquees > 1 ? "vent" : "t"} pas être transmise{bloquees > 1 ? "s" : ""}
+                </span>{" "}
+                <span className="text-red-400/80">
+                  — il y manque une information. Survolez l&apos;état de la ligne pour savoir laquelle.
+                </span>
+              </p>
+            </div>
+          )}
+
           {loading ? (
             <div className="text-center py-16 text-gray-500">Chargement…</div>
           ) : isFree ? (
@@ -438,6 +526,7 @@ export default function InvoicesPage() {
                           <span className={`px-2 py-0.5 rounded-full font-medium ${e.classe}`}>{e.texte}</span>
                         ) : null;
                       })()}
+
                       <span className="text-gray-500">{fmtDate(inv.issue_date)}</span>
                     </div>
                   </div>
@@ -448,6 +537,29 @@ export default function InvoicesPage() {
                   >
                     Télécharger la facture
                   </button>
+
+                  {/* Sur téléphone, une pastille n'est pas une action. Si la
+                      facture doit partir, le doigt doit trouver un bouton
+                      pleine largeur, au même titre que le téléchargement. */}
+                  {raccordePdp && (() => {
+                    const e = etatPdp(inv);
+                    if (!e?.aFaire) return null;
+                    return (
+                      <button
+                        onClick={(ev) => transmettrePdp(inv, ev)}
+                        disabled={transmission === inv.id}
+                        className="w-full mt-2 px-3 py-2.5 rounded-lg border border-amber-500/30 bg-amber-500/5 text-amber-400 text-sm font-semibold hover:bg-amber-500/10 disabled:opacity-50 transition-colors"
+                      >
+                        {transmission === inv.id ? "Transmission…" : "Transmettre à la Plateforme Agréée"}
+                      </button>
+                    );
+                  })()}
+
+                  {messagePdp?.id === inv.id && (
+                    <p className={`mt-2 text-xs ${messagePdp.ok ? "text-emerald-400" : "text-red-400"}`}>
+                      {messagePdp.texte}
+                    </p>
+                  )}
                 </article>
               ))}
             </div>
@@ -497,12 +609,30 @@ export default function InvoicesPage() {
                           {(() => {
                             const e = etatPdp(inv);
                             if (!e) return <span className="text-gray-600 text-xs">—</span>;
+                            if (e.aFaire)
+                              return (
+                                <button
+                                  onClick={(ev) => transmettrePdp(inv, ev)}
+                                  disabled={transmission === inv.id}
+                                  className="px-2.5 py-1 rounded-full text-xs font-semibold bg-amber-500/10 text-amber-400 hover:bg-amber-500/20 disabled:opacity-50 transition-colors"
+                                >
+                                  {transmission === inv.id ? "Transmission…" : "Transmettre"}
+                                </button>
+                              );
                             return (
-                              <span className={`inline-block px-2 py-0.5 rounded-full text-xs font-medium ${e.classe}`}>
+                              <span
+                                title={e.manques.length ? phraseManques(e.manques) : undefined}
+                                className={`inline-block px-2 py-0.5 rounded-full text-xs font-medium ${e.classe}`}
+                              >
                                 {e.texte}
                               </span>
                             );
                           })()}
+                          {messagePdp?.id === inv.id && (
+                            <div className={`mt-1 text-[11px] ${messagePdp.ok ? "text-emerald-400" : "text-red-400"}`}>
+                              {messagePdp.texte}
+                            </div>
+                          )}
                         </td>
                       )}
                       <td className="px-5 py-3.5 text-right">
