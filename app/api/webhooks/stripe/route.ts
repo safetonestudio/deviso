@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { stripe } from "@/lib/stripe";
 import { createAdminClient } from "@/lib/supabase/admin";
+import { envoyerEncaissementPdp } from "@/lib/superpdp-encaissement";
 import type Stripe from "stripe";
 
 // Correspondance price_id → plan (mensuel ET annuel)
@@ -54,11 +55,27 @@ export async function POST(req: NextRequest) {
       if (session.mode !== "subscription") {
         const invoiceId = session.metadata?.invoice_id;
         if (invoiceId && session.payment_status === "paid") {
-          const { error } = await supabase
+          const { data: updated, error } = await supabase
             .from("invoices")
             .update({ status: "paid" })
-            .eq("id", invoiceId);
+            .eq("id", invoiceId)
+            .select("user_id, superpdp_invoice_id, superpdp_encaisse_at")
+            .maybeSingle();
           if (error) console.error("checkout.session.completed invoice update error:", error);
+
+          // Paiement encaissé via un lien Deviso : même obligation d'e-reporting
+          // (fr:212) que le bouton « Marquer comme payée ». Ce webhook contourne
+          // la route PATCH générique, donc sans cet appel une facture payée par
+          // lien de paiement ne déclarerait jamais son encaissement à Super PDP.
+          if (updated?.superpdp_invoice_id && !updated.superpdp_encaisse_at) {
+            const resultat = await envoyerEncaissementPdp(updated.user_id, invoiceId);
+            if (!resultat.ok && resultat.raison !== "non_transmise") {
+              console.error(
+                `[stripe webhook] encaissement PDP ${invoiceId} : ${resultat.raison}`,
+                resultat.detail ?? ""
+              );
+            }
+          }
         }
         break;
       }

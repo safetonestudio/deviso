@@ -40,3 +40,6 @@ scripts/e2e/sans-*.pdf
 # Artefacts de traversee Super PDP (bac a sable)
 recue*.json
 facture-test.json
+
+# Journaux de traversee locaux
+_scratch_e2e/

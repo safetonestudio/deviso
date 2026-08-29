@@ -3,6 +3,8 @@ import {
   getConnection,
   saveConnection,
   superpdpFetch,
+  lireEtatSession,
+  statutDepuisEtat,
   SuperPdpNotConnected,
   SuperPdpSessionPending,
 } from "@/lib/superpdp";
@@ -74,6 +76,34 @@ export async function synchroniserFactures(userId: string): Promise<ResultatSync
   let entrantes = 0;
 
   try {
+    // État réel de la session, demandé à la source plutôt que déduit d'un 403.
+    // C'est ce qui permet de distinguer « en cours de vérification » de
+    // « vérification échouée » : deux situations opposées, jusqu'ici confondues
+    // dans un seul message qui laissait attendre un utilisateur bloqué.
+    const etat = await lireEtatSession(userId);
+    if (etat) {
+      const statut = statutDepuisEtat(etat);
+      if (statut !== conn.session_status) {
+        await saveConnection(userId, {
+          session_status: statut,
+          ...(statut === "error"
+            ? { last_error: "Super PDP n'a pas pu vérifier le rattachement de votre entreprise. Refaites le raccordement." }
+            : statut === "verified"
+              ? { last_error: null }
+              : {}),
+        });
+      }
+      if (statut !== "verified") {
+        return {
+          recuperees,
+          entrantes,
+          jusquA: curseur,
+          raison: statut === "error" ? "erreur" : "verification_en_cours",
+          detail: `company_verification_status = ${etat.entreprise}`,
+        };
+      }
+    }
+
     // Rattrapage de l'adresse de réception.
     //
     // Elle est renseignée au moment du raccordement, mais tout raccordement
@@ -179,6 +209,26 @@ export async function synchroniserFactures(userId: string): Promise<ResultatSync
     }
     const detail = err instanceof Error ? err.message : "Erreur inconnue";
     console.error("[superpdp-sync]", detail);
+
+    // On inscrit l'échec sur le raccordement. Sans cela, une synchronisation qui
+    // échoue ne laisse aucune trace visible : l'écran continue d'afficher un
+    // raccordement sain pendant que plus rien n'arrive. C'est le pire des cas
+    // pour de la facturation électronique — l'utilisateur est légalement
+    // destinataire de factures qu'il ne voit jamais, et rien ne le lui signale.
+    //
+    // `invalid_grant` est à part : le refresh token est mort (rotation OAuth 2.1
+    // perdue, révocation, autorisation retirée). Aucun réessai ne le ranimera,
+    // il faut refaire le tunnel d'autorisation — d'où le statut `error`, qui
+    // permet à l'interface de proposer un rebranchement au lieu d'attendre.
+    const grantMort = /invalid_grant/i.test(detail);
+    await saveConnection(userId, {
+      last_error: detail.slice(0, 500),
+      ...(grantMort ? { session_status: "error" as const } : {}),
+    }).catch(() => {
+      // Ne jamais transformer un échec de journalisation en échec de
+      // synchronisation : on a déjà une erreur à remonter.
+    });
+
     return { recuperees, entrantes, jusquA: curseur, raison: "erreur", detail };
   }
 
@@ -188,7 +238,13 @@ export async function synchroniserFactures(userId: string): Promise<ResultatSync
   // Une synchronisation sans nouveauté est un succès, pas un non-événement :
   // on horodate quand même, sinon l'écran ne peut pas distinguer « rien de
   // nouveau » de « on n'a pas regardé depuis hier ».
-  await saveConnection(userId, { last_sync_at: new Date().toISOString() });
+  // Le succès efface l'erreur précédente : sans cela, un incident passager
+  // laisserait une alerte affichée indéfiniment, et l'utilisateur cesserait de
+  // la croire — donc de la lire le jour où elle est vraie.
+  await saveConnection(userId, {
+    last_sync_at: new Date().toISOString(),
+    ...(conn.last_error ? { last_error: null } : {}),
+  });
 
   return { recuperees, entrantes, jusquA: curseur, statuts };
 }

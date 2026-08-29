@@ -116,6 +116,21 @@ export function electronicAddress(sirenOrSiret: string | null | undefined): stri
   return toSiren(sirenOrSiret);
 }
 
+/**
+ * Un client est-il un particulier (B2C) ?
+ *
+ * Heuristique provisoire — documentée comme telle depuis l'introduction de
+ * `FacturXCompliance` : sans raison sociale, le client est un particulier.
+ * Centralisée ici (au lieu d'être réécrite dans le composant de conformité,
+ * la génération XML et la route d'émission Super PDP) pour ne pas reproduire
+ * la divergence constatée sur la navigation (`check:nav`, 22/08/2026) : trois
+ * implémentations indépendantes d'une même règle finissent par diverger sans
+ * qu'aucun contrôle ne le remarque.
+ */
+export function isB2CInvoice(input: { client_company?: string | null }): boolean {
+  return !input.client_company?.trim();
+}
+
 export interface ComplianceIssue {
   field: string;
   label: string;
@@ -135,8 +150,22 @@ export function checkInvoiceCompliance(input: {
   clientAddress?: string | null;
   isFranchise: boolean;
   isB2C?: boolean;
+  operationCategory?: "services" | "goods" | "mixed" | null;
 }): ComplianceIssue[] {
   const issues: ComplianceIssue[] = [];
+
+  // Documenté par Super PDP (page "E-reporting", 29/08/2026) : « Les factures
+  // mixtes (appelées aussi doubles) comportant des ventes de biens et
+  // services ne sont pas gérées. » L'extraction automatique de l'e-reporting
+  // ne sait pas ventiler une facture entre les deux — il faut deux factures.
+  if (input.operationCategory === "mixed") {
+    issues.push({
+      field: "operation_category",
+      label:
+        "Une facture mélangeant biens et services ne peut pas être transmise à la Plateforme Agréée — séparez-la en deux factures",
+      blocking: true,
+    });
+  }
 
   if (!toSiren(input.sellerSiren)) {
     issues.push({ field: "seller_siren", label: "Votre SIREN ou SIRET est manquant ou invalide", blocking: true });

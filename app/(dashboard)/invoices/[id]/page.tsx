@@ -100,7 +100,26 @@ function ActionPanel({ invoice, id, router, hasChorusPro }: {
       body: JSON.stringify({ status: "paid" }),
     });
     const data = await res.json();
-    if (res.ok) setInv(data.invoice);
+    if (res.ok) {
+      setInv(data.invoice);
+      // Facture déjà transmise à Super PDP : l'encaissement (fr:212) est une
+      // obligation légale distincte du statut "payée" côté Deviso (art. 290 A
+      // CGI). Échec silencieux volontaire : Deviso reste la source de vérité
+      // sur le paiement même si la Plateforme Agréée est momentanément
+      // injoignable — l'utilisateur ne doit pas voir sa facture "non payée"
+      // pour une raison qui ne le concerne pas.
+      if (data.invoice.superpdp_invoice_id && !data.invoice.superpdp_encaisse_at) {
+        try {
+          const r2 = await fetch(`/api/superpdp/invoices/${id}/encaisser`, { method: "POST" });
+          const d2 = await r2.json();
+          if (r2.ok && d2.encaissee) {
+            setInv((prev) => (prev ? { ...prev, superpdp_encaisse_at: new Date().toISOString() } : prev));
+          }
+        } catch {
+          // best-effort, cf. commentaire ci-dessus
+        }
+      }
+    }
     setMarkingPaid(false);
   }
 
@@ -329,7 +348,12 @@ function ActionPanel({ invoice, id, router, hasChorusPro }: {
         {dejaTransmise && (
           <div className="w-full text-sm px-4 py-2.5 rounded-lg border border-emerald-500/20 bg-emerald-500/5 text-emerald-400 flex items-center gap-2">
             <RadioTower size={17} className="shrink-0" />
-            <span>Transmise à la Plateforme Agréée</span>
+            <div className="flex flex-col">
+              <span>Transmise à la Plateforme Agréée</span>
+              {inv.superpdp_encaisse_at && (
+                <span className="text-[11px] text-emerald-400/70">Encaissement déclaré (fr:212)</span>
+              )}
+            </div>
           </div>
         )}
 

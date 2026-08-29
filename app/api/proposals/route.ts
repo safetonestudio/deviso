@@ -45,10 +45,30 @@ export async function POST(req: NextRequest) {
     valid_until, payment_terms, notes, ai_brief
   } = body;
 
-  // Génère le numéro de devis auto
-  const { data: numData } = await supabase
+  // Génère le numéro de devis auto.
+  //
+  // Même correctif que sur les factures : plus de repli « D-YYYY-001 ». Un
+  // repli silencieux donnait le même numéro à tous les devis d'un compte dès
+  // que la séquence échouait, et rien ne le signalait. Un devis est moins
+  // encadré qu'une facture, mais deux devis homonymes chez un même client
+  // rendent la référence contractuelle inutilisable — et c'est elle qu'on cite
+  // sur la facture qui suit.
+  const { data: numData, error: numErr } = await supabase
     .rpc("next_proposal_number", { p_user_id: workspaceId });
-  const proposalNumber = numData || `D-${new Date().getFullYear()}-001`;
+
+  if (numErr || !numData) {
+    console.error("[proposals] numérotation :", numErr?.message ?? "aucun numéro renvoyé");
+    return NextResponse.json(
+      {
+        error: "NUMEROTATION_INDISPONIBLE",
+        message:
+          "Le numéro de devis n'a pas pu être attribué. Le devis n'a pas été créé : " +
+          "mieux vaut réessayer que produire un numéro en doublon.",
+      },
+      { status: 500 }
+    );
+  }
+  const proposalNumber = numData;
 
   // Assigner un ID à chaque ligne si manquant
   const itemsWithIds = (items as ProposalItem[]).map((item) => ({

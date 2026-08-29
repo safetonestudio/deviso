@@ -77,6 +77,16 @@ export interface Profile {
   logo_url: string | null;
   tva_number: string | null;
   tva_regime: TvaRegime | null;
+  /**
+   * Périodicité de déclaration de TVA, transmise à la Plateforme Agréée où elle
+   * commande le calendrier d'e-reporting. Sans elle, les factures adressées à
+   * des particuliers sont refusées.
+   *
+   * ⚠️ Distincte de `tva_regime`, qui décrit le **taux appliqué**. Ne concerne
+   * que les assujettis : la franchise en base se traduit d'elle-même en
+   * `vat_exemption` côté Super PDP, sans rien demander à l'utilisateur.
+   */
+  tva_periodicite: "monthly" | "quarterly" | "simplified" | null;
   plan: "free" | "solo" | "pro";
   stripe_customer_id: string | null;
   stripe_subscription_id: string | null;
@@ -125,6 +135,8 @@ export interface Invoice {
   /** Identifiant de la facture chez la Plateforme Agréée, une fois transmise. */
   superpdp_invoice_id?: string | null;
   superpdp_status?: string | null;
+  /** Horodatage d'envoi réussi du statut « Encaissée » (fr:212) à la Plateforme Agréée. */
+  superpdp_encaisse_at?: string | null;
   superpdp_status_date?: string | null;
   superpdp_error?: string | null;
 
@@ -137,6 +149,14 @@ export interface Invoice {
   client_email: string | null;
   client_company: string | null;
   client_siren: string | null;
+  /**
+   * Adresse de facturation électronique du client à l'Annuaire (BT-49), quand
+   * elle ne se déduit pas de son seul SIREN. La spécification française admet
+   * `SIREN`, `SIREN_SIRET`, `SIREN_SUFFIXE` et `SIREN_SIRET_CODEROUTAGE` : un
+   * client à plusieurs établissements peut donc exiger un routage plus fin.
+   * Vide, on retombe sur le SIREN, correct pour la plupart des entreprises.
+   */
+  client_directory_address: string | null;
   /** Forme affichable, dérivée des champs ci-dessous par l'API. */
   client_address: string | null;
   client_street: string | null;

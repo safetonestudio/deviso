@@ -50,9 +50,13 @@ if (token) {
   verifier("« Signature électronique » — le devis est consultable publiquement",
     vue.status === 200 && Boolean(vue.body?.proposal), `HTTP ${vue.status}`);
 
+  // `signer_name`, pas `signerName` : la route lit la forme en tirets bas, comme
+  // la page publique qui l'appelle. Ce script a longtemps envoyé la mauvaise
+  // clé — la signature aboutissait quand même, sans nom de signataire, et
+  // l'assertion passait sans rien prouver du chemin le plus important.
   const sign = await s.call(`/api/public/proposals/${token}`, {
     method: "POST",
-    body: doc({ action: "sign", signerName: "Jean Témoin" }),
+    body: doc({ action: "sign", signer_name: "Jean Témoin" }),
   });
   verifier("« Signature électronique » — la signature aboutit",
     sign.status === 200, `HTTP ${sign.status} ${doc(sign.body).slice(0, 100)}`);
@@ -61,6 +65,14 @@ if (token) {
   verifier("la signature est horodatée et l'empreinte conservée",
     apres.body?.proposal?.status === "signed" && Boolean(apres.body?.proposal?.signed_at),
     `statut ${apres.body?.proposal?.status}`);
+
+  // Sans le nom du signataire, la piste d'audit ne désigne personne : elle perd
+  // l'essentiel de sa valeur probante en cas de contestation.
+  verifier("la signature retient le nom du signataire et une empreinte du document",
+    apres.body?.proposal?.signer_name === "Jean Témoin" &&
+      typeof apres.body?.proposal?.signature_hash === "string" &&
+      apres.body?.proposal?.signature_hash.length === 64,
+    `signataire « ${apres.body?.proposal?.signer_name} », empreinte ${apres.body?.proposal?.signature_hash?.slice(0, 12)}…`);
 }
 
 // ── Factures : standard, acompte, solde, récurrente ──────────────────────────

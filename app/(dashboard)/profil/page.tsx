@@ -7,6 +7,7 @@ import type { Profile, TvaRegime } from "@/types";
 import { UpgradeBanner } from "@/components/UpgradeBanner";
 import { GuidedTourBanner } from "@/components/GuidedTourBanner";
 import { SuperPdpCard } from "@/components/SuperPdpCard";
+import { PERIODICITES_TVA } from "@/lib/superpdp-entreprise";
 
 const TVA_REGIMES: { value: TvaRegime; label: string; rate: number; description: string }[] = [
   { value: "franchise",    label: "Franchise en base : TVA non applicable (art. 293 B CGI)", rate: 0,    description: "Micro-entrepreneur ou CA sous le seuil (36 800 €/an services)" },
@@ -101,6 +102,9 @@ export default function ProfilPage() {
       phone: profile.phone ?? null,
       tva_number: profile.tva_number ?? null,
       tva_regime: profile.tva_regime ?? null,
+      // Transmise à la Plateforme Agréée par l'API, où elle commande le
+      // calendrier d'e-reporting. L'oublier ici la perdrait en silence.
+      tva_periodicite: profile.tva_periodicite ?? null,
       proposal_template: profile.proposal_template ?? null,
       proposal_color: profile.proposal_color ?? null,
       // `require_approval` se règle sur la page Équipe. Le renvoyer d'ici
@@ -517,6 +521,41 @@ Les présentes CGV sont soumises au droit français. Tout litige relève de la c
               ? <p className="text-xs text-gray-400 italic">TVA non applicable, art. 293 B du CGI</p>
               : <p className="text-xs text-gray-400 italic">TVA {selectedRegime.rate}% applicable · Taux en vigueur à la date d&apos;émission</p>}
           </div>
+
+          {/* Périodicité de déclaration — assujettis uniquement.
+              Distincte du régime ci-dessus : celui-là fixe le taux, celle-ci le
+              calendrier de déclaration. La Plateforme Agréée l'exige pour
+              l'e-reporting ; sans elle, les factures aux particuliers sont
+              refusées. En franchise, il n'y a rien à déclarer : la question ne
+              se pose pas et n'est donc pas posée. */}
+          {selectedRegime.value !== "franchise" && (
+            <div className="space-y-2 pt-1">
+              <div className="text-sm font-medium text-white">Périodicité de déclaration de TVA</div>
+              <p className="text-xs text-gray-500">
+                Transmise à la Plateforme Agréée : elle détermine le rythme auquel vos ventes aux
+                particuliers sont déclarées à l&apos;administration. Sans elle, ces factures sont refusées.
+              </p>
+              <div className="grid gap-2 sm:grid-cols-3">
+                {PERIODICITES_TVA.map((p) => (
+                  <label key={p.value}
+                    className={`flex items-center gap-2 p-3 rounded-xl border cursor-pointer transition-colors ${
+                      profile.tva_periodicite === p.value
+                        ? "border-indigo-500 bg-indigo-500/10" : "border-ds-border hover:border-zinc-600"
+                    }`}>
+                    <input type="radio" name="tva_periodicite" value={p.value}
+                      checked={profile.tva_periodicite === p.value}
+                      onChange={() => set("tva_periodicite", p.value)} className="accent-indigo-600" />
+                    <span className="text-xs text-white">{p.label}</span>
+                  </label>
+                ))}
+              </div>
+              {!profile.tva_periodicite && (
+                <p className="text-xs text-amber-400/90">
+                  Non renseignée : vos factures à des particuliers seront refusées par la Plateforme Agréée.
+                </p>
+              )}
+            </div>
+          )}
         </section>
 
         {/* Légal */}

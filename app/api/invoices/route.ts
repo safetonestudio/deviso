@@ -56,20 +56,40 @@ export async function POST(req: NextRequest) {
   const body = await req.json();
   const invoiceType = body.invoice_type || "standard";
 
-  // Génère le numéro de facture auto si absent
+  // Génère le numéro de facture auto si absent.
+  //
+  // ⚠️ Aucun numéro de repli. La version précédente écrivait
+  // `numData || "YYYY-001"` : quand la séquence échouait, chaque facture du
+  // compte recevait le même numéro, en silence. C'est exactement ce qui s'est
+  // produit — la fonction SQL n'était pas exécutable par le rôle
+  // `authenticated`, l'appel échouait à tous les coups, et un compte de test a
+  // accumulé quinze factures « 2026-001 » sans que rien ne le signale.
+  //
+  // L'article 242 nonies A du CGI impose une numérotation chronologique,
+  // continue et sans doublon. Un numéro inventé pour éviter une erreur produit
+  // donc une facture irrégulière, ce qui est plus grave que l'échec qu'il
+  // masque. On refuse de créer la facture plutôt que d'en créer une fausse.
   let invoiceNumber = body.invoice_number;
   if (!invoiceNumber) {
-    if (invoiceType === "acompte") {
-      // Séquence atomique via document_sequences, garantit AC-YYYY-NNN continu sans race condition
-      const { data: numData } = await supabase
-        .rpc("next_acompte_number", { p_user_id: workspaceId });
-      invoiceNumber = numData || `AC-${new Date().getFullYear()}-001`;
-    } else {
-      // Séquence atomique via document_sequences, garantit YYYY-NNN continu sans race condition
-      const { data: numData } = await supabase
-        .rpc("next_invoice_number", { p_user_id: workspaceId });
-      invoiceNumber = numData || `${new Date().getFullYear()}-001`;
+    // Séquence atomique via document_sequences : AC-YYYY-NNN ou YYYY-NNN,
+    // continue et sans concurrence possible.
+    const fonction = invoiceType === "acompte" ? "next_acompte_number" : "next_invoice_number";
+    const { data: numData, error: numErr } = await supabase
+      .rpc(fonction, { p_user_id: workspaceId });
+
+    if (numErr || !numData) {
+      console.error(`[invoices] numérotation ${fonction} :`, numErr?.message ?? "aucun numéro renvoyé");
+      return NextResponse.json(
+        {
+          error: "NUMEROTATION_INDISPONIBLE",
+          message:
+            "Le numéro de facture n'a pas pu être attribué. La facture n'a pas été créée : " +
+            "mieux vaut réessayer que produire un numéro en doublon, interdit par la réglementation.",
+        },
+        { status: 500 }
+      );
     }
+    invoiceNumber = numData;
   }
 
   // Adresses : on dérive la forme affichable des champs saisis, des deux côtés.

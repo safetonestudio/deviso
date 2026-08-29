@@ -15,6 +15,7 @@ import {
   parseAddress,
   resolveVatNumber,
   electronicAddress,
+  isB2CInvoice,
 } from "./facturx-helpers";
 import type { PaymentInfo } from "./invoice-pdf";
 import { resolveAddress } from "@/lib/address";
@@ -109,7 +110,40 @@ function postalAddress(
 export function generateFacturXml(
   invoice: Invoice,
   linkedInvoiceNumber?: string | null,
-  paymentInfo?: PaymentInfo
+  paymentInfo?: PaymentInfo,
+  // Adresse électronique réellement enregistrée par Super PDP pour le vendeur
+  // (superpdp_connections.directory_address, ex. "0225:315143296_57701").
+  //
+  // Pourquoi ne pas se contenter de dériver le SIREN comme pour n'importe quel
+  // tiers : en production, une entreprise n'a qu'un SIREN et les deux
+  // approches coïncident. Mais l'annuaire autorise des adresses composées
+  // (SIREN_SUFFIXE, SIREN_SIRET...) pour l'organisation interne d'une
+  // entreprise, et le bac à sable de Super PDP en dépend structurellement :
+  // ses deux sociétés fictives partagent le même SIREN 315143296, distinguées
+  // uniquement par ce suffixe. Sans cet override, `electronicAddress()`
+  // renvoie un SIREN nu identique pour les deux et Super PDP refuse
+  // l'émission (« L'entreprise liée à cette session ne correspond pas au
+  // vendeur de la facture ») — vérifié le 29/08/2026. On préfère de toute
+  // façon la valeur que Super PDP nous a lui-même communiquée à sa propre
+  // re-dérivation : c'est la source de vérité.
+  sellerDirectoryAddress?: string | null,
+  // Numéro d'entreprise enregistré par Super PDP pour le vendeur
+  // (superpdp_connections.company_number), qui alimente l'identifiant légal
+  // BT-30. **En production ce numéro EST le SIREN** — leur schéma est alors
+  // `fr_siren` — si bien que cet override ne change rien au document émis par
+  // un vrai client ; il le rend seulement plus juste, en préférant ce que la
+  // Plateforme Agréée connaît de nous à ce que l'utilisateur a saisi dans son
+  // profil. C'est en bac à sable que l'écart se voit : le numéro y est fictif
+  // (000000002 pour Burger Queen) alors que le SIREN du profil est réel, et
+  // leur vérification de session compare précisément ces deux valeurs.
+  sellerLegalNumber?: string | null,
+  // Adresse d'acheminement du destinataire, **résolue par l'appelant** —
+  // idéalement lue dans l'Annuaire (`GET /french_directory/entries`), voir
+  // lib/superpdp-annuaire.ts. Absente, on retombe sur le champ saisi puis sur
+  // le SIREN nu : ce repli reste correct pour la majorité des entreprises, et
+  // sert aussi aux PDF Factur-X générés hors de tout raccordement, où aucun
+  // appel d'annuaire n'est possible.
+  buyerDirectoryAddress?: string | null
 ): string {
   const issueDate = xmlDate(invoice.issue_date);
   const dueDate = invoice.due_date ? xmlDate(invoice.due_date) : null;
@@ -122,12 +156,55 @@ export function generateFacturXml(
     ? "<ram:ExemptionReason>TVA non applicable, art. 293 B du CGI</ram:ExemptionReason>"
     : "";
 
-  // Identifiants dérivés : SIREN 9 chiffres depuis le SIRET, TVA calculée si absente
+  // Identifiants dérivés : SIREN 9 chiffres depuis le SIRET, TVA calculée si absente.
+  // Identifiant légal du vendeur (BT-30). Le numéro communiqué par Super PDP
+  // prime sur le SIREN du profil : c'est celui auquel leur vérification de
+  // session compare la facture. En production les deux coïncident (schéma
+  // `fr_siren`), donc `toSiren()` reste le repli naturel — notamment pour les
+  // PDF Factur-X générés hors de tout raccordement.
+  const sellerLegalId = sellerLegalNumber?.trim() || toSiren(invoice.seller_siren);
+  // À distinguer du précédent : le BT-32 ci-dessous est un identifiant
+  // **fiscal**, servi en repli du n° de TVA sous le régime de franchise. Il doit
+  // rester le vrai SIREN de l'entreprise, jamais le numéro interne attribué par
+  // la Plateforme Agréée — lequel n'a aucune valeur devant l'administration.
   const sellerSiren = toSiren(invoice.seller_siren);
   const buyerSiren = toSiren(invoice.client_siren);
   const sellerVat = resolveVatNumber(invoice.seller_tva_number, invoice.seller_siren, isFranchise);
-  const sellerEas = electronicAddress(invoice.seller_siren);
-  const buyerEas = electronicAddress(invoice.client_siren);
+  // "0225:XXXX" → "XXXX" : superpdp_connections.directory_address est stockée
+  // au format Peppol complet (Scheme ID inclus), mais le XML ne veut que le
+  // Participant ID, le Scheme ID étant déjà porté par schemeID="0225".
+  const sellerEas = sellerDirectoryAddress
+    ? sellerDirectoryAddress.replace(/^0225:/, "")
+    : electronicAddress(invoice.seller_siren);
+  // Côté acheteur, même raisonnement que côté vendeur : si le client a déclaré
+  // une adresse d'annuaire composée (SIREN_SIRET pour tel établissement,
+  // SIREN_SUFFIXE pour tel service), c'est elle qui achemine — la dériver de son
+  // SIREN enverrait la facture au siège au lieu du service destinataire, quand
+  // ça ne la fait pas refuser franchement. Vide, on retombe sur le SIREN nu, ce
+  // qui reste correct pour la grande majorité des entreprises (un SIREN, une
+  // adresse).
+  const buyerEas = (
+    buyerDirectoryAddress?.trim() ||
+    invoice.client_directory_address?.trim() ||
+    ""
+  ).replace(/^0225:/, "") || electronicAddress(invoice.client_siren);
+
+  // B2C (client particulier, sans SIREN) : le document ne s'achemine à
+  // personne — un particulier n'a pas de Plateforme Agréée — mais Super PDP a
+  // quand même besoin de le détecter pour en extraire les données d'e-reporting
+  // (page "E-reporting" de leur documentation, vérifié le 29/08/2026). Deux
+  // méthodes de détection documentées, indépendantes : la note BAR/B2C
+  // ci-dessous, et/ou une adresse électronique de scheme "EM" (email) au lieu
+  // de "0225" (SIREN). On pose les deux : la note ne dépend pas de la présence
+  // d'un email, l'adresse EM est un signal redondant quand l'email existe.
+  const isB2C = isB2CInvoice(invoice);
+  const buyerElectronicAddress = isB2C
+    ? invoice.client_email
+      ? `<ram:URIUniversalCommunication><ram:URIID schemeID="EM">${esc(invoice.client_email)}</ram:URIID></ram:URIUniversalCommunication>`
+      : ""
+    : buyerEas
+      ? `<ram:URIUniversalCommunication><ram:URIID schemeID="0225">${esc(buyerEas)}</ram:URIID></ram:URIUniversalCommunication>`
+      : "";
 
   const lines = invoice.items
     .map(
@@ -145,11 +222,15 @@ export function generateFacturXml(
     )
     .join("");
 
-  // Notes : mentions légales obligatoires + note libre de l'utilisateur
+  // Notes : mentions légales obligatoires + marqueur B2C + note libre de l'utilisateur
   const notes = [
     ...LEGAL_NOTES.map(
       (n) => `<ram:IncludedNote><ram:Content>${esc(n.content)}</ram:Content><ram:SubjectCode>${n.code}</ram:SubjectCode></ram:IncludedNote>`
     ),
+    // BT-21/BT-22 = BAR/B2C : c'est ainsi que Super PDP détecte une facture
+    // B2C pour en extraire les données d'e-reporting sans tenter de
+    // l'acheminer vers une Plateforme Agréée inexistante côté particulier.
+    isB2C ? `<ram:IncludedNote><ram:Content>B2C</ram:Content><ram:SubjectCode>BAR</ram:SubjectCode></ram:IncludedNote>` : "",
     invoice.notes ? `<ram:IncludedNote><ram:Content>${esc(invoice.notes)}</ram:Content></ram:IncludedNote>` : "",
   ].join("\n    ");
 
@@ -194,7 +275,7 @@ export function generateFacturXml(
     <ram:ApplicableHeaderTradeAgreement>
       <ram:SellerTradeParty>
         <ram:Name>${esc(invoice.seller_company || invoice.seller_name || "")}</ram:Name>
-        ${sellerSiren ? `<ram:SpecifiedLegalOrganization><ram:ID schemeID="0002">${esc(sellerSiren)}</ram:ID></ram:SpecifiedLegalOrganization>` : ""}
+        ${sellerLegalId ? `<ram:SpecifiedLegalOrganization><ram:ID schemeID="0002">${esc(sellerLegalId)}</ram:ID></ram:SpecifiedLegalOrganization>` : ""}
         ${postalAddress(
           { street: invoice.seller_street, postcode: invoice.seller_postcode, city: invoice.seller_city, country: invoice.seller_country },
           invoice.seller_address
@@ -217,7 +298,7 @@ export function generateFacturXml(
           { street: invoice.client_street, postcode: invoice.client_postcode, city: invoice.client_city, country: invoice.client_country },
           invoice.client_address
         )}
-        ${buyerEas ? `<ram:URIUniversalCommunication><ram:URIID schemeID="0225">${esc(buyerEas)}</ram:URIID></ram:URIUniversalCommunication>` : ""}
+        ${buyerElectronicAddress}
         ${invoice.client_vat_number ? `<ram:SpecifiedTaxRegistration><ram:ID schemeID="VA">${esc(invoice.client_vat_number)}</ram:ID></ram:SpecifiedTaxRegistration>` : ""}
       </ram:BuyerTradeParty>
     </ram:ApplicableHeaderTradeAgreement>

@@ -7,6 +7,7 @@ import {
   saveConnection,
   superpdpConfig,
 } from "@/lib/superpdp";
+import { pousserRegimeTva } from "@/lib/superpdp-entreprise";
 
 const SETTINGS = "/profil";
 
@@ -71,6 +72,8 @@ export async function GET(req: NextRequest) {
     // Récupération de l'entreprise raccordée. Un 403 ici est normal : Super PDP
     // vérifie le rattachement utilisateur/entreprise en différé.
     let companyId: string | null = null;
+    let companyNumber: string | null = null;
+    let companyNumberScheme: string | null = null;
     let status: "pending" | "verified" = "pending";
 
     const entetes = {
@@ -82,6 +85,12 @@ export async function GET(req: NextRequest) {
     if (me.ok) {
       const body = await me.json().catch(() => null);
       companyId = body?.id != null ? String(body.id) : (body?.company?.id ?? null);
+      // Le numéro d'entreprise, distinct de l'identifiant interne. C'est lui que
+      // la vérification de session compare au BT-30 de nos factures ; sans le
+      // conserver ici, on émettait avec le SIREN du profil et l'émission était
+      // refusée dès que les deux divergeaient. Voir SuperPdpConnection.
+      companyNumber = body?.number != null ? String(body.number) : null;
+      companyNumberScheme = body?.number_scheme != null ? String(body.number_scheme) : null;
       status = "verified";
     }
 
@@ -111,6 +120,8 @@ export async function GET(req: NextRequest) {
     await saveConnection(workspaceId, {
       refresh_token: tokens.refresh_token,
       company_id: companyId,
+      company_number: companyNumber,
+      company_number_scheme: companyNumberScheme,
       directory_id: directoryId,
       directory_address: directoryAddress,
       session_status: status,
@@ -124,6 +135,25 @@ export async function GET(req: NextRequest) {
         Date.now() + (tokens.expires_in ?? 1800) * 1000
       ).toISOString(),
     });
+
+    // Régime de TVA : à pousser dès le raccordement, sinon la première facture
+    // B2C du client sera refusée sans qu'il comprenne pourquoi. Ce réglage
+    // n'existe que par l'API — ni son interface Super PDP ni la nôtre ne le
+    // montrent. Best-effort : un échec ne doit pas casser un raccordement qui
+    // vient d'aboutir, et le prochain enregistrement de profil rattrapera.
+    if (status === "verified") {
+      const { data: profil } = await supabase
+        .from("profiles")
+        .select("tva_regime, tva_periodicite")
+        .eq("id", workspaceId)
+        .maybeSingle();
+      if (profil) {
+        const r = await pousserRegimeTva(workspaceId, profil);
+        if (!r.ok && r.raison !== "inconnu") {
+          console.error(`[superpdp/callback] régime de TVA non transmis : ${r.raison}`);
+        }
+      }
+    }
 
     return back(req, { superpdp: status === "verified" ? "connecte" : "en_attente" });
   } catch (err) {

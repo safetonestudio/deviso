@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { checkInvoiceCompliance } from "@/lib/facturx-helpers";
+import { checkInvoiceCompliance, isB2CInvoice } from "@/lib/facturx-helpers";
 import type { Invoice } from "@/types";
 import { resolveAddress } from "@/lib/address";
 
@@ -29,12 +29,13 @@ export function FacturXCompliance({ invoice }: { invoice: Invoice }) {
       invoice.client_address
     ).formatted,
     isFranchise: invoice.tva_rate === 0,
-    // Heuristique provisoire : sans raison sociale, le client est un particulier.
     // Les obligations d'adressage (SIREN, adresse structurée) ne valent qu'en B2B —
     // les réclamer à un freelance qui facture des particuliers afficherait une
-    // alerte rouge permanente et fausse. À remplacer par un vrai indicateur B2C
-    // sur la facture quand on traitera l'e-reporting (étape 5 du plan Super PDP).
-    isB2C: !invoice.client_company?.trim(),
+    // alerte rouge permanente et fausse. Étape 5 du plan Super PDP, traitée le
+    // 29/08/2026 : B2C géré nativement (note BAR/B2C + adresse EM), donc plus
+    // besoin de forcer un SIREN client fictif pour émettre.
+    isB2C: isB2CInvoice(invoice),
+    operationCategory: invoice.operation_category,
   });
 
   const blocking = issues.filter((i) => i.blocking);
@@ -104,6 +105,11 @@ export function FacturXCompliance({ invoice }: { invoice: Invoice }) {
             {issues.some((i) => i.field.startsWith("client")) && (
               <span className="block mt-1">
                 Les informations du client se saisissent à la création de la facture.
+              </span>
+            )}
+            {issues.some((i) => i.field === "operation_category") && (
+              <span className="block mt-1">
+                La nature de l&apos;opération (biens ou services) se choisit à la création de la facture.
               </span>
             )}
           </p>

@@ -2,9 +2,10 @@ import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { getWorkspaceUserId } from "@/lib/workspace";
-import { superpdpFetch, SuperPdpNotConnected, SuperPdpSessionPending } from "@/lib/superpdp";
+import { superpdpFetch, getConnection, SuperPdpNotConnected, SuperPdpSessionPending } from "@/lib/superpdp";
 import { generateFacturXml } from "@/lib/invoice-xml";
-import { toSiren } from "@/lib/facturx-helpers";
+import { toSiren, isB2CInvoice } from "@/lib/facturx-helpers";
+import { resoudreAdresseClient } from "@/lib/superpdp-annuaire";
 import type { Invoice } from "@/types";
 
 /**
@@ -64,12 +65,24 @@ export async function POST(req: NextRequest, ctx: { params: Promise<{ id: string
   // plateforme. Le principe retenu sur ce projet est qu'aucun champ n'est
   // obligatoire à la création d'une facture ; la contrepartie est de dire
   // clairement, au moment de l'émission, ce qui manque et pourquoi.
+  const isB2C = isB2CInvoice(facture as unknown as Invoice);
+
   const manques: string[] = [];
   if (!toSiren(facture.seller_siren)) {
     manques.push("votre SIREN (à renseigner dans Paramètres)");
   }
-  if (!toSiren(facture.client_siren)) {
+  // Un particulier n'a pas de SIREN — l'exiger bloquerait toute facture B2C.
+  // Super PDP détecte le B2C autrement (note BAR + adresse email), voir
+  // lib/invoice-xml.ts.
+  if (!isB2C && !toSiren(facture.client_siren)) {
     manques.push(`le SIREN de ${facture.client_name || "votre client"}`);
+  }
+  // Documenté par Super PDP (page "E-reporting") : les factures mélangeant
+  // biens et services ne sont pas gérées par leur extraction d'e-reporting.
+  if (facture.operation_category === "mixed") {
+    manques.push(
+      "une catégorie d'opération unique : biens OU services, pas les deux sur la même facture"
+    );
   }
   if (manques.length) {
     return NextResponse.json(
@@ -86,7 +99,28 @@ export async function POST(req: NextRequest, ctx: { params: Promise<{ id: string
   }
 
   try {
-    const xml = generateFacturXml(facture as unknown as Invoice);
+    // Adresse électronique et numéro d'entreprise réellement enregistrés par
+    // Super PDP pour NOUS (le vendeur) — voir generateFacturXml pour le
+    // pourquoi. Les deux viennent du raccordement plutôt que du profil : c'est
+    // ce que la Plateforme Agréée connaît de nous qui fait foi à l'émission,
+    // pas ce que l'utilisateur a saisi.
+    const connexion = await getConnection(workspaceId);
+
+    // Adresse d'acheminement du destinataire : lue dans l'Annuaire plutôt que
+    // fabriquée à partir du SIREN. Voir lib/superpdp-annuaire.ts pour l'ordre
+    // de priorité et pourquoi la fabrication était fausse.
+    const { adresse: adresseClient, source: sourceAdresse } = isB2C
+      ? { adresse: null, source: "aucune" as const }
+      : await resoudreAdresseClient(workspaceId, facture);
+
+    const xml = generateFacturXml(
+      facture as unknown as Invoice,
+      undefined,
+      undefined,
+      connexion?.directory_address ?? null,
+      connexion?.company_number ?? null,
+      adresseClient
+    );
 
     const formulaire = new FormData();
     formulaire.append(
@@ -95,7 +129,20 @@ export async function POST(req: NextRequest, ctx: { params: Promise<{ id: string
       `${facture.invoice_number || facture.id}.xml`
     );
 
-    const res = await superpdpFetch(workspaceId, "/invoices", {
+    // `processing_rule` : on déclare la nature qu'on a détectée, et Super PDP
+    // **répond en erreur** si son propre calcul diffère. C'est un filet gratuit
+    // sur notre détection B2C, qui n'est qu'une heuristique (absence de raison
+    // sociale). Sans ce paramètre, un mauvais classement passerait inaperçu et
+    // partirait dans le mauvais flux d'e-reporting.
+    //
+    // `external_id` : notre identifiant de facture, pour que leur côté et le
+    // nôtre se rattachent sans dépendre du seul numéro de facture.
+    const params = new URLSearchParams({
+      processing_rule: isB2C ? "B2C" : "B2B",
+      external_id: facture.id,
+    });
+
+    const res = await superpdpFetch(workspaceId, `/invoices?${params}`, {
       method: "POST",
       body: formulaire,
     });
@@ -119,6 +166,11 @@ export async function POST(req: NextRequest, ctx: { params: Promise<{ id: string
           message:
             "La Plateforme Agréée a refusé la facture. Le détail est enregistré sur la facture.",
           detail,
+          // Remontée même en cas de refus : savoir d'où venait l'adresse du
+          // destinataire est la première question qu'on se pose devant un rejet
+          // d'acheminement, et la relire dans le XML coûte une session de
+          // débogage.
+          sourceAdresse,
         },
         { status: 502 }
       );
@@ -140,7 +192,10 @@ export async function POST(req: NextRequest, ctx: { params: Promise<{ id: string
       .eq("id", id)
       .eq("user_id", workspaceId);
 
-    return NextResponse.json({ emise: true, superpdpId: reponse.id });
+    // `sourceAdresse` remonte à l'appelant : c'est ce qui permet à l'interface
+    // — et aux tests — de distinguer une adresse lue dans l'Annuaire d'un repli
+    // sur le SIREN nu, sans avoir à relire le XML.
+    return NextResponse.json({ emise: true, superpdpId: reponse.id, sourceAdresse });
   } catch (err) {
     if (err instanceof SuperPdpNotConnected) {
       return NextResponse.json(

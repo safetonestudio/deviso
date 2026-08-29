@@ -14,6 +14,30 @@
 import { readFileSync, writeFileSync, existsSync } from "node:fs";
 
 export const BASE = process.env.E2E_BASE_URL || "https://getdeviso.fr";
+
+/**
+ * Les traversées ont besoin de quelques secrets (mots de passe de comptes de
+ * test). Ils vivent dans .env.local, qui est ignoré par git : un secret écrit
+ * en clair dans un script finirait dans l'historique du dépôt pour toujours.
+ * Node ne lit pas .env.local tout seul pour les scripts, alors on le fait ici.
+ */
+export function secret(nom) {
+  if (process.env[nom]) return process.env[nom];
+  if (existsSync(".env.local")) {
+    for (const ligne of readFileSync(".env.local", "utf8").split(/\r?\n/)) {
+      const eq = ligne.indexOf("=");
+      if (eq < 1 || ligne.trimStart().startsWith("#")) continue;
+      if (ligne.slice(0, eq).trim() !== nom) continue;
+      return ligne.slice(eq + 1).trim().replace(/^["']|["']$/g, "");
+    }
+  }
+  throw new Error(
+    `${nom} est introuvable. Ajoutez-le à .env.local (ignoré par git) ` +
+      `ou passez-le en variable d'environnement avant de lancer la traversée.`,
+  );
+}
+
+
 const PROJECT_REF = "mjhsafxzbufpughtxhnw";
 
 /**
@@ -21,6 +45,17 @@ const PROJECT_REF = "mjhsafxzbufpughtxhnw";
  * garde-fou légitime contre l'abus. La suite en consomme deux par exécution et
  * se retrouvait bloquée au bout de cinq lancements. On réutilise donc les
  * sessions tant qu'elles vivent, ce qui rend aussi la suite nettement plus rapide.
+ *
+ * ⚠️ Budget d'étiquettes. Une étiquette = un compte de démonstration = une unité
+ * sur les dix de l'heure. `npm run verify` en utilise huit à froid : crons,
+ * demo-sortante, demo-vivante, membre, pdf, promesses, propriétaire, stripe.
+ * Il reste donc **deux unités de marge**, et `demo-sortante` en reconsomme une à
+ * chaque exécution puisque son test la supprime volontairement.
+ *
+ * Conséquence pratique : un nouveau script de la suite doit **réutiliser** les
+ * étiquettes existantes (« propriétaire » et « membre » couvrent les deux rôles,
+ * « promesses » sert d'espace de travail étranger) plutôt qu'en introduire une.
+ * En ajouter deux rendrait `verify` impossible à lancer deux fois de suite.
  */
 const CACHE = new URL("./.sessions.json", import.meta.url);
 const lireCache = () => (existsSync(CACHE) ? JSON.parse(readFileSync(CACHE, "utf8")) : {});

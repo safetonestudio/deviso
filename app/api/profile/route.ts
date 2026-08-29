@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 import { createClient as createAdminClient } from "@supabase/supabase-js";
 import { getWorkspaceUserId } from "@/lib/workspace";
+import { pousserRegimeTva } from "@/lib/superpdp-entreprise";
 
 const supabaseAdmin = createAdminClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -39,7 +40,7 @@ export async function PATCH(req: NextRequest) {
     // désynchroniser du code postal et de la ville.
     "full_name", "company_name", "siret", "email", "phone",
     "tva_number", "logo_url", "proposal_template", "proposal_color",
-    "require_approval", "tva_regime",
+    "require_approval", "tva_regime", "tva_periodicite",
     "payment_method", "payment_link_provider", "payment_link_profile",
     "bank_iban", "bank_bic", "bank_account_name",
     "cgv_text",
@@ -134,5 +135,22 @@ export async function PATCH(req: NextRequest) {
     .single();
 
   if (error) return NextResponse.json({ error: error.message }, { status: 500 });
+
+  // Le régime de TVA vit à deux endroits : ici, et chez la Plateforme Agréée où
+  // il commande le calendrier d'e-reporting. Les laisser diverger revient à
+  // déclarer au mauvais rythme — ou, si le champ est resté vide chez eux, à voir
+  // toutes les factures B2C refusées. On resynchronise donc à chaque
+  // enregistrement, en best-effort : le profil est déjà sauvegardé, un échec de
+  // transmission ne doit pas le remettre en cause.
+  if ("tva_regime" in updates || "tva_periodicite" in updates) {
+    const r = await pousserRegimeTva(user.id, {
+      tva_regime: data.tva_regime,
+      tva_periodicite: data.tva_periodicite,
+    });
+    if (!r.ok && !["inconnu", "non_raccorde"].includes(r.raison)) {
+      console.error(`[profile] régime de TVA non transmis à Super PDP : ${r.raison}`);
+    }
+  }
+
   return NextResponse.json({ profile: data });
 }

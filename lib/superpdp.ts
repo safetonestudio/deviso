@@ -111,6 +111,20 @@ export interface SuperPdpConnection {
   user_id: string;
   refresh_token: string;
   company_id: string | null;
+  /**
+   * Numéro d'entreprise **tel que Super PDP l'a enregistré**, et non le SIREN
+   * saisi dans le profil. C'est lui que leur vérification de session compare à
+   * l'identifiant légal du vendeur (BT-30) au moment de l'émission : un écart
+   * fait refuser la facture avec « L'entreprise (X) liée à cette session ne
+   * correspond pas au vendeur de la facture (Y) ».
+   *
+   * En production le schéma est `fr_siren` et ce numéro **est** le SIREN, si
+   * bien que s'y fier plutôt qu'au profil est simplement plus juste : c'est ce
+   * que la Plateforme Agréée connaît de nous, pas ce que l'utilisateur a tapé.
+   */
+  company_number: string | null;
+  /** `fr_siren` en production, `sandbox` en bac à sable. */
+  company_number_scheme: string | null;
   directory_id: string | null;
   session_status: "pending" | "verified" | "error";
   last_error: string | null;
@@ -200,6 +214,50 @@ export async function saveConnection(
 export class SuperPdpNotConnected extends Error {}
 /** Super PDP vérifie le rattachement utilisateur/entreprise en différé. */
 export class SuperPdpSessionPending extends Error {}
+
+/**
+ * État réel de la session, lu chez Super PDP.
+ *
+ * ⚠️ Ne pas revenir à déduire cet état d'un 403. C'est ce que faisait
+ * `superpdpFetch` : tout refus était interprété comme « vérification en cours »,
+ * ce qui confondait deux situations opposées — `needs_review`, où il faut
+ * patienter, et `failed`, où il faut refaire le raccordement. Un utilisateur en
+ * échec attendait donc indéfiniment un feu vert qui ne viendrait jamais.
+ *
+ * `GET /oauth2_sessions/me` donne les deux statuts explicitement. On garde
+ * l'interception du 403 comme filet — la route de session peut elle-même
+ * répondre 403 — mais l'état affiché vient désormais de la source.
+ */
+export type EtatSession = {
+  entreprise: "verified" | "needs_review" | "failed";
+  identite?: "verified" | "needs_review" | "failed" | "not_verified";
+};
+
+export async function lireEtatSession(userId: string): Promise<EtatSession | null> {
+  try {
+    const res = await superpdpFetch(userId, "/oauth2_sessions/me");
+    if (!res.ok) return null;
+    const body = (await res.json()) as {
+      company_verification_status?: EtatSession["entreprise"];
+      user_identity_verification_status?: EtatSession["identite"];
+    };
+    if (!body.company_verification_status) return null;
+    return {
+      entreprise: body.company_verification_status,
+      identite: body.user_identity_verification_status,
+    };
+  } catch {
+    // Non raccordé ou session refusée : l'appelant sait déjà le dire.
+    return null;
+  }
+}
+
+/** Traduit l'état Super PDP vers la colonne `session_status` de notre table. */
+export function statutDepuisEtat(etat: EtatSession): "verified" | "pending" | "error" {
+  if (etat.entreprise === "verified") return "verified";
+  if (etat.entreprise === "failed") return "error";
+  return "pending";
+}
 
 /** Marge avant expiration : on rafraîchit un peu en avance plutôt qu'au ras. */
 const MARGE_EXPIRATION_MS = 60_000;
