@@ -4,6 +4,7 @@ import { useState, useEffect, useCallback } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import type { Proposal, ProposalItem } from "@/types";
+import { PAYS_FACTURATION } from "@/lib/superpdp-nature";
 import { v4 as uuidv4 } from "uuid";
 import { Clock, Package, FileText, Coins, CircleCheck, TriangleAlert, type LucideIcon } from "lucide-react";
 import { GuidedTourBanner } from "@/components/GuidedTourBanner";
@@ -92,6 +93,10 @@ export default function NewInvoicePage() {
   const [clientStreet, setClientStreet] = useState("");
   const [clientPostcode, setClientPostcode] = useState("");
   const [clientCity, setClientCity] = useState("");
+  // Par défaut la France, mais modifiable : c'est ce pays qui décide si la
+  // facture relève du circuit national (B2B) ou de l'e-reporting des
+  // opérations internationales (B2BInt).
+  const [clientCountry, setClientCountry] = useState("FR");
 
   // Catalogue
   const [catalog, setCatalog] = useState<CatalogItem[]>([]);
@@ -359,6 +364,7 @@ export default function NewInvoicePage() {
         client_street: clientStreet || null,
         client_postcode: clientPostcode || null,
         client_city: clientCity || null,
+        client_country: clientCountry || null,
         seller_company: sellerCompany,
         seller_siren: sellerSiren || null,
         seller_street: sellerStreet || null,
@@ -650,6 +656,30 @@ export default function NewInvoicePage() {
               <div>
                 <label className="block text-xs font-medium text-gray-400 mb-1">Ville</label>
                 <input value={clientCity} onChange={(e) => setClientCity(e.target.value)} placeholder="Villenave-d'Ornon" className={inputCls} />
+              </div>
+              {/* Le pays décide du circuit : national pour un client français,
+                  e-reporting des opérations internationales sinon. Il n'existait
+                  pas dans ce formulaire, et l'API forçait « FR » — une facture à
+                  un client étranger partait donc dans le mauvais flux. */}
+              <div>
+                <label className="block text-xs font-medium text-gray-400 mb-1">Pays</label>
+                <select
+                  value={clientCountry}
+                  onChange={(e) => setClientCountry(e.target.value)}
+                  className={inputCls}
+                >
+                  {PAYS_FACTURATION.map((p) => (
+                    <option key={p.code} value={p.code}>
+                      {p.nom}
+                    </option>
+                  ))}
+                </select>
+                {clientCountry !== "FR" && (
+                  <p className="text-[11px] text-gray-500 mt-1">
+                    Opération internationale : déclarée à l&apos;administration, non acheminée par le
+                    réseau national.
+                  </p>
+                )}
               </div>
             </div>
           </section>

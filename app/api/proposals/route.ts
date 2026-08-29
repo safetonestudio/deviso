@@ -40,7 +40,7 @@ export async function POST(req: NextRequest) {
   const body = await req.json();
   const {
     title, client_name, client_email, client_company,
-    client_address, client_street, client_postcode, client_city, client_siren,
+    client_address, client_street, client_postcode, client_city, client_country, client_siren,
     description, items, total_ht, tva_rate, total_ttc,
     valid_until, payment_terms, notes, ai_brief
   } = body;
@@ -90,8 +90,10 @@ export async function POST(req: NextRequest) {
       // Aucun de ces champs n'est requis : un devis doit pouvoir partir avec une
       // adresse incomplète, le manque est signalé au moment de la facture.
       ...(() => {
+        // `country` inclus : sans lui, resolveAddress force « FR » et le pays
+        // saisi est perdu. Voir app/api/invoices/route.ts pour la conséquence.
         const a = resolveAddress(
-          { street: client_street, postcode: client_postcode, city: client_city },
+          { street: client_street, postcode: client_postcode, city: client_city, country: client_country },
           client_address
         );
         return {

@@ -95,12 +95,29 @@ export async function POST(req: NextRequest) {
   // Adresses : on dérive la forme affichable des champs saisis, des deux côtés.
   // Rien n'est requis — une facture doit pouvoir être créée avec une adresse
   // incomplète, quitte à ce que la bannière de conformité le signale ensuite.
+  //
+  // ⚠️ `country` doit être transmis. Il ne l'était pas, et `resolveAddress`
+  // retombe alors sur « FR » : le pays du client ne pouvait donc JAMAIS valoir
+  // autre chose que la France, quoi que l'utilisateur saisisse. Conséquence,
+  // une facture à un client belge était classée B2B et envoyée dans le circuit
+  // national, qui n'a pas à l'acheminer — le B2BInt était impossible par
+  // construction, pas par oubli d'implémentation.
   const clientAddr = resolveAddress(
-    { street: body.client_street, postcode: body.client_postcode, city: body.client_city },
+    {
+      street: body.client_street,
+      postcode: body.client_postcode,
+      city: body.client_city,
+      country: body.client_country,
+    },
     body.client_address
   );
   const sellerAddr = resolveAddress(
-    { street: body.seller_street, postcode: body.seller_postcode, city: body.seller_city },
+    {
+      street: body.seller_street,
+      postcode: body.seller_postcode,
+      city: body.seller_city,
+      country: body.seller_country,
+    },
     body.seller_address
   );
 

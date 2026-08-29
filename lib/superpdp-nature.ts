@@ -49,3 +49,35 @@ export function natureOperation(facture: {
   if (isB2CInvoice(facture as unknown as Invoice)) return "B2C";
   return paysFrancais(facture.client_country) ? "B2B" : "B2BInt";
 }
+
+/**
+ * Les pays proposés à la facturation.
+ *
+ * La France en tête parce que c'est le cas de la quasi-totalité des factures,
+ * puis les voisins et les destinations les plus fréquentes chez les freelances
+ * français, puis le reste de l'Union. La liste n'a pas vocation à être
+ * exhaustive : ce qui compte est de pouvoir sortir de « FR », ce qui était
+ * jusqu'ici impossible.
+ */
+export const PAYS_FACTURATION = [
+  { code: "FR", nom: "France" },
+  { code: "BE", nom: "Belgique" },
+  { code: "CH", nom: "Suisse" },
+  { code: "LU", nom: "Luxembourg" },
+  { code: "DE", nom: "Allemagne" },
+  { code: "ES", nom: "Espagne" },
+  { code: "IT", nom: "Italie" },
+  { code: "PT", nom: "Portugal" },
+  { code: "NL", nom: "Pays-Bas" },
+  { code: "GB", nom: "Royaume-Uni" },
+  { code: "IE", nom: "Irlande" },
+  { code: "US", nom: "États-Unis" },
+  { code: "CA", nom: "Canada" },
+  { code: "MC", nom: "Monaco" },
+  { code: "AT", nom: "Autriche" },
+  { code: "DK", nom: "Danemark" },
+  { code: "FI", nom: "Finlande" },
+  { code: "GR", nom: "Grèce" },
+  { code: "PL", nom: "Pologne" },
+  { code: "SE", nom: "Suède" },
+] as const;
