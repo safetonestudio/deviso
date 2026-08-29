@@ -36,6 +36,29 @@ function fmtDate(d: string) {
   return new Date(d).toLocaleDateString("fr-FR");
 }
 
+/**
+ * Où en est une facture vis-à-vis de la Plateforme Agréée ?
+ *
+ * Pourquoi cette colonne existe. La transmission était un bouton au fond du
+ * panneau d'une facture ouverte : pour savoir si ses factures étaient parties,
+ * il fallait les ouvrir une par une. Sous la réforme, la transmission n'est pas
+ * une option — une facture émise et jamais transmise est une facture qui, pour
+ * l'administration, n'existe pas. Cet état doit se lire d'un coup d'œil sur la
+ * liste, comme le statut de paiement.
+ */
+function etatPdp(inv: Invoice): { texte: string; classe: string; aFaire: boolean } | null {
+  if (inv.status === "draft" || inv.status === "cancelled") return null;
+  if (inv.superpdp_encaisse_at)
+    return { texte: "Encaissement déclaré", classe: "bg-emerald-500/10 text-emerald-400", aFaire: false };
+  if (inv.superpdp_status === "fr:210")
+    return { texte: "Refusée par le client", classe: "bg-amber-500/10 text-amber-400", aFaire: false };
+  if (inv.superpdp_status === "fr:213")
+    return { texte: "Rejetée", classe: "bg-amber-500/10 text-amber-400", aFaire: false };
+  if (inv.superpdp_invoice_id)
+    return { texte: "Transmise", classe: "bg-emerald-500/10 text-emerald-400", aFaire: false };
+  return { texte: "À transmettre", classe: "bg-amber-500/10 text-amber-400", aFaire: true };
+}
+
 type RecurringInvoice = {
   id: string;
   client_name: string | null;
@@ -70,6 +93,10 @@ export default function InvoicesPage() {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
   const [paymentConfigured, setPaymentConfigured] = useState(true);
+  // La colonne « Plateforme Agréée » ne s'affiche que pour un espace raccordé :
+  // ailleurs elle ne dirait rien de vrai, juste « à transmettre » pour tout,
+  // sans moyen de le faire.
+  const [raccordePdp, setRaccordePdp] = useState(false);
   const [loading, setLoading] = useState(true);
   const [exportYear, setExportYear] = useState(new Date().getFullYear());
   const [exporting, setExporting] = useState(false);
@@ -97,10 +124,14 @@ export default function InvoicesPage() {
     Promise.all([
       fetch("/api/invoices").then((r) => r.json()),
       fetch("/api/profile").then((r) => r.json()),
-    ]).then(([invoiceData, profileData]) => {
+      // Le statut du raccordement ne doit pas pouvoir faire échouer la liste :
+      // une facture reste consultable même si la Plateforme Agréée est muette.
+      fetch("/api/superpdp/status").then((r) => r.json()).catch(() => null),
+    ]).then(([invoiceData, profileData, pdp]) => {
       setInvoices(invoiceData.invoices || []);
       const pm = profileData.profile?.payment_method;
       setPaymentConfigured(!!pm && pm !== "none");
+      setRaccordePdp(pdp?.connected === true && pdp?.status === "verified");
     }).finally(() => setLoading(false));
   }, []);
 
@@ -401,6 +432,12 @@ export default function InvoicesPage() {
                       <span className={`px-2 py-0.5 rounded-full font-medium ${STATUS_COLOR[inv.status] || ""}`}>
                         {STATUS_LABEL[inv.status] || inv.status}
                       </span>
+                      {raccordePdp && (() => {
+                        const e = etatPdp(inv);
+                        return e ? (
+                          <span className={`px-2 py-0.5 rounded-full font-medium ${e.classe}`}>{e.texte}</span>
+                        ) : null;
+                      })()}
                       <span className="text-gray-500">{fmtDate(inv.issue_date)}</span>
                     </div>
                   </div>
@@ -424,6 +461,7 @@ export default function InvoicesPage() {
                     <th className="text-left px-5 py-3">Date</th>
                     <th className="text-right px-5 py-3">Montant TTC</th>
                     <th className="text-center px-5 py-3">Statut</th>
+                    {raccordePdp && <th className="text-center px-5 py-3">Plateforme Agréée</th>}
                     <th className="text-right px-5 py-3">Actions</th>
                   </tr>
                 </thead>
@@ -454,6 +492,19 @@ export default function InvoicesPage() {
                           {STATUS_LABEL[inv.status] || inv.status}
                         </span>
                       </td>
+                      {raccordePdp && (
+                        <td className="px-5 py-3.5 text-center">
+                          {(() => {
+                            const e = etatPdp(inv);
+                            if (!e) return <span className="text-gray-600 text-xs">—</span>;
+                            return (
+                              <span className={`inline-block px-2 py-0.5 rounded-full text-xs font-medium ${e.classe}`}>
+                                {e.texte}
+                              </span>
+                            );
+                          })()}
+                        </td>
+                      )}
                       <td className="px-5 py-3.5 text-right">
                         <button
                           onClick={(e) => handleDownload(inv.id, e)}

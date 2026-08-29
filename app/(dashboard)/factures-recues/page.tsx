@@ -92,7 +92,7 @@ export default async function FacturesRecues() {
   const workspaceId = await getWorkspaceUserId(user.id);
   const admin = createAdminClient();
 
-  const [{ data: raccordement }, { data: factures }] = await Promise.all([
+  const [{ data: raccordement }, { data: factures, error: erreurLecture }] = await Promise.all([
     admin
       .from("superpdp_connections")
       .select("session_status, directory_address, last_sync_at")
@@ -143,6 +143,25 @@ export default async function FacturesRecues() {
           >
             Aller aux paramètres
           </a>
+        </section>
+      ) : erreurLecture ? (
+        // Une lecture qui échoue affichait « Aucune facture reçue » : le même
+        // repli silencieux que celui qui numérotait toutes les factures 001.
+        // Une panne doit se voir, sinon elle se lit comme une absence — et une
+        // absence de factures reçues, sous la réforme, se lit comme « rien à
+        // payer ». Il n'y a pas de repli acceptable ici.
+        <section className="bg-ds-surface border border-red-500/30 rounded-xl p-6 mt-6 text-center">
+          <p className="text-white font-medium mb-1">
+            Impossible de lire vos factures reçues
+          </p>
+          <p className="text-sm text-gray-500 max-w-md mx-auto">
+            Vous en avez peut-être. Cette page n&apos;a pas pu les charger, alors elle ne
+            prétend pas que vous n&apos;en avez aucune. Réessayez dans un instant ; si le
+            problème persiste, signalez-le avec ce détail&nbsp;:
+          </p>
+          <p className="mt-3 text-xs font-mono text-red-400/90 break-all max-w-md mx-auto">
+            {erreurLecture.message}
+          </p>
         </section>
       ) : liste.length === 0 ? (
         <section className="bg-ds-surface border border-ds-border rounded-xl p-6 mt-6 text-center">
