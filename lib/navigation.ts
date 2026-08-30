@@ -12,6 +12,7 @@ import {
   BookOpen,
   CreditCard,
   Inbox,
+  Landmark,
   type LucideIcon,
 } from "lucide-react";
 
@@ -76,6 +77,7 @@ export const NAVIGATION: NavItem[] = [
   // Même objet métier que « Factures », vu depuis l'autre bout : reçues plutôt
   // qu'émises. D'où la position immédiatement après.
   { href: "/factures-recues", label: "Factures reçues", icon: Inbox, ownerOnly: true },
+  { href: "/declarations", label: "Déclarations", icon: Landmark, ownerOnly: true },
 
   { section: "Clients", ownerOnly: true },
   { href: "/crm", label: "Mes clients", icon: Users, ownerOnly: true },

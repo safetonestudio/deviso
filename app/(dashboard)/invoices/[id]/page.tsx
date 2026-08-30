@@ -13,6 +13,7 @@ import {
   Bell,
   Download,
   RadioTower,
+  ShieldCheck,
   Landmark,
 } from "lucide-react";
 import type { Invoice } from "@/types";
@@ -53,6 +54,12 @@ function ActionPanel({ invoice, id, router, hasChorusPro }: {
   const [emailSent, setEmailSent] = useState(false);
   const [depositingChorus, setDepositingChorus] = useState(false);
   const [emission, setEmission] = useState(false);
+  const [verification, setVerification] = useState(false);
+  const [rapport, setRapport] = useState<{
+    conforme: boolean;
+    manques: string[];
+    validation: { echecs: string[]; indisponible: string | null };
+  } | null>(null);
   const [messagePdp, setMessagePdp] = useState<string | null>(null);
   const [chorusRef, setChorusRef] = useState<string | null>(invoice.chorus_pro_ref || null);
   const [chorusError, setChorusError] = useState<string | null>(null);
@@ -230,6 +237,26 @@ function ActionPanel({ invoice, id, router, hasChorusPro }: {
    * traduit les contrôles préalables (SIREN manquant) plutôt que de relayer le
    * retour brut de Super PDP.
    */
+  /**
+   * Passe la facture aux validateurs officiels, sans la transmettre.
+   *
+   * Leur documentation le conseille systematiquement : << nous vous conseillons
+   * de systematiquement la valider avec le validateur de l'API SUPER PDP >>.
+   * 189 controles XSD et Schematron, avec la localisation de l'erreur.
+   */
+  async function verifierPdp() {
+    if (!inv) return;
+    setVerification(true);
+    setRapport(null);
+    try {
+      const r = await fetch(`/api/superpdp/invoices/${inv.id}/valider`, { method: "POST" });
+      const d = await r.json();
+      if (r.ok) setRapport(d);
+    } finally {
+      setVerification(false);
+    }
+  }
+
   async function emettrePdp() {
     setEmission(true);
     setMessagePdp(null);
@@ -333,6 +360,45 @@ function ActionPanel({ invoice, id, router, hasChorusPro }: {
           <Download size={17} className="shrink-0" />
           <span>{downloading ? "Génération…" : "Télécharger Factur-X PDF"}</span>
         </button>
+
+        {peutEmettre && (
+          <button
+            onClick={verifierPdp}
+            disabled={verification}
+            className="w-full text-sm font-medium px-4 py-2.5 rounded-lg border border-ds-border hover:bg-ds-elevated/60 text-gray-400 disabled:opacity-50 transition-colors text-left flex items-center gap-2"
+          >
+            <ShieldCheck size={17} className="shrink-0" />
+            <span>{verification ? "Verification..." : "Verifier avant de transmettre"}</span>
+          </button>
+        )}
+
+        {rapport && (
+          <div
+            className={`w-full text-sm px-4 py-2.5 rounded-lg border ${
+              rapport.conforme
+                ? "border-emerald-500/20 bg-emerald-500/5 text-emerald-400"
+                : "border-amber-500/30 bg-amber-500/5 text-amber-300"
+            }`}
+          >
+            {rapport.conforme ? (
+              <span>Conforme &mdash; cette facture sera acceptee.</span>
+            ) : (
+              <div className="space-y-1">
+                <p className="font-medium">Cette facture serait refusee :</p>
+                <ul className="list-disc list-inside text-xs text-amber-400/90 space-y-0.5">
+                  {[...rapport.manques, ...rapport.validation.echecs].slice(0, 6).map((m, i) => (
+                    <li key={i}>{m}</li>
+                  ))}
+                </ul>
+                {rapport.validation.indisponible && (
+                  <p className="text-[11px] text-gray-500">
+                    Controle officiel indisponible : seuls nos propres controles ont ete appliques.
+                  </p>
+                )}
+              </div>
+            )}
+          </div>
+        )}
 
         {peutEmettre && (
           <button
