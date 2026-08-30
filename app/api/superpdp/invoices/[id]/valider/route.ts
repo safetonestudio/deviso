@@ -58,10 +58,24 @@ export async function POST(req: NextRequest, ctx: { params: Promise<{ id: string
   // On construit le XML exactement comme la route d'émission, sinon on
   // validerait un document que personne n'enverra jamais.
   const connexion = await getConnection(workspaceId);
-  const { adresse: adresseClient } =
+  const resolution =
     nature === "B2C"
-      ? { adresse: null }
+      ? { adresse: null, candidats: undefined, obstacle: null }
       : await resoudreAdresseClient(workspaceId, facture);
+  const adresseClient = resolution.adresse;
+
+  // « Vérifier avant de transmettre » doit annoncer ce qui va bloquer.
+  // Découvrir l'ambiguïté d'adresse seulement au moment du clic « Transmettre »
+  // ferait de ce bouton un piège, ce que le pré-contrôle existe pour éviter.
+  // Seule l'ambiguïté bloque. Une adresse pas encore en vigueur laisse
+  // l'émission se faire sur le SIREN nu — voir lib/superpdp-annuaire.ts pour
+  // pourquoi refuser serait pire.
+  if (resolution.obstacle === "ambigu") {
+    manques.push(
+      `l'adresse de facturation électronique à utiliser pour ${facture.client_name || "votre client"} ` +
+        `— il en publie plusieurs, une par service : ${(resolution.candidats ?? []).join(", ")}`
+    );
+  }
 
   const profil = await getWorkspaceProfile<{
     payment_method: string | null;

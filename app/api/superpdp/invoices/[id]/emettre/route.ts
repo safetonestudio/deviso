@@ -106,9 +106,32 @@ export async function POST(req: NextRequest, ctx: { params: Promise<{ id: string
     // Adresse d'acheminement du destinataire : lue dans l'Annuaire plutôt que
     // fabriquée à partir du SIREN. Voir lib/superpdp-annuaire.ts pour l'ordre
     // de priorité et pourquoi la fabrication était fausse.
-    const { adresse: adresseClient, source: sourceAdresse } = isB2C
-      ? { adresse: null, source: "aucune" as const }
+    const resolution = isB2C
+      ? { adresse: null, source: "aucune" as const, candidats: undefined, obstacle: null }
       : await resoudreAdresseClient(workspaceId, facture);
+    const { adresse: adresseClient, source: sourceAdresse } = resolution;
+
+    // L'annuaire connaît ce client, mais nous ne pouvons pas choisir pour lui.
+    //
+    // On refuse plutôt que de tirer au sort. Une facture envoyée au mauvais
+    // service d'une grande entreprise n'est pas rejetée : elle est acceptée,
+    // rangée ailleurs, et jamais payée — le pire des trois résultats possibles,
+    // parce qu'il ne lève rien. Mieux vaut demander une fois à l'utilisateur.
+    if (!isB2C && resolution.obstacle === "ambigu") {
+      const liste = (resolution.candidats ?? []).join(", ");
+      return NextResponse.json(
+        {
+          error: "Adresse d'acheminement à choisir",
+          message:
+            `${facture.client_name || "Votre client"} publie plusieurs adresses de facturation ` +
+            `électronique, une par service. Demandez-lui laquelle utiliser et renseignez-la sur ` +
+            `la facture : ${liste}.`,
+          candidats: resolution.candidats ?? [],
+          obstacle: resolution.obstacle,
+        },
+        { status: 400 }
+      );
+    }
 
     // Coordonnées bancaires et facture d'acompte liée.
     //
