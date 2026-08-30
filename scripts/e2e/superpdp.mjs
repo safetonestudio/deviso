@@ -587,6 +587,16 @@ verifier(
   validDebits.status === 200 && validDebits.body?.validation?.valide === true,
   `échecs : ${doc(validDebits.body?.validation?.echecs)}`
 );
+verifier(
+  "sur les débits, l'exigibilité déclarée est la date de facture (5)",
+  validDebits.body?.exigibilite === "5",
+  `DueDateTypeCode = ${validDebits.body?.exigibilite}`
+);
+verifier(
+  "sur les encaissements, l'exigibilité déclarée est le paiement (72)",
+  (await bq.call(`/api/superpdp/invoices/${idB2b}/valider`, { method: "POST" })).body?.exigibilite === "72",
+  "DueDateTypeCode attendu 72 sur la facture B2B ordinaire"
+);
 
 // ── Recherche d'entreprise dans l'Annuaire national ─────────────────────────
 console.log("");

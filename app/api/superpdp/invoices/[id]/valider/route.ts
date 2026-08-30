@@ -101,10 +101,16 @@ export async function POST(req: NextRequest, ctx: { params: Promise<{ id: string
 
   const rapport = await validerFacture(xml, `${facture.invoice_number || facture.id}.xml`);
 
+  // BT-8 tel qu'il part réellement, relu dans le XML plutôt que recalculé :
+  // c'est la seule façon de vérifier que l'exigibilité déclarée correspond au
+  // régime coché, et ce code était inversé jusqu'au 30/08/2026.
+  const exigibilite = xml.match(/<ram:DueDateTypeCode>(\d+)<\/ram:DueDateTypeCode>/)?.[1] ?? null;
+
   return NextResponse.json({
     transmissible: transmissible(facture),
     nature,
     manques,
+    exigibilite,
     conforme: rapport.valide && manques.length === 0 && transmissible(facture),
     validation: {
       valide: rapport.valide,
