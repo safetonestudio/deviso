@@ -631,6 +631,37 @@ verifier(
   ereportings.status === 200 && Array.isArray(ereportings.body?.declarations),
   `HTTP ${ereportings.status} ${doc(ereportings.body).slice(0, 260)}`
 );
+// Ce qui a été déclaré pour une facture donnée. Les transactions d'e-reporting
+// B2C sont créées automatiquement par Super PDP à partir des factures
+// transmises (constaté en sondant le bac à sable) : l'utilisateur n'a rien à
+// faire, mais il n'avait aucun moyen de vérifier que ça avait eu lieu.
+const declaration = idB2b
+  ? await bq.call(`/api/superpdp/invoices/${idB2b}/declaration`)
+  : { status: 0, body: null };
+verifier(
+  "on peut savoir ce qui a été déclaré au fisc pour une facture",
+  declaration.status === 200 &&
+    declaration.body?.transmise === true &&
+    Array.isArray(declaration.body?.transactions),
+  `HTTP ${declaration.status} ${doc(declaration.body).slice(0, 240)}`
+);
+
+// L'aperçu : la seule occasion de corriger avant que ça devienne une
+// déclaration. Un 204 (rien à déclarer) est un résultat, pas un échec.
+const apercu = await bq.call("/api/superpdp/ereportings/apercu?kind=transaction&role_code=SE");
+verifier(
+  "l'aperçu de ce qui partira au fisc est consultable",
+  apercu.status === 200 && typeof apercu.body?.vide === "boolean",
+  `HTTP ${apercu.status} ${doc(apercu.body).slice(0, 240)}`
+);
+
+const apercuInvalide = await bq.call("/api/superpdp/ereportings/apercu?date=hier&kind=transaction&role_code=SE");
+verifier(
+  "une date d'aperçu invalide est refusée avant tout appel",
+  apercuInvalide.status === 400,
+  `HTTP ${apercuInvalide.status} ${doc(apercuInvalide.body).slice(0, 160)}`
+);
+
 aVerifierAutrement(
   "Le contenu d'une déclaration rejetée",
   "il faut qu'une déclaration soit effectivement rejetée par le PPF ; le bac à sable n'en produit pas à la demande."
