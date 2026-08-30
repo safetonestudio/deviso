@@ -228,14 +228,28 @@ export async function synchroniserFactures(userId: string): Promise<ResultatSync
       if (lot.length === 0) break;
 
       for (const brute of lot) {
-        // `expand[]` a normalement tout ramené. On ne fait l'appel de détail
-        // que s'il manque quelque chose : ainsi le jour où la plateforme
-        // cesserait d'honorer `expand`, la synchronisation ralentit au lieu de
-        // se mettre à écrire des factures vides.
+        // `expand[]` ne ramène PAS tout, contrairement à ce qu'on a cru.
+        //
+        // La liste renvoie un `en_invoice_overview`, dont le schéma précise :
+        // « the same structure as ENInvoice, except some fields are optional
+        // (buyer, lines and seller) ». En pratique la plateforme les omet.
+        // L'optimisation `expand[]`, introduite pour supprimer le N+1,
+        // enregistrait donc des factures reçues sans émetteur : l'écran
+        // « Factures reçues » ne pouvait plus dire de qui venait la facture.
+        // Une facture reçue sans expéditeur n'est pas une facture, c'est une
+        // ligne comptable orpheline.
+        //
+        // On garde l'expansion — elle évite l'appel de détail quand elle
+        // suffit — mais on redescend chercher le détail dès qu'il manque
+        // l'identité des parties. Le coût reste borné : le curseur ne repasse
+        // jamais sur une facture déjà écrite, donc chaque facture n'est
+        // détaillée qu'une fois dans sa vie.
         let en = brute.en_invoice ?? null;
         let evenements = brute.events ?? null;
 
-        if (!en || !evenements) {
+        const partiesManquantes = !en?.seller || !en?.buyer;
+
+        if (!en || !evenements || partiesManquantes) {
           const d = await superpdpFetch(userId, `/invoices/${brute.id}`);
           if (!d.ok) {
           // ⚠️ Surtout pas `continue`. Le curseur est commun au lot : sauter
