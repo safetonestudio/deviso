@@ -85,7 +85,21 @@ async function tokenRequest(params: Record<string, string>): Promise<TokenSet> {
   };
 
   let res = await attempt(true);
-  if (res.status === 401) res = await attempt(false);
+
+  // Repli sur l'authentification par corps — mais JAMAIS sur un
+  // `refresh_token`.
+  //
+  // Sur un échange de code, un 401 signifie « mauvaise méthode
+  // d'authentification » et le second essai est sans risque : le code
+  // d'autorisation n'a pas encore été consommé.
+  //
+  // Sur un rafraîchissement, un 401 signifie le plus souvent « ce jeton est
+  // mort ». Rejouer le MÊME refresh token est précisément le geste qui, sous
+  // rotation OAuth 2.1, peut faire révoquer toute la famille de jetons — donc
+  // transformer une erreur passagère en raccordement définitivement perdu.
+  if (res.status === 401 && params.grant_type !== "refresh_token") {
+    res = await attempt(false);
+  }
 
   const text = await res.text();
   if (!res.ok) {

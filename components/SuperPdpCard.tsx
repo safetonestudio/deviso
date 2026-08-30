@@ -28,6 +28,8 @@ type Etat = {
   companyId?: string | null;
   directoryAddress?: string | null;
   regimeTva?: string | null;
+  /** Renseigné si l'environnement de la plateforme ne correspond pas au nôtre. */
+  discordanceEnv?: string | null;
   /** Ce qu'il faut dire, et si une action est attendue de la personne. */
   messageStatut?: { texte: string; agir: boolean } | null;
   /** État réel de la ligne de réception. Voir lib/superpdp-ligne-annuaire.ts. */
@@ -234,6 +236,17 @@ export function SuperPdpCard() {
           >
             {verifie ? "Reconnecter" : enAttente ? "Relancer" : "Raccorder mon entreprise"}
           </a>
+        </div>
+      )}
+
+      {/* Bac à sable contre production : la plateforme dit lequel, on le
+          compare au nôtre. Se tromper, c'est émettre de vraies factures depuis
+          un compte de test, ou croire tester alors qu'on engage le réseau
+          national de facturation. */}
+      {etat?.discordanceEnv && (
+        <div className="mt-4 bg-red-500/10 border border-red-500/30 rounded-lg px-4 py-3">
+          <p className="text-sm text-red-300 font-medium">Environnement incohérent</p>
+          <p className="text-xs text-red-400/80 mt-1">{etat.discordanceEnv}</p>
         </div>
       )}
 

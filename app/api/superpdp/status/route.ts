@@ -88,6 +88,15 @@ export async function GET() {
     }
   }
 
+  // L'environnement que la plateforme nous attribue, comparé au nôtre.
+  //
+  // `env` est marqué `required` sur le schéma `company` : la plateforme dit
+  // elle-même si ce compte est en bac à sable ou en production. Deviso le
+  // déduisait d'une variable locale. Une variable mal positionnée fait signer
+  // des factures réelles depuis un compte de test — ou l'inverse — sans que
+  // rien ne le détecte. Le contrôle coûte une comparaison.
+  let discordanceEnv: string | null = null;
+
   let regimeTva: string | null = null;
   let ligne: EtatLigne | null = null;
   if (statut === "verified") {
@@ -104,8 +113,17 @@ export async function GET() {
     try {
       const res = await superpdpFetch(workspaceId, "/companies/me");
       if (res.ok) {
-        const body = (await res.json()) as { vat_regime?: string | null };
+        const body = (await res.json()) as {
+          vat_regime?: string | null;
+          env?: "sandbox" | "production";
+        };
         regimeTva = body.vat_regime?.trim() ? body.vat_regime : null;
+        if (body.env && (body.env === "sandbox") !== isSandbox()) {
+          discordanceEnv =
+            `La Plateforme Agréée considère ce compte comme « ${body.env} », ` +
+            `alors que Deviso est configuré en « ${isSandbox() ? "sandbox" : "production"} ».`;
+          console.error(`[superpdp/status] ${discordanceEnv}`);
+        }
       }
     } catch {
       // L'état du raccordement reste affichable sans cette information.
@@ -129,6 +147,7 @@ export async function GET() {
     // Vide = les factures aux particuliers seront refusées. C'est la seule
     // façon pour l'utilisateur de s'en apercevoir avant d'essayer.
     regimeTva,
+    discordanceEnv,
     lastError: conn?.last_error ?? null,
   });
 }
