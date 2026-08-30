@@ -54,10 +54,40 @@ Plus trois silences : erreurs HTTP non journalisées, synchronisation des
 **`npm run verify` : 240 vérifications, 0 échec**, dont 42 sur Super PDP
 (27 avant ce chantier) et 4 sur le refus.
 
-### Priorité 4 — à cadrer
-E-reporting des recettes hors facture (`b2c_transactions`), achats
-internationaux (`b2bint_invoices` en `direction: in`), mandats
-d'autofacturation. Tous supposent un modèle de données que Deviso n'a pas.
+### Fait — priorité 4, ce qui était déterminable
+
+Sondage du bac à sable en lecture seule, le 30/08/2026. Deux découvertes qui
+changent le plan initial :
+
+1. **Les transactions d'e-reporting B2C sont créées automatiquement** par
+   Super PDP à partir des factures transmises (`b2c_transaction.invoice_id`
+   pointe la facture). Deviso n'a donc **rien à déclarer** pour une vente
+   facturée — le `POST` ne sert qu'aux recettes hors facture.
+2. Nos factures **services** ressortent classées `TLB1`. Le champ
+   `operation_category` de Deviso n'était écrit **nulle part dans le XML** :
+   Super PDP n'a aucun moyen de distinguer biens et services. Voir les questions.
+
+| Livré | Ce que ça apporte |
+|---|---|
+| `GET /b2c_transactions` et `/b2c_payments` filtrés par facture | « Votre vente a bien été déclarée au titre du flux 10.1 », avec `ppf_ereporting_id` — nul tant que la déclaration n'est pas déposée |
+| `GET /ereportings/preview` | La seule occasion de corriger avant que ça devienne une déclaration. XML seul, `204` = rien à déclarer, traité comme un résultat |
+| **BT-8 corrigé** | `DueDateTypeCode` était **inversé** : 72 (« paid to date ») émis pour les débits, et rien pour les encaissements — le cas courant. Deux assertions verrouillent les deux sens |
+
+Aucune période n'est calculée côté Deviso : la spec ne documente le découpage
+que pour le régime mensuel, et **par décades**. Deviner pour le trimestriel
+serait exactement l'erreur de `vat_exemption`.
+
+### Reste — bloqué ou hors périmètre
+
+- **`POST /b2c_transactions`** (recettes au comptant, sans facture) : suppose un
+  modèle de données que Deviso n'a pas, et le sens de `category_code` n'est pas
+  documenté. Faible valeur pour un freelance qui facture tout.
+- **`POST /b2bint_invoices`** pour les **achats** à l'étranger (`direction: in`) :
+  `business_process` (`{id, type_id}`, tous deux requis) n'a **aucune valeur
+  documentée**. Non implémentable sans réponse. Les ventes internationales, elles,
+  passent par `processing_rule=B2BInt`, qui fonctionne.
+- **`company_mandates`** (autofacturation) : la spec réserve l'enrôlement aux
+  cabinets comptables, et le cas est marginal pour la cible.
 
 ## Questions à poser à Super PDP
 
@@ -76,6 +106,11 @@ Aucune ne se lève par déduction — et c'est en devinant une énumération que
    spec ne documente que le cas mensuel (par décades).
 6. `b2c_payment_subtotal.category_code` et `b2c_payment.company_id` sont
    `required` mais absents des `properties` : bug de spec ?
+7. **Comment distinguer biens et services ?** Nos factures `services`
+   ressortent en `TLB1`. Aucun champ de `en_invoice` ne semble porter cette
+   distinction, et `operation_category` n'a pas d'équivalent EN 16931. Si le
+   classement se déduit d'autre chose, il faut savoir de quoi — une facture de
+   prestation déclarée comme livraison de biens est une déclaration fausse.
 
 ## Ce que Selim seul peut confirmer
 
