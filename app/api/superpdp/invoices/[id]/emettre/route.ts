@@ -7,6 +7,7 @@ import { generateFacturXml } from "@/lib/invoice-xml";
 import { isB2CInvoice } from "@/lib/facturx-helpers";
 import { manquesPourEmission, phraseManques, transmissible } from "@/lib/superpdp-precontrole";
 import { natureOperation } from "@/lib/superpdp-nature";
+import { validerFacture, resumerEchecs } from "@/lib/superpdp-validation";
 import { resoudreAdresseClient } from "@/lib/superpdp-annuaire";
 import type { Invoice } from "@/types";
 
@@ -182,6 +183,42 @@ export async function POST(req: NextRequest, ctx: { params: Promise<{ id: string
       processing_rule: nature,
       external_id: String(facture.id).slice(0, 36),
     });
+
+    // Validation en amont, telle que la spec la recommande.
+    //
+    // « Most of errors like that can be avoided by calling the
+    // /validation_reports endpoint first » — description du statut
+    // `api:invalid`. Sans cet appel, une facture syntaxiquement acceptée mais
+    // sémantiquement fausse repart en `api:invalid` de façon ASYNCHRONE : le
+    // POST répond 200, l'utilisateur croit sa facture partie, et elle ne l'est
+    // pas. C'est le seul moyen de le savoir avant.
+    //
+    // On ne bloque que sur un verdict explicitement négatif : une validation
+    // injoignable ne doit jamais empêcher d'émettre.
+    const rapport = await validerFacture(xml, `${facture.invoice_number || facture.id}.xml`);
+    if (!rapport.valide && rapport.echecs.length) {
+      const lignes = resumerEchecs(rapport.echecs);
+      await admin
+        .from("invoices")
+        .update({
+          superpdp_error: `Validation : ${lignes.join(" | ")}`.slice(0, 1000),
+          superpdp_status_date: new Date().toISOString(),
+        })
+        .eq("id", id)
+        .eq("user_id", workspaceId);
+
+      return NextResponse.json(
+        {
+          error: "Facture non conforme",
+          message:
+            "La Plateforme Agréée rejetterait cette facture. Elle n'a donc pas été transmise, " +
+            "pour éviter un rejet qui aurait été constaté bien plus tard.",
+          echecs: lignes,
+          sourceAdresse,
+        },
+        { status: 422 }
+      );
+    }
 
     const res = await superpdpFetch(workspaceId, `/invoices?${params}`, {
       method: "POST",

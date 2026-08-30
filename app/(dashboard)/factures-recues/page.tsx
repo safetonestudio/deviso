@@ -5,42 +5,11 @@ import { createAdminClient } from "@/lib/supabase/admin";
 import { getWorkspaceUserId, getWorkspaceProfile } from "@/lib/workspace";
 import { SyncButton } from "./SyncButton";
 import { BoutonRefus } from "./BoutonRefus";
+import { ActionsCycle } from "./ActionsCycle";
+import { libelleStatut, estCloture } from "@/lib/superpdp-statuts";
 
 export const metadata: Metadata = { title: "Factures reçues" };
 export const dynamic = "force-dynamic";
-
-/**
- * Statuts de cycle de vie, tableau 8 du dossier de spécifications externes de
- * la DGFiP, version 3.2 du 30/04/2026.
- *
- * ⚠️ Cette table a d'abord été écrite de mémoire, et elle était décalée d'un
- * cran à partir du code 204. Une facture **refusée** (210) s'affichait
- * « Paiement transmis ». Recopiée depuis le document officiel le 12/08/2026 :
- * ne pas la modifier sans rouvrir ce document.
- *
- * `obligatoire` reprend la colonne « Caractère » : quatre statuts seulement le
- * sont — 200 et 213 posés par les plateformes, 210 par le destinataire, 212 par
- * le fournisseur.
- */
-const STATUTS: Record<
-  string,
-  { texte: string; ton: "neutre" | "attention" | "bien"; obligatoire?: boolean }
-> = {
-  "fr:200": { texte: "Déposée", ton: "neutre", obligatoire: true },
-  "fr:201": { texte: "Émise par la plateforme", ton: "neutre" },
-  "fr:202": { texte: "Reçue par la plateforme", ton: "neutre" },
-  "fr:203": { texte: "Mise à disposition", ton: "neutre" },
-  "fr:204": { texte: "Prise en charge", ton: "neutre" },
-  "fr:205": { texte: "Approuvée", ton: "bien" },
-  "fr:206": { texte: "Approuvée partiellement", ton: "attention" },
-  "fr:207": { texte: "En litige", ton: "attention" },
-  "fr:208": { texte: "Suspendue", ton: "attention" },
-  "fr:209": { texte: "Complétée", ton: "neutre" },
-  "fr:210": { texte: "Refusée", ton: "attention", obligatoire: true },
-  "fr:211": { texte: "Paiement transmis", ton: "neutre" },
-  "fr:212": { texte: "Encaissée", ton: "bien", obligatoire: true },
-  "fr:213": { texte: "Rejetée", ton: "attention", obligatoire: true },
-};
 
 const euros = (v: number | null, devise: string | null) =>
   v === null
@@ -50,23 +19,9 @@ const euros = (v: number | null, devise: string | null) =>
 const jour = (v: string | null) =>
   v ? new Date(v).toLocaleDateString("fr-FR", { day: "2-digit", month: "short", year: "numeric" }) : "—";
 
-/**
- * Une facture est-elle réellement en retard de paiement ?
- *
- * L'échéance dépassée ne suffit pas. Une facture **encaissée** (212) est payée,
- * et une facture **refusée** (210) ou **rejetée** (213) est annulée — le
- * fournisseur doit passer un avoir. Les afficher en rouge réclamerait un
- * paiement pour des factures qui n'ont plus lieu d'être payées, et noierait les
- * vrais retards au milieu.
- *
- * Constaté sur une capture de Selim : une facture refusée gardait son échéance
- * en rouge.
- */
-const CLOTUREES = new Set(["fr:210", "fr:212", "fr:213"]);
-
 function estEnRetard(f: { payment_due_date: string | null; last_status_code: string | null }) {
   if (!f.payment_due_date) return false;
-  if (f.last_status_code && CLOTUREES.has(f.last_status_code)) return false;
+  if (estCloture(f.last_status_code)) return false;
   return new Date(f.payment_due_date) < new Date();
 }
 
@@ -225,7 +180,7 @@ export default async function FacturesRecues() {
               sert qu'à retrouver la pièce, jamais à décider. */}
           <section className="lg:hidden space-y-3 mt-6">
             {liste.map((f) => {
-              const statut = f.last_status_code ? STATUTS[f.last_status_code] : undefined;
+              const statut = libelleStatut(f.last_status_code);
               const enRetard = estEnRetard(f);
               return (
                 <article
@@ -273,7 +228,8 @@ export default async function FacturesRecues() {
                     Télécharger la facture
                   </a>
 
-                  <div className="mt-2 text-center">
+                  <div className="mt-2 flex items-center justify-center gap-4">
+                    <ActionsCycle factureId={f.id} statutActuel={f.last_status_code} />
                     <BoutonRefus
                       factureId={f.id}
                       fournisseur={f.seller_name ?? "ce fournisseur"}
@@ -301,7 +257,7 @@ export default async function FacturesRecues() {
               </thead>
               <tbody>
                 {liste.map((f) => {
-                  const statut = f.last_status_code ? STATUTS[f.last_status_code] : undefined;
+                  const statut = libelleStatut(f.last_status_code);
                   const enRetard = estEnRetard(f);
                   return (
                     <tr key={f.id} className="border-b border-ds-border last:border-0 hover:bg-ds-elevated/40">
@@ -339,6 +295,7 @@ export default async function FacturesRecues() {
                           >
                             Télécharger
                           </a>
+                          <ActionsCycle factureId={f.id} statutActuel={f.last_status_code} />
                           <BoutonRefus
                             factureId={f.id}
                             fournisseur={f.seller_name ?? "ce fournisseur"}

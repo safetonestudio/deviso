@@ -81,6 +81,10 @@ export type ResultatSync = {
   jusquA: number | null;
   /** Nombre de statuts mis à jour depuis les événements de cycle de vie. */
   statuts?: number;
+  /** Total connu de la plateforme, toutes pages confondues (`count`). */
+  total?: number | null;
+  /** Vrai quand la borne de pages a été atteinte : il reste des factures. */
+  tronque?: boolean;
   /** Renseigné quand la synchronisation n'a pas pu se faire. */
   raison?: "non_raccorde" | "verification_en_cours" | "erreur";
   detail?: string;
@@ -92,6 +96,9 @@ type FactureListe = {
   created_at?: string;
   direction: "in" | "out";
   processing_rule?: string;
+  /** Présents seulement si `expand[]` a été demandé — voir la boucle. */
+  en_invoice?: Record<string, unknown> | null;
+  events?: { status_code?: string }[] | null;
 };
 
 const nombre = (v: unknown): number | null => {
@@ -112,6 +119,10 @@ export async function synchroniserFactures(userId: string): Promise<ResultatSync
   let curseur = conn.last_invoice_id ?? null;
   let recuperees = 0;
   let entrantes = 0;
+  /** `count` renvoyé par la plateforme : le total de toutes les pages. */
+  let total: number | null = null;
+  /** Vrai si on est sorti par épuisement de PAGES_MAX, pas par fin de liste. */
+  let tronque = false;
 
   try {
     // État réel de la session, demandé à la source plutôt que déduit d'un 403.
@@ -166,9 +177,35 @@ export async function synchroniserFactures(userId: string): Promise<ResultatSync
     }
 
     for (let page = 0; page < PAGES_MAX; page++) {
+      // `expand[]` et `limit` : cent un appels HTTP deviennent un seul.
+      //
+      // Le commentaire de tête de ce fichier affirmait que « la liste est
+      // maigre — il faut un appel de détail par facture ». C'était vrai de
+      // l'observation faite sans paramètre, et la spec en donne la raison :
+      // « By default, the `en_invoice` property is not returned, **for
+      // performance reasons**. Use the expand parameter to control the amount
+      // of expanded data in the response. »
+      //
+      // `en_invoice_overview` déclare `number`, `issue_date`, `currency_code`
+      // et `totals` comme requis, plus `seller`, `buyer` et
+      // `payment_due_date` — c'est-à-dire exactement tout ce que l'écriture
+      // ci-dessous allait chercher une facture à la fois.
+      //
+      // Ce que ça change au-delà du coût : une page de cent factures faisait
+      // cent-un appels SÉQUENTIELS dans une seule invocation serverless. Le
+      // curseur n'étant sauvegardé qu'après la page complète, une expiration à
+      // la soixantième facture perdait les cinquante-neuf précédentes — et une
+      // page qui ne tient jamais dans le budget bloquait la synchronisation
+      // pour toujours, en boucle.
+      //
+      // `limit=1000` est le maximum documenté : la borne de sécurité couvre
+      // désormais vingt mille factures au lieu de deux mille.
       const params = new URLSearchParams();
       if (curseur) params.set("starting_after_id", String(curseur));
-      const chemin = `/invoices${params.toString() ? `?${params}` : ""}`;
+      params.set("limit", "1000");
+      params.append("expand[]", "en_invoice");
+      params.append("expand[]", "events");
+      const chemin = `/invoices?${params}`;
 
       const res = await superpdpFetch(userId, chemin);
       if (!res.ok) {
@@ -181,14 +218,26 @@ export async function synchroniserFactures(userId: string): Promise<ResultatSync
         return { recuperees, entrantes, jusquA: curseur, raison: "erreur", detail };
       }
 
-      const body = (await res.json()) as { data?: FactureListe[]; has_after?: boolean };
+      const body = (await res.json()) as {
+        data?: FactureListe[];
+        has_after?: boolean;
+        count?: number;
+      };
       const lot = body.data ?? [];
+      total = body.count ?? total;
       if (lot.length === 0) break;
 
       for (const brute of lot) {
-        // La liste ne porte pas le contenu : un appel de détail par facture.
-        const d = await superpdpFetch(userId, `/invoices/${brute.id}`);
-        if (!d.ok) {
+        // `expand[]` a normalement tout ramené. On ne fait l'appel de détail
+        // que s'il manque quelque chose : ainsi le jour où la plateforme
+        // cesserait d'honorer `expand`, la synchronisation ralentit au lieu de
+        // se mettre à écrire des factures vides.
+        let en = brute.en_invoice ?? null;
+        let evenements = brute.events ?? null;
+
+        if (!en || !evenements) {
+          const d = await superpdpFetch(userId, `/invoices/${brute.id}`);
+          if (!d.ok) {
           // ⚠️ Surtout pas `continue`. Le curseur est commun au lot : sauter
           // cette facture et laisser les suivantes le faire avancer la rend
           // INATTEIGNABLE pour toujours — `starting_after_id` ne ramène que les
@@ -199,20 +248,24 @@ export async function synchroniserFactures(userId: string): Promise<ResultatSync
           // On arrête donc la page ici : le curseur reste sur la dernière
           // facture réellement écrite, et le prochain passage reprend
           // exactement là. Une panne passagère coûte un délai, pas une facture.
-          await saveConnection(userId, { last_invoice_id: curseur, last_sync_at: new Date().toISOString() });
-          return {
-            recuperees, entrantes, jusquA: curseur, raison: "erreur",
+            await saveConnection(userId, { last_invoice_id: curseur, last_sync_at: new Date().toISOString() });
+            return {
+              recuperees, entrantes, jusquA: curseur, raison: "erreur",
             detail: `Détail de la facture ${brute.id} illisible (HTTP ${d.status}). Reprise au prochain passage.`,
+            };
+          }
+
+          const facture = (await d.json()) as {
+            en_invoice?: Record<string, unknown>;
+            events?: { status_code?: string }[];
           };
+          en = (facture.en_invoice ?? {}) as Record<string, unknown>;
+          evenements = facture.events ?? [];
         }
 
-        const facture = (await d.json()) as {
-          en_invoice?: Record<string, unknown>;
-          events?: { status_code?: string }[];
-        };
-        const en = (facture.en_invoice ?? {}) as Record<string, any>;
-        const totaux = (en.totals ?? {}) as Record<string, unknown>;
-        const evenements = facture.events ?? [];
+        const champs = (en ?? {}) as Record<string, any>;
+        const totaux = (champs.totals ?? {}) as Record<string, unknown>;
+        const journal = evenements ?? [];
 
         const { error: erreurEcriture } = await admin.from("superpdp_invoices").upsert(
           {
@@ -221,18 +274,18 @@ export async function synchroniserFactures(userId: string): Promise<ResultatSync
             company_id: brute.company_id != null ? String(brute.company_id) : null,
             direction: brute.direction,
             processing_rule: brute.processing_rule ?? null,
-            number: en.number ?? null,
-            issue_date: date(en.issue_date),
-            payment_due_date: date(en.payment_due_date),
-            currency_code: en.currency_code ?? null,
-            seller_name: en.seller?.name ?? null,
-            buyer_name: en.buyer?.name ?? null,
+            number: champs.number ?? null,
+            issue_date: date(champs.issue_date),
+            payment_due_date: date(champs.payment_due_date),
+            currency_code: champs.currency_code ?? null,
+            seller_name: champs.seller?.name ?? null,
+            buyer_name: champs.buyer?.name ?? null,
             total_without_vat: nombre(totaux.total_without_vat),
             total_vat: nombre(totaux.total_vat_amount),
             total_with_vat: nombre(totaux.total_with_vat),
             amount_due: nombre(totaux.amount_due_for_payment),
-            last_status_code: statutQuiFaitFoi(evenements),
-            en_invoice: en,
+            last_status_code: statutQuiFaitFoi(journal),
+            en_invoice: champs,
             received_at: brute.created_at ?? null,
             synced_at: new Date().toISOString(),
           },
@@ -266,6 +319,10 @@ export async function synchroniserFactures(userId: string): Promise<ResultatSync
       });
 
       if (!body.has_after) break;
+      // Dernier tour sans avoir vidé la liste : on sort par la borne de
+      // sécurité, pas parce qu'il n'y a plus rien. Le dire évite d'afficher
+      // « à jour » sur une synchronisation tronquée.
+      if (page === PAGES_MAX - 1) tronque = true;
     }
   } catch (err) {
     if (err instanceof SuperPdpNotConnected) {
@@ -330,7 +387,7 @@ export async function synchroniserFactures(userId: string): Promise<ResultatSync
     ...(conn.last_error ? { last_error: null } : {}),
   });
 
-  return { recuperees, entrantes, jusquA: curseur, statuts };
+  return { recuperees, entrantes, jusquA: curseur, statuts, total, tronque };
 }
 
 type EvenementFacture = {

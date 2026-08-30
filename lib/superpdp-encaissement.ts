@@ -37,7 +37,20 @@ export type ResultatEncaissement =
  */
 export async function envoyerEncaissementPdp(
   workspaceId: string,
-  invoiceId: string
+  invoiceId: string,
+  /**
+   * Date réelle de l'encaissement, au format `YYYY-MM-DD`.
+   *
+   * Sans elle, la date retenue est celle de l'appel. Or la TVA sur les
+   * prestations de services est exigible **à l'encaissement** : quelqu'un qui
+   * pointe le 29 un virement reçu le 12 déclarait une date fausse de dix-sept
+   * jours, sur la donnée qui détermine précisément l'exigibilité.
+   *
+   * Le champ existe dans la spec : `invoice_event_reported_data.date`,
+   * « indicates an expected date value, particularly the date of the receipt of
+   * payment ». Absente, on n'invente rien et on laisse la plateforme dater.
+   */
+  dateEncaissement?: string | null
 ): Promise<ResultatEncaissement> {
   const admin = createAdminClient();
 
@@ -59,6 +72,15 @@ export async function envoyerEncaissementPdp(
     return { ok: true, dejaEncaissee: true };
   }
 
+  // On n'accepte qu'une date du passé, au bon format : une date d'encaissement
+  // dans le futur n'a pas de sens et serait rejetée bien plus loin, sans
+  // message exploitable.
+  const aujourdhui = new Date().toISOString().slice(0, 10);
+  const dateValide =
+    dateEncaissement && /^\d{4}-\d{2}-\d{2}$/.test(dateEncaissement) && dateEncaissement <= aujourdhui
+      ? dateEncaissement
+      : null;
+
   try {
     const res = await superpdpFetch(workspaceId, "/invoice_events", {
       method: "POST",
@@ -66,6 +88,13 @@ export async function envoyerEncaissementPdp(
       body: JSON.stringify({
         invoice_id: Number(facture.superpdp_invoice_id),
         status_code: "fr:212",
+        // On ne pose `details` que si l'on connaît la date : le corps minimal
+        // reste le cas nominal, et la plateforme calcule alors elle-même la
+        // ventilation des montants par taux à partir de la facture qu'elle
+        // connaît déjà.
+        ...(dateValide
+          ? { details: [{ reported_data: [{ date: dateValide }] }] }
+          : {}),
       }),
     });
 
@@ -77,7 +106,11 @@ export async function envoyerEncaissementPdp(
 
     await admin
       .from("invoices")
-      .update({ superpdp_encaisse_at: new Date().toISOString() })
+      .update({
+        superpdp_encaisse_at: dateValide
+          ? new Date(`${dateValide}T12:00:00Z`).toISOString()
+          : new Date().toISOString(),
+      })
       .eq("id", invoiceId)
       .eq("user_id", workspaceId);
 

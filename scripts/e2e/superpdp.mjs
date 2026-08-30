@@ -500,6 +500,82 @@ verifier(
   `superpdp_status = ${statutPorte}`
 );
 
+// ── Validation avant transmission ────────────────────────────────────────────
+console.log("");
+console.log("── Validation officielle avant transmission ──────────────────");
+
+// `POST /validation_reports` fait tourner les validateurs réels (XSD CII,
+// Factur-X EN16931, Schematron BR-FR) — 189 contrôles sur la facture de
+// référence du dépôt. La spec le recommande explicitement : « Most of errors
+// like that can be avoided by calling the /validation_reports endpoint first ».
+// Sans lui, une facture sémantiquement fausse repart en `api:invalid` de façon
+// ASYNCHRONE : le POST répond 200 et l'utilisateur croit sa facture partie.
+const validation = idB2b ? await bq.call(`/api/superpdp/invoices/${idB2b}/valider`, { method: "POST" }) : { status: 0, body: null };
+verifier(
+  "une facture peut être validée sans être transmise",
+  validation.status === 200 && typeof validation.body?.validation?.valide === "boolean",
+  `HTTP ${validation.status} ${doc(validation.body).slice(0, 260)}`
+);
+verifier(
+  "la validation fait bien tourner les validateurs officiels",
+  validation.body?.validation?.niveau?.includes("en16931") === true ||
+    validation.body?.validation?.indisponible != null,
+  `niveau = ${validation.body?.validation?.niveau} · indisponible = ${validation.body?.validation?.indisponible}`
+);
+verifier(
+  "le XML produit par Deviso est jugé conforme",
+  validation.body?.validation?.valide === true,
+  `échecs : ${doc(validation.body?.validation?.echecs)}`
+);
+
+// ── Réponses du destinataire autres que le refus ─────────────────────────────
+console.log("");
+console.log("── Cycle de vie : répondre sans refuser ──────────────────────");
+
+// Ne proposer que le refus, « définitif et global », poussait à l'utiliser à
+// tort pour signaler une simple erreur de montant.
+const statutSurSortante = idPdp
+  ? await bq.call(`/api/superpdp/invoices/${idPdp}/statut`, { method: "POST", body: doc({ code: "fr:207" }) })
+  : { status: 0, body: null };
+verifier(
+  "on ne pose pas un statut de destinataire sur sa propre facture émise",
+  statutSurSortante.status === 400 && /Sens invalide/.test(doc(statutSurSortante.body)),
+  `HTTP ${statutSurSortante.status} ${doc(statutSurSortante.body).slice(0, 200)}`
+);
+
+const codeInterdit = idPdp
+  ? await bq.call(`/api/superpdp/invoices/${idPdp}/statut`, { method: "POST", body: doc({ code: "fr:210" }) })
+  : { status: 0, body: null };
+verifier(
+  "le refus garde sa route dédiée et n'est pas banalisé ici",
+  codeInterdit.status === 400 && /motif/i.test(doc(codeInterdit.body)),
+  `HTTP ${codeInterdit.status} ${doc(codeInterdit.body).slice(0, 200)}`
+);
+
+const codeInconnu = idPdp
+  ? await bq.call(`/api/superpdp/invoices/${idPdp}/statut`, { method: "POST", body: doc({ code: "fr:999" }) })
+  : { status: 0, body: null };
+verifier(
+  "un code hors nomenclature est refusé avant tout appel",
+  codeInconnu.status === 400 && /Statut inconnu/.test(doc(codeInconnu.body)),
+  `HTTP ${codeInconnu.status} ${doc(codeInconnu.body).slice(0, 160)}`
+);
+
+// ── E-reporting ──────────────────────────────────────────────────────────────
+console.log("");
+console.log("── Ce qui est déclaré au fisc ────────────────────────────────");
+
+const ereportings = await bq.call("/api/superpdp/ereportings");
+verifier(
+  "les déclarations d'e-reporting sont lisibles",
+  ereportings.status === 200 && Array.isArray(ereportings.body?.declarations),
+  `HTTP ${ereportings.status} ${doc(ereportings.body).slice(0, 260)}`
+);
+aVerifierAutrement(
+  "Le contenu d'une déclaration rejetée",
+  "il faut qu'une déclaration soit effectivement rejetée par le PPF ; le bac à sable n'en produit pas à la demande."
+);
+
 // ── Téléchargement Factur-X ──────────────────────────────────────────────────
 console.log("");
 console.log("── Téléchargement Factur-X d'une facture de la plateforme ────");

@@ -10,7 +10,7 @@ import { envoyerEncaissementPdp } from "@/lib/superpdp-encaissement";
  * transmise à Super PDP. Toute la logique vit dans lib/superpdp-encaissement.ts,
  * partagée avec le webhook Stripe — voir ce fichier pour le pourquoi.
  */
-export async function POST(_req: NextRequest, ctx: { params: Promise<{ id: string }> }) {
+export async function POST(req: NextRequest, ctx: { params: Promise<{ id: string }> }) {
   const { id } = await ctx.params;
 
   const supabase = await createClient();
@@ -22,8 +22,14 @@ export async function POST(_req: NextRequest, ctx: { params: Promise<{ id: strin
     return NextResponse.json({ error: "Non autorisé" }, { status: 401 });
   }
 
+  // Date réelle de l'encaissement, si l'appelant la connaît. C'est elle qui
+  // détermine l'exigibilité de la TVA sur les prestations de services, pas la
+  // date à laquelle on pense à cocher la case.
+  const corps = await req.json().catch(() => ({}));
+  const dateEncaissement = typeof corps?.date === "string" ? corps.date : null;
+
   const workspaceId = await getWorkspaceUserId(user.id);
-  const resultat = await envoyerEncaissementPdp(workspaceId, id);
+  const resultat = await envoyerEncaissementPdp(workspaceId, id, dateEncaissement);
 
   if (!resultat.ok) {
     if (resultat.raison === "non_transmise") {
