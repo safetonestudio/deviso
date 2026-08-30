@@ -130,6 +130,37 @@ export async function GET() {
     }
   }
 
+  // Rattrapage du régime de TVA, sur l'état et non sur la transition.
+  //
+  // Le rattrapage plus haut ne se déclenche qu'au moment où la vérification
+  // d'identité *change* d'état. Un compte déjà `verified` depuis longtemps,
+  // dont le régime n'a jamais été poussé — parce que le tunnel d'origine est
+  // antérieur à ce code, ou parce que le PATCH avait échoué ce jour-là — ne
+  // repasse jamais par cette transition. Il restait donc bloqué à vie avec un
+  // `vat_regime` vide et toutes ses factures aux particuliers refusées, sans
+  // autre issue que de rouvrir son profil et réenregistrer.
+  //
+  // On juge donc sur ce que la plateforme dit vraiment : si elle ne connaît
+  // pas le régime alors que le profil permet de le déterminer, on le pousse.
+  // Le cas nominal ne coûte rien — `regimeTva` est déjà rempli.
+  if (statut === "verified" && !regimeTva) {
+    try {
+      const profil = await getWorkspaceProfile<{
+        tva_regime: string | null;
+        tva_periodicite: string | null;
+      }>(workspaceId, "tva_regime, tva_periodicite");
+      if (profil) {
+        const r = await pousserRegimeTva(workspaceId, profil);
+        if (r.ok) regimeTva = r.regime;
+        else if (r.raison !== "inconnu") {
+          console.error(`[superpdp/status] régime non poussé : ${r.raison}`);
+        }
+      }
+    } catch {
+      // Best-effort : l'écran reste affichable.
+    }
+  }
+
   return NextResponse.json({
     available: true,
     sandbox: isSandbox(),
