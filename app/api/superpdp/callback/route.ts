@@ -74,7 +74,7 @@ export async function GET(req: NextRequest) {
     let companyId: string | null = null;
     let companyNumber: string | null = null;
     let companyNumberScheme: string | null = null;
-    let status: "pending" | "verified" = "pending";
+    let status: "pending" | "verified" | "error" = "pending";
 
     const entetes = {
       Authorization: `Bearer ${tokens.access_token}`,
@@ -91,6 +91,38 @@ export async function GET(req: NextRequest) {
       // refusée dès que les deux divergeaient. Voir SuperPdpConnection.
       companyNumber = body?.number != null ? String(body.number) : null;
       companyNumberScheme = body?.number_scheme != null ? String(body.number_scheme) : null;
+    }
+
+    // Le statut se LIT, il ne se déduit pas d'un 200.
+    //
+    // On posait `verified` dès que `/companies/me` répondait. C'était une
+    // inférence : toute autre cause de non-200 — réseau, 500 — devenait
+    // silencieusement « vérification en cours », avec `last_error` effacé. La
+    // personne lisait « Super PDP vérifie… » pour une panne technique.
+    //
+    // `GET /oauth2_sessions/me` est la source d'autorité, et elle distingue ce
+    // qu'un 403 confond : entreprise en revue, entreprise refusée, identité pas
+    // encore vérifiée par l'utilisateur lui-même.
+    const sessionRes = await fetch(`${SUPERPDP_API}/oauth2_sessions/me`, {
+      headers: entetes,
+      cache: "no-store",
+    });
+    if (sessionRes.ok) {
+      const etat = (await sessionRes.json().catch(() => null)) as {
+        company_verification_status?: "verified" | "needs_review" | "failed";
+        user_identity_verification_status?: "verified" | "needs_review" | "failed" | "not_verified";
+      } | null;
+      if (etat?.company_verification_status) {
+        status =
+          etat.company_verification_status === "verified"
+            ? "verified"
+            : etat.company_verification_status === "failed"
+              ? "error"
+              : "pending";
+      }
+    } else if (me.ok) {
+      // Repli sur l'ancienne inférence : si la fiche entreprise répond, la
+      // session est au moins utilisable. Mieux que de rester bloqué en attente.
       status = "verified";
     }
 

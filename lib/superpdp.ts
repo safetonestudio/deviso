@@ -259,6 +259,50 @@ export function statutDepuisEtat(etat: EtatSession): "verified" | "pending" | "e
   return "pending";
 }
 
+/**
+ * Ce qu'il faut dire à l'utilisateur, selon l'état réel de sa session.
+ *
+ * `user_identity_verification_status` était lu, typé, transporté — et jamais
+ * utilisé. Or il change complètement le message : `not_verified` signifie « The
+ * user has either not started the process », c'est-à-dire **une action attendue
+ * de sa part**. On lui affichait « Super PDP vérifie le rattachement de votre
+ * entreprise », ce qui invite précisément à ne rien faire. Un blocage pouvait
+ * durer indéfiniment parce qu'on avait dit à la personne d'attendre.
+ */
+export function messageEtatSession(etat: EtatSession): { texte: string; agir: boolean } {
+  if (etat.identite === "not_verified") {
+    return {
+      texte:
+        "Super PDP attend que vous vérifiiez votre identité. Tant que ce n'est pas fait, " +
+        "rien ne peut avancer — la vérification se termine sur leur interface.",
+      agir: true,
+    };
+  }
+  if (etat.identite === "failed") {
+    return {
+      texte: "Super PDP n'a pas pu valider votre identité. Contactez leur support.",
+      agir: true,
+    };
+  }
+  if (etat.entreprise === "failed") {
+    return {
+      texte:
+        "Super PDP n'a pas pu rattacher votre entreprise à votre compte. " +
+        "Ce n'est pas une attente : il faut reprendre le raccordement.",
+      agir: true,
+    };
+  }
+  if (etat.entreprise === "verified") {
+    return { texte: "Votre entreprise est vérifiée.", agir: false };
+  }
+  return {
+    texte:
+      "Super PDP vérifie le rattachement de votre entreprise. " +
+      "Cette vérification est faite par leurs équipes, généralement sous 24 h.",
+    agir: false,
+  };
+}
+
 /** Marge avant expiration : on rafraîchit un peu en avance plutôt qu'au ras. */
 const MARGE_EXPIRATION_MS = 60_000;
 
@@ -281,17 +325,60 @@ async function accessTokenValide(conn: SuperPdpConnection): Promise<string> {
     return conn.access_token;
   }
 
-  const tokens = await refreshTokens(conn.refresh_token);
+  let tokens;
+  try {
+    tokens = await refreshTokens(conn.refresh_token);
+  } catch (err) {
+    // Un `invalid_grant` au rafraîchissement veut dire que ce refresh token est
+    // mort : révoqué, expiré, ou consommé par un appel concurrent. Aucun
+    // réessai ne le ranimera — il faut refaire le tunnel d'autorisation.
+    //
+    // On l'inscrit ICI plutôt que chez chaque appelant : selon le chemin
+    // d'entrée, la même perte définitive était tantôt journalisée, tantôt
+    // avalée par un `catch` vide. Le raccordement doit se déclarer cassé une
+    // seule fois, au seul endroit qui le sait.
+    const detail = err instanceof Error ? err.message : String(err);
+    if (/invalid_grant/i.test(detail)) {
+      await saveConnection(conn.user_id, {
+        session_status: "error",
+        last_error:
+          "Votre autorisation Super PDP n'est plus valide. Reconnectez votre entreprise.",
+      }).catch(() => {});
+    }
+    throw err;
+  }
+
   const dureeMs = (tokens.expires_in ?? 1800) * 1000;
 
-  await saveConnection(conn.user_id, {
-    // Rotation : on enregistre le nouveau refresh token s'il y en a un. S'il
-    // n'y en a pas, on garde l'ancien — l'écraser avec `undefined` couperait
-    // le raccordement.
-    ...(tokens.refresh_token ? { refresh_token: tokens.refresh_token } : {}),
-    access_token: tokens.access_token,
-    access_token_expires_at: new Date(Date.now() + dureeMs).toISOString(),
-  });
+  // Écriture CONDITIONNELLE sur l'ancien refresh token.
+  //
+  // OAuth 2.1 impose la rotation : l'ancien jeton meurt dès qu'on s'en sert.
+  // Rien ne sérialisait deux rafraîchissements concurrents — la tâche horaire
+  // et un chargement de page peuvent se croiser, voir tous deux un jeton
+  // expiré, et rafraîchir en parallèle avec le MÊME refresh token. Le second
+  // reçoit `invalid_grant`, et surtout le perdant écrasait en base le jeton
+  // que le gagnant venait d'obtenir : raccordement mort, tunnel à refaire.
+  //
+  // `WHERE refresh_token = <ancien>` fait que seul le premier écrit. Le second
+  // ne touche rien et se contente de son propre jeton d'accès, qui est valide.
+  if (tokens.refresh_token) {
+    const admin = createAdminClient();
+    await admin
+      .from("superpdp_connections")
+      .update({
+        refresh_token: tokens.refresh_token,
+        access_token: tokens.access_token,
+        access_token_expires_at: new Date(Date.now() + dureeMs).toISOString(),
+      })
+      .eq("user_id", conn.user_id)
+      .eq("refresh_token", conn.refresh_token);
+  } else {
+    // Pas de rotation : on ne met à jour que le jeton d'accès.
+    await saveConnection(conn.user_id, {
+      access_token: tokens.access_token,
+      access_token_expires_at: new Date(Date.now() + dureeMs).toISOString(),
+    });
+  }
 
   return tokens.access_token;
 }

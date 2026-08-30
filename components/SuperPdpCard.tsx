@@ -28,6 +28,8 @@ type Etat = {
   companyId?: string | null;
   directoryAddress?: string | null;
   regimeTva?: string | null;
+  /** Ce qu'il faut dire, et si une action est attendue de la personne. */
+  messageStatut?: { texte: string; agir: boolean } | null;
   /** État réel de la ligne de réception. Voir lib/superpdp-ligne-annuaire.ts. */
   ligne?:
     | { etat: "joignable"; adresse: string }
@@ -215,7 +217,8 @@ export function SuperPdpCard() {
                           ? "Votre ligne de réception est en erreur : vous ne recevez rien."
                           : "Aucune ligne de réception : vos fournisseurs ne peuvent pas vous joindre."
                   : enAttente
-                    ? "Super PDP vérifie le rattachement de votre entreprise."
+                    ? (etat?.messageStatut?.texte ??
+                      "Super PDP vérifie le rattachement de votre entreprise.")
                     : "Vous ne pouvez pas encore recevoir de factures électroniques."}
               </p>
             </div>

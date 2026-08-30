@@ -41,6 +41,11 @@ export async function POST(req: NextRequest, ctx: { params: Promise<{ id: string
 
   const body = await req.json().catch(() => ({}));
   const motif = typeof body.motif === "string" ? body.motif : "";
+  // Une explication en clair, à côté du code de la nomenclature. Sans elle, le
+  // fournisseur reçoit « CALCUL_ERR » et doit deviner QUELLE ligne est fausse :
+  // un aller-retour téléphonique par refus. Les autres réponses du destinataire
+  // l'acceptaient déjà, il n'y avait pas de raison que le refus en soit privé.
+  const note = typeof body.note === "string" ? body.note.trim().slice(0, 500) : "";
 
   // On valide contre la liste que l'API nous a elle-même donnée, plutôt que de
   // relayer n'importe quelle chaîne et de laisser Super PDP répondre en anglais
@@ -89,7 +94,12 @@ export async function POST(req: NextRequest, ctx: { params: Promise<{ id: string
       body: JSON.stringify({
         invoice_id: Number(id),
         status_code: "fr:210",
-        details: [{ reason: motif }],
+        details: [
+          {
+            reason: motif,
+            ...(note ? { notes: [{ contents: [{ content: note }] }] } : {}),
+          },
+        ],
       }),
     });
 

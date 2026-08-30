@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 import { getWorkspaceUserId, getWorkspaceProfile } from "@/lib/workspace";
 import { pousserRegimeTva } from "@/lib/superpdp-entreprise";
-import { getConnection, isSandbox, superpdpConfig, superpdpFetch, lireEtatSession, statutDepuisEtat, saveConnection } from "@/lib/superpdp";
+import { getConnection, isSandbox, superpdpConfig, superpdpFetch, lireEtatSession, statutDepuisEtat, saveConnection, messageEtatSession } from "@/lib/superpdp";
 import { lireLigneAnnuaire, type EtatLigne } from "@/lib/superpdp-ligne-annuaire";
 
 /**
@@ -43,10 +43,15 @@ export async function GET() {
   // et le seul bouton offert relançait un tunnel d'autorisation complet là où
   // un simple GET suffit.
   let statut = conn?.session_status ?? null;
+  let messageStatut: { texte: string; agir: boolean } | null = null;
   if (conn && statut !== "verified") {
     try {
       const etat = await lireEtatSession(workspaceId);
       if (etat) {
+        // Ce qu'il faut dire, et surtout si une action est attendue de la
+        // personne. « Nous vérifions » invite à attendre ; or une identité non
+        // vérifiée attend justement qu'elle fasse quelque chose.
+        messageStatut = messageEtatSession(etat);
         const reel = statutDepuisEtat(etat);
         if (reel !== statut) {
           statut = reel;
@@ -112,6 +117,7 @@ export async function GET() {
     sandbox: isSandbox(),
     connected: Boolean(conn),
     status: statut,
+    messageStatut,
     companyId: conn?.company_id ?? null,
     // Ce que l'utilisateur communique à ses clients pour être joignable.
     directoryAddress:

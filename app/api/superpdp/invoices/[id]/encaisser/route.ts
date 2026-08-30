@@ -41,6 +41,11 @@ export async function POST(req: NextRequest, ctx: { params: Promise<{ id: string
       non_raccorde: "Compte non raccordé à la Plateforme Agréée.",
       verification_en_cours: "Super PDP vérifie encore le rattachement de votre entreprise.",
       refuse: "La Plateforme Agréée a refusé l'événement d'encaissement. Réessayez dans un moment.",
+      // Cas délicat : c'est fait chez eux, pas noté chez nous. Dire
+      // « réessayez » ferait déclarer le paiement une seconde fois.
+      non_enregistre:
+        "L'encaissement a bien été déclaré à la Plateforme Agréée, mais Deviso n'a pas pu le noter. " +
+        "Ne recommencez pas : la déclaration partirait en double.",
     };
     return NextResponse.json(
       {

@@ -32,6 +32,7 @@ export function BoutonRefus({
   const router = useRouter();
   const [ouvert, setOuvert] = useState(false);
   const [motif, setMotif] = useState("");
+  const [note, setNote] = useState("");
   const [enCours, setEnCours] = useState(false);
   const [erreur, setErreur] = useState<string | null>(null);
 
@@ -45,7 +46,7 @@ export function BoutonRefus({
       const r = await fetch(`/api/superpdp/invoices/${factureId}/refuser`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ motif }),
+        body: JSON.stringify({ motif, note: note.trim() || undefined }),
       });
       const res = await r.json();
       if (!r.ok) {
@@ -124,10 +125,25 @@ export function BoutonRefus({
               </option>
             ))}
           </select>
-          <p className="text-xs text-gray-600 mb-4">
+          <p className="text-xs text-gray-600 mb-3">
             La réforme n&apos;accepte que ces motifs : il n&apos;existe pas d&apos;option
             « autre ».
           </p>
+
+          {/* Le code seul oblige le fournisseur à deviner : « erreur de calcul »
+              ne dit pas QUELLE ligne est fausse. Un mot ici, c'est un
+              aller-retour téléphonique en moins. */}
+          <label className="block text-xs font-medium text-gray-400 mb-1.5">
+            Précision pour votre fournisseur <span className="text-gray-600">(facultatif)</span>
+          </label>
+          <textarea
+            value={note}
+            onChange={(e) => setNote(e.target.value)}
+            rows={2}
+            maxLength={500}
+            placeholder="Ex. : le total de la ligne 3 ne correspond pas au devis signé."
+            className="w-full bg-ds-bg border border-ds-border text-white rounded-lg px-3 py-2 text-sm mb-4 focus:outline-none focus:border-indigo-500 placeholder:text-gray-600"
+          />
 
           {erreur && <p className="text-sm text-red-400 mb-3">{erreur}</p>}
 

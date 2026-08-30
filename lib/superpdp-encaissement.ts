@@ -5,7 +5,13 @@ export type ResultatEncaissement =
   | { ok: true; dejaEncaissee?: boolean }
   | {
       ok: false;
-      raison: "non_transmise" | "non_raccorde" | "verification_en_cours" | "refuse";
+      raison:
+        | "non_transmise"
+        | "non_raccorde"
+        | "verification_en_cours"
+        | "refuse"
+        /** Déclaré auprès de la plateforme, mais pas noté chez nous : ne pas rejouer. */
+        | "non_enregistre";
       detail?: string;
     };
 
@@ -104,7 +110,13 @@ export async function envoyerEncaissementPdp(
       return { ok: false, raison: "refuse", detail };
     }
 
-    await admin
+    // `superpdp_encaisse_at` est la SEULE garde d'idempotence de cette
+    // fonction (voir le test plus haut). Si le POST réussit et que cette
+    // écriture échoue en silence, un second clic sur « Marquer comme payée »
+    // réémet un événement d'encaissement — et la donnée d'e-reporting de
+    // paiement part en double vers le PPF. On vérifie donc l'erreur, et on le
+    // dit clairement à l'appelant plutôt que de répondre « c'est fait ».
+    const { error: erreurEcriture } = await admin
       .from("invoices")
       .update({
         superpdp_encaisse_at: dateValide
@@ -113,6 +125,15 @@ export async function envoyerEncaissementPdp(
       })
       .eq("id", invoiceId)
       .eq("user_id", workspaceId);
+
+    if (erreurEcriture) {
+      console.error(`[superpdp/encaissement] ${invoiceId} : encaissement déclaré mais non enregistré — ${erreurEcriture.message}`);
+      return {
+        ok: false,
+        raison: "non_enregistre",
+        detail: erreurEcriture.message,
+      };
+    }
 
     return { ok: true };
   } catch (err) {
