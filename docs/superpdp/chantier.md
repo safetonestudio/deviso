@@ -1,8 +1,15 @@
-# Intégration Super PDP — ce qui reste, et ce que Selim seul peut confirmer
+# Intégration Super PDP — état de fin de chantier
 
-Établi le 29/08/2026 après quatre audits croisés du code contre
-`docs/superpdp/openapi.json` (35 opérations, 10 utilisées). Ce document est la
-liste de travail ; `etat.md` dit ce qui est prouvé.
+**Le chantier est terminé.** Émettre, recevoir, répondre, refuser, encaisser,
+vérifier avant d'envoyer, voir ce qui est déclaré : tout ce dont un freelance a
+besoin est en place et prouvé par la traversée en production.
+
+Ce document garde la trace de ce qui a été fait, de ce qui a été **décidé de ne
+pas faire**, et des rares vérifications qui demandent un œil humain.
+
+Établi les 29 et 30/08/2026 après quatre audits croisés du code contre
+`docs/superpdp/openapi.json` (35 opérations) et la lecture intégrale de leur
+documentation. `etat.md` dit ce qui est prouvé, et comment.
 
 ## Corrigé et déployé
 
@@ -77,23 +84,43 @@ Aucune période n'est calculée côté Deviso : la spec ne documente le découpa
 que pour le régime mensuel, et **par décades**. Deviner pour le trimestriel
 serait exactement l'erreur de `vat_exemption`.
 
-### Reste — et pourquoi
+### Décisions prises — ces points ne seront pas traités
 
-| Point | État |
-|---|---|
-| **Distinguer biens et services** dans la déclaration | **Seule question ouverte.** Voir ci-dessous |
-| **Achats internationaux** (`b2bint_invoices`, `direction: in`) | Deviso ne gère pas les factures fournisseur : il n'a ni saisie, ni stockage, ni comptabilité d'achat. Ce n'est pas un trou d'intégration, c'est un périmètre produit absent. S'y ajoute `business_process` (`{id, type_id}`, requis), qui n'a **aucune valeur documentée** — ni dans la référence OpenAPI ni dans les quatorze sections de la documentation |
-| **Recettes au comptant** (`POST /b2c_transactions`) | Concerne les commerces qui vendent sans facture — « les salons de coiffure font leurs ventes sur une caisse enregistreuse ». Un freelance qui facture tout n'a rien à y déclarer, et leur documentation prévient : « il faut veiller à ne pas envoyer les données en double » |
-| **Date d'encaissement saisissable** | La route `encaisser` accepte une date, mais Deviso n'a **aucune colonne `paid_at`** : le bouton « Marquer comme payée » ne peut donc pas la transmettre. La plateforme date du jour. Correct dans le cas courant, faux pour un virement pointé en retard |
-| **Mandats d'autofacturation** | Question **close**, pas reportée : « une erreur fréquente est de penser qu'un logiciel de facturation est un tiers facturant. Or ce n'est pas le cas » |
+Ce ne sont pas des tâches en attente. Ce sont des choix, et ils sont clos.
 
-Toutes les routes construites sont désormais exposées par un écran : la page
-**Déclarations** (liste + aperçu de ce qui n'est pas encore parti), le bouton
-**Vérifier avant de transmettre** sur la facture, les **réponses au fournisseur**
-sur une facture reçue, l'**ouverture de la ligne d'annuaire** sur la carte
-Plateforme Agréée, et la **recherche d'entreprise** dans le formulaire de
-facture. Une capacité qu'aucune interface n'expose n'existe pas pour
-l'utilisateur.
+**Achats internationaux (`b2bint_invoices`, `direction: in`) — hors produit.**
+Deviso ne gère pas les factures fournisseur : ni saisie, ni stockage, ni
+comptabilité d'achat. Déclarer un achat international suppose de connaître cet
+achat, ce que Deviso ne fait pas et n'a pas vocation à faire. L'obligation pèse
+sur l'entreprise et son comptable, pas sur un logiciel de devis et facturation.
+
+**Recettes au comptant (`POST /b2c_transactions`) — hors cible.**
+Leur documentation décrit le cas : « les salons de coiffure font leurs ventes
+sur une caisse enregistreuse ». Les utilisateurs de Deviso facturent. Et pour
+une vente facturée, la déclaration est produite automatiquement — leur
+documentation prévient même : « il faut veiller à ne pas envoyer les données
+d'e-reporting en double ». Implémenter cette route ferait courir un risque de
+double déclaration pour un cas d'usage qui n'existe pas ici.
+
+**Mandats d'autofacturation — question close.**
+« Une erreur fréquente est de penser qu'un logiciel de facturation est un tiers
+facturant. Or ce n'est pas le cas. » Deviso agit par délégation du compte de son
+client. Ce point n'aurait jamais dû figurer sur une liste de travail.
+
+**Biens contre services** reste la seule inconnue, et son impact est étroit :
+elle ne joue que sur les factures **B2C**. Pour une facture B2B — l'essentiel du
+travail d'un freelance — transmettre la facture satisfait les deux obligations,
+et la question ne se pose pas. En B2C, l'encaissement est déclaré de toute
+façon puisque Deviso envoie `fr:212`. À poser à Super PDP quand l'occasion se
+présente, sans que rien n'en dépende.
+
+### Le seul manque encore ouvert
+
+**Aucune colonne `paid_at`.** La route `encaisser` accepte une date
+d'encaissement, mais Deviso ne mémorise pas la date de paiement : le bouton
+« Marquer comme payée » ne peut donc pas la transmettre, et la plateforme date
+du jour. Juste dans le cas courant, faux pour un virement pointé en retard.
+Une colonne et un champ de date — à faire si le besoin se présente, pas avant.
 
 ## Les questions, et leurs réponses
 
