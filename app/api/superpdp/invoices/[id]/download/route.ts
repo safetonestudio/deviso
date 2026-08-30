@@ -65,10 +65,40 @@ export async function GET(req: NextRequest, ctx: { params: Promise<{ id: string 
   try {
     // `superpdpFetch` pose `Accept: application/json` par défaut. Testé sans
     // effet sur cette route, mais autant demander ce qu'on attend vraiment.
-    const res = await superpdpFetch(workspaceId, `/invoices/${id}?format=factur-x`, {
+    let res = await superpdpFetch(workspaceId, `/invoices/${id}?format=factur-x`, {
       headers: { Accept: "application/pdf" },
     });
+
+    // Repli sur le rendu de la plateforme.
+    //
+    // « To ignore the embedded PDFs and always use the SUPER PDP invoice
+    // renderer » — c'est exactement le cas où le PDF embarqué par l'émetteur
+    // est illisible. Sans ce repli, l'utilisateur restait sur une impasse pour
+    // une pièce dont la conservation est une obligation légale.
     if (!res.ok) {
+      res = await superpdpFetch(
+        workspaceId,
+        `/invoices/${id}?format=factur-x&force_superpdp_pdf_renderer=true`,
+        { headers: { Accept: "application/pdf" } }
+      );
+    }
+
+    // Dernier repli : le fichier ORIGINAL, tel que l'émetteur l'a déposé.
+    // `format=original` renvoie « the unmodified original invoice ». Ce n'est
+    // pas un PDF, mais un XML correctement étiqueté vaut mieux qu'un message
+    // d'échec sur une facture qu'on doit pouvoir conserver.
+    if (!res.ok) {
+      const brut = await superpdpFetch(workspaceId, `/invoices/${id}?format=original`);
+      if (brut.ok) {
+        const nomBrut = `facture-${(facture.number ?? id).toString().replace(/[^\w.-]/g, "_")}.xml`;
+        return new NextResponse(await brut.arrayBuffer(), {
+          headers: {
+            "Content-Type": brut.headers.get("content-type") ?? "application/xml",
+            "Content-Disposition": `attachment; filename="${nomBrut}"`,
+            "Cache-Control": "private, no-store",
+          },
+        });
+      }
       return NextResponse.json(
         { error: "Téléchargement impossible auprès de la Plateforme Agréée" },
         { status: 502 }

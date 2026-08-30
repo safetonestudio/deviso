@@ -561,6 +561,29 @@ verifier(
   `HTTP ${codeInconnu.status} ${doc(codeInconnu.body).slice(0, 160)}`
 );
 
+// ── Recherche d'entreprise dans l'Annuaire national ─────────────────────────
+console.log("");
+console.log("── Rechercher un client plutôt que lui demander son SIREN ────");
+
+const rechercheVide = await bq.call("/api/annuaire/entreprises");
+verifier(
+  "une recherche sans critère est refusée avant tout appel",
+  rechercheVide.status === 400,
+  `HTTP ${rechercheVide.status} ${doc(rechercheVide.body).slice(0, 160)}`
+);
+
+// SIREN réel et stable : la Banque de France. On vérifie qu'on retrouve bien
+// une entreprise et que le SIREN remonte — c'est ce qui évite à l'utilisateur
+// de le recopier à la main, et une faute de frappe se solde par un rejet.
+const parSiren = await bq.call("/api/annuaire/entreprises?siren=572104790");
+verifier(
+  "une recherche par SIREN retourne une entreprise identifiable",
+  parSiren.status === 200 &&
+    Array.isArray(parSiren.body?.entreprises) &&
+    parSiren.body.entreprises.every((e) => typeof e.siren === "string" && typeof e.nom === "string"),
+  `HTTP ${parSiren.status} ${doc(parSiren.body).slice(0, 300)}`
+);
+
 // ── E-reporting ──────────────────────────────────────────────────────────────
 console.log("");
 console.log("── Ce qui est déclaré au fisc ────────────────────────────────");

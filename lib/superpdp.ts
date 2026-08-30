@@ -305,20 +305,44 @@ export async function superpdpFetch(
   const conn = await getConnection(userId);
   if (!conn) throw new SuperPdpNotConnected("Compte non raccordé à Super PDP.");
 
-  const accessToken = await accessTokenValide(conn);
+  const appel = async (jeton: string) =>
+    fetch(`${SUPERPDP_API}${path}`, {
+      ...init,
+      headers: {
+        Accept: "application/json",
+        ...(init.headers ?? {}),
+        Authorization: `Bearer ${jeton}`,
+      },
+      cache: "no-store",
+    });
 
-  const res = await fetch(`${SUPERPDP_API}${path}`, {
-    ...init,
-    headers: {
-      Accept: "application/json",
-      ...(init.headers ?? {}),
-      Authorization: `Bearer ${accessToken}`,
-    },
-    cache: "no-store",
-  });
+  let res = await appel(await accessTokenValide(conn));
+
+  // 401 : le jeton d'accès a été invalidé côté serveur avant son expiration
+  // nominale — révocation, rebranchement, redémarrage de leur côté. Il n'était
+  // pas traité : chaque appelant recevait une erreur générique, et l'émission
+  // affichait « la Plateforme Agréée a refusé la facture » là où il fallait
+  // lire « reconnectez votre compte ». Un seul réessai après rafraîchissement
+  // forcé suffit, et il ne peut pas boucler.
+  if (res.status === 401) {
+    const rafraichi = await getConnection(userId);
+    if (rafraichi) {
+      const jeton = await accessTokenValide({ ...rafraichi, access_token_expires_at: null });
+      res = await appel(jeton);
+    }
+  }
 
   if (res.status === 403) {
-    await saveConnection(userId, { session_status: "pending" });
+    // ⚠️ Ne rien écrire ici.
+    //
+    // La spec produit le MÊME 403 pour `needs_review` (vérification en cours)
+    // et pour `failed` (« Support has determined the user is not authorized —
+    // Access is blocked »). Écrire `pending` écrasait donc activement le
+    // diagnostic que `lireEtatSession` venait d'établir à la source : un
+    // utilisateur définitivement refusé lisait « vérification en cours,
+    // généralement sous 24 h » pour toujours.
+    //
+    // Le statut se lit par `GET /oauth2_sessions/me`, et nulle part ailleurs.
     throw new SuperPdpSessionPending(
       "Super PDP n'a pas encore validé le rattachement de votre compte à votre entreprise. " +
         "Cette vérification est faite par leurs équipes, généralement sous 24 h."
