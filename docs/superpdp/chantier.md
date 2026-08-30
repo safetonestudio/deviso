@@ -36,28 +36,23 @@ Plus trois silences : erreurs HTTP non journalisées, synchronisation des
 | **Le pays du client ne pouvait jamais valoir autre chose que « FR »** | `resolveAddress` ne recevait pas `country` ; corrigé sur facture et devis, plus un sélecteur de pays dans le formulaire |
 | Annuaire français interrogé avec authentification | `security: []` dans la spec — appel public, la résolution fonctionne désormais pour les comptes non raccordés |
 
-### Priorité 3 — exploiter l'API
-- **`POST /validation_reports`** : valider *avant* d'émettre. Sans
-  authentification, avec `failures[].location`. C'est la brique qui remplace le
-  JSON brut par « ligne 3 : BR-CO-10 non respectée ».
-- **`expand[]` + `limit=1000`** sur `GET /invoices` : supprime le N+1 (101
-  appels par page aujourd'hui), le risque d'expiration de la fonction, et les
-  deux tiers de la troncature à 2 000 factures.
-- **`GET /french_directory/*` est public** (`security: []`) : la résolution
-  d'adresse passe aujourd'hui par `superpdpFetch`, donc ne fonctionne pas pour
-  les comptes non raccordés — exactement les cas où elle servirait.
-- **`GET /french_directory/companies`** : rechercher un client par nom plutôt
-  que lui demander son SIREN.
-- **`fr:207` (litige)** : aujourd'hui la seule réponse offerte à une facture
-  douteuse est le refus, définitif. Ne proposer que l'option irréversible pousse
-  à l'utiliser à tort.
-- **`fr:211` (paiement transmis)** et une notion de « payée » sur les factures
-  reçues : sans elle, une facture réglée reste en rouge.
-- **Date d'encaissement** dans `fr:212` : Deviso envoie la date de l'appel. Qui
-  pointe le 29 un virement du 12 déclare une date fausse de 17 jours, sur la
-  donnée qui détermine l'exigibilité de la TVA.
-- **Écran « ce qui est déclaré au fisc »** (`GET /ereportings`) : c'est le seul
-  endroit où l'on apprend qu'une déclaration a été rejetée.
+### Fait — priorité 3
+
+| Apport | Ce que ça change |
+|---|---|
+| `POST /validation_reports` branché à l'émission et exposé en route dédiée | 189 contrôles officiels (XSD CII, Factur-X EN16931, Schematron BR-FR) avec la localisation dans le XML. Sans lui, une facture sémantiquement fausse repartait en `api:invalid` **asynchrone** : POST 200, utilisateur rassuré, facture non transmise |
+| `expand[]` + `limit=1000` | 101 appels HTTP séquentiels par page → 1. Borne de sécurité : 20 000 factures au lieu de 2 000. Troncature signalée au lieu d'être présentée comme « à jour » |
+| Table des statuts complète (43 codes) | Les `api:*` (factures Peppol) n'avaient aucun libellé, et une facture Peppol rejetée restait affichée « en retard » |
+| `fr:204`, `fr:205`, `fr:207`, `fr:208`, `fr:209`, `fr:211` | La seule réponse offerte à une facture douteuse était le refus, définitif, qui oblige le fournisseur à un avoir. Contester et suspendre existent pour ça |
+| Commentaire libre joint à l'action | Le fournisseur recevait un code et devait deviner |
+| Date d'encaissement dans `fr:212` | Pointer le 29 un virement du 12 déclarait une date fausse de 17 jours, sur la donnée qui détermine l'exigibilité de la TVA |
+| Écran des e-reportings (`GET /ereportings`) | Seul endroit où l'on apprend qu'une déclaration a été rejetée par l'administration |
+| `401` traité, `403` n'écrase plus le statut | Un compte définitivement refusé lisait « vérification en cours » pour toujours |
+| Trois replis au téléchargement | Impasse sur une pièce dont la conservation est une obligation légale |
+| `GET /french_directory/companies` | Rechercher un client par son nom au lieu de lui demander son SIREN — une faute de frappe se soldait par un rejet |
+
+**`npm run verify` : 240 vérifications, 0 échec**, dont 42 sur Super PDP
+(27 avant ce chantier) et 4 sur le refus.
 
 ### Priorité 4 — à cadrer
 E-reporting des recettes hors facture (`b2c_transactions`), achats

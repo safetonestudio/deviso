@@ -37,8 +37,10 @@ comptes réels du bac à sable, avec de vraies factures.
 - Périodicité de TVA propagée ; la franchise devient `vat_exemption` seule
 - Téléchargement Factur-X : on lit les octets, pas l'en-tête
 
-`npm run verify` complet : **224 vérifications, 0 échec**, plus les 4 du
-refus (`test:superpdp-refus`), désormais dans la suite.
+`npm run verify` complet : **240 vérifications, 0 échec** — dont 42 sur
+Super PDP et 4 sur le refus. Parmi elles, la plus structurante : « le XML
+produit par Deviso est jugé conforme » par les validateurs officiels de la
+plateforme, et non par nos propres règles.
 
 ## 3. Ce qui n'est pas couvert, et pourquoi
 
