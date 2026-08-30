@@ -56,8 +56,11 @@ plateforme, et non par nos propres règles.
   elle-même pour tenir les deux bouts. La plateforme la **rejette** (`fr:213`),
   vérifié sur la facture 375540. Une facture dont l'émetteur est le destinataire
   n'existe pas pour elle.
-- **Le tunnel de raccordement** (connect → callback → déconnexion) : redirection
-  OAuth, donc un navigateur.
+- ~~**Le tunnel de raccordement**~~ : **validé le 30/08/2026**, rejoué de bout en
+  bout dans un navigateur. Refresh token rotaté — preuve que l'échange
+  code → token a réellement eu lieu et qu'il ne s'agit pas du raccordement
+  précédent ayant survécu. Deux défauts corrigés à cette occasion, voir
+  `chantier.md`.
 - **L'émission depuis une entreprise réelle** : le bac à sable et la production
   partagent l'hôte d'API ; émettre pour de vrai engage le réseau national.
 - **Le rendu des écrans** : les traversées interrogent l'API. Leçon du 29/08 —

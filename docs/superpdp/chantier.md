@@ -171,4 +171,36 @@ formulé pour être testé en quelques secondes, avec le résultat attendu.
 | C3 | Refuser une facture reçue (`/factures-recues`) | Le statut passe « Refusée », l'échéance cesse d'être rouge, et un second refus dit « déjà refusée ». Renseigner `E2E_REFUS_EMAIL`/`E2E_REFUS_PASSWORD` dans `.env.local` automatise ce test |
 | C4 | Créer une facture pour un client hors de France, la transmettre | Elle part en `B2BInt` et n'est plus bloquée par l'absence de SIREN |
 | C5 | Transmettre une facture de solde liée à un acompte | Le PDF reçu par le client porte l'IBAN et la référence de l'acompte |
-| C6 | Le tunnel de raccordement complet (débrancher puis reraccorder) | Redirection OAuth : impossible à automatiser |
+| C6 | Le tunnel de raccordement complet (débrancher puis reraccorder) | **Validé le 30/08/2026.** Tunnel rejoué de bout en bout : refresh token rotaté, société 57700 / `000000001`, `verified`, ligne d'annuaire joignable. Deux défauts trouvés à cette occasion, voir ci-dessous |
+
+## Ce que le test du tunnel a révélé (30/08/2026)
+
+Rejouer C6 a mis au jour deux défauts que ni les traversées ni la relecture
+n'auraient trouvés, parce qu'ils ne se manifestent qu'à l'usage.
+
+**1. Le rattrapage du régime de TVA jugeait sur la transition, pas sur l'état.**
+`app/api/superpdp/status` ne poussait `vat_regime` qu'au moment où la
+vérification d'identité *changeait* d'état. Un compte vérifié de longue date ne
+repasse jamais par cette transition : il restait à vie avec un `vat_regime` vide
+chez Super PDP, donc toutes ses factures aux particuliers refusées, sans autre
+issue que de rouvrir son profil et réenregistrer — ce que personne ne devine.
+Le rattrapage juge désormais sur ce que la plateforme répond réellement : régime
+inconnu chez elle + déterminable depuis le profil ⇒ on le pousse. Idempotent, et
+gratuit dans le cas nominal.
+
+**2. La fenêtre du tunnel était de 10 minutes, et quatre causes d'échec
+tombaient sous un seul message.** Le `maxAge` des cookies `state`/`verifier`
+posés par `app/api/superpdp/connect` valait 600 s. Le tunnel Super PDP compte
+cinq étapes dont une vérification d'e-mail et une vérification d'identité : dix
+minutes ne suffisent pas à un premier raccordement mené normalement. Porté à
+1800 s — sans coût en sécurité, le `state` étant à usage unique, httpOnly, et
+effacé au retour quelle qu'en soit l'issue.
+
+Surtout, `callback` renvoyait `expire` pour quatre situations distinctes :
+absence de `code`, cookie disparu, `state` divergent, requête forgée. On a
+diagnostiqué une expiration là où il s'agissait peut-être d'un tunnel ouvert
+deux fois. Les cas sont désormais séparés — `interrompu`, `expire`, `double` —
+chacun avec son remède affiché.
+
+**Leçon.** Les deux défauts vivaient dans du code relu, testé et considéré
+comme terminé. Aucun ne se voit sans jouer le chemin réel de bout en bout.
