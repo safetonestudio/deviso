@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { synchroniserFactures } from "@/lib/superpdp-sync";
+import { factureBloquee } from "@/lib/superpdp-blocage";
 
 /**
  * Filet horaire pour la réception des factures électroniques.
@@ -57,10 +58,45 @@ export async function GET(req: Request) {
     }
   }
 
+  // Recensement des factures qui ne bougent plus, après synchronisation.
+  //
+  // Pourquoi ici plutôt que dans l'application. L'écran ne dit la vérité qu'à
+  // celui qui l'ouvre : un utilisateur qui ne se connecte pas de la semaine ne
+  // verra pas que ses factures ne sont jamais arrivées, et c'est précisément
+  // celui-là qu'il faut protéger. Ce passage horaire regarde pour lui, et
+  // laisse une trace côté serveur — la seule chose qui permette de découvrir
+  // une panne d'acheminement autrement que par la plainte d'un client.
+  //
+  // On ne fait qu'observer : aucune retransmission automatique. Réémettre une
+  // facture dont on ignore le sort risquerait le doublon, qui est une faute
+  // plus grave que le retard.
+  let bloquees = 0;
+  try {
+    const { data: candidates } = await admin
+      .from("invoices")
+      .select("id, user_id, invoice_number, superpdp_invoice_id, superpdp_status, superpdp_status_date, superpdp_adresse_source, updated_at")
+      .not("superpdp_invoice_id", "is", null);
+
+    for (const f of candidates ?? []) {
+      const b = factureBloquee(f);
+      if (!b) continue;
+      bloquees++;
+      console.error(
+        `[superpdp-blocage] facture ${f.invoice_number} (${f.id}, compte ${f.user_id}) : ` +
+          `${b.raison} — ${b.heures} h dans « ${f.superpdp_status ?? "aucun statut"} »`
+      );
+    }
+  } catch (err) {
+    // Le recensement ne doit jamais faire échouer la synchronisation, qui est
+    // la mission principale de cette tâche.
+    console.error("[superpdp-blocage] recensement impossible :", err instanceof Error ? err.message : err);
+  }
+
   console.log(
     `[superpdp-sync] ${comptes} compte(s), ${factures} facture(s) dont ${entrantes} entrante(s)` +
-      (echecs ? ` — ${echecs} échec(s)` : "")
+      (echecs ? ` — ${echecs} échec(s)` : "") +
+      (bloquees ? ` — ${bloquees} facture(s) bloquée(s)` : "")
   );
 
-  return NextResponse.json({ comptes, factures, entrantes, echecs });
+  return NextResponse.json({ comptes, factures, entrantes, echecs, bloquees });
 }

@@ -1,5 +1,6 @@
 import type { Invoice } from "@/types";
 import { manquesPourEmission, transmissible } from "@/lib/superpdp-precontrole";
+import { factureBloquee, depuis } from "@/lib/superpdp-blocage";
 
 /**
  * Où en est une facture vis-à-vis de la Plateforme Agréée ?
@@ -33,6 +34,20 @@ export function etatPdp(inv: Invoice): {
     return { texte: "Refusée par le client", classe: "bg-amber-500/10 text-amber-400", aFaire: false, manques: [] };
   if (inv.superpdp_status === "fr:213")
     return { texte: "Rejetée", classe: "bg-amber-500/10 text-amber-400", aFaire: false, manques: [] };
+  // Un blocage prime sur tout le reste : c'est la seule chose que l'utilisateur
+  // doive traiter aujourd'hui. Une facture qui stagne dans un statut de
+  // transport n'a jamais été remise, et sans ce test elle s'affichait comme une
+  // facture normalement partie.
+  const blocage = factureBloquee(inv);
+  if (blocage)
+    return {
+      texte: `Bloquée ${depuis(blocage.heures)}`,
+      classe: "bg-red-500/10 text-red-400",
+      aFaire: false,
+      manques: [],
+      alerte: `${blocage.raison}. ${blocage.remede}`,
+    };
+
   if (inv.superpdp_invoice_id) {
     // Une facture transmise à une adresse **déduite du SIREN** peut n'être
     // jamais remise : si plusieurs entreprises partagent ce SIREN, la
