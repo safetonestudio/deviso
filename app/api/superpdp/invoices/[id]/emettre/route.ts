@@ -8,6 +8,7 @@ import { isB2CInvoice } from "@/lib/facturx-helpers";
 import { manquesPourEmission, phraseManques, transmissible } from "@/lib/superpdp-precontrole";
 import { natureOperation } from "@/lib/superpdp-nature";
 import { validerFacture, resumerEchecs } from "@/lib/superpdp-validation";
+import { envoyerEncaissementPdp } from "@/lib/superpdp-encaissement";
 import { resoudreAdresseClient } from "@/lib/superpdp-annuaire";
 import type { Invoice } from "@/types";
 
@@ -353,6 +354,34 @@ export async function POST(req: NextRequest, ctx: { params: Promise<{ id: string
         },
         { status: 500 }
       );
+    }
+
+    // Une facture déjà payée au moment de sa transmission doit déclarer son
+    // encaissement TOUT DE SUITE.
+    //
+    // Leur documentation, section E-reporting : « Les données d'e-reporting de
+    // paiement sont créées à partir du message de cycle de vie "Encaissée
+    // (212)" […] **Pour les factures déjà encaissées à l'émission, il faut
+    // envoyer ce message de cycle de vie juste après sa création.** »
+    //
+    // Sans ça, une facture encaissée avant d'être transmise — le cas d'un
+    // paiement comptant, ou d'une facture régularisée après coup — ne produit
+    // JAMAIS son flux 10.2 : le bouton « Marquer comme payée » a déjà été
+    // cliqué, et il ne le sera pas une seconde fois. La déclaration manque, en
+    // silence.
+    //
+    // Sans effet sur une vente de marchandise : « Pour les factures qui ne
+    // nécessitent pas d'e-reporting de paiement (vente de marchandise), le
+    // message de cycle de vie "Encaissée (212)" n'aura aucun effet. »
+    if (facture.status === "paid" && !facture.superpdp_encaisse_at) {
+      // Sans date : Deviso ne mémorise pas la date de paiement (aucune colonne
+      // `paid_at`), donc la plateforme datera l'encaissement du jour. C'est
+      // approximatif et assumé ici — inventer une date serait pire. La route
+      // `encaisser` accepte une date quand l'appelant la connaît.
+      const encaissement = await envoyerEncaissementPdp(workspaceId, id, null);
+      if (!encaissement.ok) {
+        console.error(`[superpdp/emettre] ${id} : encaissement immédiat non déclaré — ${encaissement.raison}`);
+      }
     }
 
     // `sourceAdresse` remonte à l'appelant : c'est ce qui permet à l'interface

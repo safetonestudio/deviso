@@ -1,5 +1,5 @@
 import { superpdpFetch, isSandbox } from "@/lib/superpdp";
-import { toSiren, toSiret } from "@/lib/facturx-helpers";
+import { toSiren } from "@/lib/facturx-helpers";
 
 /**
  * La ligne d'annuaire : ce qui rend une entreprise JOIGNABLE.
@@ -93,13 +93,21 @@ export async function ouvrirLigneAnnuaire(
   if (!siren) {
     return { ok: false, raison: "Renseignez votre SIRET dans Paramètres avant d'ouvrir votre ligne." };
   }
-  const siret = toSiret(profil.siret);
 
+  // Le SIREN nu, et pas `SIREN_SIRET`.
+  //
+  // Leur documentation est explicite : « pour faire simple et comme tout le
+  // monde, on vous conseille de choisir comme adresse électronique de
+  // facturation le numéro SIREN de votre entreprise », et « la plupart des
+  // entreprises feront le choix pragmatique de n'avoir qu'une seule adresse ».
+  // Les formes composées existent pour l'organisation interne des grandes
+  // structures — un freelance n'en a aucun usage, et une adresse plus longue
+  // est une adresse de plus à communiquer sans erreur.
   const corps = isSandbox()
     ? { directory: "peppol", identifier: `0225:${siren}` }
     : {
         directory: "ppf",
-        identifier: siret ? `${siren}_${siret}` : siren,
+        identifier: siren,
         // Date d'entrée en vigueur de l'obligation de réception. La spec en
         // fait son exemple littéral : une ligne peut être ouverte à l'avance.
         effective_date: "2026-09-01",
