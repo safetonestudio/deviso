@@ -8,7 +8,8 @@ import { UpgradeBanner } from "@/components/UpgradeBanner";
 import { RefreshCw, Trash2, Plus, X, ChevronDown, Download, Coins, CircleCheck, TriangleAlert, Lock } from "lucide-react";
 import { GuidedTourBanner } from "@/components/GuidedTourBanner";
 import { usePlan } from "@/components/PlanContext";
-import { manquesPourEmission, phraseManques, transmissible } from "@/lib/superpdp-precontrole";
+import { phraseManques } from "@/lib/superpdp-precontrole";
+import { etatPdp } from "@/lib/superpdp-etat-facture";
 
 const STATUS_LABEL: Record<string, string> = {
   draft: "Brouillon",
@@ -36,61 +37,6 @@ function fmt(n: number) {
 function fmtDate(d: string) {
   return new Date(d).toLocaleDateString("fr-FR");
 }
-
-/**
- * Où en est une facture vis-à-vis de la Plateforme Agréée ?
- *
- * Pourquoi cette colonne existe. La transmission était un bouton au fond du
- * panneau d'une facture ouverte : pour savoir si ses factures étaient parties,
- * il fallait les ouvrir une par une. Sous la réforme, la transmission n'est pas
- * une option — une facture émise et jamais transmise est une facture qui, pour
- * l'administration, n'existe pas. Cet état doit se lire d'un coup d'œil sur la
- * liste, comme le statut de paiement.
- */
-function etatPdp(inv: Invoice): {
-  texte: string;
-  classe: string;
-  aFaire: boolean;
-  manques: string[];
-  alerte?: string;
-} | null {
-  if (!transmissible(inv)) return null;
-  if (inv.superpdp_encaisse_at)
-    return { texte: "Encaissement déclaré", classe: "bg-emerald-500/10 text-emerald-400", aFaire: false, manques: [] };
-  if (inv.superpdp_status === "fr:210")
-    return { texte: "Refusée par le client", classe: "bg-amber-500/10 text-amber-400", aFaire: false, manques: [] };
-  if (inv.superpdp_status === "fr:213")
-    return { texte: "Rejetée", classe: "bg-amber-500/10 text-amber-400", aFaire: false, manques: [] };
-  if (inv.superpdp_invoice_id) {
-    // Une facture transmise à une adresse **déduite du SIREN** peut n'être
-    // jamais remise : si plusieurs entreprises partagent ce SIREN, la
-    // Plateforme Agréée l'accepte, ne sait pas à qui la donner, et ne le
-    // signale pas. Constaté le 29/08/2026 sur sept factures. Afficher
-    // « Transmise » tout court serait une promesse qu'on ne tient pas.
-    if (inv.superpdp_adresse_source === "siren")
-      return {
-        texte: "Transmise — adresse déduite",
-        classe: "bg-amber-500/10 text-amber-400",
-        aFaire: false,
-        manques: [],
-        alerte:
-          "L'adresse d'acheminement a été déduite du SIREN, faute d'entrée à l'Annuaire. " +
-          "Si le destinataire n'est pas joignable à cette adresse, la facture peut ne jamais lui être remise. " +
-          "Renseignez son adresse de facturation électronique pour lever le doute.",
-      };
-    return { texte: "Transmise", classe: "bg-emerald-500/10 text-emerald-400", aFaire: false, manques: [] };
-  }
-
-  // Une facture à laquelle il manque le SIREN du client ne peut pas partir.
-  // Afficher « À transmettre » avec un bouton qui échouera serait un piège :
-  // on nomme ce qui bloque, à l'endroit où la personne le lit.
-  const manques = manquesPourEmission(inv);
-  if (manques.length)
-    return { texte: "Transmission impossible", classe: "bg-red-500/10 text-red-400", aFaire: false, manques };
-
-  return { texte: "À transmettre", classe: "bg-amber-500/10 text-amber-400", aFaire: true, manques: [] };
-}
-
 
 type RecurringInvoice = {
   id: string;

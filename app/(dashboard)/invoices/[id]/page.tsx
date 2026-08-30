@@ -16,7 +16,8 @@ import {
   ShieldCheck,
   Landmark,
 } from "lucide-react";
-import { libelleStatut, estCloture } from "@/lib/superpdp-statuts";
+import { libelleStatut } from "@/lib/superpdp-statuts";
+import { etatPdp } from "@/lib/superpdp-etat-facture";
 import type { Invoice } from "@/types";
 
 const STATUS_LABEL: Record<string, string> = {
@@ -413,35 +414,27 @@ function ActionPanel({ invoice, id, router, hasChorusPro }: {
         )}
 
         {dejaTransmise && (() => {
-          // On affiche le statut réel du cycle de vie, pas le seul fait d'avoir
-          // un identifiant.
-          //
-          // Cet encadré était vert et disait « Transmise à la Plateforme
-          // Agréée » dès que `superpdp_invoice_id` existait — c'est-à-dire dès
-          // que le POST avait abouti. Une facture rejetée (`fr:213`), déclarée
-          // invalide (`api:invalid`) ou restée indéfiniment sans acheminement
-          // affichait donc exactement le même message rassurant qu'une facture
-          // réellement remise. L'écran promettait ce que la plateforme n'avait
-          // pas confirmé — et pour une obligation légale, c'est le pire des
-          // mensonges : celui qu'on ne va pas vérifier.
+          // Même règle que la liste des factures, littéralement la même
+          // fonction. Ce panneau jugeait sur `superpdp_invoice_id` seul et
+          // affichait un « Transmise » vert dès que le POST avait abouti : une
+          // facture rejetée, invalide, ou expédiée à une adresse déduite d'un
+          // SIREN ambigu — donc possiblement jamais remise — portait le même
+          // vert rassurant qu'une facture réellement acceptée. La liste, elle,
+          // avertissait déjà. Les deux écrans disent maintenant la même chose.
+          const etat = etatPdp(inv);
           const statut = libelleStatut(inv.superpdp_status);
-          const ton = statut?.ton ?? "neutre";
-          const couleurs =
-            ton === "attention"
-              ? "border-amber-500/20 bg-amber-500/5 text-amber-400"
-              : ton === "bien"
-                ? "border-emerald-500/20 bg-emerald-500/5 text-emerald-400"
-                : "border-gray-600/30 bg-gray-500/5 text-gray-300";
-
           return (
-            <div className={`w-full text-sm px-4 py-2.5 rounded-lg border flex items-center gap-2 ${couleurs}`}>
-              <RadioTower size={17} className="shrink-0" />
-              <div className="flex flex-col">
-                <span>{statut ? statut.texte : "Transmise à la Plateforme Agréée"}</span>
-                {statut && ton !== "attention" && !estCloture(inv.superpdp_status) && (
+            <div className={`w-full text-sm px-4 py-2.5 rounded-lg border border-current/20 flex items-start gap-2 ${etat?.classe ?? "bg-gray-500/5 text-gray-300"}`}>
+              <RadioTower size={17} className="shrink-0 mt-0.5" />
+              <div className="flex flex-col gap-0.5">
+                <span>{etat?.texte ?? "Transmise à la Plateforme Agréée"}</span>
+                {statut && (
                   <span className="text-[11px] opacity-70">
-                    Acheminement en cours — le statut évoluera.
+                    Statut de la plateforme : {statut.texte}
                   </span>
+                )}
+                {etat?.alerte && (
+                  <span className="text-[11px] opacity-80 leading-relaxed">{etat.alerte}</span>
                 )}
                 {inv.superpdp_encaisse_at && (
                   <span className="text-[11px] opacity-70">Encaissement déclaré (fr:212)</span>
