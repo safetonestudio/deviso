@@ -54,7 +54,21 @@ const RETOURS: Record<string, { ton: "ok" | "attente" | "erreur"; texte: string 
   },
   expire: {
     ton: "erreur",
-    texte: "La demande a expiré (plus de 10 minutes) ou n'a pas pu être vérifiée. Relancez le raccordement.",
+    texte:
+      "La demande a expiré : le raccordement doit être mené en une fois, en moins " +
+      "de 30 minutes. Relancez-le.",
+  },
+  interrompu: {
+    ton: "erreur",
+    texte:
+      "Le raccordement a été interrompu avant la dernière étape. Relancez-le et " +
+      "allez jusqu'à l'écran d'autorisation.",
+  },
+  double: {
+    ton: "erreur",
+    texte:
+      "Le raccordement a été ouvert plusieurs fois : c'est une demande précédente " +
+      "qui est revenue. Fermez les autres onglets et relancez-le une seule fois.",
   },
   session_perdue: {
     ton: "erreur",

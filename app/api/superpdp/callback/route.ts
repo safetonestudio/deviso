@@ -44,9 +44,24 @@ export async function GET(req: NextRequest) {
   const verifier = req.cookies.get("superpdp_verifier")?.value;
   const cookieUid = req.cookies.get("superpdp_uid")?.value;
 
-  if (!code || !state || !expectedState || state !== expectedState || !verifier) {
-    // State absent ou divergent : requête forgée, ou cookie expiré (>10 min).
+  // Ces quatre cas échouaient sous un seul message, « la demande a expiré ou
+  // n'a pas pu être vérifiée ». Ils n'ont pourtant ni la même cause ni le même
+  // remède, et l'utilisateur ne pouvait pas savoir lequel le concernait : on a
+  // passé un test à supposer une expiration là où le tunnel avait peut-être
+  // simplement été ouvert deux fois. On les distingue.
+  if (!code || !state) {
+    // Retour sans code d'autorisation : tunnel interrompu, ou fermé avant la
+    // dernière étape.
+    return back(req, { superpdp: "interrompu" });
+  }
+  if (!expectedState || !verifier) {
+    // Nos cookies ne sont plus là : la fenêtre de 30 minutes est passée.
     return back(req, { superpdp: "expire" });
+  }
+  if (state !== expectedState) {
+    // Le state ne correspond pas au dernier tunnel ouvert. En pratique :
+    // « Reconnecter » cliqué deux fois, et c'est le premier onglet qui revient.
+    return back(req, { superpdp: "double" });
   }
 
   // On revalide la session : le cookie prouve l'origine de la requête, pas

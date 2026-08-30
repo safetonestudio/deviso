@@ -128,7 +128,14 @@ export async function GET() {
     secure: process.env.NODE_ENV === "production",
     sameSite: "lax" as const,
     path: "/api/superpdp",
-    maxAge: 600, // 10 minutes : le temps du tunnel d'inscription
+    // 30 minutes. Le tunnel d'inscription Super PDP comporte cinq étapes, dont
+    // une vérification d'adresse e-mail et une vérification d'identité : dix
+    // minutes ne suffisent pas à un premier raccordement mené normalement, et
+    // l'utilisateur revenait sur un « la demande a expiré » sans comprendre ce
+    // qu'il avait fait de travers. Allonger la fenêtre ne coûte rien en
+    // sécurité : le `state` est à usage unique, le cookie est httpOnly, et il
+    // est effacé au retour du tunnel — quelle qu'en soit l'issue.
+    maxAge: 1800,
   };
   res.cookies.set("superpdp_state", state, cookieOpts);
   res.cookies.set("superpdp_verifier", verifier, cookieOpts);
