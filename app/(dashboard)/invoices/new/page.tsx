@@ -5,6 +5,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import type { Proposal, ProposalItem } from "@/types";
 import { PAYS_FACTURATION } from "@/lib/superpdp-nature";
+import { RechercheEntreprise } from "@/components/RechercheEntreprise";
 import { v4 as uuidv4 } from "uuid";
 import { Clock, Package, FileText, Coins, CircleCheck, TriangleAlert, type LucideIcon } from "lucide-react";
 import { GuidedTourBanner } from "@/components/GuidedTourBanner";
@@ -624,6 +625,17 @@ export default function NewInvoicePage() {
           <section className="bg-ds-surface rounded-xl border border-ds-border p-5 space-y-4">
             <h2 className="font-semibold text-gray-200">Client</h2>
             <div className="grid grid-cols-2 gap-3">
+              <RechercheEntreprise
+                onChoisir={(e) => {
+                  setClientCompany(e.nom);
+                  setClientSiren(e.siren);
+                  setClientStreet(e.rue);
+                  setClientPostcode(e.code_postal);
+                  setClientCity(e.ville);
+                  setClientCountry(e.pays || "FR");
+                  if (!clientName.trim()) setClientName(e.nom);
+                }}
+              />
               <div>
                 <label className="block text-xs font-medium text-gray-400 mb-1">Nom</label>
                 <input value={clientName} onChange={(e) => setClientName(e.target.value)} className={inputCls} />
