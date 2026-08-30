@@ -89,28 +89,42 @@ serait exactement l'erreur de `vat_exemption`.
 - **`company_mandates`** (autofacturation) : la spec réserve l'enrôlement aux
   cabinets comptables, et le cas est marginal pour la cible.
 
-## Questions à poser à Super PDP
+## Les questions, et leurs réponses
 
-Aucune ne se lève par déduction — et c'est en devinant une énumération que
-`vat_exemption` avait été manqué.
+Elles étaient toutes dans la **documentation** de Super PDP
+(`superpdp.tech/documentation`), que la référence OpenAPI cite pourtant
+explicitement et que je n'avais jamais ouverte. Le contenu est servi par
+`https://api.superpdp.tech/internal/articles/{n}/html`, ce qui permet de
+chercher dans les quatorze sections d'un coup.
 
-1. `superpdp_send_and_receive` et `superpdp_directory_entry_identifier` :
-   paramètres d'`authorize` utilisés par Deviso, **absents de la spec**. Sont-ils
-   supportés ?
-2. Sens des codes `TLB1` / `TPS1` / `TNT1` / `TMA1` (`b2c_transaction.category_code`).
-3. Valeurs admises de `business_process` (`{id, type_id}`) et de
-   `tax_due_date_type_code` sur `b2bint_invoice`.
-4. `fr:220` est accepté à la création mais absent de l'énumération de lecture ;
-   `fr:501` est glosé mais absent des deux. Que valent-ils ?
-5. Découpage des périodes d'e-reporting pour `quarterly` et `simplified` — la
-   spec ne documente que le cas mensuel (par décades).
-6. `b2c_payment_subtotal.category_code` et `b2c_payment.company_id` sont
-   `required` mais absents des `properties` : bug de spec ?
-7. **Comment distinguer biens et services ?** Nos factures `services`
-   ressortent en `TLB1`. Aucun champ de `en_invoice` ne semble porter cette
-   distinction, et `operation_category` n'a pas d'équivalent EN 16931. Si le
-   classement se déduit d'autre chose, il faut savoir de quoi — une facture de
-   prestation déclarée comme livraison de biens est une déclaration fausse.
+| Question | Réponse trouvée |
+|---|---|
+| `superpdp_send_and_receive` et `superpdp_directory_entry_identifier` sont-ils supportés ? | **Oui**, documentés section « Authentification ». `any` (défaut) laisse le choix, `send` masque la réception, `receive` **force** l'enregistrement d'une ligne. Notre usage est le bon. `superpdp_directory_entry_identifier` configure l'adresse créée, indépendamment du pré-remplissage de l'entreprise — il est désormais envoyé systématiquement |
+| Faut-il déclarer les transactions B2C d'une facture ? | **Non, surtout pas.** « Nous faisons automatiquement l'extraction des données d'e-reporting […] Il faut veiller à ne pas envoyer les données en double » |
+| Une facture B2B doit-elle être déclarée séparément ? | **Non.** « En nous confiant une facture, nous satisfaisons les deux obligations d'e-invoicing et d'e-reporting » (Flux 1) |
+| Comment Super PDP détecte-t-il le B2C ? | Note **BAR** valant `B2C`, **ou** adresse électronique acheteur au scheme **EM**. Exactement ce que Deviso fait — un audit l'avait signalé comme non contractuel, il est documenté |
+| Que faire d'une facture déjà encaissée à l'émission ? | « **Il faut envoyer ce message de cycle de vie juste après sa création.** » C'était un trou : le flux 10.2 ne partait jamais. Corrigé |
+| Quelle adresse d'annuaire ouvrir ? | « On vous conseille de choisir le numéro SIREN de votre entreprise » — on ouvrait `SIREN_SIRET` |
+| Les mandats concernent-ils Deviso ? | **Non.** « Une erreur fréquente est de penser qu'un logiciel de facturation est un tiers facturant. Or ce n'est pas le cas » : Deviso agit par délégation du compte du client. Question close |
+| Achats internationaux | « Il n'est pas possible d'envoyer directement des factures, il faut déclarer les données d'e-reporting » via `b2bint_invoices`. Les **ventes** internationales passent bien par l'API `invoices`, ce que Deviso fait |
+| Périodicité de déclaration | Décadaire pour le régime mensuel (« déclarer tous les 10 jours »). Le trimestriel et le simplifié ne sont pas détaillés — sans conséquence : Deviso ne calcule aucune période, il passe la date et laisse la plateforme décider |
+
+### La seule qui reste ouverte
+
+**Comment déclarer qu'une facture porte des services et non des biens ?**
+
+Établi par l'expérience, pas par supposition : une facture B2C de services,
+émise avec BT-8 = `72` (exigibilité au paiement), ressort classée `TLB1` chez
+Super PDP. J'ai vérifié que `tax_due_date_type_code: "72"` arrive bien — donc
+BT-8 n'est pas le discriminant. Aucune des quatorze sections de leur
+documentation ne mentionne `category_code`, `TLB1` ni `TPS1`.
+
+L'enjeu est réel : leur documentation dit qu'un restaurant (biens) ne déclare
+que les transactions, alors qu'un salon de coiffure (services) déclare aussi
+les paiements. Une facture de prestation classée en livraison de biens est donc
+une déclaration incomplète.
+
+C'est la seule question à leur poser, et elle est précise.
 
 ## Ce que Selim seul peut confirmer
 

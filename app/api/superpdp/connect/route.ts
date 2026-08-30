@@ -88,12 +88,20 @@ export async function GET() {
   if (siren && process.env.SUPERPDP_PREFILL_COMPANY === "true") {
     params.set("superpdp_company_number", siren);
     params.set("superpdp_company_number_scheme", companyNumberScheme());
-    // Adresse électronique de facturation créée si l'utilisateur active la
-    // réception. La documentation « Annuaire » conseille le SIREN nu, c'est ce
-    // que fera la grande majorité des entreprises.
-    if (companyNumberScheme() === "fr_siren") {
-      params.set("superpdp_directory_entry_identifier", siren);
-    }
+  }
+
+  // L'adresse qui sera créée si l'utilisateur active la réception.
+  //
+  // Envoyé indépendamment du pré-remplissage de l'entreprise : la
+  // documentation « Authentification » le décrit seul — « pour les entreprises
+  // fr_siren il est possible de configurer l'adresse de facturation
+  // électronique qui sera créée dans le cas où l'utilisateur active la
+  // réception des factures ». Il ne porte donc pas le risque de blocage du
+  // couple `superpdp_company_number` / `_scheme`, et il rend prévisible
+  // l'adresse ouverte : le SIREN nu, celui que `lireLigneAnnuaire` attend et
+  // que la documentation « Annuaire » conseille à tout le monde.
+  if (siren && companyNumberScheme() === "fr_siren") {
+    params.set("superpdp_directory_entry_identifier", siren);
   }
 
   // `login_hint` ne pré-remplit qu'un champ texte : aucun risque de blocage.
@@ -105,6 +113,12 @@ export async function GET() {
   // croirait être raccordé tout en restant incapable de recevoir, c'est-à-dire
   // hors de l'obligation du 1ᵉʳ septembre 2026. On force donc la réception,
   // puisque c'est l'objet même du raccordement proposé dans Deviso.
+  //
+  // Paramètre **documenté**, section « Authentification » : `any` (défaut)
+  // laisse le choix, `send` masque la réception, `receive` « force
+  // l'utilisateur à accepter l'enregistrement d'une ligne dans l'annuaire ».
+  // Un audit l'avait signalé comme absent de la référence OpenAPI — il l'est,
+  // mais il figure bien dans la documentation. Vérifié le 30/08/2026.
   params.set("superpdp_send_and_receive", "receive");
 
   const res = NextResponse.redirect(`${SUPERPDP_HOST}/oauth2/authorize?${params}`);
