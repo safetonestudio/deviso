@@ -77,17 +77,23 @@ Aucune période n'est calculée côté Deviso : la spec ne documente le découpa
 que pour le régime mensuel, et **par décades**. Deviner pour le trimestriel
 serait exactement l'erreur de `vat_exemption`.
 
-### Reste — bloqué ou hors périmètre
+### Reste — et pourquoi
 
-- **`POST /b2c_transactions`** (recettes au comptant, sans facture) : suppose un
-  modèle de données que Deviso n'a pas, et le sens de `category_code` n'est pas
-  documenté. Faible valeur pour un freelance qui facture tout.
-- **`POST /b2bint_invoices`** pour les **achats** à l'étranger (`direction: in`) :
-  `business_process` (`{id, type_id}`, tous deux requis) n'a **aucune valeur
-  documentée**. Non implémentable sans réponse. Les ventes internationales, elles,
-  passent par `processing_rule=B2BInt`, qui fonctionne.
-- **`company_mandates`** (autofacturation) : la spec réserve l'enrôlement aux
-  cabinets comptables, et le cas est marginal pour la cible.
+| Point | État |
+|---|---|
+| **Distinguer biens et services** dans la déclaration | **Seule question ouverte.** Voir ci-dessous |
+| **Achats internationaux** (`b2bint_invoices`, `direction: in`) | Deviso ne gère pas les factures fournisseur : il n'a ni saisie, ni stockage, ni comptabilité d'achat. Ce n'est pas un trou d'intégration, c'est un périmètre produit absent. S'y ajoute `business_process` (`{id, type_id}`, requis), qui n'a **aucune valeur documentée** — ni dans la référence OpenAPI ni dans les quatorze sections de la documentation |
+| **Recettes au comptant** (`POST /b2c_transactions`) | Concerne les commerces qui vendent sans facture — « les salons de coiffure font leurs ventes sur une caisse enregistreuse ». Un freelance qui facture tout n'a rien à y déclarer, et leur documentation prévient : « il faut veiller à ne pas envoyer les données en double » |
+| **Date d'encaissement saisissable** | La route `encaisser` accepte une date, mais Deviso n'a **aucune colonne `paid_at`** : le bouton « Marquer comme payée » ne peut donc pas la transmettre. La plateforme date du jour. Correct dans le cas courant, faux pour un virement pointé en retard |
+| **Mandats d'autofacturation** | Question **close**, pas reportée : « une erreur fréquente est de penser qu'un logiciel de facturation est un tiers facturant. Or ce n'est pas le cas » |
+
+Toutes les routes construites sont désormais exposées par un écran : la page
+**Déclarations** (liste + aperçu de ce qui n'est pas encore parti), le bouton
+**Vérifier avant de transmettre** sur la facture, les **réponses au fournisseur**
+sur une facture reçue, l'**ouverture de la ligne d'annuaire** sur la carte
+Plateforme Agréée, et la **recherche d'entreprise** dans le formulaire de
+facture. Une capacité qu'aucune interface n'expose n'existe pas pour
+l'utilisateur.
 
 ## Les questions, et leurs réponses
 
