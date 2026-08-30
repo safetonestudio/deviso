@@ -145,6 +145,32 @@ export function generateFacturXml(
   // appel d'annuaire n'est possible.
   buyerDirectoryAddress?: string | null
 ): string {
+  /**
+   * BT-8 — quand la TVA devient exigible.
+   *
+   * ⚠️ Ce code était **inversé**. Il ne sortait que si `payment_on_debit` était
+   * vrai, et il valait alors `72` — « paid to date », l'exigibilité au
+   * PAIEMENT. Or `payment_on_debit` veut dire l'exact contraire : « TVA
+   * acquittée sur les débits (art. 1693 bis CGI) », c'est-à-dire exigible dès
+   * la facture. Le document déclarait donc le régime opposé à celui coché, et
+   * dans le cas courant — les encaissements, valeur par défaut chez les
+   * freelances — il ne déclarait rien du tout.
+   *
+   * BT-8 : « The code shall distinguish between the following entries of
+   * UNTDID 2005 : Invoice document issue date - Delivery date, actual - Paid to
+   * date ». En CII (`DueDateTypeCode`) ces trois entrées sont `5`, `29` et
+   * `72`.
+   *
+   *   - débits            → 5  (date de facture)
+   *   - encaissements     → 72 (date de paiement)  ← le défaut français
+   *   - livraison de biens → 29, non émis ici : Deviso ne connaît pas la date
+   *     de livraison, et l'inventer serait pire que se taire.
+   *
+   * C'est cette donnée qui commande le calendrier d'e-reporting des paiements
+   * (flux 10.2) : se tromper de code, c'est déclarer au mauvais moment.
+   */
+  const dueDateTypeCode = invoice.payment_on_debit ? "5" : "72";
+
   const issueDate = xmlDate(invoice.issue_date);
   const dueDate = invoice.due_date ? xmlDate(invoice.due_date) : null;
   const tvaAmount = xmlAmount(invoice.total_ttc - invoice.total_ht);
@@ -306,7 +332,7 @@ export function generateFacturXml(
     <ram:ApplicableHeaderTradeSettlement>
       <ram:InvoiceCurrencyCode>EUR</ram:InvoiceCurrencyCode>
       ${paymentMeans}
-      <ram:ApplicableTradeTax><ram:CalculatedAmount>${tvaAmount}</ram:CalculatedAmount><ram:TypeCode>VAT</ram:TypeCode>${exemptionReason}<ram:BasisAmount>${xmlAmount(invoice.total_ht)}</ram:BasisAmount><ram:CategoryCode>${taxCategory}</ram:CategoryCode>${invoice.payment_on_debit ? "<ram:DueDateTypeCode>72</ram:DueDateTypeCode>" : ""}<ram:RateApplicablePercent>${invoice.tva_rate}</ram:RateApplicablePercent></ram:ApplicableTradeTax>
+      <ram:ApplicableTradeTax><ram:CalculatedAmount>${tvaAmount}</ram:CalculatedAmount><ram:TypeCode>VAT</ram:TypeCode>${exemptionReason}<ram:BasisAmount>${xmlAmount(invoice.total_ht)}</ram:BasisAmount><ram:CategoryCode>${taxCategory}</ram:CategoryCode><ram:DueDateTypeCode>${dueDateTypeCode}</ram:DueDateTypeCode><ram:RateApplicablePercent>${invoice.tva_rate}</ram:RateApplicablePercent></ram:ApplicableTradeTax>
       ${paymentTerms}
       <ram:SpecifiedTradeSettlementHeaderMonetarySummation><ram:LineTotalAmount>${xmlAmount(invoice.total_ht)}</ram:LineTotalAmount><ram:TaxBasisTotalAmount>${xmlAmount(invoice.total_ht)}</ram:TaxBasisTotalAmount><ram:TaxTotalAmount currencyID="EUR">${tvaAmount}</ram:TaxTotalAmount><ram:GrandTotalAmount>${xmlAmount(invoice.total_ttc)}</ram:GrandTotalAmount><ram:DuePayableAmount>${xmlAmount(invoice.total_ttc)}</ram:DuePayableAmount></ram:SpecifiedTradeSettlementHeaderMonetarySummation>
       ${referencedDoc}

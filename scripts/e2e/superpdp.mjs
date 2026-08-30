@@ -561,6 +561,33 @@ verifier(
   `HTTP ${codeInconnu.status} ${doc(codeInconnu.body).slice(0, 160)}`
 );
 
+// ── Exigibilité de la TVA (BT-8) ────────────────────────────────────────────
+console.log("");
+console.log("── Exigibilité de la TVA : débits contre encaissements ───────");
+
+// `DueDateTypeCode` était inversé : il ne sortait que pour les débits, et
+// valait 72 — « paid to date », l'exigibilité au PAIEMENT. Une facture cochée
+// « TVA sur les débits » déclarait donc le régime opposé, et le cas courant
+// (encaissements) ne déclarait rien. C'est cette donnée qui commande le
+// calendrier d'e-reporting des paiements.
+const surDebits = await creerFacture({
+  client_name: "Client Débits SARL", client_company: "Client Débits SARL",
+  client_siren: "552100554",
+  client_street: "3 rue des Débits", client_postcode: "33000", client_city: "Bordeaux",
+  operation_category: "goods",
+  payment_on_debit: true,
+});
+const idDebits = surDebits.body?.invoice?.id;
+if (idDebits) await bq.call(`/api/invoices/${idDebits}`, { method: "PATCH", body: doc({ status: "sent" }) });
+const validDebits = idDebits
+  ? await bq.call(`/api/superpdp/invoices/${idDebits}/valider`, { method: "POST" })
+  : { status: 0, body: null };
+verifier(
+  "une facture sur les débits reste conforme aux validateurs officiels",
+  validDebits.status === 200 && validDebits.body?.validation?.valide === true,
+  `échecs : ${doc(validDebits.body?.validation?.echecs)}`
+);
+
 // ── Recherche d'entreprise dans l'Annuaire national ─────────────────────────
 console.log("");
 console.log("── Rechercher un client plutôt que lui demander son SIREN ────");
