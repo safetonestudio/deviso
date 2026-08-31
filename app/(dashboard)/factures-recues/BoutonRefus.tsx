@@ -62,11 +62,22 @@ export function BoutonRefus({
     }
   };
 
+  // Lisible, sans être criard.
+  //
+  // Ce lien était en `text-gray-600` : volontairement effacé, parce qu'un refus
+  // est définitif et oblige le fournisseur à passer un avoir, et qu'on ne
+  // voulait pas qu'il se clique par réflexe. Résultat mesuré le 31/08/2026 :
+  // Selim, qui a écrit l'application, n'a pas trouvé le bouton et a demandé où
+  // il était. Rendre une action grave *introuvable* ne protège personne — ça
+  // oblige à la chercher, puis à cliquer au hasard. La prudence est déjà
+  // portée par la fenêtre de confirmation, le choix d'un motif obligatoire, et
+  // la disparition du lien une fois le refus posé. Le lien lui-même n'a qu'à
+  // être lisible, au même niveau que « Répondre ».
   if (!ouvert) {
     return (
       <button
         onClick={() => setOuvert(true)}
-        className="text-xs text-gray-600 hover:text-red-400 transition-colors whitespace-nowrap"
+        className="text-xs font-medium text-gray-400 hover:text-red-400 transition-colors whitespace-nowrap"
       >
         Refuser
       </button>
@@ -77,7 +88,7 @@ export function BoutonRefus({
     <>
       <button
         onClick={() => setOuvert(true)}
-        className="text-xs text-gray-600 hover:text-red-400 transition-colors whitespace-nowrap"
+        className="text-xs font-medium text-gray-400 hover:text-red-400 transition-colors whitespace-nowrap"
       >
         Refuser
       </button>
