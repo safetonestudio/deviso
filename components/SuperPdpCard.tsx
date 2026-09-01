@@ -163,7 +163,20 @@ export function SuperPdpCard() {
   const enAttente = etat?.connected && etat.status === "pending";
   const ligne = etat?.ligne ?? null;
   const joignable = verifie && ligne?.etat === "joignable";
-  const ligneAOuvrir = verifie && (!ligne || ligne.etat === "absente" || ligne.etat === "en_erreur");
+  // Une ligne EN ERREUR ne s'ouvre pas : elle existe déjà.
+  //
+  // On proposait « Ouvrir ma ligne de réception » dans ce cas, avec un
+  // encadré ambre alarmant. C'est le geste à ne pas faire. La documentation
+  // Super PDP (article « Annuaire ») décrit l'erreur comme l'état NORMAL d'une
+  // portabilité : quand une entreprise arrive d'une autre Plateforme Agréée,
+  // « pendant le temps de la migration, la ligne d'annuaire est en erreur côté
+  // SUPER PDP, mais ça n'est pas grave, il ne faut pas la supprimer ». L'ancien
+  // plateforme a cinq jours pour répondre.
+  //
+  // Pousser l'utilisateur à créer une seconde ligne pendant ce transfert, c'est
+  // l'inviter à casser sa propre migration. On ne propose donc l'ouverture que
+  // lorsqu'il n'y a réellement aucune ligne.
+  const ligneAOuvrir = verifie && (!ligne || ligne.etat === "absente");
 
   return (
     <section className="bg-ds-surface border border-ds-border rounded-xl p-5 mt-6">
@@ -230,7 +243,7 @@ export function SuperPdpCard() {
                       : ligne?.etat === "en_cours"
                         ? "Votre ligne de réception est en cours d'ouverture."
                         : ligne?.etat === "en_erreur"
-                          ? "Votre ligne de réception est en erreur : vous ne recevez rien."
+                          ? "Votre ligne de réception est signalée en erreur. Si vous arrivez d'une autre Plateforme Agréée, c'est normal le temps du transfert."
                           : "Aucune ligne de réception : vos fournisseurs ne peuvent pas vous joindre."
                   : enAttente
                     ? (etat?.messageStatut?.texte ??
@@ -294,9 +307,8 @@ export function SuperPdpCard() {
             Vos fournisseurs ne peuvent pas encore vous adresser de factures
           </p>
           <p className="text-xs text-amber-400/80 mt-1 mb-3">
-            {ligne?.etat === "en_erreur" && ligne.message
-              ? ligne.message
-              : "Votre entreprise est raccordée, mais aucune ligne n'est ouverte à l'annuaire. C'est elle qui vous rend joignable."}
+            Votre entreprise est raccordée, mais aucune ligne n&apos;est ouverte à
+            l&apos;annuaire. C&apos;est elle qui vous rend joignable.
           </p>
           <button
             onClick={ouvrirLigne}
@@ -306,6 +318,26 @@ export function SuperPdpCard() {
             {ouverture ? "Ouverture…" : "Ouvrir ma ligne de réception"}
           </button>
           {messageLigne && <p className="text-xs text-amber-300 mt-2">{messageLigne}</p>}
+        </div>
+      )}
+
+      {/* Une ligne en erreur : on informe, on ne pousse à rien.
+          Voir le commentaire de `ligneAOuvrir` — c'est le plus souvent une
+          portabilité en cours, et le seul geste utile est d'attendre. */}
+      {verifie && ligne?.etat === "en_erreur" && (
+        <div className="mt-4 bg-amber-500/10 border border-amber-500/30 rounded-lg px-4 py-3">
+          <p className="text-sm text-amber-300 font-medium">
+            Votre ligne de réception est signalée en erreur
+          </p>
+          <p className="text-xs text-amber-400/80 mt-1 leading-relaxed">
+            {ligne.message ? `${ligne.message} ` : ""}
+            Si vous venez de quitter une autre Plateforme Agréée, c&apos;est
+            attendu : votre ligne est en cours de transfert, et l&apos;ancienne
+            plateforme a cinq jours pour répondre. N&apos;ouvrez pas de seconde
+            ligne et ne supprimez pas celle-ci — vous interrompriez le transfert.
+            Si la situation dure au-delà d&apos;une semaine, contactez la
+            Plateforme Agréée.
+          </p>
         </div>
       )}
 
