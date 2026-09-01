@@ -42,6 +42,7 @@ type ReponseBrute = {
     subreports?: {
       validator?: string;
       failures?: MessageValidation[];
+      messages?: MessageValidation[];
     }[];
   }[];
 };
@@ -76,7 +77,33 @@ export async function validerFacture(
       return { valide: true, format: null, niveau: null, echecs: [], indisponible: "Rapport vide" };
     }
 
-    const echecs = (rapport.subreports ?? []).flatMap((sr) => sr.failures ?? []);
+    let echecs = (rapport.subreports ?? []).flatMap((sr) => sr.failures ?? []);
+
+    // Un rapport peut déclarer la facture invalide sans remplir `failures`.
+    //
+    // Constaté le 01/09/2026 sur une facture B2BInt : `is_valid: false`,
+    // `failures` vide, `error` absent. L'écran annonçait donc « cette facture
+    // serait refusée » suivi d'une liste de raisons… vide. C'est le pire des
+    // messages : il alarme sans permettre d'agir, et l'utilisateur n'a même pas
+    // de quoi poser la question au support.
+    //
+    // Le schéma `subreport` porte DEUX tableaux — `failures` et `messages` —
+    // et nous ne lisions que le premier. On se rabat donc sur le second quand
+    // le verdict est négatif mais muet, et à défaut on le dit franchement
+    // plutôt que d'afficher un vide.
+    if (rapport.is_valid === false && echecs.length === 0) {
+      const messages = (rapport.subreports ?? []).flatMap((sr) => sr.messages ?? []);
+      echecs = messages.length
+        ? messages
+        : [
+            {
+              message:
+                "La Plateforme Agréée déclare cette facture non conforme sans préciser la règle en cause. " +
+                "Transmettez-la telle quelle : son contrôle au dépôt donnera le motif exact.",
+              raw: JSON.stringify(rapport).slice(0, 500),
+            },
+          ];
+    }
 
     return {
       // On ne se déclare invalide que si la plateforme le dit explicitement :
