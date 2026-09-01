@@ -439,7 +439,14 @@ async function synchroniserEvenements(userId: string): Promise<number> {
   for (let page = 0; page < PAGES_MAX; page++) {
     const params = new URLSearchParams();
     if (curseur) params.set("starting_after_id", String(curseur));
-    const res = await superpdpFetch(userId, `/invoice_events${params.toString() ? `?${params}` : ""}`);
+    // `limit` vaut 100 par défaut et 1000 au maximum (spécification de
+    // `GET /invoice_events`). On ne le posait pas : vingt pages de cent, soit
+    // deux mille événements par passage, au-delà desquels la boucle s'arrêtait
+    // sans rien dire. Un compte actif après une coupure de synchronisation
+    // aurait perdu ses refus et ses encaissements en silence. Dix fois plus de
+    // marge pour le même nombre d'appels.
+    params.set("limit", "1000");
+    const res = await superpdpFetch(userId, `/invoice_events?${params}`);
     // Un `break` muet ici, c'était le mode de défaillance le plus coûteux du
     // domaine : les refus, encaissements et rejets cessaient de remonter sans
     // que rien ne le signale. On le fait remonter comme une erreur.
@@ -492,6 +499,13 @@ async function synchroniserEvenements(userId: string): Promise<number> {
 
     await saveConnection(userId, { last_event_id: curseur });
     if (!body.has_after) break;
+    // Sortie par la borne de sécurité plutôt que par épuisement : il reste des
+    // événements. Le taire ferait croire la synchronisation complète.
+    if (page === PAGES_MAX - 1) {
+      console.error(
+        `[superpdp/evenements] ${userId} : ${PAGES_MAX} pages atteintes, il reste des événements à lire`
+      );
+    }
   }
 
   return appliques;

@@ -182,8 +182,11 @@ const CAS = [
     client_country: "FR",
   }),
 
+  // Le client etranger fournit son adresse de facturation electronique : hors
+  // de France elle ne se deduit de rien, et BT-49 est obligatoire (BR-FR-12).
+  // `0208` est le schema du numero d'entreprise belge.
   facture("B2BInt, client belge", {
-    client_directory_address: null,
+    client_directory_address: "0208:0403170701",
     client_name: "Tricatel Belgium",
     client_company: "Tricatel Belgium",
     client_siren: null,
@@ -191,6 +194,18 @@ const CAS = [
     client_postcode: "1000",
     client_city: "Bruxelles",
     client_country: "BE",
+  }),
+
+  facture("B2BInt sans adresse électronique — doit être bloqué en amont", {
+    client_directory_address: null,
+    client_name: "Tricatel Deutschland",
+    client_company: "Tricatel Deutschland",
+    client_siren: null,
+    client_street: "Unter den Linden 1",
+    client_postcode: "10117",
+    client_city: "Berlin",
+    client_country: "DE",
+    attendu: "manque",
   }),
 
   facture("Facture d'acompte (30 %)", {
@@ -246,6 +261,19 @@ for (const cas of CAS) {
 
   const v = r.body?.validation ?? {};
   const manques = r.body?.manques ?? [];
+
+  // Certains cas ne doivent PAS produire un document conforme : ils doivent
+  // etre arretes par le pre-controle, avant qu'un XML ne parte. Verifier leur
+  // conformite n'aurait pas de sens — c'est leur blocage qu'on verifie.
+  if (cas.corps.attendu === "manque") {
+    verifier(
+      `${cas.nom} — arrêtée par le pré-contrôle`,
+      manques.length > 0 && r.body?.conforme === false,
+      `manques = ${JSON.stringify(manques)}`,
+    );
+    if (manques.length) console.log(`       ${manques.join(" · ")}`);
+    continue;
+  }
 
   // Le validateur peut être momentanément indisponible : ne pas confondre
   // « la facture est mauvaise » avec « le juge n'a pas répondu ».

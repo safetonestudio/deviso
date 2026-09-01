@@ -107,6 +107,42 @@ function postalAddress(
   ].join("");
 }
 
+/**
+ * Une adresse électronique de facturation, séparée en schéma et valeur.
+ *
+ * Le code écrivait `schemeID="0225"` en dur et ne retirait que le préfixe
+ * `0225:`. Tant que le destinataire est français, les deux coïncident : `0225`
+ * est le schéma de l'annuaire français, et l'adresse s'y réduit au SIREN.
+ *
+ * Hors de France, non. Une entreprise belge s'adresse en `0208:` (numéro
+ * d'entreprise belge), une allemande autrement. L'ancien code aurait écrit le
+ * préfixe étranger *à l'intérieur* de la valeur, sous un schéma français —
+ * un identifiant qui ne désigne personne.
+ *
+ * Et surtout : sans adresse du tout, il n'écrivait rien. Le validateur
+ * officiel l'a signalé le 01/09/2026 sur une facture à un client belge —
+ * « BR-FR-12/BT-49 : Le BT-49 est obligatoire. Valeur actuelle : BT-49="" ».
+ * Toute facture à un client étranger était donc non conforme, et le chemin
+ * B2BInt venait précisément d'être rendu accessible par le sélecteur de pays.
+ */
+function decouperAdresse(
+  adresse: string | null | undefined,
+  repli: string | null
+): { scheme: string; valeur: string } {
+  const brute = adresse?.trim();
+  if (brute) {
+    const sep = brute.indexOf(":");
+    // Un schéma d'annuaire est un code numérique à quatre chiffres (0225,
+    // 0208, 0009…). Deux-points sans ce motif = un identifiant qui en contient
+    // un, pas un préfixe : on ne le découpe pas.
+    if (sep > 0 && /^\d{4}$/.test(brute.slice(0, sep))) {
+      return { scheme: brute.slice(0, sep), valeur: brute.slice(sep + 1) };
+    }
+    return { scheme: "0225", valeur: brute };
+  }
+  return { scheme: "0225", valeur: repli ?? "" };
+}
+
 export function generateFacturXml(
   invoice: Invoice,
   linkedInvoiceNumber?: string | null,
@@ -199,9 +235,11 @@ export function generateFacturXml(
   // "0225:XXXX" → "XXXX" : superpdp_connections.directory_address est stockée
   // au format Peppol complet (Scheme ID inclus), mais le XML ne veut que le
   // Participant ID, le Scheme ID étant déjà porté par schemeID="0225".
-  const sellerEas = sellerDirectoryAddress
-    ? sellerDirectoryAddress.replace(/^0225:/, "")
-    : electronicAddress(invoice.seller_siren);
+  const sellerAdresse = decouperAdresse(
+    sellerDirectoryAddress,
+    electronicAddress(invoice.seller_siren)
+  );
+  const sellerEas = sellerAdresse.valeur;
   // Côté acheteur, même raisonnement que côté vendeur : si le client a déclaré
   // une adresse d'annuaire composée (SIREN_SIRET pour tel établissement,
   // SIREN_SUFFIXE pour tel service), c'est elle qui achemine — la dériver de son
@@ -209,11 +247,11 @@ export function generateFacturXml(
   // ça ne la fait pas refuser franchement. Vide, on retombe sur le SIREN nu, ce
   // qui reste correct pour la grande majorité des entreprises (un SIREN, une
   // adresse).
-  const buyerEas = (
-    buyerDirectoryAddress?.trim() ||
-    invoice.client_directory_address?.trim() ||
-    ""
-  ).replace(/^0225:/, "") || electronicAddress(invoice.client_siren);
+  const buyerAdresse = decouperAdresse(
+    buyerDirectoryAddress?.trim() || invoice.client_directory_address?.trim() || null,
+    electronicAddress(invoice.client_siren)
+  );
+  const buyerEas = buyerAdresse.valeur;
 
   // B2C (client particulier, sans SIREN) : le document ne s'achemine à
   // personne — un particulier n'a pas de Plateforme Agréée — mais Super PDP a
@@ -229,7 +267,7 @@ export function generateFacturXml(
       ? `<ram:URIUniversalCommunication><ram:URIID schemeID="EM">${esc(invoice.client_email)}</ram:URIID></ram:URIUniversalCommunication>`
       : ""
     : buyerEas
-      ? `<ram:URIUniversalCommunication><ram:URIID schemeID="0225">${esc(buyerEas)}</ram:URIID></ram:URIUniversalCommunication>`
+      ? `<ram:URIUniversalCommunication><ram:URIID schemeID="${esc(buyerAdresse.scheme)}">${esc(buyerEas)}</ram:URIID></ram:URIUniversalCommunication>`
       : "";
 
   const lines = invoice.items
@@ -306,7 +344,7 @@ export function generateFacturXml(
           { street: invoice.seller_street, postcode: invoice.seller_postcode, city: invoice.seller_city, country: invoice.seller_country },
           invoice.seller_address
         )}
-        ${sellerEas ? `<ram:URIUniversalCommunication><ram:URIID schemeID="0225">${esc(sellerEas)}</ram:URIID></ram:URIUniversalCommunication>` : ""}
+        ${sellerEas ? `<ram:URIUniversalCommunication><ram:URIID schemeID="${esc(sellerAdresse.scheme)}">${esc(sellerEas)}</ram:URIID></ram:URIUniversalCommunication>` : ""}
         ${
           sellerVat.value
             ? `<ram:SpecifiedTaxRegistration><ram:ID schemeID="VA">${esc(sellerVat.value)}</ram:ID></ram:SpecifiedTaxRegistration>`

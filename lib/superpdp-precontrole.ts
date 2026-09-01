@@ -20,6 +20,7 @@ import { natureOperation } from "@/lib/superpdp-nature";
  */
 export function manquesPourEmission(facture: {
   seller_siren?: string | null;
+  client_directory_address?: string | null;
   client_siren?: string | null;
   client_company?: string | null;
   client_name?: string | null;
@@ -55,6 +56,27 @@ export function manquesPourEmission(facture: {
   // française par défaut — c'est-à-dire à tort.
   if (nature === "B2BInt" && !facture.client_country?.trim()) {
     manques.push(`le pays de ${facture.client_name || "votre client"}`);
+  }
+
+  // Un client étranger doit fournir son adresse de facturation électronique.
+  //
+  // BT-49 est obligatoire — règle française BR-FR-12, confirmée le 01/09/2026
+  // par le validateur officiel, qui a refusé une facture à un client belge :
+  // « Le BT-49 est obligatoire. Valeur actuelle : BT-49="" ».
+  //
+  // Pour un client français, Deviso sait la construire : c'est le SIREN, ou
+  // l'entrée d'annuaire qui lui correspond. Hors de France, il n'existe aucune
+  // règle de dérivation — le numéro d'entreprise belge, allemand ou espagnol
+  // n'est pas déductible du nom — et l'annuaire français ne référence pas ces
+  // entreprises. Seul le client la connaît.
+  //
+  // On la demande donc avant le clic plutôt que de laisser partir un document
+  // dont on sait qu'il sera rejeté.
+  if (nature === "B2BInt" && !facture.client_directory_address?.trim()) {
+    manques.push(
+      `l'adresse de facturation électronique de ${facture.client_name || "votre client"} ` +
+        `(à lui demander : hors de France, elle ne se déduit d'aucune autre donnée)`
+    );
   }
 
   // Documenté par Super PDP (page « E-reporting ») : les factures mélangeant
