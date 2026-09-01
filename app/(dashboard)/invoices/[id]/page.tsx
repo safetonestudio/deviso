@@ -432,9 +432,14 @@ function ActionPanel({ invoice, id, router, hasChorusPro }: {
               <RadioTower size={17} className="shrink-0 mt-0.5" />
               <div className="flex flex-col gap-0.5">
                 <span>{etat?.texte ?? "Transmise à la Plateforme Agréée"}</span>
-                {statut && (
+                {/* Un code que notre table ne connaît pas s'affiche brut plutôt
+                    que de disparaître : leur nomenclature évolue — `fr:220` a
+                    été ajouté par Super PDP le 07/08/2026 sans que la norme en
+                    publie l'usage — et un code consultable vaut mieux qu'un
+                    silence. Même règle que la liste des factures reçues. */}
+                {(statut || inv.superpdp_status) && (
                   <span className="text-[11px] opacity-70">
-                    Statut de la plateforme : {statut.texte}
+                    Statut de la plateforme : {statut?.texte ?? inv.superpdp_status}
                   </span>
                 )}
                 {etat?.alerte && (
