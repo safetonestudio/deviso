@@ -111,12 +111,17 @@ function ligne(description, pu, q = 1) {
 }
 
 function facture(nom, extra) {
-  const items = extra.items ?? [ligne("Prestation de conseil", 500)];
+  // `attendu` pilote la traversee, il n'appartient pas au corps de la facture :
+  // le laisser passer faisait rejeter la creation par la route (« Could not
+  // find the 'attendu' column »).
+  const { attendu, ...champs } = extra;
+  const items = champs.items ?? [ligne("Prestation de conseil", 500)];
   const ht = Math.round(items.reduce((s, i) => s + i.total, 0) * 100) / 100;
-  const taux = extra.tva_rate ?? 20;
+  const taux = champs.tva_rate ?? 20;
   const ttc = Math.round(ht * (1 + taux / 100) * 100) / 100;
   return {
     nom,
+    attendu,
     corps: {
       ...VENDEUR,
       ...CLIENT_PRO,
@@ -126,7 +131,7 @@ function facture(nom, extra) {
       payment_terms: "30 jours net",
       issue_date: jour(-3),
       due_date: jour(27),
-      ...extra,
+      ...champs,
       items,
       total_ht: ht,
       tva_rate: taux,
@@ -265,7 +270,7 @@ for (const cas of CAS) {
   // Certains cas ne doivent PAS produire un document conforme : ils doivent
   // etre arretes par le pre-controle, avant qu'un XML ne parte. Verifier leur
   // conformite n'aurait pas de sens — c'est leur blocage qu'on verifie.
-  if (cas.corps.attendu === "manque") {
+  if (cas.attendu === "manque") {
     verifier(
       `${cas.nom} — arrêtée par le pré-contrôle`,
       manques.length > 0 && r.body?.conforme === false,
