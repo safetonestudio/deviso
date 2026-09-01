@@ -55,7 +55,23 @@ export function RechercheEntreprise({
       setResultats(d.entreprises ?? []);
       setTronque(d.tronque === true);
       if ((d.entreprises ?? []).length === 0) {
-        setMessage("Aucune entreprise trouvée. La recherche porte sur le début du nom officiel.");
+        // Une absence de l'annuaire a un sens précis, documenté par Super PDP,
+        // et le taire laissait l'utilisateur croire à une panne de recherche.
+        // « Si le SIREN de votre entreprise ou association ne figure pas dans
+        // l'annuaire de la facturation électronique, cela signifie soit qu'elle
+        // n'est pas assujettie à la TVA, et donc n'est pas soumise aux
+        // obligations d'émettre et de recevoir des factures électroniques ;
+        // soit qu'il s'agit d'une erreur. »
+        //
+        // Les deux cas appellent une conduite différente, et l'utilisateur ne
+        // peut la choisir que s'il connaît l'alternative.
+        setMessage(
+          "Aucune entreprise trouvée. La recherche porte sur le début du nom officiel — " +
+            "essayez une orthographe plus courte, ou ajoutez le code postal. " +
+            "Si vous êtes sûr du nom, c'est que cette entreprise n'est pas assujettie à la TVA : " +
+            "elle n'est alors pas concernée par la facturation électronique, et vous pouvez " +
+            "continuer à lui adresser vos factures comme avant.",
+        );
       }
     } catch {
       setMessage("Recherche impossible : connexion interrompue.");

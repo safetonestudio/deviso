@@ -20,7 +20,17 @@ import { factureBloquee, depuis } from "@/lib/superpdp-blocage";
  * comme pour `manquesPourEmission`, et pour la même raison : deux copies d'une
  * règle finissent toujours par diverger, et c'est l'utilisateur qui arbitre.
  */
-export function etatPdp(inv: Invoice): {
+export function etatPdp(
+  inv: Invoice,
+  /**
+   * Vrai quand le raccordement est en bac à sable. Fourni par l'appelant —
+   * `/api/superpdp/status` le renvoie — plutôt que lu d'une variable
+   * d'environnement : cette fonction tourne aussi côté navigateur, où les
+   * variables serveur n'existent pas, et une valeur absente y aurait
+   * silencieusement pris la mauvaise branche.
+   */
+  sandbox = false
+): {
   texte: string;
   classe: string;
   aFaire: boolean;
@@ -49,22 +59,44 @@ export function etatPdp(inv: Invoice): {
     };
 
   if (inv.superpdp_invoice_id) {
-    // Une facture transmise à une adresse **déduite du SIREN** peut n'être
-    // jamais remise : si plusieurs entreprises partagent ce SIREN, la
-    // Plateforme Agréée l'accepte, ne sait pas à qui la donner, et ne le
-    // signale pas. Constaté le 29/08/2026 sur sept factures. Afficher
-    // « Transmise » tout court serait une promesse qu'on ne tient pas.
-    if (inv.superpdp_adresse_source === "siren")
+    // L'adresse déduite du SIREN n'est PAS une anomalie en production.
+    //
+    // Ce badge ambre a été écrit le 29/08/2026, après que sept factures se
+    // soient perdues : elles portaient l'adresse `0225:315143296`, le SIREN nu,
+    // que les deux sociétés du bac à sable partagent. La plateforme les a
+    // acceptées, n'a pas su à qui les remettre, et n'a rien dit.
+    //
+    // Sauf que c'est un artefact du bac à sable. La FAQ Super PDP dit
+    // l'inverse pour le monde réel : « En France et en production, l'adresse
+    // électronique de facturation est dans la plupart des cas le numéro
+    // SIREN. » Déduire l'adresse du SIREN y est donc le cas NOMINAL.
+    //
+    // Laisser l'ambre allumé aurait signalé comme douteuse la quasi-totalité
+    // des factures émises en production. Une alerte permanente est une alerte
+    // morte : on apprend à la sauter, et le jour où elle dit vrai personne ne
+    // la lit. C'est exactement le défaut que `superpdp-blocage.ts` existe pour
+    // éviter, et on l'aurait recréé ici.
+    //
+    // Le vrai signal n'est pas la manière dont l'adresse a été obtenue, c'est
+    // le fait que la facture n'arrive pas. Il est déjà donné, plus haut, par
+    // `factureBloquee` — qui juge sur le silence de la plateforme au bout de
+    // 24 h, et qui nomme l'adresse déduite comme cause probable quand elle
+    // l'est. On ne double pas ce signal par une couleur permanente.
+    //
+    // Reste le bac à sable, où l'ambiguïté est réelle et permanente : on y
+    // garde l'avertissement, parce que c'est là qu'on teste et qu'on a besoin
+    // de le voir.
+    if (sandbox && inv.superpdp_adresse_source === "siren")
       return {
         texte: "Transmise — adresse déduite",
         classe: "bg-amber-500/10 text-amber-400",
         aFaire: false,
         manques: [],
         alerte:
-          "L'adresse d'acheminement a été déduite du SIREN, faute d'entrée à l'Annuaire. " +
-          "Si le destinataire n'est pas joignable à cette adresse, la facture peut ne jamais lui être remise. " +
-          "Renseignez son adresse de facturation électronique pour lever le doute.",
+          "Bac à sable : l'adresse d'acheminement a été déduite du SIREN, que plusieurs " +
+          "sociétés de test partagent. La facture peut ne jamais être remise.",
       };
+
     return { texte: "Transmise", classe: "bg-emerald-500/10 text-emerald-400", aFaire: false, manques: [] };
   }
 

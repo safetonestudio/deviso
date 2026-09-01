@@ -156,10 +156,18 @@ verifier(
   "s'il disparait, verifier que ce n'est pas notre lecture qui a change plutot que l'annuaire",
 );
 
-verifier(
-  "Le cas « entree pas encore en vigueur » existe pour de vrai",
-  inactifs > 0,
-  "avant septembre 2026 c'est courant ; apres, ce sera un signal",
+// Le cas « entree pas encore en vigueur » n'est PAS une assertion.
+//
+// Il l'a ete jusqu'au 31/08/2026, ou TOTALENERGIES et CARREFOUR n'avaient que
+// des entrees inactives. Le 01/09 au matin, jour d'entree en vigueur de la
+// reforme, elles sont toutes passees actives et l'assertion est tombee — sans
+// qu'aucune ligne de code n'ait bouge. Une traversee qui echoue parce que le
+// monde a change plutot que parce qu'on a casse quelque chose est une
+// traversee qui apprend a etre ignoree. On mesure, on n'exige pas.
+console.log(
+  inactifs > 0
+    ? `Observation : ${inactifs} entreprise(s) sans entree en vigueur — le repli SIREN les concerne.`
+    : "Observation : toutes les entreprises trouvees ont au moins une adresse en vigueur.",
 );
 
 // L'assertion qui compte : on ne doit JAMAIS produire une adresse quand

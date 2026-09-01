@@ -63,6 +63,22 @@ function ActionPanel({ invoice, id, router, hasChorusPro }: {
     validation: { echecs: string[]; indisponible: string | null };
   } | null>(null);
   const [messagePdp, setMessagePdp] = useState<string | null>(null);
+  // Le bac à sable partage un SIREN entre ses sociétés de test : c'est le seul
+  // environnement où « adresse déduite » mérite un avertissement.
+  const [sandboxPdp, setSandboxPdp] = useState(false);
+
+  useEffect(() => {
+    let vivant = true;
+    fetch("/api/superpdp/status")
+      .then((r) => r.json())
+      .then((d) => {
+        if (vivant) setSandboxPdp(d?.sandbox === true);
+      })
+      .catch(() => {});
+    return () => {
+      vivant = false;
+    };
+  }, []);
   const [chorusRef, setChorusRef] = useState<string | null>(invoice.chorus_pro_ref || null);
   const [chorusError, setChorusError] = useState<string | null>(null);
   const CHORUS_STATUS_MAP: Record<string, { label: string; color: string }> = {
@@ -111,23 +127,11 @@ function ActionPanel({ invoice, id, router, hasChorusPro }: {
     const data = await res.json();
     if (res.ok) {
       setInv(data.invoice);
-      // Facture déjà transmise à Super PDP : l'encaissement (fr:212) est une
-      // obligation légale distincte du statut "payée" côté Deviso (art. 290 A
-      // CGI). Échec silencieux volontaire : Deviso reste la source de vérité
-      // sur le paiement même si la Plateforme Agréée est momentanément
-      // injoignable — l'utilisateur ne doit pas voir sa facture "non payée"
-      // pour une raison qui ne le concerne pas.
-      if (data.invoice.superpdp_invoice_id && !data.invoice.superpdp_encaisse_at) {
-        try {
-          const r2 = await fetch(`/api/superpdp/invoices/${id}/encaisser`, { method: "POST" });
-          const d2 = await r2.json();
-          if (r2.ok && d2.encaissee) {
-            setInv((prev) => (prev ? { ...prev, superpdp_encaisse_at: new Date().toISOString() } : prev));
-          }
-        } catch {
-          // best-effort, cf. commentaire ci-dessus
-        }
-      }
+      // L'encaissement (fr:212) est désormais déclaré par la route PATCH
+      // elle-même, au moment où la facture passe à « payée ». Il l'était ici,
+      // dans le navigateur — ce qui obligeait chaque nouveau chemin menant au
+      // paiement à penser à le recâbler. La route renvoie la facture relue,
+      // donc `superpdp_encaisse_at` est déjà à jour dans `data.invoice`.
     }
     setMarkingPaid(false);
   }
@@ -421,7 +425,7 @@ function ActionPanel({ invoice, id, router, hasChorusPro }: {
           // SIREN ambigu — donc possiblement jamais remise — portait le même
           // vert rassurant qu'une facture réellement acceptée. La liste, elle,
           // avertissait déjà. Les deux écrans disent maintenant la même chose.
-          const etat = etatPdp(inv);
+          const etat = etatPdp(inv, sandboxPdp);
           const statut = libelleStatut(inv.superpdp_status);
           return (
             <div className={`w-full text-sm px-4 py-2.5 rounded-lg border border-current/20 flex items-start gap-2 ${etat?.classe ?? "bg-gray-500/5 text-gray-300"}`}>

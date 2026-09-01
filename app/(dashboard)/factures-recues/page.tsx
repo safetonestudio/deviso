@@ -4,8 +4,7 @@ import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { getWorkspaceUserId, getWorkspaceProfile } from "@/lib/workspace";
 import { SyncButton } from "./SyncButton";
-import { BoutonRefus } from "./BoutonRefus";
-import { ActionsCycle } from "./ActionsCycle";
+import { SignalerProbleme } from "./SignalerProbleme";
 import { libelleStatut, estCloture } from "@/lib/superpdp-statuts";
 
 export const metadata: Metadata = { title: "Factures reçues" };
@@ -228,12 +227,11 @@ export default async function FacturesRecues() {
                     Télécharger la facture
                   </a>
 
-                  <div className="mt-2 flex items-center justify-center gap-4">
-                    <ActionsCycle factureId={f.id} statutActuel={f.last_status_code} />
-                    <BoutonRefus
+                  <div className="mt-2 flex items-center justify-center">
+                    <SignalerProbleme
                       factureId={f.id}
                       fournisseur={f.seller_name ?? "ce fournisseur"}
-                      dejaRefusee={f.last_status_code === "fr:210"}
+                      statutActuel={f.last_status_code}
                     />
                   </div>
                 </article>
@@ -295,11 +293,10 @@ export default async function FacturesRecues() {
                           >
                             Télécharger
                           </a>
-                          <ActionsCycle factureId={f.id} statutActuel={f.last_status_code} />
-                          <BoutonRefus
+                          <SignalerProbleme
                             factureId={f.id}
                             fournisseur={f.seller_name ?? "ce fournisseur"}
-                            dejaRefusee={f.last_status_code === "fr:210"}
+                            statutActuel={f.last_status_code}
                           />
                         </div>
                       </td>

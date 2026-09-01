@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 import { createClient as createAdminClient } from "@supabase/supabase-js";
 import { getWorkspaceUserId } from "@/lib/workspace";
+import { envoyerEncaissementPdp } from "@/lib/superpdp-encaissement";
 
 type Params = { params: Promise<{ id: string }> };
 
@@ -88,6 +89,46 @@ export async function PATCH(req: NextRequest, { params }: Params) {
 
   if (error) return NextResponse.json({ error: error.message }, { status: 500 });
 
+  // Le passage à « payée » déclare l'encaissement, ici et pas ailleurs.
+  //
+  // `fr:212 Encaissée` est l'un des quatre statuts obligatoires de la réforme,
+  // et le seul qui incombe à l'émetteur. La documentation Super PDP est nette :
+  // les données d'e-reporting de paiement sont construites **à partir de ce
+  // message**. Sans lui, l'administration ne reçoit jamais le paiement.
+  //
+  // Il était jusqu'ici envoyé par ses appelants : le composant React de la page
+  // de détail, et le webhook Stripe. Les deux chemins réels étaient donc
+  // couverts — mais parce que quelqu'un avait pensé à câbler chacun d'eux. La
+  // route qui voit *vraiment* passer le changement d'état, elle, n'en tirait
+  // qu'une notification. Le jour où un rapprochement bancaire, un import de
+  // relevé ou une action en masse marque une facture payée, la déclaration ne
+  // suivrait pas, et rien ne le signalerait.
+  //
+  // On accroche donc l'obligation au **fait** plutôt qu'à ses appelants. C'est
+  // idempotent (`superpdp_encaisse_at` garde la trace) et best-effort : Deviso
+  // reste la source de vérité sur le paiement même si la Plateforme Agréée est
+  // momentanément muette. L'utilisateur ne doit pas voir sa facture « non
+  // payée » pour une raison qui ne le concerne pas.
+  let facture = data;
+  if (body.status === "paid" && current?.status !== "paid") {
+    if (facture?.superpdp_invoice_id && !facture.superpdp_encaisse_at) {
+      const resultat = await envoyerEncaissementPdp(workspaceId, id);
+      if (resultat.ok) {
+        // La ligne renvoyée a été lue AVANT la déclaration : sans cette
+        // relecture, l'écran afficherait une facture payée mais pas encore
+        // encaissée jusqu'au prochain chargement.
+        const { data: relue } = await supabase
+          .from("invoices").select().eq("id", id).eq("user_id", workspaceId).single();
+        if (relue) facture = relue;
+      } else if (resultat.raison !== "non_transmise") {
+        console.error(
+          `[invoices PATCH] encaissement PDP ${id} : ${resultat.raison}`,
+          resultat.detail ?? ""
+        );
+      }
+    }
+  }
+
   // Notification quand une facture passe à "paid"
   if (body.status === "paid" && current?.status !== "paid") {
     const invoiceNum = current?.invoice_number || data.invoice_number || "Facture";
@@ -100,7 +141,7 @@ export async function PATCH(req: NextRequest, { params }: Params) {
     });
   }
 
-  return NextResponse.json({ invoice: data });
+  return NextResponse.json({ invoice: facture });
 }
 
 export async function DELETE(_req: NextRequest, { params }: Params) {

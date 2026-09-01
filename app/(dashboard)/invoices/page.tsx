@@ -76,6 +76,7 @@ export default function InvoicesPage() {
   // ailleurs elle ne dirait rien de vrai, juste « à transmettre » pour tout,
   // sans moyen de le faire.
   const [raccordePdp, setRaccordePdp] = useState(false);
+  const [sandboxPdp, setSandboxPdp] = useState(false);
   // Transmission en cours, par identifiant de facture : la liste reste
   // utilisable pendant qu'une ligne part.
   const [transmission, setTransmission] = useState<string | null>(null);
@@ -115,6 +116,7 @@ export default function InvoicesPage() {
       const pm = profileData.profile?.payment_method;
       setPaymentConfigured(!!pm && pm !== "none");
       setRaccordePdp(pdp?.connected === true && pdp?.status === "verified");
+      setSandboxPdp(pdp?.sandbox === true);
     }).finally(() => setLoading(false));
   }, []);
 
@@ -164,7 +166,7 @@ export default function InvoicesPage() {
     }
   }
 
-  const etatsPdp = raccordePdp ? invoices.map(etatPdp) : [];
+  const etatsPdp = raccordePdp ? invoices.map((i) => etatPdp(i, sandboxPdp)) : [];
   const aTransmettre = etatsPdp.filter((e) => e?.aFaire).length;
   const bloquees = etatsPdp.filter((e) => e && e.manques.length > 0).length;
 
@@ -485,7 +487,7 @@ export default function InvoicesPage() {
                         {STATUS_LABEL[inv.status] || inv.status}
                       </span>
                       {raccordePdp && (() => {
-                        const e = etatPdp(inv);
+                        const e = etatPdp(inv, sandboxPdp);
                         return e ? (
                           <span className={`px-2 py-0.5 rounded-full font-medium ${e.classe}`}>{e.texte}</span>
                         ) : null;
@@ -506,7 +508,7 @@ export default function InvoicesPage() {
                       facture doit partir, le doigt doit trouver un bouton
                       pleine largeur, au même titre que le téléchargement. */}
                   {raccordePdp && (() => {
-                    const e = etatPdp(inv);
+                    const e = etatPdp(inv, sandboxPdp);
                     if (!e?.aFaire) return null;
                     return (
                       <button
@@ -571,7 +573,7 @@ export default function InvoicesPage() {
                       {raccordePdp && (
                         <td className="px-5 py-3.5 text-center">
                           {(() => {
-                            const e = etatPdp(inv);
+                            const e = etatPdp(inv, sandboxPdp);
                             if (!e) return <span className="text-gray-600 text-xs">—</span>;
                             if (e.aFaire)
                               return (
