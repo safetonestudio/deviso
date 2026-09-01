@@ -1,3 +1,9 @@
+> **Audit complet du 01/09/2026** — voir `audit-2026-09-01.md`.
+> Six défauts corrigés (dont BT-49, qui rendait non conforme toute facture à un
+> client étranger), cinq lacunes fonctionnelles documentées comme décisions, et
+> un banc de conformité qui soumet quatorze situations au validateur officiel à
+> chaque `npm run verify`. Suite complète : 317 vérifications, 0 échec.
+
 # État de l'intégration Super PDP
 
 Bilan du 29/08/2026, après la refonte du jour. Ce document dit ce qui est
