@@ -41,11 +41,15 @@ export async function POST(req: NextRequest, ctx: { params: Promise<{ id: string
       non_raccorde: "Compte non raccordé à la Plateforme Agréée.",
       verification_en_cours: "Super PDP vérifie encore le rattachement de votre entreprise.",
       refuse: "La Plateforme Agréée a refusé l'événement d'encaissement. Réessayez dans un moment.",
-      // Cas délicat : c'est fait chez eux, pas noté chez nous. Dire
-      // « réessayez » ferait déclarer le paiement une seconde fois.
+      // Échec de la réservation en base : l'appel n'est jamais parti.
       non_enregistre:
-        "L'encaissement a bien été déclaré à la Plateforme Agréée, mais Deviso n'a pas pu le noter. " +
-        "Ne recommencez pas : la déclaration partirait en double.",
+        "Deviso n'a pas pu enregistrer l'encaissement. Rien n'a été déclaré : réessayez.",
+      // La réservation est conservée exprès côté serveur. Le message doit donc
+      // dire l'inverse de « réessayez » : on ignore si la déclaration est
+      // passée, et la rejouer la ferait partir en double au PPF.
+      incertain:
+        "L'encaissement a peut-être été déclaré à la Plateforme Agréée : la réponse ne nous est " +
+        "jamais parvenue. Ne recommencez pas — vérifiez le statut de la facture dans un moment.",
     };
     return NextResponse.json(
       {

@@ -4,6 +4,7 @@ import { getWorkspaceUserId } from "@/lib/workspace";
 import {
   SUPERPDP_API,
   exchangeCode,
+  getConnection,
   saveConnection,
   superpdpConfig,
 } from "@/lib/superpdp";
@@ -164,7 +165,25 @@ export async function GET(req: NextRequest) {
       }
     }
 
+    // Rebranchement sur une AUTRE entreprise : les curseurs de synchronisation
+    // ne veulent plus rien dire.
+    //
+    // `last_invoice_id` et `last_event_id` sont des bornes « ne me redonne rien
+    // en dessous ». Rebrancher sans les remettre à zéro fait donc sauter, en
+    // silence et définitivement, toutes les factures de la nouvelle entreprise
+    // dont l'identifiant est inférieur à la borne héritée de l'ancienne —
+    // c'est-à-dire l'antériorité complète d'une entreprise qui utilisait déjà
+    // la Plateforme Agréée avant de passer par Deviso. Un débranchement suivi
+    // d'un rebranchement efface la ligne et n'a pas ce problème ; refaire le
+    // tunnel sans débrancher, ce que fait tout le monde, l'a.
+    const ancien = await getConnection(workspaceId).catch(() => null);
+    const changeEntreprise =
+      Boolean(ancien?.company_id) && Boolean(companyId) && ancien!.company_id !== companyId;
+
     await saveConnection(workspaceId, {
+      ...(changeEntreprise
+        ? { last_invoice_id: null, last_event_id: null, last_sync_at: null }
+        : {}),
       refresh_token: tokens.refresh_token,
       company_id: companyId,
       company_number: companyNumber,

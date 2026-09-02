@@ -11,7 +11,13 @@ export type ResultatEncaissement =
         | "verification_en_cours"
         | "refuse"
         /** Déclaré auprès de la plateforme, mais pas noté chez nous : ne pas rejouer. */
-        | "non_enregistre";
+        | "non_enregistre"
+        /**
+         * L'appel est parti et on n'a jamais su ce qu'il est devenu — coupure,
+         * délai dépassé. La réservation est CONSERVÉE : rejouer risquerait une
+         * seconde déclaration de paiement au PPF pour le même encaissement.
+         */
+        | "incertain";
       detail?: string;
     };
 
@@ -87,6 +93,61 @@ export async function envoyerEncaissementPdp(
       ? dateEncaissement
       : null;
 
+  const horodatage = dateValide
+    ? new Date(`${dateValide}T12:00:00Z`).toISOString()
+    : new Date().toISOString();
+
+  // ─────────────────── Réservation atomique avant l'appel ───────────────────
+  //
+  // Le test `if (facture.superpdp_encaisse_at)` ci-dessus lit, puis on écrivait
+  // APRÈS l'appel. Entre les deux, la fenêtre est grande ouverte, et elle est
+  // empruntée par le scénario le plus banal qui soit : cette fonction a quatre
+  // appelants, dont « Marquer comme payée » et le webhook Stripe. Quelqu'un qui
+  // clique « payée » à l'instant où Stripe confirme le paiement déclenche les
+  // deux. Tous deux lisent `null`, tous deux postent `fr:212`, et la donnée
+  // d'e-reporting de paiement part **deux fois** au PPF pour un seul
+  // encaissement. Le commentaire du bloc d'écriture décrivait déjà ce danger
+  // comme la chose à ne pas laisser arriver — la garde, elle, ne l'empêchait
+  // que pour deux clics espacés.
+  //
+  // On inverse donc l'ordre : on réserve d'abord, par une écriture
+  // conditionnelle que la base sérialise, et on relâche si l'envoi n'a pas eu
+  // lieu. Le seul cas où l'on garde la réservation sans certitude est celui où
+  // l'on ignore ce qu'est devenu l'appel — parce qu'une déclaration fiscale en
+  // double est un incident, là où une déclaration manquante se rattrape en
+  // reprenant la facture.
+  const { data: prise, error: erreurReservation } = await admin
+    .from("invoices")
+    .update({ superpdp_encaisse_at: horodatage })
+    .eq("id", invoiceId)
+    .eq("user_id", workspaceId)
+    .is("superpdp_encaisse_at", null)
+    .select("id")
+    .maybeSingle();
+
+  if (erreurReservation) {
+    console.error(`[superpdp/encaissement] ${invoiceId} : réservation impossible — ${erreurReservation.message}`);
+    return { ok: false, raison: "non_enregistre", detail: erreurReservation.message };
+  }
+
+  // Quelqu'un d'autre a réservé entre-temps : c'est déjà déclaré, ou en train
+  // de l'être. Dans les deux cas il n'y a rien à faire, et surtout rien à
+  // renvoyer.
+  if (!prise) return { ok: true, dejaEncaissee: true };
+
+  /** Annule la réservation : à n'appeler que si RIEN n'est parti. */
+  const rendreReservation = () =>
+    admin
+      .from("invoices")
+      .update({ superpdp_encaisse_at: null })
+      .eq("id", invoiceId)
+      .eq("user_id", workspaceId)
+      .eq("superpdp_encaisse_at", horodatage)
+      .then(
+        () => undefined,
+        () => undefined
+      );
+
   try {
     const res = await superpdpFetch(workspaceId, "/invoice_events", {
       method: "POST",
@@ -104,42 +165,41 @@ export async function envoyerEncaissementPdp(
       }),
     });
 
+    // Refus explicite de la plateforme : la réponse est arrivée, donc on SAIT
+    // qu'aucun événement n'a été créé. La réservation se rend sans risque, et
+    // l'utilisateur pourra réessayer.
     if (!res.ok) {
       const detail = (await res.text()).slice(0, 500);
       console.error(`[superpdp/encaissement] ${invoiceId} : HTTP ${res.status} ${detail.slice(0, 300)}`);
+      await rendreReservation();
       return { ok: false, raison: "refuse", detail };
     }
 
-    // `superpdp_encaisse_at` est la SEULE garde d'idempotence de cette
-    // fonction (voir le test plus haut). Si le POST réussit et que cette
-    // écriture échoue en silence, un second clic sur « Marquer comme payée »
-    // réémet un événement d'encaissement — et la donnée d'e-reporting de
-    // paiement part en double vers le PPF. On vérifie donc l'erreur, et on le
-    // dit clairement à l'appelant plutôt que de répondre « c'est fait ».
-    const { error: erreurEcriture } = await admin
-      .from("invoices")
-      .update({
-        superpdp_encaisse_at: dateValide
-          ? new Date(`${dateValide}T12:00:00Z`).toISOString()
-          : new Date().toISOString(),
-      })
-      .eq("id", invoiceId)
-      .eq("user_id", workspaceId);
-
-    if (erreurEcriture) {
-      console.error(`[superpdp/encaissement] ${invoiceId} : encaissement déclaré mais non enregistré — ${erreurEcriture.message}`);
-      return {
-        ok: false,
-        raison: "non_enregistre",
-        detail: erreurEcriture.message,
-      };
-    }
-
+    // Rien à écrire : c'est fait depuis la réservation.
     return { ok: true };
   } catch (err) {
-    if (err instanceof SuperPdpNotConnected) return { ok: false, raison: "non_raccorde" };
-    if (err instanceof SuperPdpSessionPending) return { ok: false, raison: "verification_en_cours" };
+    // Ces deux-là sont levées AVANT tout envoi, par `superpdpFetch` lui-même :
+    // rien n'est parti, la réservation se rend.
+    if (err instanceof SuperPdpNotConnected) {
+      await rendreReservation();
+      return { ok: false, raison: "non_raccorde" };
+    }
+    if (err instanceof SuperPdpSessionPending) {
+      await rendreReservation();
+      return { ok: false, raison: "verification_en_cours" };
+    }
+
+    // Tout le reste — coupure réseau, délai dépassé, réponse illisible — laisse
+    // le sort de l'appel inconnu. On GARDE la réservation, délibérément :
+    // rejouer un `fr:212` qui serait déjà passé ferait partir une seconde
+    // déclaration de paiement au PPF pour le même encaissement, ce qu'aucun
+    // écran ne rattrape. Une facture marquée encaissée à tort se corrige ; une
+    // déclaration fiscale en double, non.
     console.error("[superpdp/encaissement]", err instanceof Error ? err.message : err);
-    return { ok: false, raison: "refuse" };
+    return {
+      ok: false,
+      raison: "incertain",
+      detail: err instanceof Error ? err.message : String(err),
+    };
   }
 }

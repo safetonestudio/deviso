@@ -330,7 +330,15 @@ const MARGE_EXPIRATION_MS = 60_000;
  * et notre écriture en base, et l'utilisateur doit refaire tout le tunnel
  * d'autorisation. Le jeton d'accès vit 30 minutes : on s'en sert.
  */
-async function accessTokenValide(conn: SuperPdpConnection): Promise<string> {
+async function accessTokenValide(
+  conn: SuperPdpConnection,
+  /**
+   * Faux au second passage. Empêche qu'une lecture concurrente perpétuelle
+   * fasse tourner cette fonction sur elle-même : on retente exactement une
+   * fois avec le jeton qu'un autre appel vient d'obtenir, jamais davantage.
+   */
+  peutReessayer = true
+): Promise<string> {
   const expiration = conn.access_token_expires_at
     ? new Date(conn.access_token_expires_at).getTime()
     : 0;
@@ -343,16 +351,33 @@ async function accessTokenValide(conn: SuperPdpConnection): Promise<string> {
   try {
     tokens = await refreshTokens(conn.refresh_token);
   } catch (err) {
-    // Un `invalid_grant` au rafraîchissement veut dire que ce refresh token est
-    // mort : révoqué, expiré, ou consommé par un appel concurrent. Aucun
-    // réessai ne le ranimera — il faut refaire le tunnel d'autorisation.
+    // Un `invalid_grant` au rafraîchissement veut dire que CE refresh token est
+    // mort. Il y a deux façons de mourir, et elles n'ont rien à voir :
     //
-    // On l'inscrit ICI plutôt que chez chaque appelant : selon le chemin
-    // d'entrée, la même perte définitive était tantôt journalisée, tantôt
-    // avalée par un `catch` vide. Le raccordement doit se déclarer cassé une
-    // seule fois, au seul endroit qui le sait.
+    //   - révoqué ou expiré : le raccordement est perdu, il faut refaire le
+    //     tunnel ;
+    //   - **consommé par un appel concurrent** : sous rotation OAuth 2.1, deux
+    //     requêtes qui voient toutes deux un jeton d'accès expiré rafraîchissent
+    //     avec le MÊME refresh token ; la première réussit et fait tourner le
+    //     jeton, la seconde reçoit `invalid_grant`. Le raccordement est
+    //     parfaitement sain — c'est la perdante qui arrive en retard.
+    //
+    // On les confondait, et on inscrivait `session_status = "error"` dans les
+    // deux cas. Conséquence réelle : la tâche horaire et un chargement de page
+    // qui se croisent suffisaient à afficher « Votre autorisation n'est plus
+    // valide, reconnectez votre entreprise » sur un compte qui fonctionnait,
+    // et à faire démonter par l'utilisateur un raccordement intact. C'est le
+    // même défaut que le doublon d'émission : une course qu'on n'avait pas vue.
+    //
+    // Le départage est direct : si le refresh token en base n'est plus celui
+    // avec lequel on vient d'échouer, quelqu'un d'autre a rotationné avec
+    // succès. On se range derrière lui.
     const detail = err instanceof Error ? err.message : String(err);
     if (/invalid_grant/i.test(detail)) {
+      const relu = peutReessayer ? await getConnection(conn.user_id).catch(() => null) : null;
+      if (relu && relu.refresh_token !== conn.refresh_token) {
+        return accessTokenValide(relu, false);
+      }
       await saveConnection(conn.user_id, {
         session_status: "error",
         last_error:
