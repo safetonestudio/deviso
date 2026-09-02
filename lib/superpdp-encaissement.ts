@@ -130,10 +130,35 @@ export async function envoyerEncaissementPdp(
     return { ok: false, raison: "non_enregistre", detail: erreurReservation.message };
   }
 
-  // Quelqu'un d'autre a réservé entre-temps : c'est déjà déclaré, ou en train
-  // de l'être. Dans les deux cas il n'y a rien à faire, et surtout rien à
-  // renvoyer.
-  if (!prise) return { ok: true, dejaEncaissee: true };
+  // Quelqu'un d'autre a réservé entre-temps. Attention au raccourci : « réservé
+  // par un autre » ne veut pas dire « déclaré ». Si cet autre échoue et rend sa
+  // réservation, répondre « déjà encaissée » annoncerait un succès à un
+  // utilisateur dont la facture n'a rien de déclaré — l'échec silencieux, de
+  // nouveau, et sur le statut obligatoire du fournisseur.
+  //
+  // On laisse donc au gagnant le temps de conclure, puis on regarde le
+  // résultat : réservation toujours posée = c'est fait ; réservation rendue =
+  // il a échoué, et c'est à nous de reprendre.
+  if (!prise) {
+    await new Promise((r) => setTimeout(r, 1500));
+    const { data: apres } = await admin
+      .from("invoices")
+      .select("superpdp_encaisse_at")
+      .eq("id", invoiceId)
+      .eq("user_id", workspaceId)
+      .maybeSingle();
+
+    if (apres?.superpdp_encaisse_at) return { ok: true, dejaEncaissee: true };
+
+    // Le gagnant a rendu sa réservation : il a échoué, et il a déjà dit
+    // pourquoi à son propre appelant. On ne rejoue pas ici — deux appels qui se
+    // relancent mutuellement tourneraient en rond. On dit ce qui est vrai.
+    return {
+      ok: false,
+      raison: "refuse",
+      detail: "La déclaration menée en parallèle n'a pas abouti.",
+    };
+  }
 
   /** Annule la réservation : à n'appeler que si RIEN n'est parti. */
   const rendreReservation = () =>
