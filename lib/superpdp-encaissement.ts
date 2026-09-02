@@ -194,7 +194,10 @@ export async function envoyerEncaissementPdp(
     // qu'aucun événement n'a été créé. La réservation se rend sans risque, et
     // l'utilisateur pourra réessayer.
     if (!res.ok) {
-      const detail = (await res.text()).slice(0, 500);
+      // 1500 et non 500 : les règles de gestion de la nomenclature (BR-FR-CDV-*)
+      // sont citées in extenso dans le message, et c'est justement la fin qui
+      // dit ce qu'il faut envoyer. Tronquer à 500 coupait la règle en deux.
+      const detail = (await res.text()).slice(0, 1500);
       console.error(`[superpdp/encaissement] ${invoiceId} : HTTP ${res.status} ${detail.slice(0, 300)}`);
       await rendreReservation();
       return { ok: false, raison: "refuse", detail };

@@ -203,7 +203,7 @@ const troisieme = await appel(`/api/superpdp/invoices/${id}/encaisser`, {
 verifier(
   "un appel ultérieur répond « déjà encaissée » sans rien renvoyer",
   troisieme.status === 200 && troisieme.body?.dejaEncaissee === true,
-  `HTTP ${troisieme.status} ${JSON.stringify(troisieme.body).slice(0, 160)}`,
+  `HTTP ${troisieme.status} ${JSON.stringify(troisieme.body).slice(0, 900)}`,
 );
 
 const apres = await appel(`/api/invoices/${id}`);

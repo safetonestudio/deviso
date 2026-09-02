@@ -61,7 +61,10 @@ export async function POST(req: NextRequest, ctx: { params: Promise<{ id: string
         const ko = JSON.parse(resultat.detail) as { message?: string; error?: string };
         motifPlateforme = ko.message ?? ko.error ?? "";
       } catch {
-        motifPlateforme = resultat.detail.slice(0, 200);
+        // Réponse tronquée, donc JSON invalide : on récupère quand même le
+        // message, qui est la seule partie utile.
+        const m = resultat.detail.match(/"message"\s*:\s*"((?:[^"\\]|\\.)*)/);
+        motifPlateforme = (m ? m[1].replace(/\\"/g, '"').replace(/\\n/g, " ") : resultat.detail).slice(0, 700);
       }
     }
 

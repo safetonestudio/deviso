@@ -1,0 +1,35 @@
+
+> deviso@0.1.0 test:encaissement-concurrent
+> node scripts/e2e/encaissement-concurrent.mjs
+
+
+── Encaissement concurrent : un paiement, deux déclencheurs ───
+   base : https://getdeviso.fr
+
+  ok   une facture transmissible est créée
+  ok   elle est transmise à la Plateforme Agréée
+   réponse 1 : HTTP 502 {"error":"Encaissement non transmis","message":"La Plateforme Agréée a refusé l'événement d'encaissement. Réessayez dans un moment
+   réponse 2 : HTTP 502 {"error":"Encaissement non transmis","message":"La Plateforme Agréée a refusé l'événement d'encaissement. Réessayez dans un moment
+
+ÉCHEC  une seule des deux déclare l'encaissement — 0 déclaration(s) — deux signifierait un e-reporting de paiement en double au PPF
+ÉCHEC  l'autre se sait doublée et ne renvoie rien — déjà encaissée : 0
+  ok   aucune des deux ne renvoie une erreur serveur
+ÉCHEC  la facture porte une date d'encaissement — superpdp_encaisse_at = null
+ÉCHEC  et c'est la date réelle du paiement, pas celle du clic — null attendu 2026-09-01 — c'est cette date qui détermine l'exigibilité de la TVA
+ÉCHEC  un appel ultérieur répond « déjà encaissée » sans rien renvoyer — HTTP 502 {"error":"Encaissement non transmis","message":"La Plateforme Agréée a refusé l'événement d'encaissement. Réessayez dans un moment. {\"http_status_code\":400,\"message\":\"[BR-FR-CDV-14/MDT-207] : Si le statut est \\\"Encaissé\\\" (MDT-105 = 212), ALORS il doit y avoir au moins 1 Bloc MDG-43 avec une valeur de MDT-207 = MEN et tous les blo"}
+  ok   et il ne déplace pas la date déjà enregistrée
+  ok   une facture jamais transmise répond « non transmise », calmement
+  ok   et elle ne porte AUCUNE date d'encaissement
+  ok   une date d'encaissement future est ignorée au profit d'aujourd'hui
+   Facture de test conservée (réellement transmise) : ebb4cc4b-2628-4e4b-ab30-b0b42147dc4f
+
+   Facture de test conservée (réellement transmise et encaissée) : 77a2a74d-270c-4061-a8de-e41a15f6ece9
+
+7/12 vérifications passées
+
+Échecs :
+  · une seule des deux déclare l'encaissement — 0 déclaration(s) — deux signifierait un e-reporting de paiement en double au PPF
+  · l'autre se sait doublée et ne renvoie rien — déjà encaissée : 0
+  · la facture porte une date d'encaissement — superpdp_encaisse_at = null
+  · et c'est la date réelle du paiement, pas celle du clic — null attendu 2026-09-01 — c'est cette date qui détermine l'exigibilité de la TVA
+  · un appel ultérieur répond « déjà encaissée » sans rien renvoyer — HTTP 502 {"error":"Encaissement non transmis","message":"La Plateforme Agréée a refusé l'événement d'encaissement. Réessayez dans un moment. {\"http_status_code\":400,\"message\":\"[BR-FR-CDV-14/MDT-207] : Si le statut est \\\"Encaissé\\\" (MDT-105 = 212), ALORS il doit y avoir au moins 1 Bloc MDG-43 avec une valeur de MDT-207 = MEN et tous les blo"}
