@@ -205,7 +205,12 @@ export interface Invoice {
   last_reminder_sent_at: string | null;
   reminder_count: number;
   // Acompte / Solde
-  invoice_type: "standard" | "acompte" | "solde";
+  /**
+   * `avoir` : note de crédit (type_code 381) annulant la facture désignée par
+   * `linked_invoice_id`. Ses montants restent positifs — c'est le type de
+   * document qui porte le sens, pas leur signe (BR-27).
+   */
+  invoice_type: "standard" | "acompte" | "solde" | "avoir";
   linked_invoice_id: string | null;
   linked_invoice_number: string | null; // jointure virtuelle (non stockée, enrichie à la volée)
   deposit_percentage: number | null;

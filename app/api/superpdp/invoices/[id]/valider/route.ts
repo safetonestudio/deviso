@@ -85,8 +85,14 @@ export async function POST(req: NextRequest, ctx: { params: Promise<{ id: string
     bank_account_name: string | null;
   }>(workspaceId, "payment_method, payment_link_profile, bank_iban, bank_bic, bank_account_name");
 
+  // Même règle qu'à l'émission : solde → acompte, avoir → facture annulée.
+  // Valider un document sans la référence que l'émission y mettra, ce serait
+  // valider autre chose que ce qui part.
   let numeroAcompte: string | null = null;
-  if (facture.invoice_type === "solde" && facture.linked_invoice_id) {
+  if (
+    (facture.invoice_type === "solde" || facture.invoice_type === "avoir") &&
+    facture.linked_invoice_id
+  ) {
     const { data: liee } = await admin
       .from("invoices")
       .select("invoice_number")

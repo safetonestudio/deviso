@@ -218,8 +218,18 @@ export async function POST(req: NextRequest, ctx: { params: Promise<{ id: string
         }
       : undefined;
 
+    // Référence au document précédent (BG-3). Deux cas la remplissent, et pour
+    // la même raison : ce document-ci ne se comprend qu'avec l'autre.
+    //
+    //   - une facture de solde renvoie à son acompte ;
+    //   - un **avoir** renvoie à la facture qu'il annule. Sans cette référence,
+    //     le destinataire reçoit un crédit qui ne dit pas ce qu'il corrige, et
+    //     son comptable ne peut le rapprocher de rien.
     let numeroAcompte: string | null = null;
-    if (facture.invoice_type === "solde" && facture.linked_invoice_id) {
+    if (
+      (facture.invoice_type === "solde" || facture.invoice_type === "avoir") &&
+      facture.linked_invoice_id
+    ) {
       const { data: liee } = await admin
         .from("invoices")
         .select("invoice_number")

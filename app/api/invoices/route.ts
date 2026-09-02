@@ -4,6 +4,7 @@ import { v4 as uuidv4 } from "uuid";
 import type { ProposalItem } from "@/types";
 import { getWorkspaceUserId, getWorkspaceProfile } from "@/lib/workspace";
 import { resolveAddress } from "@/lib/address";
+import { numeroDocument } from "@/lib/numerotation";
 
 // GET /api/invoices
 export async function GET() {
@@ -56,40 +57,22 @@ export async function POST(req: NextRequest) {
   const body = await req.json();
   const invoiceType = body.invoice_type || "standard";
 
-  // Génère le numéro de facture auto si absent.
-  //
-  // ⚠️ Aucun numéro de repli. La version précédente écrivait
-  // `numData || "YYYY-001"` : quand la séquence échouait, chaque facture du
-  // compte recevait le même numéro, en silence. C'est exactement ce qui s'est
-  // produit — la fonction SQL n'était pas exécutable par le rôle
-  // `authenticated`, l'appel échouait à tous les coups, et un compte de test a
-  // accumulé quinze factures « 2026-001 » sans que rien ne le signale.
-  //
-  // L'article 242 nonies A du CGI impose une numérotation chronologique,
-  // continue et sans doublon. Un numéro inventé pour éviter une erreur produit
-  // donc une facture irrégulière, ce qui est plus grave que l'échec qu'il
-  // masque. On refuse de créer la facture plutôt que d'en créer une fausse.
+  // Génère le numéro de facture auto si absent. La règle vit dans
+  // lib/numerotation.ts, partagée avec la création d'avoir — voir ce fichier
+  // pour le pourquoi du refus plutôt que du repli.
   let invoiceNumber = body.invoice_number;
   if (!invoiceNumber) {
-    // Séquence atomique via document_sequences : AC-YYYY-NNN ou YYYY-NNN,
-    // continue et sans concurrence possible.
-    const fonction = invoiceType === "acompte" ? "next_acompte_number" : "next_invoice_number";
-    const { data: numData, error: numErr } = await supabase
-      .rpc(fonction, { p_user_id: workspaceId });
-
-    if (numErr || !numData) {
-      console.error(`[invoices] numérotation ${fonction} :`, numErr?.message ?? "aucun numéro renvoyé");
+    try {
+      invoiceNumber = await numeroDocument(supabase, workspaceId, invoiceType);
+    } catch (err) {
       return NextResponse.json(
         {
           error: "NUMEROTATION_INDISPONIBLE",
-          message:
-            "Le numéro de facture n'a pas pu être attribué. La facture n'a pas été créée : " +
-            "mieux vaut réessayer que produire un numéro en doublon, interdit par la réglementation.",
+          message: err instanceof Error ? err.message : "Numérotation indisponible.",
         },
         { status: 500 }
       );
     }
-    invoiceNumber = numData;
   }
 
   // Adresses : on dérive la forme affichable des champs saisis, des deux côtés.
