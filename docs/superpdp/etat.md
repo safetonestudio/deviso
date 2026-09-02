@@ -1,3 +1,11 @@
+> **Seconde passe d'audit, nuit du 01 au 02/09/2026** — voir
+> `audit-2026-09-02.md`. Sept défauts de concurrence et d'ordonnancement, tous
+> silencieux : encaissement déclarable deux fois au fisc, date d'encaissement qui
+> empêchait le `fr:212` de partir, raccordement sain se déclarant mort, et
+> surtout **11 factures émises affichant « Reçue par la plateforme » alors
+> qu'elles étaient encaissées** — lignes réparées. Suite complète : 340
+> vérifications, 0 échec.
+>
 > **Audit complet du 01/09/2026** — voir `audit-2026-09-01.md`.
 > Six défauts corrigés (dont BT-49, qui rendait non conforme toute facture à un
 > client étranger), cinq lacunes fonctionnelles documentées comme décisions, et
