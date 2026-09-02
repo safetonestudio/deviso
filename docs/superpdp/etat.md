@@ -3,7 +3,12 @@
 > silencieux : encaissement déclarable deux fois au fisc, date d'encaissement qui
 > empêchait le `fr:212` de partir, raccordement sain se déclarant mort, et
 > surtout **11 factures émises affichant « Reçue par la plateforme » alors
-> qu'elles étaient encaissées** — lignes réparées. Suite complète : 340
+> qu'elles étaient encaissées** — lignes réparées.
+>
+> Puis les deux décisions qui restaient : la **date d'encaissement** est
+> désormais celle du paiement réel et non celle du pointage, et Deviso sait
+> **établir un avoir** — le seul moyen de corriger une facture transmise, et la
+> seule réponse possible à un refus, qui est terminal. Suite complète : 373
 > vérifications, 0 échec.
 >
 > **Audit complet du 01/09/2026** — voir `audit-2026-09-01.md`.
