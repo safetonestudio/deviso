@@ -51,10 +51,26 @@ export async function POST(req: NextRequest, ctx: { params: Promise<{ id: string
         "L'encaissement a peut-être été déclaré à la Plateforme Agréée : la réponse ne nous est " +
         "jamais parvenue. Ne recommencez pas — vérifiez le statut de la facture dans un moment.",
     };
+    // Le motif de la plateforme, quand elle en donne un. « La Plateforme Agréée
+    // a refusé » sans dire pourquoi est le genre de message devant lequel il
+    // n'y a rien à faire — ni pour l'utilisateur, ni pour nous en diagnostic.
+    // Les routes `statut` et `emettre` remontent déjà le leur.
+    let motifPlateforme = "";
+    if (resultat.raison === "refuse" && resultat.detail) {
+      try {
+        const ko = JSON.parse(resultat.detail) as { message?: string; error?: string };
+        motifPlateforme = ko.message ?? ko.error ?? "";
+      } catch {
+        motifPlateforme = resultat.detail.slice(0, 200);
+      }
+    }
+
     return NextResponse.json(
       {
         error: "Encaissement non transmis",
-        message: messages[resultat.raison] ?? "Erreur inconnue.",
+        message:
+          (messages[resultat.raison] ?? "Erreur inconnue.") +
+          (motifPlateforme ? ` ${motifPlateforme}` : ""),
       },
       { status: resultat.raison === "refuse" ? 502 : 409 }
     );

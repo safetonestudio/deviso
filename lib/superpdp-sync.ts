@@ -458,10 +458,51 @@ async function synchroniserEvenements(userId: string): Promise<number> {
     const lot = body.data ?? [];
     if (lot.length === 0) break;
 
+    // ── Statuts déjà connus, pour ne jamais rétrograder ─────────────────────
+    //
+    // Deux règles écrivaient la même colonne, et elles ne disaient pas la même
+    // chose. `statutQuiFaitFoi`, plus haut, est explicite : un `api:*` ne
+    // remplace jamais un `fr:*`, parce que les `api:*` sont internes à la
+    // plateforme et les `fr:*` sont le cycle de vie officiel que l'utilisateur
+    // doit lire. Cette boucle-ci, elle, appliquait les deux familles dans
+    // l'ordre d'arrivée.
+    //
+    // Aujourd'hui l'ordre nominal les sépare — les `api:*` précèdent les
+    // `fr:*` — et le défaut ne se voit pas. Mais un seul `api:*` tardif ferait
+    // repasser une facture REFUSÉE en « transmise », c'est-à-dire exactement
+    // le défaut du 29/08/2026 que ce fichier a été écrit pour corriger. Leur
+    // nomenclature évolue (fr:220 est apparu le 07/08/2026) : une règle qui
+    // tient par accident d'ordonnancement ne tient pas.
+    //
+    // Une seule lecture par page, pas une par événement.
+    const idsConcernes = [
+      ...new Set(
+        lot
+          .filter((e) => e.status_code && estStatutAffichable(e.status_code))
+          .map((e) => e.invoice_id)
+      ),
+    ];
+    const connus = new Map<number, string | null>();
+    if (idsConcernes.length) {
+      const { data: existantes } = await admin
+        .from("superpdp_invoices")
+        .select("id, last_status_code")
+        .eq("user_id", userId)
+        .in("id", idsConcernes);
+      for (const ligne of existantes ?? []) connus.set(ligne.id, ligne.last_status_code);
+    }
+
     for (const ev of lot) {
       // Un `ppf:*` fait avancer le curseur mais ne touche à aucun statut : il
       // dit où en est l'acheminement administratif, pas où en est la facture.
       if (ev.status_code && estStatutAffichable(ev.status_code)) {
+        // Rétrogradation refusée : le statut officiel prime sur l'interne.
+        const dejaOfficiel = (connus.get(ev.invoice_id) ?? "").startsWith("fr:");
+        if (dejaOfficiel && ev.status_code.startsWith("api:")) {
+          curseur = Math.max(curseur ?? 0, ev.id);
+          continue;
+        }
+        connus.set(ev.invoice_id, ev.status_code);
         // Les événements arrivent par id croissant, donc le dernier appliqué
         // pour une facture donnée est bien le plus récent.
         const { error } = await admin
