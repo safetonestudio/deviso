@@ -140,6 +140,13 @@ export interface Invoice {
   superpdp_encaisse_at?: string | null;
   superpdp_status_date?: string | null;
   superpdp_error?: string | null;
+  /**
+   * Date réelle de l'encaissement (AAAA-MM-JJ), distincte du moment où la
+   * facture a été marquée payée. C'est elle qui part dans le `fr:212`, donc
+   * elle qui fixe la période d'exigibilité de la TVA sur les prestations de
+   * services. Non corrigeable une fois la déclaration partie.
+   */
+  paid_at?: string | null;
 
   id: string;
   user_id: string;

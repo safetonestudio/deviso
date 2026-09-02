@@ -102,6 +102,25 @@ function ActionPanel({ invoice, id, router, hasChorusPro }: {
   const [deleting, setDeleting] = useState(false);
   const [inv, setInv] = useState(invoice);
 
+  // ── La date d'encaissement, demandée là où elle change quelque chose ──────
+  //
+  // Sur une facture transmise à la Plateforme Agréée, marquer « payée » déclenche
+  // le message `fr:212`, dont l'administration tire l'e-reporting de paiement.
+  // La date portée par ce message fixe la période d'exigibilité de la TVA sur
+  // les prestations de services.
+  //
+  // Cette date ne peut PAS être corrigée après coup : rejouer un `fr:212` ferait
+  // partir une seconde déclaration de paiement pour le même encaissement. Il n'y
+  // a donc pas de « on verra plus tard » possible — c'est maintenant ou jamais,
+  // et c'est ce qui justifie de demander avant plutôt que de proposer de
+  // modifier après.
+  //
+  // On ne la demande que dans ce cas. Sur une facture non transmise, il n'y a
+  // rien à déclarer : le bouton reste à un clic, comme avant.
+  const [demandeDatePaiement, setDemandeDatePaiement] = useState(false);
+  const [datePaiement, setDatePaiement] = useState(() => new Date().toISOString().slice(0, 10));
+  const dateEncaissementRequise = Boolean(inv.superpdp_invoice_id) && !inv.superpdp_encaisse_at;
+
   async function handleDownload() {
     setDownloading(true);
     const res = await fetch(`/api/invoices/${id}/download`);
@@ -117,16 +136,22 @@ function ActionPanel({ invoice, id, router, hasChorusPro }: {
     setDownloading(false);
   }
 
-  async function handleMarkPaid() {
+  async function handleMarkPaid(dateEncaissement?: string) {
     setMarkingPaid(true);
     const res = await fetch(`/api/invoices/${id}`, {
       method: "PATCH",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ status: "paid" }),
+      body: JSON.stringify({
+        status: "paid",
+        // Envoyée seulement si l'écran l'a demandée. Sur une facture non
+        // transmise, il n'y a rien à déclarer et rien à saisir.
+        ...(dateEncaissement ? { paid_at: dateEncaissement } : {}),
+      }),
     });
     const data = await res.json();
     if (res.ok) {
       setInv(data.invoice);
+      setDemandeDatePaiement(false);
       // L'encaissement (fr:212) est désormais déclaré par la route PATCH
       // elle-même, au moment où la facture passe à « payée ». Il l'était ici,
       // dans le navigateur — ce qui obligeait chaque nouveau chemin menant au
@@ -333,15 +358,56 @@ function ActionPanel({ invoice, id, router, hasChorusPro }: {
                 <span>{markingSent ? "Mise à jour…" : "Marquer comme envoyée"}</span>
               </button>
             )}
-            {canMarkPaid && (
+            {canMarkPaid && !demandeDatePaiement && (
               <button
-                onClick={handleMarkPaid}
+                onClick={() =>
+                  dateEncaissementRequise ? setDemandeDatePaiement(true) : handleMarkPaid()
+                }
                 disabled={markingPaid}
                 className="w-full text-sm font-medium px-4 py-2.5 rounded-lg border border-emerald-500/30 hover:bg-emerald-500/10 text-emerald-400 disabled:opacity-50 transition-colors text-left flex items-center gap-2"
               >
                 <Check size={17} className="shrink-0" />
                 <span>{markingPaid ? "Mise à jour…" : "Marquer comme payée"}</span>
               </button>
+            )}
+
+            {canMarkPaid && demandeDatePaiement && (
+              <div className="w-full rounded-lg border border-emerald-500/30 bg-emerald-500/5 p-3 space-y-2.5">
+                <label htmlFor="date-encaissement" className="block text-sm font-medium text-emerald-300">
+                  Payée le
+                </label>
+                <input
+                  id="date-encaissement"
+                  type="date"
+                  value={datePaiement}
+                  max={new Date().toISOString().slice(0, 10)}
+                  onChange={(e) => setDatePaiement(e.target.value)}
+                  className="w-full text-sm px-3 py-2 rounded-lg bg-ds-elevated border border-ds-border text-gray-200 focus:outline-none focus:border-emerald-500/50"
+                />
+                {/* Pourquoi on demande, en une phrase. Un champ de date qui
+                    apparaît sans raison ressemble à une complication ; celui-ci
+                    en a une, et elle est définitive. */}
+                <p className="text-xs text-gray-400 leading-relaxed">
+                  Cette date part à l&apos;administration avec la déclaration
+                  d&apos;encaissement. Elle ne pourra plus être corrigée ensuite.
+                </p>
+                <div className="flex gap-2">
+                  <button
+                    onClick={() => handleMarkPaid(datePaiement)}
+                    disabled={markingPaid || !datePaiement}
+                    className="flex-1 text-sm font-medium px-3 py-2 rounded-lg bg-emerald-500/15 border border-emerald-500/40 hover:bg-emerald-500/25 text-emerald-300 disabled:opacity-50 transition-colors"
+                  >
+                    {markingPaid ? "Mise à jour…" : "Confirmer"}
+                  </button>
+                  <button
+                    onClick={() => setDemandeDatePaiement(false)}
+                    disabled={markingPaid}
+                    className="text-sm font-medium px-3 py-2 rounded-lg border border-ds-border hover:bg-ds-elevated/60 text-gray-400 disabled:opacity-50 transition-colors"
+                  >
+                    Annuler
+                  </button>
+                </div>
+              </div>
             )}
             {canRemind && (
               <button

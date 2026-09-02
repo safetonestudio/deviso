@@ -467,11 +467,13 @@ export async function POST(req: NextRequest, ctx: { params: Promise<{ id: string
     // nécessitent pas d'e-reporting de paiement (vente de marchandise), le
     // message de cycle de vie "Encaissée (212)" n'aura aucun effet. »
     if (facture.status === "paid" && !facture.superpdp_encaisse_at) {
-      // Sans date : Deviso ne mémorise pas la date de paiement (aucune colonne
-      // `paid_at`), donc la plateforme datera l'encaissement du jour. C'est
-      // approximatif et assumé ici — inventer une date serait pire. La route
-      // `encaisser` accepte une date quand l'appelant la connaît.
-      const encaissement = await envoyerEncaissementPdp(workspaceId, id, null);
+      // Avec sa vraie date quand on l'a. Une facture déjà payée au moment où on
+      // la transmet a souvent été encaissée bien avant — c'est même la
+      // définition du cas — donc dater l'encaissement du jour de la
+      // transmission serait faux de plusieurs jours sur la donnée qui fixe
+      // l'exigibilité. `paid_at` absente, la plateforme date elle-même : on
+      // n'invente rien.
+      const encaissement = await envoyerEncaissementPdp(workspaceId, id, facture.paid_at ?? null);
       if (!encaissement.ok) {
         console.error(`[superpdp/emettre] ${id} : encaissement immédiat non déclaré — ${encaissement.raison}`);
       }

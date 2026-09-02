@@ -66,6 +66,10 @@ export async function PATCH(req: NextRequest, { params }: Params) {
     "issue_date", "due_date", "payment_terms", "notes", "invoice_type",
     "deposit_percentage", "linked_invoice_id", "operation_category",
     "payment_on_debit", "type_code", "chorus_pro_ref", "chorus_pro_submitted_at",
+    // Date réelle de l'encaissement. Voir le commentaire de la colonne : c'est
+    // elle qui détermine la période d'exigibilité déclarée, et elle n'est plus
+    // corrigeable une fois le `fr:212` parti.
+    "paid_at",
   ] as const;
   const safeUpdate = Object.fromEntries(
     Object.entries(body).filter(([k]) => ALLOWED.includes(k as typeof ALLOWED[number]))
@@ -112,7 +116,13 @@ export async function PATCH(req: NextRequest, { params }: Params) {
   let facture = data;
   if (body.status === "paid" && current?.status !== "paid") {
     if (facture?.superpdp_invoice_id && !facture.superpdp_encaisse_at) {
-      const resultat = await envoyerEncaissementPdp(workspaceId, id);
+      // La date de paiement, si on la connaît. Sans elle, la plateforme date
+      // l'encaissement du jour de l'appel — ce qui est faux dès qu'on pointe un
+      // virement avec quelques jours de retard, et faux précisément sur la
+      // donnée qui fixe la période d'exigibilité de la TVA. On lit la colonne
+      // relue plutôt que le corps de la requête : une facture déjà datée par un
+      // autre chemin (import, rapprochement) doit valoir autant qu'une saisie.
+      const resultat = await envoyerEncaissementPdp(workspaceId, id, facture?.paid_at ?? null);
       if (resultat.ok) {
         // La ligne renvoyée a été lue AVANT la déclaration : sans cette
         // relecture, l'écran afficherait une facture payée mais pas encore

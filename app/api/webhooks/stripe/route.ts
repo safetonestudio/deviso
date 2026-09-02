@@ -55,11 +55,16 @@ export async function POST(req: NextRequest) {
       if (session.mode !== "subscription") {
         const invoiceId = session.metadata?.invoice_id;
         if (invoiceId && session.payment_status === "paid") {
+          // Un paiement par lien est encaissé maintenant, et c'est le seul
+          // chemin où la date est connue avec certitude — Stripe vient de nous
+          // le dire. On l'inscrit plutôt que de laisser la Plateforme Agréée
+          // dater elle-même : c'est cette date qui fixe la période
+          // d'exigibilité de la TVA sur les prestations de services.
           const { data: updated, error } = await supabase
             .from("invoices")
-            .update({ status: "paid" })
+            .update({ status: "paid", paid_at: new Date().toISOString().slice(0, 10) })
             .eq("id", invoiceId)
-            .select("user_id, superpdp_invoice_id, superpdp_encaisse_at")
+            .select("user_id, superpdp_invoice_id, superpdp_encaisse_at, paid_at")
             .maybeSingle();
           if (error) console.error("checkout.session.completed invoice update error:", error);
 
@@ -68,7 +73,11 @@ export async function POST(req: NextRequest) {
           // la route PATCH générique, donc sans cet appel une facture payée par
           // lien de paiement ne déclarerait jamais son encaissement à Super PDP.
           if (updated?.superpdp_invoice_id && !updated.superpdp_encaisse_at) {
-            const resultat = await envoyerEncaissementPdp(updated.user_id, invoiceId);
+            const resultat = await envoyerEncaissementPdp(
+              updated.user_id,
+              invoiceId,
+              updated.paid_at ?? null
+            );
             if (!resultat.ok && resultat.raison !== "non_transmise") {
               console.error(
                 `[stripe webhook] encaissement PDP ${invoiceId} : ${resultat.raison}`,
