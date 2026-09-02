@@ -47,15 +47,23 @@ export async function GET(_req: NextRequest, ctx: { params: Promise<{ id: string
   }
   if (!facture.superpdp_invoice_id) {
     // Pas une erreur : une facture jamais transmise n'a rien à déclarer.
-    return NextResponse.json({ transmise: false, transactions: [], paiements: [] });
+    return NextResponse.json({ transmise: false, transactions: [], paiements: [], evenements: [] });
   }
 
   const idPdp = Number(facture.superpdp_invoice_id);
 
   try {
-    const [tx, pay] = await Promise.all([
+    const [tx, pay, evs] = await Promise.all([
       superpdpFetch(workspaceId, `/b2c_transactions?invoice_id=${idPdp}&limit=20`),
       superpdpFetch(workspaceId, `/b2c_payments?invoice_id=${idPdp}&limit=20`),
+      // Les événements de cycle de vie, avec leurs blocs de données déclarées.
+      //
+      // C'est ici que vit la seule preuve consultable de ce qui a été déclaré au
+      // titre du paiement : le `fr:212` porte, dans `details[].reported_data`,
+      // les montants encaissés par taux de TVA (MDG-43 / MDT-207 = « MEN »).
+      // Sans cette lecture, l'utilisateur ne peut ni vérifier ce qui est parti
+      // en son nom, ni nous dire ce qui cloche quand ça ne part pas.
+      superpdpFetch(workspaceId, `/invoice_events?invoice_id=${idPdp}&limit=100`),
     ]);
 
     const lireTransactions = tx.ok
@@ -78,7 +86,32 @@ export async function GET(_req: NextRequest, ctx: { params: Promise<{ id: string
         }).data ?? []
       : [];
 
+    const lireEvenements = evs.ok
+      ? ((await evs.json()) as {
+          data?: {
+            id: number;
+            status_code: string;
+            status_text?: string;
+            created_at: string;
+            details?: {
+              reason?: string;
+              reported_data?: Record<string, unknown>[];
+              notes?: { contents?: { content?: string }[] }[];
+            }[];
+          }[];
+        }).data ?? []
+      : [];
+
     return NextResponse.json({
+      evenements: lireEvenements.map((e) => ({
+        id: e.id,
+        code: e.status_code,
+        libelle: e.status_text ?? null,
+        le: e.created_at,
+        // Le contenu déclaré, tel quel. On ne le résume pas : c'est une pièce
+        // justificative, et une pièce résumée ne justifie plus rien.
+        details: e.details ?? [],
+      })),
       transmise: true,
       transactions: lireTransactions.map((t) => ({
         id: t.id,
