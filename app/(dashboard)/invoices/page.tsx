@@ -475,6 +475,7 @@ export default function InvoicesPage() {
                           {inv.invoice_number}
                           {inv.invoice_type === "acompte" && " · acompte"}
                           {inv.invoice_type === "solde" && " · solde"}
+                          {inv.invoice_type === "avoir" && " · avoir"}
                         </div>
                       </div>
                       <div className="font-semibold text-white whitespace-nowrap shrink-0">
@@ -557,6 +558,11 @@ export default function InvoicesPage() {
                         )}
                         {inv.invoice_type === "solde" && (
                           <span className="text-[10px] font-bold px-1.5 py-0.5 rounded bg-indigo-500/15 text-indigo-400 border border-indigo-500/20">SOLDE</span>
+                        )}
+                        {/* Un avoir se lit de loin : c'est un montant qu'on rend,
+                            au milieu d'une liste de montants qu'on attend. */}
+                        {inv.invoice_type === "avoir" && (
+                          <span className="text-[10px] font-bold px-1.5 py-0.5 rounded bg-amber-500/15 text-amber-400 border border-amber-500/20">AVOIR</span>
                         )}
                       </td>
                       <td className="px-5 py-3.5 text-gray-300">

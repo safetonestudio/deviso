@@ -25,6 +25,21 @@ export async function POST(req: NextRequest, { params }: Params) {
     .single();
 
   if (!invoice) return NextResponse.json({ error: "Facture introuvable" }, { status: 404 });
+
+  // Un avoir est un montant qu'on REND. Le relancer, c'est réclamer à son
+  // client l'argent qu'on lui doit. Le bouton n'est plus proposé à l'écran,
+  // mais la règle doit vivre ici aussi : une règle qui ne tient que dans le
+  // navigateur n'est pas une règle.
+  if (invoice.invoice_type === "avoir") {
+    return NextResponse.json(
+      {
+        error: "Relance impossible",
+        message: "Un avoir n'appelle aucun paiement : c'est vous qui devez ce montant à votre client.",
+      },
+      { status: 400 }
+    );
+  }
+
   if (!invoice.client_email) return NextResponse.json({ error: "Email client manquant" }, { status: 400 });
 
   // On charge le profil uniquement pour le Reply-To : une relance de paiement

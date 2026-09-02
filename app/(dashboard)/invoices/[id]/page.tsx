@@ -15,6 +15,7 @@ import {
   RadioTower,
   ShieldCheck,
   Landmark,
+  Undo2,
 } from "lucide-react";
 import { libelleStatut } from "@/lib/superpdp-statuts";
 import { etatPdp } from "@/lib/superpdp-etat-facture";
@@ -101,6 +102,7 @@ function ActionPanel({ invoice, id, router, hasChorusPro }: {
   const [confirmDelete, setConfirmDelete] = useState(false);
   const [deleting, setDeleting] = useState(false);
   const [inv, setInv] = useState(invoice);
+  const [creatingAvoir, setCreatingAvoir] = useState(false);
 
   // ── La date d'encaissement, demandée là où elle change quelque chose ──────
   //
@@ -159,6 +161,33 @@ function ActionPanel({ invoice, id, router, hasChorusPro }: {
       // donc `superpdp_encaisse_at` est déjà à jour dans `data.invoice`.
     }
     setMarkingPaid(false);
+  }
+
+  /**
+   * Établir l'avoir qui annule cette facture.
+   *
+   * C'est le seul chemin de correction d'une facture déjà transmise : sous la
+   * réforme elle ne se modifie plus, et un refus du client (fr:210) est
+   * terminal. L'avoir naît en brouillon — l'utilisateur peut réduire les
+   * lignes pour n'en annuler qu'une partie — et on l'y emmène directement,
+   * parce qu'un document créé qu'on ne voit pas est un document oublié.
+   */
+  async function handleAvoir() {
+    setCreatingAvoir(true);
+    const res = await fetch(`/api/invoices/${id}/avoir`, { method: "POST" });
+    const data = await res.json();
+    setCreatingAvoir(false);
+
+    if (res.ok && data.avoir?.id) {
+      window.location.href = `/invoices/${data.avoir.id}`;
+      return;
+    }
+    // Un avoir existe déjà : on n'en refait pas un, on montre celui-là.
+    if (res.status === 409 && data.avoirId) {
+      window.location.href = `/invoices/${data.avoirId}`;
+      return;
+    }
+    alert(data.message || data.error || "Création de l'avoir impossible.");
   }
 
   async function handlePaymentLink() {
@@ -256,11 +285,16 @@ function ActionPanel({ invoice, id, router, hasChorusPro }: {
     router.push("/invoices");
   }
 
+  // Un avoir n'appelle aucun règlement : c'est le vendeur qui doit. Lui
+  // proposer un lien de paiement, un « marquer comme payée » ou une relance
+  // aurait la même conséquence de chaque côté — réclamer au client de l'argent
+  // qu'on est en train de lui rendre.
+  const estAvoir = inv.invoice_type === "avoir";
   const canSendEmail = !!inv.client_email && inv.status !== "cancelled";
-  const canPaymentLink = inv.status !== "paid" && inv.status !== "cancelled";
-  const canMarkPaid = inv.status !== "paid" && inv.status !== "cancelled";
+  const canPaymentLink = !estAvoir && inv.status !== "paid" && inv.status !== "cancelled";
+  const canMarkPaid = !estAvoir && inv.status !== "paid" && inv.status !== "cancelled";
   const canMarkSent = inv.status === "draft";
-  const canRemind = inv.status === "sent" && !!inv.client_email;
+  const canRemind = !estAvoir && inv.status === "sent" && !!inv.client_email;
   /**
    * Transmet la facture à la Plateforme Agréée.
    *
@@ -417,6 +451,22 @@ function ActionPanel({ invoice, id, router, hasChorusPro }: {
               >
                 <Bell size={17} className="shrink-0" />
                 <span>{sendingReminder ? "Envoi…" : inv.reminder_count > 0 ? `Relancer (${inv.reminder_count}/3)` : "Relancer le client"}</span>
+              </button>
+            )}
+
+            {/* Établir un avoir.
+                Proposé sur toute facture sortie du brouillon, et pas seulement
+                sur une facture refusée : une erreur se découvre aussi bien
+                avant le refus qu'après, et sous la réforme une facture partie
+                ne se modifie plus. Un avoir n'a rien à faire sur un avoir. */}
+            {inv.status !== "draft" && inv.invoice_type !== "avoir" && (
+              <button
+                onClick={handleAvoir}
+                disabled={creatingAvoir}
+                className="w-full text-sm font-medium px-4 py-2.5 rounded-lg border border-ds-border hover:bg-ds-elevated/60 text-gray-300 disabled:opacity-50 transition-colors text-left flex items-center gap-2"
+              >
+                <Undo2 size={17} className="shrink-0" />
+                <span>{creatingAvoir ? "Création…" : "Établir un avoir"}</span>
               </button>
             )}
           </>
@@ -666,11 +716,25 @@ export default function InvoiceDetailPage() {
                   SOLDE
                 </span>
               )}
+              {invoice.invoice_type === "avoir" && (
+                <span className="px-2.5 py-0.5 rounded-full text-xs font-bold bg-amber-500/15 text-amber-400 border border-amber-500/20">
+                  AVOIR
+                </span>
+              )}
             </div>
             <p className="text-gray-400 text-sm">
-              Émise le {fmtDate(invoice.issue_date)}
-              {invoice.due_date && ` · Échéance le ${fmtDate(invoice.due_date)}`}
+              Émis{invoice.invoice_type === "avoir" ? "" : "e"} le {fmtDate(invoice.issue_date)}
+              {/* Un avoir n'a pas d'échéance : il n'appelle aucun paiement. En
+                  afficher une ferait attendre un règlement qui ne viendra pas. */}
+              {invoice.invoice_type !== "avoir" &&
+                invoice.due_date &&
+                ` · Échéance le ${fmtDate(invoice.due_date)}`}
             </p>
+            {invoice.invoice_type === "avoir" && invoice.linked_invoice_number && (
+              <p className="text-sm text-amber-400 mt-1">
+                Annule la facture {invoice.linked_invoice_number}
+              </p>
+            )}
             {invoice.invoice_type === "solde" && invoice.linked_invoice_number && (
               <p className="text-sm text-indigo-400 mt-1">
                 Acompte versé ·{" "}

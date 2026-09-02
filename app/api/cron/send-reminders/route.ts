@@ -65,6 +65,12 @@ export async function GET(req: NextRequest) {
     .from("invoices")
     .select("id, invoice_number, client_name, client_email, client_company, total_ttc, due_date, payment_link_url, reminder_count, seller_name, seller_company, user_id, issue_date")
     .eq("status", "sent")
+    // Jamais un avoir. C'est un montant qu'on rend : relancer son client pour
+    // qu'il paie l'argent qu'on lui doit est le message le plus gênant que ce
+    // produit puisse envoyer, et il partirait tout seul, la nuit, sans que
+    // personne l'ait demandé. Un avoir porte une échéance au jour de son
+    // émission — il serait donc « en retard » dès le lendemain.
+    .neq("invoice_type", "avoir")
     .lt("due_date", now)
     .lt("reminder_count", 10)
     .in("user_id", eligibleIds);

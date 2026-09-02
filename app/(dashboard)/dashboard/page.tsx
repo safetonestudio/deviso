@@ -50,7 +50,7 @@ export default async function DashboardPage() {
 
   let invoicesQuery = supabase
     .from("invoices")
-    .select("id, invoice_number, client_name, client_email, status, total_ht, total_ttc, due_date, issue_date, created_at, proposal_id")
+    .select("id, invoice_number, client_name, client_email, status, total_ht, total_ttc, due_date, issue_date, created_at, proposal_id, invoice_type")
     .order("created_at", { ascending: false });
 
   if (isMember) {
@@ -73,7 +73,11 @@ export default async function DashboardPage() {
   const monthStart = new Date(now.getFullYear(), now.getMonth(), 1).toISOString();
 
   // ── KPI 1 : Encours à encaisser ──────────────────────────────────────────
-  const sentInvoices    = inv.filter((i) => i.status === "sent");
+  //
+  // Un avoir est un montant qu'on REND. Le compter dans l'encours gonflerait
+  // ce qu'on attend de ses clients du montant même qu'on leur doit, et le
+  // ferait apparaître en retard dès le lendemain de son émission.
+  const sentInvoices    = inv.filter((i) => i.status === "sent" && i.invoice_type !== "avoir");
   const caToCollect     = sentInvoices.reduce((s, i) => s + i.total_ttc, 0);
   const overdueInvoices = sentInvoices.filter(
     (i) => i.due_date && new Date(i.due_date) < now

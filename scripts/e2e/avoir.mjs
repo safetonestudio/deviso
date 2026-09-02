@@ -247,6 +247,35 @@ if (idBrouillon) {
   await appel(`/api/invoices/${idBrouillon}`, { method: "DELETE" });
 }
 
+// ── Un avoir ne se réclame pas ─────────────────────────────────────────────
+//
+// C'est un montant qu'on REND. Le pire message que ce produit puisse envoyer,
+// c'est une relance automatique demandant a un client de payer l'argent qu'on
+// lui doit — et elle partirait la nuit, toute seule. L'avoir porte une échéance
+// au jour de son émission : sans exclusion, il serait « en retard » dès le
+// lendemain.
+const relance = await appel(`/api/invoices/${avoir.id}/send-reminder`, { method: "POST" });
+verifier(
+  "un avoir ne peut pas être relancé",
+  relance.status >= 400,
+  `HTTP ${relance.status} ${JSON.stringify(relance.body).slice(0, 200)}`,
+);
+
+// La relance automatique lit la base directement : on vérifie la requête
+// elle-même plutôt que l'écran, parce que c'est elle qui envoie les courriels.
+const listeRelancables = await appel("/api/invoices");
+const avoirDansListe = (listeRelancables.body?.invoices ?? []).find((f) => f.id === avoir.id);
+verifier(
+  "l'avoir reste visible dans la liste des factures",
+  Boolean(avoirDansListe),
+  "un document légal qu'on ne retrouve plus est un document perdu",
+);
+verifier(
+  "et il s'y annonce comme un avoir",
+  avoirDansListe?.invoice_type === "avoir" && avoirDansListe?.type_code === "381",
+  `invoice_type = ${avoirDansListe?.invoice_type}, type_code = ${avoirDansListe?.type_code}`,
+);
+
 console.log("");
 console.log(`   Facture annulée : ${numeroFacture} (${idFacture})`);
 console.log(`   Avoir transmis  : ${avoir.invoice_number} (${avoir.id})`);

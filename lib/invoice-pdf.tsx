@@ -356,6 +356,7 @@ export function InvoicePDF({ invoice, accentColor, paymentInfo, linkedInvoiceNum
   const isFranchise = invoice.tva_rate === 0;
   const isAcompte = invoice.invoice_type === "acompte";
   const isSolde = invoice.invoice_type === "solde";
+  const isAvoir = invoice.invoice_type === "avoir";
   const linkedNumber = linkedInvoiceNumber ?? invoice.linked_invoice_number ?? null;
   // Même n° de TVA que celui injecté dans le XML : le PDF lisible et les données
   // structurées doivent dire strictement la même chose.
@@ -374,7 +375,13 @@ export function InvoicePDF({ invoice, accentColor, paymentInfo, linkedInvoiceNum
     (paymentInfo.method === "link" || paymentInfo.method === "both") &&
     paymentInfo.linkUrl;
 
-  const title = isAcompte
+  // Un avoir doit se lire comme un avoir dès la première ligne. Le PDF est ce
+  // que le client ouvre et ce que son comptable classe : lui présenter
+  // « FACTURE » sur un document qui rend de l'argent, c'est provoquer une
+  // écriture à l'envers.
+  const title = isAvoir
+    ? "AVOIR"
+    : isAcompte
     ? "FACTURE D'ACOMPTE"
     : isSolde
     ? "FACTURE DE SOLDE"
@@ -580,7 +587,9 @@ export function InvoicePDF({ invoice, accentColor, paymentInfo, linkedInvoiceNum
               </Text>
             </View>
             <View style={[styles.totalRowFinal, { backgroundColor: accent }]}>
-              <Text style={styles.totalLabelFinal}>Total TTC</Text>
+              <Text style={styles.totalLabelFinal}>
+                {isAvoir ? "Total TTC à votre crédit" : "Total TTC"}
+              </Text>
               <Text style={styles.totalValueFinal}>
                 {fmt(invoice.total_ttc)}
               </Text>
@@ -588,8 +597,11 @@ export function InvoicePDF({ invoice, accentColor, paymentInfo, linkedInvoiceNum
           </View>
         </View>
 
-        {/* ── Modalités de paiement ── */}
-        {(showBank || showLink) && (
+        {/* ── Modalités de paiement ──
+            Rien à payer sur un avoir : c'est le vendeur qui doit. Afficher un
+            IBAN ou un lien de paiement inviterait le client à régler un
+            document qui le crédite. */}
+        {!isAvoir && (showBank || showLink) && (
           <View style={styles.notesBox}>
             <Text style={styles.notesLabel}>Modalités de paiement</Text>
             {showBank && <Text style={styles.notesText}>{bankText}</Text>}
