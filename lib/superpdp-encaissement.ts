@@ -68,7 +68,7 @@ export async function envoyerEncaissementPdp(
 
   const { data: facture } = await admin
     .from("invoices")
-    .select("id, superpdp_invoice_id, superpdp_encaisse_at")
+    .select("id, superpdp_invoice_id, superpdp_encaisse_at, total_ttc, tva_rate")
     .eq("id", invoiceId)
     .eq("user_id", workspaceId)
     .maybeSingle();
@@ -93,7 +93,56 @@ export async function envoyerEncaissementPdp(
       ? dateEncaissement
       : null;
 
-  const horodatage = dateValide
+  // ─────────────── Le bloc MDG-43 exigé par la nomenclature ────────────────
+  //
+  // On envoyait `details: [{ reported_data: [{ date }] }]`. La plateforme le
+  // refusait, et disait exactement pourquoi :
+  //
+  //   « [BR-FR-CDV-14/MDT-207] : Si le statut est "Encaissé" (MDT-105 = 212),
+  //     ALORS il doit y avoir au moins 1 Bloc MDG-43 avec une valeur de
+  //     MDT-207 = MEN et tous les blocs MDG-43 avec une valeur MDT-207 = "MEN"
+  //     doivent contenir une valeur MDT-215 (Montant) et une valeur de MDT-224
+  //     (pourcentage de TVA). »
+  //
+  // Le piège : sans `details` du tout, la plateforme construit ce bloc elle-même
+  // et tout passe. En fournir un incomplet DÉSACTIVE ce calcul et fait échouer
+  // la validation. La branche « date » n'était donc pas seulement inutile, elle
+  // empêchait le `fr:212` — le statut obligatoire du fournisseur — de partir.
+  // Aucune interface ne l'appelait encore : le défaut était armé, pas déclenché.
+  //
+  // La forme exacte a été lue sur un bloc que la plateforme a produit seule
+  // (facture 404395, 02/09/2026) plutôt que devinée :
+  //
+  //   { type_code: "MEN", amount: "300.000000", currency_code: "EUR",
+  //     value_percent: "20.00" }
+  //
+  // À noter, et c'est contre-intuitif : `amount` vaut 300 pour une facture de
+  // 250 € HT + 20 %. Le « montant encaissé net » est donc le montant TTC
+  // réellement reçu, pas le HT.
+  //
+  // Une facture Deviso n'a qu'un seul taux (`invoices.tva_rate`), donc un seul
+  // bloc suffit toujours. Si l'un des deux chiffres manque, on n'invente rien :
+  // on retombe sur le corps minimal, que la plateforme sait compléter. On perd
+  // la date exacte, jamais la déclaration.
+  const ttc = Number(facture.total_ttc);
+  const taux = Number(facture.tva_rate);
+  const chiffresSurs = Number.isFinite(ttc) && ttc > 0 && Number.isFinite(taux) && taux >= 0;
+
+  const blocMen =
+    dateValide && chiffresSurs
+      ? {
+          type_code: "MEN",
+          amount: ttc.toFixed(2),
+          currency_code: "EUR",
+          value_percent: taux.toFixed(2),
+          date: dateValide,
+        }
+      : null;
+
+  // La date qu'on note chez nous doit être celle qui part réellement. Sans le
+  // bloc, c'est la plateforme qui date l'événement — donc aujourd'hui. Noter la
+  // date fournie ferait croire à une déclaration qu'on n'a pas faite.
+  const horodatage = blocMen
     ? new Date(`${dateValide}T12:00:00Z`).toISOString()
     : new Date().toISOString();
 
@@ -180,13 +229,12 @@ export async function envoyerEncaissementPdp(
       body: JSON.stringify({
         invoice_id: Number(facture.superpdp_invoice_id),
         status_code: "fr:212",
-        // On ne pose `details` que si l'on connaît la date : le corps minimal
-        // reste le cas nominal, et la plateforme calcule alors elle-même la
-        // ventilation des montants par taux à partir de la facture qu'elle
-        // connaît déjà.
-        ...(dateValide
-          ? { details: [{ reported_data: [{ date: dateValide }] }] }
-          : {}),
+        // Corps minimal par défaut : la plateforme calcule alors elle-même la
+        // ventilation par taux à partir de la facture qu'elle connaît déjà. On
+        // ne pose `details` que pour porter la date d'encaissement, et
+        // seulement avec un bloc MEN complet — un bloc partiel désactive son
+        // calcul sans satisfaire BR-FR-CDV-14.
+        ...(blocMen ? { details: [{ reported_data: [blocMen] }] } : {}),
       }),
     });
 

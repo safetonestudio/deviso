@@ -8,6 +8,7 @@ import {
   SuperPdpNotConnected,
   SuperPdpSessionPending,
 } from "@/lib/superpdp";
+import { estCloture } from "@/lib/superpdp-statuts";
 
 /**
  * Synchronisation des factures échangées via la Plateforme Agréée.
@@ -55,14 +56,36 @@ import {
  * fournisseur cesse d'afficher « Refusée par le client » — c'est-à-dire
  * l'information qui l'oblige à passer un avoir.
  *
- * On retient donc le dernier `fr:*`, et à défaut le dernier `api:*` (une
- * facture Peppol n'a que ceux-là). Les `ppf:*` sont de la traçabilité
- * d'acheminement : ils n'ont rien à dire à l'utilisateur.
+ * On retient donc, dans l'ordre : le dernier statut **clôturant** s'il y en a
+ * un, sinon le dernier `fr:*`, sinon le dernier `api:*` (une facture Peppol
+ * n'a que ceux-là). Les `ppf:*` sont de la traçabilité d'acheminement : ils
+ * n'ont rien à dire à l'utilisateur.
  */
 export function statutQuiFaitFoi(
   evenements: { status_code?: string | null }[] | null | undefined
 ): string | null {
   const codes = (evenements ?? []).map((e) => e?.status_code).filter(Boolean) as string[];
+
+  // Un statut clôturant l'emporte, même s'il n'est pas le dernier arrivé.
+  //
+  // Constaté sur une facture réelle du bac à sable le 02/09/2026, id 404395 :
+  //
+  //   1168010  fr:212  Encaissée              02:17:32.400378
+  //   1168011  fr:202  Reçue par la plateforme 02:17:32.519899
+  //
+  // L'accusé de réception du destinataire arrive APRÈS l'encaissement, avec un
+  // identifiant supérieur. Prendre le dernier `fr:*` affiche donc « Reçue par
+  // la plateforme » sur une facture encaissée — et, plus grave que l'affichage,
+  // `estCloture` cesse de la reconnaître comme terminée : elle repasse « en
+  // retard » en rouge, et la détection de blocage recommence à la surveiller.
+  //
+  // La spécification prévient d'ailleurs que ce n'est pas une machine à états :
+  // « There is no formal state machine governing the transitions. » Il n'y a
+  // donc aucune raison d'attendre un ordre, et l'ordre observé ici prouve qu'il
+  // n'y en a pas. Une facture dont la vie est finie ne redevient pas en cours.
+  const clos = codes.filter((c) => estCloture(c));
+  if (clos.length) return clos[clos.length - 1];
+
   const officiels = codes.filter((c) => c.startsWith("fr:"));
   if (officiels.length) return officiels[officiels.length - 1];
   const internes = codes.filter((c) => c.startsWith("api:"));
@@ -496,9 +519,20 @@ async function synchroniserEvenements(userId: string): Promise<number> {
       // Un `ppf:*` fait avancer le curseur mais ne touche à aucun statut : il
       // dit où en est l'acheminement administratif, pas où en est la facture.
       if (ev.status_code && estStatutAffichable(ev.status_code)) {
-        // Rétrogradation refusée : le statut officiel prime sur l'interne.
-        const dejaOfficiel = (connus.get(ev.invoice_id) ?? "").startsWith("fr:");
-        if (dejaOfficiel && ev.status_code.startsWith("api:")) {
+        // Rétrogradation refusée, selon la même hiérarchie que
+        // `statutQuiFaitFoi` — c'est la même colonne, ce doit être la même
+        // règle :
+        //
+        //   1. un statut clôturant ne se fait jamais remplacer par un statut
+        //      en cours. La facture 404395 le montre : `fr:202` arrive APRÈS
+        //      `fr:212`, et l'appliquer ferait repasser une facture encaissée
+        //      en « Reçue par la plateforme », donc en retard, donc surveillée ;
+        //   2. un `api:*` ne remplace jamais un `fr:*`.
+        const actuel = connus.get(ev.invoice_id) ?? "";
+        const retrograde =
+          (estCloture(actuel) && !estCloture(ev.status_code)) ||
+          (actuel.startsWith("fr:") && ev.status_code.startsWith("api:"));
+        if (retrograde) {
           curseur = Math.max(curseur ?? 0, ev.id);
           continue;
         }

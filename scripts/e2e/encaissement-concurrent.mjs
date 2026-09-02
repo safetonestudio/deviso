@@ -273,6 +273,44 @@ if (idFuture) {
   console.log(`   Facture de test conservée (réellement transmise) : ${idFuture}`);
 }
 
+// ── Franchise en base : 0 % de TVA, et une date d'encaissement ─────────────
+//
+// C'est le cas majoritaire chez les freelances, donc chez les utilisateurs de
+// Deviso. BR-FR-CDV-14 exige « une valeur de MDT-224 (pourcentage de TVA) » sur
+// le bloc MEN. Zéro EST une valeur, mais rien ne garantit que la plateforme
+// l'entende ainsi : si elle refusait, le statut obligatoire du fournisseur ne
+// partirait pour aucun auto-entrepreneur en franchise. On le vérifie plutôt que
+// de le supposer.
+const franchise = await appel("/api/invoices", {
+  method: "POST",
+  body: JSON.stringify(
+    corpsFacture("Encaissement en franchise en base", { tva_rate: 0, total_ttc: 250 }),
+  ),
+});
+const idFranchise = franchise.body?.invoice?.id;
+if (idFranchise) {
+  await appel(`/api/invoices/${idFranchise}`, { method: "PATCH", body: JSON.stringify({ status: "sent" }) });
+  const emiseF = await appel(`/api/superpdp/invoices/${idFranchise}/emettre`, { method: "POST" });
+  if (emiseF.status === 200) {
+    const encF = await appel(`/api/superpdp/invoices/${idFranchise}/encaisser`, {
+      method: "POST",
+      body: JSON.stringify({ date }),
+    });
+    verifier(
+      "une facture à 0 % de TVA s'encaisse avec sa date réelle",
+      encF.status === 200 && encF.body?.encaissee === true,
+      `HTTP ${encF.status} ${JSON.stringify(encF.body).slice(0, 500)}`,
+    );
+    const rlF = await appel(`/api/invoices/${idFranchise}`);
+    verifier(
+      "et la date retenue est bien celle du paiement",
+      String(rlF.body?.invoice?.superpdp_encaisse_at ?? "").slice(0, 10) === date,
+      `${rlF.body?.invoice?.superpdp_encaisse_at} attendu ${date}`,
+    );
+    console.log(`   Facture de test conservée (franchise, transmise) : ${idFranchise}`);
+  }
+}
+
 console.log("");
 console.log(`   Facture de test conservée (réellement transmise et encaissée) : ${id}`);
 
