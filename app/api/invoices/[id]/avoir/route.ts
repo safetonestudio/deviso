@@ -137,6 +137,10 @@ export async function POST(_req: NextRequest, ctx: { params: Promise<{ id: strin
     "created_at",
     "updated_at",
     "invoice_number",
+    "created_by",
+    // Un avoir n'est pas la facture d'un devis : le rattacher au même devis le
+    // ferait compter comme tel là où Deviso cherche « la facture de ce devis ».
+    "proposal_id",
     "superpdp_invoice_id",
     "superpdp_status",
     "superpdp_status_date",
@@ -146,12 +150,14 @@ export async function POST(_req: NextRequest, ctx: { params: Promise<{ id: strin
     "superpdp_emission_debutee_at",
     "paid_at",
     "payment_link_url",
+    "stripe_payment_link_id",
+    "facturx_pdf_path",
     "reminder_count",
-    "last_reminder_at",
-    "sent_at",
-    "viewed_at",
+    "last_reminder_sent_at",
     "chorus_pro_ref",
     "chorus_pro_status",
+    "chorus_pro_status_date",
+    "chorus_pro_motif_rejet",
     "chorus_pro_submitted_at",
   ]);
   const reprise = Object.fromEntries(
@@ -175,7 +181,10 @@ export async function POST(_req: NextRequest, ctx: { params: Promise<{ id: strin
       // l'échéance de la facture annulée parlerait d'un paiement qui n'aura
       // pas lieu.
       due_date: aujourdhui,
-      title: origine.invoice_number ? `Avoir sur facture ${origine.invoice_number}` : "Avoir",
+      created_by: user.id,
+      // Un avoir n'appelle aucun paiement : les conditions de règlement de la
+      // facture annulée n'ont plus d'objet.
+      payment_terms: null,
       notes: [`Avoir annulant la facture ${origine.invoice_number ?? ""}`.trim(), origine.notes ?? ""]
         .filter(Boolean)
         .join("\n"),
