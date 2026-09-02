@@ -9,6 +9,7 @@ import { manquesPourEmission, phraseManques, transmissible } from "@/lib/superpd
 import { natureOperation } from "@/lib/superpdp-nature";
 import { validerFacture, resumerEchecs } from "@/lib/superpdp-validation";
 import { envoyerEncaissementPdp } from "@/lib/superpdp-encaissement";
+import { statutQuiFaitFoi } from "@/lib/superpdp-sync";
 import { resoudreAdresseClient } from "@/lib/superpdp-annuaire";
 import type { Invoice } from "@/types";
 
@@ -410,7 +411,14 @@ export async function POST(req: NextRequest, ctx: { params: Promise<{ id: string
       .from("invoices")
       .update({
         superpdp_invoice_id: reponse.id != null ? String(reponse.id) : null,
-        superpdp_status: reponse.events?.at(-1)?.status_code ?? "api:uploaded",
+        // `at(-1)` était exactement ce que `statutQuiFaitFoi` interdit, et pour
+        // les mêmes raisons : la réponse d'émission porte déjà plusieurs
+        // événements, dont des `ppf:*` d'acheminement administratif qui n'ont
+        // rien à dire à l'utilisateur. Le dernier du tableau pouvait donc
+        // s'inscrire comme statut de la facture, et l'écran afficher un code
+        // brut sur une facture qui venait de partir normalement. Une seule
+        // règle pour cette colonne, ici comme à la synchronisation.
+        superpdp_status: statutQuiFaitFoi(reponse.events) ?? "api:uploaded",
         superpdp_status_date: new Date().toISOString(),
         superpdp_error: null,
         // Conservé, pas seulement renvoyé : c'est ce qui permet, des jours plus
