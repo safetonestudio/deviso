@@ -226,17 +226,21 @@ export async function POST(req: NextRequest, ctx: { params: Promise<{ id: string
     //     le destinataire reçoit un crédit qui ne dit pas ce qu'il corrige, et
     //     son comptable ne peut le rapprocher de rien.
     let numeroAcompte: string | null = null;
+    let dateDocLie: string | null = null;
     if (
       (facture.invoice_type === "solde" || facture.invoice_type === "avoir") &&
       facture.linked_invoice_id
     ) {
       const { data: liee } = await admin
         .from("invoices")
-        .select("invoice_number")
+        .select("invoice_number, issue_date")
         .eq("id", facture.linked_invoice_id)
         .eq("user_id", workspaceId)
         .maybeSingle();
       numeroAcompte = liee?.invoice_number ?? null;
+      // BT-26. Sans elle, un avoir est refusé par BR-FR-CO-05, qui ne compte
+      // pas une référence non datée.
+      dateDocLie = liee?.issue_date ?? null;
     }
 
     const xml = generateFacturXml(
@@ -245,7 +249,8 @@ export async function POST(req: NextRequest, ctx: { params: Promise<{ id: string
       paiement,
       connexion?.directory_address ?? null,
       connexion?.company_number ?? null,
-      adresseClient
+      adresseClient,
+      dateDocLie
     );
 
     const formulaire = new FormData();

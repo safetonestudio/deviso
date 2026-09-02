@@ -179,7 +179,22 @@ export function generateFacturXml(
   // le SIREN nu : ce repli reste correct pour la majorité des entreprises, et
   // sert aussi aux PDF Factur-X générés hors de tout raccordement, où aucun
   // appel d'annuaire n'est possible.
-  buyerDirectoryAddress?: string | null
+  buyerDirectoryAddress?: string | null,
+  /**
+   * Date d'émission du document référencé (BT-26), au format AAAA-MM-JJ.
+   *
+   * Facultative pour une facture de solde qui renvoie à son acompte,
+   * **obligatoire pour un avoir**. BR-FR-CO-05 : « Si le type de facture (BT-3)
+   * est un avoir (261, 381, 396, 502, 503), alors au moins une référence à une
+   * facture antérieure (BT-25) **avec sa date (BT-26)** doit être présente. »
+   *
+   * Une référence sans date n'est pas comptée du tout : le validateur officiel
+   * répondait « Références entête trouvées : 0 » sur un document qui en portait
+   * pourtant bien une. En dernier paramètre, et non inséré au milieu, parce que
+   * tous les paramètres voisins sont des `string | null` — un décalage
+   * positionnel y passerait la vérification de types sans être vu.
+   */
+  linkedInvoiceDate?: string | null
 ): string {
   /**
    * BT-8 — quand la TVA devient exigible.
@@ -318,9 +333,17 @@ export function generateFacturXml(
         }</ram:SpecifiedTradePaymentTerms>`
       : "";
 
-  // Référence à la facture d'acompte (BG-3) — se place APRÈS les totaux en CII
+  // Référence au document antérieur (BG-3) — se place APRÈS les totaux en CII.
+  // Deux usages : l'acompte d'une facture de solde, et la facture qu'un avoir
+  // annule. La date (BT-26) est ce qui rend la référence opposable pour un
+  // avoir — sans elle, BR-FR-CO-05 la compte pour rien.
+  const dateDocLie = linkedInvoiceDate?.slice(0, 10).replace(/-/g, "") || null;
   const referencedDoc = linkedInvoiceNumber
-    ? `<ram:InvoiceReferencedDocument><ram:IssuerAssignedID>${esc(linkedInvoiceNumber)}</ram:IssuerAssignedID></ram:InvoiceReferencedDocument>`
+    ? `<ram:InvoiceReferencedDocument><ram:IssuerAssignedID>${esc(linkedInvoiceNumber)}</ram:IssuerAssignedID>${
+        dateDocLie
+          ? `<ram:FormattedIssueDateTime><qdt:DateTimeString format="102">${dateDocLie}</qdt:DateTimeString></ram:FormattedIssueDateTime>`
+          : ""
+      }</ram:InvoiceReferencedDocument>`
     : "";
 
   return `<?xml version="1.0" encoding="UTF-8"?>

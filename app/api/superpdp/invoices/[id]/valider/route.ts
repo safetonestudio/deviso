@@ -89,17 +89,19 @@ export async function POST(req: NextRequest, ctx: { params: Promise<{ id: string
   // Valider un document sans la référence que l'émission y mettra, ce serait
   // valider autre chose que ce qui part.
   let numeroAcompte: string | null = null;
+  let dateDocLie: string | null = null;
   if (
     (facture.invoice_type === "solde" || facture.invoice_type === "avoir") &&
     facture.linked_invoice_id
   ) {
     const { data: liee } = await admin
       .from("invoices")
-      .select("invoice_number")
+      .select("invoice_number, issue_date")
       .eq("id", facture.linked_invoice_id)
       .eq("user_id", workspaceId)
       .maybeSingle();
     numeroAcompte = liee?.invoice_number ?? null;
+    dateDocLie = liee?.issue_date ?? null;
   }
 
   const xml = generateFacturXml(
@@ -116,7 +118,8 @@ export async function POST(req: NextRequest, ctx: { params: Promise<{ id: string
       : undefined,
     connexion?.directory_address ?? null,
     connexion?.company_number ?? null,
-    adresseClient
+    adresseClient,
+    dateDocLie
   );
 
   const rapport = await validerFacture(xml, `${facture.invoice_number || facture.id}.xml`);
