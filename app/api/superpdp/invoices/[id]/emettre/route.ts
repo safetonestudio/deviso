@@ -95,6 +95,63 @@ export async function POST(req: NextRequest, ctx: { params: Promise<{ id: string
     );
   }
 
+  // Verrou d'émission : la garde anti-doublon ci-dessus ne suffit pas.
+  //
+  // Elle lit `superpdp_invoice_id`, le trouve vide, puis transmet. Entre les
+  // deux il s'écoule plusieurs secondes — génération du XML, validation
+  // officielle, POST — pendant lesquelles un second appel lit la même valeur
+  // vide et transmet lui aussi. La facture arrive en double chez le client,
+  // qui la refuse pour « DOUBLON », et il faut passer un avoir. Le bouton est
+  // désactivé pendant l'envoi, mais un second onglet, un réessai réseau ou un
+  // appel direct à l'API contournent l'interface.
+  //
+  // On remplace donc la lecture par une PRISE : un UPDATE conditionnel que la
+  // base arbitre. Le premier appel obtient sa ligne, les suivants en obtiennent
+  // zéro et s'arrêtent avant d'avoir rien envoyé.
+  //
+  // Le verrou se périme au bout de dix minutes : un plantage à mi-course ne
+  // doit pas bloquer la facture pour toujours. C'est plus long que la durée
+  // d'une émission (quelques secondes) et plus court que la patience de
+  // quelqu'un qui réessaie.
+  const perime = new Date(Date.now() - 10 * 60 * 1000).toISOString();
+  const { data: prise } = await admin
+    .from("invoices")
+    .update({ superpdp_emission_debutee_at: new Date().toISOString() })
+    .eq("id", id)
+    .eq("user_id", workspaceId)
+    .is("superpdp_invoice_id", null)
+    .or(`superpdp_emission_debutee_at.is.null,superpdp_emission_debutee_at.lt.${perime}`)
+    .select("id")
+    .maybeSingle();
+
+  if (!prise) {
+    return NextResponse.json(
+      {
+        error: "Transmission déjà en cours",
+        message:
+          "Cette facture est déjà en cours de transmission. Patientez quelques secondes " +
+          "et rechargez la page plutôt que de réessayer : un second envoi la ferait " +
+          "arriver en double chez votre client.",
+      },
+      { status: 409 }
+    );
+  }
+
+  /**
+   * Rend le verrou. À appeler sur CHAQUE sortie qui n'a pas transmis.
+   *
+   * Le laisser posé après un échec bloquerait la facture dix minutes sans
+   * raison — l'utilisateur corrige son adresse et se voit répondre « déjà en
+   * cours » alors que rien ne l'est.
+   */
+  const rendreVerrou = () =>
+    admin
+      .from("invoices")
+      .update({ superpdp_emission_debutee_at: null })
+      .eq("id", id)
+      .eq("user_id", workspaceId)
+      .then(() => undefined, () => undefined);
+
   try {
     // Adresse électronique et numéro d'entreprise réellement enregistrés par
     // Super PDP pour NOUS (le vendeur) — voir generateFacturXml pour le
@@ -231,6 +288,7 @@ export async function POST(req: NextRequest, ctx: { params: Promise<{ id: string
         .eq("id", id)
         .eq("user_id", workspaceId);
 
+      await rendreVerrou();
       return NextResponse.json(
         {
           error: "Facture non conforme",
@@ -284,6 +342,7 @@ export async function POST(req: NextRequest, ctx: { params: Promise<{ id: string
         .eq("user_id", workspaceId);
 
       console.error(`[superpdp/emettre] ${id} : HTTP ${res.status} ${detail.slice(0, 300)}`);
+      await rendreVerrou();
       return NextResponse.json(
         {
           error: panne ? "Plateforme indisponible" : "Facture refusée",
@@ -358,6 +417,9 @@ export async function POST(req: NextRequest, ctx: { params: Promise<{ id: string
         // tard, de savoir si une facture « transmise » l'a été à une adresse
         // sûre ou à un SIREN nu qui peut ne désigner personne.
         superpdp_adresse_source: sourceAdresse,
+        // Le verrou a fait son office : c'est `superpdp_invoice_id` qui garde
+        // désormais la facture contre un second envoi.
+        superpdp_emission_debutee_at: null,
       })
       .eq("id", id)
       .eq("user_id", workspaceId);
@@ -412,7 +474,10 @@ export async function POST(req: NextRequest, ctx: { params: Promise<{ id: string
     // sur le SIREN nu, sans avoir à relire le XML.
     return NextResponse.json({ emise: true, superpdpId: reponse.id, sourceAdresse });
   } catch (err) {
+    // Ces deux exceptions sont levées par `superpdpFetch` avant tout envoi :
+    // rien n'est parti, on rend le verrou.
     if (err instanceof SuperPdpNotConnected) {
+      await rendreVerrou();
       return NextResponse.json(
         {
           error: "Non raccordé",
@@ -422,6 +487,7 @@ export async function POST(req: NextRequest, ctx: { params: Promise<{ id: string
       );
     }
     if (err instanceof SuperPdpSessionPending) {
+      await rendreVerrou();
       return NextResponse.json(
         {
           error: "Vérification en cours",
@@ -430,7 +496,23 @@ export async function POST(req: NextRequest, ctx: { params: Promise<{ id: string
         { status: 409 }
       );
     }
+    // Exception inconnue : on garde le verrou, délibérément.
+    //
+    // On ne sait pas si le POST a eu lieu — une coupure pendant la lecture de
+    // la réponse laisse une facture transmise dont nous ignorons tout. Le
+    // verrou se périmera seul dans dix minutes. Faire patienter quelqu'un dix
+    // minutes est un désagrément ; lui faire envoyer une facture en double est
+    // un incident comptable chez son client.
     console.error("[superpdp/emettre]", err instanceof Error ? err.message : err);
-    return NextResponse.json({ error: "Transmission impossible" }, { status: 500 });
+    return NextResponse.json(
+      {
+        error: "Transmission impossible",
+        message:
+          "Une erreur inattendue est survenue et nous ne savons pas si la facture est partie. " +
+          "Ne la retransmettez pas tout de suite : rechargez la page dans quelques minutes " +
+          "pour voir son état réel.",
+      },
+      { status: 500 }
+    );
   }
 }
