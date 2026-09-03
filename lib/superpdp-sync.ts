@@ -225,8 +225,28 @@ export async function synchroniserFactures(userId: string): Promise<ResultatSync
       // désormais vingt mille factures au lieu de deux mille.
       const params = new URLSearchParams();
       if (curseur) params.set("starting_after_id", String(curseur));
-      params.set("limit", "1000");
+      // 200 et non 1000 : on demande maintenant le document complet, pas un
+      // résumé. Vingt pages de deux cents couvrent quatre mille factures par
+      // passage, ce qui reste très au-delà du besoin, et chaque réponse tient
+      // dans le budget d'une fonction serverless.
+      params.set("limit", "200");
+      // `expand[]` accepte des valeurs GRANULAIRES, et c'est ce qui manquait.
+      //
+      // `en_invoice` seul renvoie un `en_invoice_overview`, dont le schéma dit
+      // que `seller`, `buyer` et `lines` sont optionnels — et la plateforme les
+      // omet. On avait donc ajouté un appel de détail en repli, une facture à
+      // la fois : sur une première synchronisation d'un compte fourni, c'est
+      // une requête HTTP séquentielle par facture dans une seule invocation
+      // serverless, et le curseur n'étant sauvegardé qu'en fin de page, une
+      // expiration en cours de route reperdait tout le travail.
+      //
+      // Demander explicitement les parties et les lignes supprime ce repli dans
+      // le cas nominal — le détail reste là pour les cas où il manquerait
+      // encore quelque chose.
       params.append("expand[]", "en_invoice");
+      params.append("expand[]", "en_invoice.seller");
+      params.append("expand[]", "en_invoice.buyer");
+      params.append("expand[]", "en_invoice.lines");
       params.append("expand[]", "events");
       const chemin = `/invoices?${params}`;
 

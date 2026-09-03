@@ -53,9 +53,8 @@ export async function GET(_req: NextRequest, ctx: { params: Promise<{ id: string
   const idPdp = Number(facture.superpdp_invoice_id);
 
   try {
-    const [tx, pay, evs] = await Promise.all([
+    const [tx, evs] = await Promise.all([
       superpdpFetch(workspaceId, `/b2c_transactions?invoice_id=${idPdp}&limit=20`),
-      superpdpFetch(workspaceId, `/b2c_payments?invoice_id=${idPdp}&limit=20`),
       // Les événements de cycle de vie, avec leurs blocs de données déclarées.
       //
       // C'est ici que vit la seule preuve consultable de ce qui a été déclaré au
@@ -80,11 +79,6 @@ export async function GET(_req: NextRequest, ctx: { params: Promise<{ id: string
         }).data ?? []
       : [];
 
-    const lirePaiements = pay.ok
-      ? ((await pay.json()) as {
-          data?: { id: number; date?: string; ppf_ereporting_id?: number }[];
-        }).data ?? []
-      : [];
 
     const lireEvenements = evs.ok
       ? ((await evs.json()) as {
@@ -101,6 +95,47 @@ export async function GET(_req: NextRequest, ctx: { params: Promise<{ id: string
           }[];
         }).data ?? []
       : [];
+
+    // ── Les paiements déclarés, rattachés à l'ÉVÉNEMENT et non à la facture ──
+    //
+    // `GET /b2c_payments` ne connaît pas de paramètre `invoice_id` : la spec ne
+    // lui donne que `invoice_event_id` (et `ppf_ereporting_id`). On lui passait
+    // `invoice_id`, qui était donc **ignoré en silence** — la route renvoyait
+    // les vingt derniers paiements de toute l'entreprise, et cet écran les
+    // présentait comme ceux de la facture regardée. Sur une pièce
+    // justificative, attribuer à une facture les déclarations d'une autre est
+    // pire que ne rien afficher.
+    //
+    // Le bon rattachement découle de la documentation : « les données
+    // d'e-reporting de paiement sont créées à partir du message de cycle de vie
+    // Encaissée (212) ». C'est donc l'identifiant de CET événement qui relie un
+    // paiement à une facture — d'où la lecture en deux temps.
+    const idsEncaissement = lireEvenements
+      .filter((e) => e.status_code === "fr:212")
+      .map((e) => e.id);
+
+    const paiements: { id: number; date: string | null; declarationId: number | null }[] = [];
+    let paiementsLus = true;
+    for (const idEvenement of idsEncaissement) {
+      const r = await superpdpFetch(
+        workspaceId,
+        `/b2c_payments?invoice_event_id=${idEvenement}&limit=20`
+      );
+      if (!r.ok) {
+        paiementsLus = false;
+        continue;
+      }
+      const corps = (await r.json()) as {
+        data?: { id: number; date?: string; ppf_ereporting_id?: number }[];
+      };
+      for (const p of corps.data ?? []) {
+        paiements.push({
+          id: p.id,
+          date: p.date ?? null,
+          declarationId: p.ppf_ereporting_id ?? null,
+        });
+      }
+    }
 
     return NextResponse.json({
       evenements: lireEvenements.map((e) => ({
@@ -124,15 +159,11 @@ export async function GET(_req: NextRequest, ctx: { params: Promise<{ id: string
         // est nul, la transaction est enregistrée mais pas encore envoyée.
         declarationId: t.ppf_ereporting_id ?? null,
       })),
-      paiements: lirePaiements.map((p) => ({
-        id: p.id,
-        date: p.date ?? null,
-        declarationId: p.ppf_ereporting_id ?? null,
-      })),
+      paiements,
       // Une facture B2B française n'a pas d'e-reporting : elle est acheminée,
       // c'est le circuit lui-même qui informe l'administration. Ne rien trouver
       // n'est donc pas anormal, et l'écran doit le dire plutôt que d'alarmer.
-      lecture: tx.ok && pay.ok ? "complete" : "partielle",
+      lecture: tx.ok && evs.ok && paiementsLus ? "complete" : "partielle",
     });
   } catch (err) {
     if (err instanceof SuperPdpNotConnected) {
