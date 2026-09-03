@@ -422,7 +422,14 @@ export function SuperPdpCard() {
 
               <div className="flex gap-2 shrink-0">
                 <button
-                  onClick={() => setConfirmation(false)}
+                  onClick={() => {
+                    // Annuler efface AUSSI le choix de fermer la ligne. Sans
+                    // ça, une case cochée puis abandonnée reste cochée au clic
+                    // suivant : l'option la plus destructrice de cet écran
+                    // survivrait à un renoncement explicite.
+                    setConfirmation(false);
+                    setFermerLigne(false);
+                  }}
                   className="px-3 py-1.5 rounded-lg border border-ds-border text-gray-400 hover:text-white text-xs font-medium transition-colors"
                 >
                   Annuler
