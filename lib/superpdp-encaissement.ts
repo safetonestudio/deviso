@@ -1,5 +1,6 @@
 import { createAdminClient } from "@/lib/supabase/admin";
 import { superpdpFetch, SuperPdpNotConnected, SuperPdpSessionPending } from "@/lib/superpdp";
+import { estCloture, libelleStatut } from "@/lib/superpdp-statuts";
 
 export type ResultatEncaissement =
   | { ok: true; dejaEncaissee?: boolean }
@@ -17,8 +18,15 @@ export type ResultatEncaissement =
          * délai dépassé. La réservation est CONSERVÉE : rejouer risquerait une
          * seconde déclaration de paiement au PPF pour le même encaissement.
          */
-        | "incertain";
+        | "incertain"
+        /**
+         * La facture a déjà fini sa vie autrement — rejetée, refusée. Aucun
+         * encaissement ne peut s'y rattacher, et réessayer n'y changera rien.
+         */
+        | "facture_close";
       detail?: string;
+      /** Message prêt à afficher, quand la cause est connue précisément. */
+      message?: string;
     };
 
 /**
@@ -68,7 +76,7 @@ export async function envoyerEncaissementPdp(
 
   const { data: facture } = await admin
     .from("invoices")
-    .select("id, superpdp_invoice_id, superpdp_encaisse_at, total_ttc, tva_rate")
+    .select("id, superpdp_invoice_id, superpdp_encaisse_at, total_ttc, tva_rate, superpdp_status")
     .eq("id", invoiceId)
     .eq("user_id", workspaceId)
     .maybeSingle();
@@ -82,6 +90,35 @@ export async function envoyerEncaissementPdp(
 
   if (facture.superpdp_encaisse_at) {
     return { ok: true, dejaEncaissee: true };
+  }
+
+  // ── Une facture dont la vie est finie ne s'encaisse pas ──────────────────
+  //
+  // Une facture rejetée par la plateforme (`fr:213`) ou refusée par le
+  // destinataire (`fr:210`) porte un statut CLÔTURANT. La Plateforme Agréée
+  // refuse alors le `fr:212` — « La facture possède déjà un statut final » — et
+  // sans ce contrôle on relayait ce refus sous la forme « Réessayez dans un
+  // moment ». C'est un mensonge par omission : aucun réessai n'aboutira jamais,
+  // et pendant ce temps la vraie information — votre facture a été rejetée, il
+  // faut la refaire — n'est pas dite.
+  //
+  // On s'arrête donc avant l'appel, et on nomme la cause.
+  //
+  // `fr:212` est lui aussi clôturant : s'il est déjà posé sans que nous l'ayons
+  // noté, l'encaissement est fait, pas impossible.
+  if (facture.superpdp_status === "fr:212") {
+    return { ok: true, dejaEncaissee: true };
+  }
+  if (estCloture(facture.superpdp_status)) {
+    const libelle = libelleStatut(facture.superpdp_status)?.texte ?? facture.superpdp_status;
+    return {
+      ok: false,
+      raison: "facture_close",
+      detail: `statut ${facture.superpdp_status}`,
+      message:
+        `Cette facture porte le statut « ${libelle} » : elle est close, et aucun ` +
+        `encaissement ne peut plus s'y rattacher. Établissez une nouvelle facture.`,
+    };
   }
 
   // On n'accepte qu'une date du passé, au bon format : une date d'encaissement

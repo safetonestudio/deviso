@@ -168,13 +168,41 @@ verifier(
 console.log("");
 console.log("── Encaissement (fr:212), obligatoire art. 290 A CGI ─────────");
 
-const payee = idB2b
-  ? await bq.call(`/api/invoices/${idB2b}`, { method: "PATCH", body: doc({ status: "paid" }) })
+// ⚠️ PAS sur `idB2b`. Cette facture-là est émise volontairement sans adresse
+// d'annuaire, pour éprouver le repli sur le SIREN nu — or dans le bac à sable
+// le SIREN 315143296 est partagé par les deux sociétés de test, donc la
+// plateforme finit par la REJETER (`fr:213`), de façon asynchrone.
+//
+// L'encaisser revenait à courir contre cette arrivée : tant que le rejet
+// n'était pas là, le `fr:212` passait et le test était vert ; le jour où il
+// arrivait en premier, la plateforme répondait « la facture possède déjà un
+// statut final ». Deux passages identiques, deux résultats — c'est-à-dire un
+// test qui ne prouve rien. Constaté le 03/09/2026.
+//
+// On encaisse donc une facture réellement remise, et le repli SIREN reste
+// éprouvé là où il doit l'être : à l'émission.
+const aEncaisser = await creerFacture({
+  client_name: "Tricatel", client_company: "Tricatel",
+  client_siren: SIREN_PARTAGE,
+  client_directory_address: ANNUAIRE_TRICATEL,
+  client_street: "Avenue de la République", client_postcode: "37170", client_city: "Chambray-lès-Tours",
+  operation_category: "services",
+});
+const idEncaisser = aEncaisser.body?.invoice?.id;
+if (idEncaisser) {
+  await bq.call(`/api/invoices/${idEncaisser}`, { method: "PATCH", body: doc({ status: "sent" }) });
+  await bq.call(`/api/superpdp/invoices/${idEncaisser}/emettre`, { method: "POST" });
+}
+
+const payee = idEncaisser
+  ? await bq.call(`/api/invoices/${idEncaisser}`, { method: "PATCH", body: doc({ status: "paid" }) })
   : { status: 0, body: null };
 verifier("la facture est marquée payée", payee.body?.invoice?.status === "paid", `HTTP ${payee.status}`);
 
-const encaissement = idB2b
-  ? await bq.call(`/api/superpdp/invoices/${idB2b}/encaisser`, { method: "POST" })
+// Le passage à « payée » déclare déjà l'encaissement : la route PATCH porte
+// l'obligation. L'appel explicite doit donc constater, pas refaire.
+const encaissement = idEncaisser
+  ? await bq.call(`/api/superpdp/invoices/${idEncaisser}/encaisser`, { method: "POST" })
   : { status: 0, body: null };
 verifier(
   "l'encaissement est déclaré à la Plateforme Agréée",
@@ -182,8 +210,8 @@ verifier(
   `HTTP ${encaissement.status} ${doc(encaissement.body)}`
 );
 
-const encaissementBis = idB2b
-  ? await bq.call(`/api/superpdp/invoices/${idB2b}/encaisser`, { method: "POST" })
+const encaissementBis = idEncaisser
+  ? await bq.call(`/api/superpdp/invoices/${idEncaisser}/encaisser`, { method: "POST" })
   : { status: 0, body: null };
 verifier(
   "un second appel ne renvoie pas un second événement",

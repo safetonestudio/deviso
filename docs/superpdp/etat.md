@@ -8,8 +8,11 @@
 > Puis les deux décisions qui restaient : la **date d'encaissement** est
 > désormais celle du paiement réel et non celle du pointage, et Deviso sait
 > **établir un avoir** — le seul moyen de corriger une facture transmise, et la
-> seule réponse possible à un refus, qui est terminal. Suite complète : 373
-> vérifications, 0 échec.
+> seule réponse possible à un refus, qui est terminal.
+>
+> Le 3 septembre, le cycle de vie du raccordement se referme : Deviso sait
+> **fermer une ligne d'annuaire**, et refuse de le faire pendant une
+> portabilité. Suite complète : 383 vérifications, 0 échec.
 >
 > **Audit complet du 01/09/2026** — voir `audit-2026-09-01.md`.
 > Six défauts corrigés (dont BT-49, qui rendait non conforme toute facture à un

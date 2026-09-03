@@ -50,6 +50,8 @@ export async function POST(req: NextRequest, ctx: { params: Promise<{ id: string
       incertain:
         "L'encaissement a peut-être été déclaré à la Plateforme Agréée : la réponse ne nous est " +
         "jamais parvenue. Ne recommencez pas — vérifiez le statut de la facture dans un moment.",
+      // Remplacé plus bas par le message précis de la lib, qui nomme le statut.
+      facture_close: "Cette facture est close : aucun encaissement ne peut s'y rattacher.",
     };
     // Le motif de la plateforme, quand elle en donne un. « La Plateforme Agréée
     // a refusé » sans dire pourquoi est le genre de message devant lequel il
@@ -72,9 +74,13 @@ export async function POST(req: NextRequest, ctx: { params: Promise<{ id: string
       {
         error: "Encaissement non transmis",
         message:
+          // La lib sait parfois dire mieux que la table : elle a lu le statut.
+          resultat.message ??
           (messages[resultat.raison] ?? "Erreur inconnue.") +
-          (motifPlateforme ? ` ${motifPlateforme}` : ""),
+            (motifPlateforme ? ` ${motifPlateforme}` : ""),
       },
+      // 409 et non 502 pour une facture close : ce n'est pas la plateforme qui
+      // a échoué, c'est la demande qui n'a pas lieu d'être.
       { status: resultat.raison === "refuse" ? 502 : 409 }
     );
   }
