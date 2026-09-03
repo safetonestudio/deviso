@@ -1,0 +1,34 @@
+# Fins de ligne : une seule convention, decidee ici plutot que par le systeme
+# de chacun.
+#
+# Pourquoi ce fichier. Sans lui, git stocke ce que la machine lui donne : les
+# postes Windows ecrivent en CRLF, les outils Linux lisent du LF, et le depot
+# affichait 285 fichiers « modifies » qui ne differaient que par leurs fins de
+# ligne — 62 715 insertions pour 62 590 suppressions, dont trois vrais
+# changements. Un « git status » qui ment a ce point ne se lit plus, et le jour
+# ou quelqu un fait « git add -A » depuis le mauvais outil, ce bruit entre dans
+# l historique et pollue chaque diff a venir.
+#
+# `text=auto eol=lf` : git normalise en LF a l enregistrement ET dans la copie
+# de travail. Node, Next et les navigateurs s en moquent ; seuls les scripts
+# PowerShell gagnent a rester en CRLF, par prudence avec les vieux hotes.
+* text=auto eol=lf
+
+# Scripts Windows : CRLF assume.
+*.ps1 text eol=crlf
+*.bat text eol=crlf
+*.cmd text eol=crlf
+
+# Binaires : jamais touches. git les detecte seul, on le dit quand meme —
+# une police ou un profil colorimetrique « normalise » est une police cassee.
+*.ttf binary
+*.otf binary
+*.woff binary
+*.woff2 binary
+*.icc binary
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.ico binary
+*.pdf binary
