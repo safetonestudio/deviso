@@ -357,11 +357,21 @@ export function SuperPdpCard() {
           <p className="text-xs text-amber-400/80 mt-1 leading-relaxed">
             {ligne.message ? `${ligne.message} ` : ""}
             Si vous venez de quitter une autre Plateforme Agréée, c&apos;est
-            attendu : votre ligne est en cours de transfert, et l&apos;ancienne
-            plateforme a cinq jours pour répondre. N&apos;ouvrez pas de seconde
-            ligne et ne supprimez pas celle-ci — vous interrompriez le transfert.
-            Si la situation dure au-delà d&apos;une semaine, contactez la
-            Plateforme Agréée.
+            attendu : votre ligne est en cours de transfert.{" "}
+            {/* Le point que l'ancien message taisait, et qui change tout :
+                la portabilité commence par un e-mail de confirmation adressé
+                au client. « Attendez » se lit alors comme « ne faites rien »,
+                alors qu'un geste est attendu de sa part — et sans ce geste
+                rien n'avance, jamais. Même défaut que le message d'identité
+                non vérifiée, corrigé pour la même raison. */}
+            <strong className="text-amber-300">
+              Super PDP vous a envoyé un e-mail pour vous demander de confirmer
+              votre choix : sans cette confirmation, le transfert ne démarre pas.
+            </strong>{" "}
+            Une fois confirmé, l&apos;ancienne plateforme a cinq jours pour
+            répondre. N&apos;ouvrez pas de seconde ligne et ne supprimez pas
+            celle-ci — vous interrompriez le transfert. Si la situation dure
+            au-delà d&apos;une semaine, contactez la Plateforme Agréée.
           </p>
         </div>
       )}
