@@ -102,6 +102,14 @@ export function SuperPdpCard() {
   const [ouverture, setOuverture] = useState(false);
   const [messageLigne, setMessageLigne] = useState<string | null>(null);
   const [confirmation, setConfirmation] = useState(false);
+  // Fermer aussi la ligne d'annuaire en se débranchant.
+  //
+  // Décoché par défaut, et ce défaut est le bon : se débrancher de Deviso n'est
+  // pas cesser d'exister. Quelqu'un qui change d'outil de facturation tout en
+  // restant chez Super PDP doit rester joignable ; fermer sa ligne le rendrait
+  // injoignable pour toute la France, sur un geste qu'il croyait limité à Deviso.
+  const [fermerLigne, setFermerLigne] = useState(false);
+  const [messageFermeture, setMessageFermeture] = useState<string | null>(null);
 
   const retourCle = params.get("superpdp");
   const retourDetail = params.get("detail");
@@ -146,10 +154,27 @@ export function SuperPdpCard() {
 
   const debrancher = async () => {
     setDebranchement(true);
+    setMessageFermeture(null);
     try {
-      await fetch("/api/superpdp/disconnect", { method: "POST" });
+      const r = await fetch("/api/superpdp/disconnect", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ fermerLigne }),
+      });
+      const d = await r.json().catch(() => ({}));
+      // La fermeture peut échouer sans que le débranchement échoue — la route
+      // ne retient personne parce que l'annuaire résiste. Le taire laisserait
+      // partir quelqu'un convaincu de ne plus rien recevoir, alors qu'on lui
+      // adresse encore des factures.
+      if (fermerLigne && d?.ligne && d.ligne.fermee !== true) {
+        setMessageFermeture(
+          d.ligne.message ??
+            "Votre ligne d'annuaire n'a pas pu être fermée : elle reste ouverte chez Super PDP."
+        );
+      }
       await relire();
       setConfirmation(false);
+      setFermerLigne(false);
     } finally {
       setDebranchement(false);
     }
@@ -361,11 +386,40 @@ export function SuperPdpCard() {
       {(verifie || enAttente) && (
         <div className="mt-4 pt-4 border-t border-ds-border">
           {confirmation ? (
-            <div className="flex flex-wrap items-center justify-between gap-3">
+            <div className="space-y-3">
               <p className="text-xs text-gray-400 max-w-md">
-                Vous ne recevrez plus de factures dans Deviso. Votre ligne d&apos;annuaire reste
-                ouverte chez Super PDP&nbsp;: pour la fermer, passez par leur interface.
+                Vous ne recevrez plus de factures dans Deviso.
               </p>
+
+              {/* Le choix qui manquait.
+                  Deviso savait ouvrir une ligne d'annuaire, pas la fermer : on
+                  prévenait que la ligne restait ouverte, et on envoyait la
+                  personne finir la manœuvre sur l'interface de Super PDP.
+                  Une moitié de cycle de vie.
+
+                  Il fallait un choix, et pas un automatisme, parce que les deux
+                  situations sont opposées et qu'elles se ressemblent : changer
+                  d'outil, c'est rester joignable ; cesser son activité, c'est ne
+                  plus l'être. Le défaut protège le cas réversible. */}
+              {ligne && ligne.etat !== "absente" && (
+                <label className="flex items-start gap-2.5 cursor-pointer max-w-md">
+                  <input
+                    type="checkbox"
+                    checked={fermerLigne}
+                    onChange={(e) => setFermerLigne(e.target.checked)}
+                    className="mt-0.5 shrink-0 accent-red-500"
+                  />
+                  <span className="text-xs text-gray-400 leading-relaxed">
+                    Fermer aussi ma ligne de réception à l&apos;annuaire
+                    <span className="block text-gray-600 mt-0.5">
+                      À cocher seulement si vous cessez votre activité. Si vous
+                      changez simplement d&apos;outil, laissez décoché&nbsp;: sinon
+                      plus personne en France ne pourra vous adresser de facture.
+                    </span>
+                  </span>
+                </label>
+              )}
+
               <div className="flex gap-2 shrink-0">
                 <button
                   onClick={() => setConfirmation(false)}
@@ -391,6 +445,13 @@ export function SuperPdpCard() {
             </button>
           )}
         </div>
+      )}
+
+      {/* La ligne n'a pas pu être fermée. On le dit, parce que quelqu'un qui
+          repart en croyant sa ligne fermée continuera de recevoir des factures
+          sans jamais les lire. */}
+      {messageFermeture && (
+        <p className="text-xs text-amber-400 mt-3 leading-relaxed">{messageFermeture}</p>
       )}
 
       {etat?.lastError && (

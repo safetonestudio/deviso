@@ -1,5 +1,6 @@
 import { superpdpFetch, isSandbox } from "@/lib/superpdp";
 import { toSiren } from "@/lib/facturx-helpers";
+import { decisionFermeture } from "@/lib/superpdp-fermeture";
 
 /**
  * La ligne d'annuaire : ce qui rend une entreprise JOIGNABLE.
@@ -130,4 +131,81 @@ export async function ouvrirLigneAnnuaire(
   let cree: LigneBrute = {};
   try { cree = JSON.parse(texte); } catch { /* réponse non JSON : l'appel a réussi quand même */ }
   return { ok: true, adresse: cree.identifier ?? corps.identifier };
+}
+
+export type EchecFermeture =
+  /** Aucune ligne à fermer : ce n'est pas une erreur. */
+  | "absente"
+  /** Portabilité en cours — fermer casserait le transfert. */
+  | "migration"
+  /** La plateforme a refusé. */
+  | "refuse";
+
+/**
+ * Ferme la ligne de réception.
+ *
+ * Pourquoi cette fonction existe. Deviso savait ouvrir une ligne, pas la
+ * fermer. Un utilisateur qui cesse son activité se débranchait, et la ligne
+ * restait : l'annuaire continuait d'annoncer qu'il était joignable via
+ * Super PDP alors que Deviso ne lisait plus rien. Les factures qu'on lui
+ * adressait tombaient dans le vide, sans que personne ne le lui dise. On le
+ * prévenait, et on l'envoyait finir la manœuvre sur l'interface de Super PDP —
+ * une moitié de cycle de vie.
+ *
+ * ⚠️ Le garde-fou est le cœur de cette fonction, pas la suppression.
+ *
+ * Une ligne « en erreur » est l'état **normal** d'une portabilité en cours :
+ * quand une entreprise arrive d'une autre Plateforme Agréée, « pendant le temps
+ * de la migration, la ligne d'annuaire est en erreur côté SUPER PDP, mais ça
+ * n'est pas grave, **il ne faut pas la supprimer** » (documentation Super PDP,
+ * article « Annuaire »). L'ancienne plateforme a cinq jours pour rendre la
+ * main. Supprimer à cet instant, c'est interrompre son propre transfert — et
+ * l'utilisateur qui vient de voir un encadré ambre « erreur » est précisément
+ * celui qui aura envie d'appuyer sur le bouton.
+ *
+ * On refuse donc, plutôt que de faire confiance au texte d'avertissement.
+ *
+ * Les adresses `is_replyto` ne sont de toute façon pas supprimables — « Reply-to
+ * addresses are technical addresses and cannot be deleted » — et
+ * `lireLigneAnnuaire` les écarte déjà.
+ */
+export async function fermerLigneAnnuaire(
+  workspaceId: string
+): Promise<{ ok: true; adresse: string } | { ok: false; raison: EchecFermeture; message: string }> {
+  const ligne = await lireLigneAnnuaire(workspaceId);
+
+  // La règle qui décide vit dans lib/superpdp-fermeture.ts, sans dépendance,
+  // pour être éprouvable sans fermer de vraie ligne. Voir ce fichier : le refus
+  // pendant une portabilité est le garde-fou central de cette fonction.
+  const decision = decisionFermeture(ligne?.etat);
+  if (!decision.fermer) {
+    return { ok: false, raison: decision.raison, message: decision.message };
+  }
+
+  if (!ligne || ligne.etat === "absente" || ligne.id == null) {
+    return {
+      ok: false,
+      raison: "refuse",
+      message: "La Plateforme Agréée n'a pas communiqué l'identifiant de votre ligne.",
+    };
+  }
+
+  const res = await superpdpFetch(workspaceId, `/directory_entries/${ligne.id}`, {
+    method: "DELETE",
+  });
+
+  // La spec annonce un 204. On accepte tout 2xx : un 200 avec corps ne serait
+  // pas un échec, et se montrer plus strict que la plateforme ferait échouer
+  // une fermeture qui a eu lieu.
+  if (!res.ok) {
+    const detail = (await res.text()).slice(0, 500);
+    console.error(`[superpdp/ligne] fermeture ${ligne.id} : HTTP ${res.status} ${detail.slice(0, 300)}`);
+    return {
+      ok: false,
+      raison: "refuse",
+      message: "La Plateforme Agréée a refusé la fermeture de la ligne. Réessayez dans un moment.",
+    };
+  }
+
+  return { ok: true, adresse: ligne.adresse };
 }
