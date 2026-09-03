@@ -11,9 +11,11 @@ const t = await r.json();
 const cookie = `sb-${PROJECT_REF}-auth-token=base64-${Buffer.from(
   JSON.stringify({ access_token: t.access_token, refresh_token: t.refresh_token, token_type: "bearer", expires_in: 3600, expires_at: Math.floor(Date.now() / 1000) + 3600 })
 ).toString("base64")}`;
+const depart = Date.now();
 const res = await fetch(`${BASE}/api/superpdp/sync`, {
   method: "POST",
   headers: { cookie, "content-type": "application/json" },
   body: JSON.stringify({ explicite: true }),
 });
 console.log(res.status, (await res.text()).slice(0, 500));
+console.log(`duree : ${((Date.now() - depart) / 1000).toFixed(2)} s`);
