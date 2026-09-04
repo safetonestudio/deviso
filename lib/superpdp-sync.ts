@@ -461,6 +461,16 @@ export async function synchroniserFactures(userId: string): Promise<ResultatSync
       .eq("status", "paid")
       .not("superpdp_invoice_id", "is", null)
       .is("superpdp_encaisse_at", null)
+      // Sept jours, et pas « pour toujours ».
+      //
+      // Le rattrapage vise un refus transitoire, qui se résout en secondes ou
+      // en minutes. Une facture qui échoue encore au bout d'une semaine échoue
+      // pour une raison qui ne passera pas avec le temps — et la rejouer toutes
+      // les trois minutes, indéfiniment, serait du martèlement d'API sans
+      // aucune chance d'aboutir. Passé ce délai, la facture cesse d'être
+      // rattrapée : c'est `superpdp_error` et l'écran qui doivent prendre le
+      // relais, pas une boucle silencieuse.
+      .gt("updated_at", new Date(Date.now() - 7 * 24 * 3600 * 1000).toISOString())
       .limit(20);
 
     for (const facture of aRattraper ?? []) {
