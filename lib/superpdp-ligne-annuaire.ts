@@ -173,8 +173,17 @@ export async function ouvrirLigneAnnuaire(
   // Les formes composées existent pour l'organisation interne des grandes
   // structures — un freelance n'en a aucun usage, et une adresse plus longue
   // est une adresse de plus à communiquer sans erreur.
+  // En bac à sable, une ligne secondaire doit être préfixée par l'adresse
+  // principale — la plateforme le dit elle-même : « pour des raisons
+  // techniques, le Participant Id doit commencer par 315143296_57701_ ». Les
+  // deux sociétés de test partageant un SIREN, c'est le suffixe de société qui
+  // les sépare, et une ligne dérivée doit rester dans cet espace.
+  // En production, `SIREN_SUFFIXE` s'applique tel quel.
+  const baseSandbox = (conn?.directory_address ?? "").replace(/^\d{4}:/, "") || siren;
+  const identifiantSandbox = suffixe ? `${baseSandbox}_${suffixe}` : siren;
+
   const corps = isSandbox()
-    ? { directory: "peppol", identifier: `0225:${identifiantFr}` }
+    ? { directory: "peppol", identifier: `0225:${identifiantSandbox}` }
     : {
         directory: "ppf",
         identifier: identifiantFr,
