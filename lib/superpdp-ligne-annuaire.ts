@@ -1,4 +1,4 @@
-import { superpdpFetch, isSandbox } from "@/lib/superpdp";
+import { superpdpFetch, isSandbox, getConnection } from "@/lib/superpdp";
 import { toSiren } from "@/lib/facturx-helpers";
 import { decisionFermeture } from "@/lib/superpdp-fermeture";
 
@@ -135,7 +135,23 @@ export async function ouvrirLigneAnnuaire(
    */
   suffixe?: string
 ): Promise<{ ok: true; adresse: string } | { ok: false; raison: string }> {
-  const siren = toSiren(profil.siret);
+  // Le SIREN du profil, et à défaut celui que la Plateforme Agréée a elle-même
+  // enregistré pour l'entreprise.
+  //
+  // Constaté le 04/09/2026 sur le compte de test : raccordé, ligne d'annuaire
+  // ouverte par le tunnel, `company_number` renseigné — et pourtant « Ouvrir ma
+  // ligne de réception » répondait « Renseignez votre SIRET dans Paramètres ».
+  // On réclamait à l'utilisateur une information que nous avions déjà, et sous
+  // une forme (le SIRET) dont nous n'utilisons que les neuf premiers chiffres.
+  // Un utilisateur qui perd sa ligne se retrouvait bloqué sans raison.
+  //
+  // Le repli n'est valable que si le schéma est `fr_siren` : c'est alors, par
+  // définition, un SIREN. En bac à sable le numéro est fictif (000000002) et ne
+  // désigne rien dans l'annuaire français — on ne s'en sert donc pas.
+  const conn = await getConnection(workspaceId);
+  const sirenPlateforme =
+    conn?.company_number_scheme === "fr_siren" ? toSiren(conn.company_number) : null;
+  const siren = toSiren(profil.siret) ?? sirenPlateforme;
   if (!siren) {
     return { ok: false, raison: "Renseignez votre SIRET dans Paramètres avant d'ouvrir votre ligne." };
   }
