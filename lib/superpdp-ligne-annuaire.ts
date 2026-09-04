@@ -43,6 +43,39 @@ type LigneBrute = {
   effective_date?: string | null;
 };
 
+/** L'état d'une ligne, dérivé de ses trois champs. */
+function etatDeLaLigne(ligne: LigneBrute): EtatLigne {
+  const adresse = ligne.identifier as string;
+  const id = ligne.id ?? null;
+  if (ligne.status === "error") {
+    return { etat: "en_erreur", adresse, id, message: ligne.status_message ?? null };
+  }
+  if (ligne.status === "pending") return { etat: "en_cours", adresse, id };
+  const effet = ligne.effective_date ? ligne.effective_date.slice(0, 10) : null;
+  if (effet && effet > new Date().toISOString().slice(0, 10)) {
+    return { etat: "programmee", adresse, id, aPartirDu: effet };
+  }
+  return { etat: "joignable", adresse, id };
+}
+
+/**
+ * Toutes les lignes de réception, pas seulement la meilleure.
+ *
+ * L'annuaire autorise plusieurs lignes par entreprise — « toutes les entreprises
+ * sont libres de créer autant de lignes d'annuaires qu'elles le souhaitent, pour
+ * leur organisation interne ». `lireLigneAnnuaire` n'en montre qu'une, et c'est
+ * le bon choix pour l'écran : un freelance n'en a qu'une. Mais pour en FERMER
+ * une précise, il faut pouvoir les désigner.
+ */
+export async function lireLignesAnnuaire(workspaceId: string): Promise<EtatLigne[] | null> {
+  const res = await superpdpFetch(workspaceId, "/directory_entries");
+  if (!res.ok) return null;
+  const body = (await res.json()) as { data?: LigneBrute[] };
+  return (body.data ?? [])
+    .filter((l) => !l.is_replyto && l.identifier)
+    .map(etatDeLaLigne);
+}
+
 /** Lit l'état réel de la ligne de réception de l'espace de travail. */
 export async function lireLigneAnnuaire(workspaceId: string): Promise<EtatLigne | null> {
   const res = await superpdpFetch(workspaceId, "/directory_entries");
@@ -88,12 +121,32 @@ export async function lireLigneAnnuaire(workspaceId: string): Promise<EtatLigne 
  */
 export async function ouvrirLigneAnnuaire(
   workspaceId: string,
-  profil: { siret?: string | null }
+  profil: { siret?: string | null },
+  /**
+   * Suffixe d'organisation interne, ajouté au SIREN (`SIREN_SUFFIXE`).
+   *
+   * Existe pour une raison précise et une seule : permettre à la traversée de
+   * créer une ligne SECONDAIRE, distincte de l'adresse principale, pour
+   * éprouver la fermeture sans toucher à celle qui rend le compte joignable.
+   *
+   * Règles d'identifiant, en retenant la plus restrictive de la DGFiP et de
+   * Peppol (article « Annuaire ») : cent caractères au plus, chiffres et
+   * lettres sans accent uniquement, seul `_` admis, insensible à la casse.
+   */
+  suffixe?: string
 ): Promise<{ ok: true; adresse: string } | { ok: false; raison: string }> {
   const siren = toSiren(profil.siret);
   if (!siren) {
     return { ok: false, raison: "Renseignez votre SIRET dans Paramètres avant d'ouvrir votre ligne." };
   }
+
+  if (suffixe !== undefined && !/^[A-Za-z0-9_]{1,100}$/.test(suffixe)) {
+    return {
+      ok: false,
+      raison: "Suffixe invalide : chiffres, lettres sans accent et « _ » uniquement, 100 caractères au plus.",
+    };
+  }
+  const identifiantFr = suffixe ? `${siren}_${suffixe}` : siren;
 
   // Le SIREN nu, et pas `SIREN_SIRET`.
   //
@@ -105,10 +158,10 @@ export async function ouvrirLigneAnnuaire(
   // structures — un freelance n'en a aucun usage, et une adresse plus longue
   // est une adresse de plus à communiquer sans erreur.
   const corps = isSandbox()
-    ? { directory: "peppol", identifier: `0225:${siren}` }
+    ? { directory: "peppol", identifier: `0225:${identifiantFr}` }
     : {
         directory: "ppf",
-        identifier: siren,
+        identifier: identifiantFr,
         // Date d'entrée en vigueur de l'obligation de réception. La spec en
         // fait son exemple littéral : une ligne peut être ouverte à l'avance.
         effective_date: "2026-09-01",
@@ -170,9 +223,29 @@ export type EchecFermeture =
  * `lireLigneAnnuaire` les écarte déjà.
  */
 export async function fermerLigneAnnuaire(
-  workspaceId: string
+  workspaceId: string,
+  /**
+   * Ferme CETTE ligne plutôt que celle que l'écran montre.
+   *
+   * Sans ce paramètre, la fonction ne sait fermer que la ligne principale, et
+   * l'éprouver revient donc à rendre le compte injoignable puis à le rouvrir —
+   * ce qui, en bac à sable, ne restitue même pas la même adresse : `ouvrir`
+   * reconstruit `0225:SIREN` alors que les sociétés de test se distinguent par
+   * un suffixe. Le seul chemin destructeur de l'intégration serait resté le
+   * seul jamais joué.
+   *
+   * Avec, on peut créer une ligne secondaire, la fermer, et vérifier que la
+   * principale n'a pas bougé. Le garde-fou s'applique à la ligne désignée,
+   * pas à une autre.
+   */
+  idLigne?: number
 ): Promise<{ ok: true; adresse: string } | { ok: false; raison: EchecFermeture; message: string }> {
-  const ligne = await lireLigneAnnuaire(workspaceId);
+  const ligne =
+    idLigne != null
+      ? (await lireLignesAnnuaire(workspaceId))?.find(
+          (l) => l.etat !== "absente" && l.id === idLigne
+        ) ?? { etat: "absente" as const }
+      : await lireLigneAnnuaire(workspaceId);
 
   // La règle qui décide vit dans lib/superpdp-fermeture.ts, sans dépendance,
   // pour être éprouvable sans fermer de vraie ligne. Voir ce fichier : le refus
