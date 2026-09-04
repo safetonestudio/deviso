@@ -191,10 +191,27 @@ export async function ouvrirLigneAnnuaire(
 
   const texte = await res.text();
   if (!res.ok) {
-    console.error(`[superpdp/ligne] HTTP ${res.status} ${texte.slice(0, 300)}`);
+    console.error(`[superpdp/ligne] HTTP ${res.status} ${texte.slice(0, 500)}`);
+    // Le motif de la plateforme, quand elle en donne un.
+    //
+    // « Réessayez dans un moment » sur un refus définitif — identifiant déjà
+    // pris, suffixe invalide, entreprise non vérifiée — envoie l'utilisateur
+    // recommencer indéfiniment une action qui n'aboutira jamais, et nous prive
+    // du seul indice utile. Même défaut que sur l'encaissement, corrigé pour la
+    // même raison.
+    let motif = "";
+    try {
+      const ko = JSON.parse(texte) as { message?: string; error?: string };
+      motif = ko.message ?? ko.error ?? "";
+    } catch {
+      const m = texte.match(/"message"\s*:\s*"((?:[^"\\]|\\.)*)/);
+      motif = m ? m[1].replace(/\\"/g, '"') : texte.slice(0, 200);
+    }
     return {
       ok: false,
-      raison: "La Plateforme Agréée a refusé l'ouverture de la ligne. Réessayez dans un moment.",
+      raison:
+        "La Plateforme Agréée a refusé l'ouverture de la ligne." +
+        (motif ? ` ${motif.slice(0, 400)}` : " Réessayez dans un moment."),
     };
   }
   let cree: LigneBrute = {};
