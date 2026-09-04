@@ -9,6 +9,7 @@ import {
   SuperPdpSessionPending,
 } from "@/lib/superpdp";
 import { estCloture } from "@/lib/superpdp-statuts";
+import { envoyerEncaissementPdp } from "@/lib/superpdp-encaissement";
 
 /**
  * Synchronisation des factures échangées via la Plateforme Agréée.
@@ -104,6 +105,8 @@ export type ResultatSync = {
   jusquA: number | null;
   /** Nombre de statuts mis à jour depuis les événements de cycle de vie. */
   statuts?: number;
+  /** Encaissements déclarés lors de ce passage, après un refus transitoire. */
+  encaissementsRattrapes?: number;
   /** Total connu de la plateforme, toutes pages confondues (`count`). */
   total?: number | null;
   /** Vrai quand la borne de pages a été atteinte : il reste des factures. */
@@ -433,6 +436,43 @@ export async function synchroniserFactures(userId: string): Promise<ResultatSync
     return { recuperees, entrantes, jusquA: curseur, raison: "erreur", detail };
   }
 
+  // ── Rattrapage des encaissements que la plateforme a fait attendre ───────
+  //
+  // Constaté le 04/09/2026 : déclarer l'encaissement juste après l'émission —
+  // ce que la documentation demande explicitement pour « les factures déjà
+  // encaissées à l'émission » — se heurte à « La facture liée est en cours de
+  // traitement. Réessayer plus tard ». C'est un refus TRANSITOIRE, et nous le
+  // traitions comme définitif : la réservation était rendue, personne ne
+  // rejouait, et le `fr:212` — statut obligatoire du fournisseur, source de
+  // l'e-reporting de paiement — ne partait jamais. En silence.
+  //
+  // Une facture payée et transmise doit finir par déclarer son encaissement.
+  // On le refait donc à chaque synchronisation, jusqu'à ce que ça passe. C'est
+  // le même principe que la détection de blocage : on ne peut pas empêcher un
+  // appel d'échouer, on peut refuser de l'oublier.
+  //
+  // Borné à vingt : au-delà, la synchronisation suivante prendra la suite.
+  let encaissementsRattrapes = 0;
+  try {
+    const { data: aRattraper } = await admin
+      .from("invoices")
+      .select("id")
+      .eq("user_id", userId)
+      .eq("status", "paid")
+      .not("superpdp_invoice_id", "is", null)
+      .is("superpdp_encaisse_at", null)
+      .limit(20);
+
+    for (const facture of aRattraper ?? []) {
+      const r = await envoyerEncaissementPdp(userId, facture.id);
+      if (r.ok) encaissementsRattrapes++;
+      // Un échec n'est pas signalé ici : la facture reste éligible et le
+      // prochain passage réessaiera. Ce qu'il ne faut pas, c'est boucler.
+    }
+  } catch (err) {
+    console.error("[superpdp-sync/encaissements]", err instanceof Error ? err.message : err);
+  }
+
   // Une synchronisation sans nouveauté est un succès, pas un non-événement :
   // on horodate quand même, sinon l'écran ne peut pas distinguer « rien de
   // nouveau » de « on n'a pas regardé depuis hier ».
@@ -444,7 +484,7 @@ export async function synchroniserFactures(userId: string): Promise<ResultatSync
     ...(conn.last_error ? { last_error: null } : {}),
   });
 
-  return { recuperees, entrantes, jusquA: curseur, statuts, total, tronque };
+  return { recuperees, entrantes, jusquA: curseur, statuts, total, tronque, encaissementsRattrapes };
 }
 
 type EvenementFacture = {

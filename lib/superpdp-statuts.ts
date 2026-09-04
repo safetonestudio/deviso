@@ -45,6 +45,10 @@ export const STATUTS: Record<string, Statut> = {
   "fr:211": { texte: "Paiement transmis", ton: "neutre" },
   "fr:212": { texte: "Encaissée", ton: "bien", obligatoire: true, cloture: true },
   "fr:213": { texte: "Rejetée", ton: "attention", obligatoire: true, cloture: true },
+  // 214 « Inconnu (facture) » : la nomenclature le définit, l'énumération de la
+  // plateforme ne le crée pas. Reçu, il doit s'afficher en français plutôt
+  // qu'en code brut — c'est le seul de la table 200-214 qui nous manquait.
+  "fr:214": { texte: "Statut inconnu du destinataire", ton: "attention" },
   // Glosé par la spec (« Inadmissible ») mais absent de son énumération. On le
   // connaît quand même : reçu, il doit s'afficher, pas tomber en code brut.
   "fr:501": { texte: "Irrecevable", ton: "attention", cloture: true },

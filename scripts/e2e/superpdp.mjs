@@ -199,13 +199,21 @@ const payee = idEncaisser
   : { status: 0, body: null };
 verifier("la facture est marquée payée", payee.body?.invoice?.status === "paid", `HTTP ${payee.status}`);
 
-// Le passage à « payée » déclare déjà l'encaissement : la route PATCH porte
-// l'obligation. L'appel explicite doit donc constater, pas refaire.
-const encaissement = idEncaisser
-  ? await bq.call(`/api/superpdp/invoices/${idEncaisser}/encaisser`, { method: "POST" })
-  : { status: 0, body: null };
+// Le passage à « payée » déclare l'encaissement, mais la plateforme peut le
+// faire attendre : « La facture liée est en cours de traitement. Réessayer plus
+// tard. » C'est un refus transitoire, et le produit le rattrape désormais à
+// chaque synchronisation. Le test doit donc éprouver le RÉSULTAT — la facture
+// finit encaissée — et non la réussite du premier appel, qui dépend d'une
+// course qu'on ne maîtrise pas. Une assertion qui dépend du hasard ne prouve
+// rien : c'est la leçon du 03/09 sur cette même facture.
+let encaissement = { status: 0, body: null };
+for (let essai = 0; essai < 5 && idEncaisser; essai++) {
+  encaissement = await bq.call(`/api/superpdp/invoices/${idEncaisser}/encaisser`, { method: "POST" });
+  if (encaissement.status === 200 && encaissement.body?.encaissee === true) break;
+  await new Promise((r) => setTimeout(r, 3000));
+}
 verifier(
-  "l'encaissement est déclaré à la Plateforme Agréée",
+  "l'encaissement finit par être déclaré à la Plateforme Agréée",
   encaissement.status === 200 && encaissement.body?.encaissee === true,
   `HTTP ${encaissement.status} ${doc(encaissement.body)}`
 );
