@@ -8,6 +8,22 @@
  * était décalée d'un cran à partir du code 204 : une facture **refusée** (210)
  * s'affichait « Paiement transmis ». Ne pas la modifier sans rouvrir la source.
  *
+ * Le tableau 8 a été lu directement le 07/09/2026, dans le paquet officiel.
+ * Deux choses en ressortent, qui étaient jusque-là supposées :
+ *
+ *   - il **s'arrête à 213**. Les codes 214 à 228, qu'on soupçonnait d'exister
+ *     sans pouvoir les nommer, ne sont documentés nulle part dans le paquet
+ *     DGFiP. Le document le dit lui-même : « Les statuts possibles (liste non
+ *     exhaustive, voir norme AFNOR XP Z12-012) ». La liste complète n'existe
+ *     donc que dans une norme payante, et aucune traduction de ces codes n'est
+ *     défendable. C'est ce qui justifie `libelleStatut` : un code inconnu
+ *     s'affiche brut plutôt que sous un libellé inventé ;
+ *   - quatre statuts, et quatre seulement, sont marqués « Obligatoire » —
+ *     200, 210, 212, 213. Confirmé par l'onglet « Statuts » de l'annexe 2
+ *     (« Format sémantique FE CDV — Flux 6 », v2.3), qui n'en liste pas
+ *     d'autres pour l'objet facture. Le champ `obligatoire` ci-dessous est
+ *     donc exact, et il l'est désormais par vérification et non par mémoire.
+ *
  * Trois familles, que la spec distingue :
  *   - `fr:*` — le cycle de vie officiel français ;
  *   - `api:*` — les statuts internes de Super PDP, « used when an invoice does
@@ -45,9 +61,13 @@ export const STATUTS: Record<string, Statut> = {
   "fr:211": { texte: "Paiement transmis", ton: "neutre" },
   "fr:212": { texte: "Encaissée", ton: "bien", obligatoire: true, cloture: true },
   "fr:213": { texte: "Rejetée", ton: "attention", obligatoire: true, cloture: true },
-  // 214 « Inconnu (facture) » : la nomenclature le définit, l'énumération de la
-  // plateforme ne le crée pas. Reçu, il doit s'afficher en français plutôt
-  // qu'en code brut — c'est le seul de la table 200-214 qui nous manquait.
+  // 214 : présent dans l'énumération `status_code` de Super PDP, ABSENT du
+  // tableau 8 de la DGFiP — vérifié le 07/09/2026 sur le document lui-même,
+  // qui s'arrête à 213. Ce n'est donc pas un statut du cycle de vie français
+  // documenté, et le libellé ci-dessous est une glose, pas une citation. On le
+  // garde parce qu'un code reçu doit s'afficher en français plutôt qu'en brut,
+  // mais il ne doit surtout pas être traité comme obligatoire ni comme
+  // clôturant.
   "fr:214": { texte: "Statut inconnu du destinataire", ton: "attention" },
   // Glosé par la spec (« Inadmissible ») mais absent de son énumération. On le
   // connaît quand même : reçu, il doit s'afficher, pas tomber en code brut.

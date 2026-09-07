@@ -528,12 +528,43 @@ verifier(
 // `fr:202`. Une facture REFUSÉE par le client (fr:210) s'affichait donc
 // « Transmise » en vert — et un refus oblige le fournisseur à passer un avoir.
 // Aucun test ne regardait ce champ : ils vérifiaient tous la table miroir.
-const factureApres = idB2b ? await bq.call(`/api/invoices/${idB2b}`) : { status: 0, body: null };
-const statutPorte = factureApres.body?.invoice?.superpdp_status ?? null;
+// On attend, plutôt que de constater trop tôt.
+//
+// Cette assertion mesurait une course : la facture venait d'être déposée, et on
+// exigeait qu'une synchronisation lancée dans la seconde ait déjà ramené un
+// statut `fr:*`. La plateforme met de quelques secondes à une minute à faire
+// passer une facture par ses propres contrôles avant d'émettre `fr:200`. Selon
+// sa charge, la même suite passait ou échouait sans qu'une ligne de code ait
+// bougé — et un test qui échoue au hasard finit par être ignoré, ce qui est
+// pire que pas de test.
+//
+// On boucle donc jusqu'à une minute, en resynchronisant à chaque tour (le
+// plancher du clic explicite est de dix secondes). L'échec, s'il survient,
+// signifie alors vraiment que le statut ne redescend pas.
+//
+// On observe `idSaisie`, et non `idB2b`. Ce n'est pas un contournement : dans
+// le bac à sable, une facture dont l'adresse a été DÉDUITE du SIREN — le cas
+// d'`idB2b` — n'est jamais acheminée, parce que les sociétés de test y
+// partagent le même SIREN `315143296`. Elle reste à `api:uploaded` pour
+// toujours, normalement, et c'est même ce que `factureBloquee` et `etatPdp`
+// documentent et affichent. Trois exécutions du 07/09/2026 le montrent sans
+// ambiguïté : les factures à adresse SAISIE atteignent `fr:202` puis `fr:212`
+// en quelques secondes, celles à adresse déduite restent toutes à
+// `api:uploaded`. Assertion posée sur la mauvaise facture : elle ne mesurait
+// pas la redescente des statuts, elle mesurait une limite du bac à sable.
+let statutPorte = null;
+const idSuivi = idSaisie ?? idB2b;
+for (let essai = 0; essai < 6 && idSuivi; essai++) {
+  const lue = await bq.call(`/api/invoices/${idSuivi}`);
+  statutPorte = lue.body?.invoice?.superpdp_status ?? null;
+  if (typeof statutPorte === "string" && statutPorte.startsWith("fr:")) break;
+  await new Promise((r) => setTimeout(r, 11000));
+  await bq.call("/api/superpdp/sync", { method: "POST", body: doc({ explicite: true }) });
+}
 verifier(
   "le statut de la facture suit la plateforme, il ne reste pas à api:uploaded",
   typeof statutPorte === "string" && statutPorte.startsWith("fr:"),
-  `superpdp_status = ${statutPorte}`
+  `superpdp_status = ${statutPorte} (après une minute d'attente et six synchronisations)`
 );
 
 // ── Validation avant transmission ────────────────────────────────────────────

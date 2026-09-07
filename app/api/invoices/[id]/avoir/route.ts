@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 import { getWorkspaceUserId } from "@/lib/workspace";
 import { numeroDocument } from "@/lib/numerotation";
+import { verdictAvoir } from "@/lib/superpdp-avoir";
 
 /**
  * Crée l'avoir qui annule une facture.
@@ -197,5 +198,10 @@ export async function POST(_req: NextRequest, ctx: { params: Promise<{ id: strin
     return NextResponse.json({ error: "Création impossible", message: error.message }, { status: 500 });
   }
 
-  return NextResponse.json({ avoir });
+  // L'utilisateur doit savoir MAINTENANT si cet avoir se transmet ou reste
+  // dans ses livres — pas au moment où il cliquera « Transmettre » pour se
+  // voir opposer un refus. Voir lib/superpdp-avoir.ts.
+  const verdict = verdictAvoir(origine.superpdp_status);
+
+  return NextResponse.json({ avoir, interne: verdict.interne, avertissement: verdict.message });
 }

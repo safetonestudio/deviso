@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { MOTIFS_REFUS } from "@/lib/superpdp-motifs";
+import { MOTIFS_REFUS, motifParCode } from "@/lib/superpdp-motifs";
 
 /**
  * La seule action proposée sur une facture reçue.
@@ -249,6 +249,18 @@ export function SignalerProbleme({
                   </option>
                 ))}
               </select>
+              {/* La description du motif choisi, mot pour mot de la
+                  nomenclature officielle. Un refus est terminal : il oblige le
+                  fournisseur à passer un avoir. Deux libellés se ressemblent
+                  assez pour être confondus — « Facture en doublon » et
+                  « Données réglementaires F1 en doublon » — et un troisième
+                  porte une restriction d'emploi qu'aucun libellé ne peut
+                  contenir. Le texte lève l'ambiguïté au moment du choix. */}
+              {motifParCode(motif)?.description && (
+                <p className="text-xs text-gray-400 mb-2 leading-relaxed">
+                  {motifParCode(motif)!.description}
+                </p>
+              )}
               <p className="text-xs text-gray-600 mb-4">
                 La réforme n&apos;accepte que ces motifs : il n&apos;existe pas
                 d&apos;option « autre ».

@@ -6,6 +6,7 @@ import { superpdpFetch, getConnection, SuperPdpNotConnected, SuperPdpSessionPend
 import { generateFacturXml } from "@/lib/invoice-xml";
 import { isB2CInvoice } from "@/lib/facturx-helpers";
 import { manquesPourEmission, phraseManques, transmissible } from "@/lib/superpdp-precontrole";
+import { verdictAvoir } from "@/lib/superpdp-avoir";
 import { natureOperation } from "@/lib/superpdp-nature";
 import { validerFacture, resumerEchecs } from "@/lib/superpdp-validation";
 import { envoyerEncaissementPdp } from "@/lib/superpdp-encaissement";
@@ -233,7 +234,7 @@ export async function POST(req: NextRequest, ctx: { params: Promise<{ id: string
     ) {
       const { data: liee } = await admin
         .from("invoices")
-        .select("invoice_number, issue_date")
+        .select("invoice_number, issue_date, superpdp_status")
         .eq("id", facture.linked_invoice_id)
         .eq("user_id", workspaceId)
         .maybeSingle();
@@ -241,6 +242,20 @@ export async function POST(req: NextRequest, ctx: { params: Promise<{ id: string
       // BT-26. Sans elle, un avoir est refusé par BR-FR-CO-05, qui ne compte
       // pas une référence non datée.
       dateDocLie = liee?.issue_date ?? null;
+
+      // Un avoir qui annule une facture refusée ou rejetée ne se transmet pas.
+      // L'administration sait déjà, par le statut obligatoire, que la facture
+      // ne vaut plus rien ; l'envoyer quand même déclarerait deux fois la même
+      // annulation. Voir lib/superpdp-avoir.ts pour la règle et sa source.
+      if (facture.invoice_type === "avoir") {
+        const verdict = verdictAvoir(liee?.superpdp_status ?? null);
+        if (verdict.interne) {
+          return NextResponse.json(
+            { error: "AVOIR_INTERNE", message: verdict.message },
+            { status: 400 }
+          );
+        }
+      }
     }
 
     const xml = generateFacturXml(

@@ -88,8 +88,8 @@ export default async function Declarations() {
       <div>
         <h1 className="text-2xl font-semibold text-white">Déclarations au fisc</h1>
         <p className="text-sm text-gray-500 mt-1">
-          Ce que la Plateforme Agréée déclare à l&apos;administration en votre nom. Vous n&apos;avez
-          rien à envoyer&nbsp;: transmettre une facture suffit.
+          Ce que la Plateforme Agréée déclare à l&apos;administration en votre nom. Pour tout ce que
+          vous facturez, vous n&apos;avez rien à envoyer&nbsp;: transmettre la facture suffit.
         </p>
         <p className="text-xs text-gray-500 mt-2">
           Compte affiché : <span className="text-gray-300 font-medium">{nomCompte}</span>
@@ -127,6 +127,32 @@ export default async function Declarations() {
           )}
 
           <Apercu />
+
+          {/* La seule obligation que Deviso ne couvre pas, dite à l'endroit où
+              l'utilisateur croit justement que tout est couvert.
+
+              L'article 290-II du CGI oblige l'entreprise française à déclarer
+              aussi ses ACHATS auprès d'un fournisseur étranger — le sens
+              « Bi2B ». Ces factures-là n'arrivent pas par la Plateforme
+              Agréée : elles arrivent par courriel, en PDF, comme avant. Deviso
+              ne les saisit pas, donc ne les déclare pas, et la ligne « Achats »
+              du tableau ci-dessous restera vide même quand l'obligation court.
+
+              Un écran qui affirme « vous n'avez rien à envoyer » et se tait
+              là-dessus ne laisse à l'utilisateur aucune chance de découvrir le
+              trou avant un contrôle. Le dire coûte quatre lignes. */}
+          <div className="bg-amber-500/5 border border-amber-500/20 rounded-xl px-4 py-3 mt-6">
+            <p className="text-sm text-amber-300 font-medium mb-1">
+              Vos achats à l&apos;étranger ne sont pas couverts
+            </p>
+            <p className="text-xs text-gray-400 leading-relaxed">
+              Si vous achetez à un fournisseur établi hors de France, c&apos;est à vous de déclarer
+              ces achats (article 290-II du CGI) — sa facture ne passe pas par votre Plateforme
+              Agréée. Deviso ne saisit pas les factures d&apos;achat&nbsp;: cette déclaration se fait
+              aujourd&apos;hui auprès de votre Plateforme Agréée ou de votre comptable. Vos ventes,
+              elles, sont entièrement couvertes.
+            </p>
+          </div>
 
           {erreur ? (
             <section className="bg-ds-surface border border-red-500/30 rounded-xl p-6 mt-6 text-center">

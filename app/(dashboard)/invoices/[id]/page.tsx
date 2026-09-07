@@ -179,6 +179,12 @@ function ActionPanel({ invoice, id, router, hasChorusPro }: {
     setCreatingAvoir(false);
 
     if (res.ok && data.avoir?.id) {
+      // Un avoir qui annule une facture refusée ou rejetée ne se transmet pas
+      // (spécifications externes DGFiP v3.2, p. 60). On le dit avant d'emmener
+      // l'utilisateur sur le document : la route d'émission refusera de toute
+      // façon, mais découvrir la règle en se heurtant à un refus est le pire
+      // moment pour l'apprendre.
+      if (data.interne && data.avertissement) alert(data.avertissement);
       window.location.href = `/invoices/${data.avoir.id}`;
       return;
     }
