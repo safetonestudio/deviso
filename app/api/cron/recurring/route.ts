@@ -3,6 +3,8 @@ import { createAdminClient } from "@/lib/supabase/admin";
 import { generateFacturXPdf, facturxFilename } from "@/lib/facturx";
 import { resend } from "@/lib/resend";
 import { piedDePageMarque } from "@/lib/emails/branding";
+import { cronAutorise } from "@/lib/cron-auth";
+import { numeroDocument } from "@/lib/numerotation";
 
 // Vercel cron, déclenché quotidiennement à 7h
 // Génère les factures récurrentes dont la date de facturation est arrivée
@@ -25,8 +27,7 @@ type RecurringInvoice = {
 };
 
 export async function GET(req: NextRequest) {
-  const authHeader = req.headers.get("authorization");
-  if (authHeader !== `Bearer ${process.env.CRON_SECRET}`) {
+  if (!cronAutorise(req)) {
     return NextResponse.json({ error: "Non autorisé" }, { status: 401 });
   }
 
@@ -50,23 +51,73 @@ export async function GET(req: NextRequest) {
     // Récupérer le profil du propriétaire (pour numéro de facture, seller info, couleur)
     const { data: profile } = await supabase
       .from("profiles")
-      .select("full_name, company_name, siret, address, email, tva_number, plan, proposal_color")
+      .select("full_name, company_name, siret, address, email, tva_number, plan, proposal_color, payment_method, payment_link_provider, payment_link_profile, bank_iban, bank_bic, bank_account_name")
       .eq("id", rec.user_id)
       .single();
 
     if (!profile) continue;
 
-    // Générer le numéro de facture
-    const { data: invoiceNumber } = await supabase.rpc("next_invoice_number", { p_user_id: rec.user_id });
-    const number = invoiceNumber || `${new Date().getFullYear()}-REC`;
+    // Numéro de facture : la règle partagée, et surtout PAS de repli.
+    //
+    // Cette ligne était `invoiceNumber || \`${année}-REC\``, exactement le
+    // motif que `lib/numerotation.ts` documente comme ayant déjà causé un
+    // incident et qu'il interdit depuis. L'erreur de la fonction SQL n'était
+    // même pas lue : le jour où l'appel échoue — il a déjà échoué, faute de
+    // droits d'exécution — TOUTES les factures récurrentes de TOUS les comptes
+    // prennent le numéro « 2026-REC », partent par courriel au client, et
+    // violent l'article 242 nonies A du CGI qui impose une numérotation
+    // continue et sans doublon. Un numéro inventé pour éviter une erreur
+    // produit une facture irrégulière, ce qui est plus grave que l'échec qu'il
+    // masque : on abandonne cette échéance et on la reprendra demain.
+    let number: string;
+    try {
+      number = await numeroDocument(supabase, rec.user_id, "standard");
+    } catch (err) {
+      console.error(`[cron/recurring] ${rec.id} : numérotation indisponible`, err);
+      continue;
+    }
 
-    // Calculer les totaux
-    const total_ht = rec.items.reduce((sum, item) => sum + item.total, 0);
-    const tva_amount = total_ht * (rec.tva_rate / 100);
-    const total_ttc = total_ht + tva_amount;
+    // Totaux arrondis au centime, comme partout ailleurs : sans cela la somme
+    // des lignes du PDF ne correspond pas au total imprimé, et le XML embarqué
+    // viole BR-CO-10.
+    const centimes = (n: number) => Math.round((Number(n) || 0) * 100) / 100;
+    const lignes = rec.items.map((it) => ({ ...it, total: centimes(it.total) }));
+    const total_ht = centimes(lignes.reduce((sum, item) => sum + item.total, 0));
+    const total_ttc = centimes(total_ht * (1 + rec.tva_rate / 100));
 
     const issue_date = today;
     const due_date = computeDueDate(rec.payment_terms);
+
+    /**
+     * On réserve l'échéance AVANT de créer la facture.
+     *
+     * L'ordre était l'inverse : numéro consommé, facture insérée, courriel
+     * envoyé, puis seulement `next_billing_date` avancé. Cette fonction n'a
+     * aucune limite de durée déclarée et rend un PDF par facture (deux à
+     * quatre secondes pièce) : au 1er du mois, avec quelques centaines
+     * d'abonnements, elle est tuée par Vercel au bout de quinze ou vingt.
+     * Toutes les échéances non avancées repassaient le lendemain — même
+     * période, deuxième numéro légal, deuxième facture, deuxième courriel au
+     * client. Une facture en double ne s'annule que par un avoir.
+     *
+     * En réservant d'abord, sous condition que la date n'ait pas bougé, une
+     * exécution coupée ne refacture rien : elle a simplement sauté une
+     * échéance, ce qui se rattrape. Le `.eq("next_billing_date", …)` rend
+     * l'opération sûre même si deux exécutions du cron se croisent — Vercel
+     * garantit « au moins une fois », pas « exactement une fois ».
+     */
+    const next_billing_date = computeNextBillingDate(rec.interval, rec.day_of_month, rec.next_billing_date);
+    const { data: reservee } = await supabase
+      .from("recurring_invoices")
+      .update({ last_billed_at: new Date().toISOString(), next_billing_date })
+      .eq("id", rec.id)
+      .eq("next_billing_date", rec.next_billing_date)
+      .select("id");
+
+    if (!reservee || reservee.length === 0) {
+      // Une autre exécution s'en occupe déjà.
+      continue;
+    }
 
     // Créer la facture
     const { data: invoice, error: invoiceError } = await supabase
@@ -83,7 +134,7 @@ export async function GET(req: NextRequest) {
         seller_siren: profile.siret,
         seller_address: profile.address,
         seller_tva_number: profile.tva_number,
-        items: rec.items,
+        items: lignes,
         total_ht,
         tva_rate: rec.tva_rate,
         total_ttc,
@@ -105,7 +156,19 @@ export async function GET(req: NextRequest) {
     if (rec.client_email) {
       try {
         const accentColor = profile.proposal_color ?? undefined;
-        const pdfBuffer = await generateFacturXPdf(invoice, accentColor);
+        // Coordonnées de paiement : elles n'étaient pas passées, et une facture
+        // récurrente partait donc SANS IBAN ni lien de paiement, là où toute
+        // facture émise à la main en porte. Le client reçoit une facture et ne
+        // sait pas où payer — sur un abonnement, tous les mois.
+        const paymentInfo = {
+          method: (profile.payment_method || "none") as "none" | "link" | "bank" | "both",
+          linkProvider: profile.payment_link_provider,
+          linkUrl: profile.payment_link_profile,
+          bankIban: profile.bank_iban,
+          bankBic: profile.bank_bic,
+          bankAccountName: profile.bank_account_name,
+        };
+        const pdfBuffer = await generateFacturXPdf(invoice, accentColor, paymentInfo);
         const filename = facturxFilename(invoice);
         const amount = new Intl.NumberFormat("fr-FR", { style: "currency", currency: "EUR" }).format(total_ttc);
         const clientName = rec.client_company || rec.client_name || "Client";
@@ -131,18 +194,21 @@ export async function GET(req: NextRequest) {
           html,
           attachments: [{ filename, content: Buffer.from(pdfBuffer).toString("base64") }],
         });
-      } catch {
-        // L'email a échoué mais la facture est créée, on continue
+      } catch (err) {
+        // L'envoi a échoué. La facture, elle, existe — et elle porte le statut
+        // « envoyée », que la boucle de relance interprète comme « le client
+        // l'a reçue ». Sans cette correction, le client recevait trois rappels
+        // de paiement pour une facture qu'il n'avait jamais vue, et le
+        // freelance n'avait aucun moyen de comprendre pourquoi son client
+        // s'énervait : le `catch` d'origine était vide, il n'écrivait même pas
+        // dans les journaux.
+        console.error(
+          `[cron/recurring] facture ${number} créée mais NON envoyée à ${rec.client_email} :`,
+          err
+        );
+        await supabase.from("invoices").update({ status: "draft" }).eq("id", invoice.id);
       }
     }
-
-    // Calculer la prochaine date de facturation
-    const next_billing_date = computeNextBillingDate(rec.interval, rec.day_of_month, rec.next_billing_date);
-
-    await supabase
-      .from("recurring_invoices")
-      .update({ last_billed_at: new Date().toISOString(), next_billing_date })
-      .eq("id", rec.id);
 
     generated++;
   }

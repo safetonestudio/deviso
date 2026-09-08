@@ -39,6 +39,29 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "already_accepted" }, { status: 409 });
   }
 
+  // L'adresse créée DOIT être celle qui a été invitée.
+  //
+  // Sans ce contrôle, le jeton d'invitation devenait une fabrique de comptes
+  // vérifiés sous n'importe quelle adresse : `email_confirm: true` ci-dessous
+  // marque l'e-mail comme prouvé sans qu'aucune preuve n'ait été apportée.
+  // Quelqu'un qui reçoit — ou intercepte, ou se voit transférer — une seule
+  // invitation pouvait ouvrir un compte au nom de `compta@grand-client.fr` :
+  // la vraie personne ne pouvait plus s'inscrire, et selon la configuration
+  // Supabase un futur lien magique sur cette adresse atterrissait chez lui.
+  //
+  // Le jeton prouve qu'on a été invité, pas qu'on est le destinataire.
+  if (String(email).trim().toLowerCase() !== String(invite.email ?? "").trim().toLowerCase()) {
+    return NextResponse.json(
+      {
+        error: "EMAIL_MISMATCH",
+        message:
+          "Cette invitation a été envoyée à une autre adresse. " +
+          "Inscrivez-vous avec l'adresse qui l'a reçue, ou demandez une nouvelle invitation.",
+      },
+      { status: 403 }
+    );
+  }
+
   // Crée l'utilisateur avec email confirmé d'emblée (pas d'email de vérification)
   const { data: created, error: createError } = await admin.auth.admin.createUser({
     email,

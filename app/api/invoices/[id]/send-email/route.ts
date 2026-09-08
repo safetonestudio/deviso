@@ -1,9 +1,10 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 import { generateFacturXPdf, facturxFilename } from "@/lib/facturx";
-import { resend } from "@/lib/resend";
+import { documentLie } from "@/lib/document-lie";
+import { envoyerCourriel } from "@/lib/resend";
 import type { Invoice } from "@/types";
-import { getWorkspaceUserId } from "@/lib/workspace";
+import { getWorkspaceUserId, getWorkspaceProfile } from "@/lib/workspace";
 import { piedDePageMarque } from "@/lib/emails/branding";
 
 type Params = { params: Promise<{ id: string }> };
@@ -31,11 +32,18 @@ export async function POST(req: NextRequest, { params }: Params) {
   const invoice = data as Invoice;
   if (!invoice.client_email) return NextResponse.json({ error: "Email client manquant" }, { status: 400 });
 
-  const { data: profileData } = await supabase
-    .from("profiles")
-    .select("proposal_color, payment_method, payment_link_provider, payment_link_profile, bank_iban, bank_bic, bank_account_name, plan, company_name, full_name, email")
-    .eq("id", user.id)
-    .single();
+  // Le profil de l'ESPACE, pas celui de la personne connectée.
+  //
+  // Ce `.eq("id", user.id)` était un défaut discret et coûteux : sur un plan
+  // Pro multi-utilisateurs, un collaborateur agissant sur un document de
+  // l'espace lisait SON profil. Selon la route, cela donnait un PDF portant
+  // son IBAN (ou aucun) au lieu de celui de l'entreprise — le client paie
+  // alors sur le mauvais compte — ou un refus « plan insuffisant » sur une
+  // fonction que l'espace paie pourtant.
+  const profileData = await getWorkspaceProfile<{ proposal_color: string | null; payment_method: string | null; payment_link_provider: string | null; payment_link_profile: string | null; bank_iban: string | null; bank_bic: string | null; bank_account_name: string | null; plan: string | null; company_name: string | null; full_name: string | null; email: string | null }>(
+    workspaceId,
+    "proposal_color, payment_method, payment_link_provider, payment_link_profile, bank_iban, bank_bic, bank_account_name, plan, company_name, full_name, email"
+  );
 
   const accentColor = profileData?.proposal_color ?? undefined;
   const paymentMethod = (profileData?.payment_method || "none") as "none" | "link" | "bank" | "both";
@@ -49,7 +57,26 @@ export async function POST(req: NextRequest, { params }: Params) {
     bankAccountName: profileData.bank_account_name,
   } : undefined;
 
-  const pdfBuffer = await generateFacturXPdf(invoice, accentColor, paymentInfo);
+  // Le PDF envoyé au client doit être le MÊME que celui qu'il télécharge :
+  // cette route ne passait ni le numéro ni la date du document lié, donc un
+  // avoir partait avec un XML non conforme (BR-FR-CO-05) et une facture de
+  // solde sans son bandeau « vient en déduction de… ».
+  /**
+   * Un avoir n'est pas une facture à payer, et le courriel le disait quand
+   * même.
+   *
+   * Le gabarit était unique, sans aucun test sur le type du document : l'objet
+   * annonçait « Votre facture », le corps « veuillez trouver ci-joint la
+   * facture », l'encadré « à régler avant le … », et venaient ensuite le bouton
+   * « Payer en ligne » et l'IBAN. Le PDF joint, lui, fait exactement l'inverse
+   * et le dit en commentaire : sur un avoir, rien n'est à payer, c'est le
+   * vendeur qui doit. Le client recevait donc un document intitulé AVOIR dans
+   * un message qui lui réclamait 1 200 €.
+   */
+  const estAvoir = invoice.invoice_type === "avoir" || invoice.type_code === "381";
+
+  const lie = await documentLie(supabase, invoice, workspaceId);
+  const pdfBuffer = await generateFacturXPdf(invoice, accentColor, paymentInfo, lie.numero, lie.date);
   const filename = facturxFilename(invoice);
   const amount = new Intl.NumberFormat("fr-FR", { style: "currency", currency: "EUR" }).format(invoice.total_ttc);
   const clientName = invoice.client_company || invoice.client_name || "Client";
@@ -77,25 +104,27 @@ export async function POST(req: NextRequest, { params }: Params) {
         <tr><td style="padding:36px;">
           <p style="margin:0 0 6px;font-size:20px;font-weight:700;color:#0f172a;">Bonjour ${clientName},</p>
           <p style="margin:0 0 24px;font-size:15px;color:#64748b;line-height:1.6;">
-            Veuillez trouver ci-joint la facture de <strong style="color:#0f172a;">${invoiceDisplayName}</strong>.
+            ${estAvoir
+              ? `Veuillez trouver ci-joint l'avoir émis par <strong style="color:#0f172a;">${invoiceDisplayName}</strong>. Aucun paiement ne vous est demandé : ce document annule tout ou partie d'une facture précédente.`
+              : `Veuillez trouver ci-joint la facture de <strong style="color:#0f172a;">${invoiceDisplayName}</strong>.`}
           </p>
           <div style="background:#f8fafc;border-radius:12px;padding:20px;margin-bottom:28px;">
             <table width="100%" cellpadding="0" cellspacing="0">
               <tr>
-                <td style="font-size:13px;color:#64748b;">Numéro de facture</td>
+                <td style="font-size:13px;color:#64748b;">${estAvoir ? "Numéro d'avoir" : "Numéro de facture"}</td>
                 <td align="right" style="font-size:13px;font-weight:700;color:#0f172a;">${invoice.invoice_number}</td>
               </tr>
               <tr>
                 <td style="font-size:13px;color:#64748b;padding-top:8px;">Montant</td>
                 <td align="right" style="font-size:18px;font-weight:800;color:#0f172a;padding-top:8px;">${amount}</td>
               </tr>
-              ${dueDate ? `<tr>
+              ${dueDate && !estAvoir ? `<tr>
                 <td style="font-size:13px;color:#64748b;padding-top:8px;">À régler avant le</td>
                 <td align="right" style="font-size:13px;font-weight:700;color:${brand};padding-top:8px;">${dueDate}</td>
               </tr>` : ""}
             </table>
           </div>
-          ${paymentLinkForEmail ? `
+          ${paymentLinkForEmail && !estAvoir ? `
           <table width="100%" cellpadding="0" cellspacing="0" style="margin-bottom:24px;">
             <tr><td align="center">
               <a href="${paymentLinkForEmail}" style="display:inline-block;background:${brand};color:#ffffff;font-size:15px;font-weight:700;text-decoration:none;padding:14px 36px;border-radius:12px;">
@@ -103,7 +132,7 @@ export async function POST(req: NextRequest, { params }: Params) {
               </a>
             </td></tr>
           </table>` : ""}
-          ${showBankInEmail ? `
+          ${showBankInEmail && !estAvoir ? `
           <div style="background:#f0fdf4;border:1px solid #bbf7d0;border-radius:12px;padding:20px;margin-bottom:24px;">
             <p style="margin:0 0 8px;font-size:12px;font-weight:700;color:#166534;text-transform:uppercase;letter-spacing:0.5px;">Virement bancaire</p>
             ${profileData?.bank_account_name ? `<p style="margin:0 0 4px;font-size:13px;color:#166534;">Titulaire : <strong>${profileData.bank_account_name}</strong></p>` : ""}
@@ -111,7 +140,7 @@ export async function POST(req: NextRequest, { params }: Params) {
             ${profileData?.bank_bic ? `<p style="margin:0;font-size:13px;color:#166534;font-family:monospace;">BIC : ${profileData.bank_bic}</p>` : ""}
           </div>` : ""}
           <p style="margin:0;font-size:13px;color:#94a3b8;text-align:center;">
-            La facture Factur-X est jointe en PDF à cet email.
+            ${estAvoir ? "L\'avoir Factur-X est joint en PDF à cet email." : "La facture Factur-X est jointe en PDF à cet email."}
           </p>
         </td></tr>
         ${piedDePageMarque(profileData?.plan, "Facture émise via", brand)
@@ -125,12 +154,14 @@ export async function POST(req: NextRequest, { params }: Params) {
 
   const invoiceFrom = `${invoiceDisplayName} <noreply@getdeviso.fr>`;
 
-  const { error: emailError } = await resend.emails.send({
+  const { error: emailError } = await envoyerCourriel(user.id, {
     from: invoiceFrom,
     // Idem : une question sur la facture doit atterrir chez l'émetteur.
     ...(profileData?.email ? { replyTo: profileData.email } : {}),
     to: invoice.client_email,
-    subject: `Votre facture de ${invoiceDisplayName} — ${invoice.invoice_number} (${amount})`,
+    subject: estAvoir
+      ? `Avoir de ${invoiceDisplayName} — ${invoice.invoice_number} (${amount})`
+      : `Votre facture de ${invoiceDisplayName} — ${invoice.invoice_number} (${amount})`,
     html,
     attachments: [
       {

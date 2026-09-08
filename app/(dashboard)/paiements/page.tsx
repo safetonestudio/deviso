@@ -284,7 +284,7 @@ export default function PaiementsPage() {
             <label className="text-xs font-medium text-gray-400 mb-1.5 block">
               Votre lien de paiement *
             </label>
-            <input
+            <input aria-label="Votre lien de paiement"
               type="url"
               value={linkUrl}
               onChange={(e) => setLinkUrl(e.target.value)}
@@ -319,7 +319,7 @@ export default function PaiementsPage() {
               <label className="text-xs font-medium text-gray-400 mb-1.5 block">
                 Titulaire du compte *
               </label>
-              <input
+              <input aria-label="Titulaire du compte"
                 value={accountName}
                 onChange={(e) => setAccountName(e.target.value)}
                 placeholder={profile.company_name || profile.full_name || "Nom ou raison sociale"}
@@ -332,7 +332,7 @@ export default function PaiementsPage() {
               <label className="text-xs font-medium text-gray-400 mb-1.5 block">
                 IBAN *
               </label>
-              <input
+              <input aria-label="IBAN"
                 value={iban}
                 onChange={(e) => setIban(formatIBAN(e.target.value))}
                 placeholder="FR76 3000 6000 0112 3456 7890 189"
@@ -347,7 +347,7 @@ export default function PaiementsPage() {
               <label className="text-xs font-medium text-gray-400 mb-1.5 block">
                 BIC / SWIFT *
               </label>
-              <input
+              <input aria-label="BIC / SWIFT"
                 value={bic}
                 onChange={(e) => setBic(e.target.value.toUpperCase().replace(/\s/g, ""))}
                 placeholder="BNPAFRPP"

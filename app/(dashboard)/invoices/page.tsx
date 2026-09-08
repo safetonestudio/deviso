@@ -656,25 +656,25 @@ export default function InvoicesPage() {
                       <div className="grid grid-cols-2 gap-3">
                         <div>
                           <label className="text-xs text-gray-400 mb-1 block">Nom client *</label>
-                          <input value={rClientName} onChange={(e) => setRClientName(e.target.value)} className={inputCls} placeholder="Jean Dupont" />
+                          <input aria-label="Nom client" value={rClientName} onChange={(e) => setRClientName(e.target.value)} className={inputCls} placeholder="Jean Dupont" />
                         </div>
                         <div>
                           <label className="text-xs text-gray-400 mb-1 block">Email client</label>
-                          <input value={rClientEmail} onChange={(e) => setRClientEmail(e.target.value)} className={inputCls} placeholder="jean@exemple.fr" type="email" />
+                          <input aria-label="Email client" value={rClientEmail} onChange={(e) => setRClientEmail(e.target.value)} className={inputCls} placeholder="jean@exemple.fr" type="email" />
                         </div>
                         <div>
                           <label className="text-xs text-gray-400 mb-1 block">Société</label>
-                          <input value={rClientCompany} onChange={(e) => setRClientCompany(e.target.value)} className={inputCls} placeholder="Acme SAS" />
+                          <input aria-label="Société" value={rClientCompany} onChange={(e) => setRClientCompany(e.target.value)} className={inputCls} placeholder="Acme SAS" />
                         </div>
                         <div>
                           <label className="text-xs text-gray-400 mb-1 block">TVA (%)</label>
-                          <input value={rTva} onChange={(e) => setRTva(Number(e.target.value))} className={inputCls} type="number" min={0} max={100} />
+                          <input aria-label="TVA (%)" value={rTva} onChange={(e) => setRTva(Number(e.target.value))} className={inputCls} type="number" min={0} max={100} />
                         </div>
                       </div>
 
                       <div>
                         <label className="text-xs text-gray-400 mb-1 block">Adresse client</label>
-                        <input value={rClientAddress} onChange={(e) => setRClientAddress(e.target.value)} className={inputCls} placeholder="12 rue de la Paix, 75001 Paris" />
+                        <input aria-label="Adresse client" value={rClientAddress} onChange={(e) => setRClientAddress(e.target.value)} className={inputCls} placeholder="12 rue de la Paix, 75001 Paris" />
                       </div>
 
                       {/* Articles */}
@@ -721,7 +721,7 @@ export default function InvoicesPage() {
                       <div className="grid grid-cols-2 gap-3">
                         <div>
                           <label className="text-xs text-gray-400 mb-1 block">Fréquence</label>
-                          <select value={rInterval} onChange={(e) => setRInterval(e.target.value)} className={inputCls}>
+                          <select aria-label="Fréquence" value={rInterval} onChange={(e) => setRInterval(e.target.value)} className={inputCls}>
                             <option value="monthly">Mensuelle</option>
                             <option value="quarterly">Trimestrielle</option>
                             <option value="yearly">Annuelle</option>
@@ -729,7 +729,7 @@ export default function InvoicesPage() {
                         </div>
                         <div>
                           <label className="text-xs text-gray-400 mb-1 block">Jour du mois</label>
-                          <input
+                          <input aria-label="Jour du mois"
                             value={rDayOfMonth}
                             onChange={(e) => setRDayOfMonth(Math.min(28, Math.max(1, Number(e.target.value))))}
                             className={inputCls}
@@ -738,13 +738,13 @@ export default function InvoicesPage() {
                         </div>
                         <div>
                           <label className="text-xs text-gray-400 mb-1 block">Conditions de paiement</label>
-                          <input value={rPaymentTerms} onChange={(e) => setRPaymentTerms(e.target.value)} className={inputCls} placeholder="30 jours" />
+                          <input aria-label="Conditions de paiement" value={rPaymentTerms} onChange={(e) => setRPaymentTerms(e.target.value)} className={inputCls} placeholder="30 jours" />
                         </div>
                       </div>
 
                       <div>
                         <label className="text-xs text-gray-400 mb-1 block">Notes</label>
-                        <textarea value={rNotes} onChange={(e) => setRNotes(e.target.value)} className={`${inputCls} resize-none h-16`} placeholder="Mentions particulières…" />
+                        <textarea aria-label="Notes" value={rNotes} onChange={(e) => setRNotes(e.target.value)} className={`${inputCls} resize-none h-16`} placeholder="Mentions particulières…" />
                       </div>
                     </div>
 

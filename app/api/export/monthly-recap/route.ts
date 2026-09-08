@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
-import { getWorkspaceUserId } from "@/lib/workspace";
+import { getWorkspaceUserId, getWorkspaceProfile } from "@/lib/workspace";
 
 // GET /api/export/monthly-recap?year=2025, Pro only
 export async function GET(req: NextRequest) {
@@ -8,11 +8,18 @@ export async function GET(req: NextRequest) {
   const { data: { user }, error: authError } = await supabase.auth.getUser();
   if (authError || !user) return NextResponse.json({ error: "Non autorisé" }, { status: 401 });
 
-  const { data: profile } = await supabase
-    .from("profiles")
-    .select("plan")
-    .eq("id", user.id)
-    .single();
+  // Le profil de l'ESPACE, pas celui de la personne connectée.
+  //
+  // Ce `.eq("id", user.id)` était un défaut discret et coûteux : sur un plan
+  // Pro multi-utilisateurs, un collaborateur agissant sur un document de
+  // l'espace lisait SON profil. Selon la route, cela donnait un PDF portant
+  // son IBAN (ou aucun) au lieu de celui de l'entreprise — le client paie
+  // alors sur le mauvais compte — ou un refus « plan insuffisant » sur une
+  // fonction que l'espace paie pourtant.
+  const profile = await getWorkspaceProfile<{ plan: string | null }>(
+    await getWorkspaceUserId(user.id),
+    "plan"
+  );
 
   if (profile?.plan !== "pro") {
     return NextResponse.json({ error: "PLAN_REQUIRED" }, { status: 403 });
@@ -23,9 +30,12 @@ export async function GET(req: NextRequest) {
 
   const { data: invoices, error } = await supabase
     .from("invoices")
-    .select("issue_date, total_ht, total_ttc, tva_rate, status")
+    .select("issue_date, total_ht, total_ttc, tva_rate, status, invoice_type")
     .eq("user_id", workspaceId)
-    .neq("status", "cancelled")
+    // Un brouillon n'est pas du chiffre d'affaires : il n'est parti nulle part
+    // et son numéro n'est même pas définitif. Il n'était exclu nulle part, et
+    // gonflait à la fois le CA du mois et la colonne « impayé ».
+    .in("status", ["sent", "paid"])
     .gte("issue_date", `${year}-01-01`)
     .lte("issue_date", `${year}-12-31`);
 
@@ -52,8 +62,13 @@ export async function GET(req: NextRequest) {
 
   (invoices ?? []).forEach((inv) => {
     const m = new Date(inv.issue_date).getMonth();
-    const ht = inv.total_ht ?? 0;
-    const ttc = inv.total_ttc ?? 0;
+    // Un avoir RETRANCHE du chiffre d'affaires : ses montants sont positifs
+    // (règle BR-27, c'est le type du document qui porte le sens), et ils
+    // étaient additionnés. Une facture de 1 000 € et son avoir affichaient
+    // 2 000 € de CA au lieu de zéro.
+    const signe = inv.invoice_type === "avoir" ? -1 : 1;
+    const ht = signe * (inv.total_ht ?? 0);
+    const ttc = signe * (inv.total_ttc ?? 0);
     const tva = ttc - ht;
     byMonth[m].nb_factures++;
     byMonth[m].ca_ht += ht;
@@ -114,7 +129,20 @@ export async function GET(req: NextRequest) {
   ]);
 
   const BOM = "﻿";
-  const csv = BOM + [headers.join(","), ...rows.map((r) => r.join(","))].join("\r\n");
+  // Séparateur point-virgule, et ce n'est pas une préférence.
+  //
+  // Les montants sont formatés à la française — « 1234,56 » — et étaient
+  // joints par une virgule. Chaque colonne numérique éclatait donc en deux
+  // champs : une ligne à douze colonnes en produisait seize, et Excel lisait
+  // « Montant HT = 1234 », « TVA % = 56 ». TOUTES les lignes étaient fausses,
+  // ligne de totaux comprise, et rien ne le signalait — le fichier s'ouvre
+  // sans erreur, il est juste décalé.
+  //
+  // Le point-virgule est la convention qui va avec la virgule décimale : c'est
+  // ce qu'Excel attend en locale française, et ce que Deviso produit déjà de
+  // fait par le BOM UTF-8 juste en dessous.
+  const SEP = ";";
+  const csv = BOM + [headers.join(SEP), ...rows.map((r) => r.join(SEP))].join("\r\n");
   const filename = `Recap_CA_${year}_${new Date().toISOString().split("T")[0]}.csv`;
 
   return new NextResponse(csv, {

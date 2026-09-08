@@ -75,7 +75,7 @@ export function TjmSimulator({ defaultTjm = 350, defaultJours = 15 }: TjmSimulat
             <label className="block text-xs font-medium text-gray-400 mb-1.5">
               Votre TJM (€/jour)
             </label>
-            <input
+            <input aria-label="Votre TJM (€/jour)"
               type="number"
               min={50}
               max={5000}
@@ -90,7 +90,7 @@ export function TjmSimulator({ defaultTjm = 350, defaultJours = 15 }: TjmSimulat
             <label className="block text-xs font-medium text-gray-400 mb-1.5">
               Revenu net cible / mois (avant impôt)
             </label>
-            <input
+            <input aria-label="Revenu net cible / mois (avant impôt)"
               type="number"
               min={500}
               max={50000}
@@ -106,7 +106,7 @@ export function TjmSimulator({ defaultTjm = 350, defaultJours = 15 }: TjmSimulat
           <label className="block text-xs font-medium text-gray-400 mb-1.5">
             Jours facturables / mois
           </label>
-          <input
+          <input aria-label="Jours facturables / mois"
             type="range"
             min={5}
             max={22}

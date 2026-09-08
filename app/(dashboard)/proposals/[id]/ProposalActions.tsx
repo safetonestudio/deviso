@@ -323,7 +323,7 @@ export default function ProposalActions({
                         </div>
                         <div className="flex items-center gap-2 mb-3">
                           <label className="text-xs text-gray-400 shrink-0">Autre :</label>
-                          <input
+                          <input aria-label="Autre"
                             type="number"
                             min={1}
                             max={99}
@@ -456,7 +456,7 @@ export default function ProposalActions({
                   </div>
                   <div className="flex items-center gap-2 mb-3">
                     <label className="text-xs text-gray-400 shrink-0">Autre :</label>
-                    <input type="number" min={1} max={99} value={acomptePct} onChange={(e) => setAcomptePct(Number(e.target.value))} className="w-full bg-ds-elevated border border-ds-border rounded-lg px-2 py-1 text-sm text-white" />
+                    <input aria-label="Autre" type="number" min={1} max={99} value={acomptePct} onChange={(e) => setAcomptePct(Number(e.target.value))} className="w-full bg-ds-elevated border border-ds-border rounded-lg px-2 py-1 text-sm text-white" />
                     <span className="text-gray-400 text-sm">%</span>
                   </div>
                   <div className="flex gap-2">

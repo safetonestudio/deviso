@@ -48,9 +48,72 @@ export async function PATCH(req: NextRequest, { params }: Params) {
 
   const body = await req.json();
 
+  // Liste blanche, comme partout ailleurs dans le projet.
+  //
+  // Cette route écrivait `body` tel quel. Deux conséquences, et la seconde est
+  // la plus lourde :
+  //
+  //   - `approval_status` étant écrivable, un collaborateur d'un espace où la
+  //     validation par le propriétaire est exigée passait outre en une
+  //     requête, alors que `/approve` et `/submit-for-approval` gardent
+  //     soigneusement le rôle. Le garde-fou vendu avec le plan Pro ne tenait
+  //     qu'à ce que personne n'appelle l'API directement ;
+  //   - `signed_at`, `signer_name`, `signer_ip`, `signature_hash` l'étaient
+  //     aussi. Toute la piste d'audit que la route publique de signature
+  //     construit côté serveur — empreinte SHA-256 du document figé, IP,
+  //     user-agent, horodatage serveur — était réinscriptible par le vendeur
+  //     lui-même. Un devis « signé » ne prouvait donc rien, ce qui est
+  //     exactement ce qu'une signature électronique doit prouver.
+  //
+  // Ce qui suit est ce qu'un utilisateur modifie légitimement sur son devis.
+  // Le statut de signature, celui d'approbation et l'horodatage n'en font pas
+  // partie : ils se posent par les routes dédiées, qui contrôlent le rôle.
+  const MODIFIABLES = new Set([
+    "title",
+    "client_name",
+    "client_company",
+    "client_email",
+    "client_siren",
+    "client_address",
+    "client_street",
+    "client_postcode",
+    "client_city",
+    "client_country",
+    "items",
+    "total_ht",
+    "total_ttc",
+    "tva_rate",
+    "description",
+    "notes",
+    "payment_terms",
+    "valid_until",
+    "status",
+    "proposal_number",
+  ]);
+
+  const modifs = Object.fromEntries(
+    Object.entries(body as Record<string, unknown>).filter(([k]) => MODIFIABLES.has(k))
+  );
+
+  // `status` sert au cycle commercial (brouillon → envoyé → refusé), pas à se
+  // déclarer signé : cet état-là n'est posé que par la signature du client.
+  if (modifs.status === "signed") {
+    return NextResponse.json(
+      {
+        error: "STATUT_RESERVE",
+        message: "Un devis ne passe à « signé » que par la signature du client.",
+      },
+      { status: 400 }
+    );
+  }
+
+  if (Object.keys(modifs).length === 0) {
+    return NextResponse.json({ error: "Aucun champ modifiable fourni" }, { status: 400 });
+  }
+
   const { data, error } = await supabase
     .from("proposals")
-    .update(body)
+    .update(modifs)
     .eq("id", id)
     .eq("user_id", workspaceId)
     .select()

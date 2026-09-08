@@ -63,7 +63,7 @@ export default function ResetPasswordPage() {
               <label className="block text-sm font-medium text-gray-300 mb-1.5">
                 Nouveau mot de passe
               </label>
-              <input
+              <input aria-label="Nouveau mot de passe"
                 type="password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
@@ -77,7 +77,7 @@ export default function ResetPasswordPage() {
               <label className="block text-sm font-medium text-gray-300 mb-1.5">
                 Confirmer le mot de passe
               </label>
-              <input
+              <input aria-label="Confirmer le mot de passe"
                 type="password"
                 value={confirm}
                 onChange={(e) => setConfirm(e.target.value)}

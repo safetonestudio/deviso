@@ -104,10 +104,31 @@ export async function POST(req: NextRequest) {
     body.seller_address
   );
 
+  const centimes = (n: number) => Math.round((Number(n) || 0) * 100) / 100;
+
+  /**
+   * Les totaux sont RECALCULÉS ici, ils ne sont pas repris du corps de requête.
+   *
+   * Ils l'étaient : `...body` insérait `total_ht` et `total_ttc` tels que le
+   * navigateur les avait calculés, sans qu'aucune vérification ne les relie
+   * aux lignes ni au taux de TVA. Toute la justesse des montants d'une facture
+   * — un document fiscal — reposait donc sur du code client, qu'un appel API
+   * direct contourne en une ligne. On pouvait enregistrer une facture de trois
+   * lignes à 100 € portant « total HT : 5 € ».
+   *
+   * Le serveur est le seul endroit où cette cohérence peut être garantie, et
+   * c'est le même calcul que celui de l'écran : arrondi au centime sur chaque
+   * ligne, puis sur la somme.
+   */
   const itemsWithIds = ((body.items || []) as ProposalItem[]).map((item) => ({
     ...item,
     id: item.id || uuidv4(),
+    total: centimes(item.total),
   }));
+
+  const tvaRate = Number(body.tva_rate) || 0;
+  const totalHtCalcule = centimes(itemsWithIds.reduce((s, it) => s + centimes(it.total), 0));
+  const totalTtcCalcule = centimes(totalHtCalcule * (1 + tvaRate / 100));
 
   const { data, error } = await supabase
     .from("invoices")
@@ -127,6 +148,9 @@ export async function POST(req: NextRequest) {
       created_by: user.id,
       invoice_number: invoiceNumber,
       items: itemsWithIds,
+      tva_rate: tvaRate,
+      total_ht: totalHtCalcule,
+      total_ttc: totalTtcCalcule,
       status: "draft",
     })
     .select()

@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
-import { getWorkspaceUserId } from "@/lib/workspace";
+import { getWorkspaceUserId, getWorkspaceProfile } from "@/lib/workspace";
 
 type Params = { params: Promise<{ id: string }> };
 
@@ -33,11 +33,18 @@ export async function POST(_req: NextRequest, { params }: Params) {
   }
 
   // Récupérer le lien de paiement depuis le profil de l'utilisateur
-  const { data: profile } = await supabase
-    .from("profiles")
-    .select("payment_method, payment_link_profile")
-    .eq("id", user.id)
-    .single();
+  // Le profil de l'ESPACE, pas celui de la personne connectée.
+  //
+  // Ce `.eq("id", user.id)` était un défaut discret et coûteux : sur un plan
+  // Pro multi-utilisateurs, un collaborateur agissant sur un document de
+  // l'espace lisait SON profil. Selon la route, cela donnait un PDF portant
+  // son IBAN (ou aucun) au lieu de celui de l'entreprise — le client paie
+  // alors sur le mauvais compte — ou un refus « plan insuffisant » sur une
+  // fonction que l'espace paie pourtant.
+  const profile = await getWorkspaceProfile<{ payment_method: string | null; payment_link_profile: string | null }>(
+    workspaceId,
+    "payment_method, payment_link_profile"
+  );
 
   const profileLink = profile?.payment_link_profile;
 

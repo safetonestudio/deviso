@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
-import { getWorkspaceUserId } from "@/lib/workspace";
+import { getWorkspaceUserId, getWorkspaceProfile } from "@/lib/workspace";
 
 function fecDate(dateStr: string): string {
   const d = new Date(dateStr);
@@ -15,8 +15,24 @@ function amt(n: number): string {
   return n.toFixed(2).replace(".", ",");
 }
 
-function clientCode(idx: number): string {
-  return `C${String(idx).padStart(5, "0")}`;
+/**
+ * Code du compte auxiliaire client.
+ *
+ * Il était dérivé de l'INDEX DE LA LIGNE dans l'export. Deux conséquences :
+ * un même client changeait de code auxiliaire à chaque facture, et `C00001`
+ * désignait un client différent d'une année sur l'autre. Le lettrage
+ * auxiliaire — la raison d'être de cette colonne — était donc inexploitable.
+ *
+ * On le dérive maintenant du nom normalisé du client, stable par construction.
+ * Un préfixe alphabétique plus une empreinte courte : pas de collision en
+ * pratique, et le même client garde son code d'un exercice à l'autre.
+ */
+function clientCode(nomNormalise: string): string {
+  let h = 0;
+  for (let i = 0; i < nomNormalise.length; i++) {
+    h = (h * 31 + nomNormalise.charCodeAt(i)) >>> 0;
+  }
+  return `C${String(h % 100000).padStart(5, "0")}`;
 }
 
 // GET /api/export/fec?year=2025, Solo + Pro
@@ -25,11 +41,18 @@ export async function GET(req: NextRequest) {
   const { data: { user }, error: authError } = await supabase.auth.getUser();
   if (authError || !user) return NextResponse.json({ error: "Non autorisé" }, { status: 401 });
 
-  const { data: profile } = await supabase
-    .from("profiles")
-    .select("plan")
-    .eq("id", user.id)
-    .single();
+  // Le profil de l'ESPACE, pas celui de la personne connectée.
+  //
+  // Ce `.eq("id", user.id)` était un défaut discret et coûteux : sur un plan
+  // Pro multi-utilisateurs, un collaborateur agissant sur un document de
+  // l'espace lisait SON profil. Selon la route, cela donnait un PDF portant
+  // son IBAN (ou aucun) au lieu de celui de l'entreprise — le client paie
+  // alors sur le mauvais compte — ou un refus « plan insuffisant » sur une
+  // fonction que l'espace paie pourtant.
+  const profile = await getWorkspaceProfile<{ plan: string | null }>(
+    await getWorkspaceUserId(user.id),
+    "plan"
+  );
 
   const workspaceId = await getWorkspaceUserId(user.id);
 
@@ -65,36 +88,85 @@ export async function GET(req: NextRequest) {
     const ref = inv.invoice_number;
     const clientLib = (inv.client_company || inv.client_name || "CLIENT")
       .toUpperCase().replace(/[^A-Z0-9 ]/g, "").slice(0, 17);
-    const lib = `Facture ${ref}`;
+
+    /**
+     * Un avoir s'enregistre en SENS INVERSE d'une facture.
+     *
+     * Il passait dans le même moule que la facture qu'il annule. Les montants
+     * d'un avoir sont positifs — c'est la règle BR-27, le type du document
+     * porte le sens — donc une facture de 1 000 € HT suivie de son avoir
+     * produisait 2 000 € de crédit au 706 et 400 € de TVA collectée au lieu de
+     * zéro. L'équilibre débit/crédit tenait, ce qui est le pire des cas : le
+     * contrôle de cohérence du cabinet ne voyait rien, et le chiffre d'affaires
+     * comme la TVA collectée étaient doublés.
+     *
+     * On ne retranche pas : on inverse le sens des écritures, ce qui est la
+     * pratique comptable et laisse la trace de l'avoir dans le journal.
+     */
+    const estAvoir = inv.invoice_type === "avoir" || inv.type_code === "381";
+    const lib = `${estAvoir ? "Avoir" : "Facture"} ${ref}`;
     const numStr = `VT${String(i + 1).padStart(6, "0")}`;
-    const cCode = clientCode(i + 1);
+    const cCode = clientCode(clientLib);
     const ht = +(inv.total_ht ?? 0).toFixed(2);
     const ttc = +(inv.total_ttc ?? 0).toFixed(2);
     const tva = +(ttc - ht).toFixed(2);
 
+    // 706 « prestations de services » ou 707 « ventes de marchandises » : le
+    // plan comptable les distingue, et l'information existe déjà sur la
+    // facture. Tout était imputé en 706, y compris les ventes de biens.
+    const compteVente = inv.operation_category === "goods" ? "707000" : "706000";
+    const libelleVente =
+      inv.operation_category === "goods" ? "Ventes de marchandises" : "Prestations de services";
+
     const row = (compte: string, compteLib: string, auxNum: string, auxLib: string, debit: number, credit: number) =>
       [numStr, date, compte, compteLib, auxNum, auxLib, ref, date, lib, amt(debit), amt(credit), "", "", date, "", ""];
 
-    // Débit 411 client (TTC)
-    rows.push(["VT", "Ventes", ...row("411000", "Clients", cCode, clientLib, ttc, 0)]);
-    // Crédit 706 prestations (HT)
-    rows.push(["VT", "Ventes", ...row("706000", "Prestations de services", "", "", 0, ht)]);
-    // Crédit 445710 TVA collectée (si applicable)
+    // Client : débité sur une facture (il doit), crédité sur un avoir (on lui doit).
+    rows.push([
+      "VT",
+      "Ventes",
+      ...row("411000", "Clients", cCode, clientLib, estAvoir ? 0 : ttc, estAvoir ? ttc : 0),
+    ]);
+    // Produit : crédité sur une facture, débité sur un avoir.
+    rows.push([
+      "VT",
+      "Ventes",
+      ...row(compteVente, libelleVente, "", "", estAvoir ? ht : 0, estAvoir ? 0 : ht),
+    ]);
     if (tva > 0) {
-      rows.push(["VT", "Ventes", ...row("445710", `TVA collectée ${inv.tva_rate}%`, "", "", 0, tva)]);
+      rows.push([
+        "VT",
+        "Ventes",
+        ...row("445710", `TVA collectee ${inv.tva_rate}%`, "", "", estAvoir ? tva : 0, estAvoir ? 0 : tva),
+      ]);
     }
 
     // Lignes de règlement si payée
     if (inv.status === "paid") {
-      const payDate = fecDate(inv.updated_at || inv.issue_date);
+      // Date d'encaissement réelle, pas `updated_at`.
+      //
+      // `updated_at` bouge à la moindre modification : une facture réglée le
+      // 15/12 puis simplement rouverte le 03/01 produisait une écriture de
+      // banque datée du 03/01 **dans le FEC de l'année précédente** — une
+      // écriture hors exercice, que le contrôle de la DGFiP relève.
+      const payDate = fecDate(inv.paid_at || inv.updated_at || inv.issue_date);
       const payNum = `BQ${String(i + 1).padStart(6, "0")}`;
-      const payLib = `Règlement ${ref}`;
+      const payLib = `${estAvoir ? "Remboursement" : "Reglement"} ${ref}`;
 
       const payRow = (compte: string, compteLib: string, auxNum: string, auxLib: string, debit: number, credit: number) =>
         [payNum, payDate, compte, compteLib, auxNum, auxLib, ref, payDate, payLib, amt(debit), amt(credit), "", "", payDate, "", ""];
 
-      rows.push(["BQ", "Banque", ...payRow("512000", "Banque", "", "", ttc, 0)]);
-      rows.push(["BQ", "Banque", ...payRow("411000", "Clients", cCode, clientLib, 0, ttc)]);
+      // Un avoir remboursé sort de la banque, il n'y entre pas.
+      rows.push([
+        "BQ",
+        "Banque",
+        ...payRow("512000", "Banque", "", "", estAvoir ? 0 : ttc, estAvoir ? ttc : 0),
+      ]);
+      rows.push([
+        "BQ",
+        "Banque",
+        ...payRow("411000", "Clients", cCode, clientLib, estAvoir ? ttc : 0, estAvoir ? 0 : ttc),
+      ]);
     }
   });
 

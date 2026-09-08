@@ -32,7 +32,17 @@ export async function DELETE(_req: NextRequest, { params }: Params) {
 
   // Retirer le siège de l'abonnement Stripe seulement si le membre était actif
   if (member?.status === "active") {
-    await removeSeatFromSubscription(user.id).catch(() => {});
+    // Un échec ici coûte de l'argent au propriétaire : le collaborateur n'a
+    // plus accès, mais le siège reste facturé tous les mois. Le `catch` vide
+    // rendait la situation indétectable — personne ne peut régulariser ce que
+    // personne ne sait.
+    await removeSeatFromSubscription(user.id).catch((err) => {
+      console.error(
+        `[team/DELETE] siège NON retiré pour l'espace ${user.id} (membre ${memberId}) : ` +
+          `il continue d'être facturé.`,
+        err
+      );
+    });
   }
 
   return NextResponse.json({ success: true });

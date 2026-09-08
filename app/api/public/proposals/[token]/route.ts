@@ -47,9 +47,24 @@ export async function GET(_req: NextRequest, { params }: Params) {
   const { token } = await params;
   if (!token) return NextResponse.json({ error: "Token manquant" }, { status: 400 });
 
+  // On énumère les colonnes plutôt que `select("*")`.
+  //
+  // Cette réponse part chez le client final, non authentifié : tout ce qu'elle
+  // contient est lisible par quiconque détient le lien. `*` y faisait passer
+  // des champs qui n'ont rien à y faire — le brouillon d'IA (`ai_brief`), le
+  // compteur de relances et la date de la dernière, et surtout l'empreinte de
+  // signature, l'IP et le user-agent du signataire. Ces trois derniers sont la
+  // piste d'audit : elle est faite pour être opposable, pas pour circuler.
+  //
+  // La liste correspond à ce que `components/ProposalDocument.tsx` affiche
+  // réellement. La route POST, elle, garde `select("*")` : elle calcule
+  // l'empreinte du document figé et a besoin de tout.
   const { data: proposal, error } = await admin
     .from("proposals")
-    .select("*")
+    // Une seule chaîne littérale, sans concaténation : supabase-js déduit le
+    // type de la réponse de la forme littérale du `select`, et une expression
+    // `"a" + "b"` lui fait perdre ce typage.
+    .select("id, user_id, share_token, status, title, proposal_number, description, items, total_ht, total_ttc, tva_rate, payment_terms, notes, valid_until, created_at, signed_at, signer_name, viewed_at, client_name, client_company, client_email, client_siren, client_address, client_street, client_postcode, client_city, client_country")
     .eq("share_token", token)
     .single();
 

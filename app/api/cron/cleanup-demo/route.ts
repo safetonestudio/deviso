@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { purgeExpiredDemoAccounts } from "@/lib/demo-cleanup";
+import { cronAutorise } from "@/lib/cron-auth";
 
 /**
  * Filet de sécurité quotidien pour la suppression des comptes de démonstration.
@@ -10,8 +11,7 @@ import { purgeExpiredDemoAccounts } from "@/lib/demo-cleanup";
  * ce qui laisserait sinon vivre un compte jusqu'à ~24 h au lieu de 2 h.
  */
 export async function GET(req: Request) {
-  const auth = req.headers.get("authorization");
-  if (auth !== `Bearer ${process.env.CRON_SECRET}`) {
+  if (!cronAutorise(req)) {
     return new Response("Unauthorized", { status: 401 });
   }
 

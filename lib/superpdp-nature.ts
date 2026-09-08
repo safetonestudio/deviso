@@ -1,5 +1,6 @@
 import { isB2CInvoice } from "@/lib/facturx-helpers";
 import type { Invoice } from "@/types";
+import { estFrance } from "@/lib/territoires";
 
 /**
  * De quelle nature est l'opération, au sens de la réforme.
@@ -34,13 +35,10 @@ export type NatureOperation = "B2B" | "B2C" | "B2BInt";
  * Les DOM sont hors du territoire TVA métropolitain mais restent français et
  * relèvent du circuit national : on ne les sort donc pas en B2BInt.
  */
-const CODES_FRANCE = new Set(["FR", "MC", "GP", "MQ", "GF", "RE", "YT"]);
-
-export function paysFrancais(code: string | null | undefined): boolean {
-  const c = (code ?? "").trim().toUpperCase();
-  if (!c) return true; // absence de pays = France, cf. parseAddress
-  return CODES_FRANCE.has(c);
-}
+// La liste elle-même vit dans lib/territoires.ts, sans aucun import, pour
+// qu'une traversée de tests puisse l'éprouver sans charger l'application.
+export { CODES_FRANCE } from "@/lib/territoires";
+export const paysFrancais = estFrance;
 
 export function natureOperation(facture: {
   client_company?: string | null;

@@ -1,8 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
-import { resend } from "@/lib/resend";
+import { envoyerCourriel } from "@/lib/resend";
 import { publicBaseUrl, proposalShareUrl } from "@/lib/public-url";
-import { getWorkspaceUserId } from "@/lib/workspace";
+import { getWorkspaceUserId, getWorkspaceProfile } from "@/lib/workspace";
 import { piedDePageMarque } from "@/lib/emails/branding";
 
 type Params = { params: Promise<{ id: string }> };
@@ -29,11 +29,18 @@ export async function POST(_req: NextRequest, { params }: Params) {
   if (!proposal.client_email) return NextResponse.json({ error: "Email client manquant" }, { status: 400 });
   if (proposal.status === "signed") return NextResponse.json({ error: "Ce devis est déjà signé" }, { status: 400 });
 
-  const { data: profile } = await supabase
-    .from("profiles")
-    .select("full_name, company_name, email, subdomain, plan")
-    .eq("id", user.id)
-    .single();
+  // Le profil de l'ESPACE, pas celui de la personne connectée.
+  //
+  // Ce `.eq("id", user.id)` était un défaut discret et coûteux : sur un plan
+  // Pro multi-utilisateurs, un collaborateur agissant sur un document de
+  // l'espace lisait SON profil. Selon la route, cela donnait un PDF portant
+  // son IBAN (ou aucun) au lieu de celui de l'entreprise — le client paie
+  // alors sur le mauvais compte — ou un refus « plan insuffisant » sur une
+  // fonction que l'espace paie pourtant.
+  const profile = await getWorkspaceProfile<{ full_name: string | null; company_name: string | null; email: string | null; subdomain: string | null; plan: string | null }>(
+    workspaceId,
+    "full_name, company_name, email, subdomain, plan"
+  );
 
   const clientName = proposal.client_company || proposal.client_name || "Client";
   const senderName = profile?.company_name || profile?.full_name || "Votre prestataire";
@@ -101,7 +108,7 @@ export async function POST(_req: NextRequest, { params }: Params) {
 </body>
 </html>`;
 
-  const { error: emailError } = await resend.emails.send({
+  const { error: emailError } = await envoyerCourriel(user.id, {
     // Le client a reçu le devis ou la facture au nom de son prestataire.
     // Recevoir la relance de « Deviso », une société qu'il ne connaît pas,
     // ressemble à une tentative d'hameçonnage et abîme la crédibilité de

@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { getWorkspaceUserId } from "@/lib/workspace";
-import { resend } from "@/lib/resend";
+import { envoyerCourriel } from "@/lib/resend";
 import { inviteEmailHtml } from "@/lib/emails/invite";
 
 // GET /api/team — liste les membres de l'équipe du workspace
@@ -108,8 +108,14 @@ export async function POST(req: NextRequest) {
   // pour tous les vrais clients.
   const estFictif = email.toLowerCase().endsWith("@deviso.internal");
 
+  // Le filtre `@deviso.internal` empêche d'INVITER un compte de démonstration,
+  // pas d'en envoyer une invitation vers l'extérieur : les comptes de
+  // démonstration ont le plan Pro, donc accès aux invitations d'équipe. Un
+  // visiteur pouvait donc faire partir un courriel « X vous invite » vers
+  // l'adresse de son choix. `envoyerCourriel` court-circuite l'envoi réel pour
+  // ces comptes — voir lib/resend.ts.
   if (!estFictif) {
-    await resend.emails.send({
+    await envoyerCourriel(user.id, {
       from: "Deviso <noreply@getdeviso.fr>",
       to: email,
       subject: `${profile?.company_name || profile?.full_name || "Quelqu'un"} t'invite sur Deviso`,

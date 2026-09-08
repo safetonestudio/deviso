@@ -156,7 +156,7 @@ export default function CataloguePage() {
           <div className="space-y-3">
             <div>
               <label className="block text-xs font-medium text-gray-400 mb-1">Nom *</label>
-              <input
+              <input aria-label="Nom"
                 value={form.name}
                 onChange={(e) => setForm((f) => ({ ...f, name: e.target.value }))}
                 placeholder={formType === "hourly" ? "Ex: Développement / Conseil / Audit…" : "Ex: Page web, Landing page, Logo…"}
@@ -166,7 +166,7 @@ export default function CataloguePage() {
             </div>
             <div>
               <label className="block text-xs font-medium text-gray-400 mb-1">Description</label>
-              <textarea
+              <textarea aria-label="Description"
                 value={form.description || ""}
                 onChange={(e) => setForm((f) => ({ ...f, description: e.target.value }))}
                 placeholder="Détail de la prestation (optionnel)"
@@ -178,7 +178,7 @@ export default function CataloguePage() {
               {formType === "fixed" && (
                 <div>
                   <label className="block text-xs font-medium text-gray-400 mb-1">Unité</label>
-                  <input
+                  <input aria-label="Unité"
                     value={form.unit}
                     onChange={(e) => setForm((f) => ({ ...f, unit: e.target.value }))}
                     placeholder="forfait, jour, page…"

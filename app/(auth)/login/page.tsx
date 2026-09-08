@@ -92,7 +92,7 @@ function LoginForm() {
               <label className="block text-sm font-medium text-gray-300 mb-1.5">
                 Adresse email
               </label>
-              <input
+              <input aria-label="Adresse email"
                 type="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}

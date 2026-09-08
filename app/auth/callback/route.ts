@@ -6,7 +6,18 @@ import { welcomeEmailHtml } from "@/lib/emails/welcome";
 export async function GET(request: Request) {
   const { searchParams, origin } = new URL(request.url);
   const code = searchParams.get("code");
-  const next = searchParams.get("next") ?? "/dashboard";
+  // `next` est fourni dans l'URL : il ne doit désigner qu'un chemin interne.
+  //
+  // Recollé tel quel à `origin`, il ouvrait une redirection vers l'extérieur :
+  // `?next=@exemple.fr` produit `https://getdeviso.fr@exemple.fr`, que tout
+  // analyseur d'URL résout vers l'hôte `exemple.fr`. Le lien reste alors un
+  // lien getdeviso.fr aux yeux de qui le lit, et il mène ailleurs — c'est
+  // exactement la forme qu'on attend d'un lien de connexion piégé.
+  //
+  // Un chemin interne commence par `/` et ne commence pas par `//` (qui
+  // désignerait un autre hôte). Tout le reste est refusé au profit du défaut.
+  const nextBrut = searchParams.get("next") ?? "/dashboard";
+  const next = /^\/(?!\/)[^\\]*$/.test(nextBrut) ? nextBrut : "/dashboard";
   const tourReset = searchParams.get("tour_reset") === "1";
 
   if (code) {

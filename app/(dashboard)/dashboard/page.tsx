@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
-import { isTeamMember } from "@/lib/workspace";
+import { isTeamMember, getWorkspaceUserId } from "@/lib/workspace";
 import type { Proposal } from "@/types";
 import { KpiCard } from "@/components/ui/KpiCard";
 import { EmptyState } from "@/components/ui/EmptyState";
@@ -41,16 +41,30 @@ export default async function DashboardPage() {
   if (!user) redirect("/login");
 
   const isMember = await isTeamMember(user.id);
+  const workspaceId = await getWorkspaceUserId(user.id);
 
+  // Le filtre d'espace est écrit ici, en plus de la RLS.
+  //
+  // Ces deux requêtes s'en remettaient entièrement à la politique de sécurité
+  // de la base : côté application, rien ne disait à quel espace elles se
+  // limitent. C'est un pari sur une configuration qui vit ailleurs — et le
+  // fichier `supabase/schema.sql` versionné dans ce dépôt contient justement
+  // une ancienne policy qui, réappliquée, ouvrirait la lecture des devis de
+  // tous les comptes. Le jour où elle reviendrait, cet écran afficherait les
+  // cinquante derniers devis de toute la plateforme sans que rien ne casse.
+  //
+  // Deux verrous valent mieux qu'un quand le second est une ligne.
   let proposalsQuery = supabase
     .from("proposals")
     .select("id, title, client_name, status, total_ttc, created_at, signed_at")
+    .eq("user_id", workspaceId)
     .order("created_at", { ascending: false })
     .limit(50);
 
   let invoicesQuery = supabase
     .from("invoices")
     .select("id, invoice_number, client_name, client_email, status, total_ht, total_ttc, due_date, issue_date, created_at, proposal_id, invoice_type")
+    .eq("user_id", workspaceId)
     .order("created_at", { ascending: false });
 
   if (isMember) {
@@ -92,12 +106,17 @@ export default async function DashboardPage() {
     : 0;
 
   // ── KPI 3 : Encaissé vs Facturé ce mois ──────────────────────────────────
+  // Même règle que pour l'encours, et pour la même raison : un avoir se
+  // retranche. Elle était appliquée au KPI 1 et oubliée ici — dans le même
+  // fichier, dix lignes plus bas. Une facture encaissée puis annulée par un
+  // avoir affichait « encaissé ce mois » au double du montant réel.
+  const signeCa = (i: { invoice_type?: string | null }) => (i.invoice_type === "avoir" ? -1 : 1);
   const caThisMonth      = inv
     .filter((i) => i.status === "paid" && i.created_at >= monthStart)
-    .reduce((s, i) => s + i.total_ttc, 0);
+    .reduce((s, i) => s + signeCa(i) * i.total_ttc, 0);
   const facturéThisMonth = inv
-    .filter((i) => i.status !== "cancelled" && i.created_at >= monthStart)
-    .reduce((s, i) => s + i.total_ttc, 0);
+    .filter((i) => i.status !== "cancelled" && i.status !== "draft" && i.created_at >= monthStart)
+    .reduce((s, i) => s + signeCa(i) * i.total_ttc, 0);
 
   // ── KPI 4 : Devis signés non encore facturés ─────────────────────────────
   const invoicedProposalIds = new Set(inv.filter((i) => i.proposal_id).map((i) => i.proposal_id));

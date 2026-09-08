@@ -208,7 +208,7 @@ export default function TeamPage() {
       {global && (
         <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
           {[
-            { label: "CA encaissé", value: fmt(global.ca_encaisse), icon: TrendingUp },
+            { label: "CA encaissé HT", value: fmt(global.ca_encaisse), icon: TrendingUp },
             { label: "Pipeline ouvert", value: fmt(global.ca_pipeline), icon: Send },
             { label: "Devis signés", value: `${global.proposals_signed} / ${global.proposals_sent}`, icon: CheckCircle2 },
             { label: "Conversion équipe", value: `${global.conversion_rate}%`, icon: FileText },
@@ -274,7 +274,7 @@ export default function TeamPage() {
                 </div>
                 <div className="grid grid-cols-3 md:grid-cols-6 gap-2 mb-3">
                   {[
-                    { label: "CA encaissé", value: fmt(member.stats.ca_encaisse), color: "text-emerald-400" },
+                    { label: "CA encaissé HT", value: fmt(member.stats.ca_encaisse), color: "text-emerald-400" },
                     { label: "Pipeline", value: fmt(member.stats.ca_pipeline), color: "text-indigo-400" },
                     { label: "Devis total", value: String(member.stats.proposals_total), color: "text-white" },
                     { label: "Signés", value: String(member.stats.proposals_signed), color: "text-emerald-400" },

@@ -416,7 +416,7 @@ function ActionPanel({ invoice, id, router, hasChorusPro }: {
                 <label htmlFor="date-encaissement" className="block text-sm font-medium text-emerald-300">
                   Payée le
                 </label>
-                <input
+                <input aria-label="Payée le"
                   id="date-encaissement"
                   type="date"
                   value={datePaiement}

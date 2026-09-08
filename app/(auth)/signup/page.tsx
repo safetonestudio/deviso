@@ -99,7 +99,7 @@ function SignupForm() {
           <form onSubmit={handleSignup} className="space-y-4">
             <div>
               <label className="block text-sm font-medium text-gray-300 mb-1.5">Ton prénom et nom</label>
-              <input
+              <input aria-label="Ton prénom et nom"
                 type="text"
                 value={fullName}
                 onChange={(e) => setFullName(e.target.value)}
@@ -110,7 +110,7 @@ function SignupForm() {
             </div>
             <div>
               <label className="block text-sm font-medium text-gray-300 mb-1.5">Adresse email</label>
-              <input
+              <input aria-label="Adresse email"
                 type="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
@@ -121,7 +121,7 @@ function SignupForm() {
             </div>
             <div>
               <label className="block text-sm font-medium text-gray-300 mb-1.5">Mot de passe</label>
-              <input
+              <input aria-label="Mot de passe"
                 type="password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}

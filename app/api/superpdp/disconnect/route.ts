@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
-import { getWorkspaceUserId } from "@/lib/workspace";
+import { getWorkspaceUserId, isTeamMember } from "@/lib/workspace";
 import { getConnection, revokeToken } from "@/lib/superpdp";
 import { fermerLigneAnnuaire } from "@/lib/superpdp-ligne-annuaire";
 
@@ -25,6 +25,28 @@ export async function POST(req: Request) {
   } = await supabase.auth.getUser();
   if (authError || !user) {
     return NextResponse.json({ error: "Non autorisé" }, { status: 401 });
+  }
+
+  // Débrancher est une décision de propriétaire, pas de collaborateur.
+  //
+  // Cette garde manquait, et c'était le seul trou d'une famille autrement bien
+  // gardée : `POST` et `DELETE /api/superpdp/ligne-annuaire` refusent tous
+  // deux un membre d'équipe, précisément parce que fermer une ligne rend
+  // l'entreprise injoignable pour toute la France. Or `fermerLigne: true` sur
+  // cette route-ci appelait `fermerLigneAnnuaire` par la porte de service, et
+  // n'importe quel collaborateur — un stagiaire, un ancien salarié dont le
+  // siège n'a pas été retiré — pouvait à la fois révoquer le raccordement et
+  // fermer la ligne. Rebrancher suppose de refaire tout le tunnel OAuth.
+  if (await isTeamMember(user.id)) {
+    return NextResponse.json(
+      {
+        error: "PROPRIETAIRE_REQUIS",
+        message:
+          "Seul le propriétaire de l'espace peut débrancher la Plateforme Agréée. " +
+          "Demandez-lui de le faire depuis ses paramètres.",
+      },
+      { status: 403 }
+    );
   }
 
   const workspaceId = await getWorkspaceUserId(user.id);

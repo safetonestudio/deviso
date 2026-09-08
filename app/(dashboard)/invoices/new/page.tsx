@@ -122,8 +122,19 @@ export default function NewInvoicePage() {
   const [paymentTerms, setPaymentTerms] = useState("30 jours net");
 
   // Calculs
-  const totalHt = items.reduce((sum, item) => sum + item.total, 0);
-  const totalTtc = totalHt * (1 + tvaRate / 100);
+  //
+  // Arrondi au centime à chaque étape, comme le fait déjà l'écran des devis.
+  // Il ne l'était nulle part ici, et une facture ne s'additionnait alors pas
+  // avec elle-même : trois lignes de « 2,25 h × 33,33 € » donnaient 74,99 €
+  // affichés par ligne mais 224,98 € de total (au lieu de 224,97), parce que
+  // la somme portait sur les valeurs brutes. Trois conséquences, toutes
+  // visibles par le client : le PDF ne s'additionne pas, l'écran de création
+  // annonçait 45,00 € de TVA là où le PDF en imprimait 44,99, et le XML
+  // transmis violait BR-CO-10 (somme des lignes ≠ total des lignes), ce qui
+  // rend la facture rejetable par l'administration.
+  const centimes = (n: number) => Math.round(n * 100) / 100;
+  const totalHt = centimes(items.reduce((sum, item) => sum + centimes(item.total), 0));
+  const totalTtc = centimes(totalHt * (1 + tvaRate / 100));
 
   const inputCls = "w-full border border-ds-border rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-indigo-500/30 focus:border-indigo-500 bg-ds-elevated text-white placeholder:text-gray-600";
 
@@ -217,17 +228,35 @@ export default function NewInvoicePage() {
     } else if (type === "solde") {
       const invRes = await fetch("/api/invoices");
       const invData = await invRes.json();
-      const acompteInv = (invData.invoices || []).find(
-        (inv: { proposal_id: string | null; invoice_type: string }) =>
-          inv.proposal_id === pId && inv.invoice_type === "acompte"
+      // TOUS les acomptes de ce devis, pas seulement le dernier.
+      //
+      // C'était un `find` sur une liste triée par date décroissante : seul le
+      // plus récent était déduit. Un devis de 10 000 € réglé par deux acomptes
+      // de 3 000 € produisait donc un solde de 7 000 € au lieu de 4 000 € — le
+      // client était facturé 3 000 € de trop, et rien ne le signalait.
+      const acomptes = (invData.invoices || []).filter(
+        (inv: { proposal_id: string | null; invoice_type: string; status?: string }) =>
+          inv.proposal_id === pId &&
+          inv.invoice_type === "acompte" &&
+          inv.status !== "cancelled"
       );
+      const acompteInv = acomptes[0];
       if (acompteInv) {
+        const totalAcomptesHt = Math.round(
+          acomptes.reduce((s: number, a: { total_ht: number }) => s + (a.total_ht ?? 0), 0) * 100
+        ) / 100;
         setLinkedInvoiceId(acompteInv.id);
         setLinkedInvoiceNumber(acompteInv.invoice_number);
-        setSoldeFromDeposit(acompteInv.total_ht);
+        setSoldeFromDeposit(totalAcomptesHt);
         const fullHt = p.items.reduce((s: number, i: ProposalItem) => s + i.total, 0);
-        const soldeHt = Math.round((fullHt - acompteInv.total_ht) * 100) / 100;
-        const foundPct = acompteInv.deposit_percentage ?? Math.round((acompteInv.total_ht / fullHt) * 100);
+        const soldeHt = Math.round((fullHt - totalAcomptesHt) * 100) / 100;
+        // Le pourcentage réellement acquitté, calculé sur la somme des
+        // acomptes. Il était laissé à la valeur par défaut de l'URL (30 %) au
+        // moment de l'enregistrement : l'écran de détail reconstruisait donc
+        // la prestation totale à partir d'un pourcentage faux — 8 571 € de
+        // « prestation totale » pour un devis à 12 000 € réglé à 50 %.
+        const foundPct = fullHt > 0 ? Math.round((totalAcomptesHt / fullHt) * 100) : 0;
+        setDepositPct(foundPct);
         setItems([{
           id: uuidv4(),
           description: `Solde ${100 - foundPct}%, ${p.title}`,
@@ -299,7 +328,10 @@ export default function NewInvoicePage() {
         if (item.id !== id) return item;
         const updated = { ...item, [field]: value };
         if (field === "quantity" || field === "unit_price") {
-          updated.total = Number(updated.quantity) * Number(updated.unit_price);
+          // Au centime : c'est ce montant qui s'imprime sur la ligne du PDF et
+          // qui part en `LineTotalAmount` dans le XML. Non arrondi, il rend la
+          // somme des lignes différente du total affiché.
+          updated.total = Math.round(Number(updated.quantity) * Number(updated.unit_price) * 100) / 100;
         }
         return updated;
       })
@@ -594,27 +626,27 @@ export default function NewInvoicePage() {
             <div className="grid grid-cols-2 gap-3">
               <div>
                 <label className="block text-xs font-medium text-gray-400 mb-1">Entreprise / Nom</label>
-                <input value={sellerCompany} onChange={(e) => setSellerCompany(e.target.value)} required className={inputCls} />
+                <input aria-label="Entreprise / Nom" value={sellerCompany} onChange={(e) => setSellerCompany(e.target.value)} required className={inputCls} />
               </div>
               <div>
                 <label className="block text-xs font-medium text-gray-400 mb-1">SIREN</label>
-                <input value={sellerSiren} onChange={(e) => setSellerSiren(e.target.value)} placeholder="123 456 789" className={inputCls} />
+                <input aria-label="SIREN" value={sellerSiren} onChange={(e) => setSellerSiren(e.target.value)} placeholder="123 456 789" className={inputCls} />
               </div>
               <div className="col-span-2">
                 <label className="block text-xs font-medium text-gray-400 mb-1">Adresse</label>
-                <input value={sellerStreet} onChange={(e) => setSellerStreet(e.target.value)} placeholder="24 Avenue de Gradignan" className={inputCls} />
+                <input aria-label="Adresse" value={sellerStreet} onChange={(e) => setSellerStreet(e.target.value)} placeholder="24 Avenue de Gradignan" className={inputCls} />
               </div>
               <div>
                 <label className="block text-xs font-medium text-gray-400 mb-1">Code postal</label>
-                <input value={sellerPostcode} onChange={(e) => setSellerPostcode(e.target.value)} placeholder="33170" inputMode="numeric" maxLength={10} className={inputCls} />
+                <input aria-label="Code postal" value={sellerPostcode} onChange={(e) => setSellerPostcode(e.target.value)} placeholder="33170" inputMode="numeric" maxLength={10} className={inputCls} />
               </div>
               <div>
                 <label className="block text-xs font-medium text-gray-400 mb-1">Ville</label>
-                <input value={sellerCity} onChange={(e) => setSellerCity(e.target.value)} placeholder="Gradignan" className={inputCls} />
+                <input aria-label="Ville" value={sellerCity} onChange={(e) => setSellerCity(e.target.value)} placeholder="Gradignan" className={inputCls} />
               </div>
               <div>
                 <label className="block text-xs font-medium text-gray-400 mb-1">N° TVA intracommunautaire</label>
-                <input value={sellerTva} onChange={(e) => setSellerTva(e.target.value)} placeholder="FR12345678901"
+                <input aria-label="N° TVA intracommunautaire" value={sellerTva} onChange={(e) => setSellerTva(e.target.value)} placeholder="FR12345678901"
                   disabled={tvaRate === 0}
                   className={`${inputCls} disabled:opacity-50`} />
               </div>
@@ -638,15 +670,15 @@ export default function NewInvoicePage() {
               />
               <div>
                 <label className="block text-xs font-medium text-gray-400 mb-1">Nom</label>
-                <input value={clientName} onChange={(e) => setClientName(e.target.value)} className={inputCls} />
+                <input aria-label="Nom" value={clientName} onChange={(e) => setClientName(e.target.value)} className={inputCls} />
               </div>
               <div>
                 <label className="block text-xs font-medium text-gray-400 mb-1">Email</label>
-                <input type="email" value={clientEmail} onChange={(e) => setClientEmail(e.target.value)} className={inputCls} />
+                <input aria-label="Email" type="email" value={clientEmail} onChange={(e) => setClientEmail(e.target.value)} className={inputCls} />
               </div>
               <div>
                 <label className="block text-xs font-medium text-gray-400 mb-1">Entreprise</label>
-                <input value={clientCompany} onChange={(e) => setClientCompany(e.target.value)} className={inputCls} />
+                <input aria-label="Entreprise" value={clientCompany} onChange={(e) => setClientCompany(e.target.value)} className={inputCls} />
               </div>
               <div>
                 <label className="block text-xs font-medium text-gray-400 mb-1">
@@ -659,15 +691,15 @@ export default function NewInvoicePage() {
                   ici ne doit empêcher de créer ou d'envoyer la facture. */}
               <div className="col-span-2">
                 <label className="block text-xs font-medium text-gray-400 mb-1">Adresse de facturation</label>
-                <input value={clientStreet} onChange={(e) => setClientStreet(e.target.value)} placeholder="5 rue Bossuet" className={inputCls} />
+                <input aria-label="Adresse de facturation" value={clientStreet} onChange={(e) => setClientStreet(e.target.value)} placeholder="5 rue Bossuet" className={inputCls} />
               </div>
               <div>
                 <label className="block text-xs font-medium text-gray-400 mb-1">Code postal</label>
-                <input value={clientPostcode} onChange={(e) => setClientPostcode(e.target.value)} placeholder="33140" inputMode="numeric" maxLength={10} className={inputCls} />
+                <input aria-label="Code postal" value={clientPostcode} onChange={(e) => setClientPostcode(e.target.value)} placeholder="33140" inputMode="numeric" maxLength={10} className={inputCls} />
               </div>
               <div>
                 <label className="block text-xs font-medium text-gray-400 mb-1">Ville</label>
-                <input value={clientCity} onChange={(e) => setClientCity(e.target.value)} placeholder="Villenave-d'Ornon" className={inputCls} />
+                <input aria-label="Ville" value={clientCity} onChange={(e) => setClientCity(e.target.value)} placeholder="Villenave-d'Ornon" className={inputCls} />
               </div>
               {/* Le pays décide du circuit : national pour un client français,
                   e-reporting des opérations internationales sinon. Il n'existait
@@ -675,7 +707,7 @@ export default function NewInvoicePage() {
                   un client étranger partait donc dans le mauvais flux. */}
               <div>
                 <label className="block text-xs font-medium text-gray-400 mb-1">Pays</label>
-                <select
+                <select aria-label="Pays"
                   value={clientCountry}
                   onChange={(e) => setClientCountry(e.target.value)}
                   className={inputCls}
@@ -718,7 +750,22 @@ export default function NewInvoicePage() {
                   </div>
                   <div className="col-span-2 py-2 text-sm font-semibold text-gray-300 text-right">{fmt(item.total)}</div>
                   <div className="col-span-1 flex justify-end">
-                    <button type="button" onClick={() => removeItem(item.id)} className="text-red-400 hover:text-red-400 text-lg leading-none py-2">×</button>
+                    {/* Cible tactile de 44 px, et pas 12.
+                        Mesuré sur un iPhone (375 px de large) : ce bouton
+                        faisait 12 px. C'est intouchable au doigt, et c'est une
+                        action destructrice entourée de champs de saisie — un
+                        doigt qui manque la croix tombe sur le prix unitaire de
+                        la ligne. Le caractère « × » reste petit ; c'est la zone
+                        cliquable qu'on agrandit. Le libellé accessible remplace
+                        un « × » que rien ne sait lire à voix haute. */}
+                    <button
+                      type="button"
+                      onClick={() => removeItem(item.id)}
+                      aria-label="Supprimer cette ligne"
+                      className="flex h-11 w-11 items-center justify-center rounded-lg text-red-400 text-lg leading-none hover:bg-red-500/10 transition-colors"
+                    >
+                      ×
+                    </button>
                   </div>
                 </div>
               ))}
@@ -793,7 +840,7 @@ export default function NewInvoicePage() {
             <div className="border-t border-ds-border pt-4 space-y-4">
               <div>
                 <label className="block text-xs font-medium text-gray-400 mb-1.5">Régime TVA</label>
-                <select
+                <select aria-label="Régime TVA"
                   value={tvaRate}
                   onChange={(e) => setTvaRate(parseFloat(e.target.value))}
                   className="w-full border border-ds-border rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-indigo-500/30 focus:border-indigo-500 bg-ds-elevated text-white"
@@ -830,7 +877,7 @@ export default function NewInvoicePage() {
             <h2 className="font-semibold text-blue-200">Mentions obligatoires 2026</h2>
             <div>
               <label className="block text-xs font-medium text-blue-300 mb-1">Nature de l&apos;opération</label>
-              <select value={operationCategory} onChange={(e) => setOperationCategory(e.target.value as "services" | "goods" | "mixed")}
+              <select aria-label="Nature de l'opération" value={operationCategory} onChange={(e) => setOperationCategory(e.target.value as "services" | "goods" | "mixed")}
                 className="border border-ds-border rounded-lg px-3 py-2 text-sm bg-ds-elevated text-white focus:outline-none focus:ring-1 focus:ring-indigo-500/30 focus:border-indigo-500">
                 <option value="services">Prestation de services</option>
                 <option value="goods">Livraison de biens</option>
@@ -854,15 +901,15 @@ export default function NewInvoicePage() {
             <div className="grid grid-cols-2 gap-3">
               <div>
                 <label className="block text-xs font-medium text-gray-400 mb-1">Date d&apos;émission</label>
-                <input type="date" value={issueDate} onChange={(e) => setIssueDate(e.target.value)} required className={inputCls} />
+                <input aria-label="Date d'émission" type="date" value={issueDate} onChange={(e) => setIssueDate(e.target.value)} required className={inputCls} />
               </div>
               <div>
                 <label className="block text-xs font-medium text-gray-400 mb-1">Date d&apos;échéance</label>
-                <input type="date" value={dueDate} onChange={(e) => setDueDate(e.target.value)} className={inputCls} />
+                <input aria-label="Date d'échéance" type="date" value={dueDate} onChange={(e) => setDueDate(e.target.value)} className={inputCls} />
               </div>
               <div className="col-span-2">
                 <label className="block text-xs font-medium text-gray-400 mb-1">Conditions de paiement</label>
-                <input value={paymentTerms} onChange={(e) => setPaymentTerms(e.target.value)} placeholder="30 jours net" className={inputCls} />
+                <input aria-label="Conditions de paiement" value={paymentTerms} onChange={(e) => setPaymentTerms(e.target.value)} placeholder="30 jours net" className={inputCls} />
               </div>
             </div>
           </section>
@@ -905,14 +952,14 @@ export default function NewInvoicePage() {
             <div className="grid grid-cols-2 gap-3 mb-4">
               <div>
                 <label className="block text-xs font-medium text-gray-400 mb-1.5">Heures</label>
-                <select value={durationHours} onChange={(e) => setDurationHours(parseInt(e.target.value))}
+                <select aria-label="Heures" value={durationHours} onChange={(e) => setDurationHours(parseInt(e.target.value))}
                   className="w-full px-3 py-2 rounded-lg bg-ds-bg border border-ds-border text-sm text-white focus:outline-none focus:border-violet-500 focus:ring-1 focus:ring-violet-500/30">
                   {Array.from({ length: 24 }, (_, i) => <option key={i} value={i}>{i}h</option>)}
                 </select>
               </div>
               <div>
                 <label className="block text-xs font-medium text-gray-400 mb-1.5">Minutes</label>
-                <select value={durationMinutes} onChange={(e) => setDurationMinutes(parseInt(e.target.value))}
+                <select aria-label="Minutes" value={durationMinutes} onChange={(e) => setDurationMinutes(parseInt(e.target.value))}
                   className="w-full px-3 py-2 rounded-lg bg-ds-bg border border-ds-border text-sm text-white focus:outline-none focus:border-violet-500 focus:ring-1 focus:ring-violet-500/30">
                   {[0, 15, 30, 45].map((m) => <option key={m} value={m}>{m === 0 ? "00 min" : `${m} min`}</option>)}
                 </select>

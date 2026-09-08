@@ -20,6 +20,7 @@ import {
 import path from "path";
 import type { Invoice } from "@/types";
 import { digitsOnly, parseAddress, resolveVatNumber } from "./facturx-helpers";
+import { motifExoneration } from "@/lib/exoneration";
 
 /**
  * Polices incorporées au PDF.
@@ -353,7 +354,15 @@ interface Props {
 
 export function InvoicePDF({ invoice, accentColor, paymentInfo, linkedInvoiceNumber }: Props) {
   const accent = accentColor || BRAND;
-  const isFranchise = invoice.tva_rate === 0;
+  // Le motif de l'absence de TVA, déterminé par la même règle que le XML
+  // (lib/exoneration.ts). `isFranchise` ne désigne plus « taux à zéro » mais
+  // bien le régime de franchise en base : le PDF imprimait « art. 293 B du
+  // CGI » sur toute facture à 0 %, y compris une livraison intracommunautaire
+  // émise par un assujetti — une déclaration écrite, et fausse, de son régime
+  // fiscal.
+  const exo = motifExoneration(invoice);
+  const exonere = exo.categorie !== "S";
+  const isFranchise = exo.categorie === "E" && /293 B/.test(exo.mention);
   const isAcompte = invoice.invoice_type === "acompte";
   const isSolde = invoice.invoice_type === "solde";
   const isAvoir = invoice.invoice_type === "avoir";
@@ -414,8 +423,8 @@ export function InvoicePDF({ invoice, accentColor, paymentInfo, linkedInvoiceNum
       : "Livraison de biens et prestation de services";
 
   const legalText = [
-    isFranchise
-      ? "TVA non applicable, art. 293 B du CGI"
+    exonere
+      ? exo.mention
       : `Facture soumise à TVA, Taux applicable : ${invoice.tva_rate}%${
           invoice.payment_on_debit
             ? ", TVA acquittée sur les débits (art. 1693 bis CGI)"
@@ -580,7 +589,7 @@ export function InvoicePDF({ invoice, accentColor, paymentInfo, linkedInvoiceNum
             </View>
             <View style={styles.totalRow}>
               <Text style={styles.totalLabel}>
-                {isFranchise ? "TVA non applicable" : `TVA ${invoice.tva_rate}%`}
+                {exonere ? "TVA non applicable" : `TVA ${invoice.tva_rate}%`}
               </Text>
               <Text style={styles.totalValue}>
                 {fmt(invoice.total_ttc - invoice.total_ht)}

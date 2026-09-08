@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { synchroniserFactures } from "@/lib/superpdp-sync";
 import { factureBloquee } from "@/lib/superpdp-blocage";
+import { cronAutorise } from "@/lib/cron-auth";
 
 /**
  * Filet horaire pour la réception des factures électroniques.
@@ -19,8 +20,7 @@ import { factureBloquee } from "@/lib/superpdp-blocage";
  * pour de la facturation.
  */
 export async function GET(req: Request) {
-  const auth = req.headers.get("authorization");
-  if (auth !== `Bearer ${process.env.CRON_SECRET}`) {
+  if (!cronAutorise(req)) {
     return new Response("Unauthorized", { status: 401 });
   }
 

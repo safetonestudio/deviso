@@ -4,6 +4,7 @@ import Link from "next/link";
 import { checkInvoiceCompliance, isB2CInvoice } from "@/lib/facturx-helpers";
 import type { Invoice } from "@/types";
 import { resolveAddress } from "@/lib/address";
+import { motifExoneration } from "@/lib/exoneration";
 
 /**
  * Diagnostic de conformité Factur-X EN 16931 affiché sur la facture.
@@ -13,7 +14,7 @@ import { resolveAddress } from "@/lib/address";
  * que sa Plateforme Agréée ne rejette le document.
  */
 export function FacturXCompliance({ invoice }: { invoice: Invoice }) {
-  const issues = checkInvoiceCompliance({
+  const issuesBrutes = checkInvoiceCompliance({
     sellerSiren: invoice.seller_siren,
     // On donne au contrôle la forme canonique issue des champs séparés : sinon
     // il rejugeait un texte libre et pouvait signaler un code postal manquant
@@ -28,7 +29,7 @@ export function FacturXCompliance({ invoice }: { invoice: Invoice }) {
       { street: invoice.client_street, postcode: invoice.client_postcode, city: invoice.client_city },
       invoice.client_address
     ).formatted,
-    isFranchise: invoice.tva_rate === 0,
+    isFranchise: motifExoneration(invoice).categorie === "E",
     // Les obligations d'adressage (SIREN, adresse structurée) ne valent qu'en B2B —
     // les réclamer à un freelance qui facture des particuliers afficherait une
     // alerte rouge permanente et fausse. Étape 5 du plan Super PDP, traitée le
@@ -37,6 +38,25 @@ export function FacturXCompliance({ invoice }: { invoice: Invoice }) {
     isB2C: isB2CInvoice(invoice),
     operationCategory: invoice.operation_category,
   });
+
+  // Le motif de l'exonération, quand il n'a pas pu être établi.
+  //
+  // Une facture à 0 % émise par un assujetti doit dire POURQUOI. Deviso
+  // écrivait jusqu'ici « art. 293 B du CGI » dans tous les cas, ce qui revenait
+  // à déclarer à sa place un régime de franchise en base. Il écrit maintenant
+  // une mention neutre quand il ne peut pas trancher — et le dit ici, sans quoi
+  // l'utilisateur ne saurait pas qu'il manque quelque chose à sa facture.
+  const exo = motifExoneration(invoice);
+  const issues = exo.certaine
+    ? issuesBrutes
+    : [
+        ...issuesBrutes,
+        {
+          field: "exoneration",
+          label: `Facture sans TVA : il manque ${exo.manque}`,
+          blocking: false,
+        },
+      ];
 
   const blocking = issues.filter((i) => i.blocking);
   const warnings = issues.filter((i) => !i.blocking);

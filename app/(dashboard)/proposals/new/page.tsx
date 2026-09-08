@@ -437,7 +437,17 @@ export default function NewProposalPage() {
                   <div className="col-span-2 text-right">
                     <input type="number" className={`w-full ${inputCls} text-right`} value={item.unit_price} onChange={(e) => updateItem(idx, "unit_price", parseFloat(e.target.value))} min={0} />
                   </div>
-                  <button onClick={() => removeItem(idx)} className="col-span-1 text-gray-400 hover:text-red-400 transition-colors text-center text-lg">×</button>
+                  {/* Même correction que sur la facture : une croix de 12 px
+                      n'est pas une cible tactile, et supprimer une ligne est
+                      irréversible. */}
+                  <button
+                    type="button"
+                    onClick={() => removeItem(idx)}
+                    aria-label="Supprimer cette ligne"
+                    className="col-span-1 mx-auto flex h-11 w-11 items-center justify-center rounded-lg text-gray-400 hover:text-red-400 hover:bg-red-500/10 transition-colors text-lg"
+                  >
+                    ×
+                  </button>
                 </div>
               ))}
             </div>
@@ -509,7 +519,7 @@ export default function NewProposalPage() {
             <div className="border-t border-ds-border mt-4 pt-4">
               <div className="mb-4">
                 <label className="block text-xs font-medium text-gray-400 mb-1.5">Régime TVA</label>
-                <select
+                <select aria-label="Régime TVA"
                   value={generated.tva_rate}
                   onChange={(e) => updateTvaRate(parseFloat(e.target.value))}
                   className="w-full border border-ds-border rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-indigo-500/30 focus:border-indigo-500 bg-ds-elevated text-white"
@@ -605,11 +615,11 @@ export default function NewProposalPage() {
           <div className="bg-ds-surface rounded-xl border border-ds-border p-6">
             <div className="mb-4">
               <label className="block text-sm font-medium text-gray-300 mb-1.5">Conditions de paiement</label>
-              <input className={inputCls} value={generated.payment_terms} onChange={(e) => setGenerated({ ...generated, payment_terms: e.target.value })} />
+              <input aria-label="Conditions de paiement" className={inputCls} value={generated.payment_terms} onChange={(e) => setGenerated({ ...generated, payment_terms: e.target.value })} />
             </div>
             <div>
               <label className="block text-sm font-medium text-gray-300 mb-1.5">Notes et mentions</label>
-              <textarea rows={3} className={`${inputCls} resize-none`} value={generated.notes} onChange={(e) => setGenerated({ ...generated, notes: e.target.value })} />
+              <textarea aria-label="Notes et mentions" rows={3} className={`${inputCls} resize-none`} value={generated.notes} onChange={(e) => setGenerated({ ...generated, notes: e.target.value })} />
             </div>
           </div>
 
@@ -629,15 +639,15 @@ export default function NewProposalPage() {
           <div className="grid sm:grid-cols-2 gap-4">
             <div>
               <label className="block text-sm font-medium text-gray-300 mb-1.5">Nom du client</label>
-              <input className={inputCls} placeholder="Jean Martin" value={clientName} onChange={(e) => setClientName(e.target.value)} />
+              <input aria-label="Nom du client" className={inputCls} placeholder="Jean Martin" value={clientName} onChange={(e) => setClientName(e.target.value)} />
             </div>
             <div>
               <label className="block text-sm font-medium text-gray-300 mb-1.5">Entreprise</label>
-              <input className={inputCls} placeholder="SARL Martin & Co" value={clientCompany} onChange={(e) => setClientCompany(e.target.value)} />
+              <input aria-label="Entreprise" className={inputCls} placeholder="SARL Martin & Co" value={clientCompany} onChange={(e) => setClientCompany(e.target.value)} />
             </div>
             <div>
               <label className="block text-sm font-medium text-gray-300 mb-1.5">Email client</label>
-              <input type="email" className={inputCls} placeholder="jean@exemple.fr" value={clientEmail} onChange={(e) => setClientEmail(e.target.value)} />
+              <input aria-label="Email client" type="email" className={inputCls} placeholder="jean@exemple.fr" value={clientEmail} onChange={(e) => setClientEmail(e.target.value)} />
             </div>
             <div>
               <label className="block text-sm font-medium text-gray-300 mb-1.5">SIREN client <span className="text-blue-400 text-xs">(B2B 2026)</span></label>
@@ -648,15 +658,15 @@ export default function NewProposalPage() {
                 l'enregistrement, le manque est signalé sur la facture. */}
             <div className="sm:col-span-2">
               <label className="block text-sm font-medium text-gray-300 mb-1.5">Adresse du client</label>
-              <input className={inputCls} placeholder="12 rue de la Paix" value={clientStreet} onChange={(e) => setClientStreet(e.target.value)} />
+              <input aria-label="Adresse du client" className={inputCls} placeholder="12 rue de la Paix" value={clientStreet} onChange={(e) => setClientStreet(e.target.value)} />
             </div>
             <div>
               <label className="block text-sm font-medium text-gray-300 mb-1.5">Code postal</label>
-              <input className={inputCls} placeholder="75001" inputMode="numeric" maxLength={10} value={clientPostcode} onChange={(e) => setClientPostcode(e.target.value)} />
+              <input aria-label="Code postal" className={inputCls} placeholder="75001" inputMode="numeric" maxLength={10} value={clientPostcode} onChange={(e) => setClientPostcode(e.target.value)} />
             </div>
             <div>
               <label className="block text-sm font-medium text-gray-300 mb-1.5">Ville</label>
-              <input className={inputCls} placeholder="Paris" value={clientCity} onChange={(e) => setClientCity(e.target.value)} />
+              <input aria-label="Ville" className={inputCls} placeholder="Paris" value={clientCity} onChange={(e) => setClientCity(e.target.value)} />
             </div>
           </div>
 
@@ -694,7 +704,7 @@ export default function NewProposalPage() {
             <div className="grid grid-cols-2 gap-3 mb-4">
               <div>
                 <label className="block text-xs font-medium text-gray-400 mb-1.5">Heures</label>
-                <select
+                <select aria-label="Heures"
                   value={durationHours}
                   onChange={(e) => setDurationHours(parseInt(e.target.value))}
                   className="w-full px-3 py-2 rounded-lg bg-ds-bg border border-ds-border text-sm text-white focus:outline-none focus:border-violet-500 focus:ring-1 focus:ring-violet-500/30"
@@ -706,7 +716,7 @@ export default function NewProposalPage() {
               </div>
               <div>
                 <label className="block text-xs font-medium text-gray-400 mb-1.5">Minutes</label>
-                <select
+                <select aria-label="Minutes"
                   value={durationMinutes}
                   onChange={(e) => setDurationMinutes(parseInt(e.target.value))}
                   className="w-full px-3 py-2 rounded-lg bg-ds-bg border border-ds-border text-sm text-white focus:outline-none focus:border-violet-500 focus:ring-1 focus:ring-violet-500/30"

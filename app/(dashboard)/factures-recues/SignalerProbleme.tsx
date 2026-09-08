@@ -236,7 +236,7 @@ export function SignalerProbleme({
               <label className="block text-xs font-medium text-gray-400 mb-1.5">
                 Motif du refus
               </label>
-              <select
+              <select aria-label="Motif du refus"
                 value={motif}
                 onChange={(e) => setMotif(e.target.value)}
                 autoFocus

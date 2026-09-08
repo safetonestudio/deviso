@@ -2,8 +2,10 @@ import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { getWorkspaceUserId, getWorkspaceProfile } from "@/lib/workspace";
-import { resend } from "@/lib/resend";
+import { envoyerCourriel } from "@/lib/resend";
 import { piedDePageMarque } from "@/lib/emails/branding";
+import { echapperHtml, echapperUrl } from "@/lib/emails/html";
+import { publicBaseUrl, proposalShareUrl } from "@/lib/public-url";
 
 type Params = { params: Promise<{ id: string }> };
 
@@ -13,30 +15,55 @@ export async function POST(req: NextRequest, { params }: Params) {
   const { data: { user }, error: authError } = await supabase.auth.getUser();
   if (authError || !user) return NextResponse.json({ error: "Non autorisé" }, { status: 401 });
 
-  const { to, shareUrl, senderName, proposalTitle } = await req.json();
+  const { to } = await req.json();
 
-  if (!to || !shareUrl) return NextResponse.json({ error: "Email et lien requis" }, { status: 400 });
+  // Le destinataire reste au choix de l'utilisateur — envoyer le devis au
+  // comptable plutôt qu'au contact commercial est un usage légitime — mais on
+  // exige une adresse qui ressemble à une adresse.
+  if (typeof to !== "string" || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(to.trim())) {
+    return NextResponse.json({ error: "Adresse email invalide" }, { status: 400 });
+  }
 
   const workspaceId = await getWorkspaceUserId(user.id);
 
-  const profileData = await getWorkspaceProfile<{ company_name: string | null; email: string | null; plan: string | null }>(
-    workspaceId,
-    "company_name, email, plan"
-  );
-
-  // Le nom commercial de l'émetteur s'affiche dans le champ « De », l'adresse
-  // technique reste la nôtre. C'est ce que voit le client, et ça suffit.
-  const displayName = profileData?.company_name || senderName || "Votre prestataire";
-  const fromAddress = `${displayName} <noreply@getdeviso.fr>`;
+  const profileData = await getWorkspaceProfile<{
+    company_name: string | null;
+    email: string | null;
+    plan: string | null;
+    subdomain: string | null;
+  }>(workspaceId, "company_name, email, plan, subdomain");
 
   const { data: proposal } = await supabase
     .from("proposals")
-    .select("id, status, client_name, client_email, client_company")
+    .select("id, status, title, share_token, client_name, client_email, client_company")
     .eq("id", id)
     .eq("user_id", workspaceId)
     .single();
 
   if (!proposal) return NextResponse.json({ error: "Devis introuvable" }, { status: 404 });
+
+  // Le lien et le titre viennent du devis, plus du corps de la requête.
+  //
+  // Ils en venaient, et c'était un relais de courriel ouvert : `shareUrl`
+  // était inséré tel quel dans le bouton « Consulter et signer le devis ».
+  // N'importe quel compte — y compris un compte de démonstration obtenu en dix
+  // secondes — pouvait donc faire partir, depuis `noreply@getdeviso.fr` et
+  // avec la signature SPF/DKIM du domaine, un message vers l'adresse de son
+  // choix dont le bouton pointait vers son propre site. Le devis n'était qu'un
+  // prétexte : rien de son contenu n'était utilisé.
+  //
+  // Reconstruire le lien côté serveur ferme le vecteur sans rien retirer à
+  // l'usage réel, et garantit au passage la même adresse qu'à la relance
+  // (`proposals/[id]/remind`) — deux liens différents pour un même devis
+  // sèment le doute juste avant la signature.
+  const shareUrl = proposalShareUrl(publicBaseUrl(profileData), proposal.share_token);
+  const proposalTitle = proposal.title;
+
+  // Le nom commercial de l'émetteur s'affiche dans le champ « De », l'adresse
+  // technique reste la nôtre. C'est ce que voit le client, et ça suffit.
+  const displayName = profileData?.company_name || "Votre prestataire";
+  const fromAddress = `${displayName.replace(/[<>\r\n"]/g, " ").trim() || "Deviso"} <noreply@getdeviso.fr>`;
+  const senderName = displayName;
 
   const html = `
 <!DOCTYPE html>
@@ -47,13 +74,13 @@ export async function POST(req: NextRequest, { params }: Params) {
     <tr><td align="center">
       <table width="100%" cellpadding="0" cellspacing="0" style="max-width:560px;background:#ffffff;border-radius:16px;border:1px solid #e2e8f0;overflow:hidden;">
         <tr><td style="background:#4f46e5;padding:28px 36px;">
-          <span style="color:#ffffff;font-size:18px;font-weight:700;">${displayName}</span>
+          <span style="color:#ffffff;font-size:18px;font-weight:700;">${echapperHtml(displayName)}</span>
         </td></tr>
         <tr><td style="padding:36px;">
           <p style="margin:0 0 8px;font-size:22px;font-weight:700;color:#0f172a;">Vous avez reçu un devis</p>
           <p style="margin:0 0 24px;font-size:15px;color:#64748b;line-height:1.6;">
-            <strong style="color:#0f172a;">${senderName || "Votre prestataire"}</strong> vous a envoyé un devis pour :<br>
-            <em style="color:#4f46e5;">${proposalTitle || "une prestation"}</em>
+            <strong style="color:#0f172a;">${echapperHtml(senderName || "Votre prestataire")}</strong> vous a envoyé un devis pour :<br>
+            <em style="color:#4f46e5;">${echapperHtml(proposalTitle || "une prestation")}</em>
           </p>
           <div style="background:#f8fafc;border-radius:12px;padding:20px;margin-bottom:28px;">
             <p style="margin:0 0 12px;font-size:12px;font-weight:700;color:#94a3b8;text-transform:uppercase;letter-spacing:0.8px;">Comment ça marche ?</p>
@@ -63,7 +90,7 @@ export async function POST(req: NextRequest, { params }: Params) {
           </div>
           <table width="100%" cellpadding="0" cellspacing="0">
             <tr><td align="center">
-              <a href="${shareUrl}" style="display:inline-block;background:#4f46e5;color:#ffffff;font-size:15px;font-weight:700;text-decoration:none;padding:14px 36px;border-radius:12px;">
+              <a href="${echapperUrl(shareUrl)}" style="display:inline-block;background:#4f46e5;color:#ffffff;font-size:15px;font-weight:700;text-decoration:none;padding:14px 36px;border-radius:12px;">
                 Consulter et signer le devis &rarr;
               </a>
             </td></tr>
@@ -79,7 +106,7 @@ export async function POST(req: NextRequest, { params }: Params) {
 </body>
 </html>`;
 
-  const { error } = await resend.emails.send({
+  const { error } = await envoyerCourriel(user.id, {
     from: fromAddress,
     // Sans Reply-To, une réponse du client part vers noreply@getdeviso.fr et se
     // perd. C'est la boîte du freelance qui doit recevoir « ok pour le devis ».

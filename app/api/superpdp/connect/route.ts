@@ -9,6 +9,7 @@ import {
   createState,
   superpdpConfig,
 } from "@/lib/superpdp";
+import { estCompteDemo, MESSAGE_DEMO_TIERS } from "@/lib/garde-demo";
 
 /**
  * Démarre le raccordement de l'utilisateur à Super PDP (OAuth 2.1, flow
@@ -34,6 +35,13 @@ export async function GET() {
   } = await supabase.auth.getUser();
   if (authError || !user) {
     return NextResponse.json({ error: "Non autorisé" }, { status: 401 });
+  }
+  // Aucun dépôt chez un tiers depuis un compte de démonstration. Voir
+  // lib/garde-demo.ts : PISTE et la Plateforme Agréée sont en production, et le
+  // jeu de données de démonstration contient de vrais destinataires — dont une
+  // facture B2G adressée au SIREN d'une commune réelle.
+  if (await estCompteDemo(user.id)) {
+    return NextResponse.json({ error: "DEMO", message: MESSAGE_DEMO_TIERS }, { status: 403 });
   }
 
   // Le raccordement appartient à l'entreprise, pas au collaborateur : un membre

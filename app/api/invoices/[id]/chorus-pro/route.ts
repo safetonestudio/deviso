@@ -4,6 +4,7 @@ import { createAdminClient } from "@/lib/supabase/admin";
 import { generateFacturXPdf } from "@/lib/facturx";
 import type { Invoice } from "@/types";
 import { getWorkspaceUserId } from "@/lib/workspace";
+import { estCompteDemo, MESSAGE_DEMO_TIERS } from "@/lib/garde-demo";
 
 // ─── Config PISTE ────────────────────────────────────────────────────────────
 const PISTE_SANDBOX = false; // Production PISTE activée
@@ -144,6 +145,13 @@ export async function POST(
   } = await supabase.auth.getUser();
   if (!user)
     return NextResponse.json({ error: "Non authentifié" }, { status: 401 });
+  // Aucun dépôt chez un tiers depuis un compte de démonstration. Voir
+  // lib/garde-demo.ts : PISTE et la Plateforme Agréée sont en production, et le
+  // jeu de données de démonstration contient de vrais destinataires — dont une
+  // facture B2G adressée au SIREN d'une commune réelle.
+  if (await estCompteDemo(user.id)) {
+    return NextResponse.json({ error: "DEMO", message: MESSAGE_DEMO_TIERS }, { status: 403 });
+  }
 
   // Les documents appartiennent à l'espace de travail, pas au collaborateur :
   // filtrer sur user.id renvoyait 404 à tout membre d'équipe.

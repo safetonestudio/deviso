@@ -315,7 +315,7 @@ Les présentes CGV sont soumises au droit français. Tout litige relève de la c
 
           <div>
             <label className="block text-sm font-medium text-gray-300 mb-1.5">Prénom et nom</label>
-            <input
+            <input aria-label="Prénom et nom"
               className={inputCls}
               value={profile.full_name || ""}
               onChange={(e) => setProfile({ ...profile, full_name: e.target.value })}
@@ -324,7 +324,7 @@ Les présentes CGV sont soumises au droit français. Tout litige relève de la c
           </div>
           <div>
             <label className="block text-sm font-medium text-gray-300 mb-1.5">Email professionnel</label>
-            <input
+            <input aria-label="Email professionnel"
               className={inputCls}
               type="email"
               value={profile.email || ""}
@@ -334,7 +334,7 @@ Les présentes CGV sont soumises au droit français. Tout litige relève de la c
           </div>
           <div>
             <label className="block text-sm font-medium text-gray-300 mb-1.5">Téléphone</label>
-            <input
+            <input aria-label="Téléphone"
               className={inputCls}
               value={profile.phone || ""}
               onChange={(e) => setProfile({ ...profile, phone: e.target.value })}
@@ -461,19 +461,19 @@ Les présentes CGV sont soumises au droit français. Tout litige relève de la c
           <div className="grid grid-cols-2 gap-3">
             <div>
               <label className="block text-xs font-medium text-gray-400 mb-1">Prénom & Nom</label>
-              <input value={profile.full_name || ""} onChange={(e) => set("full_name", e.target.value)} placeholder="Selim Martin" className={inputCls} />
+              <input aria-label="Prénom & Nom" value={profile.full_name || ""} onChange={(e) => set("full_name", e.target.value)} placeholder="Selim Martin" className={inputCls} />
             </div>
             <div>
               <label className="block text-xs font-medium text-gray-400 mb-1">Nom de l&apos;entreprise</label>
-              <input value={profile.company_name || ""} onChange={(e) => set("company_name", e.target.value)} placeholder="Safetone Studio" className={inputCls} />
+              <input aria-label="Nom de l'entreprise" value={profile.company_name || ""} onChange={(e) => set("company_name", e.target.value)} placeholder="Safetone Studio" className={inputCls} />
             </div>
             <div>
               <label className="block text-xs font-medium text-gray-400 mb-1">Email professionnel</label>
-              <input type="email" value={profile.email || ""} onChange={(e) => set("email", e.target.value)} className={inputCls} />
+              <input aria-label="Email professionnel" type="email" value={profile.email || ""} onChange={(e) => set("email", e.target.value)} className={inputCls} />
             </div>
             <div>
               <label className="block text-xs font-medium text-gray-400 mb-1">Téléphone</label>
-              <input value={profile.phone || ""} onChange={(e) => set("phone", e.target.value)} placeholder="+33 6 00 00 00 00" className={inputCls} />
+              <input aria-label="Téléphone" value={profile.phone || ""} onChange={(e) => set("phone", e.target.value)} placeholder="+33 6 00 00 00 00" className={inputCls} />
             </div>
             {/* Adresse en champs séparés : l'EN 16931 exige la rue (BT-35), le code
                 postal (BT-38) et la ville (BT-37) comme éléments distincts du XML.
@@ -481,15 +481,15 @@ Les présentes CGV sont soumises au droit français. Tout litige relève de la c
                 factures non conformes sans que personne ne le voie. */}
             <div className="col-span-2">
               <label className="block text-xs font-medium text-gray-400 mb-1">Adresse</label>
-              <input value={profile.address_street || ""} onChange={(e) => set("address_street", e.target.value)} placeholder="24 Avenue de Gradignan" className={inputCls} />
+              <input aria-label="Adresse" value={profile.address_street || ""} onChange={(e) => set("address_street", e.target.value)} placeholder="24 Avenue de Gradignan" className={inputCls} />
             </div>
             <div>
               <label className="block text-xs font-medium text-gray-400 mb-1">Code postal</label>
-              <input value={profile.address_postcode || ""} onChange={(e) => set("address_postcode", e.target.value)} placeholder="33170" inputMode="numeric" maxLength={10} className={inputCls} />
+              <input aria-label="Code postal" value={profile.address_postcode || ""} onChange={(e) => set("address_postcode", e.target.value)} placeholder="33170" inputMode="numeric" maxLength={10} className={inputCls} />
             </div>
             <div>
               <label className="block text-xs font-medium text-gray-400 mb-1">Ville</label>
-              <input value={profile.address_city || ""} onChange={(e) => set("address_city", e.target.value)} placeholder="Gradignan" className={inputCls} />
+              <input aria-label="Ville" value={profile.address_city || ""} onChange={(e) => set("address_city", e.target.value)} placeholder="Gradignan" className={inputCls} />
             </div>
           </div>
         </section>
@@ -838,7 +838,7 @@ Les présentes CGV sont soumises au droit français. Tout litige relève de la c
             <label className="block text-xs font-medium text-gray-400 mb-1.5">
               Identifiant compte technique
             </label>
-            <input
+            <input aria-label="Identifiant compte technique"
               type="text"
               value={chorusLogin}
               onChange={(e) => setChorusLogin(e.target.value)}
@@ -850,7 +850,7 @@ Les présentes CGV sont soumises au droit français. Tout litige relève de la c
             <label className="block text-xs font-medium text-gray-400 mb-1.5">
               Mot de passe compte technique
             </label>
-            <input
+            <input aria-label="Mot de passe compte technique"
               type="password"
               value={chorusPassword}
               onChange={(e) => setChorusPassword(e.target.value)}
@@ -862,7 +862,7 @@ Les présentes CGV sont soumises au droit français. Tout litige relève de la c
             <label className="block text-xs font-medium text-gray-400 mb-1.5">
               ID structure (idFournisseur)
             </label>
-            <input
+            <input aria-label="ID structure (idFournisseur)"
               type="number"
               value={chorusFournisseurId}
               onChange={(e) => setChorusFournisseurId(e.target.value)}
@@ -875,7 +875,7 @@ Les présentes CGV sont soumises au droit français. Tout litige relève de la c
             <label className="block text-xs font-medium text-gray-400 mb-1.5">
               Code coordonnées bancaires
             </label>
-            <input
+            <input aria-label="Code coordonnées bancaires"
               type="number"
               value={chorusBankCode}
               onChange={(e) => setChorusBankCode(e.target.value)}

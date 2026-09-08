@@ -83,16 +83,37 @@ create table if not exists public.proposals (
 
 alter table public.proposals enable row level security;
 
+-- ⚠️ CE FICHIER EST EN RETARD SUR LA BASE RÉELLE. Ne pas l'appliquer tel quel.
+--
+-- Il ignore une douzaine de colonnes (invoice_type, linked_invoice_id,
+-- deposit_percentage, paid_at, client_country, toutes les colonnes superpdp_*,
+-- created_by, approval_status…) et la moitié des tables. Il sert de trace
+-- d'origine, pas de source de vérité : la base de production fait foi, et les
+-- policies vivantes y sont des policies « workspace_access » réservées au rôle
+-- `authenticated` et filtrées par `accessible_workspace_ids()`.
+--
+-- La policy de partage public ci-dessous a été RETIRÉE de la production, et
+-- elle est laissée ici commentée comme avertissement : telle qu'elle était
+-- écrite, elle ne comparait pas le jeton, elle testait seulement qu'il n'est
+-- pas nul. Or la colonne a une valeur par défaut : le prédicat était donc vrai
+-- pour TOUTES les lignes, pour le rôle `public` — c'est-à-dire pour n'importe
+-- qui muni de la clé anonyme, qui est par construction dans le bundle
+-- navigateur. Réappliquer ce fichier rouvrirait la lecture de tous les devis
+-- de tous les comptes.
+--
+-- La lecture publique d'un devis passe exclusivement par
+-- `app/api/public/proposals/[token]`, en service role, qui résout le jeton
+-- lui-même. Aucune policy n'est nécessaire pour cela.
+
 -- L'utilisateur peut tout faire sur ses propres devis
 create policy "Users manage their own proposals"
   on public.proposals for all
   using (auth.uid() = user_id)
   with check (auth.uid() = user_id);
 
--- N'importe qui avec le token peut voir le devis (lien de partage client)
-create policy "Public share link read access"
-  on public.proposals for select
-  using (share_token is not null);
+-- create policy "Public share link read access"
+--   on public.proposals for select
+--   using (share_token is not null);   -- ← vrai pour toutes les lignes. Ne pas remettre.
 
 -- Auto-update du champ updated_at
 create or replace function public.set_updated_at()

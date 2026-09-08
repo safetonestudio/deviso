@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
-import { resend } from "@/lib/resend";
-import { getWorkspaceUserId } from "@/lib/workspace";
+import { envoyerCourriel } from "@/lib/resend";
+import { getWorkspaceUserId, getWorkspaceProfile } from "@/lib/workspace";
 import { piedDePageMarque } from "@/lib/emails/branding";
 
 type Params = { params: Promise<{ id: string }> };
@@ -44,11 +44,14 @@ export async function POST(req: NextRequest, { params }: Params) {
 
   // On charge le profil uniquement pour le Reply-To : une relance de paiement
   // sans adresse de réponse valide est un aller simple vers l'impayé.
-  const { data: senderProfile } = await supabase
-    .from("profiles")
-    .select("email, plan")
-    .eq("id", user.id)
-    .single();
+  // Le profil de l'ESPACE, pas celui de la personne connectée : c'est
+  // l'entreprise qui relance son client, et c'est chez elle que la réponse
+  // doit arriver. Un collaborateur relançant depuis un espace Pro mettait
+  // sa propre adresse en Reply-To, et le plan lu était le sien.
+  const senderProfile = await getWorkspaceProfile<{ email: string | null; plan: string | null }>(
+    workspaceId,
+    "email, plan"
+  );
 
   const clientName = invoice.client_company || invoice.client_name || "Client";
   const senderName = invoice.seller_company || invoice.seller_name || "Votre prestataire";
@@ -111,7 +114,7 @@ export async function POST(req: NextRequest, { params }: Params) {
 </body>
 </html>`;
 
-  const { error } = await resend.emails.send({
+  const { error } = await envoyerCourriel(user.id, {
     // Le client a reçu le devis ou la facture au nom de son prestataire.
     // Recevoir la relance de « Deviso », une société qu'il ne connaît pas,
     // ressemble à une tentative d'hameçonnage et abîme la crédibilité de

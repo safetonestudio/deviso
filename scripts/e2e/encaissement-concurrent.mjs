@@ -146,11 +146,47 @@ if (!idPdp) process.exit(bilan());
 //
 // Reproduit exactement le croisement « clic sur payée » / « webhook Stripe » :
 // aucune n'attend l'autre.
+// Le refus transitoire de la plateforme n'est pas le defaut qu'on mesure.
+//
+// La facture vient d'etre deposee. Tant que la Plateforme Agreee ne l'a pas
+// fait passer par ses propres controles, elle refuse tout evenement de cycle de
+// vie dessus — « Reessayez dans un moment », en toutes lettres dans sa reponse.
+// Les deux appels repartent alors en 502 ensemble, et la suite echouait en
+// annoncant « 0 declaration » : exactement le contraire du defaut surveille,
+// puisque ce test cherche un DOUBLON, pas une absence.
+//
+// Constate le 08/09/2026 : meme commit, deux executions, un echec et un succes.
+// Un test qui echoue au hasard finit par etre ignore, et c'est pire que pas de
+// test. On rejoue donc le couple concurrent — jamais un seul appel, sans quoi
+// on ne mesurerait plus la concurrence — jusqu'a ce que la plateforme soit
+// prete.
 const date = jour(-1);
-const [a, b] = await Promise.all([
-  appel(`/api/superpdp/invoices/${id}/encaisser`, { method: "POST", body: JSON.stringify({ date }) }),
-  appel(`/api/superpdp/invoices/${id}/encaisser`, { method: "POST", body: JSON.stringify({ date }) }),
-]);
+const transitoire = (r) => r.status === 502 && /r[ée]essayez/i.test(JSON.stringify(r.body ?? ""));
+
+/** Meme attente, pour les declarations isolees plus bas. */
+async function encaisser(idFacture, corps) {
+  let r;
+  for (let essai = 0; essai < 4; essai++) {
+    r = await appel(`/api/superpdp/invoices/${idFacture}/encaisser`, {
+      method: "POST",
+      body: JSON.stringify(corps),
+    });
+    if (!transitoire(r)) return r;
+    await new Promise((x) => setTimeout(x, 8000));
+  }
+  return r;
+}
+
+let a, b;
+for (let essai = 0; essai < 4; essai++) {
+  [a, b] = await Promise.all([
+    appel(`/api/superpdp/invoices/${id}/encaisser`, { method: "POST", body: JSON.stringify({ date }) }),
+    appel(`/api/superpdp/invoices/${id}/encaisser`, { method: "POST", body: JSON.stringify({ date }) }),
+  ]);
+  if (!(transitoire(a) && transitoire(b))) break;
+  console.log(`   la plateforme n'a pas encore fini de traiter la facture, nouvelle tentative (${essai + 1}/4)`);
+  await new Promise((r) => setTimeout(r, 8000));
+}
 
 console.log(`   réponse 1 : HTTP ${a.status} ${JSON.stringify(a.body).slice(0, 130)}`);
 console.log(`   réponse 2 : HTTP ${b.status} ${JSON.stringify(b.body).slice(0, 130)}`);
@@ -258,10 +294,7 @@ if (idFuture) {
   await appel(`/api/invoices/${idFuture}`, { method: "PATCH", body: JSON.stringify({ status: "sent" }) });
   const emise = await appel(`/api/superpdp/invoices/${idFuture}/emettre`, { method: "POST" });
   if (emise.status === 200) {
-    await appel(`/api/superpdp/invoices/${idFuture}/encaisser`, {
-      method: "POST",
-      body: JSON.stringify({ date: jour(30) }),
-    });
+    await encaisser(idFuture, { date: jour(30) });
     const rl = await appel(`/api/invoices/${idFuture}`);
     const d = rl.body?.invoice?.superpdp_encaisse_at;
     verifier(
@@ -292,10 +325,7 @@ if (idFranchise) {
   await appel(`/api/invoices/${idFranchise}`, { method: "PATCH", body: JSON.stringify({ status: "sent" }) });
   const emiseF = await appel(`/api/superpdp/invoices/${idFranchise}/emettre`, { method: "POST" });
   if (emiseF.status === 200) {
-    const encF = await appel(`/api/superpdp/invoices/${idFranchise}/encaisser`, {
-      method: "POST",
-      body: JSON.stringify({ date }),
-    });
+    const encF = await encaisser(idFranchise, { date });
     verifier(
       "une facture à 0 % de TVA s'encaisse avec sa date réelle",
       encF.status === 200 && encF.body?.encaissee === true,

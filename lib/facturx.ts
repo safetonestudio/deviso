@@ -19,14 +19,27 @@ import { generateFacturXml } from "./invoice-xml";
 import type { Invoice } from "@/types";
 import type { ReactElement } from "react";
 
-export async function generateFacturXPdf(invoice: Invoice, accentColor?: string, paymentInfo?: PaymentInfo, linkedInvoiceNumber?: string | null): Promise<Buffer> {
+/**
+ * @param linkedInvoiceDate date d'émission du document lié (BT-26).
+ *
+ * Elle manquait, et le XML embarqué dans le PDF était donc, pour un avoir, non
+ * conforme à BR-FR-CO-05 : « une référence à une facture antérieure (BT-25)
+ * **avec sa date (BT-26)** ». Sans la date, le validateur officiel ne compte
+ * pas la référence du tout — « Références entête trouvées : 0 ».
+ *
+ * Le XML transmis à la Plateforme Agréée, lui, la portait déjà (la route
+ * d'émission résout les deux champs). Il y avait donc deux XML différents pour
+ * le même avoir, et c'est celui que le comptable du client ouvre dans le PDF
+ * qui était le mauvais.
+ */
+export async function generateFacturXPdf(invoice: Invoice, accentColor?: string, paymentInfo?: PaymentInfo, linkedInvoiceNumber?: string | null, linkedInvoiceDate?: string | null): Promise<Buffer> {
   // 1. Génération du PDF visuel (React PDF → Buffer)
   const pdfBuffer = await renderToBuffer(
     React.createElement(InvoicePDF, { invoice, accentColor, paymentInfo, linkedInvoiceNumber }) as ReactElement<React.ComponentProps<typeof Document>>
   );
 
   // 2. Génération du XML CII
-  const xml = generateFacturXml(invoice, linkedInvoiceNumber, paymentInfo);
+  const xml = generateFacturXml(invoice, linkedInvoiceNumber, paymentInfo, undefined, undefined, undefined, linkedInvoiceDate);
   const xmlBytes = new TextEncoder().encode(xml);
 
   // 3. Chargement du PDF avec pdf-lib

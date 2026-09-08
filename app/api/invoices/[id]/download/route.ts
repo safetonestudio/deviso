@@ -1,8 +1,9 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 import { generateFacturXPdf, facturxFilename } from "@/lib/facturx";
+import { documentLie } from "@/lib/document-lie";
 import type { Invoice } from "@/types";
-import { getWorkspaceUserId } from "@/lib/workspace";
+import { getWorkspaceUserId, getWorkspaceProfile } from "@/lib/workspace";
 
 type Params = { params: Promise<{ id: string }> };
 
@@ -27,11 +28,18 @@ export async function GET(_req: NextRequest, { params }: Params) {
   if (error || !data) return NextResponse.json({ error: "Facture introuvable" }, { status: 404 });
 
   const invoice = data as Invoice;
-  const { data: profileData } = await supabase
-    .from("profiles")
-    .select("proposal_color, payment_method, payment_link_provider, payment_link_profile, bank_iban, bank_bic, bank_account_name")
-    .eq("id", user.id)
-    .single();
+  // Le profil de l'ESPACE, pas celui de la personne connectée.
+  //
+  // Ce `.eq("id", user.id)` était un défaut discret et coûteux : sur un plan
+  // Pro multi-utilisateurs, un collaborateur agissant sur un document de
+  // l'espace lisait SON profil. Selon la route, cela donnait un PDF portant
+  // son IBAN (ou aucun) au lieu de celui de l'entreprise — le client paie
+  // alors sur le mauvais compte — ou un refus « plan insuffisant » sur une
+  // fonction que l'espace paie pourtant.
+  const profileData = await getWorkspaceProfile<{ proposal_color: string | null; payment_method: string | null; payment_link_provider: string | null; payment_link_profile: string | null; bank_iban: string | null; bank_bic: string | null; bank_account_name: string | null }>(
+    workspaceId,
+    "proposal_color, payment_method, payment_link_provider, payment_link_profile, bank_iban, bank_bic, bank_account_name"
+  );
 
   const accentColor = profileData?.proposal_color ?? undefined;
   const paymentInfo = profileData ? {
@@ -43,18 +51,11 @@ export async function GET(_req: NextRequest, { params }: Params) {
     bankAccountName: profileData.bank_account_name,
   } : undefined;
 
-  // Pour les factures de solde : récupérer le numéro de la facture d'acompte liée
-  let linkedInvoiceNumber: string | null = null;
-  if (invoice.invoice_type === "solde" && invoice.linked_invoice_id) {
-    const { data: linkedInv } = await supabase
-      .from("invoices")
-      .select("invoice_number")
-      .eq("id", invoice.linked_invoice_id)
-      .single();
-    linkedInvoiceNumber = linkedInv?.invoice_number ?? null;
-  }
+  // Solde ET avoir : numéro et date du document lié. Cette route ne traitait
+  // que le solde, et ne lisait que le numéro — voir lib/document-lie.ts.
+  const lie = await documentLie(supabase, invoice, workspaceId);
 
-  const pdfBuffer = await generateFacturXPdf(invoice, accentColor, paymentInfo, linkedInvoiceNumber);
+  const pdfBuffer = await generateFacturXPdf(invoice, accentColor, paymentInfo, lie.numero, lie.date);
   const filename = facturxFilename(invoice);
 
   // Sauvegarde optionnelle du chemin en BDD (best-effort)

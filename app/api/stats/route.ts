@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
-import { getWorkspaceUserId } from "@/lib/workspace";
+import { getWorkspaceUserId, getWorkspaceProfile } from "@/lib/workspace";
 
 // GET /api/stats, Solo + Pro (analytics Pro en bonus)
 export async function GET() {
@@ -8,11 +8,18 @@ export async function GET() {
   const { data: { user }, error: authError } = await supabase.auth.getUser();
   if (authError || !user) return NextResponse.json({ error: "Non autorisé" }, { status: 401 });
 
-  const { data: profile } = await supabase
-    .from("profiles")
-    .select("plan")
-    .eq("id", user.id)
-    .single();
+  // Le profil de l'ESPACE, pas celui de la personne connectée.
+  //
+  // Ce `.eq("id", user.id)` était un défaut discret et coûteux : sur un plan
+  // Pro multi-utilisateurs, un collaborateur agissant sur un document de
+  // l'espace lisait SON profil. Selon la route, cela donnait un PDF portant
+  // son IBAN (ou aucun) au lieu de celui de l'entreprise — le client paie
+  // alors sur le mauvais compte — ou un refus « plan insuffisant » sur une
+  // fonction que l'espace paie pourtant.
+  const profile = await getWorkspaceProfile<{ plan: string | null }>(
+    await getWorkspaceUserId(user.id),
+    "plan"
+  );
 
   const workspaceId = await getWorkspaceUserId(user.id);
 
@@ -32,7 +39,7 @@ export async function GET() {
   const [{ data: invoices }, { data: proposals }] = await Promise.all([
     supabase
       .from("invoices")
-      .select("id, client_name, client_company, total_ttc, status, issue_date")
+      .select("id, client_name, client_company, total_ht, total_ttc, status, issue_date, invoice_type")
       .eq("user_id", workspaceId),
     supabase
       .from("proposals")
@@ -47,18 +54,41 @@ export async function GET() {
     d.setMonth(d.getMonth() + m);
     monthlyMap.set(`${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}`, 0);
   }
+  // Un avoir se RETRANCHE du chiffre d'affaires.
+  //
+  // Ses montants sont positifs — c'est la règle BR-27, le type du document
+  // porte le sens — et ils étaient additionnés partout ici. Une facture de
+  // 1 200 € encaissée puis annulée par un avoir de 1 200 € affichait donc
+  // 2 400 € de CA au lieu de zéro, sur le graphique, sur le cumul annuel et
+  // dans le classement des meilleurs clients. Le tableau de bord appliquait
+  // pourtant déjà la règle sur un de ses indicateurs — pas sur les autres.
+  const signeCa = (inv: { invoice_type?: string | null }) => (inv.invoice_type === "avoir" ? -1 : 1);
+
+  /**
+   * Le chiffre d'affaires se compte HORS TAXES.
+   *
+   * Ces trois indicateurs sommaient le TTC sous l'étiquette « CA encaissé ».
+   * Pour un utilisateur en franchise en base, HT et TTC sont égaux et personne
+   * ne voyait rien ; pour un assujetti à 20 %, le chiffre affiché était gonflé
+   * d'un cinquième. Or c'est ce chiffre-là qu'on reporte — sur une déclaration,
+   * dans un prévisionnel, chez un comptable. La TVA collectée n'appartient pas
+   * à l'entreprise : elle ne fait que transiter.
+   */
+  const montantCa = (inv: { invoice_type?: string | null; total_ht?: number | null; total_ttc?: number | null }) =>
+    signeCa(inv) * (inv.total_ht ?? inv.total_ttc ?? 0);
+
   for (const inv of invoices ?? []) {
     if (inv.status !== "paid") continue;
     if (inv.issue_date < since) continue;
     const key = inv.issue_date.slice(0, 7);
-    if (monthlyMap.has(key)) monthlyMap.set(key, (monthlyMap.get(key) ?? 0) + inv.total_ttc);
+    if (monthlyMap.has(key)) monthlyMap.set(key, (monthlyMap.get(key) ?? 0) + montantCa(inv));
   }
   const monthly_ca = Array.from(monthlyMap.entries()).map(([month, ca]) => ({ month, ca: Math.round(ca * 100) / 100 }));
 
   // --- CA encaissé YTD ---
   const ca_ytd = (invoices ?? [])
     .filter((i) => i.status === "paid" && i.issue_date >= startOfYear)
-    .reduce((s, i) => s + i.total_ttc, 0);
+    .reduce((s, i) => s + montantCa(i), 0);
 
   // --- CA prévisionnel (devis envoyés ou vus, non signés) ---
   const ca_previsionnel = (proposals ?? [])
@@ -80,7 +110,7 @@ export async function GET() {
     if (inv.status !== "paid") continue;
     const key = inv.client_company || inv.client_name || "Inconnu";
     const existing = clientMap.get(key) ?? { name: key, ca: 0 };
-    clientMap.set(key, { name: key, ca: existing.ca + inv.total_ttc });
+    clientMap.set(key, { name: key, ca: existing.ca + montantCa(inv) });
   }
   const top_clients = Array.from(clientMap.values())
     .sort((a, b) => b.ca - a.ca)

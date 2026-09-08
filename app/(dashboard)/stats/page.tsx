@@ -135,7 +135,7 @@ export default function StatsPage() {
       </div>
 
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-        <KpiCard label="CA encaissé (année)" value={fmt(stats.ca_ytd)} icon={TrendingUp} />
+        <KpiCard label="CA encaissé HT (année)" value={fmt(stats.ca_ytd)} icon={TrendingUp} />
         <KpiCard label="CA prévisionnel" value={fmt(stats.ca_previsionnel)} icon={Target} />
         <KpiCard label="Taux de conversion" value={`${stats.conversion_rate}%`} icon={Percent} />
         <KpiCard label="Valeur moy. devis" value={fmt(stats.avg_proposal)} icon={FileText} />
@@ -252,7 +252,7 @@ export default function StatsPage() {
       {/* Top clients + Perf devis */}
       <div className="grid md:grid-cols-2 gap-6">
         <div className="bg-ds-surface border border-ds-border rounded-xl p-6">
-          <h2 className="text-sm font-semibold text-gray-400 uppercase tracking-wide mb-4">Top clients, CA encaissé</h2>
+          <h2 className="text-sm font-semibold text-gray-400 uppercase tracking-wide mb-4">Top clients, CA encaissé HT</h2>
           {stats.top_clients.length === 0 ? (
             <p className="text-gray-500 text-sm">Aucune facture payée pour l&apos;instant.</p>
           ) : (

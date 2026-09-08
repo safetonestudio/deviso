@@ -59,7 +59,7 @@ export default function OnboardingPage() {
         <div className="grid grid-cols-2 gap-4">
           <div>
             <label className="block text-xs font-semibold text-gray-400 mb-1.5">Prénom &amp; Nom</label>
-            <input
+            <input aria-label="Prénom & Nom"
               value={form.full_name}
               onChange={(e) => set("full_name", e.target.value)}
               placeholder="Thomas Dupont"
@@ -90,7 +90,7 @@ export default function OnboardingPage() {
           </div>
           <div>
             <label className="block text-xs font-semibold text-gray-400 mb-1.5">Adresse professionnelle</label>
-            <input
+            <input aria-label="Adresse professionnelle"
               value={form.address}
               onChange={(e) => set("address", e.target.value)}
               placeholder="12 rue de la Paix, 75001 Paris"

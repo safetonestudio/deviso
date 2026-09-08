@@ -25,7 +25,9 @@ interface CRMInvoice {
   client_name: string | null;
   client_email: string | null;
   client_company: string | null;
+  total_ht: number | null;
   total_ttc: number;
+  invoice_type: string | null;
   status: string;
   created_at: string;
 }
@@ -162,8 +164,12 @@ export default function CRMPage() {
       const c = map.get(key)!;
       c.invoices.push(inv);
       c.nb_invoices++;
-      if (inv.status === "paid") c.ca_total += inv.total_ttc;
-      if (inv.status === "sent")  c.ca_pending += inv.total_ttc;
+      // CA hors taxes, avoirs retranchés — même règle que l'écran Activité et
+      // que les statistiques d'équipe.
+      const signe = inv.invoice_type === "avoir" ? -1 : 1;
+      const ht = signe * (inv.total_ht ?? inv.total_ttc ?? 0);
+      if (inv.status === "paid") c.ca_total += ht;
+      if (inv.status === "sent")  c.ca_pending += signe * (inv.total_ttc ?? 0);
       if (inv.created_at > c.last_activity) c.last_activity = inv.created_at;
     }
 
@@ -239,7 +245,7 @@ export default function CRMPage() {
         {[
           { label: "Clients", value: totalClients, icon: Users as LucideIcon, large: false },
           { label: "Devis signés", value: totalSigned, icon: CircleCheck as LucideIcon, large: false },
-          { label: "CA encaissé", value: fmt(totalCA), icon: Euro as LucideIcon, large: true },
+          { label: "CA encaissé HT", value: fmt(totalCA), icon: Euro as LucideIcon, large: true },
         ].map((s) => (
           <KpiCard
             key={s.label}
@@ -330,7 +336,7 @@ export default function CRMPage() {
                 <th className="text-center px-4 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wider">Devis</th>
                 <th className="text-center px-4 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wider">Signés</th>
                 <th className="text-center px-4 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wider">Factures</th>
-                <th className="text-right px-4 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wider">CA encaissé</th>
+                <th className="text-right px-4 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wider">CA encaissé HT</th>
                 <th className="text-right px-4 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wider">Dernière activité</th>
               </tr>
             </thead>
@@ -426,7 +432,7 @@ export default function CRMPage() {
                 <div className="text-xl font-semibold text-white sm:order-1">{selected.nb_proposals}</div>
               </div>
               <div className="flex justify-between sm:block sm:text-center">
-                <div className="text-xs text-gray-500 sm:order-2">CA encaissé</div>
+                <div className="text-xs text-gray-500 sm:order-2">CA encaissé HT</div>
                 <div className="text-xl font-semibold text-emerald-400 sm:order-1">{fmt(selected.ca_total)}</div>
               </div>
               <div className="flex justify-between sm:block sm:text-center">

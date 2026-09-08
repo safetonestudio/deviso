@@ -19,6 +19,7 @@ import {
 } from "./facturx-helpers";
 import type { PaymentInfo } from "./invoice-pdf";
 import { resolveAddress } from "@/lib/address";
+import { motifExoneration } from "@/lib/exoneration";
 
 function xmlDate(dateStr: string): string {
   return dateStr.replace(/-/g, "");
@@ -226,11 +227,19 @@ export function generateFacturXml(
   const dueDate = invoice.due_date ? xmlDate(invoice.due_date) : null;
   const tvaAmount = xmlAmount(invoice.total_ttc - invoice.total_ht);
 
-  // Catégorie TVA : E = exonéré (franchise art. 293 B CGI), S = taux standard
-  const isFranchise = invoice.tva_rate === 0;
-  const taxCategory = isFranchise ? "E" : "S";
-  const exemptionReason = isFranchise
-    ? "<ram:ExemptionReason>TVA non applicable, art. 293 B du CGI</ram:ExemptionReason>"
+  // Catégorie TVA (BT-118) et motif d'exonération (BT-120).
+  //
+  // Ils étaient déduits du seul taux : zéro valait « franchise en base,
+  // art. 293 B ». Une livraison intracommunautaire partait donc annoncée à
+  // l'administration comme une opération de micro-entrepreneur non assujetti.
+  // La règle vit désormais dans lib/exoneration.ts, partagée avec le PDF —
+  // deux copies auraient divergé, et la divergence portait ici sur une
+  // qualification fiscale.
+  const exo = motifExoneration(invoice);
+  const isFranchise = exo.categorie === "E" && /293 B/.test(exo.mention);
+  const taxCategory = exo.categorie;
+  const exemptionReason = exo.mention
+    ? `<ram:ExemptionReason>${esc(exo.mention)}</ram:ExemptionReason>`
     : "";
 
   // Identifiants dérivés : SIREN 9 chiffres depuis le SIRET, TVA calculée si absente.

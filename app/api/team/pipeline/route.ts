@@ -65,7 +65,7 @@ export async function GET() {
   // Récupère les factures payées pour le CA réel
   const { data: invoices } = await admin
     .from("invoices")
-    .select("id, status, total_ttc, created_by")
+    .select("id, status, total_ht, total_ttc, created_by, invoice_type")
     .eq("user_id", workspaceId)
     .eq("status", "paid");
 
@@ -86,7 +86,14 @@ export async function GET() {
     const declined = myProposals.filter((p) => p.status === "declined").length;
     const pending = myProposals.filter((p) => ["sent", "viewed"].includes(p.status)).length;
     const draft = myProposals.filter((p) => p.status === "draft").length;
-    const ca_encaisse = myInvoices.reduce((sum, i) => sum + (i.total_ttc ?? 0), 0);
+    // CA hors taxes, avoirs retranchés — même règle que `app/api/stats`. Ce
+    // chiffre sert à comparer les collaborateurs : sommer du TTC le gonflait
+    // d'un cinquième pour un assujetti, et additionner les avoirs récompensait
+    // celui qui annule le plus.
+    const ca_encaisse = myInvoices.reduce(
+      (sum, i) => sum + (i.invoice_type === "avoir" ? -1 : 1) * (i.total_ht ?? i.total_ttc ?? 0),
+      0,
+    );
     const ca_pipeline = myProposals
       .filter((p) => ["sent", "viewed"].includes(p.status))
       .reduce((sum, p) => sum + (p.total_ttc ?? 0), 0);

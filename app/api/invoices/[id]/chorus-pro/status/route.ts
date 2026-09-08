@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { getWorkspaceUserId } from "@/lib/workspace";
+import { estCompteDemo, MESSAGE_DEMO_TIERS } from "@/lib/garde-demo";
 
 const PISTE_OAUTH_URL = "https://oauth.piste.gouv.fr/api/oauth/token";
 const PISTE_API_BASE = "https://api.piste.gouv.fr/cpro";
@@ -43,6 +44,15 @@ export async function GET(
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) return NextResponse.json({ error: "Non authentifié" }, { status: 401 });
+
+  // La consultation d'un compte-rendu est une lecture, mais elle s'authentifie
+  // avec les identifiants PISTE de PRODUCTION de Deviso. Le jeu de données de
+  // démonstration porte une référence Chorus Pro inventée : interroger
+  // l'administration avec un numéro qui n'existe pas n'apprend rien à personne
+  // et laisse des erreurs dans les journaux du compte AIFE.
+  if (await estCompteDemo(user.id)) {
+    return NextResponse.json({ error: "DEMO", message: MESSAGE_DEMO_TIERS }, { status: 403 });
+  }
 
   // Les documents appartiennent à l'espace de travail, pas au collaborateur :
   // filtrer sur user.id renvoyait 404 à tout membre d'équipe.
