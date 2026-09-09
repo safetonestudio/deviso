@@ -11,7 +11,7 @@ const STEPS_OWNER = [
   {
     target: "dashboard",
     title: "Ton tableau de bord",
-    body: "Ta page de départ chaque matin. Tu vois en un coup d'œil ton CA encaissé ce mois, les devis en attente de réponse, ton taux de conversion, et toutes les alertes actives : factures impayées, relances en retard, approbations en attente. Le widget URSSAF te donne ton CA trimestriel et annuel, prêt à reporter dans ta déclaration.",
+    body: "Ta page de départ chaque matin. Tu vois en un coup d'œil ton CA encaissé ce mois, les devis en attente de réponse, ton taux de conversion, et toutes les alertes actives : factures impayées, relances en retard, approbations en attente. Le récapitulatif de chiffre d'affaires te donne ton CA encaissé par trimestre et par mois — et, si tu es en franchise en base, les échéances URSSAF qui vont avec.",
   },
   {
     target: "proposals",

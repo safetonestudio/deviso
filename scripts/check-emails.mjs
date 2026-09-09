@@ -26,9 +26,19 @@ let echecs = 0;
 // ── 1. Expéditeur ────────────────────────────────────────────────────────────
 // Seuls les messages réellement émis par Deviso peuvent porter son nom :
 // l'invitation d'un collaborateur et la demande de validation interne.
+//
+// Le critère est le DESTINATAIRE, pas le contenu : un message adressé au
+// prestataire lui-même est bien envoyé par Deviso, et signer du nom de sa
+// propre entreprise n'aurait aucun sens. Un message adressé à SON client, si.
 const NOM_DEVISO_LEGITIME = [
   "app/api/team/route.ts",
   "app/api/proposals/[id]/submit-for-approval/route.ts",
+  // « Votre devis vient d'être signé / refusé » : destinataire = le
+  // propriétaire du devis. Ce fichier passait jusqu'ici sans être vu, non
+  // parce qu'il respectait la règle mais parce que l'adresse transitait par
+  // une variable (`fromAddress`) que ce contrôle ne suivait pas. La variable
+  // a disparu, le contrôle voit enfin le fichier, et l'exemption est écrite.
+  "app/api/public/proposals/[token]/route.ts",
 ];
 
 for (const f of fichiers) {

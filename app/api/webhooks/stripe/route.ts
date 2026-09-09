@@ -1,7 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { stripe } from "@/lib/stripe";
 import { createAdminClient } from "@/lib/supabase/admin";
-import { envoyerEncaissementPdp } from "@/lib/superpdp-encaissement";
 import type Stripe from "stripe";
 
 // Correspondance price_id → plan (mensuel ET annuel)
@@ -98,43 +97,36 @@ export async function POST(req: NextRequest) {
     case "checkout.session.completed": {
       const session = event.data.object as Stripe.Checkout.Session;
 
-      // Cas 1 : lien de paiement facture (mode payment avec invoice_id en metadata)
-      if (session.mode !== "subscription") {
-        const invoiceId = session.metadata?.invoice_id;
-        if (invoiceId && session.payment_status === "paid") {
-          // Un paiement par lien est encaissé maintenant, et c'est le seul
-          // chemin où la date est connue avec certitude — Stripe vient de nous
-          // le dire. On l'inscrit plutôt que de laisser la Plateforme Agréée
-          // dater elle-même : c'est cette date qui fixe la période
-          // d'exigibilité de la TVA sur les prestations de services.
-          const { data: updated, error } = await supabase
-            .from("invoices")
-            .update({ status: "paid", paid_at: new Date().toISOString().slice(0, 10) })
-            .eq("id", invoiceId)
-            .select("user_id, superpdp_invoice_id, superpdp_encaisse_at, paid_at")
-            .maybeSingle();
-          if (error) console.error("checkout.session.completed invoice update error:", error);
-
-          // Paiement encaissé via un lien Deviso : même obligation d'e-reporting
-          // (fr:212) que le bouton « Marquer comme payée ». Ce webhook contourne
-          // la route PATCH générique, donc sans cet appel une facture payée par
-          // lien de paiement ne déclarerait jamais son encaissement à Super PDP.
-          if (updated?.superpdp_invoice_id && !updated.superpdp_encaisse_at) {
-            const resultat = await envoyerEncaissementPdp(
-              updated.user_id,
-              invoiceId,
-              updated.paid_at ?? null
-            );
-            if (!resultat.ok && resultat.raison !== "non_transmise") {
-              console.error(
-                `[stripe webhook] encaissement PDP ${invoiceId} : ${resultat.raison}`,
-                resultat.detail ?? ""
-              );
-            }
-          }
-        }
-        break;
-      }
+      /**
+       * Un paiement autre qu'un abonnement n'existe pas sur ce compte Stripe.
+       *
+       * Ce bloc traitait les sessions `mode: "payment"` portant un
+       * `metadata.invoice_id` : il marquait la facture payée et déclarait
+       * l'encaissement à la Plateforme Agréée. Il était devenu du CODE MORT,
+       * et c'est plus grave que de l'inutile — il donnait à lire, au milieu du
+       * webhook, l'affirmation qu'un paiement par lien se rapproche tout seul.
+       *
+       * Ce n'est pas le cas, et ce ne PEUT pas l'être :
+       * `app/api/invoices/[id]/payment-link` ne crée plus aucune session
+       * Stripe. Elle renvoie le lien de paiement personnel de l'utilisateur,
+       * configuré dans son profil. L'argent va directement de son client à
+       * lui — il ne transite jamais par le compte Stripe de Deviso, et ce
+       * webhook, qui n'écoute que ce compte-là, ne peut par construction rien
+       * en voir. Aucune session `mode: "payment"` n'est plus créée nulle part
+       * (`grep metadata.invoice_id` ne trouve aucun émetteur).
+       *
+       * Le rapprochement automatique suppose donc Stripe Connect : lire les
+       * paiements arrivant sur le compte du client, avec son autorisation.
+       * C'est une fonctionnalité, pas une correction, et elle n'a pas sa place
+       * ici.
+       *
+       * En attendant, le chemin réel est manuel et il est complet : marquer la
+       * facture payée déclenche `envoyerEncaissementPdp` dans
+       * `PATCH /api/invoices/[id]`, où l'obligation est accrochée au FAIT du
+       * paiement plutôt qu'à l'un de ses appelants. L'interface le dit
+       * maintenant au moment où l'utilisateur copie son lien.
+       */
+      if (session.mode !== "subscription") break;
 
       // Cas 2 : souscription abonnement
       const customerId = session.customer as string;

@@ -203,7 +203,24 @@ function ActionPanel({ invoice, id, router, hasChorusPro }: {
     if (res.ok && data.url) {
       await navigator.clipboard.writeText(data.url);
       setInv((prev) => prev ? { ...prev, payment_link_url: data.url } : prev);
-      alert("Lien de paiement copié.");
+      // On dit ce que l'outil ne fera PAS à sa place.
+      //
+      // Le lien de paiement est celui de l'utilisateur : l'argent va
+      // directement de son client à lui, sans passer par Deviso. Deviso ne peut
+      // donc pas savoir que la facture a été réglée — et c'est le passage à
+      // « payée » qui déclare l'encaissement (fr:212) à la Plateforme Agréée,
+      // l'un des quatre statuts obligatoires de la réforme.
+      //
+      // Sans cette phrase, l'utilisateur suppose raisonnablement l'inverse :
+      // il a copié un lien depuis son logiciel de facturation, il attend que
+      // son logiciel suive le paiement. Le silence coûtait une obligation
+      // déclarative.
+      alert(
+        "Lien de paiement copié.\n\n" +
+          "Ce lien envoie l'argent directement sur votre compte : Deviso ne voit pas " +
+          "le paiement. Pensez à marquer la facture « payée » quand vous serez réglé — " +
+          "c'est ce geste qui déclare l'encaissement à l'administration."
+      );
     } else if (data.error === "PAYMENT_NOT_CONFIGURED") {
       if (confirm("Moyen de paiement non configuré.\n\nAller dans Paiements pour le configurer ?")) {
         window.location.href = "/paiements";

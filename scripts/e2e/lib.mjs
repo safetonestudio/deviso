@@ -115,6 +115,29 @@ export async function openSession(label) {
     return { status: r.status, body };
   };
 
+  /**
+   * L'adresse de CONNEXION du compte, lue dans le jeton.
+   *
+   * `profile.email` est l'adresse de contact de l'entreprise, un champ libre du
+   * profil — et le jeu de données de démonstration donne la MÊME à tous les
+   * comptes (« marie@studiocreatimd.fr »). Deux sessions distinctes semblaient
+   * donc porter la même adresse, ce qui a fait inviter un collaborateur à
+   * l'adresse du propriétaire : l'acceptation refusait, à juste titre, et onze
+   * routes paraissaient régresser d'un coup alors que le rattachement n'avait
+   * simplement jamais eu lieu.
+   *
+   * L'adresse d'authentification, elle, est unique par compte et c'est celle
+   * que compare la route d'acceptation. Elle est dans la charge utile du JWT.
+   */
+  const authEmail = (() => {
+    try {
+      const charge = JSON.parse(Buffer.from(tokens.access_token.split(".")[1], "base64").toString());
+      return charge.email ?? null;
+    } catch {
+      return null;
+    }
+  })();
+
   const me = await call("/api/profile");
   if (me.status !== 200) {
     // Le compte a expiré (purge à 2 h) : on vide le cache et on recommence.
@@ -126,7 +149,7 @@ export async function openSession(label) {
 
   // `cookie` est exposé pour les téléchargements binaires : `call` lit la réponse
   // en texte, ce qui corromprait un PDF.
-  return { label, call, cookie, userId: me.body.profile.id, email: me.body.profile.email };
+  return { label, call, cookie, userId: me.body.profile.id, email: me.body.profile.email, authEmail };
 }
 
 /** Session anonyme, pour vérifier que les routes refusent bien ce qu'elles doivent refuser. */
@@ -157,9 +180,13 @@ export async function linkAsTeamMember(owner, member) {
   );
   if (deja) return { deja: true };
 
+  // On invite l'adresse de CONNEXION du collaborateur, pas l'adresse de contact
+  // de son profil : c'est celle que la route d'acceptation compare, et c'est
+  // aussi ce qui se passe en production — on invite quelqu'un à l'adresse avec
+  // laquelle il se connectera.
   const invite = await owner.call("/api/team", {
     method: "POST",
-    body: JSON.stringify({ email: member.email }),
+    body: JSON.stringify({ email: member.authEmail ?? member.email }),
   });
   if (invite.status !== 200 || !invite.body?.inviteUrl) {
     throw new Error(`Invitation impossible : HTTP ${invite.status} ${JSON.stringify(invite.body)}`);
@@ -167,10 +194,27 @@ export async function linkAsTeamMember(owner, member) {
 
   const token = invite.body.inviteUrl.split("/join/")[1];
   const accept = await member.call(`/api/team/accept/${token}`);
-  // La route d'acceptation redirige vers le tableau de bord ; tout sauf une
-  // redirection signale un échec.
   if (accept.status !== 307 && accept.status !== 302) {
     throw new Error(`Acceptation impossible : HTTP ${accept.status}`);
+  }
+
+  // On VÉRIFIE que le rattachement a eu lieu, au lieu de se fier à la redirection.
+  //
+  // Toutes les issues de cette route redirigent — succès, « mauvais compte »,
+  // « déjà acceptée ». Se contenter du code 307 revenait donc à ne rien
+  // vérifier du tout : un refus légitime passait pour un succès, et la
+  // traversée qui suivait annonçait onze routes en échec au lieu de nommer la
+  // vraie cause. Un test dont l'échec désigne le mauvais coupable coûte plus
+  // cher que pas de test.
+  const apres = await owner.call("/api/team");
+  const actif = (apres.body?.members ?? []).some(
+    (m) => m.member_id === member.userId && m.status === "active"
+  );
+  if (!actif) {
+    throw new Error(
+      `Rattachement NON effectif après acceptation : la redirection est partie vers ` +
+        `« ${accept.body?.location ?? "?"} ». Invitation envoyée à ${member.authEmail ?? member.email}.`
+    );
   }
   return invite.body;
 }

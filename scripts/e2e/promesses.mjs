@@ -13,7 +13,7 @@
  * Usage : node scripts/e2e/promesses.mjs
  */
 
-import { openSession, verifier, bilan } from "./lib.mjs";
+import { openSession, verifier, bilan, BASE } from "./lib.mjs";
 
 const doc = (o) => JSON.stringify(o);
 const nonProuve = [];
@@ -73,6 +73,28 @@ if (token) {
       typeof apres.body?.proposal?.signature_hash === "string" &&
       apres.body?.proposal?.signature_hash.length === 64,
     `signataire « ${apres.body?.proposal?.signer_name} », empreinte ${apres.body?.proposal?.signature_hash?.slice(0, 12)}…`);
+
+  // ── La signature laisse une trace que le vendeur retrouvera ────────────────
+  //
+  // C'est l'evenement commercial le plus important du produit, et il n'en
+  // restait AUCUNE trace durable : le seul signal etait un courriel dont
+  // l'echec etait avale par un `catch` vide. Un refus passager de Resend, et
+  // le freelance n'apprenait jamais qu'il avait decroche la mission.
+  //
+  // `NotificationBell` savait pourtant deja afficher `proposal_signed` : les
+  // icones existaient depuis toujours, personne n'avait jamais insere de ligne.
+  const notifs = await s.call("/api/notifications");
+  const signee = (notifs.body?.notifications ?? []).find((n) => n.type === "proposal_signed");
+  verifier(
+    "« Signature electronique » — le vendeur en est notifie durablement",
+    Boolean(signee),
+    `${(notifs.body?.notifications ?? []).length} notification(s), aucune de type proposal_signed`,
+  );
+  verifier(
+    "et la notification nomme le signataire et mene au devis",
+    Boolean(signee) && /Jean Témoin/.test(signee.body ?? "") && String(signee.link ?? "").startsWith("/proposals/"),
+    `${signee?.body ?? "—"} → ${signee?.link ?? "—"}`,
+  );
 }
 
 // ── Factures : standard, acompte, solde, récurrente ──────────────────────────
@@ -165,7 +187,24 @@ verifier("« Couleur d'accent sur vos PDF » — elle s'enregistre",
 
 // ── Promesses non couvertes par ce script ────────────────────────────────────
 aVerifierAlaMain("« Dépôt Chorus Pro B2G »", "exige des identifiants PISTE de production, jamais exercé.");
-aVerifierAlaMain("« Widget CA URSSAF »", "affichage seul, aucune route à interroger.");
+// ── Le recapitulatif de CA, promis par le tour du produit ────────────────────
+//
+// Le composant existait, complet, mais n'etait monte nulle part : le tour le
+// promettait (« le widget URSSAF te donne ton CA trimestriel et annuel ») et
+// aucun ecran ne l'affichait. Cette promesse figurait ici meme comme « non
+// prouvee, affichage seul » — c'etait vrai, et c'est precisement ce qui l'avait
+// laissee passer. On lit donc le HTML du tableau de bord.
+const html = await fetch(`${BASE}/dashboard`, { headers: { cookie: s.cookie } }).then((r) => r.text());
+verifier(
+  "« Widget CA URSSAF » — le recapitulatif est bien affiche sur le tableau de bord",
+  /Récap (CA, URSSAF|chiffre d&#x27;affaires|chiffre d'affaires)/.test(html),
+  "le composant CaUrssafWidget n'apparait pas dans la page rendue",
+);
+verifier(
+  "et il propose les deux vues, trimestrielle et mensuelle",
+  /Trimestriel/.test(html) && /Mensuel/.test(html),
+  "les bascules du widget sont absentes du rendu",
+);
 aVerifierAlaMain("« Sans branding Deviso sur vos documents »", "différence visuelle dans le PDF, non vérifiée automatiquement.");
 aVerifierAlaMain("« 3 utilisateurs inclus, +5 €/utilisateur »", "dépend de la facturation Stripe réelle, non exercée.");
 aVerifierAlaMain("« Couleur d'accent » appliquée au PDF", "la valeur est enregistrée ; son effet visuel n'est pas contrôlé.");

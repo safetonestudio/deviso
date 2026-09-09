@@ -8,6 +8,7 @@ import { EmptyState } from "@/components/ui/EmptyState";
 import { ProductTour } from "@/components/ProductTour";
 import { GuidedTourBanner } from "@/components/GuidedTourBanner";
 import { DashboardActionFeed, type ActionItem } from "@/components/DashboardActionFeed";
+import { CaUrssafWidget } from "@/components/CaUrssafWidget";
 import {
   Sparkles, Receipt, FileText, Send,
   Euro, TrendingUp, ArrowRight, Clock,
@@ -63,7 +64,7 @@ export default async function DashboardPage() {
 
   let invoicesQuery = supabase
     .from("invoices")
-    .select("id, invoice_number, client_name, client_email, status, total_ht, total_ttc, due_date, issue_date, created_at, proposal_id, invoice_type")
+    .select("id, invoice_number, client_name, client_email, status, total_ht, total_ttc, due_date, issue_date, paid_at, created_at, proposal_id, invoice_type")
     .eq("user_id", workspaceId)
     .order("created_at", { ascending: false });
 
@@ -72,10 +73,11 @@ export default async function DashboardPage() {
     invoicesQuery  = invoicesQuery.eq("created_by", user.id);
   }
 
-  const [{ data: allProposals }, { data: invoices }, { data: profile }] = await Promise.all([
+  const [{ data: allProposals }, { data: invoices }, { data: profile }, { data: profilEspace }] = await Promise.all([
     proposalsQuery,
     invoicesQuery,
     supabase.from("profiles").select("plan").eq("id", user.id).single(),
+    supabase.from("profiles").select("tva_regime").eq("id", workspaceId).maybeSingle(),
   ]);
 
   const proposals = (allProposals ?? []) as Proposal[];
@@ -111,6 +113,43 @@ export default async function DashboardPage() {
   // fichier, dix lignes plus bas. Une facture encaissée puis annulée par un
   // avoir affichait « encaissé ce mois » au double du montant réel.
   const signeCa = (i: { invoice_type?: string | null }) => (i.invoice_type === "avoir" ? -1 : 1);
+
+  // ── Récap du chiffre d'affaires encaissé, mois par mois ──────────────────
+  //
+  // Le composant existait déjà, complet et soigné, mais n'était monté nulle
+  // part — alors que le tour du produit le promet noir sur blanc (« le widget
+  // URSSAF te donne ton CA trimestriel et annuel, prêt à reporter dans ta
+  // déclaration »). Promettre une fonctionnalité qu'on n'affiche pas est un
+  // défaut à part entière : l'utilisateur la cherche, ne la trouve pas, et
+  // doute du reste.
+  //
+  // Deux choix de fond dans ce calcul :
+  //
+  //   - **la date retenue est celle de l'ENCAISSEMENT** (`paid_at`), pas celle
+  //     d'émission. C'est la règle du micro-entrepreneur, qui déclare ce qu'il
+  //     a effectivement perçu sur la période. Une facture émise en mars et
+  //     réglée en avril appartient à avril. À défaut de `paid_at`, on retombe
+  //     sur la date d'émission plutôt que d'ignorer la facture ;
+  //   - **hors taxes, avoirs retranchés**, comme partout ailleurs depuis
+  //     l'audit du 08/09 : c'est ce chiffre-là qu'on reporte sur une
+  //     déclaration, et la TVA collectée n'appartient pas à l'entreprise.
+  const anneeCourante = now.getFullYear();
+  const caMensuelHt = Array(12).fill(0) as number[];
+  for (const f of inv) {
+    if (f.status !== "paid") continue;
+    const quand = f.paid_at || f.issue_date;
+    if (!quand || Number(String(quand).slice(0, 4)) !== anneeCourante) continue;
+    const mois = Number(String(quand).slice(5, 7)) - 1;
+    if (mois < 0 || mois > 11) continue;
+    caMensuelHt[mois] += signeCa(f) * (f.total_ht ?? 0);
+  }
+
+  // Les échéances URSSAF affichées par le widget sont celles du
+  // micro-entrepreneur. On ne les montre que lorsqu'on peut l'affirmer — la
+  // franchise en base est le seul indice fiable dont on dispose, faute de
+  // champ « forme juridique ». Le récapitulatif, lui, s'affiche pour tous :
+  // savoir ce qu'on a encaissé par trimestre n'a pas de régime.
+  const echeancesUrssaf = profilEspace?.tva_regime === "franchise";
   const caThisMonth      = inv
     .filter((i) => i.status === "paid" && i.created_at >= monthStart)
     .reduce((s, i) => s + signeCa(i) * i.total_ttc, 0);
@@ -263,6 +302,19 @@ export default async function DashboardPage() {
       {/* ── Action feed ── */}
       {!isMember && actionItems.length > 0 && (
         <DashboardActionFeed items={actionItems} />
+      )}
+
+      {/* ── Récap du CA encaissé ── */}
+      {/* Réservé au propriétaire : un collaborateur ne voit que ses propres
+          documents, la somme n'aurait aucun sens comme récapitulatif de
+          l'entreprise. */}
+      {!isMember && (
+        <CaUrssafWidget
+          monthlyHT={caMensuelHt}
+          currentMonth={now.getMonth()}
+          currentYear={anneeCourante}
+          echeancesUrssaf={echeancesUrssaf}
+        />
       )}
 
       {/* ── Grille devis + factures ── */}

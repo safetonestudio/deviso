@@ -6,6 +6,19 @@ interface Props {
   monthlyHT: number[];   // 12 valeurs HT indexées 0=Jan … 11=Déc, année en cours
   currentMonth: number;  // 0-indexed
   currentYear: number;
+  /**
+   * Vrai quand les échéances de déclaration URSSAF s'appliquent à ce compte.
+   *
+   * Le chiffre d'affaires encaissé par trimestre et par mois intéresse toute
+   * entreprise ; les dates « 30 avril », « 31 juillet » sont, elles, celles du
+   * micro-entrepreneur. Les afficher à une société serait une information
+   * fausse, imprimée par l'outil et non par l'utilisateur — exactement la
+   * faute qu'on a corrigée sur les mentions de TVA.
+   *
+   * On les montre donc quand on peut l'affirmer, et on se tait sinon : le
+   * widget garde tout son sens sans elles.
+   */
+  echeancesUrssaf?: boolean;
 }
 
 const MONTHS_FR = ["Janv.", "Févr.", "Mars", "Avr.", "Mai", "Juin", "Juil.", "Août", "Sept.", "Oct.", "Nov.", "Déc."];
@@ -33,7 +46,7 @@ function fmt(n: number) {
   return new Intl.NumberFormat("fr-FR", { style: "currency", currency: "EUR", maximumFractionDigits: 0 }).format(n);
 }
 
-export function CaUrssafWidget({ monthlyHT, currentMonth, currentYear }: Props) {
+export function CaUrssafWidget({ monthlyHT, currentMonth, currentYear, echeancesUrssaf = false }: Props) {
   const [mode, setMode] = useState<"trimestre" | "mensuel">("trimestre");
 
   const currentQuarter = Math.floor(currentMonth / 3);
@@ -46,22 +59,28 @@ export function CaUrssafWidget({ monthlyHT, currentMonth, currentYear }: Props) 
   const maxQuarter = Math.max(...quarterlyHT.filter((_, i) => i <= currentQuarter), 1);
   const maxMonth = Math.max(...monthlyHT.slice(0, currentMonth + 1), 1);
 
-  const deadline = mode === "trimestre"
-    ? `Dépôt ${URSSAF_DEADLINES[currentQuarter]}`
-    : `Dépôt ${monthlyDeadline(currentMonth, currentYear)}`;
+  const deadline = !echeancesUrssaf
+    ? null
+    : mode === "trimestre"
+      ? `Dépôt ${URSSAF_DEADLINES[currentQuarter]}`
+      : `Dépôt ${monthlyDeadline(currentMonth, currentYear)}`;
 
   return (
     <div className="bg-ds-surface border border-ds-border rounded-xl p-5">
       {/* Header */}
       <div className="flex items-center justify-between mb-4 flex-wrap gap-2">
         <div>
-          <h2 className="text-sm font-semibold text-white">Récap CA, URSSAF</h2>
+          <h2 className="text-sm font-semibold text-white">
+            {echeancesUrssaf ? "Récap CA, URSSAF" : "Récap chiffre d'affaires"}
+          </h2>
           <p className="text-xs text-gray-500 mt-0.5">Chiffre d&apos;affaires HT encaissé · {currentYear}</p>
         </div>
         <div className="flex items-center gap-2">
-          <span className="text-xs text-amber-400 bg-amber-500/10 border border-amber-500/20 px-2 py-0.5 rounded-full font-medium">
-            {deadline}
-          </span>
+          {deadline && (
+            <span className="text-xs text-amber-400 bg-amber-500/10 border border-amber-500/20 px-2 py-0.5 rounded-full font-medium">
+              {deadline}
+            </span>
+          )}
           {/* Toggle */}
           <div className="flex rounded-lg border border-ds-border overflow-hidden text-xs font-medium">
             <button
@@ -203,10 +222,14 @@ export function CaUrssafWidget({ monthlyHT, currentMonth, currentYear }: Props) 
           <div className="border-t border-ds-border pt-4">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-xs text-gray-500">CA {MONTHS_FULL[currentMonth]} à déclarer</p>
-                <p className="text-xs text-amber-400/80 mt-0.5">
-                  Avant le {monthlyDeadline(currentMonth, currentYear)}
+                <p className="text-xs text-gray-500">
+                  CA {MONTHS_FULL[currentMonth]}{echeancesUrssaf ? " à déclarer" : ""}
                 </p>
+                {echeancesUrssaf && (
+                  <p className="text-xs text-amber-400/80 mt-0.5">
+                    Avant le {monthlyDeadline(currentMonth, currentYear)}
+                  </p>
+                )}
               </div>
               <span className="text-sm font-bold text-white">
                 {fmt(monthlyHT[currentMonth])} <span className="text-xs font-normal text-gray-500">HT</span>

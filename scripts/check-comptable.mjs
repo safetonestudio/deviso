@@ -309,6 +309,74 @@ for (const f of [
 }
 
 console.log("");
+console.log("── Ce que le produit promet, il le fait ───────────────────────");
+console.log("");
+
+// ── 16. La signature d'un devis laisse une trace durable ────────────────────
+{
+  const src = lire("app/api/public/proposals/[token]/route.ts");
+  exige(
+    "signature de devis — notification en base, pas seulement un courriel",
+    /notifierProprietaire\([\s\S]{0,200}proposal_signed/.test(src),
+    "le seul signal était un courriel dans un `catch` vide : un refus de Resend, et le vendeur n'apprenait jamais qu'il avait décroché la mission",
+  );
+  exige(
+    "refus de devis — idem",
+    /notifierProprietaire\([\s\S]{0,200}proposal_declined/.test(src),
+    "`NotificationBell` affiche `proposal_declined` depuis toujours ; rien n'insérait la ligne",
+  );
+  exige(
+    "signature de devis — le nom du signataire est échappé dans le courriel",
+    /echapperHtml\(signerName/.test(src),
+    "il vient du formulaire public : interpolé tel quel, il entre comme du HTML dans un message signé par notre domaine",
+  );
+  exige(
+    "signature de devis — l'échec d'envoi est journalisé",
+    !/\} catch \{ \/\* non-blocking \*\/ \}/.test(src),
+    "un `catch` vide transforme une panne en absence, et une absence ne se diagnostique pas",
+  );
+}
+
+// ── 17. Aucun code ne prétend rapprocher un paiement par lien ───────────────
+{
+  const src = lire("app/api/webhooks/stripe/route.ts");
+  exige(
+    "webhook — plus de branche morte prétendant rapprocher un paiement par lien",
+    !/metadata\?\.invoice_id/.test(src),
+    "`payment-link` ne crée plus aucune session Stripe : l'argent va directement chez l'utilisateur, ce webhook ne peut par construction rien en voir. Le code laissait croire l'inverse.",
+  );
+
+  const ui = lire("app/(dashboard)/invoices/[id]/page.tsx");
+  exige(
+    "lien de paiement — l'interface dit que le suivi est manuel",
+    /Deviso ne voit pas/.test(ui) && /marquer la facture/.test(ui),
+    "l'utilisateur copie un lien depuis son logiciel de facturation et suppose que celui-ci suivra le paiement. Le silence coûtait la déclaration d'encaissement (fr:212).",
+  );
+}
+
+// ── 18. Le récapitulatif de CA promis est réellement affiché ────────────────
+{
+  const src = lire("app/(dashboard)/dashboard/page.tsx");
+  exige(
+    "tableau de bord — le récapitulatif de CA est monté",
+    /<CaUrssafWidget/.test(src),
+    "le composant existait, complet, et n'était monté nulle part — alors que le tour du produit le promet explicitement",
+  );
+  exige(
+    "récapitulatif — daté de l'encaissement, pas de l'émission",
+    /f\.paid_at \|\| f\.issue_date/.test(src),
+    "on déclare ce qu'on a perçu sur la période : une facture émise en mars et réglée en avril appartient à avril",
+  );
+
+  const widget = lire("components/CaUrssafWidget.tsx");
+  exige(
+    "récapitulatif — les échéances URSSAF ne s'affichent que si elles s'appliquent",
+    /echeancesUrssaf/.test(widget),
+    "« 30 avril », « 31 juillet » sont les dates du micro-entrepreneur : les montrer à une société serait une information fausse imprimée par l'outil",
+  );
+}
+
+console.log("");
 if (echecs > 0) {
   console.error(`${echecs} contrôle(s) en échec.`);
   process.exit(1);

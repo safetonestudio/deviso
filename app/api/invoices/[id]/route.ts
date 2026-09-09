@@ -89,9 +89,21 @@ export async function PATCH(req: NextRequest, { params }: Params) {
     .eq("id", id)
     .eq("user_id", workspaceId)
     .select()
-    .single();
+    .maybeSingle();
 
   if (error) return NextResponse.json({ error: error.message }, { status: 500 });
+
+  // Aucune ligne touchée : la facture n'existe pas, ou elle n'appartient pas à
+  // cet espace. C'est un 404, pas un 500.
+  //
+  // Avec `.single()`, l'absence de ligne était une ERREUR Postgres, et la route
+  // répondait « 500 » — un incident serveur — là où il ne s'était rien passé
+  // d'anormal. Le message renvoyé exposait au passage le détail de la requête,
+  // et l'appelant ne pouvait pas distinguer « je n'ai pas le droit » de « votre
+  // serveur est cassé ».
+  if (!data) {
+    return NextResponse.json({ error: "Facture introuvable" }, { status: 404 });
+  }
 
   // Le passage à « payée » déclare l'encaissement, ici et pas ailleurs.
   //

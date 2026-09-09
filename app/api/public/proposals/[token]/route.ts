@@ -2,6 +2,8 @@ import { NextRequest, NextResponse } from "next/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { createHash } from "crypto";
 import { publicBaseUrl } from "@/lib/public-url";
+import { notifierProprietaire } from "@/lib/notifications";
+import { echapperHtml } from "@/lib/emails/html";
 
 /**
  * Piste d'audit e-signature : hash SHA-256 du contenu du devis figé au
@@ -145,6 +147,28 @@ export async function POST(req: NextRequest, { params }: Params) {
 
     if (updateError) return NextResponse.json({ error: updateError.message }, { status: 500 });
 
+    // La notification en base d'abord, le courriel ensuite.
+    //
+    // La signature d'un devis est l'événement commercial le plus important du
+    // produit, et il n'en restait AUCUNE trace durable : le seul signal était
+    // un courriel dont l'échec était avalé par un `catch` vide. Resend refuse
+    // une fois, et le freelance n'apprend jamais qu'il a décroché la mission —
+    // sauf s'il pense à rouvrir son tableau de bord.
+    //
+    // `NotificationBell` savait pourtant déjà afficher `proposal_signed` et
+    // `proposal_declined` : les icônes existent depuis toujours, personne
+    // n'avait jamais inséré les lignes.
+    //
+    // Destinataire : `proposal.user_id`, le propriétaire de l'espace. C'est le
+    // client qui signe, il n'y a pas d'utilisateur connecté à qui rattacher
+    // l'événement.
+    await notifierProprietaire(admin, proposal.user_id, {
+      type: "proposal_signed",
+      title: "Devis signé",
+      body: `${signerName || proposal.client_name || "Votre client"} a signé « ${proposal.title || "votre devis"} ».`,
+      link: `/proposals/${proposal.id}`,
+    });
+
     try {
       const { data: profile } = await admin
         .from("profiles")
@@ -153,16 +177,23 @@ export async function POST(req: NextRequest, { params }: Params) {
         .single();
       if (profile?.email) {
         const { resend } = await import("@/lib/resend");
-        const displayName = profile.company_name || profile.full_name || "Deviso";
-        const fromAddress = "Deviso <noreply@getdeviso.fr>";
+        // Le nom du signataire vient du formulaire public : il est saisi par le
+        // client, donc par n'importe qui détenant le lien. Interpolé tel quel,
+        // il entrait comme du HTML dans un message signé par notre domaine.
+        const qui = echapperHtml(signerName || proposal.client_name || "Votre client");
+        const titre = echapperHtml(proposal.title || "");
         await resend.emails.send({
-          from: fromAddress,
+          from: "Deviso <noreply@getdeviso.fr>",
           to: profile.email,
           subject: `Devis signé : ${proposal.title || "votre devis"}`,
-          html: `<p>Bonjour,</p><p><strong>${signerName || proposal.client_name || "Votre client"}</strong> vient de signer votre devis <em>${proposal.title || ""}</em>.</p><p>Connectez-vous à <a href="https://getdeviso.fr/dashboard">votre espace Deviso</a> pour créer la facture.</p><p>L'équipe Deviso</p>`,
+          html: `<p>Bonjour,</p><p><strong>${qui}</strong> vient de signer votre devis <em>${titre}</em>.</p><p>Connectez-vous à <a href="https://getdeviso.fr/dashboard">votre espace Deviso</a> pour créer la facture.</p><p>L'équipe Deviso</p>`,
         });
       }
-    } catch { /* non-blocking */ }
+    } catch (err) {
+      // L'échec n'est plus muet. La notification en base, elle, est déjà posée :
+      // l'information n'est pas perdue, seul le courriel l'est.
+      console.error(`[proposals/sign] courriel de signature non envoyé (devis ${proposal.id}) :`, err);
+    }
 
     return NextResponse.json({ proposal: updated });
   }
@@ -177,6 +208,14 @@ export async function POST(req: NextRequest, { params }: Params) {
 
     if (updateError) return NextResponse.json({ error: updateError.message }, { status: 500 });
 
+    // Même raison que pour la signature : un refus se sait, et il se retrouve.
+    await notifierProprietaire(admin, proposal.user_id, {
+      type: "proposal_declined",
+      title: "Devis refusé",
+      body: `${proposal.client_company || proposal.client_name || "Votre client"} a refusé « ${proposal.title || "votre devis"} ».`,
+      link: `/proposals/${proposal.id}`,
+    });
+
     try {
       const { data: profile } = await admin
         .from("profiles")
@@ -185,16 +224,17 @@ export async function POST(req: NextRequest, { params }: Params) {
         .single();
       if (profile?.email) {
         const { resend } = await import("@/lib/resend");
-        const displayName = profile.company_name || profile.full_name || "Deviso";
-        const fromAddress = "Deviso <noreply@getdeviso.fr>";
+        const titre = echapperHtml(proposal.title || "");
         await resend.emails.send({
-          from: fromAddress,
+          from: "Deviso <noreply@getdeviso.fr>",
           to: profile.email,
           subject: `Devis refusé : ${proposal.title || "votre devis"}`,
-          html: `<p>Bonjour,</p><p>Votre devis <em>${proposal.title || ""}</em> a été refusé par le client.</p><p>Connectez-vous à <a href="https://getdeviso.fr/dashboard">votre espace Deviso</a> pour en savoir plus.</p><p>L'équipe Deviso</p>`,
+          html: `<p>Bonjour,</p><p>Votre devis <em>${titre}</em> a été refusé par le client.</p><p>Connectez-vous à <a href="https://getdeviso.fr/dashboard">votre espace Deviso</a> pour en savoir plus.</p><p>L'équipe Deviso</p>`,
         });
       }
-    } catch { /* non-blocking */ }
+    } catch (err) {
+      console.error(`[proposals/decline] courriel de refus non envoyé (devis ${proposal.id}) :`, err);
+    }
 
     return NextResponse.json({ proposal: updated });
   }
