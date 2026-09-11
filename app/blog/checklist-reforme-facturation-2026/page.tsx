@@ -1,32 +1,14 @@
-import type { Metadata } from "next";
+import { DonneesStructurees } from "@/components/DonneesStructurees";
+import { SiteFooter } from "@/components/SiteFooter";
+import { jsonLdArticle, metadonneesArticle } from "@/lib/blog/meta";
 import Link from "next/link";
 import { NavbarMobile } from "@/components/NavbarMobile";
 import { WaitlistButton } from "@/components/landing/WaitlistButton";
 
-export const metadata: Metadata = {
-  title: "Checklist réforme facturation 2026 : 7 points",
-  description:
-    "Réforme facturation électronique 2026 : 7 points à vérifier pour être prêt. Logiciel, format Factur-X, plateforme agréée, e-reporting, mentions légales.",
-  alternates: { canonical: "https://getdeviso.fr/blog/checklist-reforme-facturation-2026" },
-  openGraph: {
-    title: "Checklist réforme facturation 2026 pour freelances",
-    description: "7 points à vérifier avant septembre 2026 pour être en conformité avec la réforme de facturation électronique.",
-    url: "https://getdeviso.fr/blog/checklist-reforme-facturation-2026",
-    images: [{ url: "https://getdeviso.fr/opengraph-image", width: 1200, height: 630, alt: "Checklist réforme facturation 2026" }],
-  },
-};
+const SLUG = "checklist-reforme-facturation-2026";
 
-const jsonLd = {
-  "@context": "https://schema.org",
-  "@type": "Article",
-  headline: "Checklist réforme facturation 2026 : êtes-vous prêt ?",
-  datePublished: "2026-07-10",
-  dateModified: "2026-07-10",
-  author: { "@type": "Organization", name: "Deviso", url: "https://getdeviso.fr" },
-  publisher: { "@type": "Organization", name: "Deviso", url: "https://getdeviso.fr" },
-  inLanguage: "fr",
-  mainEntityOfPage: { "@type": "WebPage", "@id": "https://getdeviso.fr/blog/checklist-reforme-facturation-2026" },
-};
+export const metadata = metadonneesArticle(SLUG);
+
 
 type ChecklistItem = {
   num: string;
@@ -41,7 +23,7 @@ const CHECKLIST: ChecklistItem[] = [
   {
     num: "01",
     title: "Identifier si vous êtes une grande entreprise, ETI ou PME/TPE",
-    description: "Votre date d'obligation dépend de votre taille. Si vous êtes freelance ou micro-entrepreneur, votre échéance est le 1er septembre 2027, mais vous devrez aussi recevoir des e-factures dès septembre 2026.",
+    description: "Votre date d'obligation d'émettre dépend de votre taille : pour un freelance ou un micro-entrepreneur, c'est le 1er septembre 2027. Mais l'obligation de pouvoir RECEVOIR une facture électronique via une plateforme agréée s'applique déjà, depuis le 1er septembre 2026, quelle que soit votre taille.",
     urgency: "high",
     action: "Vérifier votre catégorie dans le portail impots.gouv.fr ou avec votre expert-comptable.",
     details: [
@@ -90,7 +72,7 @@ const CHECKLIST: ChecklistItem[] = [
   {
     num: "05",
     title: "Déterminer si vous avez une obligation d'e-reporting (B2C ou international)",
-    description: "Si vous avez des clients particuliers OU des clients à l'étranger, vous avez une obligation d'e-reporting TVA en plus de l'e-invoicing B2B. L'e-reporting est souvent oublié dans les guides, mais les amendes sont significatives (250€/transaction).",
+    description: "Si vous avez des clients particuliers OU des clients à l'étranger, vous avez une obligation d'e-reporting TVA en plus de l'e-invoicing B2B. L'e-reporting est souvent oublié dans les guides, mais l'amende est significative : 500 € par transmission manquante depuis le 1er septembre 2026, plafonnée à 15 000 € par an.",
     urgency: "medium",
     action: "Lister vos types de clients : B2B France, B2B étranger, B2C (particuliers), associations. Chaque catégorie a un traitement différent.",
     details: [
@@ -131,7 +113,7 @@ const CHECKLIST: ChecklistItem[] = [
 export default function ChecklistReforme2026Page() {
   return (
     <div className="min-h-screen bg-ds-bg">
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
+      <DonneesStructurees donnees={jsonLdArticle(SLUG)} />
 
       <div className="fixed top-0 left-0 right-0 bg-indigo-950/95 backdrop-blur-sm border-b border-indigo-500/20 py-2 px-4 text-center text-sm" style={{ zIndex: 60 }}>
         <span className="text-white font-semibold">1er septembre 2026&nbsp;:</span>
@@ -230,7 +212,7 @@ export default function ChecklistReforme2026Page() {
                       item.urgency === "high" ? "bg-red-500/60" : item.urgency === "medium" ? "bg-amber-500/60" : "bg-indigo-500/40"
                     }`}
                   />
-                  <span className="text-2xl font-black text-white/10 leading-none tabular-nums">{item.num}</span>
+                  <span className="text-2xl font-bold text-white/10 leading-none tabular-nums">{item.num}</span>
                 </div>
                 <div className="flex-1 min-w-0">
                   <h3 className="text-sm font-bold text-white mb-1.5">{item.title}</h3>
@@ -306,9 +288,7 @@ export default function ChecklistReforme2026Page() {
           <p className="text-xs text-gray-400 mt-3">Factur-X inclus · PDP avant sept. 2027 · E-reporting géré automatiquement</p>
         </div>
 
-        <footer className="border-t border-ds-border pt-8">
-          <Link href="/blog" className="text-xs text-gray-400 hover:text-white transition-colors">← Retour au blog</Link>
-        </footer>
+        <SiteFooter />
       </main>
     </div>
   );

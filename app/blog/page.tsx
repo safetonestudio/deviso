@@ -2,209 +2,106 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { NavbarMobile } from "@/components/NavbarMobile";
 import { WaitlistButton } from "@/components/landing/WaitlistButton";
-import { BarChart3, Camera, CircleCheck, Globe, GraduationCap, HardHat, Laptop, Link2, Palette, PenLine, RadioTower, Receipt, Smartphone, Target, Zap } from "lucide-react";
+import { SiteFooter } from "@/components/SiteFooter";
+import { DonneesStructurees } from "@/components/DonneesStructurees";
+import { ARTICLES, SITE, articlesDe, urlArticle } from "@/lib/blog/registre";
+import {
+  BarChart3, Camera, CircleCheck, Globe, GraduationCap, HardHat, Laptop, Link2,
+  Palette, PenLine, RadioTower, Receipt, Smartphone, Target, Zap, type LucideIcon,
+} from "lucide-react";
+
+/**
+ * L'index du blog, construit depuis le registre.
+ *
+ * Ce fichier portait sa propre copie des dix-neuf articles : titres, résumés,
+ * durées de lecture, badges. Une troisième saisie, après les métadonnées de
+ * chaque page et l'entrée du sitemap. Elle avait dérivé, comme toutes les
+ * copies finissent par dériver : le résumé de l'article e-reporting annonçait ici
+ * « Amendes : 250 €/transaction », un montant doublé depuis le 1er septembre 2026
+ * par la loi de finances pour 2026.
+ *
+ * Il ne reste qu'une chose à tenir à la main : l'icône de chaque article. Elle
+ * est ici, et pas dans le registre, pour que `app/sitemap.ts` n'ait pas à importer
+ * `lucide-react` pour produire du XML.
+ */
+
+/** Une icône par slug. Un slug sans icône retombe sur une valeur par défaut. */
+const ICONES: Record<string, LucideIcon> = {
+  "facturation-electronique-2026": Zap,
+  "reforme-facturation-micro-entrepreneur": Receipt,
+  "choisir-plateforme-agreee-freelance": Link2,
+  "e-reporting-freelance-2026": RadioTower,
+  "checklist-reforme-facturation-2026": CircleCheck,
+  "devis-graphiste-freelance": Palette,
+  "devis-developpeur-web": Laptop,
+  "devis-consultant-independant": BarChart3,
+  "devis-photographe-freelance": Camera,
+  "devis-redacteur-web": PenLine,
+  "devis-formateur-independant": GraduationCap,
+  "devis-artisan-btp": HardHat,
+  "devis-community-manager": Smartphone,
+  "devis-coach-freelance": Target,
+  "devis-traducteur-freelance": Globe,
+};
+
+const reformeArticles = articlesDe("reforme");
+const metierArticles = articlesDe("metier");
+const autresArticles = articlesDe("transverse");
 
 export const metadata: Metadata = {
   title: "Guides devis et facturation pour freelances",
   description:
-    "Guides pratiques sur la facturation freelance en France : mentions obligatoires, droits d'auteur, OPCO, Factur-X, Chorus Pro. Par métier et par sujet.",
-  alternates: { canonical: "https://getdeviso.fr/blog" },
+    "Guides pratiques sur la facturation freelance en France : réforme 2026, mentions obligatoires, droits d'auteur, OPCO, Factur-X. Par métier et par sujet.",
+  alternates: { canonical: `${SITE}/blog` },
   openGraph: {
-    title: "Blog Deviso, Guides devis et facturation pour freelances",
-    description: "Guides pratiques sur la facturation freelance en France : mentions obligatoires, droits d'auteur, OPCO, Factur-X.",
-    url: "https://getdeviso.fr/blog",
-    images: [{ url: "https://getdeviso.fr/opengraph-image", width: 1200, height: 630, alt: "Deviso, logiciel de devis et facturation" }],
+    title: "Blog Deviso, guides devis et facturation pour freelances",
+    description:
+      "Guides pratiques sur la facturation freelance en France : réforme 2026, mentions obligatoires, droits d'auteur, Factur-X.",
+    url: `${SITE}/blog`,
+    images: [{ url: `${SITE}/opengraph-image`, width: 1200, height: 630, alt: "Blog Deviso" }],
   },
 };
 
+/**
+ * Le `CollectionPage` liste désormais les dix-neuf articles, et non six choisis à
+ * la main — un `hasPart` partiel déclare à Google une collection plus pauvre
+ * qu'elle ne l'est. Le `BreadcrumbList` est ajouté : aucune page du site n'en
+ * portait.
+ */
 const jsonLd = {
   "@context": "https://schema.org",
-  "@type": "CollectionPage",
-  name: "Blog Deviso, Guides devis et facturation pour freelances",
-  description: "Guides pratiques sur la facturation freelance en France : mentions obligatoires, droits d'auteur, Factur-X, Chorus Pro. Par métier et par sujet.",
-  url: "https://getdeviso.fr/blog",
-  publisher: { "@type": "Organization", name: "Deviso", url: "https://getdeviso.fr" },
-  inLanguage: "fr",
-  hasPart: [
-    { "@type": "Article", name: "Devis graphiste freelance : mentions obligatoires", url: "https://getdeviso.fr/blog/devis-graphiste-freelance" },
-    { "@type": "Article", name: "Devis développeur web freelance", url: "https://getdeviso.fr/blog/devis-developpeur-web" },
-    { "@type": "Article", name: "Devis consultant indépendant", url: "https://getdeviso.fr/blog/devis-consultant-independant" },
-    { "@type": "Article", name: "Clauses essentielles pour un devis freelance", url: "https://getdeviso.fr/blog/clauses-devis-freelance" },
-    { "@type": "Article", name: "Gérer les impayés en freelance", url: "https://getdeviso.fr/blog/gerer-impayes-freelance" },
-    { "@type": "Article", name: "Fixer ses tarifs en freelance", url: "https://getdeviso.fr/blog/fixer-ses-tarifs-freelance" },
+  "@graph": [
+    {
+      "@type": "CollectionPage",
+      "@id": `${SITE}/blog#blog`,
+      name: "Blog Deviso, guides devis et facturation pour freelances",
+      description:
+        "Guides pratiques sur la facturation freelance en France : réforme 2026, mentions obligatoires, droits d'auteur, Factur-X, par métier et par sujet.",
+      url: `${SITE}/blog`,
+      publisher: { "@type": "Organization", name: "Deviso", url: SITE },
+      inLanguage: "fr",
+      hasPart: ARTICLES.map((a) => ({
+        "@type": "Article",
+        name: a.h1,
+        url: urlArticle(a.slug),
+        datePublished: a.publieLe,
+        dateModified: a.misAJourLe,
+      })),
+    },
+    {
+      "@type": "BreadcrumbList",
+      itemListElement: [
+        { "@type": "ListItem", position: 1, name: "Accueil", item: SITE },
+        { "@type": "ListItem", position: 2, name: "Blog" },
+      ],
+    },
   ],
 };
-
-// Articles réforme 2026, cluster 5 articles
-const reformeArticles = [
-  {
-    slug: "facturation-electronique-2026",
-    title: "Guide complet réforme facturation électronique 2026",
-    icon: Zap,
-    description: "PPF abandonné, PDP obligatoire, Factur-X, calendrier, tout ce que les freelances doivent savoir",
-    readingTime: 10,
-    badge: "Guide pilier",
-  },
-  {
-    slug: "reforme-facturation-micro-entrepreneur",
-    title: "Micro-entrepreneur : ce que la réforme change pour toi",
-    icon: Receipt,
-    description: "Franchise TVA ≠ exemption. Les 3 scénarios selon votre activité B2B/B2C",
-    readingTime: 8,
-    badge: "Micro-entrepreneur",
-  },
-  {
-    slug: "choisir-plateforme-agreee-freelance",
-    title: "Choisir sa plateforme agréée (PDP) : guide comparatif",
-    icon: Link2,
-    description: "Le PPF est abandonné. 5 critères pour sélectionner la bonne PDP pour votre activité",
-    readingTime: 8,
-    badge: "PDP",
-  },
-  {
-    slug: "e-reporting-freelance-2026",
-    title: "E-reporting : l'obligation B2C dont personne ne parle",
-    icon: RadioTower,
-    description: "Si vous avez des clients particuliers, l'e-reporting TVA vous concerne aussi. Amendes : 250€/transaction",
-    readingTime: 7,
-    badge: "B2C",
-  },
-  {
-    slug: "checklist-reforme-facturation-2026",
-    title: "Checklist réforme 2026 : êtes-vous prêt ?",
-    icon: CircleCheck,
-    description: "7 points à vérifier pour ne rien rater, à partager avec votre comptable",
-    readingTime: 10,
-    badge: "Checklist",
-  },
-];
-
-// Articles regroupés sous l'accordéon "Devis par métier"
-const metierArticles = [
-  {
-    slug: "devis-graphiste-freelance",
-    label: "Graphiste freelance",
-    icon: Palette,
-    description: "Droits de cession, révisions, formats livrés",
-    readingTime: 6,
-  },
-  {
-    slug: "devis-developpeur-web",
-    label: "Développeur web",
-    icon: Laptop,
-    description: "TJM vs forfait, scope creep, propriété du code",
-    readingTime: 7,
-  },
-  {
-    slug: "devis-consultant-independant",
-    label: "Consultant indépendant",
-    icon: BarChart3,
-    description: "Propale efficace, régie vs forfait, grands comptes",
-    readingTime: 6,
-  },
-  {
-    slug: "devis-photographe-freelance",
-    label: "Photographe freelance",
-    icon: Camera,
-    description: "Droits d'auteur, acompte, conditions d'annulation",
-    readingTime: 5,
-  },
-  {
-    slug: "devis-redacteur-web",
-    label: "Rédacteur & copywriter",
-    icon: PenLine,
-    description: "Tarif au mot, révisions limitées, cession de droits",
-    readingTime: 5,
-  },
-  {
-    slug: "devis-formateur-independant",
-    label: "Formateur indépendant",
-    icon: GraduationCap,
-    description: "Mentions OPCO, exonération TVA, Qualiopi",
-    readingTime: 6,
-  },
-  {
-    slug: "devis-artisan-btp",
-    label: "Artisan BTP",
-    icon: HardHat,
-    description: "TVA réduite, garantie décennale, acompte",
-    readingTime: 7,
-  },
-  {
-    slug: "devis-community-manager",
-    label: "Community manager",
-    icon: Smartphone,
-    description: "Périmètre, forfait mensuel, résiliation",
-    readingTime: 6,
-  },
-  {
-    slug: "devis-coach-freelance",
-    label: "Coach freelance",
-    icon: Target,
-    description: "TVA, conditions d'abandon de programme",
-    readingTime: 6,
-  },
-  {
-    slug: "devis-traducteur-freelance",
-    label: "Traducteur freelance",
-    icon: Globe,
-    description: "Tarif au mot, droits sur la traduction, urgences",
-    readingTime: 7,
-  },
-];
-
-// Articles cross-profession : hub clauses + problèmes freelance
-const autresArticles = [
-  {
-    slug: "clauses-devis-freelance",
-    title: "Les clauses indispensables dans un devis freelance (avec formulations)",
-    description: "Périmètre, acompte, révisions, propriété intellectuelle, résiliation, les 9 clauses à mettre dans tout devis freelance, avec des formulations prêtes à l'emploi.",
-    profession: "Tous métiers",
-    readingTime: 8,
-  },
-  {
-    slug: "scope-creep-freelance",
-    title: "Scope creep freelance : qu'est-ce que c'est et comment s'en protéger dans son devis",
-    description: "Le scope creep est la première cause de perte de rentabilité en freelance. Découvrez comment il arrive, et les clauses pour vous en protéger.",
-    profession: "Problème freelance",
-    readingTime: 6,
-  },
-  {
-    slug: "gerer-impayes-freelance",
-    title: "Gérer les impayés en freelance : de la relance à l'injonction de payer",
-    description: "Relance amiable, mise en demeure LRAR, injonction de payer, le guide complet pour récupérer vos factures impayées, étape par étape.",
-    profession: "Problème freelance",
-    readingTime: 7,
-  },
-  {
-    slug: "fixer-ses-tarifs-freelance",
-    title: "Comment fixer ses tarifs en freelance : TJM, méthodes et erreurs à éviter",
-    description: "Les 3 méthodes pour calculer son TJM, les erreurs classiques (syndrome de l'imposteur, temps non facturables), et comment augmenter ses tarifs sans perdre ses clients.",
-    profession: "Problème freelance",
-    readingTime: 7,
-  },
-];
-
-const metierLinks = [
-  { label: "Graphiste freelance", href: "/freelance-graphiste" },
-  { label: "Développeur web", href: "/freelance-developpeur" },
-  { label: "Consultant indépendant", href: "/freelance-consultant" },
-  { label: "Photographe freelance", href: "/freelance-photographe" },
-  { label: "Rédacteur & copywriter", href: "/freelance-redacteur" },
-  { label: "Formateur indépendant", href: "/freelance-formateur" },
-  { label: "Artisan BTP", href: "/freelance-artisan" },
-  { label: "Community manager", href: "/freelance-community-manager" },
-  { label: "Coach freelance", href: "/freelance-coach" },
-  { label: "Traducteur freelance", href: "/freelance-traducteur" },
-];
 
 export default function BlogIndex() {
   return (
     <div className="min-h-screen bg-ds-bg">
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
-      />
+      <DonneesStructurees donnees={jsonLd} />
       {/* ── Bandeau réforme 2026 ── */}
       <div
         className="fixed top-0 left-0 right-0 bg-indigo-950/95 backdrop-blur-sm border-b border-indigo-500/20 py-2 px-4 text-center text-sm"
@@ -274,13 +171,13 @@ export default function BlogIndex() {
                     <span className="text-xs px-2.5 py-1 rounded-full font-medium border bg-amber-500/10 text-amber-300 border-amber-500/20">
                       Réforme 2026
                     </span>
-                    <span className="text-xs text-gray-400">5 guides · urgent</span>
+                    <span className="text-xs text-gray-400">{reformeArticles.length} guides · en vigueur</span>
                   </div>
                   <h2 className="text-white font-semibold text-lg leading-snug mb-2 group-open:text-amber-200 transition-colors">
                     Facturation électronique 2026 : tout ce que les freelances doivent savoir
                   </h2>
                   <p className="text-gray-500 text-sm leading-relaxed">
-                    PPF abandonné, PDP obligatoires, e-reporting B2C, checklist de conformité, le cluster complet sur la réforme en vigueur dès septembre 2026.
+                    La réforme est entrée en application le 1<sup>er</sup> septembre 2026. Ce qui s&apos;applique déjà, ce qui arrive en 2027, les plateformes agréées, l&apos;e-reporting et les amendes réelles.
                   </p>
                 </div>
                 <span className="text-gray-600 flex-shrink-0 mt-1 text-xl transition-transform duration-200 group-open:rotate-90">→</span>
@@ -294,14 +191,14 @@ export default function BlogIndex() {
                     href={`/blog/${article.slug}`}
                     className="flex items-center gap-4 px-6 py-4 hover:bg-ds-elevated transition-colors group/item"
                   >
-                    <span className="flex-shrink-0 w-8 flex justify-center text-indigo-400"><article.icon size={18} /></span>
+                    <span className="flex-shrink-0 w-8 flex justify-center text-indigo-400">{(() => { const I = ICONES[article.slug] ?? Zap; return <I size={18} />; })()}</span>
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center gap-2 mb-0.5">
-                        <p className="text-white text-sm font-medium group-hover/item:text-amber-200 transition-colors">{article.title}</p>
+                        <p className="text-white text-sm font-medium group-hover/item:text-amber-200 transition-colors">{article.carte.titre}</p>
                       </div>
-                      <p className="text-gray-600 text-xs">{article.description}</p>
+                      <p className="text-gray-600 text-xs">{article.carte.resume}</p>
                     </div>
-                    <span className="text-xs text-gray-400 flex-shrink-0 whitespace-nowrap">{article.readingTime} min</span>
+                    <span className="text-xs text-gray-400 flex-shrink-0 whitespace-nowrap">{article.dureeLecture} min</span>
                     <span className="text-gray-700 group-hover/item:text-amber-400 transition-colors flex-shrink-0 text-sm">→</span>
                   </Link>
                 ))}
@@ -316,7 +213,7 @@ export default function BlogIndex() {
                     <span className="text-xs px-2.5 py-1 rounded-full font-medium border bg-indigo-500/10 text-indigo-300 border-indigo-500/20">
                       Devis par métier
                     </span>
-                    <span className="text-xs text-gray-400">10 guides</span>
+                    <span className="text-xs text-gray-400">{metierArticles.length} guides</span>
                   </div>
                   <h2 className="text-white font-semibold text-lg leading-snug mb-2 group-open:text-indigo-200 transition-colors">
                     Devis par métier : guide complet par profession
@@ -336,12 +233,12 @@ export default function BlogIndex() {
                     href={`/blog/${article.slug}`}
                     className="flex items-center gap-4 px-6 py-4 hover:bg-ds-elevated transition-colors group/item"
                   >
-                    <span className="flex-shrink-0 w-8 flex justify-center text-indigo-400"><article.icon size={18} /></span>
+                    <span className="flex-shrink-0 w-8 flex justify-center text-indigo-400">{(() => { const I = ICONES[article.slug] ?? Zap; return <I size={18} />; })()}</span>
                     <div className="flex-1 min-w-0">
-                      <p className="text-white text-sm font-medium group-hover/item:text-indigo-200 transition-colors">{article.label}</p>
-                      <p className="text-gray-600 text-xs mt-0.5">{article.description}</p>
+                      <p className="text-white text-sm font-medium group-hover/item:text-indigo-200 transition-colors">{article.carte.titre}</p>
+                      <p className="text-gray-600 text-xs mt-0.5">{article.carte.resume}</p>
                     </div>
-                    <span className="text-xs text-gray-400 flex-shrink-0">{article.readingTime} min</span>
+                    <span className="text-xs text-gray-400 flex-shrink-0">{article.dureeLecture} min</span>
                     <span className="text-gray-700 group-hover/item:text-indigo-400 transition-colors flex-shrink-0 text-sm">→</span>
                   </Link>
                 ))}
@@ -359,19 +256,19 @@ export default function BlogIndex() {
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-2 mb-3">
                     <span className={`text-xs px-2.5 py-1 rounded-full font-medium border ${
-                      article.profession === "Tous metiers"
+                      article.carte.badge === "Tous métiers"
                         ? "bg-emerald-500/10 text-emerald-300 border-emerald-500/20"
                         : "bg-rose-500/10 text-rose-300 border-rose-500/20"
                     }`}>
-                      {article.profession}
+                      {article.carte.badge}
                     </span>
-                    <span className="text-xs text-gray-400">{article.readingTime} min</span>
+                    <span className="text-xs text-gray-400">{article.dureeLecture} min</span>
                   </div>
                   <h3 className="text-white font-semibold leading-snug mb-2 group-hover:text-indigo-200 transition-colors text-sm">
-                    {article.title}
+                    {article.carte.titre}
                   </h3>
                   <p className="text-gray-500 text-sm leading-relaxed line-clamp-2">
-                    {article.description}
+                    {article.carte.resume}
                   </p>
                 </div>
                 <span className="text-gray-600 group-hover:text-indigo-400 transition-colors flex-shrink-0 text-xl mt-1">
@@ -384,20 +281,8 @@ export default function BlogIndex() {
         </div>
       </section>
 
-      {/* Footer links */}
-      <footer className="border-t border-ds-border py-8 px-4 sm:px-6">
-        <div className="max-w-4xl mx-auto">
-          <div className="flex flex-wrap gap-x-6 gap-y-2 text-xs text-gray-400">
-            <Link href="/" className="hover:text-white transition-colors">Accueil</Link>
-            <Link href="/blog" className="hover:text-white transition-colors">Blog</Link>
-            <Link href="/combien-facturer" className="hover:text-white transition-colors">Tarifs freelance</Link>
-            <Link href="/login" className="hover:text-white transition-colors">Connexion</Link>
-            <Link href="/cgu" className="hover:text-white transition-colors">CGU</Link>
-            <Link href="/confidentialite" className="hover:text-white transition-colors">Confidentialite</Link>
-            <Link href="/mentions-legales" className="hover:text-white transition-colors">Mentions légales</Link>
-          </div>
-        </div>
-      </footer>
+      <SiteFooter />
+
     </div>
   );
 }

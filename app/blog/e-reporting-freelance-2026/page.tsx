@@ -1,66 +1,38 @@
-import type { Metadata } from "next";
+import { DonneesStructurees } from "@/components/DonneesStructurees";
+import { SiteFooter } from "@/components/SiteFooter";
+import { jsonLdArticle, metadonneesArticle } from "@/lib/blog/meta";
 import Link from "next/link";
 import { NavbarMobile } from "@/components/NavbarMobile";
 import { WaitlistButton } from "@/components/landing/WaitlistButton";
 
-export const metadata: Metadata = {
-  title: "E-reporting freelance 2026 : l'obligation B2C",
-  description:
-    "La facturation électronique ne concerne pas que le B2B. Si vous facturez des particuliers, l'e-reporting vous oblige aussi. Ce qu'il faut faire avant 2027.",
-  alternates: { canonical: "https://getdeviso.fr/blog/e-reporting-freelance-2026" },
-  openGraph: {
-    title: "E-reporting freelance 2026 : l'obligation B2C oubliée",
-    description: "Vous avez des clients particuliers ? L'e-reporting TVA vous concerne, même si vous n'émettez pas d'e-factures. Calendrier, obligations, amendes.",
-    url: "https://getdeviso.fr/blog/e-reporting-freelance-2026",
-    images: [{ url: "https://getdeviso.fr/opengraph-image", width: 1200, height: 630, alt: "E-reporting freelance 2026" }],
-  },
-};
+const SLUG = "e-reporting-freelance-2026";
 
-const jsonLd = {
-  "@context": "https://schema.org",
-  "@type": "Article",
-  headline: "E-reporting freelance 2026 : l'obligation B2C dont personne ne parle",
-  datePublished: "2026-07-10",
-  dateModified: "2026-07-10",
-  author: { "@type": "Organization", name: "Deviso", url: "https://getdeviso.fr" },
-  publisher: { "@type": "Organization", name: "Deviso", url: "https://getdeviso.fr" },
-  inLanguage: "fr",
-  mainEntityOfPage: { "@type": "WebPage", "@id": "https://getdeviso.fr/blog/e-reporting-freelance-2026" },
-  mainEntity: {
-    "@type": "FAQPage",
-    mainEntity: [
-      {
-        "@type": "Question",
-        name: "Qu'est-ce que l'e-reporting ?",
-        acceptedAnswer: {
-          "@type": "Answer",
-          text: "L'e-reporting est l'obligation de transmettre à la DGFiP les données de transactions commerciales qui ne font pas l'objet d'une e-facture. Cela concerne principalement les ventes aux particuliers (B2C) et les ventes à l'étranger. Contrairement à l'e-invoicing (envoi de la facture structurée au client), l'e-reporting n'est pas une facture, c'est une déclaration de données fiscales.",
-        },
-      },
-      {
-        "@type": "Question",
-        name: "L'e-reporting concerne-t-il les freelances en franchise de TVA ?",
-        acceptedAnswer: {
-          "@type": "Answer",
-          text: "La franchise de TVA (article 293B CGI) exonère les micro-entrepreneurs de la collecte et du versement de TVA. Elle n'exempte pas des obligations d'e-reporting. Cependant, comme les données d'e-reporting concernent principalement la TVA, les franchisés auront des déclarations simplifiées (montants HT uniquement). La DGFiP doit préciser les modalités exactes pour les franchisés.",
-        },
-      },
-      {
-        "@type": "Question",
-        name: "Quelle est l'amende en cas de non-respect de l'e-reporting ?",
-        acceptedAnswer: {
-          "@type": "Answer",
-          text: "L'article 1737 IV du CGI prévoit une amende de 250 € par transaction non transmise, plafonnée à 15 000 € par an. Une remise totale est possible pour les petits manquements involontaires (premier manquement, régularisation rapide). Le plafond est haut, les freelances B2C réguliers ont intérêt à mettre en place le reporting rapidement.",
-        },
-      },
-    ],
+export const metadata = metadonneesArticle(SLUG);
+
+/**
+ * Les questions affichées sur la page, et balisées en `FAQPage` à partir de cette
+ * même liste. Une seule source : un `FAQPage` qui annonce une réponse absente du
+ * contenu visible est une déclaration fausse.
+ */
+const FAQ = [
+  {
+    q: "Qu'est-ce que l'e-reporting ?",
+    a: "L'e-reporting est l'obligation de transmettre à la DGFiP les données de transactions commerciales qui ne font pas l'objet d'une e-facture. Cela concerne principalement les ventes aux particuliers (B2C) et les ventes à l'étranger. Contrairement à l'e-invoicing (envoi de la facture structurée au client), l'e-reporting n'est pas une facture, c'est une déclaration de données fiscales.",
   },
-};
+  {
+    q: "L'e-reporting concerne-t-il les freelances en franchise de TVA ?",
+    a: "La franchise de TVA (article 293B CGI) exonère les micro-entrepreneurs de la collecte et du versement de TVA. Elle n'exempte pas des obligations d'e-reporting. Cependant, comme les données d'e-reporting concernent principalement la TVA, les franchisés auront des déclarations simplifiées (montants HT uniquement). La DGFiP doit préciser les modalités exactes pour les franchisés.",
+  },
+  {
+    q: "Quelle est l'amende en cas de non-respect de l'e-reporting ?",
+    a: "Depuis le 1er septembre 2026, l'amende est de 500 € par transmission manquante ou insuffisante, plafonnée à 15 000 € par an. Elle était de 250 € : la loi de finances pour 2026 (loi n° 2026-103 du 19 février 2026, article 123) l'a doublée. Aucune sanction n'est appliquée en cas de premier manquement sur l'année civile en cours et les trois précédentes, si l'infraction est réparée spontanément ou dans les trente jours suivant une demande de l'administration.",
+  },
+];
 
 export default function EReportingFreelancePage() {
   return (
     <div className="min-h-screen bg-ds-bg">
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
+      <DonneesStructurees donnees={jsonLdArticle(SLUG, FAQ)} />
 
       <div className="fixed top-0 left-0 right-0 bg-amber-950/90 backdrop-blur-sm border-b border-amber-500/20 py-2 px-4 text-center text-sm" style={{ zIndex: 60 }}>
         <span className="text-amber-400 font-semibold">Angle mort de la réforme&nbsp;:</span>
@@ -213,15 +185,9 @@ export default function EReportingFreelancePage() {
               {[
                 {
                   date: "1er septembre 2026",
-                  qui: "Grandes entreprises (CA > 250M€)",
-                  obligation: "E-reporting obligatoire",
+                  qui: "Grandes entreprises et ETI",
+                  obligation: "E-reporting obligatoire — en vigueur",
                   urgency: "high",
-                },
-                {
-                  date: "1er décembre 2026",
-                  qui: "ETI (50M€ – 250M€ de CA)",
-                  obligation: "E-reporting obligatoire",
-                  urgency: "medium",
                 },
                 {
                   date: "1er septembre 2027",
@@ -256,12 +222,28 @@ export default function EReportingFreelancePage() {
             <h2 className="text-xl font-bold text-white mb-4">Risques en cas de non-conformité</h2>
             <div className="grid sm:grid-cols-2 gap-4">
               <div className="bg-red-500/[0.05] border border-red-500/20 rounded-xl p-5">
-                <p className="text-sm font-bold text-red-400 mb-3">Amende e-reporting (art. 1737 IV CGI)</p>
+                <p className="text-sm font-bold text-red-400 mb-3">Amende e-reporting</p>
                 <p className="text-sm text-gray-300">
-                  <strong>250 € par transaction</strong> non déclarée, plafonnée à <strong>15 000 € / an</strong>.
+                  <strong>500 € par transmission</strong> manquante ou insuffisante, plafonnée à{" "}
+                  <strong>15 000 € / an</strong>.
                 </p>
                 <p className="text-xs text-gray-500 mt-2">
-                  Remise possible si premier manquement et régularisation dans les 30 jours.
+                  Montant doublé depuis le 1<sup>er</sup> septembre 2026 : il était de 250 €. Aucune
+                  sanction au premier manquement si vous régularisez spontanément, ou dans les 30 jours
+                  suivant une demande de l&apos;administration.
+                </p>
+              </div>
+              <div className="bg-red-500/[0.05] border border-red-500/20 rounded-xl p-5">
+                <p className="text-sm font-bold text-red-400 mb-3">Amende de réception</p>
+                <p className="text-sm text-gray-300">
+                  Celle-ci s&apos;applique <strong>déjà</strong>, à tout le monde : si vous n&apos;êtes
+                  pas en mesure de <strong>recevoir</strong> vos factures via une plateforme agréée,
+                  c&apos;est <strong>500 €</strong> après une mise en demeure de trois mois, puis{" "}
+                  <strong>1 000 € tous les trois mois</strong> tant que la situation persiste.
+                </p>
+                <p className="text-xs text-gray-500 mt-2">
+                  Elle ne dépend ni de votre chiffre d&apos;affaires, ni de votre régime de TVA, ni du
+                  fait que vous facturiez des particuliers.
                 </p>
               </div>
               <div className="bg-amber-500/[0.05] border border-amber-500/20 rounded-xl p-5">
@@ -323,6 +305,19 @@ export default function EReportingFreelancePage() {
           </section>
         </div>
 
+        {/* ── Questions fréquentes ── */}
+        <section className="mb-12">
+          <h2 className="text-2xl font-semibold text-white mb-6">Questions fréquentes</h2>
+          <div className="space-y-4">
+            {FAQ.map(({ q, a }) => (
+              <div key={q} className="bg-ds-surface rounded-xl border border-ds-border p-6">
+                <h3 className="text-white font-medium mb-3">{q}</h3>
+                <p className="text-gray-400 text-sm leading-relaxed">{a}</p>
+              </div>
+            ))}
+          </div>
+        </section>
+
         <div className="mt-14 mb-10 bg-ds-surface border border-ds-border rounded-2xl p-6">
           <p className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-4">Cluster réforme 2026</p>
           <div className="space-y-3">
@@ -348,9 +343,7 @@ export default function EReportingFreelancePage() {
           <WaitlistButton plan="free" label="Essayer Deviso 14 jours →" className="inline-flex items-center gap-2 bg-indigo-600 hover:bg-indigo-500 text-white font-semibold px-6 py-3 rounded-xl transition-colors text-sm" />
         </div>
 
-        <footer className="border-t border-ds-border pt-8">
-          <Link href="/blog" className="text-xs text-gray-400 hover:text-white transition-colors">← Retour au blog</Link>
-        </footer>
+        <SiteFooter />
       </main>
     </div>
   );

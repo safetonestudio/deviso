@@ -1,10 +1,11 @@
 import Link from "next/link";
+import { SiteFooter } from "@/components/SiteFooter";
 import type { Metadata } from "next";
 import { NavbarMobile } from "@/components/NavbarMobile";
 import { DemoButton } from "@/components/landing/DemoButton";
 import { WaitlistButton } from "@/components/landing/WaitlistButton";
 import { PricingSection } from "@/components/landing/PricingSection";
-import { Zap, PenLine, Bell, FileText, BarChart3, Timer, Heart, type LucideIcon } from "lucide-react";
+import { Zap, PenLine, Bell, FileText, BarChart3, Timer, type LucideIcon } from "lucide-react";
 
 export const metadata: Metadata = {
   title: "Deviso, Logiciel devis et facturation pour freelances français",
@@ -347,61 +348,8 @@ export default function LandingPage() {
       </section>
 
       {/* ── Footer ── */}
-      <footer className="bg-ds-bg border-t border-white/[0.04] text-gray-500 py-12 px-4 sm:px-6">
-        <div className="max-w-5xl mx-auto">
-          <div className="flex flex-col md:flex-row justify-between items-start gap-8 mb-10">
-            <div>
-              <div className="flex items-center gap-2 mb-3">
-                <div className="w-7 h-7 rounded-md bg-gradient-to-br from-indigo-600 to-violet-600 flex items-center justify-center">
-                  <span className="text-white font-semibold text-xs">D</span>
-                </div>
-                <span className="font-semibold text-white">Deviso</span>
-              </div>
-              <p className="text-sm max-w-xs leading-relaxed">
-                Logiciel de devis et facturation pour freelances et petites équipes en France. 🇫🇷
-              </p>
-            </div>
-            <div className="grid grid-cols-2 sm:grid-cols-3 gap-8 text-sm">
-              <div>
-                <div className="text-white font-semibold mb-3">Produit</div>
-                <ul className="space-y-2">
-                  <li><a href="#fonctionnalites" className="hover:text-gray-300 transition-colors">Fonctionnalités</a></li>
-                  <li><a href="#tarifs" className="hover:text-gray-300 transition-colors">Tarifs</a></li>
-                  <li><Link href="/blog" className="hover:text-gray-300 transition-colors">Blog</Link></li>
-                  <li><Link href="/login" className="hover:text-gray-300 transition-colors">Connexion</Link></li>
-                  <li><a href="mailto:support@getdeviso.fr" className="hover:text-gray-300 transition-colors">Support</a></li>
-                </ul>
-              </div>
-              <div>
-                <div className="text-white font-semibold mb-3">Métiers</div>
-                <ul className="space-y-2">
-                  <li><Link href="/freelance-developpeur" className="hover:text-gray-300 transition-colors">Développeur</Link></li>
-                  <li><Link href="/freelance-graphiste" className="hover:text-gray-300 transition-colors">Graphiste</Link></li>
-                  <li><Link href="/freelance-consultant" className="hover:text-gray-300 transition-colors">Consultant</Link></li>
-                  <li><Link href="/freelance-photographe" className="hover:text-gray-300 transition-colors">Photographe</Link></li>
-                  <li><Link href="/freelance-redacteur" className="hover:text-gray-300 transition-colors">Rédacteur</Link></li>
-                  <li><Link href="/freelance-artisan" className="hover:text-gray-300 transition-colors">Artisan</Link></li>
-                  <li><Link href="/freelance-formateur" className="hover:text-gray-300 transition-colors">Formateur</Link></li>
-                  <li><Link href="/freelance-coach" className="hover:text-gray-300 transition-colors">Coach</Link></li>
-                  <li><Link href="/freelance-community-manager" className="hover:text-gray-300 transition-colors">Community manager</Link></li>
-                  <li><Link href="/freelance-traducteur" className="hover:text-gray-300 transition-colors">Traducteur</Link></li>
-                </ul>
-              </div>
-              <div>
-                <div className="text-white font-semibold mb-3">Légal</div>
-                <ul className="space-y-2">
-                  <li><Link href="/cgu" className="hover:text-gray-300 transition-colors">CGU</Link></li>
-                  <li><Link href="/confidentialite" className="hover:text-gray-300 transition-colors">Confidentialité</Link></li>
-                  <li><Link href="/mentions-legales" className="hover:text-gray-300 transition-colors">Mentions légales</Link></li>
-                </ul>
-              </div>
-            </div>
-          </div>
-          <div className="border-t border-white/[0.04] pt-6 text-xs text-center">
-            © {new Date().getFullYear()} Deviso. Fait avec <Heart size={12} className="inline-block align-[-1px] fill-current text-red-500" aria-label="amour" /> en France.
-          </div>
-        </div>
-      </footer>
+      <SiteFooter />
+
     </div>
   );
 }

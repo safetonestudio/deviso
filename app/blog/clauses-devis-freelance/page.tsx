@@ -1,66 +1,20 @@
-import type { Metadata } from "next";
+import { DonneesStructurees } from "@/components/DonneesStructurees";
+import { SiteFooter } from "@/components/SiteFooter";
+import { jsonLdArticle, metadonneesArticle } from "@/lib/blog/meta";
 import Link from "next/link";
 import { NavbarMobile } from "@/components/NavbarMobile";
 import { WaitlistButton } from "@/components/landing/WaitlistButton";
 import { Lightbulb } from "lucide-react";
 
-export const metadata: Metadata = {
-  title: "Clauses indispensables d'un devis freelance",
-  description:
-    "Périmètre, acompte, révisions, propriété intellectuelle, résiliation : les 9 clauses à mettre dans un devis freelance, avec formulations prêtes à l'emploi.",
-  alternates: { canonical: "https://getdeviso.fr/blog/clauses-devis-freelance" },
-  openGraph: {
-    title: "Les clauses indispensables dans un devis freelance, Guide complet 2026",
-    description: "Périmètre, acompte, révisions, droits d'auteur, résiliation, NDA, les 9 clauses à ne jamais oublier dans votre devis freelance.",
-    url: "https://getdeviso.fr/blog/clauses-devis-freelance",
-    images: [{ url: "https://getdeviso.fr/opengraph-image", width: 1200, height: 630, alt: "Deviso, logiciel de devis et facturation" }],
-  },
-  twitter: {
-    title: "Les clauses indispensables dans un devis freelance, Guide complet 2026",
-    description: "Les 9 clauses à ne jamais oublier dans votre devis freelance pour vous protéger de tous les risques.",
-  },
-};
+const SLUG = "clauses-devis-freelance";
 
-const jsonLd = {
-  "@context": "https://schema.org",
-  "@type": "Article",
-  headline: "Les clauses indispensables dans un devis freelance, Guide complet 2026",
-  datePublished: "2026-06-29",
-  dateModified: "2026-06-29",
-  author: { "@type": "Organization", name: "Deviso", url: "https://getdeviso.fr" },
-  publisher: { "@type": "Organization", name: "Deviso", url: "https://getdeviso.fr" },
-  inLanguage: "fr",
-  mainEntityOfPage: { "@type": "WebPage", "@id": "https://getdeviso.fr/blog/clauses-devis-freelance" },
-  mainEntity: {
-    "@type": "FAQPage",
-    mainEntity: [
-      {
-        "@type": "Question",
-        name: "Un devis freelance a-t-il la même valeur juridique qu'un contrat ?",
-        acceptedAnswer: {
-          "@type": "Answer",
-          text: "Oui, un devis signé des deux parties constitue un contrat au sens juridique. Il engage le freelance à réaliser la prestation décrite aux conditions mentionnées, et le client à payer le prix convenu. Les clauses que vous incluez dans votre devis ont donc une valeur contractuelle pleine et entière.",
-        },
-      },
-      {
-        "@type": "Question",
-        name: "Les pénalités de retard sont-elles obligatoires dans une facture ?",
-        acceptedAnswer: {
-          "@type": "Answer",
-          text: "Oui, pour les relations entre professionnels (B2B), la mention des pénalités de retard est obligatoire sur les factures (Code de commerce, art. L441-9). Le taux minimum légal est 3 fois le taux d'intérêt légal. Il est fortement recommandé de les mentionner aussi dans le devis.",
-        },
-      },
-      {
-        "@type": "Question",
-        name: "Quand les droits d'auteur sont-ils transférés au client ?",
-        acceptedAnswer: {
-          "@type": "Answer",
-          text: "Sans mention contraire, les droits d'auteur appartiennent au créateur (graphiste, développeur, photographe, traducteur, rédacteur). La cession des droits doit être explicitement mentionnée dans le devis ou contrat, avec la durée, le territoire et les supports d'exploitation. La pratique la plus courante : la cession est conditionnée au paiement intégral de la facture.",
-        },
-      },
-    ],
-  },
-};
+export const metadata = metadonneesArticle(SLUG);
+
+/**
+ * Les questions affichées sur la page, et balisées en `FAQPage` à partir de cette
+ * même liste. Une seule source : un `FAQPage` qui annonce une réponse absente du
+ * contenu visible est une déclaration fausse.
+ */
 
 const clauses = [
   {
@@ -243,7 +197,13 @@ const metierLinks = [
   { label: "Traducteur freelance", href: "/freelance-traducteur" },
 ];
 
-const faq = [
+/**
+ * Les questions affichées sur la page, et balisées en `FAQPage` à partir de cette
+ * même liste. Avant, la page en affichait cinq et le balisage en déclarait trois,
+ * dans une rédaction légèrement différente : le balisage annonçait à Google des
+ * réponses introuvables telles quelles dans le contenu.
+ */
+const FAQ = [
   {
     q: "Un devis freelance a-t-il la même valeur juridique qu'un contrat ?",
     a: "Oui. Un devis signé des deux parties constitue un contrat au sens juridique. Il engage le freelance à réaliser la prestation aux conditions décrites, et le client à payer le prix convenu. Les clauses que vous incluez ont donc une valeur contractuelle pleine et entière, d'où l'importance de les rédiger avec soin.",
@@ -269,7 +229,7 @@ const faq = [
 export default function Page() {
   return (
     <div className="min-h-screen bg-ds-bg">
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
+      <DonneesStructurees donnees={jsonLdArticle(SLUG, FAQ)} />
 
       {/* ── Bandeau 2026 ── */}
       <div className="fixed top-0 left-0 right-0 bg-indigo-950/95 backdrop-blur-sm border-b border-indigo-500/20 py-2 px-4 text-center text-sm" style={{ zIndex: 60 }}>
@@ -417,7 +377,7 @@ export default function Page() {
           <div className="mt-16">
             <h2 className="text-xl font-semibold text-white mb-6">Questions fréquentes</h2>
             <div className="space-y-4">
-              {faq.map((item) => (
+              {FAQ.map((item) => (
                 <div key={item.q} className="bg-ds-surface border border-ds-border rounded-xl p-5">
                   <p className="font-medium text-white text-sm mb-2">{item.q}</p>
                   <p className="text-gray-400 text-sm leading-relaxed">{item.a}</p>
@@ -451,40 +411,7 @@ export default function Page() {
       </article>
 
       {/* ── Footer ── */}
-      <footer className="border-t border-ds-border py-10 px-4 sm:px-6">
-        <div className="max-w-6xl mx-auto">
-          <div className="grid grid-cols-3 gap-8 text-sm text-gray-500 mb-8">
-            <div>
-              <div className="text-white font-semibold mb-3">Produit</div>
-              <ul className="space-y-2">
-                <li><Link href="/#fonctionnalites" className="hover:text-gray-300 transition-colors">Fonctionnalités</Link></li>
-                <li><Link href="/#tarifs" className="hover:text-gray-300 transition-colors">Tarifs</Link></li>
-                <li><Link href="/blog" className="hover:text-gray-300 transition-colors">Blog</Link></li>
-              </ul>
-            </div>
-            <div>
-              <div className="text-white font-semibold mb-3">Métiers</div>
-              <ul className="space-y-2">
-                {metierLinks.slice(0, 6).map((m) => (
-                  <li key={m.href}><Link href={m.href} className="hover:text-gray-300 transition-colors">{m.label}</Link></li>
-                ))}
-              </ul>
-            </div>
-            <div>
-              <div className="text-white font-semibold mb-3">Légal</div>
-              <ul className="space-y-2">
-                <li><Link href="/mentions-legales" className="hover:text-gray-300 transition-colors">Mentions légales</Link></li>
-                <li><Link href="/confidentialite" className="hover:text-gray-300 transition-colors">Confidentialité</Link></li>
-                <li><Link href="/cgu" className="hover:text-gray-300 transition-colors">CGU</Link></li>
-              </ul>
-            </div>
-          </div>
-          <div className="flex items-center justify-between text-xs text-gray-400">
-            <p>© 2026 Deviso · SafeTone Studio · SIREN 103 340 857</p>
-            <Link href="/" className="text-gray-500 hover:text-gray-300 transition-colors">getdeviso.fr</Link>
-          </div>
-        </div>
-      </footer>
+      <SiteFooter />
     </div>
   );
 }

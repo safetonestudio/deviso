@@ -9,6 +9,10 @@ recherche, les Core Web Vitals mesurés sur le terrain, et l'état d'indexation 
 Le bac à sable ne peut pas joindre getdeviso.fr (proxy). Ces quatre points demandent un accès
 Search Console et un outil payant (Ahrefs ou Semrush) ; ils sont listés en fin de document.
 
+**Révisions de ce document.** Le 11/09/2026, le §3.4 a été corrigé : il affirmait à tort que le
+pilier réforme ne redistribuait pas vers ses satellites. Le détail de l'erreur est conservé sur
+place.
+
 ---
 
 ## Verdict en une page
@@ -223,21 +227,21 @@ vont dans le même sens, vers la landing. C'est le
 gisement de maillage interne le plus facile du site : **trois liens à ajouter dans deux composants
 partagés** (`FreelanceLanding.tsx` et `BlogPost.tsx`), et les 30 pages en bénéficient d'un coup.
 
-### 3.4 Le cluster réforme est en étoile, mais l'étoile ne redistribue pas
+### 3.4 Le cluster réforme, lui, est correctement maillé
 
-Les cinq articles réforme :
+**Correction apportée le 11/09/2026 après vérification.** Une première version de cet audit
+affirmait que le pilier `facturation-electronique-2026` ne pointait que vers un seul de ses quatre
+satellites. C'était faux, et l'erreur venait de ma méthode : j'avais compté les `href="/blog/…"` en
+attribut JSX, alors que les liens du cluster sont écrits sous forme d'objets
+(`{ href: "/blog/…", title: "…" }`) dans un tableau parcouru par `.map()`. Ils étaient invisibles à
+ma recherche, pas au navigateur.
 
-```
-facturation-electronique-2026  (le pilier)
- ├── reforme-facturation-micro-entrepreneur  → pointe vers le pilier
- ├── choisir-plateforme-agreee-freelance     → pointe vers le pilier
- ├── e-reporting-freelance-2026              → pointe vers le pilier  ← et le pilier y répond
- └── checklist-reforme-facturation-2026      → pointe vers le pilier
-```
+Le décompte réel, toutes formes confondues : **chacun des cinq articles réforme pointe vers les
+quatre autres**, plus l'index. Le cluster est bidirectionnel et complet. C'est la partie la mieux
+construite du maillage du site, et il n'y a rien à y faire.
 
-Les quatre satellites pointent vers le pilier. Le pilier ne pointe que vers **un seul** satellite
-(`e-reporting`). Un cluster ne fonctionne que dans les deux sens : le pilier capte l'autorité, puis
-la redistribue. Ici il la capte et la garde.
+Je laisse le constat erroné visible plutôt que de le supprimer : un audit dont on ne peut pas voir
+les corrections ne se relit pas avec le bon degré de méfiance.
 
 ### 3.5 Dix articles sont des culs-de-sac éditoriaux
 

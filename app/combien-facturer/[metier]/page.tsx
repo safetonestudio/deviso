@@ -1,4 +1,8 @@
 import type { Metadata } from "next";
+import { SiteFooter } from "@/components/SiteFooter";
+import { DonneesStructurees } from "@/components/DonneesStructurees";
+import { SITE } from "@/lib/blog/registre";
+import { metierDeLanding } from "@/lib/blog/metiers";
 import { notFound } from "next/navigation";
 import Link from "next/link";
 import {
@@ -77,24 +81,39 @@ export default async function MetierTarifsPage({ params }: Props) {
 
   const defaultTjm = Math.round((data.tjm.confirme.min + data.tjm.confirme.max) / 2);
 
+  // Le fil d'Ariane manquait sur tout le site. Il fait afficher le chemin de la
+  // page dans les résultats Google au lieu de l'URL brute, et il coûte six lignes.
   const jsonLd = {
     "@context": "https://schema.org",
-    "@type": "FAQPage",
-    mainEntity: data.faq.map(({ q, a }) => ({
-      "@type": "Question",
-      name: q,
-      acceptedAnswer: { "@type": "Answer", text: a },
-    })),
+    "@graph": [
+      {
+        "@type": "FAQPage",
+        mainEntity: data.faq.map(({ q, a }) => ({
+          "@type": "Question",
+          name: q,
+          acceptedAnswer: { "@type": "Answer", text: a },
+        })),
+      },
+      {
+        "@type": "BreadcrumbList",
+        itemListElement: [
+          { "@type": "ListItem", position: 1, name: "Accueil", item: SITE },
+          { "@type": "ListItem", position: 2, name: "Combien facturer", item: `${SITE}/combien-facturer` },
+          { "@type": "ListItem", position: 3, name: data.name },
+        ],
+      },
+    ],
   };
+
+  // L'article du blog consacré au même métier. Il pointait déjà vers cette page
+  // et vers la landing ; l'inverse n'existait pas.
+  const guide = metierDeLanding(data.landingHref)?.article;
 
   const otherMetiers = TARIFS_DATA.filter((m) => m.slug !== data.slug).slice(0, 5);
 
   return (
     <div className="min-h-screen bg-ds-bg text-white">
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
-      />
+      <DonneesStructurees donnees={jsonLd} />
 
       {/* Navbar */}
       <nav className="sticky top-0 z-40 bg-ds-bg/90 backdrop-blur-xl border-b border-white/[0.06]">
@@ -272,6 +291,32 @@ export default async function MetierTarifsPage({ params }: Props) {
           </div>
         </section>
 
+        {/* ── Le guide du même métier ──
+            Cette page pointait vers la landing produit, mais pas vers l'article
+            qui, lui, pointait ici. Une arête manquante sur un triangle de trois
+            pages qui visent le même sujet. ── */}
+        {guide && (
+          <section className="bg-ds-surface border border-ds-border rounded-2xl p-6">
+            <p className="text-xs text-gray-500 font-medium uppercase tracking-wider mb-2">
+              Guide pratique
+            </p>
+            <h2 className="text-lg font-semibold text-white mb-2">
+              Savoir quoi facturer, c&apos;est une chose. Savoir l&apos;écrire sur un devis, c&apos;en est
+              une autre.
+            </h2>
+            <p className="text-sm text-gray-400 leading-relaxed mb-4">
+              Mentions obligatoires, exemple chiffré, clauses qui protègent des révisions sans fin
+              et des impayés, erreurs les plus fréquentes.
+            </p>
+            <Link
+              href={guide.href}
+              className="inline-flex items-center gap-2 text-indigo-400 hover:text-indigo-300 font-medium text-sm transition-colors"
+            >
+              Lire le guide du devis {data.label} →
+            </Link>
+          </section>
+        )}
+
         {/* FAQ */}
         <section>
           <h2 className="text-xl font-bold text-white mb-6">
@@ -310,7 +355,7 @@ export default async function MetierTarifsPage({ params }: Props) {
         </section>
 
         {/* Footer */}
-        <footer className="border-t border-ds-border pt-6 pb-2 text-xs text-gray-400 flex flex-wrap gap-4">
+        <nav aria-label="Naviguer" className="border-t border-ds-border pt-6 pb-2 text-xs text-gray-400 flex flex-wrap gap-4">
           <Link href="/" className="hover:text-gray-500 transition-colors">Accueil</Link>
           <Link href="/combien-facturer" className="hover:text-gray-500 transition-colors">Tarifs freelance</Link>
           <Link href={data.landingHref} className="hover:text-gray-500 transition-colors">
@@ -323,8 +368,10 @@ export default async function MetierTarifsPage({ params }: Props) {
           <Link href="/mentions-legales" className="hover:text-gray-500 transition-colors">
             Mentions légales
           </Link>
-        </footer>
+        </nav>
       </div>
+
+      <SiteFooter />
     </div>
   );
 }

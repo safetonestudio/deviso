@@ -53,7 +53,7 @@ function SignupForm() {
       <div className="min-h-screen bg-ds-bg flex items-center justify-center px-4">
         <div className="w-full max-w-md text-center">
           <MailCheck size={44} className="mx-auto mb-4 text-indigo-400" />
-          <h2 className="text-2xl font-extrabold text-white mb-2">Vérifie tes emails</h2>
+          <h2 className="text-2xl font-bold text-white mb-2">Vérifie tes emails</h2>
           <p className="text-gray-400 mb-6">
             On a envoyé un lien de confirmation à <strong className="text-white">{email}</strong>. Clique dessus pour
             activer ton compte.
@@ -79,7 +79,7 @@ function SignupForm() {
         </div>
 
         <div className="bg-ds-surface rounded-2xl border border-ds-border p-8">
-          <h1 className="text-2xl font-extrabold text-white mb-1">Créer un compte</h1>
+          <h1 className="text-2xl font-bold text-white mb-1">Créer un compte</h1>
           <p className="text-gray-400 text-sm mb-6">
             Déjà inscrit ?{" "}
             <Link
@@ -164,7 +164,7 @@ function SignupSkeleton() {
           <span className="font-bold text-xl text-white">Deviso</span>
         </div>
         <div className="bg-ds-surface rounded-2xl border border-ds-border p-8">
-          <h1 className="text-2xl font-extrabold text-white mb-1">Créer un compte</h1>
+          <h1 className="text-2xl font-bold text-white mb-1">Créer un compte</h1>
           <p className="text-gray-400 text-sm">Chargement…</p>
         </div>
       </div>

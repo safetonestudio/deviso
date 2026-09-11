@@ -1,6 +1,33 @@
 import Link from "next/link";
 import { NavbarMobile } from "@/components/NavbarMobile";
 import { WaitlistButton } from "@/components/landing/WaitlistButton";
+import { SiteFooter } from "@/components/SiteFooter";
+import { DonneesStructurees } from "@/components/DonneesStructurees";
+import { article } from "@/lib/blog/registre";
+import { jsonLdArticle, suggestionsDeLecture } from "@/lib/blog/meta";
+import { metierDeLanding, METIERS_LANDING } from "@/lib/blog/metiers";
+
+/**
+ * Le gabarit d'un article « devis par métier ».
+ *
+ * Ce qui a changé, et pourquoi. Le composant recevait son titre, ses dates, son
+ * métier et son libellé en propriétés, et chaque page d'article les redonnait
+ * une deuxième fois dans son `export const metadata` et une troisième dans son
+ * objet `jsonLd`. Trois copies de la même information par article, dix articles :
+ * l'audit du 11/09/2026 a trouvé, sans surprise, qu'elles avaient divergé — des
+ * `dateModified` figés à la date de publication, et aucun `BreadcrumbList` nulle
+ * part, parce qu'ajouter un quatrième bloc de balisage à la main dans dix
+ * fichiers ne se fait jamais.
+ *
+ * Le gabarit ne reçoit plus qu'un `slug`. Il lit le reste dans le registre, et
+ * il émet lui-même ses données structurées.
+ *
+ * La conséquence la plus utile est invisible : le `FAQPage` est construit à
+ * partir de la **même** liste `faq` que celle affichée. Il ne peut plus annoncer
+ * à Google une réponse absente de la page — c'est exactement le genre de
+ * décalage qui fait perdre l'affichage enrichi, et il était structurellement
+ * possible avant.
+ */
 
 export interface BlogMandatoryItem {
   title: string;
@@ -24,57 +51,32 @@ export interface BlogFAQItem {
 }
 
 export interface BlogPostProps {
-  // Identity
-  h1: string;
-  datePublished: string; // "2026-06-29"
-  readingTime: number; // minutes
-  profession: string; // "graphiste freelance"
-  professionPlural: string; // "graphistes freelances"
-  landingHref: string; // "/freelance-graphiste"
-  landingLabel: string; // "logiciel de devis pour graphistes"
+  /** Slug du registre. Tout le reste en découle. */
+  slug: string;
 
   // Intro
   intro: string;
 
-  // Mandatory mentions section
+  // Mentions obligatoires
   mandatoryTitle: string;
   mandatoryIntro: string;
   mandatoryItems: BlogMandatoryItem[];
 
-  // Example devis
+  // Exemple de devis
   exampleClient: string;
   exampleLines: BlogExampleLine[];
   exampleTotal: string;
   exampleNote: string;
 
-  // Mistakes
+  // Erreurs fréquentes
   mistakes: BlogMistake[];
 
-  // FAQ
+  /** Affichée sur la page ET balisée en `FAQPage`. Une seule source. */
   faq: BlogFAQItem[];
 }
 
-const metierLinks = [
-  { label: "Graphiste freelance", href: "/freelance-graphiste" },
-  { label: "Développeur web", href: "/freelance-developpeur" },
-  { label: "Consultant indépendant", href: "/freelance-consultant" },
-  { label: "Photographe freelance", href: "/freelance-photographe" },
-  { label: "Rédacteur & copywriter", href: "/freelance-redacteur" },
-  { label: "Formateur indépendant", href: "/freelance-formateur" },
-  { label: "Artisan BTP", href: "/freelance-artisan" },
-  { label: "Community manager", href: "/freelance-community-manager" },
-  { label: "Coach freelance", href: "/freelance-coach" },
-  { label: "Traducteur freelance", href: "/freelance-traducteur" },
-];
-
 export function BlogPost({
-  h1,
-  datePublished,
-  readingTime,
-  profession,
-  professionPlural,
-  landingHref,
-  landingLabel,
+  slug,
   intro,
   mandatoryTitle,
   mandatoryIntro,
@@ -86,14 +88,23 @@ export function BlogPost({
   mistakes,
   faq,
 }: BlogPostProps) {
-  const dateFormatted = new Date(datePublished).toLocaleDateString("fr-FR", {
-    year: "numeric",
-    month: "long",
-    day: "numeric",
-  });
+  const a = article(slug);
+  const m = a.metier;
+  if (!m) {
+    throw new Error(
+      `[blog] « ${slug} » utilise <BlogPost> mais n'a pas de bloc \`metier\` dans le registre.`
+    );
+  }
+  const { landing: landingHref, landingLabel, profession, professionPluriel } = m;
+  const tarifs = metierDeLanding(landingHref)?.tarifs;
+  const lectures = suggestionsDeLecture(slug);
+
+  const formaterDate = (iso: string) =>
+    new Date(iso).toLocaleDateString("fr-FR", { year: "numeric", month: "long", day: "numeric" });
 
   return (
     <div className="min-h-screen bg-ds-bg">
+      <DonneesStructurees donnees={jsonLdArticle(slug, faq)} />
       {/* ── Bandeau réforme 2026 ── */}
       <div
         className="fixed top-0 left-0 right-0 bg-indigo-950/95 backdrop-blur-sm border-b border-indigo-500/20 py-2 px-4 text-center text-sm"
@@ -119,7 +130,7 @@ export function BlogPost({
           <div className="hidden md:flex items-center gap-8 text-sm font-medium">
             <Link href="/blog" className="text-gray-400 hover:text-white transition-colors">Blog</Link>
             <Link href={landingHref} className="text-gray-400 hover:text-white transition-colors capitalize">
-              Pour les {professionPlural}
+              Pour les {professionPluriel}
             </Link>
             <Link href="/#tarifs" className="text-gray-400 hover:text-white transition-colors">Tarifs</Link>
           </div>
@@ -147,7 +158,7 @@ export function BlogPost({
             <span>/</span>
             <Link href="/blog" className="hover:text-gray-300 transition-colors">Blog</Link>
             <span>/</span>
-            <span className="text-gray-400 truncate max-w-[200px] sm:max-w-none">{h1}</span>
+            <span className="text-gray-400 truncate max-w-[200px] sm:max-w-none">{a.carte.titre}</span>
           </nav>
 
           {/* Header */}
@@ -156,13 +167,19 @@ export function BlogPost({
               Guide pratique · {profession}
             </div>
             <h1 className="text-3xl sm:text-4xl font-semibold text-white leading-tight mb-4">
-              {h1}
+              {a.h1}
             </h1>
-            <div className="flex items-center gap-4 text-sm text-gray-500">
-              <time dateTime={datePublished}>{dateFormatted}</time>
-              <span>·</span>
-              <span>{readingTime} min de lecture</span>
-              <span>·</span>
+            <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-sm text-gray-500">
+              {a.misAJourLe !== a.publieLe ? (
+                <time dateTime={a.misAJourLe} className="text-gray-400">
+                  Mis à jour le {formaterDate(a.misAJourLe)}
+                </time>
+              ) : (
+                <time dateTime={a.publieLe}>{formaterDate(a.publieLe)}</time>
+              )}
+              <span aria-hidden>·</span>
+              <span>{a.dureeLecture} min de lecture</span>
+              <span aria-hidden>·</span>
               <Link href={landingHref} className="text-indigo-400 hover:text-indigo-300 transition-colors">
                 {landingLabel} →
               </Link>
@@ -277,17 +294,61 @@ export function BlogPost({
             </div>
           </section>
 
+          {/* ── Combien facturer : la page tarifs du même métier ── */}
+          {tarifs && (
+            <section className="mb-12 bg-ds-surface border border-ds-border rounded-2xl p-6">
+              <p className="text-xs text-gray-500 font-medium uppercase tracking-wider mb-2">
+                Et côté prix ?
+              </p>
+              <h2 className="text-xl font-semibold text-white mb-2">
+                Combien facturer quand on est {profession} ?
+              </h2>
+              <p className="text-gray-400 text-sm leading-relaxed mb-4">
+                Fourchettes de TJM par niveau d&apos;expérience, spécialités qui se paient plus cher,
+                et un simulateur pour savoir ce qu&apos;il vous reste après cotisations.
+              </p>
+              <Link
+                href={tarifs.href}
+                className="inline-flex items-center gap-2 text-indigo-400 hover:text-indigo-300 font-medium text-sm transition-colors"
+              >
+                Voir les tarifs d&apos;un {tarifs.label} →
+              </Link>
+            </section>
+          )}
+
+          {/* ── À lire ensuite ── */}
+          {lectures.length > 0 && (
+            <section className="mb-12">
+              <h2 className="text-2xl font-semibold text-white mb-6">À lire ensuite</h2>
+              <div className="grid gap-4 sm:grid-cols-2">
+                {lectures.map((l) => (
+                  <Link
+                    key={l.href}
+                    href={l.href}
+                    className="group bg-ds-surface border border-ds-border rounded-xl p-5 hover:border-indigo-500/40 transition-all"
+                  >
+                    <p className="text-white font-medium text-sm leading-snug mb-2 group-hover:text-indigo-200 transition-colors">
+                      {l.titre}
+                    </p>
+                    <p className="text-gray-500 text-xs leading-relaxed line-clamp-2 mb-3">{l.resume}</p>
+                    <p className="text-gray-600 text-xs">{l.dureeLecture} min de lecture</p>
+                  </Link>
+                ))}
+              </div>
+            </section>
+          )}
+
           {/* ── Autres métiers ── */}
           <section className="border-t border-ds-border pt-10">
             <p className="text-sm text-gray-500 mb-4 font-medium uppercase tracking-wider">Deviso par métier</p>
             <div className="flex flex-wrap gap-2">
-              {metierLinks.map((m) => (
+              {METIERS_LANDING.filter((x) => x.landing !== landingHref).map((x) => (
                 <Link
-                  key={m.href}
-                  href={m.href}
+                  key={x.landing}
+                  href={x.landing}
                   className="text-sm px-4 py-2 rounded-full border border-ds-border text-gray-400 hover:text-white hover:border-gray-500 transition-colors"
                 >
-                  {m.label}
+                  {x.label}
                 </Link>
               ))}
             </div>
@@ -295,43 +356,8 @@ export function BlogPost({
         </article>
       </main>
 
-      {/* ── Footer ── */}
-      <footer className="border-t border-ds-border py-10 px-4 sm:px-6">
-        <div className="max-w-6xl mx-auto">
-          <div className="grid grid-cols-3 gap-8 text-sm text-gray-500 mb-8">
-            <div>
-              <div className="text-white font-semibold mb-3">Produit</div>
-              <ul className="space-y-2">
-                <li><Link href="/#fonctionnalites" className="hover:text-gray-300 transition-colors">Fonctionnalités</Link></li>
-                <li><Link href="/#tarifs" className="hover:text-gray-300 transition-colors">Tarifs</Link></li>
-                <li><Link href="/blog" className="hover:text-gray-300 transition-colors">Blog</Link></li>
-              </ul>
-            </div>
-            <div>
-              <div className="text-white font-semibold mb-3">Métiers</div>
-              <ul className="space-y-2">
-                {metierLinks.map((m) => (
-                  <li key={m.href}>
-                    <Link href={m.href} className="hover:text-gray-300 transition-colors">{m.label}</Link>
-                  </li>
-                ))}
-              </ul>
-            </div>
-            <div>
-              <div className="text-white font-semibold mb-3">Légal</div>
-              <ul className="space-y-2">
-                <li><Link href="/mentions-legales" className="hover:text-gray-300 transition-colors">Mentions légales</Link></li>
-                <li><Link href="/confidentialite" className="hover:text-gray-300 transition-colors">Confidentialité</Link></li>
-                <li><Link href="/cgu" className="hover:text-gray-300 transition-colors">CGU</Link></li>
-              </ul>
-            </div>
-          </div>
-          <div className="flex items-center justify-between text-xs text-gray-400">
-            <p>© 2026 Deviso · SafeTone Studio · SIREN 103 340 857</p>
-            <Link href="/" className="text-gray-500 hover:text-gray-300 transition-colors">getdeviso.fr</Link>
-          </div>
-        </div>
-      </footer>
+      <SiteFooter />
+
     </div>
   );
 }

@@ -1,4 +1,7 @@
 import type { Metadata } from "next";
+import { SiteFooter } from "@/components/SiteFooter";
+import { DonneesStructurees } from "@/components/DonneesStructurees";
+import { SITE } from "@/lib/blog/registre";
 import Link from "next/link";
 import { TjmSimulator } from "@/components/landing/TjmSimulator";
 import { TARIFS_DATA } from "@/lib/tarifs-data";
@@ -19,31 +22,42 @@ export const metadata: Metadata = {
 
 const jsonLd = {
   "@context": "https://schema.org",
-  "@type": "FAQPage",
-  mainEntity: [
+  "@graph": [
     {
-      "@type": "Question",
-      name: "Quel est le TJM moyen d'un freelance en France en 2026 ?",
-      acceptedAnswer: {
-        "@type": "Answer",
-        text: "Le TJM médian d'un freelance en France est d'environ 420 €/jour (Malt Baromètre 2026). Il varie fortement selon le métier : de 150 €/j pour un community manager débutant à plus de 1 400 €/j pour un consultant senior en finance ou pharma.",
+      "@type": "FAQPage",
+    mainEntity: [
+      {
+        "@type": "Question",
+        name: "Quel est le TJM moyen d'un freelance en France en 2026 ?",
+        acceptedAnswer: {
+          "@type": "Answer",
+          text: "Le TJM médian d'un freelance en France est d'environ 420 €/jour (Malt Baromètre 2026). Il varie fortement selon le métier : de 150 €/j pour un community manager débutant à plus de 1 400 €/j pour un consultant senior en finance ou pharma.",
+        },
       },
+      {
+        "@type": "Question",
+        name: "Comment calculer son revenu net en freelance à partir de son TJM ?",
+        acceptedAnswer: {
+          "@type": "Answer",
+          text: "En micro-BNC (prestation intellectuelle) : CA mensuel = TJM × jours facturables (≈15/mois). Cotisations URSSAF = CA × 22 %. Revenu net avant IR = CA × 78 %. Exemple : 400 €/j × 15 j = 6 000 € de CA → 4 680 € net avant impôt.",
+        },
+      },
+      {
+        "@type": "Question",
+        name: "Combien de jours par mois un freelance peut-il réellement facturer ?",
+        acceptedAnswer: {
+          "@type": "Answer",
+          text: "En moyenne 12 à 17 jours par mois selon le métier, après déduction des congés (5 semaines/an), de la prospection, de l'administration et de la formation. Les consultants en régie ont les taux les plus élevés (16–18 j/mois), les coachs et formateurs les plus bas (10–12 j/mois).",
+        },
+      },
+    ],
     },
     {
-      "@type": "Question",
-      name: "Comment calculer son revenu net en freelance à partir de son TJM ?",
-      acceptedAnswer: {
-        "@type": "Answer",
-        text: "En micro-BNC (prestation intellectuelle) : CA mensuel = TJM × jours facturables (≈15/mois). Cotisations URSSAF = CA × 22 %. Revenu net avant IR = CA × 78 %. Exemple : 400 €/j × 15 j = 6 000 € de CA → 4 680 € net avant impôt.",
-      },
-    },
-    {
-      "@type": "Question",
-      name: "Combien de jours par mois un freelance peut-il réellement facturer ?",
-      acceptedAnswer: {
-        "@type": "Answer",
-        text: "En moyenne 12 à 17 jours par mois selon le métier, après déduction des congés (5 semaines/an), de la prospection, de l'administration et de la formation. Les consultants en régie ont les taux les plus élevés (16–18 j/mois), les coachs et formateurs les plus bas (10–12 j/mois).",
-      },
+      "@type": "BreadcrumbList",
+      itemListElement: [
+        { "@type": "ListItem", position: 1, name: "Accueil", item: SITE },
+        { "@type": "ListItem", position: 2, name: "Combien facturer" },
+      ],
     },
   ],
 };
@@ -51,10 +65,7 @@ const jsonLd = {
 export default function CombienFacturerPage() {
   return (
     <div className="min-h-screen bg-ds-bg text-white">
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
-      />
+      <DonneesStructurees donnees={jsonLd} />
 
       {/* ── Navbar ── */}
       <nav className="sticky top-0 z-40 bg-ds-bg/90 backdrop-blur-xl border-b border-white/[0.06]">
@@ -257,7 +268,7 @@ export default function CombienFacturerPage() {
         </section>
 
         {/* ── Footer métiers ── */}
-        <footer className="border-t border-ds-border pt-8 pb-4">
+        <nav aria-label="Tous les TJM par métier" className="border-t border-ds-border pt-8 pb-4">
           <div className="flex flex-wrap gap-x-6 gap-y-2 text-xs text-gray-500">
             {TARIFS_DATA.map((m) => (
               <Link
@@ -279,8 +290,10 @@ export default function CombienFacturerPage() {
             {" · "}
             <Link href="/mentions-legales" className="hover:text-gray-500 transition-colors">Mentions légales</Link>
           </p>
-        </footer>
+        </nav>
       </div>
+
+      <SiteFooter />
     </div>
   );
 }

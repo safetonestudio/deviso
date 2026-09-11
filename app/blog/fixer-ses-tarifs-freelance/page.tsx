@@ -1,53 +1,29 @@
-import type { Metadata } from "next";
+import { DonneesStructurees } from "@/components/DonneesStructurees";
+import { SiteFooter } from "@/components/SiteFooter";
+import { jsonLdArticle, metadonneesArticle } from "@/lib/blog/meta";
 import Link from "next/link";
 import { NavbarMobile } from "@/components/NavbarMobile";
 import { WaitlistButton } from "@/components/landing/WaitlistButton";
 
-export const metadata: Metadata = {
-  title: "Fixer ses tarifs en freelance : TJM et méthodes",
-  description:
-    "Calculer son TJM en freelance : 3 méthodes, les erreurs classiques, et comment augmenter ses tarifs sans perdre ses clients.",
-  alternates: { canonical: "https://getdeviso.fr/blog/fixer-ses-tarifs-freelance" },
-  openGraph: {
-    title: "Comment fixer ses tarifs en freelance : TJM, méthodes, erreurs à éviter",
-    description: "Les 3 méthodes pour calculer son TJM, les erreurs classiques, et comment augmenter ses tarifs. Guide complet pour freelances.",
-    url: "https://getdeviso.fr/blog/fixer-ses-tarifs-freelance",
-    images: [{ url: "https://getdeviso.fr/opengraph-image", width: 1200, height: 630, alt: "Deviso, logiciel de devis et facturation" }],
-  },
-};
+const SLUG = "fixer-ses-tarifs-freelance";
 
-const jsonLd = {
-  "@context": "https://schema.org",
-  "@type": "Article",
-  headline: "Comment fixer ses tarifs en freelance : TJM, méthodes et erreurs à éviter",
-  datePublished: "2026-06-29",
-  dateModified: "2026-06-29",
-  author: { "@type": "Organization", name: "Deviso", url: "https://getdeviso.fr" },
-  publisher: { "@type": "Organization", name: "Deviso", url: "https://getdeviso.fr" },
-  inLanguage: "fr",
-  mainEntityOfPage: { "@type": "WebPage", "@id": "https://getdeviso.fr/blog/fixer-ses-tarifs-freelance" },
-  mainEntity: {
-    "@type": "FAQPage",
-    mainEntity: [
-      {
-        "@type": "Question",
-        name: "Comment calculer son TJM en freelance ?",
-        acceptedAnswer: {
-          "@type": "Answer",
-          text: "La méthode la plus fiable : (1) Estimez votre revenu net mensuel cible, (2) Ajoutez vos charges (URSSAF, mutuelle, retraite, frais professionnels, environ 45-55% du CA pour un auto-entrepreneur), (3) Divisez par votre nombre de jours facturables réels par mois (généralement 15-18 jours sur 20 jours ouvrés, en comptant les congés, la prospection, l'admin). Le résultat est votre TJM minimum. Ajoutez une marge selon votre positionnement et la demande.",
-        },
-      },
-      {
-        "@type": "Question",
-        name: "Faut-il afficher ses tarifs publiquement en freelance ?",
-        acceptedAnswer: {
-          "@type": "Answer",
-          text: "Il n'y a pas de règle universelle. Afficher une fourchette de tarifs sur son site filtre les clients qui n'ont pas le budget et réduit le temps passé à faire des devis non convertis. Garder ses tarifs confidentiels permet plus de flexibilité selon le client et la mission. La plupart des freelances B2B choisissent de ne pas afficher de tarifs mais de mentionner une fourchette dans les premiers échanges.",
-        },
-      },
-    ],
+export const metadata = metadonneesArticle(SLUG);
+
+/**
+ * Les questions affichées sur la page, et balisées en `FAQPage` à partir de cette
+ * même liste. Une seule source : un `FAQPage` qui annonce une réponse absente du
+ * contenu visible est une déclaration fausse.
+ */
+const FAQ = [
+  {
+    q: "Comment calculer son TJM en freelance ?",
+    a: "La méthode la plus fiable : (1) Estimez votre revenu net mensuel cible, (2) Ajoutez vos charges (URSSAF, mutuelle, retraite, frais professionnels, environ 45-55% du CA pour un auto-entrepreneur), (3) Divisez par votre nombre de jours facturables réels par mois (généralement 15-18 jours sur 20 jours ouvrés, en comptant les congés, la prospection, l'admin). Le résultat est votre TJM minimum. Ajoutez une marge selon votre positionnement et la demande.",
   },
-};
+  {
+    q: "Faut-il afficher ses tarifs publiquement en freelance ?",
+    a: "Il n'y a pas de règle universelle. Afficher une fourchette de tarifs sur son site filtre les clients qui n'ont pas le budget et réduit le temps passé à faire des devis non convertis. Garder ses tarifs confidentiels permet plus de flexibilité selon le client et la mission. La plupart des freelances B2B choisissent de ne pas afficher de tarifs mais de mentionner une fourchette dans les premiers échanges.",
+  },
+];
 
 const metierLinks = [
   { label: "Graphiste freelance", href: "/freelance-graphiste" },
@@ -61,7 +37,7 @@ const metierLinks = [
 export default function Page() {
   return (
     <div className="min-h-screen bg-ds-bg">
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
+      <DonneesStructurees donnees={jsonLdArticle(SLUG, FAQ)} />
 
       <div className="fixed top-0 left-0 right-0 bg-indigo-950/95 backdrop-blur-sm border-b border-indigo-500/20 py-2 px-4 text-center text-sm" style={{ zIndex: 60 }}>
         <span className="text-indigo-300 font-semibold">Réforme 2026&nbsp;:</span>
@@ -230,6 +206,19 @@ export default function Page() {
 
           </div>
 
+          {/* ── Questions fréquentes ── */}
+          <section className="mb-12">
+            <h2 className="text-2xl font-semibold text-white mb-6">Questions fréquentes</h2>
+            <div className="space-y-4">
+              {FAQ.map(({ q, a }) => (
+                <div key={q} className="bg-ds-surface rounded-xl border border-ds-border p-6">
+                  <h3 className="text-white font-medium mb-3">{q}</h3>
+                  <p className="text-gray-400 text-sm leading-relaxed">{a}</p>
+                </div>
+              ))}
+            </div>
+          </section>
+
           {/* CTA */}
           <div className="mt-14 bg-gradient-to-br from-indigo-900/40 to-violet-900/20 rounded-2xl border border-indigo-500/20 p-8 text-center">
             <h2 className="text-2xl font-semibold text-white mb-3">Facturez au bon prix, présentez-vous comme un pro</h2>
@@ -251,12 +240,7 @@ export default function Page() {
         </div>
       </article>
 
-      <footer className="border-t border-ds-border py-10 px-4 sm:px-6">
-        <div className="max-w-6xl mx-auto flex items-center justify-between text-xs text-gray-400">
-          <p>© 2026 Deviso · SafeTone Studio · SIREN 103 340 857</p>
-          <Link href="/" className="text-gray-500 hover:text-gray-300 transition-colors">getdeviso.fr</Link>
-        </div>
-      </footer>
+      <SiteFooter />
     </div>
   );
 }

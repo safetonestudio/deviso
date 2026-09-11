@@ -1,66 +1,38 @@
-import type { Metadata } from "next";
+import { DonneesStructurees } from "@/components/DonneesStructurees";
+import { SiteFooter } from "@/components/SiteFooter";
+import { jsonLdArticle, metadonneesArticle } from "@/lib/blog/meta";
 import Link from "next/link";
 import { NavbarMobile } from "@/components/NavbarMobile";
 import { WaitlistButton } from "@/components/landing/WaitlistButton";
 
-export const metadata: Metadata = {
-  title: "Choisir sa plateforme agréée (PDP) en freelance",
-  description:
-    "Le portail public (PPF) est abandonné : seules les plateformes agréées privées subsistent. 5 critères pour choisir la bonne quand on est freelance.",
-  alternates: { canonical: "https://getdeviso.fr/blog/choisir-plateforme-agreee-freelance" },
-  openGraph: {
-    title: "Comment choisir sa plateforme agréée (PDP) en tant que freelance",
-    description: "PPF abandonné, PDP obligatoire. Critères de choix, questions à poser, intégration avec votre logiciel de facturation.",
-    url: "https://getdeviso.fr/blog/choisir-plateforme-agreee-freelance",
-    images: [{ url: "https://getdeviso.fr/opengraph-image", width: 1200, height: 630, alt: "Choisir plateforme agréée PDP freelance" }],
-  },
-};
+const SLUG = "choisir-plateforme-agreee-freelance";
 
-const jsonLd = {
-  "@context": "https://schema.org",
-  "@type": "Article",
-  headline: "Comment choisir sa plateforme agréée (PDP) quand on est freelance",
-  datePublished: "2026-07-10",
-  dateModified: "2026-07-10",
-  author: { "@type": "Organization", name: "Deviso", url: "https://getdeviso.fr" },
-  publisher: { "@type": "Organization", name: "Deviso", url: "https://getdeviso.fr" },
-  inLanguage: "fr",
-  mainEntityOfPage: { "@type": "WebPage", "@id": "https://getdeviso.fr/blog/choisir-plateforme-agreee-freelance" },
-  mainEntity: {
-    "@type": "FAQPage",
-    mainEntity: [
-      {
-        "@type": "Question",
-        name: "C'est quoi une PDP (Plateforme de Dématérialisation Partenaire) ?",
-        acceptedAnswer: {
-          "@type": "Answer",
-          text: "Une PDP est une plateforme privée certifiée par la DGFiP pour transmettre les factures électroniques entre entreprises et déclarer les données fiscales à l'administration. Depuis l'abandon du PPF (portail public) en octobre 2024, seules les PDP privées sont habilitées pour la réforme de facturation électronique.",
-        },
-      },
-      {
-        "@type": "Question",
-        name: "Un freelance doit-il choisir sa propre PDP ?",
-        acceptedAnswer: {
-          "@type": "Answer",
-          text: "Pas nécessairement. Si votre logiciel de facturation est lui-même une PDP ou est connecté à une PDP, c'est transparent pour vous. Vous utilisez votre logiciel comme d'habitude, et la transmission à la DGFiP se fait automatiquement. Deviso sera connecté à une PDP avant l'échéance de septembre 2027.",
-        },
-      },
-      {
-        "@type": "Question",
-        name: "Combien coûte une PDP pour un freelance ?",
-        acceptedAnswer: {
-          "@type": "Answer",
-          text: "Le coût varie selon les prestataires. Certaines PDP facturent à la transaction (0,05 à 0,30 € par facture), d'autres proposent des abonnements mensuels. Beaucoup de logiciels de facturation incluront l'accès à une PDP dans leur abonnement existant, sans surcoût.",
-        },
-      },
-    ],
+export const metadata = metadonneesArticle(SLUG);
+
+/**
+ * Les questions affichées sur la page, et balisées en `FAQPage` à partir de cette
+ * même liste. Une seule source : un `FAQPage` qui annonce une réponse absente du
+ * contenu visible est une déclaration fausse.
+ */
+const FAQ = [
+  {
+    q: "C'est quoi une PDP (Plateforme de Dématérialisation Partenaire) ?",
+    a: "Une PDP est une plateforme privée certifiée par la DGFiP pour transmettre les factures électroniques entre entreprises et déclarer les données fiscales à l'administration. Depuis l'abandon du PPF (portail public) en octobre 2024, seules les PDP privées sont habilitées pour la réforme de facturation électronique.",
   },
-};
+  {
+    q: "Un freelance doit-il choisir sa propre PDP ?",
+    a: "Pas nécessairement. Si votre logiciel de facturation est lui-même une PDP ou est connecté à une PDP, c'est transparent pour vous. Vous utilisez votre logiciel comme d'habitude, et la transmission à la DGFiP se fait automatiquement. Deviso sera connecté à une PDP avant l'échéance de septembre 2027.",
+  },
+  {
+    q: "Combien coûte une PDP pour un freelance ?",
+    a: "Le coût varie selon les prestataires. Certaines PDP facturent à la transaction (0,05 à 0,30 € par facture), d'autres proposent des abonnements mensuels. Beaucoup de logiciels de facturation incluront l'accès à une PDP dans leur abonnement existant, sans surcoût.",
+  },
+];
 
 export default function ChoisirPlateformeAgreeePage() {
   return (
     <div className="min-h-screen bg-ds-bg">
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
+      <DonneesStructurees donnees={jsonLdArticle(SLUG, FAQ)} />
 
       <div className="fixed top-0 left-0 right-0 bg-indigo-950/95 backdrop-blur-sm border-b border-indigo-500/20 py-2 px-4 text-center text-sm" style={{ zIndex: 60 }}>
         <span className="text-indigo-300 font-semibold">Réforme 2026&nbsp;:</span>
@@ -108,7 +80,7 @@ export default function ChoisirPlateformeAgreeePage() {
             Comment choisir sa plateforme agréée (PDP) quand on est freelance ou indépendant
           </h1>
           <p className="text-lg text-gray-400 leading-relaxed">
-            Le portail public de facturation (PPF) a été abandonné en octobre 2024. Toutes les entreprises, y compris les freelances, devront passer par une Plateforme de Dématérialisation Partenaire (PDP) privée. Voici comment choisir.
+            Le portail public de facturation (PPF) a abandonné son rôle de plateforme d'échange en octobre 2024. Depuis le 1er septembre 2026, toute entreprise assujettie à la TVA, freelances compris, passe par une plateforme agréée privée. Voici comment choisir la vôtre.
           </p>
         </div>
 
@@ -124,7 +96,7 @@ export default function ChoisirPlateformeAgreeePage() {
               <li className="flex gap-2"><span className="text-indigo-400 shrink-0">2.</span> <span><strong className="text-white">Déclarer les données fiscales</strong> à la DGFiP en temps réel (montants, TVA, parties, date)</span></li>
             </ul>
             <p className="mt-3">
-              Avant 2024, on espérait pouvoir utiliser le Portail Public de Facturation (PPF) gratuitement. La DGFiP a annoncé son abandon en octobre 2024, laissant uniquement les PDP privées. Vous devrez en choisir une, mais dans la plupart des cas, votre logiciel de facturation s&apos;en chargera pour vous.
+              Avant 2024, on espérait pouvoir utiliser le Portail Public de Facturation (PPF) gratuitement pour émettre et recevoir. La DGFiP a abandonné cette fonction en octobre 2024, et l&apos;État a arrêté le développement du portail en août 2025 : il ne reste que les plateformes agréées privées. Vous devez donc en avoir une — mais dans la plupart des cas, votre logiciel de facturation s&apos;en charge pour vous.
             </p>
           </section>
 
@@ -180,7 +152,7 @@ export default function ChoisirPlateformeAgreeePage() {
                 },
               ].map(({ num, titre, desc }) => (
                 <div key={num} className="flex gap-4 bg-ds-surface border border-ds-border rounded-xl p-4">
-                  <span className="text-2xl font-black text-indigo-500/30 shrink-0 leading-none">{num}</span>
+                  <span className="text-2xl font-bold text-indigo-500/30 shrink-0 leading-none">{num}</span>
                   <div>
                     <p className="text-sm font-semibold text-white mb-1">{titre}</p>
                     <p className="text-sm">{desc}</p>
@@ -253,6 +225,19 @@ export default function ChoisirPlateformeAgreeePage() {
           </section>
         </div>
 
+        {/* ── Questions fréquentes ── */}
+        <section className="mb-12">
+          <h2 className="text-2xl font-semibold text-white mb-6">Questions fréquentes</h2>
+          <div className="space-y-4">
+            {FAQ.map(({ q, a }) => (
+              <div key={q} className="bg-ds-surface rounded-xl border border-ds-border p-6">
+                <h3 className="text-white font-medium mb-3">{q}</h3>
+                <p className="text-gray-400 text-sm leading-relaxed">{a}</p>
+              </div>
+            ))}
+          </div>
+        </section>
+
         <div className="mt-14 mb-10 bg-ds-surface border border-ds-border rounded-2xl p-6">
           <p className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-4">Cluster réforme 2026</p>
           <div className="space-y-3">
@@ -278,9 +263,7 @@ export default function ChoisirPlateformeAgreeePage() {
           <WaitlistButton plan="free" label="Essayer Deviso 14 jours →" className="inline-flex items-center gap-2 bg-indigo-600 hover:bg-indigo-500 text-white font-semibold px-6 py-3 rounded-xl transition-colors text-sm" />
         </div>
 
-        <footer className="border-t border-ds-border pt-8">
-          <Link href="/blog" className="text-xs text-gray-400 hover:text-white transition-colors">← Retour au blog</Link>
-        </footer>
+        <SiteFooter />
       </main>
     </div>
   );

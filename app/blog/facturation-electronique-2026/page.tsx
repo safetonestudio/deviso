@@ -1,71 +1,39 @@
-import type { Metadata } from "next";
+import { DonneesStructurees } from "@/components/DonneesStructurees";
+import { SiteFooter } from "@/components/SiteFooter";
+import { jsonLdArticle, metadonneesArticle } from "@/lib/blog/meta";
+import { article } from "@/lib/blog/registre";
 import Link from "next/link";
 import { NavbarMobile } from "@/components/NavbarMobile";
 import { WaitlistButton } from "@/components/landing/WaitlistButton";
 import { Zap } from "lucide-react";
 
-export const metadata: Metadata = {
-  title: "Facturation électronique 2026 : le guide",
-  description:
-    "Réforme facturation électronique 2026 : qui est concerné, à quelle date, quel format et comment se préparer. Guide pour freelances et micro-entrepreneurs.",
-  alternates: { canonical: "https://getdeviso.fr/blog/facturation-electronique-2026" },
-  openGraph: {
-    title: "Facturation électronique 2026 : le guide complet pour freelances",
-    description:
-      "Calendrier, formats Factur-X, plateformes agréées, e-reporting, tout comprendre en 10 minutes.",
-    url: "https://getdeviso.fr/blog/facturation-electronique-2026",
-    images: [{ url: "https://getdeviso.fr/opengraph-image", width: 1200, height: 630, alt: "Réforme facturation électronique 2026" }],
-  },
-};
+const SLUG = "facturation-electronique-2026";
 
-const jsonLd = {
-  "@context": "https://schema.org",
-  "@type": "Article",
-  headline: "Facturation électronique 2026 : le guide complet pour freelances et indépendants",
-  datePublished: "2026-07-10",
-  dateModified: "2026-07-10",
-  author: { "@type": "Organization", name: "Deviso", url: "https://getdeviso.fr" },
-  publisher: { "@type": "Organization", name: "Deviso", url: "https://getdeviso.fr" },
-  inLanguage: "fr",
-  mainEntityOfPage: { "@type": "WebPage", "@id": "https://getdeviso.fr/blog/facturation-electronique-2026" },
-  mainEntity: {
-    "@type": "FAQPage",
-    mainEntity: [
-      {
-        "@type": "Question",
-        name: "Qu'est-ce que la réforme de facturation électronique 2026 ?",
-        acceptedAnswer: {
-          "@type": "Answer",
-          text: "La réforme de facturation électronique oblige les entreprises françaises à émettre et recevoir leurs factures B2B dans un format électronique structuré (Factur-X, UBL, CII) via une plateforme agréée par la DGFiP. Elle s'applique en B2B uniquement. Le calendrier : grandes entreprises dès le 1er septembre 2026, ETI au 1er décembre 2026, PME et micro-entrepreneurs au 1er septembre 2027.",
-        },
-      },
-      {
-        "@type": "Question",
-        name: "Les freelances et micro-entrepreneurs sont-ils concernés par la réforme 2026 ?",
-        acceptedAnswer: {
-          "@type": "Answer",
-          text: "Oui, mais à partir de septembre 2027 pour l'obligation d'émettre. En revanche, dès septembre 2026, ils devront être capables de RECEVOIR des e-factures de la part de leurs clients qui sont de grandes entreprises. L'obligation ne disparaît pas si vous êtes en franchise de TVA, le régime fiscal et l'obligation de facturation électronique sont indépendants.",
-        },
-      },
-      {
-        "@type": "Question",
-        name: "Qu'est-ce que le format Factur-X ?",
-        acceptedAnswer: {
-          "@type": "Answer",
-          text: "Factur-X est le format hybride franco-allemand (PDF lisible + données XML structurées intégrées) reconnu comme standard en France. C'est le format accepté par la DGFiP et le plus simple à adopter pour les indépendants. Deviso génère automatiquement des factures au format Factur-X EN 16931, aucune action n'est requise de votre part.",
-        },
-      },
-      {
-        "@type": "Question",
-        name: "Le portail public de facturation (PPF) existe-t-il encore ?",
-        acceptedAnswer: {
-          "@type": "Answer",
-          text: "Non. Le PPF (portail public de facturation) a été abandonné en octobre 2024. La DGFiP a décidé de ne pas développer le portail public. Seules les Plateformes de Dématérialisation Partenaires (PDP), ou plateformes agréées privées, seront habilitées à transmettre les e-factures.",
-        },
-      },
-    ],
+export const metadata = metadonneesArticle(SLUG);
+
+/**
+ * Les questions affichées sur la page, et balisées en `FAQPage` à partir de cette
+ * même liste. Une seule source : un `FAQPage` qui annonce une réponse absente du
+ * contenu visible est une déclaration fausse.
+ */
+const FAQ = [
+  {
+    q: "Qu'est-ce que la réforme de facturation électronique 2026 ?",
+    a: "La réforme oblige les entreprises françaises à émettre et recevoir leurs factures B2B dans un format électronique structuré (Factur-X, UBL, CII) via une plateforme agréée par la DGFiP. Elle est entrée en application le 1er septembre 2026. Le calendrier officiel ne comporte que deux dates d'émission : le 1er septembre 2026 pour les grandes entreprises et les ETI, et le 1er septembre 2027 pour les TPE, PME et micro-entreprises. En revanche, l'obligation de pouvoir RECEVOIR une facture électronique via une plateforme agréée s'applique depuis le 1er septembre 2026 à toute entreprise assujettie à la TVA, sans exception de taille ni de régime.",
   },
-};
+  {
+    q: "Les freelances et micro-entrepreneurs sont-ils concernés par la réforme 2026 ?",
+    a: "Oui, et à deux dates différentes. L'obligation d'ÉMETTRE en électronique arrive le 1er septembre 2027. Mais l'obligation de pouvoir RECEVOIR une facture électronique via une plateforme agréée s'applique DÉJÀ, depuis le 1er septembre 2026 : elle concerne toute entreprise assujettie à la TVA, quelle que soit sa taille. La franchise en base de TVA ne vous en exempte pas — le régime fiscal et l'obligation de facturation électronique sont deux choses indépendantes.",
+  },
+  {
+    q: "Qu'est-ce que le format Factur-X ?",
+    a: "Factur-X est le format hybride franco-allemand (PDF lisible + données XML structurées intégrées) reconnu comme standard en France. C'est le format accepté par la DGFiP et le plus simple à adopter pour les indépendants. Deviso génère automatiquement des factures au format Factur-X EN 16931, aucune action n'est requise de votre part.",
+  },
+  {
+    q: "Le portail public de facturation (PPF) existe-t-il encore ?",
+    a: "Il existe, mais plus comme plateforme d'échange. En octobre 2024 la DGFiP a abandonné sa fonction de plateforme gratuite d'émission et de réception, et en août 2025 le développement du portail a été arrêté. Le PPF subsiste dans deux rôles : l'annuaire central des entreprises, qui sert au routage, et le concentrateur des données transmises à l'administration. Conséquence concrète : il n'existe aucune option publique gratuite, et toute entreprise assujettie doit passer par une plateforme agréée privée.",
+  },
+];
 
 const metierLinks = [
   { label: "Graphiste freelance", href: "/freelance-graphiste" },
@@ -76,10 +44,47 @@ const metierLinks = [
   { label: "Traducteur freelance", href: "/freelance-traducteur" },
 ];
 
+/**
+ * Le calendrier officiel, et rien d'autre.
+ *
+ * Ce tableau annonçait pour les ETI une échéance de décembre 2026 qui n'existe pas : le calendrier ne comporte que deux dates d'émission, le
+ * 1er septembre 2026 pour les grandes entreprises ET les ETI, puis le
+ * 1er septembre 2027 pour tout le reste. L'erreur était aussi recopiée dans le
+ * `FAQPage`, donc affichable telle quelle par Google.
+ *
+ * Le statut « en vigueur / à venir » est calculé à partir de la date, et non
+ * écrit en dur : la version précédente affichait « Dans 7 semaines » sur une
+ * échéance désormais passée. Une page qui se trompe sur la date du jour se
+ * discrédite sur tout le reste.
+ *
+ * Sources : economie.gouv.fr (coup d'envoi de la réforme), impots.gouv.fr
+ * (facturation électronique et plateformes agréées).
+ */
+const ECHEANCES = [
+  {
+    iso: "2026-09-01",
+    date: "1er septembre 2026",
+    entreprises: "Toutes les entreprises assujetties à la TVA, sans exception de taille ni de régime",
+    obligation: "Obligation de POUVOIR RECEVOIR une facture électronique via une plateforme agréée",
+  },
+  {
+    iso: "2026-09-01",
+    date: "1er septembre 2026",
+    entreprises: "Grandes entreprises et ETI",
+    obligation: "Obligation d'ÉMETTRE en format électronique structuré, et e-reporting",
+  },
+  {
+    iso: "2027-09-01",
+    date: "1er septembre 2027",
+    entreprises: "TPE, PME, micro-entrepreneurs",
+    obligation: "Obligation d'ÉMETTRE en format électronique structuré, et e-reporting des opérations B2C",
+  },
+];
+
 export default function FacturationElectronique2026Page() {
   return (
     <div className="min-h-screen bg-ds-bg">
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
+      <DonneesStructurees donnees={jsonLdArticle(SLUG, FAQ)} />
 
       {/* Bandeau */}
       <div className="fixed top-0 left-0 right-0 bg-indigo-950/95 backdrop-blur-sm border-b border-indigo-500/20 py-2 px-4 text-center text-sm" style={{ zIndex: 60 }}>
@@ -125,8 +130,11 @@ export default function FacturationElectronique2026Page() {
         {/* Header */}
         <div className="mb-10">
           <div className="flex items-center gap-3 mb-4">
-            <span className="text-xs font-semibold text-amber-400 bg-amber-500/10 border border-amber-500/20 rounded-full px-3 py-1 inline-flex items-center gap-1.5"><Zap size={12} className="shrink-0" />Urgent, 1er sept. 2026</span>
-            <span className="text-xs text-gray-400">10 min de lecture · Mis à jour juillet 2026</span>
+            <span className="text-xs font-semibold text-amber-400 bg-amber-500/10 border border-amber-500/20 rounded-full px-3 py-1 inline-flex items-center gap-1.5"><Zap size={12} className="shrink-0" />Réforme en vigueur</span>
+            <span className="text-xs text-gray-400">
+              {article(SLUG).dureeLecture} min de lecture · Mis à jour le{" "}
+              {new Date(article(SLUG).misAJourLe).toLocaleDateString("fr-FR", { day: "numeric", month: "long", year: "numeric" })}
+            </span>
           </div>
           <h1 className="text-3xl sm:text-4xl font-bold text-white leading-tight mb-4">
             Facturation électronique 2026 : le guide complet pour freelances et indépendants
@@ -136,15 +144,53 @@ export default function FacturationElectronique2026Page() {
           </p>
         </div>
 
+        {/* ── Où on en est, à la date du jour ──
+            C'est l'encadré le plus utile de la page, et celui que personne d'autre
+            n'écrit : tout l'écosystème parle de la réforme au futur alors que sa
+            première obligation est entrée en application. La distinction recevoir /
+            émettre est la seule information dont un indépendant a besoin pour savoir
+            s'il est en retard ou non. ── */}
+        <div className="bg-amber-500/[0.06] border border-amber-500/30 rounded-2xl p-6 mb-6">
+          <p className="text-xs font-semibold text-amber-400 uppercase tracking-wider mb-3">
+            Où on en est aujourd&apos;hui
+          </p>
+          <p className="text-sm text-gray-300 leading-relaxed mb-4">
+            La réforme n&apos;est plus une échéance à préparer : sa première obligation est entrée en
+            application le <strong className="text-white">1<sup>er</sup> septembre 2026</strong>. Il y
+            en a deux, à deux dates différentes, et les confondre est la source de presque toute la
+            confusion sur le sujet.
+          </p>
+          <div className="grid sm:grid-cols-2 gap-4">
+            <div className="bg-ds-surface border border-amber-500/20 rounded-xl p-4">
+              <p className="text-xs font-semibold text-amber-300 mb-2">RECEVOIR — déjà obligatoire</p>
+              <p className="text-sm text-gray-300 leading-relaxed">
+                Depuis le 1<sup>er</sup> septembre 2026, toute entreprise assujettie à la TVA doit
+                être en mesure de recevoir une facture électronique via une plateforme agréée. Sans
+                exception de taille, de statut ni de régime : micro-entrepreneurs et franchise en base
+                comprises.
+              </p>
+            </div>
+            <div className="bg-ds-surface border border-ds-border rounded-xl p-4">
+              <p className="text-xs font-semibold text-gray-300 mb-2">ÉMETTRE — selon votre taille</p>
+              <p className="text-sm text-gray-400 leading-relaxed">
+                Grandes entreprises et ETI : depuis le 1<sup>er</sup> septembre 2026. TPE, PME et
+                micro-entrepreneurs : <strong className="text-white">1<sup>er</sup> septembre 2027</strong>,
+                avec l&apos;e-reporting en plus pour les opérations B2C.
+              </p>
+            </div>
+          </div>
+        </div>
+
         {/* Encadré synthèse */}
         <div className="bg-indigo-500/[0.07] border border-indigo-500/30 rounded-2xl p-6 mb-10">
           <p className="text-xs font-semibold text-indigo-400 uppercase tracking-wider mb-3">L&apos;essentiel en 30 secondes</p>
           <ul className="space-y-2 text-sm text-gray-300">
-            <li className="flex gap-2"><span className="text-indigo-400 shrink-0">→</span> Obligation d&apos;émettre des e-factures B2B via une plateforme agréée (PDP)</li>
-            <li className="flex gap-2"><span className="text-indigo-400 shrink-0">→</span> Freelances et micro-entrepreneurs : obligation à partir du <strong className="text-white">1er septembre 2027</strong></li>
-            <li className="flex gap-2"><span className="text-indigo-400 shrink-0">→</span> Grandes entreprises : dès le <strong className="text-white">1er septembre 2026</strong>, ce qui signifie que vous recevrez des e-factures d&apos;elles dès cette date</li>
+            <li className="flex gap-2"><span className="text-indigo-400 shrink-0">→</span> Une facture électronique au sens de la réforme n&apos;est <strong className="text-white">pas un PDF envoyé par email</strong> : c&apos;est un format structuré qui transite par une plateforme agréée</li>
+            <li className="flex gap-2"><span className="text-indigo-400 shrink-0">→</span> Freelances et micro-entrepreneurs : obligation d&apos;<strong className="text-white">émettre</strong> au 1<sup>er</sup> septembre 2027, obligation de <strong className="text-white">recevoir</strong> déjà en vigueur</li>
+            <li className="flex gap-2"><span className="text-indigo-400 shrink-0">→</span> La <strong className="text-white">franchise en base de TVA n&apos;exempte de rien</strong> : régime fiscal et obligation de facturation électronique sont indépendants</li>
             <li className="flex gap-2"><span className="text-indigo-400 shrink-0">→</span> Format requis : Factur-X, UBL ou CII, Deviso génère Factur-X <strong className="text-white">nativement</strong></li>
-            <li className="flex gap-2"><span className="text-indigo-400 shrink-0">→</span> Le portail public (PPF) a été <strong className="text-white">abandonné</strong> en octobre 2024, seules les PDP privées subsistent</li>
+            <li className="flex gap-2"><span className="text-indigo-400 shrink-0">→</span> Le portail public (PPF) n&apos;est <strong className="text-white">plus une plateforme d&apos;échange</strong> : il n&apos;existe aucune option gratuite de l&apos;État</li>
+            <li className="flex gap-2"><span className="text-indigo-400 shrink-0">→</span> Amendes depuis le 1<sup>er</sup> septembre 2026 : <strong className="text-white">50 € par facture</strong> non émise en électronique, <strong className="text-white">500 € par transmission</strong> d&apos;e-reporting manquante, plafond 15 000 €/an, et <strong className="text-white">500 € puis 1 000 € tous les 3 mois</strong> si vous ne pouvez pas recevoir</li>
           </ul>
         </div>
 
@@ -173,48 +219,41 @@ export default function FacturationElectronique2026Page() {
             <h2 className="text-xl font-bold text-white mb-4">2. Calendrier : qui est concerné et quand ?</h2>
 
             <div className="space-y-4">
-              {[
-                {
-                  date: "1er septembre 2026",
-                  entreprises: "Grandes entreprises (+ 250 salariés ou CA > 50 M€)",
-                  obligation: "Obligation d'émettre ET de recevoir des e-factures",
-                  urgence: "high",
-                },
-                {
-                  date: "1er décembre 2026",
-                  entreprises: "ETI (250–4 999 salariés)",
-                  obligation: "Obligation d'émettre ET de recevoir",
-                  urgence: "medium",
-                },
-                {
-                  date: "1er septembre 2027",
-                  entreprises: "PME, TPE, micro-entrepreneurs, toutes tailles",
-                  obligation: "Obligation d'émettre ET de recevoir (obligation universelle)",
-                  urgence: "low",
-                },
-              ].map((row) => (
-                <div key={row.date} className={`rounded-xl border p-4 ${
-                  row.urgence === "high" ? "border-amber-500/40 bg-amber-500/[0.05]" :
-                  row.urgence === "medium" ? "border-indigo-500/30 bg-indigo-500/[0.04]" :
-                  "border-ds-border bg-ds-surface"
-                }`}>
-                  <div className="flex flex-wrap items-start justify-between gap-2 mb-1">
-                    <span className={`text-sm font-bold ${row.urgence === "high" ? "text-amber-300" : row.urgence === "medium" ? "text-indigo-300" : "text-gray-300"}`}>
-                      {row.date}
-                    </span>
-                    {row.urgence === "high" && (
-                      <span className="text-[10px] font-semibold bg-amber-500/20 text-amber-400 rounded-full px-2 py-0.5">Dans 7 semaines</span>
-                    )}
+              {ECHEANCES.map((row) => {
+                const enVigueur = new Date(row.iso) <= new Date();
+                return (
+                  <div
+                    key={`${row.iso}-${row.entreprises}`}
+                    className={`rounded-xl border p-4 ${
+                      enVigueur
+                        ? "border-amber-500/40 bg-amber-500/[0.05]"
+                        : "border-ds-border bg-ds-surface"
+                    }`}
+                  >
+                    <div className="flex flex-wrap items-start justify-between gap-2 mb-1">
+                      <span className={`text-sm font-bold ${enVigueur ? "text-amber-300" : "text-gray-300"}`}>
+                        {row.date}
+                      </span>
+                      <span
+                        className={`text-[10px] font-semibold rounded-full px-2 py-0.5 ${
+                          enVigueur
+                            ? "bg-amber-500/20 text-amber-400"
+                            : "bg-white/[0.06] text-gray-400"
+                        }`}
+                      >
+                        {enVigueur ? "En vigueur" : "À venir"}
+                      </span>
+                    </div>
+                    <p className="text-sm text-white font-medium">{row.entreprises}</p>
+                    <p className="text-xs text-gray-500 mt-0.5">{row.obligation}</p>
                   </div>
-                  <p className="text-sm text-white font-medium">{row.entreprises}</p>
-                  <p className="text-xs text-gray-500 mt-0.5">{row.obligation}</p>
-                </div>
-              ))}
+                );
+              })}
             </div>
 
             <div className="mt-6 bg-emerald-500/[0.06] border border-emerald-500/20 rounded-xl p-4">
               <p className="text-sm text-emerald-300">
-                <strong>Ce que ça signifie pour vous dès septembre 2026</strong>, même si votre obligation d&apos;émettre ne commence qu&apos;en 2027, vos clients grandes entreprises doivent vous envoyer leurs factures fournisseurs en format électronique dès septembre 2026. Vous devrez donc être capable de les recevoir.
+                <strong>Ce que ça signifie pour vous aujourd&apos;hui</strong> : même si votre obligation d&apos;émettre ne commence qu&apos;en septembre 2027, l&apos;obligation de pouvoir <strong>recevoir</strong> une facture électronique via une plateforme agréée s&apos;applique <strong>depuis le 1<sup>er</sup> septembre 2026</strong>, à toute entreprise assujettie à la TVA. Ce n&apos;est pas une échéance à préparer, c&apos;est une obligation en cours.
               </p>
             </div>
           </section>
@@ -248,7 +287,7 @@ export default function FacturationElectronique2026Page() {
               En octobre 2024, la DGFiP a officiellement annoncé l&apos;abandon du Portail Public de Facturation (PPF) qu&apos;elle développait initialement. Ce portail gratuit devait permettre à toutes les entreprises d&apos;émettre et de recevoir des e-factures sans passer par une plateforme privée.
             </p>
             <p className="mt-3">
-              Sa suppression change tout : <strong className="text-white">il n&apos;existe plus d&apos;option gratuite fournie par l&apos;État.</strong> Toutes les entreprises devront passer par une <strong className="text-white">Plateforme de Dématérialisation Partenaire (PDP)</strong> privée, certifiée par la DGFiP.
+              Ce changement a une conséquence que peu de contenus énoncent clairement : <strong className="text-white">il n&apos;existe aucune option gratuite fournie par l&apos;État.</strong> Toute entreprise assujettie passe par une <strong className="text-white">plateforme agréée</strong> privée, immatriculée par la DGFiP — on parlait avant de « plateforme de dématérialisation partenaire » (PDP), les deux termes désignent la même chose.
             </p>
             <div className="mt-4 bg-amber-500/[0.06] border border-amber-500/20 rounded-xl p-4">
               <p className="text-sm text-amber-300">
@@ -348,6 +387,19 @@ export default function FacturationElectronique2026Page() {
 
         </div>
 
+        {/* ── Questions fréquentes ── */}
+        <section className="mb-12">
+          <h2 className="text-2xl font-semibold text-white mb-6">Questions fréquentes</h2>
+          <div className="space-y-4">
+            {FAQ.map(({ q, a }) => (
+              <div key={q} className="bg-ds-surface rounded-xl border border-ds-border p-6">
+                <h3 className="text-white font-medium mb-3">{q}</h3>
+                <p className="text-gray-400 text-sm leading-relaxed">{a}</p>
+              </div>
+            ))}
+          </div>
+        </section>
+
         {/* Articles connexes réforme */}
         <div className="mt-14 mb-12 bg-ds-surface border border-ds-border rounded-2xl p-6">
           <p className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-4">Articles du cluster réforme 2026</p>
@@ -376,15 +428,7 @@ export default function FacturationElectronique2026Page() {
         </div>
 
         {/* Footer métiers */}
-        <footer className="border-t border-ds-border pt-8">
-          <p className="text-xs text-gray-400 mb-4">Deviso, logiciel de devis et facturation pour freelances</p>
-          <div className="flex flex-wrap gap-x-4 gap-y-2">
-            {metierLinks.map(({ label, href }) => (
-              <Link key={href} href={href} className="text-xs text-gray-400 hover:text-white transition-colors">{label}</Link>
-            ))}
-            <Link href="/blog" className="text-xs text-gray-400 hover:text-white transition-colors">← Blog</Link>
-          </div>
-        </footer>
+        <SiteFooter />
       </main>
     </div>
   );

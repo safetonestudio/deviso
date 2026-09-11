@@ -3,7 +3,9 @@ import Link from "next/link";
 
 export const metadata: Metadata = {
   title: "Mentions légales",
-  robots: { index: false },
+  description:
+    "Mentions légales de Deviso : éditeur, hébergeur, propriété intellectuelle et contact.",
+  alternates: { canonical: "https://getdeviso.fr/mentions-legales" },
 };
 
 export default function MentionsLegalesPage() {

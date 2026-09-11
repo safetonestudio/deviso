@@ -1,67 +1,43 @@
-import type { Metadata } from "next";
+import { DonneesStructurees } from "@/components/DonneesStructurees";
+import { SiteFooter } from "@/components/SiteFooter";
+import { jsonLdArticle, metadonneesArticle } from "@/lib/blog/meta";
 import Link from "next/link";
 import { NavbarMobile } from "@/components/NavbarMobile";
 import { WaitlistButton } from "@/components/landing/WaitlistButton";
 import { CircleX } from "lucide-react";
 
-export const metadata: Metadata = {
-  title: "Micro-entrepreneur : la réforme 2026 expliquée",
-  description:
-    "Micro-entrepreneur : ce que la réforme de facturation électronique change vraiment pour vous. Franchise TVA, Factur-X, plateforme agréée, calendrier.",
-  alternates: { canonical: "https://getdeviso.fr/blog/reforme-facturation-micro-entrepreneur" },
-  openGraph: {
-    title: "Micro-entrepreneur et réforme facturation 2026 : ce qui change vraiment",
-    description: "La franchise TVA ne vous exempte pas. Voici ce que vous devez savoir et faire avant septembre 2027.",
-    url: "https://getdeviso.fr/blog/reforme-facturation-micro-entrepreneur",
-    images: [{ url: "https://getdeviso.fr/opengraph-image", width: 1200, height: 630, alt: "Réforme facturation micro-entrepreneur 2027" }],
-  },
-};
+const SLUG = "reforme-facturation-micro-entrepreneur";
 
-const jsonLd = {
-  "@context": "https://schema.org",
-  "@type": "Article",
-  headline: "Micro-entrepreneur et réforme facturation 2026 : ce qui change vraiment",
-  datePublished: "2026-07-10",
-  dateModified: "2026-07-10",
-  author: { "@type": "Organization", name: "Deviso", url: "https://getdeviso.fr" },
-  publisher: { "@type": "Organization", name: "Deviso", url: "https://getdeviso.fr" },
-  inLanguage: "fr",
-  mainEntityOfPage: { "@type": "WebPage", "@id": "https://getdeviso.fr/blog/reforme-facturation-micro-entrepreneur" },
-  mainEntity: {
-    "@type": "FAQPage",
-    mainEntity: [
-      {
-        "@type": "Question",
-        name: "Un micro-entrepreneur est-il concerné par la réforme de facturation électronique ?",
-        acceptedAnswer: {
-          "@type": "Answer",
-          text: "Oui. À partir du 1er septembre 2027, tous les micro-entrepreneurs ayant des clients B2B (entreprises, associations, professionnels) devront émettre leurs factures au format électronique structuré (Factur-X) via une plateforme agréée (PDP). La franchise en base de TVA ne dispense pas de cette obligation.",
-        },
-      },
-      {
-        "@type": "Question",
-        name: "La franchise TVA dispense-t-elle de la facturation électronique ?",
-        acceptedAnswer: {
-          "@type": "Answer",
-          text: "Non. La franchise en base de TVA (régime fiscal sous seuil) et l'obligation de facturation électronique (obligation administrative) sont deux choses indépendantes. Un micro-entrepreneur en franchise de TVA devra quand même émettre des factures Factur-X pour ses clients B2B à partir de septembre 2027. Il mentionnera 'TVA non applicable - article 293B du CGI' dans les données structurées.",
-        },
-      },
-      {
-        "@type": "Question",
-        name: "Un auto-entrepreneur qui facture uniquement des particuliers est-il concerné ?",
-        acceptedAnswer: {
-          "@type": "Answer",
-          text: "Pas par l'e-invoicing (réservé au B2B). En revanche, il sera concerné par l'e-reporting : obligation de transmettre à la DGFiP les données de ses transactions B2C via une PDP. Le calendrier est le même : septembre 2027 pour les TPE et micro-entrepreneurs.",
-        },
-      },
-    ],
+export const metadata = metadonneesArticle(SLUG);
+
+/**
+ * Les questions affichées sur la page, et balisées en `FAQPage` à partir de cette
+ * même liste. Une seule source : un `FAQPage` qui annonce une réponse absente du
+ * contenu visible est une déclaration fausse.
+ */
+const FAQ = [
+  {
+    q: "Je n'ai qu'un ou deux clients entreprises. Suis-je vraiment obligé ?",
+    a: "Oui. L'obligation ne dépend pas du nombre de clients ni du CA. Dès qu'une transaction est B2B (professionnel à professionnel), elle sera soumise à l'e-invoicing à partir de septembre 2027, quel que soit votre volume.",
   },
-};
+  {
+    q: "Mon client me demande déjà une facture Factur-X. Que faire ?",
+    a: "Certains grands groupes anticipent la réforme et demandent des factures Factur-X avant l'obligation légale. Si vous utilisez Deviso, vous pouvez télécharger votre facture en format Factur-X dès maintenant, c'est le format par défaut.",
+  },
+  {
+    q: "Combien va coûter la PDP ?",
+    a: "Le prix des PDP varie selon les prestataires. Certains logiciels de facturation incluront l'accès à une PDP dans leur abonnement. Deviso intégrera une PDP sans coût supplémentaire pour les utilisateurs Solo et Pro.",
+  },
+  {
+    q: "Est-ce que ça change quelque chose à mes déclarations URSSAF ?",
+    a: "Non. Les déclarations URSSAF (cotisations sociales) sont indépendantes de la facturation électronique. La réforme concerne uniquement le format des factures et leur transmission à la DGFiP, pas les cotisations.",
+  },
+];
 
 export default function ReformeFacturationMicroEntrepreneurPage() {
   return (
     <div className="min-h-screen bg-ds-bg">
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
+      <DonneesStructurees donnees={jsonLdArticle(SLUG, FAQ)} />
 
       <div className="fixed top-0 left-0 right-0 bg-indigo-950/95 backdrop-blur-sm border-b border-indigo-500/20 py-2 px-4 text-center text-sm" style={{ zIndex: 60 }}>
         <span className="text-indigo-300 font-semibold">Réforme 2026&nbsp;:</span>
@@ -229,24 +205,7 @@ export default function ReformeFacturationMicroEntrepreneurPage() {
           <section>
             <h2 className="text-xl font-bold text-white mb-4">Questions fréquentes des micro-entrepreneurs</h2>
             <div className="space-y-5">
-              {[
-                {
-                  q: "Je n'ai qu'un ou deux clients entreprises. Suis-je vraiment obligé ?",
-                  a: "Oui. L'obligation ne dépend pas du nombre de clients ni du CA. Dès qu'une transaction est B2B (professionnel à professionnel), elle sera soumise à l'e-invoicing à partir de septembre 2027, quel que soit votre volume.",
-                },
-                {
-                  q: "Mon client me demande déjà une facture Factur-X. Que faire ?",
-                  a: "Certains grands groupes anticipent la réforme et demandent des factures Factur-X avant l'obligation légale. Si vous utilisez Deviso, vous pouvez télécharger votre facture en format Factur-X dès maintenant, c'est le format par défaut.",
-                },
-                {
-                  q: "Combien va coûter la PDP ?",
-                  a: "Le prix des PDP varie selon les prestataires. Certains logiciels de facturation incluront l'accès à une PDP dans leur abonnement. Deviso intégrera une PDP sans coût supplémentaire pour les utilisateurs Solo et Pro.",
-                },
-                {
-                  q: "Est-ce que ça change quelque chose à mes déclarations URSSAF ?",
-                  a: "Non. Les déclarations URSSAF (cotisations sociales) sont indépendantes de la facturation électronique. La réforme concerne uniquement le format des factures et leur transmission à la DGFiP, pas les cotisations.",
-                },
-              ].map(({ q, a }) => (
+              {FAQ.map(({ q, a }) => (
                 <div key={q} className="border-b border-ds-border pb-5 last:border-0">
                   <h3 className="text-sm font-semibold text-white mb-2">{q}</h3>
                   <p className="text-sm">{a}</p>
@@ -283,9 +242,7 @@ export default function ReformeFacturationMicroEntrepreneurPage() {
           <WaitlistButton plan="free" label="Essayer Deviso 14 jours →" className="inline-flex items-center gap-2 bg-indigo-600 hover:bg-indigo-500 text-white font-semibold px-6 py-3 rounded-xl transition-colors text-sm" />
         </div>
 
-        <footer className="border-t border-ds-border pt-8">
-          <Link href="/blog" className="text-xs text-gray-400 hover:text-white transition-colors">← Retour au blog</Link>
-        </footer>
+        <SiteFooter />
       </main>
     </div>
   );

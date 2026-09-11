@@ -1,54 +1,30 @@
-import type { Metadata } from "next";
+import { DonneesStructurees } from "@/components/DonneesStructurees";
+import { SiteFooter } from "@/components/SiteFooter";
+import { jsonLdArticle, metadonneesArticle } from "@/lib/blog/meta";
 import Link from "next/link";
 import { NavbarMobile } from "@/components/NavbarMobile";
 import { WaitlistButton } from "@/components/landing/WaitlistButton";
 import { ShieldCheck } from "lucide-react";
 
-export const metadata: Metadata = {
-  title: "Gérer les impayés en freelance : les 4 étapes",
-  description:
-    "Récupérer une facture impayée en freelance : relance amiable, mise en demeure, injonction de payer. Étapes concrètes et protection dès le devis.",
-  alternates: { canonical: "https://getdeviso.fr/blog/gerer-impayes-freelance" },
-  openGraph: {
-    title: "Gérer les impayés en freelance : relance, mise en demeure, tribunal",
-    description: "Relance amiable, mise en demeure LRAR, injonction de payer, le guide complet pour récupérer vos factures impayées.",
-    url: "https://getdeviso.fr/blog/gerer-impayes-freelance",
-    images: [{ url: "https://getdeviso.fr/opengraph-image", width: 1200, height: 630, alt: "Deviso, logiciel de devis et facturation" }],
-  },
-};
+const SLUG = "gerer-impayes-freelance";
 
-const jsonLd = {
-  "@context": "https://schema.org",
-  "@type": "Article",
-  headline: "Gérer les impayés en freelance : de la relance à l'injonction de payer",
-  datePublished: "2026-06-29",
-  dateModified: "2026-06-29",
-  author: { "@type": "Organization", name: "Deviso", url: "https://getdeviso.fr" },
-  publisher: { "@type": "Organization", name: "Deviso", url: "https://getdeviso.fr" },
-  inLanguage: "fr",
-  mainEntityOfPage: { "@type": "WebPage", "@id": "https://getdeviso.fr/blog/gerer-impayes-freelance" },
-  mainEntity: {
-    "@type": "FAQPage",
-    mainEntity: [
-      {
-        "@type": "Question",
-        name: "Quel est le délai de prescription pour les factures impayées en freelance ?",
-        acceptedAnswer: {
-          "@type": "Answer",
-          text: "En France, les créances professionnelles se prescrivent en 5 ans à compter de la date d'exigibilité de la facture (date d'échéance). Vous avez donc 5 ans pour agir juridiquement. Mais plus vous attendez, plus le recouvrement est difficile : agissez dès le premier mois de retard.",
-        },
-      },
-      {
-        "@type": "Question",
-        name: "Comment fonctionne l'injonction de payer pour un freelance ?",
-        acceptedAnswer: {
-          "@type": "Answer",
-          text: "L'injonction de payer est une procédure judiciaire simplifiée, sans audience. Vous déposez une requête au tribunal compétent avec vos justificatifs (devis signé, facture, relances). Si le juge l'accorde, le débiteur a 1 mois pour contester. Si ce délai passe sans contestation, l'ordonnance devient exécutoire et un huissier peut saisir les biens du débiteur.",
-        },
-      },
-    ],
+export const metadata = metadonneesArticle(SLUG);
+
+/**
+ * Les questions affichées sur la page, et balisées en `FAQPage` à partir de cette
+ * même liste. Une seule source : un `FAQPage` qui annonce une réponse absente du
+ * contenu visible est une déclaration fausse.
+ */
+const FAQ = [
+  {
+    q: "Quel est le délai de prescription pour les factures impayées en freelance ?",
+    a: "En France, les créances professionnelles se prescrivent en 5 ans à compter de la date d'exigibilité de la facture (date d'échéance). Vous avez donc 5 ans pour agir juridiquement. Mais plus vous attendez, plus le recouvrement est difficile : agissez dès le premier mois de retard.",
   },
-};
+  {
+    q: "Comment fonctionne l'injonction de payer pour un freelance ?",
+    a: "L'injonction de payer est une procédure judiciaire simplifiée, sans audience. Vous déposez une requête au tribunal compétent avec vos justificatifs (devis signé, facture, relances). Si le juge l'accorde, le débiteur a 1 mois pour contester. Si ce délai passe sans contestation, l'ordonnance devient exécutoire et un huissier peut saisir les biens du débiteur.",
+  },
+];
 
 const metierLinks = [
   { label: "Graphiste freelance", href: "/freelance-graphiste" },
@@ -62,7 +38,7 @@ const metierLinks = [
 export default function Page() {
   return (
     <div className="min-h-screen bg-ds-bg">
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
+      <DonneesStructurees donnees={jsonLdArticle(SLUG, FAQ)} />
 
       <div className="fixed top-0 left-0 right-0 bg-indigo-950/95 backdrop-blur-sm border-b border-indigo-500/20 py-2 px-4 text-center text-sm" style={{ zIndex: 60 }}>
         <span className="text-indigo-300 font-semibold">Réforme 2026&nbsp;:</span>
@@ -228,6 +204,19 @@ export default function Page() {
 
           </div>
 
+          {/* ── Questions fréquentes ── */}
+          <section className="mb-12">
+            <h2 className="text-2xl font-semibold text-white mb-6">Questions fréquentes</h2>
+            <div className="space-y-4">
+              {FAQ.map(({ q, a }) => (
+                <div key={q} className="bg-ds-surface rounded-xl border border-ds-border p-6">
+                  <h3 className="text-white font-medium mb-3">{q}</h3>
+                  <p className="text-gray-400 text-sm leading-relaxed">{a}</p>
+                </div>
+              ))}
+            </div>
+          </section>
+
           {/* CTA */}
           <div className="mt-14 bg-gradient-to-br from-indigo-900/40 to-violet-900/20 rounded-2xl border border-indigo-500/20 p-8 text-center">
             <h2 className="text-2xl font-semibold text-white mb-3">Les relances automatiques, c&apos;est Deviso</h2>
@@ -249,12 +238,7 @@ export default function Page() {
         </div>
       </article>
 
-      <footer className="border-t border-ds-border py-10 px-4 sm:px-6">
-        <div className="max-w-6xl mx-auto flex items-center justify-between text-xs text-gray-400">
-          <p>© 2026 Deviso · SafeTone Studio · SIREN 103 340 857</p>
-          <Link href="/" className="text-gray-500 hover:text-gray-300 transition-colors">getdeviso.fr</Link>
-        </div>
-      </footer>
+      <SiteFooter />
     </div>
   );
 }

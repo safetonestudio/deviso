@@ -3,7 +3,9 @@ import Link from "next/link";
 
 export const metadata: Metadata = {
   title: "Conditions Générales d'Utilisation",
-  robots: { index: false },
+  description:
+    "Conditions générales d'utilisation de Deviso : accès au service, abonnements, responsabilités et résiliation.",
+  alternates: { canonical: "https://getdeviso.fr/cgu" },
 };
 
 export default function CguPage() {

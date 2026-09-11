@@ -3,7 +3,9 @@ import Link from "next/link";
 
 export const metadata: Metadata = {
   title: "Politique de confidentialité",
-  robots: { index: false },
+  description:
+    "Politique de confidentialité de Deviso : données collectées, finalités, sous-traitants, durées de conservation et vos droits.",
+  alternates: { canonical: "https://getdeviso.fr/confidentialite" },
 };
 
 export default function ConfidentialitePage() {

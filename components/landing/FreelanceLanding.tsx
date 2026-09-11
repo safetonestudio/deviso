@@ -1,9 +1,12 @@
 import Link from "next/link";
 import type { Metadata } from "next";
 import { NavbarMobile } from "@/components/NavbarMobile";
+import { SiteFooter } from "@/components/SiteFooter";
+import { DonneesStructurees } from "@/components/DonneesStructurees";
+import { metierDeLanding } from "@/lib/blog/metiers";
 import { DemoButton } from "@/components/landing/DemoButton";
 import { WaitlistButton } from "@/components/landing/WaitlistButton";
-import { Zap, PenLine, Bell, FileText, BarChart3, Receipt, Heart, type LucideIcon } from "lucide-react";
+import { Zap, PenLine, Bell, FileText, BarChart3, Receipt, type LucideIcon } from "lucide-react";
 
 export interface MockupLine {
   desc: string;
@@ -88,18 +91,6 @@ const features = [
   },
 ];
 
-const metierLinks = [
-  { label: "Graphiste freelance", href: "/freelance-graphiste" },
-  { label: "Développeur web", href: "/freelance-developpeur" },
-  { label: "Consultant indépendant", href: "/freelance-consultant" },
-  { label: "Photographe freelance", href: "/freelance-photographe" },
-  { label: "Rédacteur & copywriter", href: "/freelance-redacteur" },
-  { label: "Formateur indépendant", href: "/freelance-formateur" },
-  { label: "Artisan BTP", href: "/freelance-artisan" },
-  { label: "Community manager", href: "/freelance-community-manager" },
-  { label: "Coach freelance", href: "/freelance-coach" },
-  { label: "Traducteur freelance", href: "/freelance-traducteur" },
-];
 
 export function FreelanceLanding({
   metaTitle,
@@ -116,6 +107,34 @@ export function FreelanceLanding({
   mockupLines,
   mockupTotal,
 }: FreelanceLandingProps) {
+  // Le libellé du total est déduit de la valeur, jamais écrit à côté d'elle.
+  //
+  // Pourquoi. Le libellé était figé à « Total TTC (TVA 20%) » dans ce composant,
+  // pendant que quatre pages — artisan, coach, community manager, traducteur —
+  // passaient un total exprimé « … € HT ». Résultat : une maquette de devis qui
+  // annonçait 20 % de TVA sur un montant qui n'en contenait pas, affichée en
+  // vitrine d'un logiciel de facturation. Le genre de détail qu'un prospect
+  // attentif remarque, et qui coûte bien plus que sa taille.
+  //
+  // Déduire le libellé de la valeur rend la contradiction impossible : il n'y a
+  // plus deux endroits à tenir d'accord. `scripts/check-blog.mjs` vérifie en
+  // plus que le montant correspond bien à la somme des lignes — au HT près, ou
+  // à 1,20 × le HT selon le cas.
+  const totalHt = /\bHT\b/.test(mockupTotal);
+
+  // Les deux autres pages du même métier, lues dans le registre.
+  //
+  // Pourquoi. Pour chaque métier il existe trois pages sur le même champ
+  // sémantique : cette landing, l'article de blog, et la page tarifs. L'audit du
+  // 11/09/2026 a mesuré le maillage réel entre elles : deux arêtes sur six, et
+  // les deux pointant vers la landing. Autrement dit, la landing recevait des
+  // liens et n'en renvoyait aucun à ses deux sœurs — qui en avaient besoin, la
+  // page tarifs étant presque orpheline.
+  //
+  // Rien n'est écrit en dur ici : la correspondance vient du registre, donc un
+  // métier ajouté est relié sans intervention.
+  const chemin = canonical.replace("https://getdeviso.fr", "");
+  const metier = metierDeLanding(chemin);
   const jsonLd = {
     "@context": "https://schema.org",
     "@type": "SoftwareApplication",
@@ -137,10 +156,7 @@ export function FreelanceLanding({
 
   return (
     <div className="min-h-screen bg-ds-bg">
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
-      />
+      <DonneesStructurees donnees={jsonLd} />
       {/* ── Bandeau réforme 2026 ── */}
       <div
         className="fixed top-0 left-0 right-0 bg-indigo-950/95 backdrop-blur-sm border-b border-indigo-500/20 py-2 px-4 text-center text-sm"
@@ -255,9 +271,14 @@ export function FreelanceLanding({
                       </div>
                     ))}
                     <div className="flex justify-between pt-2 font-semibold">
-                      <span className="text-gray-900">Total TTC (TVA 20%)</span>
+                      <span className="text-gray-900">{totalHt ? "Total HT" : "Total TTC (TVA 20 %)"}</span>
                       <span className="text-indigo-600">{mockupTotal}</span>
                     </div>
+                    {totalHt && (
+                      <p className="text-[11px] text-gray-500 pt-1">
+                        TVA non applicable, art. 293 B du CGI
+                      </p>
+                    )}
                   </div>
                 </div>
               </div>
@@ -369,6 +390,58 @@ export function FreelanceLanding({
         </div>
       </section>
 
+      {/* ── Pour aller plus loin : les deux autres pages du même métier ── */}
+      {metier && (metier.article || metier.tarifs) && (
+        <section className="py-16 px-4 sm:px-6 border-t border-ds-border">
+          <div className="max-w-5xl mx-auto">
+            <h2 className="text-2xl font-semibold text-white mb-2">
+              Pour aller plus loin
+            </h2>
+            <p className="text-gray-400 text-sm mb-8">
+              Deux guides gratuits, écrits pour les {professionLabel}s.
+            </p>
+            <div className="grid gap-4 sm:grid-cols-2">
+              {metier.article && (
+                <Link
+                  href={metier.article.href}
+                  className="group bg-ds-surface border border-ds-border rounded-2xl p-6 hover:border-indigo-500/40 transition-all"
+                >
+                  <p className="text-xs text-gray-500 font-medium uppercase tracking-wider mb-3">
+                    Guide pratique
+                  </p>
+                  <p className="text-white font-semibold leading-snug mb-2 group-hover:text-indigo-200 transition-colors">
+                    Ce qu&apos;un devis de {professionLabel} doit contenir
+                  </p>
+                  <p className="text-gray-500 text-sm leading-relaxed">
+                    Mentions obligatoires, exemple chiffré, clauses qui protègent, et les erreurs
+                    qui coûtent cher.
+                  </p>
+                  <p className="text-indigo-400 text-sm font-medium mt-4">Lire le guide →</p>
+                </Link>
+              )}
+              {metier.tarifs && (
+                <Link
+                  href={metier.tarifs.href}
+                  className="group bg-ds-surface border border-ds-border rounded-2xl p-6 hover:border-indigo-500/40 transition-all"
+                >
+                  <p className="text-xs text-gray-500 font-medium uppercase tracking-wider mb-3">
+                    Tarifs du marché
+                  </p>
+                  <p className="text-white font-semibold leading-snug mb-2 group-hover:text-indigo-200 transition-colors">
+                    Combien facturer quand on est {professionLabel} ?
+                  </p>
+                  <p className="text-gray-500 text-sm leading-relaxed">
+                    Fourchettes de TJM par niveau d&apos;expérience, spécialités mieux payées, et un
+                    simulateur de revenu net après cotisations.
+                  </p>
+                  <p className="text-indigo-400 text-sm font-medium mt-4">Voir les tarifs →</p>
+                </Link>
+              )}
+            </div>
+          </div>
+        </section>
+      )}
+
       {/* ── CTA Final ── */}
       <section className="py-20 px-4 sm:px-6">
         <div className="max-w-3xl mx-auto">
@@ -389,55 +462,8 @@ export function FreelanceLanding({
         </div>
       </section>
 
-      {/* ── Footer ── */}
-      <footer className="bg-ds-bg border-t border-zinc-900 text-gray-500 py-12 px-4 sm:px-6">
-        <div className="max-w-5xl mx-auto">
-          <div className="flex flex-col md:flex-row justify-between items-start gap-8 mb-10">
-            <div>
-              <div className="flex items-center gap-2 mb-3">
-                <div className="w-7 h-7 rounded-md bg-gradient-to-br from-indigo-600 to-violet-600 flex items-center justify-center">
-                  <span className="text-white font-semibold text-xs">D</span>
-                </div>
-                <span className="font-semibold text-white">Deviso</span>
-              </div>
-              <p className="text-sm max-w-xs leading-relaxed">
-                Du devis à la facture Factur-X, pour les freelances et petites équipes en France. 🇫🇷
-              </p>
-            </div>
-            <div className="grid grid-cols-3 gap-8 text-sm">
-              <div>
-                <div className="text-white font-semibold mb-3">Produit</div>
-                <ul className="space-y-2">
-                  <li><Link href="/#fonctionnalites" className="hover:text-gray-300 transition-colors">Fonctionnalités</Link></li>
-                  <li><Link href="/#tarifs" className="hover:text-gray-300 transition-colors">Tarifs</Link></li>
-                  <li><Link href="/login" className="hover:text-gray-300 transition-colors">Connexion</Link></li>
-                </ul>
-              </div>
-              <div>
-                <div className="text-white font-semibold mb-3">Métiers</div>
-                <ul className="space-y-2">
-                  {metierLinks.map((m) => (
-                    <li key={m.href}>
-                      <Link href={m.href} className="hover:text-gray-300 transition-colors">{m.label}</Link>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-              <div>
-                <div className="text-white font-semibold mb-3">Légal</div>
-                <ul className="space-y-2">
-                  <li><Link href="/cgu" className="hover:text-gray-300 transition-colors">CGU</Link></li>
-                  <li><Link href="/confidentialite" className="hover:text-gray-300 transition-colors">Confidentialité</Link></li>
-                  <li><Link href="/mentions-legales" className="hover:text-gray-300 transition-colors">Mentions légales</Link></li>
-                </ul>
-              </div>
-            </div>
-          </div>
-          <div className="border-t border-zinc-900 pt-6 text-xs text-center">
-            © {new Date().getFullYear()} Deviso. Fait avec <Heart size={12} className="inline-block align-[-1px] fill-current text-red-500" aria-label="amour" /> en France.
-          </div>
-        </div>
-      </footer>
+      <SiteFooter />
+
     </div>
   );
 }

@@ -1,270 +1,113 @@
 import { MetadataRoute } from "next";
+import { ARTICLES, SITE, urlArticle } from "@/lib/blog/registre";
+import { METIERS } from "@/lib/blog/metiers";
+
+/**
+ * Le sitemap, calculé depuis les mêmes sources que les pages.
+ *
+ * Pourquoi il a changé. Il listait quarante-trois URL écrites à la main, une par
+ * une, sur deux cent soixante-dix lignes. Deux défauts, tous deux relevés par
+ * l'audit du 11/09/2026 :
+ *
+ *   - **rien ne signalait un oubli.** Une page ajoutée sans son entrée ici reste
+ *     invisible pour Google, et aucun test ne le disait. Le contrôle s'appelle
+ *     maintenant `scripts/check-blog.mjs`, mais le vrai remède est qu'il n'y ait
+ *     plus rien à oublier ;
+ *   - **`lastModified` valait `new Date()` sur les quarante-trois entrées.** Les
+ *     quarante-trois pages affirmaient donc avoir été modifiées à l'instant, à
+ *     chaque déploiement, même un déploiement qui n'en touchait aucune. Un
+ *     `lastmod` qui bouge toujours est un `lastmod` que Google cesse de lire —
+ *     et ce signal, on en a précisément besoin le jour où on corrige un article
+ *     réglementaire et qu'on veut que ça se sache vite.
+ *
+ * Désormais chaque article porte sa vraie date (`misAJourLe` du registre), et les
+ * pages métier portent la date de la dernière révision des données de tarifs.
+ * Les pages produit, dont le contenu évolue avec le produit, gardent la date du
+ * build : pour elles, c'est la vérité.
+ *
+ * Sur les priorités : Google dit les ignorer, et c'est probablement vrai. Elles
+ * sont conservées parce qu'elles servent de documentation — elles disent ce que
+ * *nous* considérons comme important, ce qui se vérifie ensuite contre le
+ * maillage réel. Le sitemap déclarait `/combien-facturer` en 0.9 pendant que le
+ * site ne lui envoyait qu'un lien : l'écart entre les deux était le défaut.
+ */
+
+/** Dernière révision des données de TJM. À avancer quand `TARIFS_DATA` change. */
+const REVISION_TARIFS = "2026-07-01";
+
+/** Dernière révision du contenu des landing pages métier. */
+const REVISION_LANDINGS = "2026-09-11";
 
 export default function sitemap(): MetadataRoute.Sitemap {
+  const maintenant = new Date();
+
+  const pagesProduit: MetadataRoute.Sitemap = [
+    { url: SITE, lastModified: maintenant, changeFrequency: "weekly", priority: 1 },
+    { url: `${SITE}/login`, lastModified: maintenant, changeFrequency: "monthly", priority: 0.4 },
+  ];
+
+  // Les pages légales sont indexables : pour un logiciel qui manipule de la
+  // facturation, des mentions légales et une politique de confidentialité
+  // consultables sont un signal de confiance, pas du contenu mince.
+  const pagesLegales: MetadataRoute.Sitemap = ["/mentions-legales", "/cgu", "/confidentialite"].map(
+    (chemin) => ({
+      url: `${SITE}${chemin}`,
+      lastModified: new Date(REVISION_LANDINGS),
+      changeFrequency: "yearly",
+      priority: 0.3,
+    })
+  );
+
+  const landings: MetadataRoute.Sitemap = METIERS.map((m) => ({
+    url: `${SITE}${m.landing}`,
+    lastModified: new Date(REVISION_LANDINGS),
+    changeFrequency: "monthly",
+    priority: 0.8,
+  }));
+
+  const hubTarifs: MetadataRoute.Sitemap = [
+    {
+      url: `${SITE}/combien-facturer`,
+      lastModified: new Date(REVISION_TARIFS),
+      changeFrequency: "monthly",
+      priority: 0.9,
+    },
+  ];
+
+  const pagesTarifs: MetadataRoute.Sitemap = METIERS.filter((m) => m.tarifs).map((m) => ({
+    url: `${SITE}${m.tarifs!.href}`,
+    lastModified: new Date(REVISION_TARIFS),
+    changeFrequency: "monthly",
+    priority: 0.8,
+  }));
+
+  const indexBlog: MetadataRoute.Sitemap = [
+    {
+      url: `${SITE}/blog`,
+      // L'index change dès qu'un article change : on prend la plus récente.
+      lastModified: new Date(
+        ARTICLES.map((a) => a.misAJourLe).sort().at(-1) ?? REVISION_LANDINGS
+      ),
+      changeFrequency: "weekly",
+      priority: 0.8,
+    },
+  ];
+
+  const articles: MetadataRoute.Sitemap = ARTICLES.map((a) => ({
+    url: urlArticle(a.slug),
+    lastModified: new Date(a.misAJourLe),
+    changeFrequency: "monthly",
+    // Le cluster réforme porte l'essentiel de la valeur et bouge le plus.
+    priority: a.categorie === "reforme" ? 0.9 : 0.8,
+  }));
+
   return [
-    {
-      url: "https://getdeviso.fr",
-      lastModified: new Date(),
-      changeFrequency: "weekly",
-      priority: 1,
-    },
-    {
-      url: "https://getdeviso.fr/freelance-graphiste",
-      lastModified: new Date(),
-      changeFrequency: "monthly",
-      priority: 0.8,
-    },
-    {
-      url: "https://getdeviso.fr/freelance-developpeur",
-      lastModified: new Date(),
-      changeFrequency: "monthly",
-      priority: 0.8,
-    },
-    {
-      url: "https://getdeviso.fr/freelance-consultant",
-      lastModified: new Date(),
-      changeFrequency: "monthly",
-      priority: 0.8,
-    },
-    {
-      url: "https://getdeviso.fr/freelance-photographe",
-      lastModified: new Date(),
-      changeFrequency: "monthly",
-      priority: 0.8,
-    },
-    {
-      url: "https://getdeviso.fr/freelance-redacteur",
-      lastModified: new Date(),
-      changeFrequency: "monthly",
-      priority: 0.8,
-    },
-    {
-      url: "https://getdeviso.fr/freelance-formateur",
-      lastModified: new Date(),
-      changeFrequency: "monthly",
-      priority: 0.8,
-    },
-    {
-      url: "https://getdeviso.fr/login",
-      lastModified: new Date(),
-      changeFrequency: "monthly",
-      priority: 0.4,
-    },
-    // Blog
-    {
-      url: "https://getdeviso.fr/blog",
-      lastModified: new Date(),
-      changeFrequency: "weekly",
-      priority: 0.8,
-    },
-    {
-      url: "https://getdeviso.fr/blog/devis-graphiste-freelance",
-      lastModified: new Date(),
-      changeFrequency: "monthly",
-      priority: 0.8,
-    },
-    {
-      url: "https://getdeviso.fr/blog/devis-developpeur-web",
-      lastModified: new Date(),
-      changeFrequency: "monthly",
-      priority: 0.8,
-    },
-    {
-      url: "https://getdeviso.fr/blog/devis-consultant-independant",
-      lastModified: new Date(),
-      changeFrequency: "monthly",
-      priority: 0.8,
-    },
-    {
-      url: "https://getdeviso.fr/blog/devis-photographe-freelance",
-      lastModified: new Date(),
-      changeFrequency: "monthly",
-      priority: 0.8,
-    },
-    {
-      url: "https://getdeviso.fr/blog/devis-redacteur-web",
-      lastModified: new Date(),
-      changeFrequency: "monthly",
-      priority: 0.8,
-    },
-    {
-      url: "https://getdeviso.fr/blog/devis-formateur-independant",
-      lastModified: new Date(),
-      changeFrequency: "monthly",
-      priority: 0.8,
-    },
-    // Nouvelles landing pages métier
-    {
-      url: "https://getdeviso.fr/freelance-artisan",
-      lastModified: new Date(),
-      changeFrequency: "monthly",
-      priority: 0.8,
-    },
-    {
-      url: "https://getdeviso.fr/freelance-community-manager",
-      lastModified: new Date(),
-      changeFrequency: "monthly",
-      priority: 0.8,
-    },
-    {
-      url: "https://getdeviso.fr/freelance-coach",
-      lastModified: new Date(),
-      changeFrequency: "monthly",
-      priority: 0.8,
-    },
-    {
-      url: "https://getdeviso.fr/freelance-traducteur",
-      lastModified: new Date(),
-      changeFrequency: "monthly",
-      priority: 0.8,
-    },
-    // Nouveaux articles blog
-    {
-      url: "https://getdeviso.fr/blog/devis-artisan-btp",
-      lastModified: new Date(),
-      changeFrequency: "monthly",
-      priority: 0.8,
-    },
-    {
-      url: "https://getdeviso.fr/blog/devis-community-manager",
-      lastModified: new Date(),
-      changeFrequency: "monthly",
-      priority: 0.8,
-    },
-    {
-      url: "https://getdeviso.fr/blog/devis-coach-freelance",
-      lastModified: new Date(),
-      changeFrequency: "monthly",
-      priority: 0.8,
-    },
-    {
-      url: "https://getdeviso.fr/blog/devis-traducteur-freelance",
-      lastModified: new Date(),
-      changeFrequency: "monthly",
-      priority: 0.8,
-    },
-    // Hub tarifs freelance + pages TJM par métier
-    {
-      url: "https://getdeviso.fr/combien-facturer",
-      lastModified: new Date(),
-      changeFrequency: "monthly",
-      priority: 0.9,
-    },
-    {
-      url: "https://getdeviso.fr/combien-facturer/graphiste-freelance",
-      lastModified: new Date(),
-      changeFrequency: "monthly",
-      priority: 0.8,
-    },
-    {
-      url: "https://getdeviso.fr/combien-facturer/developpeur-web-freelance",
-      lastModified: new Date(),
-      changeFrequency: "monthly",
-      priority: 0.8,
-    },
-    {
-      url: "https://getdeviso.fr/combien-facturer/consultant-freelance",
-      lastModified: new Date(),
-      changeFrequency: "monthly",
-      priority: 0.8,
-    },
-    {
-      url: "https://getdeviso.fr/combien-facturer/photographe-freelance",
-      lastModified: new Date(),
-      changeFrequency: "monthly",
-      priority: 0.8,
-    },
-    {
-      url: "https://getdeviso.fr/combien-facturer/redacteur-web-freelance",
-      lastModified: new Date(),
-      changeFrequency: "monthly",
-      priority: 0.8,
-    },
-    {
-      url: "https://getdeviso.fr/combien-facturer/formateur-freelance",
-      lastModified: new Date(),
-      changeFrequency: "monthly",
-      priority: 0.8,
-    },
-    {
-      url: "https://getdeviso.fr/combien-facturer/artisan-freelance",
-      lastModified: new Date(),
-      changeFrequency: "monthly",
-      priority: 0.8,
-    },
-    {
-      url: "https://getdeviso.fr/combien-facturer/community-manager-freelance",
-      lastModified: new Date(),
-      changeFrequency: "monthly",
-      priority: 0.8,
-    },
-    {
-      url: "https://getdeviso.fr/combien-facturer/coach-freelance",
-      lastModified: new Date(),
-      changeFrequency: "monthly",
-      priority: 0.8,
-    },
-    {
-      url: "https://getdeviso.fr/combien-facturer/traducteur-freelance",
-      lastModified: new Date(),
-      changeFrequency: "monthly",
-      priority: 0.8,
-    },
-    // Cluster réforme facturation 2026
-    {
-      url: "https://getdeviso.fr/blog/facturation-electronique-2026",
-      lastModified: new Date(),
-      changeFrequency: "monthly",
-      priority: 0.9,
-    },
-    {
-      url: "https://getdeviso.fr/blog/reforme-facturation-micro-entrepreneur",
-      lastModified: new Date(),
-      changeFrequency: "monthly",
-      priority: 0.9,
-    },
-    {
-      url: "https://getdeviso.fr/blog/choisir-plateforme-agreee-freelance",
-      lastModified: new Date(),
-      changeFrequency: "monthly",
-      priority: 0.8,
-    },
-    {
-      url: "https://getdeviso.fr/blog/e-reporting-freelance-2026",
-      lastModified: new Date(),
-      changeFrequency: "monthly",
-      priority: 0.8,
-    },
-    {
-      url: "https://getdeviso.fr/blog/checklist-reforme-facturation-2026",
-      lastModified: new Date(),
-      changeFrequency: "monthly",
-      priority: 0.8,
-    },
-    // Hub clauses + articles problèmes freelance
-    {
-      url: "https://getdeviso.fr/blog/clauses-devis-freelance",
-      lastModified: new Date(),
-      changeFrequency: "monthly",
-      priority: 0.9,
-    },
-    {
-      url: "https://getdeviso.fr/blog/scope-creep-freelance",
-      lastModified: new Date(),
-      changeFrequency: "monthly",
-      priority: 0.8,
-    },
-    {
-      url: "https://getdeviso.fr/blog/gerer-impayes-freelance",
-      lastModified: new Date(),
-      changeFrequency: "monthly",
-      priority: 0.8,
-    },
-    {
-      url: "https://getdeviso.fr/blog/fixer-ses-tarifs-freelance",
-      lastModified: new Date(),
-      changeFrequency: "monthly",
-      priority: 0.8,
-    },
+    ...pagesProduit,
+    ...hubTarifs,
+    ...indexBlog,
+    ...landings,
+    ...pagesTarifs,
+    ...articles,
+    ...pagesLegales,
   ];
 }

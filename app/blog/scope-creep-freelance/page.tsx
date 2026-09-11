@@ -1,54 +1,30 @@
-import type { Metadata } from "next";
+import { DonneesStructurees } from "@/components/DonneesStructurees";
+import { SiteFooter } from "@/components/SiteFooter";
+import { jsonLdArticle, metadonneesArticle } from "@/lib/blog/meta";
 import Link from "next/link";
 import { NavbarMobile } from "@/components/NavbarMobile";
 import { WaitlistButton } from "@/components/landing/WaitlistButton";
 import { ClipboardList, TriangleAlert } from "lucide-react";
 
-export const metadata: Metadata = {
-  title: "Scope creep freelance : s'en protéger au devis",
-  description:
-    "Le scope creep est la première cause de perte de rentabilité en freelance. Comment il arrive et quelles clauses mettre au devis pour s'en protéger.",
-  alternates: { canonical: "https://getdeviso.fr/blog/scope-creep-freelance" },
-  openGraph: {
-    title: "Scope creep freelance : comment s'en protéger avec son devis",
-    description: "Qu'est-ce que le scope creep ? Comment l'éviter ? Quelles clauses inclure dans votre devis ? Guide pratique pour freelances.",
-    url: "https://getdeviso.fr/blog/scope-creep-freelance",
-    images: [{ url: "https://getdeviso.fr/opengraph-image", width: 1200, height: 630, alt: "Deviso, logiciel de devis et facturation" }],
-  },
-};
+const SLUG = "scope-creep-freelance";
 
-const jsonLd = {
-  "@context": "https://schema.org",
-  "@type": "Article",
-  headline: "Scope creep freelance : qu'est-ce que c'est et comment s'en protéger dans son devis",
-  datePublished: "2026-06-29",
-  dateModified: "2026-06-29",
-  author: { "@type": "Organization", name: "Deviso", url: "https://getdeviso.fr" },
-  publisher: { "@type": "Organization", name: "Deviso", url: "https://getdeviso.fr" },
-  inLanguage: "fr",
-  mainEntityOfPage: { "@type": "WebPage", "@id": "https://getdeviso.fr/blog/scope-creep-freelance" },
-  mainEntity: {
-    "@type": "FAQPage",
-    mainEntity: [
-      {
-        "@type": "Question",
-        name: "Qu'est-ce que le scope creep en freelance ?",
-        acceptedAnswer: {
-          "@type": "Answer",
-          text: "Le scope creep (ou dérive de périmètre) désigne le phénomène par lequel le périmètre d'une mission freelance s'étend progressivement au-delà de ce qui était prévu initialement, sans ajustement du prix ni de la durée. C'est souvent le résultat d'un brief flou, de demandes clients non formalisées, ou d'un devis sans clause de périmètre.",
-        },
-      },
-      {
-        "@type": "Question",
-        name: "Comment éviter le scope creep dans un devis freelance ?",
-        acceptedAnswer: {
-          "@type": "Answer",
-          text: "La protection la plus efficace est une clause de périmètre explicite dans le devis : 'La présente mission couvre exclusivement les prestations décrites ci-dessus. Toute demande supplémentaire fera l'objet d'un avenant tarifé.' Complétez avec un brief détaillé signé avant le démarrage et une procédure d'avenant claire.",
-        },
-      },
-    ],
+export const metadata = metadonneesArticle(SLUG);
+
+/**
+ * Les questions affichées sur la page, et balisées en `FAQPage` à partir de cette
+ * même liste. Une seule source : un `FAQPage` qui annonce une réponse absente du
+ * contenu visible est une déclaration fausse.
+ */
+const FAQ = [
+  {
+    q: "Qu'est-ce que le scope creep en freelance ?",
+    a: "Le scope creep (ou dérive de périmètre) désigne le phénomène par lequel le périmètre d'une mission freelance s'étend progressivement au-delà de ce qui était prévu initialement, sans ajustement du prix ni de la durée. C'est souvent le résultat d'un brief flou, de demandes clients non formalisées, ou d'un devis sans clause de périmètre.",
   },
-};
+  {
+    q: "Comment éviter le scope creep dans un devis freelance ?",
+    a: "La protection la plus efficace est une clause de périmètre explicite dans le devis : 'La présente mission couvre exclusivement les prestations décrites ci-dessus. Toute demande supplémentaire fera l'objet d'un avenant tarifé.' Complétez avec un brief détaillé signé avant le démarrage et une procédure d'avenant claire.",
+  },
+];
 
 const metierLinks = [
   { label: "Graphiste freelance", href: "/freelance-graphiste" },
@@ -66,7 +42,7 @@ const metierLinks = [
 export default function Page() {
   return (
     <div className="min-h-screen bg-ds-bg">
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
+      <DonneesStructurees donnees={jsonLdArticle(SLUG, FAQ)} />
 
       {/* Bandeau */}
       <div className="fixed top-0 left-0 right-0 bg-indigo-950/95 backdrop-blur-sm border-b border-indigo-500/20 py-2 px-4 text-center text-sm" style={{ zIndex: 60 }}>
@@ -223,6 +199,19 @@ export default function Page() {
 
           </div>
 
+          {/* ── Questions fréquentes ── */}
+          <section className="mb-12">
+            <h2 className="text-2xl font-semibold text-white mb-6">Questions fréquentes</h2>
+            <div className="space-y-4">
+              {FAQ.map(({ q, a }) => (
+                <div key={q} className="bg-ds-surface rounded-xl border border-ds-border p-6">
+                  <h3 className="text-white font-medium mb-3">{q}</h3>
+                  <p className="text-gray-400 text-sm leading-relaxed">{a}</p>
+                </div>
+              ))}
+            </div>
+          </section>
+
           {/* CTA */}
           <div className="mt-14 bg-gradient-to-br from-indigo-900/40 to-violet-900/20 rounded-2xl border border-indigo-500/20 p-8 text-center">
             <h2 className="text-2xl font-semibold text-white mb-3">Un devis avec les bonnes clauses, en 30 secondes</h2>
@@ -245,12 +234,7 @@ export default function Page() {
         </div>
       </article>
 
-      <footer className="border-t border-ds-border py-10 px-4 sm:px-6">
-        <div className="max-w-6xl mx-auto flex items-center justify-between text-xs text-gray-400">
-          <p>© 2026 Deviso · SafeTone Studio · SIREN 103 340 857</p>
-          <Link href="/" className="text-gray-500 hover:text-gray-300 transition-colors">getdeviso.fr</Link>
-        </div>
-      </footer>
+      <SiteFooter />
     </div>
   );
 }
