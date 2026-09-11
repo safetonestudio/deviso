@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { SITE, article, articlesLies, urlArticle, type Article } from "./registre";
+import { AUTEUR_JSONLD } from "./auteur";
 
 /**
  * Métadonnées et données structurées, dérivées du registre.
@@ -81,7 +82,10 @@ export function jsonLdArticle(slug: string, faq?: QuestionFaq[]) {
     description: a.description,
     datePublished: a.publieLe,
     dateModified: a.misAJourLe,
-    author: { "@type": "Organization", name: "Deviso", url: SITE },
+    // L'auteur est une personne, l'éditeur reste la marque. C'est la structure
+    // que Google attend, et c'était l'inverse avant : les dix-neuf articles
+    // étaient signés par une organisation inconnue.
+    author: AUTEUR_JSONLD,
     publisher: { "@type": "Organization", name: "Deviso", url: SITE },
     inLanguage: "fr",
     mainEntityOfPage: { "@type": "WebPage", "@id": url },

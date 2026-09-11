@@ -217,6 +217,8 @@ for (const slug of slugsRegistre) {
 
 const pagesIndexables = [
   "app/page.tsx",
+  "app/conformite/page.tsx",
+  "app/a-propos/page.tsx",
   "app/blog/page.tsx",
   "app/combien-facturer/page.tsx",
   "app/combien-facturer/[metier]/page.tsx",
@@ -253,6 +255,8 @@ const piedsArtisanaux = [
   "components/blog/BlogPost.tsx",
   "components/landing/FreelanceLanding.tsx",
   ...globSync("app/blog/*/page.tsx").map((f) => f.replace(/\\/g, "/")),
+  "app/conformite/page.tsx",
+  "app/a-propos/page.tsx",
   "app/combien-facturer/page.tsx",
   "app/combien-facturer/[metier]/page.tsx",
 ].filter((f) => /<footer\b/.test(lire(f)));
@@ -264,7 +268,7 @@ exige(
 );
 
 const pied = lire("components/SiteFooter.tsx");
-for (const cible of ["/blog", "/combien-facturer", "/blog/facturation-electronique-2026"]) {
+for (const cible of ["/blog", "/combien-facturer", "/conformite", "/blog/facturation-electronique-2026"]) {
   exige(
     `le pied de page mène à ${cible}`,
     pied.includes(`href="${cible}"`),
@@ -317,7 +321,35 @@ for (const { chemin, src } of contenus) {
   );
 }
 
-// ── 10. Contre-épreuves ─────────────────────────────────────────────────────
+// ── 10. Signature : l'auteur déclaré doit être visible ──────────────────────
+titre("Signature : l'auteur du balisage est affiché sur la page");
+
+exige(
+  "le JSON-LD des articles déclare une Person, pas une Organization",
+  /author: AUTEUR_JSONLD/.test(lire("lib/blog/meta.ts")) &&
+    /"@type": "Person"/.test(lire("lib/blog/auteur.ts")),
+  "les dix-neuf articles étaient signés par une marque inconnue. Sur des sujets fiscaux, Google\n" +
+    "     attend un auteur identifiable — et le lecteur aussi."
+);
+
+for (const slug of slugsRegistre) {
+  const src = lire(`app/blog/${slug}/page.tsx`);
+  const viaGabarit = /<BlogPost\b/.test(src);
+  exige(
+    `app/blog/${slug} — signature affichée`,
+    viaGabarit || /<Signature \/>/.test(src),
+    "une signature déclarée dans le balisage mais invisible sur la page est le même décalage qu'un\n" +
+      "     FAQPage dont les réponses n'apparaissent nulle part."
+  );
+}
+
+exige(
+  "la page auteur existe et est liée depuis le pied de page",
+  /AUTEUR_JSONLD/.test(lire("app/a-propos/page.tsx")) && pied.includes('href="/a-propos"'),
+  "le `@id` de la Person pointe vers /a-propos : si la page n'existe pas, la déclaration est creuse."
+);
+
+// ── 11. Contre-épreuves ─────────────────────────────────────────────────────
 titre("Contre-épreuves");
 
 contreEpreuve(

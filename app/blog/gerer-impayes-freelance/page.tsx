@@ -1,5 +1,6 @@
 import { DonneesStructurees } from "@/components/DonneesStructurees";
 import { SiteFooter } from "@/components/SiteFooter";
+import { Signature } from "@/components/blog/Signature";
 import { jsonLdArticle, metadonneesArticle } from "@/lib/blog/meta";
 import Link from "next/link";
 import { NavbarMobile } from "@/components/NavbarMobile";
@@ -235,6 +236,7 @@ export default function Page() {
               <Link href="/blog" className="text-xs px-3 py-1.5 rounded-lg bg-ds-surface border border-ds-border text-indigo-400 hover:text-indigo-300 transition-all">← Tous les articles</Link>
             </div>
           </div>
+          <Signature />
         </div>
       </article>
 

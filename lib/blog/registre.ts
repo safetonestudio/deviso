@@ -107,6 +107,8 @@ export const ARTICLES: Article[] = [
       badge: "Guide pilier",
     },
     lies: [
+      "facture-electronique-refusee-que-faire",
+      "plateforme-agreee-ou-solution-compatible",
       "reforme-facturation-micro-entrepreneur",
       "choisir-plateforme-agreee-freelance",
       "e-reporting-freelance-2026",
@@ -155,7 +157,12 @@ export const ARTICLES: Article[] = [
       resume: "Le PPF est abandonné. 5 critères pour sélectionner la bonne plateforme pour votre activité",
       badge: "Plateforme agréée",
     },
-    lies: ["facturation-electronique-2026", "reforme-facturation-micro-entrepreneur", "checklist-reforme-facturation-2026"],
+    lies: [
+      "facturation-electronique-2026",
+      "plateforme-agreee-ou-solution-compatible",
+      "reforme-facturation-micro-entrepreneur",
+      "checklist-reforme-facturation-2026",
+    ],
   },
   {
     slug: "e-reporting-freelance-2026",
@@ -179,6 +186,60 @@ export const ARTICLES: Article[] = [
       badge: "B2C",
     },
     lies: ["facturation-electronique-2026", "reforme-facturation-micro-entrepreneur", "checklist-reforme-facturation-2026"],
+  },
+  {
+    slug: "facture-electronique-refusee-que-faire",
+    categorie: "reforme",
+    titre: "Facture électronique refusée : que faire ?",
+    description:
+      "Refusée ou rejetée, ce ne sont pas les mêmes causes ni les mêmes remèdes. Les statuts, les treize motifs de refus possibles, et pourquoi un avoir ne se transmet pas toujours.",
+    h1: "Votre facture électronique a été refusée : ce que ça veut dire et quoi faire",
+    og: {
+      titre: "Facture électronique refusée ou rejetée : comprendre et corriger",
+      description:
+        "Les statuts du cycle de vie, la différence entre un refus du client et un rejet de la plateforme, les motifs réels, et la règle de l'avoir que personne n'explique.",
+    },
+    publieLe: "2026-09-11",
+    misAJourLe: "2026-09-11",
+    dureeLecture: 12,
+    carte: {
+      titre: "Facture refusée ou rejetée : que faire ?",
+      resume:
+        "Les statuts, les treize motifs de refus possibles, et la règle de l'avoir qui ne doit pas être transmis",
+      badge: "Cycle de vie",
+    },
+    lies: [
+      "facturation-electronique-2026",
+      "plateforme-agreee-ou-solution-compatible",
+      "gerer-impayes-freelance",
+    ],
+  },
+  {
+    slug: "plateforme-agreee-ou-solution-compatible",
+    categorie: "reforme",
+    titre: "Plateforme agréée ou solution compatible ?",
+    description:
+      "La distinction est officielle, pas marketing : une solution compatible ne peut ni transmettre ni recevoir vos factures. Comment vérifier où se situe votre logiciel.",
+    h1: "Plateforme agréée ou solution compatible : ce que la différence change pour vous",
+    og: {
+      titre: "Plateforme agréée ou solution compatible : la différence qui compte",
+      description:
+        "Une solution compatible doit s'adosser à une plateforme agréée. La question à poser à votre éditeur n'est pas « êtes-vous conforme ? » mais « êtes-vous agréé, ou adossé à qui ? »",
+    },
+    publieLe: "2026-09-11",
+    misAJourLe: "2026-09-11",
+    dureeLecture: 7,
+    carte: {
+      titre: "Plateforme agréée ou solution compatible ?",
+      resume:
+        "La distinction officielle que presque personne n'explique, et les trois questions à poser à votre éditeur",
+      badge: "Plateforme agréée",
+    },
+    lies: [
+      "facturation-electronique-2026",
+      "choisir-plateforme-agreee-freelance",
+      "reforme-facturation-micro-entrepreneur",
+    ],
   },
   {
     slug: "checklist-reforme-facturation-2026",

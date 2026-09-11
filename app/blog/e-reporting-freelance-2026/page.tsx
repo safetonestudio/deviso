@@ -1,5 +1,6 @@
 import { DonneesStructurees } from "@/components/DonneesStructurees";
 import { SiteFooter } from "@/components/SiteFooter";
+import { Signature } from "@/components/blog/Signature";
 import { jsonLdArticle, metadonneesArticle } from "@/lib/blog/meta";
 import Link from "next/link";
 import { NavbarMobile } from "@/components/NavbarMobile";
@@ -341,6 +342,7 @@ export default function EReportingFreelancePage() {
             Deviso gérera automatiquement l&apos;e-reporting B2C et l&apos;e-invoicing B2B. Vous créez vos factures comme aujourd&apos;hui, la conformité 2026-2027 est prise en charge.
           </p>
           <WaitlistButton plan="free" label="Essayer Deviso 14 jours →" className="inline-flex items-center gap-2 bg-indigo-600 hover:bg-indigo-500 text-white font-semibold px-6 py-3 rounded-xl transition-colors text-sm" />
+          <Signature />
         </div>
 
         <SiteFooter />

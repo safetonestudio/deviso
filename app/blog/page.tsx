@@ -6,8 +6,8 @@ import { SiteFooter } from "@/components/SiteFooter";
 import { DonneesStructurees } from "@/components/DonneesStructurees";
 import { ARTICLES, SITE, articlesDe, urlArticle } from "@/lib/blog/registre";
 import {
-  BarChart3, Camera, CircleCheck, Globe, GraduationCap, HardHat, Laptop, Link2,
-  Palette, PenLine, RadioTower, Receipt, Smartphone, Target, Zap, type LucideIcon,
+  BarChart3, Camera, CircleCheck, CircleX, Globe, GraduationCap, HardHat, Laptop, Link2,
+  Palette, PenLine, RadioTower, Receipt, ShieldCheck, Smartphone, Target, Zap, type LucideIcon,
 } from "lucide-react";
 
 /**
@@ -28,6 +28,8 @@ import {
 /** Une icône par slug. Un slug sans icône retombe sur une valeur par défaut. */
 const ICONES: Record<string, LucideIcon> = {
   "facturation-electronique-2026": Zap,
+  "facture-electronique-refusee-que-faire": CircleX,
+  "plateforme-agreee-ou-solution-compatible": ShieldCheck,
   "reforme-facturation-micro-entrepreneur": Receipt,
   "choisir-plateforme-agreee-freelance": Link2,
   "e-reporting-freelance-2026": RadioTower,

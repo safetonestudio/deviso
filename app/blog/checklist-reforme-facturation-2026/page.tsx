@@ -1,5 +1,6 @@
 import { DonneesStructurees } from "@/components/DonneesStructurees";
 import { SiteFooter } from "@/components/SiteFooter";
+import { Signature } from "@/components/blog/Signature";
 import { jsonLdArticle, metadonneesArticle } from "@/lib/blog/meta";
 import Link from "next/link";
 import { NavbarMobile } from "@/components/NavbarMobile";
@@ -286,6 +287,7 @@ export default function ChecklistReforme2026Page() {
           </p>
           <WaitlistButton plan="free" label="Essayer Deviso gratuitement →" className="inline-flex items-center gap-2 bg-indigo-600 hover:bg-indigo-500 text-white font-semibold px-6 py-3 rounded-xl transition-colors text-sm" />
           <p className="text-xs text-gray-400 mt-3">Factur-X inclus · PDP avant sept. 2027 · E-reporting géré automatiquement</p>
+          <Signature />
         </div>
 
         <SiteFooter />

@@ -51,6 +51,8 @@ export function SiteFooter() {
             <div>
               <div className="text-white font-semibold mb-3">Ressources</div>
               <ul className="space-y-2">
+                <li><Link href="/conformite" className="hover:text-gray-300 transition-colors">Conformité 2026</Link></li>
+                <li><Link href="/a-propos" className="hover:text-gray-300 transition-colors">À propos</Link></li>
                 <li><Link href="/blog" className="hover:text-gray-300 transition-colors">Guides et blog</Link></li>
                 <li><Link href="/combien-facturer" className="hover:text-gray-300 transition-colors">Combien facturer</Link></li>
                 <li>

@@ -1,5 +1,6 @@
 import { DonneesStructurees } from "@/components/DonneesStructurees";
 import { SiteFooter } from "@/components/SiteFooter";
+import { Signature } from "@/components/blog/Signature";
 import { jsonLdArticle, metadonneesArticle } from "@/lib/blog/meta";
 import Link from "next/link";
 import { NavbarMobile } from "@/components/NavbarMobile";
@@ -240,6 +241,7 @@ export default function ReformeFacturationMicroEntrepreneurPage() {
             Toutes vos factures Deviso sont déjà au format Factur-X EN 16931, le format requis par la réforme. La mention &ldquo;franchise TVA&rdquo; est gérée automatiquement selon votre régime.
           </p>
           <WaitlistButton plan="free" label="Essayer Deviso 14 jours →" className="inline-flex items-center gap-2 bg-indigo-600 hover:bg-indigo-500 text-white font-semibold px-6 py-3 rounded-xl transition-colors text-sm" />
+          <Signature />
         </div>
 
         <SiteFooter />

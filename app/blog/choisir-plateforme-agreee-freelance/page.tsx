@@ -1,5 +1,6 @@
 import { DonneesStructurees } from "@/components/DonneesStructurees";
 import { SiteFooter } from "@/components/SiteFooter";
+import { Signature } from "@/components/blog/Signature";
 import { jsonLdArticle, metadonneesArticle } from "@/lib/blog/meta";
 import Link from "next/link";
 import { NavbarMobile } from "@/components/NavbarMobile";
@@ -261,6 +262,7 @@ export default function ChoisirPlateformeAgreeePage() {
             Deviso génère déjà des factures au format Factur-X. L&apos;intégration PDP sera disponible bien avant l&apos;obligation de septembre 2027.
           </p>
           <WaitlistButton plan="free" label="Essayer Deviso 14 jours →" className="inline-flex items-center gap-2 bg-indigo-600 hover:bg-indigo-500 text-white font-semibold px-6 py-3 rounded-xl transition-colors text-sm" />
+          <Signature />
         </div>
 
         <SiteFooter />

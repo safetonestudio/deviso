@@ -65,6 +65,25 @@ export default function sitemap(): MetadataRoute.Sitemap {
     priority: 0.8,
   }));
 
+  // La page de conformité : c'est le premier critère de tri des comparateurs
+  // depuis le 1er septembre 2026, donc une page à haute priorité.
+  const conformite: MetadataRoute.Sitemap = [
+    {
+      url: `${SITE}/conformite`,
+      lastModified: new Date(REVISION_LANDINGS),
+      changeFrequency: "monthly",
+      priority: 0.9,
+    },
+    {
+      // La page auteur : elle porte l'autorité des dix-neuf articles, qui la
+      // désignent tous par le même `@id`.
+      url: `${SITE}/a-propos`,
+      lastModified: new Date(REVISION_LANDINGS),
+      changeFrequency: "monthly",
+      priority: 0.6,
+    },
+  ];
+
   const hubTarifs: MetadataRoute.Sitemap = [
     {
       url: `${SITE}/combien-facturer`,
@@ -103,6 +122,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
 
   return [
     ...pagesProduit,
+    ...conformite,
     ...hubTarifs,
     ...indexBlog,
     ...landings,

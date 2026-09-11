@@ -1,5 +1,6 @@
 import { DonneesStructurees } from "@/components/DonneesStructurees";
 import { SiteFooter } from "@/components/SiteFooter";
+import { Signature } from "@/components/blog/Signature";
 import { jsonLdArticle, metadonneesArticle } from "@/lib/blog/meta";
 import { article } from "@/lib/blog/registre";
 import Link from "next/link";
@@ -425,6 +426,7 @@ export default function FacturationElectronique2026Page() {
             Deviso génère automatiquement des factures Factur-X EN 16931, le format requis par la réforme. Aucune action de votre part, la conformité est intégrée.
           </p>
           <WaitlistButton plan="free" label="Essayer Deviso gratuitement →" className="inline-flex items-center gap-2 bg-indigo-600 hover:bg-indigo-500 text-white font-semibold px-6 py-3 rounded-xl transition-colors text-sm" />
+          <Signature />
         </div>
 
         {/* Footer métiers */}

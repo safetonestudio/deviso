@@ -2,6 +2,7 @@ import Link from "next/link";
 import { NavbarMobile } from "@/components/NavbarMobile";
 import { WaitlistButton } from "@/components/landing/WaitlistButton";
 import { SiteFooter } from "@/components/SiteFooter";
+import { Signature } from "@/components/blog/Signature";
 import { DonneesStructurees } from "@/components/DonneesStructurees";
 import { article } from "@/lib/blog/registre";
 import { jsonLdArticle, suggestionsDeLecture } from "@/lib/blog/meta";
@@ -337,6 +338,8 @@ export function BlogPost({
               </div>
             </section>
           )}
+
+          <Signature />
 
           {/* ── Autres métiers ── */}
           <section className="border-t border-ds-border pt-10">
