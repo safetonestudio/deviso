@@ -46,6 +46,9 @@ if (pages.length === 0) {
 const LEGITIMES = new Set(["&quot;", "&amp;", "&lt;", "&gt;", "&#x27;", "&#39;"]);
 const ENTITE = /&(?:#x?[\da-fA-F]+|[a-zA-Z]+);/g;
 
+const FLEX = /\bflex\b/;
+const INLINE = /<(strong|em|sup|sub|code|b|i)\b/;
+
 const anomalies = [];
 const nom = (f) => f.slice(RACINE.length + 1);
 
@@ -73,11 +76,38 @@ for (const f of pages) {
 
   // 3. Entité dans un contexte qui n'est pas du HTML : données structurées et
   //    métadonnées. Ce que Google lit, ce n'est pas ce que le lecteur voit.
+  // 3. Une phrase découpée en colonnes par un conteneur flex.
+  signaleFlexEclate(html, nom(f));
+
   for (const bloc of html.matchAll(/<script type="application\/ld\+json">([\s\S]*?)<\/script>/g)) {
     signaleEntites(bloc[1].replaceAll("\\u003c", "<"), nom(f), "entité dans le JSON-LD");
   }
   for (const meta of html.matchAll(/<meta [^>]*content="([^"]*)"/g)) {
     signaleEntites(meta[1], nom(f), "entité dans une balise meta");
+  }
+}
+
+// Un conteneur `display:flex` traite CHAQUE enfant comme une colonne. Un <li>
+// en flex qui contient à la fois du texte nu et des <strong>/<sup> voit donc sa
+// phrase découpée en colonnes — c'est illisible, et ça ne lève rien. Le markup
+// correct met un marqueur, puis UN seul élément qui porte toute la phrase.
+function signaleFlexEclate(html, page) {
+  for (const m of html.matchAll(/<li class="([^"]*)">([\s\S]*?)<\/li>/g)) {
+    const [, classes, contenu] = m;
+    if (!FLEX.test(classes) || /inline-flex|flex-col/.test(classes)) continue;
+    // Le contenu après le marqueur : s'il mêle du texte nu et des balises
+    // inline sans un enveloppe unique, chaque morceau devient une colonne.
+    const apresMarqueur = contenu.replace(/^\s*<(span|svg)[\s\S]*?<\/\1>\s*/, "");
+    if (!INLINE.test(apresMarqueur)) continue;
+    const texteNu = apresMarqueur.replace(/<[^>]*>/g, "").trim();
+    const commenceParUnBloc = /^\s*<(span|div|p)\b/.test(apresMarqueur);
+    if (texteNu && !commenceParUnBloc) {
+      anomalies.push({
+        page,
+        genre: "phrase éclatée en colonnes par un conteneur flex",
+        extrait: apresMarqueur.replace(/<[^>]+>/g, " ").replace(/\s+/g, " ").trim().slice(0, 100),
+      });
+    }
   }
 }
 
@@ -103,6 +133,15 @@ const temoin = [];
   const faux = '<h2 class="t">Ce qu&amp;rsquo;il se passe</h2><p>&lt;strong&gt;</p>';
   if (/&amp;(?:#x?[\da-fA-F]+|[a-zA-Z]+);/.test(faux)) temoin.push("entité littérale");
   if (/&lt;\/?(?:strong|em|code|sup|sub|br)\s*\/?&gt;/.test(faux)) temoin.push("balise en texte");
+
+  const avant = anomalies.length;
+  signaleFlexEclate(
+    '<li class="flex gap-2"><span>→</span> du texte <strong>en gras</strong> et la suite</li>' +
+      '<li class="flex gap-2"><span>→</span> <span>du texte <strong>en gras</strong> et la suite</span></li>',
+    "témoin"
+  );
+  if (anomalies.length === avant + 1) temoin.push("phrase éclatée par un flex");
+  anomalies.length = avant;
 }
 
 console.log("");
@@ -112,6 +151,7 @@ if (anomalies.length === 0) {
   console.log("  ok   aucune entité affichée littéralement");
   console.log("  ok   aucune balise affichée comme du texte");
   console.log("  ok   aucune entité dans le JSON-LD ni dans les métadonnées");
+  console.log("  ok   aucune phrase éclatée en colonnes par un conteneur flex");
 } else {
   const parPage = new Map();
   for (const a of anomalies) {
@@ -127,7 +167,7 @@ if (anomalies.length === 0) {
 console.log("");
 for (const t of temoin) console.log(`  ·    contre-épreuve : ${t} bien détectée`);
 
-if (temoin.length !== 2) {
+if (temoin.length !== 3) {
   console.error("✗ contre-épreuve MUETTE : le détecteur ne reconnaît plus ses propres cas fautifs.");
   process.exit(1);
 }

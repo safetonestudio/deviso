@@ -219,9 +219,9 @@ export default function ConformitePage() {
                     Fait
                   </p>
                   <ul className="space-y-2 text-gray-300">
-                    <li className="flex gap-2"><span className="text-emerald-400 shrink-0">→</span> Génère vos factures au format <strong className="text-white">Factur-X</strong> conforme à la norme européenne EN 16931</li>
-                    <li className="flex gap-2"><span className="text-emerald-400 shrink-0">→</span> Se connecte à Super PDP pour <strong className="text-white">déposer</strong> vos factures et <strong className="text-white">recevoir</strong> celles de vos fournisseurs</li>
-                    <li className="flex gap-2"><span className="text-emerald-400 shrink-0">→</span> Suit le <strong className="text-white">cycle de vie</strong> de chaque facture déposée, y compris les refus et les rejets, et vous dit quoi faire</li>
+                    <li className="flex gap-2"><span className="text-emerald-400 shrink-0">→</span> <span>Génère vos factures au format <strong className="text-white">Factur-X</strong> conforme à la norme européenne EN 16931</span></li>
+                    <li className="flex gap-2"><span className="text-emerald-400 shrink-0">→</span> <span>Se connecte à Super PDP pour <strong className="text-white">déposer</strong> vos factures et <strong className="text-white">recevoir</strong> celles de vos fournisseurs</span></li>
+                    <li className="flex gap-2"><span className="text-emerald-400 shrink-0">→</span> <span>Suit le <strong className="text-white">cycle de vie</strong> de chaque facture déposée, y compris les refus et les rejets, et vous dit quoi faire</span></li>
                     <li className="flex gap-2"><span className="text-emerald-400 shrink-0">→</span> Gère la mention d&apos;exonération correcte si vous êtes en franchise de TVA (art. 293 B du CGI)</li>
                     <li className="flex gap-2"><span className="text-emerald-400 shrink-0">→</span> Numérote vos factures de façon continue, comme l&apos;exige l&apos;article 242 nonies A du CGI</li>
                   </ul>
@@ -231,7 +231,7 @@ export default function ConformitePage() {
                     Ne fait pas
                   </p>
                   <ul className="space-y-2 text-gray-400">
-                    <li className="flex gap-2"><span className="text-gray-500 shrink-0">→</span> Deviso n&apos;est <strong className="text-white">pas</strong> une plateforme agréée et ne transmet rien directement à l&apos;administration</li>
+                    <li className="flex gap-2"><span className="text-gray-500 shrink-0">→</span> <span>Deviso n&apos;est <strong className="text-white">pas</strong> une plateforme agréée et ne transmet rien directement à l&apos;administration</span></li>
                     <li className="flex gap-2"><span className="text-gray-500 shrink-0">→</span> Deviso ne remplace pas votre expert-comptable, et ne donne pas de conseil fiscal</li>
                     <li className="flex gap-2"><span className="text-gray-500 shrink-0">→</span> Deviso ne déclare pas vos achats B2B à votre place (art. 290-II du CGI) : cette obligation reste la vôtre</li>
                     <li className="flex gap-2"><span className="text-gray-500 shrink-0">→</span> Deviso ne voit pas les paiements encaissés hors de l&apos;outil : c&apos;est vous qui marquez une facture payée</li>
