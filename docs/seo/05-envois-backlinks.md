@@ -13,34 +13,33 @@ et c'est ce qui fait la différence entre une soumission qu'on accepte et une qu
 
 ## Depuis quelle adresse envoyer
 
+**`support@getdeviso.fr`**, sous le nom d'expéditeur **Deviso**.
+
+C'est l'adresse du produit, sur son propre domaine, celle qui est déjà affichée sur `/blog` et
+`/a-propos`. Un destinataire peut la vérifier en trente secondes, et une réponse arrive là où elle
+doit arriver. Aucune ligne d'explication sur l'éditeur n'est nécessaire : il n'y a plus de décalage
+entre le produit présenté et le domaine qui écrit.
+
+Le montage, pour mémoire, parce qu'il n'est pas évident et qu'il a demandé une demi-journée :
+
 | | |
 |---|---|
-| **Expéditeur** | `safetonestudio@proton.me` |
-| **Répondre à** (Reply-To) | `contact@safetonestudio.com` |
+| Réception | ImprovMX redirige `support@getdeviso.fr` vers la boîte Gmail |
+| Émission | Gmail « envoyer en tant que », via `smtp.gmail.com:587` |
+| SPF | `v=spf1 include:amazonses.com include:_spf.google.com ~all` |
 
-Cette combinaison n'est pas un compromis bancal, c'est la seule qui fonctionne — et il a fallu la
-vérifier pour s'en apercevoir.
+Les deux `include` sont nécessaires : Amazon SES pour les e-mails transactionnels de l'application
+(`noreply@`), Google pour ces envois-ci. Retirer l'un ou l'autre casse la moitié du courrier du
+domaine.
 
-`contact@safetonestudio.com` ne peut pas **émettre**. Le MX Plan livré gratuitement avec un domaine
-OVH n'autorise aucune boîte aux lettres (quota : 0 compte e-mail), uniquement des redirections. Il n'y
-a donc pas de SMTP derrière cette adresse, et Proton en offre gratuite ne permet pas d'émettre depuis
-un domaine personnalisé.
-
-Mais elle **reçoit**, depuis le 12/09/2026 : une redirection vers `safetonestudio@proton.me`, testée
-et confirmée. Avant cette date elle rebondissait (`554 5.7.1 Relay access denied`) — la redirection
-existante avait été saisie de travers, l'adresse complète tapée dans le champ qui n'attend que la
-partie gauche, produisant l'alias `contact@safetonestudio.com.safetonestudio.com`.
-
-Le `Reply-To` fait donc tout le travail : le destinataire voit une adresse sur ton domaine, qu'il peut
-vérifier sur `safetonestudio.com/contact`, et sa réponse part vers une boîte que tu relèves.
+**À surveiller sur les premiers envois.** Le message de confirmation de Google est lui-même arrivé en
+indésirable — un domaine récent qui émet via une redirection part avec un handicap de réputation.
+Vérifie que ton premier message atterrit bien en boîte de réception, et si possible demande au
+destinataire de confirmer. Une campagne de sept messages qui part entièrement en spam ne produit
+aucun retour, et rien ne te le signale.
 
 N'envoie pas depuis `noreply@getdeviso.fr` : plusieurs formulaires rejettent ces adresses, et
-personne ne peut y répondre. N'annonce pas `support@getdeviso.fr` comme contact tant que son alias
-ImprovMX n'est pas confirmé — les MX de `getdeviso.fr` pointent vers ImprovMX, pas vers OVH.
-
-Comme SafeTone Studio fait du doublage audiovisuel et non de la facturation, chaque message porte une
-ligne qui explique le lien — sans elle, le destinataire qui clique sur le domaine ne comprend pas
-d'où vient la sollicitation.
+personne ne peut y répondre.
 
 ---
 
@@ -73,7 +72,7 @@ détaillé et vérifiable : https://getdeviso.fr/conformite
 Tarifs : offre gratuite, puis abonnements Solo et Pro
 Pays : France · Langue : français
 Éditeur : SafeTone Studio (SIREN 103 340 857), Léognan (33)
-Contact : contact@safetonestudio.com (éditeur)
+Contact : support@getdeviso.fr
 ```
 
 ---
@@ -106,7 +105,6 @@ Contact : contact@safetonestudio.com (éditeur)
 >
 > Bien à vous,
 > S. Albert — Deviso
-> Deviso est édité par SafeTone Studio (SIREN 103 340 857), d'où l'adresse d'envoi.
 > https://getdeviso.fr · https://getdeviso.fr/a-propos
 
 ---
@@ -182,7 +180,6 @@ Contact : contact@safetonestudio.com (éditeur)
 > Bien cordialement,
 > S. Albert
 > Deviso — https://getdeviso.fr · https://getdeviso.fr/a-propos
-> Deviso est édité par SafeTone Studio (SIREN 103 340 857), d'où l'adresse d'envoi.
 
 **Note** : les angles 1 et 2 correspondent aux deux articles publiés sur le blog le 11/09/2026
 (`/blog/plateforme-agreee-ou-solution-compatible` et `/blog/facture-electronique-refusee-que-faire`).
@@ -234,7 +231,6 @@ sans les sections sur Deviso. Un article dupliqué te coûterait les deux pages 
 >
 > Bien à vous,
 > S. Albert — Deviso
-> Deviso est édité par SafeTone Studio (SIREN 103 340 857), d'où l'adresse d'envoi.
 > https://getdeviso.fr · https://getdeviso.fr/a-propos
 
 ---
