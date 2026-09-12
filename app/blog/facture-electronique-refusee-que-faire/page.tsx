@@ -205,7 +205,7 @@ export default function Page() {
                   <p className="text-white font-medium mb-2">Ça vient de votre client</p>
                   <p className="text-gray-400 mb-3">
                     Il refuse la facture dans son intégralité. La cause est commerciale ou comptable : un montant
-                    qu&apos;il contexte, une prestation qu&apos;il ne reconnaît pas, une référence qui manque à
+                    qu&apos;il conteste, une prestation qu&apos;il ne reconnaît pas, une référence qui manque à
                     son process.
                   </p>
                   <p className="text-gray-300">
