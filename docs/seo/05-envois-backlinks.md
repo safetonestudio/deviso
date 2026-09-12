@@ -13,18 +13,30 @@ et c'est ce qui fait la différence entre une soumission qu'on accepte et une qu
 
 ## Depuis quelle adresse envoyer
 
-**`contact@safetonestudio.com`**, et pas une adresse personnelle.
+| | |
+|---|---|
+| **Expéditeur** | `safetonestudio@proton.me` |
+| **Répondre à** (Reply-To) | `contact@safetonestudio.com` |
 
-Trois raisons, dans l'ordre d'importance. C'est un domaine que tu possèdes, avec un SPF strict
-(`v=spf1 include:mx.ovh.com -all`) et des MX chez OVH : les messages sont authentifiés, ce qui compte
-sur du démarchage à froid où le moindre signal fait basculer en indésirable. C'est l'adresse déjà
-publiée sur `safetonestudio.com/contact`, donc un destinataire méfiant peut la vérifier en trente
-secondes. Et les réponses arrivent dans une boîte que tu relèves — contrairement à
-`support@getdeviso.fr`, qui n'est aujourd'hui qu'une redirection ImprovMX dont l'alias n'a pas été
-confirmé.
+Cette combinaison n'est pas un compromis bancal, c'est la seule qui fonctionne — et il a fallu la
+vérifier pour s'en apercevoir.
+
+`contact@safetonestudio.com` ne peut pas **émettre**. Le MX Plan livré gratuitement avec un domaine
+OVH n'autorise aucune boîte aux lettres (quota : 0 compte e-mail), uniquement des redirections. Il n'y
+a donc pas de SMTP derrière cette adresse, et Proton en offre gratuite ne permet pas d'émettre depuis
+un domaine personnalisé.
+
+Mais elle **reçoit**, depuis le 12/09/2026 : une redirection vers `safetonestudio@proton.me`, testée
+et confirmée. Avant cette date elle rebondissait (`554 5.7.1 Relay access denied`) — la redirection
+existante avait été saisie de travers, l'adresse complète tapée dans le champ qui n'attend que la
+partie gauche, produisant l'alias `contact@safetonestudio.com.safetonestudio.com`.
+
+Le `Reply-To` fait donc tout le travail : le destinataire voit une adresse sur ton domaine, qu'il peut
+vérifier sur `safetonestudio.com/contact`, et sa réponse part vers une boîte que tu relèves.
 
 N'envoie pas depuis `noreply@getdeviso.fr` : plusieurs formulaires rejettent ces adresses, et
-personne ne peut y répondre.
+personne ne peut y répondre. N'annonce pas `support@getdeviso.fr` comme contact tant que son alias
+ImprovMX n'est pas confirmé — les MX de `getdeviso.fr` pointent vers ImprovMX, pas vers OVH.
 
 Comme SafeTone Studio fait du doublage audiovisuel et non de la facturation, chaque message porte une
 ligne qui explique le lien — sans elle, le destinataire qui clique sur le domaine ne comprend pas
