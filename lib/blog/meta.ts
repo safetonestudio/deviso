@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { SITE, article, articlesLies, urlArticle, type Article } from "./registre";
 import { AUTEUR_JSONLD } from "./auteur";
+import { categorie } from "./categories";
 
 /**
  * Métadonnées et données structurées, dérivées du registre.
@@ -131,6 +132,12 @@ export function jsonLdFilDAriane(etapes: { nom: string; url?: string }[]) {
       ...(e.url ? { item: e.url } : {}),
     })),
   };
+}
+
+/** Le badge de catégorie d'un article, pour l'afficher en tête de page. */
+export function badgeCategorie(slug: string) {
+  const c = categorie(article(slug).categorie);
+  return { badge: c.badge, accent: c.accent };
 }
 
 /** Les articles liés, prêts à afficher : chemin, titre court, durée. */

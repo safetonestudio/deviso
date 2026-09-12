@@ -72,7 +72,7 @@ export const TARIFS_DATA: TarifsMetier[] = [
       },
       {
         q: "Comment calculer mon TJM en tant que graphiste freelance ?",
-        a: "Multipliez votre TJM par vos jours facturables réels (environ 14/mois après admin, prospection et congés). Déduisez 22 % de cotisations URSSAF si vous êtes en micro-BNC. Le reste est votre BNC net avant impôt.",
+        a: "Multipliez votre TJM par vos jours réellement facturables (environ 14 par mois, une fois déduits l'administratif, la prospection et les congés). Déduisez ensuite vos cotisations : en micro-BNC au régime général, c'est 25,6 % du chiffre d'affaires, ou 23,2 % si vous êtes affilié à la Cipav. Le reste est votre bénéfice avant impôt sur le revenu — et avant vos charges propres (matériel, logiciels, assurance, mutuelle).",
       },
       {
         q: "Faut-il facturer les droits de cession en plus du devis de création ?",
@@ -178,7 +178,7 @@ export const TARIFS_DATA: TarifsMetier[] = [
       },
       {
         q: "Faut-il créer une SASU ou rester en micro-entreprise comme consultant ?",
-        a: "En micro-BNC, le plafond est de 77 700 €/CA par an. À 700 €/j × 16 jours = 11 200 €/mois × 12 = 134 400 €/an, vous dépassez largement ce seuil. Une EURL ou SASU à l'IS devient indispensable au-delà de 80 000 € de CA, pour optimiser la rémunération et les charges.",
+        a: "En micro-BNC, le plafond de chiffre d'affaires est de 83 600 € par an pour la période 2026-2028 (il était de 77 700 € jusqu'en 2025). À 700 €/j × 16 jours = 11 200 €/mois × 12 = 134 400 €/an, vous dépassez largement ce seuil : une EURL ou une SASU à l'impôt sur les sociétés devient alors le cadre adapté. Attention à ne pas confondre ce plafond avec le seuil de franchise en base de TVA, bien plus bas : 37 500 € pour les prestations de services, et c'est lui que vous franchirez en premier.",
       },
       {
         q: "Comment facturer une mission de conseil forfaitaire ?",
@@ -558,12 +558,38 @@ export function getTarifsMetier(slug: string): TarifsMetier | undefined {
 export const ALL_METIER_SLUGS = TARIFS_DATA.map((m) => m.slug);
 
 /**
- * Calcul simulateur TJM, Micro-BNC (régime le plus courant en prestation intellectuelle)
+ * Le taux de cotisations du micro-entrepreneur en prestation de services BNC.
  *
- * Cotisations URSSAF : 22 % du CA
- * → BNC net avant IR = CA × 78 %
+ * Il était fixé à 22 % dans ce fichier, avec un commentaire qui disait lui-même
+ * « taux 2024 ». C'était donc faux de 3,6 points depuis, et le simulateur
+ * surestimait d'autant le revenu net affiché sur les onze pages de
+ * `/combien-facturer` — c'est-à-dire précisément là où un indépendant décide de
+ * son tarif. Un outil qui se trompe dans le sens rassurant est pire qu'un outil
+ * absent.
  *
- * Source URSSAF : taux 2024 applicable jusqu'à nouveau décret
+ * Les taux applicables, par activité :
+ *
+ *   - vente de marchandises et hébergement : 12,3 %
+ *   - prestations de services commerciales et artisanales (BIC) : 21,2 %
+ *   - prestations de services libérales affiliées à la Cipav : 23,2 %
+ *   - prestations de services libérales affiliées au régime général (SSI) : 25,6 %
+ *
+ * Le simulateur retient **25,6 %**, parce que les métiers de `/combien-facturer`
+ * — graphiste, développeur, consultant, rédacteur, traducteur, coach, community
+ * manager — relèvent du régime général depuis la fermeture de la Cipav aux
+ * nouvelles affiliations en 2018, et non de la Cipav, dont la liste est limitée
+ * (architectes, ostéopathes, psychologues, experts…). Un affilié Cipav paiera
+ * 2,4 points de moins : c'est dit sur la page plutôt que caché dans un calcul.
+ *
+ * Source : taux modifiés par décret du 8 septembre 2025 pour la fraction BNC,
+ * relayés et datés par Compta Online (page révisée le 25/02/2026). À revérifier
+ * au barème URSSAF à chaque loi de financement de la sécurité sociale.
+ */
+export const TAUX_COTISATIONS_BNC = 0.256;
+export const TAUX_COTISATIONS_BNC_CIPAV = 0.232;
+
+/**
+ * Calcul du simulateur de TJM, en micro-BNC au régime général.
  */
 export function simulateTjm(params: {
   tjm: number;
@@ -576,15 +602,16 @@ export function simulateTjm(params: {
 } {
   const { tjm, joursParMois } = params;
   const caMensuel = tjm * joursParMois;
-  const urssaf = Math.round(caMensuel * 0.22);
+  const urssaf = Math.round(caMensuel * TAUX_COTISATIONS_BNC);
   const netAvantIr = caMensuel - urssaf;
   const caAnnuel = caMensuel * 11; // ~11 mois facturables/an (1 mois de congés)
   return { caMensuel, urssaf, netAvantIr, caAnnuel };
 }
 
 /**
- * Calcul inverse : quel TJM pour atteindre X € net/mois ?
- * Net cible = TJM × jours × 0.78  →  TJM = net / (jours × 0.78)
+ * Calcul inverse : quel TJM pour atteindre X € net par mois ?
+ *
+ * Net visé = TJM × jours × (1 − taux)  →  TJM = net / (jours × (1 − taux)).
  */
 export function simulateReverse(params: {
   netCible: number;
@@ -595,8 +622,8 @@ export function simulateReverse(params: {
   urssaf: number;
 } {
   const { netCible, joursParMois } = params;
-  const caMensuelRequis = Math.ceil(netCible / 0.78);
+  const caMensuelRequis = Math.ceil(netCible / (1 - TAUX_COTISATIONS_BNC));
   const tjmRequis = Math.ceil(caMensuelRequis / joursParMois);
-  const urssaf = Math.round(caMensuelRequis * 0.22);
+  const urssaf = Math.round(caMensuelRequis * TAUX_COTISATIONS_BNC);
   return { tjmRequis, caMensuelRequis, urssaf };
 }

@@ -102,6 +102,60 @@ exige(
   `le sitemap annoncerait à Google des URL qui renvoient 404.\n     En cause : ${orphelinsRegistre.join(", ")}`
 );
 
+// ── 1 bis. Catégories : déclarées, non vides, et aucune inventée ────────────
+titre("Catégories : déclarées dans categories.ts, et aucune vide");
+
+const srcCategories = lire("lib/blog/categories.ts");
+const idsDeclares = [...srcCategories.matchAll(/^\s*id: "([a-z-]+)",$/gm)].map((m) => m[1]);
+const idsUtilises = [...new Set(entrees.map((e) => e.categorie))];
+
+exige(
+  `${idsDeclares.length} catégorie(s) déclarée(s) : ${idsDeclares.join(", ")}`,
+  idsDeclares.length > 0,
+  "aucune catégorie lue dans categories.ts — le reste de ce contrôle ne veut rien dire."
+);
+
+const inventees = idsUtilises.filter((c) => !idsDeclares.includes(c));
+exige(
+  "aucun article ne référence une catégorie non déclarée",
+  inventees.length === 0,
+  `une catégorie inventée fait lever \`categorie()\` au rendu, donc la page ne se construit pas.\n` +
+    `     En cause : ${inventees.join(", ")}`
+);
+
+const vides = idsDeclares.filter((c) => !idsUtilises.includes(c));
+exige(
+  "aucune catégorie déclarée sans article",
+  vides.length === 0,
+  `une catégorie vide produit un menu dépliant vide sur /blog — un bug visible par le lecteur.\n` +
+    `     Déclarez la catégorie au moment d'écrire son premier article, pas avant.\n` +
+    `     En cause : ${vides.join(", ")}`
+);
+
+exige(
+  "au plus une catégorie ouverte par défaut",
+  (srcCategories.match(/ouverteParDefaut: true/g) ?? []).length <= 1,
+  "deux menus ouverts d'emblée, et la page n'a plus de hiérarchie : tout est au même niveau."
+);
+
+exige(
+  "l'index du blog dérive ses menus des catégories",
+  /LISTE_CATEGORIES\.map/.test(lire("app/blog/page.tsx")) &&
+    /<MenuCategorie/.test(lire("app/blog/page.tsx")),
+  "l'index portait deux menus écrits à la main : une catégorie ajoutée n'apparaissait pas, et un\n" +
+    "     article rattaché à une catégorie sans bloc JSX n'apparaissait nulle part."
+);
+
+exige(
+  "chaque article a une icône sur l'index",
+  (() => {
+    const idx = lire("app/blog/page.tsx");
+    return slugsRegistre.every((s) => idx.includes(`"${s}":`));
+  })(),
+  "un article sans icône retombe sur une valeur par défaut — ce n'est pas cassé, mais sur un index\n" +
+    "     où toutes les lignes en ont une, l'icône générique se voit."
+);
+
 // ── 2. Cohérence des dates ──────────────────────────────────────────────────
 titre("Dates : misAJourLe ne peut pas précéder publieLe");
 
@@ -206,12 +260,23 @@ titre("Données structurées : chaque page de contenu est balisée");
 
 for (const slug of slugsRegistre) {
   const src = lire(`app/blog/${slug}/page.tsx`);
-  const viaGabarit = /<BlogPost\b/.test(src);
+  const viaGabarit = /<(BlogPost|ArticleLong)\b/.test(src);
   exige(
     `app/blog/${slug} — métadonnées et JSON-LD`,
     /metadonneesArticle\(/.test(src) && (viaGabarit || /jsonLdArticle\(/.test(src)),
     "les métadonnées et les données structurées doivent venir du registre (`metadonneesArticle`,\n" +
-      "     `jsonLdArticle`), sinon elles sont recopiées — et une copie finit par divergerar."
+      "     `jsonLdArticle`), sinon elles sont recopiées — et une copie finit par diverger."
+  );
+}
+
+// Contre-épreuve : la tolérance accordée aux deux gabarits ne vaut que s'ils
+// balisent réellement. Sans ça, « passer par le gabarit » serait une dispense.
+for (const gabarit of ["components/blog/BlogPost.tsx", "components/blog/ArticleLong.tsx"]) {
+  exige(
+    `${gabarit} balise lui-même l'article`,
+    /jsonLdArticle\(/.test(lire(gabarit)),
+    "les pages qui passent par ce gabarit sont dispensées d'appeler `jsonLdArticle` elles-mêmes.\n" +
+      "     Si le gabarit cesse de baliser, toutes ces pages perdent leurs données structurées en silence."
   );
 }
 
@@ -315,11 +380,22 @@ for (const { chemin, src } of contenus) {
   if (!/const FAQ = \[/.test(src)) continue;
   exige(
     `${chemin} — la liste FAQ est rendue`,
-    /FAQ\.map\(/.test(src),
+    /FAQ\.map\(/.test(src) || /faq=\{FAQ\}/.test(src),
     "un `FAQPage` qui annonce une réponse absente du contenu visible est une déclaration fausse.\n" +
       "     Sept articles déclaraient une FAQ que la page n'affichait pas."
   );
 }
+
+// Contre-épreuve : la page qui confie sa FAQ au gabarit ne la vérifie plus
+// elle-même. Il faut donc que le gabarit l'affiche, et qu'il balise la même
+// liste que celle qu'il affiche.
+const gabaritLong = lire("components/blog/ArticleLong.tsx");
+exige(
+  "ArticleLong affiche la FAQ qu'il balise",
+  /faq\.map\(/.test(gabaritLong) && /jsonLdArticle\(slug, faq\)/.test(gabaritLong),
+  "le gabarit reçoit une seule liste de questions : elle doit partir à la fois dans le `FAQPage`\n" +
+    "     et dans le rendu. Deux listes, même identiques aujourd'hui, finiraient par se désaligner."
+);
 
 // ── 10. Signature : l'auteur déclaré doit être visible ──────────────────────
 titre("Signature : l'auteur du balisage est affiché sur la page");
@@ -334,12 +410,23 @@ exige(
 
 for (const slug of slugsRegistre) {
   const src = lire(`app/blog/${slug}/page.tsx`);
-  const viaGabarit = /<BlogPost\b/.test(src);
+  const viaGabarit = /<(BlogPost|ArticleLong)\b/.test(src);
   exige(
     `app/blog/${slug} — signature affichée`,
     viaGabarit || /<Signature \/>/.test(src),
     "une signature déclarée dans le balisage mais invisible sur la page est le même décalage qu'un\n" +
       "     FAQPage dont les réponses n'apparaissent nulle part."
+  );
+}
+
+// Contre-épreuve de la dispense ci-dessus : les deux gabarits doivent afficher
+// la signature, sinon « passer par le gabarit » suffirait à la faire disparaître
+// de toutes les pages d'un coup.
+for (const gabarit of ["components/blog/BlogPost.tsx", "components/blog/ArticleLong.tsx"]) {
+  exige(
+    `${gabarit} affiche la signature`,
+    /<Signature \/>/.test(lire(gabarit)),
+    "c'est ce gabarit qui dispense les pages d'afficher la signature elles-mêmes."
   );
 }
 

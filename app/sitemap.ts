@@ -1,6 +1,7 @@
 import { MetadataRoute } from "next";
 import { ARTICLES, SITE, urlArticle } from "@/lib/blog/registre";
 import { METIERS } from "@/lib/blog/metiers";
+import { categorie } from "@/lib/blog/categories";
 
 /**
  * Le sitemap, calculé depuis les mêmes sources que les pages.
@@ -116,8 +117,10 @@ export default function sitemap(): MetadataRoute.Sitemap {
     url: urlArticle(a.slug),
     lastModified: new Date(a.misAJourLe),
     changeFrequency: "monthly",
-    // Le cluster réforme porte l'essentiel de la valeur et bouge le plus.
-    priority: a.categorie === "reforme" ? 0.9 : 0.8,
+    // La priorité vient de la catégorie : les catégories réglementaires bougent
+    // et portent la valeur. Tester « reforme » en dur ici aurait oublié la
+    // deuxième catégorie prioritaire du jour où il y en aurait une.
+    priority: categorie(a.categorie).prioritaire ? 0.9 : 0.8,
   }));
 
   return [

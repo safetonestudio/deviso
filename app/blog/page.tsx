@@ -4,29 +4,33 @@ import { NavbarMobile } from "@/components/NavbarMobile";
 import { WaitlistButton } from "@/components/landing/WaitlistButton";
 import { SiteFooter } from "@/components/SiteFooter";
 import { DonneesStructurees } from "@/components/DonneesStructurees";
+import { MenuCategorie } from "@/components/blog/MenuCategorie";
 import { ARTICLES, SITE, articlesDe, urlArticle } from "@/lib/blog/registre";
+import { LISTE_CATEGORIES } from "@/lib/blog/categories";
 import {
-  BarChart3, Camera, CircleCheck, CircleX, Globe, GraduationCap, HardHat, Laptop, Link2,
-  Palette, PenLine, RadioTower, Receipt, ShieldCheck, Smartphone, Target, Zap, type LucideIcon,
+  BadgeEuro, BarChart3, Calculator, Camera, CircleCheck, CircleX, Coins, Expand,
+  FileMinus, FilePlus, FileSignature, Globe, GraduationCap, HandCoins, HardHat,
+  Hash, Laptop, Link2, Palette, PenLine, Plane, RadioTower, Receipt, ScrollText,
+  ShieldCheck, Smartphone, Stamp, Target,
+  Zap, type LucideIcon,
 } from "lucide-react";
 
 /**
- * L'index du blog, construit depuis le registre.
+ * L'index du blog, entièrement dérivé du registre et des catégories.
  *
- * Ce fichier portait sa propre copie des dix-neuf articles : titres, résumés,
- * durées de lecture, badges. Une troisième saisie, après les métadonnées de
- * chaque page et l'entrée du sitemap. Elle avait dérivé, comme toutes les
- * copies finissent par dériver : le résumé de l'article e-reporting annonçait ici
- * « Amendes : 250 €/transaction », un montant doublé depuis le 1er septembre 2026
- * par la loi de finances pour 2026.
+ * Ce fichier portait sa propre copie des dix-neuf articles, puis deux menus
+ * dépliants écrits à la main et des cartes à plat pour le reste — trois
+ * présentations pour une seule liste. Ajouter une catégorie demandait d'écrire
+ * un troisième bloc de JSX ; un article rattaché à une catégorie sans bloc
+ * n'apparaissait nulle part.
  *
- * Il ne reste qu'une chose à tenir à la main : l'icône de chaque article. Elle
- * est ici, et pas dans le registre, pour que `app/sitemap.ts` n'ait pas à importer
- * `lucide-react` pour produire du XML.
+ * Il ne reste que deux choses à tenir à la main : l'icône de chaque article, et
+ * l'ordre des catégories (qui vit dans `categories.ts`). Tout le reste suit.
  */
 
 /** Une icône par slug. Un slug sans icône retombe sur une valeur par défaut. */
 const ICONES: Record<string, LucideIcon> = {
+  // Réforme
   "facturation-electronique-2026": Zap,
   "facture-electronique-refusee-que-faire": CircleX,
   "plateforme-agreee-ou-solution-compatible": ShieldCheck,
@@ -34,6 +38,18 @@ const ICONES: Record<string, LucideIcon> = {
   "choisir-plateforme-agreee-freelance": Link2,
   "e-reporting-freelance-2026": RadioTower,
   "checklist-reforme-facturation-2026": CircleCheck,
+  "facturation-electronique-petit-chiffre-affaires": Coins,
+  // Documents
+  "facture-acompte-freelance": FilePlus,
+  "facture-avoir-erreur-facture": FileMinus,
+  "note-honoraires-ou-facture": FileSignature,
+  "attestation-vigilance-urssaf-freelance": Stamp,
+  // Obligations
+  "refacturer-frais-client-freelance": BadgeEuro,
+  "facturer-client-etranger-freelance": Plane,
+  "numerotation-factures-freelance": Hash,
+  "plafonds-micro-entreprise-2026": Coins,
+  // Métier
   "devis-graphiste-freelance": Palette,
   "devis-developpeur-web": Laptop,
   "devis-consultant-independant": BarChart3,
@@ -44,31 +60,30 @@ const ICONES: Record<string, LucideIcon> = {
   "devis-community-manager": Smartphone,
   "devis-coach-freelance": Target,
   "devis-traducteur-freelance": Globe,
+  // Transverse
+  "clauses-devis-freelance": ScrollText,
+  "scope-creep-freelance": Expand,
+  "gerer-impayes-freelance": HandCoins,
+  "fixer-ses-tarifs-freelance": Calculator,
 };
-
-const reformeArticles = articlesDe("reforme");
-const metierArticles = articlesDe("metier");
-const autresArticles = articlesDe("transverse");
 
 export const metadata: Metadata = {
   title: "Guides devis et facturation pour freelances",
   description:
-    "Guides pratiques sur la facturation freelance en France : réforme 2026, mentions obligatoires, droits d'auteur, OPCO, Factur-X. Par métier et par sujet.",
+    "Guides pratiques sur la facturation freelance en France : réforme 2026, documents obligatoires, TVA et seuils, devis par métier. Sourcés et datés.",
   alternates: { canonical: `${SITE}/blog` },
   openGraph: {
     title: "Blog Deviso, guides devis et facturation pour freelances",
     description:
-      "Guides pratiques sur la facturation freelance en France : réforme 2026, mentions obligatoires, droits d'auteur, Factur-X.",
+      "Réforme 2026, documents du freelance, TVA et obligations, devis par métier. Des guides sourcés, datés et corrigés quand le droit change.",
     url: `${SITE}/blog`,
     images: [{ url: `${SITE}/opengraph-image`, width: 1200, height: 630, alt: "Blog Deviso" }],
   },
 };
 
 /**
- * Le `CollectionPage` liste désormais les dix-neuf articles, et non six choisis à
- * la main — un `hasPart` partiel déclare à Google une collection plus pauvre
- * qu'elle ne l'est. Le `BreadcrumbList` est ajouté : aucune page du site n'en
- * portait.
+ * Le `CollectionPage` liste tous les articles, et le `BreadcrumbList` est
+ * présent : aucune page du site n'en portait avant le 11/09/2026.
  */
 const jsonLd = {
   "@context": "https://schema.org",
@@ -78,7 +93,7 @@ const jsonLd = {
       "@id": `${SITE}/blog#blog`,
       name: "Blog Deviso, guides devis et facturation pour freelances",
       description:
-        "Guides pratiques sur la facturation freelance en France : réforme 2026, mentions obligatoires, droits d'auteur, Factur-X, par métier et par sujet.",
+        "Guides pratiques sur la facturation freelance en France : réforme 2026, documents obligatoires, TVA et seuils, devis par métier.",
       url: `${SITE}/blog`,
       publisher: { "@type": "Organization", name: "Deviso", url: SITE },
       inLanguage: "fr",
@@ -164,122 +179,25 @@ export default function BlogIndex() {
       <section className="pb-20 px-4 sm:px-6">
         <div className="max-w-4xl mx-auto">
           <div className="grid gap-5">
-
-            {/* ── Accordéon "Réforme 2026" ── */}
-            <details className="group bg-ds-surface border border-amber-500/20 rounded-2xl overflow-hidden hover:border-amber-500/40 transition-all open:border-amber-500/40">
-              <summary className="flex items-start justify-between gap-4 p-6 cursor-pointer list-none select-none">
-                <div className="flex-1 min-w-0">
-                  <div className="flex items-center gap-3 mb-3">
-                    <span className="text-xs px-2.5 py-1 rounded-full font-medium border bg-amber-500/10 text-amber-300 border-amber-500/20">
-                      Réforme 2026
-                    </span>
-                    <span className="text-xs text-gray-400">{reformeArticles.length} guides · en vigueur</span>
-                  </div>
-                  <h2 className="text-white font-semibold text-lg leading-snug mb-2 group-open:text-amber-200 transition-colors">
-                    Facturation électronique 2026 : tout ce que les freelances doivent savoir
-                  </h2>
-                  <p className="text-gray-500 text-sm leading-relaxed">
-                    La réforme est entrée en application le 1<sup>er</sup> septembre 2026. Ce qui s&apos;applique déjà, ce qui arrive en 2027, les plateformes agréées, l&apos;e-reporting et les amendes réelles.
-                  </p>
-                </div>
-                <span className="text-gray-600 flex-shrink-0 mt-1 text-xl transition-transform duration-200 group-open:rotate-90">→</span>
-              </summary>
-
-              {/* Liste des articles réforme */}
-              <div className="border-t border-ds-border divide-y divide-ds-border">
-                {reformeArticles.map((article) => (
-                  <Link
-                    key={article.slug}
-                    href={`/blog/${article.slug}`}
-                    className="flex items-center gap-4 px-6 py-4 hover:bg-ds-elevated transition-colors group/item"
-                  >
-                    <span className="flex-shrink-0 w-8 flex justify-center text-indigo-400">{(() => { const I = ICONES[article.slug] ?? Zap; return <I size={18} />; })()}</span>
-                    <div className="flex-1 min-w-0">
-                      <div className="flex items-center gap-2 mb-0.5">
-                        <p className="text-white text-sm font-medium group-hover/item:text-amber-200 transition-colors">{article.carte.titre}</p>
-                      </div>
-                      <p className="text-gray-600 text-xs">{article.carte.resume}</p>
-                    </div>
-                    <span className="text-xs text-gray-400 flex-shrink-0 whitespace-nowrap">{article.dureeLecture} min</span>
-                    <span className="text-gray-700 group-hover/item:text-amber-400 transition-colors flex-shrink-0 text-sm">→</span>
-                  </Link>
-                ))}
-              </div>
-            </details>
-
-            {/* ── Accordéon "Devis par métier" ── */}
-            <details className="group bg-ds-surface border border-ds-border rounded-2xl overflow-hidden hover:border-indigo-500/40 transition-all open:border-indigo-500/30">
-              <summary className="flex items-start justify-between gap-4 p-6 cursor-pointer list-none select-none">
-                <div className="flex-1 min-w-0">
-                  <div className="flex items-center gap-3 mb-3">
-                    <span className="text-xs px-2.5 py-1 rounded-full font-medium border bg-indigo-500/10 text-indigo-300 border-indigo-500/20">
-                      Devis par métier
-                    </span>
-                    <span className="text-xs text-gray-400">{metierArticles.length} guides</span>
-                  </div>
-                  <h2 className="text-white font-semibold text-lg leading-snug mb-2 group-open:text-indigo-200 transition-colors">
-                    Devis par métier : guide complet par profession
-                  </h2>
-                  <p className="text-gray-500 text-sm leading-relaxed">
-                    Mentions obligatoires, exemples concrets et clauses spécifiques, un guide dédié pour chaque profession freelance.
-                  </p>
-                </div>
-                <span className="text-gray-600 flex-shrink-0 mt-1 text-xl transition-transform duration-200 group-open:rotate-90">→</span>
-              </summary>
-
-              {/* Liste des articles métier */}
-              <div className="border-t border-ds-border divide-y divide-ds-border">
-                {metierArticles.map((article) => (
-                  <Link
-                    key={article.slug}
-                    href={`/blog/${article.slug}`}
-                    className="flex items-center gap-4 px-6 py-4 hover:bg-ds-elevated transition-colors group/item"
-                  >
-                    <span className="flex-shrink-0 w-8 flex justify-center text-indigo-400">{(() => { const I = ICONES[article.slug] ?? Zap; return <I size={18} />; })()}</span>
-                    <div className="flex-1 min-w-0">
-                      <p className="text-white text-sm font-medium group-hover/item:text-indigo-200 transition-colors">{article.carte.titre}</p>
-                      <p className="text-gray-600 text-xs mt-0.5">{article.carte.resume}</p>
-                    </div>
-                    <span className="text-xs text-gray-400 flex-shrink-0">{article.dureeLecture} min</span>
-                    <span className="text-gray-700 group-hover/item:text-indigo-400 transition-colors flex-shrink-0 text-sm">→</span>
-                  </Link>
-                ))}
-              </div>
-            </details>
-
-            {/* ── Articles cross-profession ── */}
-            {autresArticles.map((article) => (
-              <Link
-                key={article.slug}
-                href={`/blog/${article.slug}`}
-                className="group bg-ds-surface border border-ds-border rounded-2xl p-6 hover:border-indigo-500/40 transition-all"
-            >
-              <div className="flex items-start justify-between gap-4">
-                <div className="flex-1 min-w-0">
-                  <div className="flex items-center gap-2 mb-3">
-                    <span className={`text-xs px-2.5 py-1 rounded-full font-medium border ${
-                      article.carte.badge === "Tous métiers"
-                        ? "bg-emerald-500/10 text-emerald-300 border-emerald-500/20"
-                        : "bg-rose-500/10 text-rose-300 border-rose-500/20"
-                    }`}>
-                      {article.carte.badge}
-                    </span>
-                    <span className="text-xs text-gray-400">{article.dureeLecture} min</span>
-                  </div>
-                  <h3 className="text-white font-semibold leading-snug mb-2 group-hover:text-indigo-200 transition-colors text-sm">
-                    {article.carte.titre}
-                  </h3>
-                  <p className="text-gray-500 text-sm leading-relaxed line-clamp-2">
-                    {article.carte.resume}
-                  </p>
-                </div>
-                <span className="text-gray-600 group-hover:text-indigo-400 transition-colors flex-shrink-0 text-xl mt-1">
-                  &#8594;
-                </span>
-              </div>
-            </Link>
-          ))}
+            {LISTE_CATEGORIES.map((c) => (
+              <MenuCategorie
+                key={c.id}
+                categorie={c}
+                articles={articlesDe(c.id)}
+                icones={ICONES}
+                ouvert={c.ouverteParDefaut}
+              />
+            ))}
           </div>
+
+          <p className="text-xs text-gray-500 mt-8 leading-relaxed">
+            {ARTICLES.length} guides. Chacun porte sa date de dernière mise à jour et ses sources.
+            Si vous y trouvez une information fausse,{" "}
+            <a href="mailto:support@getdeviso.fr" className="text-indigo-400 hover:text-indigo-300 transition-colors">
+              dites-le nous
+            </a>{" "}
+            : nous corrigeons et nous datons la correction.
+          </p>
         </div>
       </section>
 

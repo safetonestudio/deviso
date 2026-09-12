@@ -1,7 +1,12 @@
 "use client";
 
 import { useState, useCallback } from "react";
-import { simulateTjm, simulateReverse } from "@/lib/tarifs-data";
+import {
+  simulateTjm,
+  simulateReverse,
+  TAUX_COTISATIONS_BNC,
+  TAUX_COTISATIONS_BNC_CIPAV,
+} from "@/lib/tarifs-data";
 
 function fmt(n: number) {
   return n.toLocaleString("fr-FR") + " €";
@@ -18,7 +23,9 @@ export function TjmSimulator({ defaultTjm = 350, defaultJours = 15 }: TjmSimulat
   const [mode, setMode] = useState<"tjm-to-revenu" | "revenu-to-tjm">("tjm-to-revenu");
   const [tjm, setTjm] = useState(defaultTjm);
   const [jours, setJours] = useState(defaultJours);
-  const [netCible, setNetCible] = useState(Math.round(defaultTjm * defaultJours * 0.78 / 100) * 100);
+  const [netCible, setNetCible] = useState(
+    Math.round((defaultTjm * defaultJours * (1 - TAUX_COTISATIONS_BNC)) / 100) * 100
+  );
 
   const r1 = simulateTjm({ tjm, joursParMois: jours });
   const r2 = simulateReverse({ netCible, joursParMois: jours });
@@ -41,7 +48,9 @@ export function TjmSimulator({ defaultTjm = 350, defaultJours = 15 }: TjmSimulat
       {/* Header */}
       <div>
         <h3 className="text-base font-semibold text-white mb-1">Simulateur de revenus</h3>
-        <p className="text-sm text-gray-500">Micro-entrepreneur BNC · Cotisations URSSAF 22 %</p>
+        <p className="text-sm text-gray-500">
+          Micro-entrepreneur BNC · cotisations {(TAUX_COTISATIONS_BNC * 100).toLocaleString("fr-FR", { minimumFractionDigits: 1 })} %
+        </p>
       </div>
 
       {/* Mode toggle */}
@@ -159,7 +168,7 @@ export function TjmSimulator({ defaultTjm = 350, defaultJours = 15 }: TjmSimulat
 
       {/* Note */}
       <p className="text-[11px] text-gray-600 leading-relaxed">
-        Calcul indicatif en micro-BNC (22 % de cotisations sociales). Ne comprend pas l&apos;impôt sur le revenu
+        Calcul indicatif en micro-BNC au régime général ({(TAUX_COTISATIONS_BNC * 100).toLocaleString("fr-FR", { minimumFractionDigits: 1 })} % de cotisations sociales ; {(TAUX_COTISATIONS_BNC_CIPAV * 100).toLocaleString("fr-FR", { minimumFractionDigits: 1 })} % si vous êtes affilié à la Cipav). Ne comprend pas l&apos;impôt sur le revenu
         (variable selon votre situation), la CFE (~500 €/an) ni les frais professionnels.
         Au-delà de 77&nbsp;700 €/CA annuel, passez en EURL ou SASU à l&apos;IS.
       </p>

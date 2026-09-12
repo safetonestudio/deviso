@@ -36,11 +36,13 @@
 export const SITE = "https://getdeviso.fr";
 
 /**
- * Les trois familles du blog. Elles ne sont pas cosmétiques : elles décident de
- * la présentation sur `/blog`, du fil d'Ariane, et des articles proposés en fin
- * de lecture.
+ * Les catégories vivent dans `lib/blog/categories.ts`, et le type s'en déduit :
+ * ajouter une catégorie, c'est ajouter une entrée là-bas, et le compilateur
+ * accepte aussitôt les articles qui s'y rattachent. Une catégorie inventée ici
+ * casse la compilation — c'est le but.
  */
-export type Categorie = "reforme" | "metier" | "transverse";
+export type { Categorie } from "./categories";
+import type { Categorie } from "./categories";
 
 export type Article = {
   slug: string;
@@ -262,6 +264,223 @@ export const ARTICLES: Article[] = [
       badge: "Checklist",
     },
     lies: ["facturation-electronique-2026", "e-reporting-freelance-2026", "choisir-plateforme-agreee-freelance"],
+  },
+
+  {
+    slug: "facturation-electronique-petit-chiffre-affaires",
+    categorie: "reforme",
+    titre: "Facturation électronique et petit chiffre d'affaires",
+    description:
+      "Vous facturez quelques milliers d'euros par an et la réforme vous inquiète. Ce qu'elle vous impose réellement, ce qu'elle ne vous impose pas, et les options gratuites.",
+    h1: "Facturation électronique quand on fait un petit chiffre d'affaires : ce qui s'applique vraiment",
+    og: {
+      titre: "Petit chiffre d'affaires et facturation électronique : les options réelles",
+      description:
+        "Entre la réception obligatoire depuis 2026 et l'émission en 2027, ce qu'un très petit CA doit faire — et ce qu'il ne doit pas payer.",
+    },
+    publieLe: "2026-09-12",
+    misAJourLe: "2026-09-12",
+    dureeLecture: 8,
+    carte: {
+      titre: "Petit chiffre d'affaires : ce qui s'applique vraiment",
+      resume: "Ce que la réforme impose à un très petit CA, et ce qu'elle ne vous oblige pas à payer",
+    },
+    lies: [
+      "facturation-electronique-2026",
+      "plateforme-agreee-ou-solution-compatible",
+      "reforme-facturation-micro-entrepreneur",
+    ],
+  },
+  // ── Famille « documents » ──────────────────────────────────────────────────
+  {
+    slug: "facture-acompte-freelance",
+    categorie: "documents",
+    titre: "Facture d'acompte : le document d'après le devis",
+    description:
+      "Votre devis est signé, le client verse un acompte : il faut une facture d'acompte. Mentions obligatoires, lien avec la facture de solde, TVA, et ce qu'il faut déclarer.",
+    h1: "Facture d'acompte : le document que personne ne vous explique après la signature du devis",
+    og: {
+      titre: "Facture d'acompte freelance : mentions, solde, TVA et déclaration",
+      description:
+        "Ce que doit contenir une facture d'acompte, comment la relier à la facture de solde, et quand déclarer la somme encaissée à l'URSSAF.",
+    },
+    publieLe: "2026-09-12",
+    misAJourLe: "2026-09-12",
+    dureeLecture: 8,
+    carte: {
+      titre: "Facture d'acompte",
+      resume: "Mentions obligatoires, lien avec la facture de solde, TVA, et ce qu'on déclare",
+    },
+    lies: ["facture-avoir-erreur-facture", "clauses-devis-freelance", "numerotation-factures-freelance"],
+  },
+  {
+    slug: "facture-avoir-erreur-facture",
+    categorie: "documents",
+    titre: "Erreur sur une facture : l'avoir, pas la gomme",
+    description:
+      "Une facture émise ne se modifie ni ne se supprime. Comment corriger : avoir total, avoir partiel, facture rectificative — et ce que la facturation électronique change.",
+    h1: "J'ai fait une erreur sur une facture : pourquoi on ne la supprime jamais, et quoi faire",
+    og: {
+      titre: "Corriger une facture : avoir, rectification, et ce que la réforme change",
+      description:
+        "Une facture émise est définitive. L'avoir est le seul outil de correction — et depuis la facturation électronique, le rattrapage n'est plus le même.",
+    },
+    publieLe: "2026-09-12",
+    misAJourLe: "2026-09-12",
+    dureeLecture: 9,
+    carte: {
+      titre: "Erreur sur une facture : l'avoir",
+      resume: "Pourquoi on ne supprime jamais une facture, et comment la corriger proprement",
+    },
+    lies: [
+      "facture-electronique-refusee-que-faire",
+      "numerotation-factures-freelance",
+      "facture-acompte-freelance",
+    ],
+  },
+  {
+    slug: "note-honoraires-ou-facture",
+    categorie: "documents",
+    titre: "Note d'honoraires ou facture : laquelle émettre ?",
+    description:
+      "Praticiens, consultants, professions libérales : la note d'honoraires n'est pas un document à part. Ce qui la distingue d'une facture, et ce qu'elle doit contenir.",
+    h1: "Note d'honoraires ou facture : ce qui les distingue vraiment",
+    og: {
+      titre: "Note d'honoraires ou facture : la différence, et ce qu'elle doit contenir",
+      description:
+        "Pour un praticien ou une profession libérale, la note d'honoraires obéit aux mêmes obligations qu'une facture. Ce qui change, et ce qui ne change pas.",
+    },
+    publieLe: "2026-09-12",
+    misAJourLe: "2026-09-12",
+    dureeLecture: 7,
+    carte: {
+      titre: "Note d'honoraires ou facture ?",
+      resume: "Ce que la note d'honoraires change vraiment, et ce qu'elle doit contenir",
+    },
+    lies: ["facture-acompte-freelance", "numerotation-factures-freelance", "facturation-electronique-2026"],
+  },
+  {
+    slug: "attestation-vigilance-urssaf-freelance",
+    categorie: "documents",
+    titre: "Mon client demande une attestation de vigilance",
+    description:
+      "Votre client exige une attestation de vigilance URSSAF avant de payer. Pourquoi il y est obligé, comment l'obtenir en micro-entreprise, et quoi faire si elle vous est refusée.",
+    h1: "Mon client me demande une attestation de vigilance URSSAF : que faire ?",
+    og: {
+      titre: "Attestation de vigilance URSSAF : pourquoi votre client l'exige et comment l'obtenir",
+      description:
+        "Au-delà de 5 000 € HT, votre client a l'obligation de la réclamer. Comment la télécharger, sa durée de validité, et les cas de refus.",
+    },
+    publieLe: "2026-09-12",
+    misAJourLe: "2026-09-12",
+    dureeLecture: 6,
+    carte: {
+      titre: "Attestation de vigilance URSSAF",
+      resume: "Pourquoi votre client l'exige au-delà de 5 000 €, et comment l'obtenir",
+    },
+    lies: ["gerer-impayes-freelance", "facture-acompte-freelance", "clauses-devis-freelance"],
+  },
+
+  // ── Famille « obligations » ────────────────────────────────────────────────
+  {
+    slug: "plafonds-micro-entreprise-2026",
+    categorie: "obligations",
+    titre: "Plafonds de la micro-entreprise 2026-2028",
+    description:
+      "203 100 € et 83 600 € depuis 2026. Et surtout : ne confondez pas ces plafonds avec les seuils de TVA, bien plus bas, que vous franchirez en premier.",
+    h1: "Plafonds de la micro-entreprise 2026-2028 : les vrais chiffres, et le piège des deux seuils",
+    og: {
+      titre: "Plafonds micro-entreprise 2026-2028 : 203 100 € et 83 600 €",
+      description:
+        "Les plafonds ont été revalorisés de 7,6 % pour 2026-2028. Les seuils de TVA, eux, n'ont pas bougé — et c'est eux que vous franchirez d'abord.",
+    },
+    publieLe: "2026-09-12",
+    misAJourLe: "2026-09-12",
+    dureeLecture: 8,
+    carte: {
+      titre: "Plafonds micro-entreprise 2026-2028",
+      resume: "203 100 € et 83 600 €, et le piège de la confusion avec les seuils de TVA",
+    },
+    lies: [
+      "facturer-client-etranger-freelance",
+      "refacturer-frais-client-freelance",
+      "fixer-ses-tarifs-freelance",
+    ],
+  },
+  {
+    slug: "refacturer-frais-client-freelance",
+    categorie: "obligations",
+    titre: "Refacturer ses frais sans gonfler son CA",
+    description:
+      "Refacturer un train ou un hôtel augmente votre chiffre d'affaires, donc vos cotisations. Le mécanisme du débours, ses conditions strictes, et quand il ne s'applique pas.",
+    h1: "Refacturer ses frais à un client sans faire exploser son chiffre d'affaires",
+    og: {
+      titre: "Refacturer des frais en micro-entreprise : le piège des cotisations",
+      description:
+        "Un frais refacturé entre dans votre chiffre d'affaires et donc dans l'assiette de vos cotisations. Sauf s'il remplit les conditions du débours.",
+    },
+    publieLe: "2026-09-12",
+    misAJourLe: "2026-09-12",
+    dureeLecture: 9,
+    carte: {
+      titre: "Refacturer ses frais sans gonfler son CA",
+      resume: "Le mécanisme du débours, ses conditions strictes, et le piège des cotisations",
+    },
+    lies: [
+      "plafonds-micro-entreprise-2026",
+      "facture-acompte-freelance",
+      "fixer-ses-tarifs-freelance",
+    ],
+  },
+  {
+    slug: "facturer-client-etranger-freelance",
+    categorie: "obligations",
+    titre: "Facturer un client à l'étranger",
+    description:
+      "Client pro dans l'UE, particulier en Belgique, entreprise aux États-Unis : la mention à porter sur la facture change à chaque fois. Le guide des quatre cas.",
+    h1: "Facturer un client à l'étranger : quelle mention porter, dans quel cas",
+    og: {
+      titre: "Facturer un client étranger en freelance : TVA, mentions, DES",
+      description:
+        "Autoliquidation, numéro de TVA intracommunautaire obligatoire même en franchise, Déclaration européenne de services : les quatre cas, sans jargon.",
+    },
+    publieLe: "2026-09-12",
+    misAJourLe: "2026-09-12",
+    dureeLecture: 10,
+    carte: {
+      titre: "Facturer un client à l'étranger",
+      resume: "UE ou hors UE, pro ou particulier : la mention change à chaque fois",
+    },
+    lies: [
+      "plafonds-micro-entreprise-2026",
+      "e-reporting-freelance-2026",
+      "facture-acompte-freelance",
+    ],
+  },
+  {
+    slug: "numerotation-factures-freelance",
+    categorie: "obligations",
+    titre: "Numéroter ses factures, et réparer un trou",
+    description:
+      "La numérotation doit être continue et sans trou : c'est une obligation du CGI. Les formats qui tiennent, et comment réparer une série déjà cassée.",
+    h1: "Numéroter ses factures sans se tromper — et que faire si c'est déjà raté",
+    og: {
+      titre: "Numérotation des factures : les règles, les formats, et comment réparer",
+      description:
+        "Séquence continue, sans trou, sans doublon. Les formats qui tiennent dans le temps, et la marche à suivre quand la série est déjà cassée.",
+    },
+    publieLe: "2026-09-12",
+    misAJourLe: "2026-09-12",
+    dureeLecture: 7,
+    carte: {
+      titre: "Numéroter ses factures",
+      resume: "La séquence continue, les formats qui tiennent, et comment réparer un trou",
+    },
+    lies: [
+      "facture-avoir-erreur-facture",
+      "facture-acompte-freelance",
+      "facturation-electronique-2026",
+    ],
   },
 
   // ── Famille « métier » ─────────────────────────────────────────────────────
