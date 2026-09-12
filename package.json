@@ -44,7 +44,8 @@
     "check:effets-reels": "node scripts/check-effets-reels.mjs",
     "test:exoneration": "node --experimental-strip-types --no-warnings scripts/e2e/exoneration.mjs",
     "check:emoji": "node scripts/check-emoji.mjs",
-    "check:blog": "node scripts/check-blog.mjs"
+    "check:blog": "node scripts/check-blog.mjs",
+    "check:rendu": "node scripts/check-rendu.mjs"
   },
   "dependencies": {
     "@react-pdf/renderer": "^4.3.0",

@@ -156,6 +156,52 @@ exige(
     "     où toutes les lignes en ont une, l'icône générique se voit."
 );
 
+// ── 1 ter. Entités HTML : un seul chemin de rendu par type de champ ─────────
+titre("Entités HTML : rendues, jamais affichées telles quelles");
+
+// Ce contrôle existe à cause d'un bug parti en production le 12/09/2026 : les
+// paragraphes des articles longs étaient rendus en HTML, mais les *titres* de
+// section interpolés en texte brut. Un `&rsquo;` écrit dans un titre s'affichait
+// littéralement — « Ce qu&rsquo;il se passe quand… » — sur une page publique.
+const srcGabaritLong = lire("components/blog/ArticleLong.tsx");
+const CHAMPS_RICHES = ["section.titre", "item.titre", "c.titre", "c.sousTitre", "cta.titre", "cta.texte", "section.source", "c"];
+// `t={section.titre}` passe par <Riche />, `key={item.titre}` est une clé React :
+// une accolade précédée d'un `=` est un passage de prop. C'est l'interpolation
+// nue dans le JSX rendu, `>{section.titre}<`, qu'on traque.
+const brut = (src) =>
+  CHAMPS_RICHES.filter((champ) => new RegExp(`(?<!=)\\{${champ.replace(".", "\\.")}\\}`).test(src));
+const interpolationsBrutes = brut(srcGabaritLong);
+
+exige(
+  "aucun champ d'auteur interpolé en texte brut dans ArticleLong",
+  interpolationsBrutes.length === 0,
+  `ces champs peuvent contenir des entités (\`&rsquo;\`) ou du balisage, comme les paragraphes.\n` +
+    `     Interpolés en texte brut, l'entité s'affiche telle quelle. Passez-les par <Riche />.\n` +
+    `     En cause : ${interpolationsBrutes.join(", ")}`
+);
+
+// L'inverse est tout aussi faux : ce qui est rendu en texte brut *et* recopié
+// dans le JSON-LD — les FAQ, les sources, le registre — ne doit contenir aucune
+// entité, sinon Google lit « qu&rsquo;il » dans une réponse balisée.
+const ENTITE = /&[a-z]+;|&#\d+;/;
+const champsTexteBrut = [];
+for (const slug of slugsRegistre) {
+  const src = lire(`app/blog/${slug}/page.tsx`);
+  for (const nom of ["FAQ", "SOURCES"]) {
+    const bloc = src.match(new RegExp(`const ${nom} = \\[[\\s\\S]*?\\n\\];`));
+    if (bloc && ENTITE.test(bloc[0])) champsTexteBrut.push(`${slug} (${nom})`);
+  }
+}
+if (ENTITE.test(registre)) champsTexteBrut.push("lib/blog/registre.ts");
+
+exige(
+  "aucune entité HTML dans les champs rendus en texte brut",
+  champsTexteBrut.length === 0,
+  `la FAQ, les sources et le registre sont affichés tels quels et recopiés dans le JSON-LD.\n` +
+    `     Écrivez-y une apostrophe typographique directement, pas son entité.\n` +
+    `     En cause : ${champsTexteBrut.join(", ")}`
+);
+
 // ── 2. Cohérence des dates ──────────────────────────────────────────────────
 titre("Dates : misAJourLe ne peut pas précéder publieLe");
 
@@ -438,6 +484,18 @@ exige(
 
 // ── 11. Contre-épreuves ─────────────────────────────────────────────────────
 titre("Contre-épreuves");
+
+contreEpreuve(
+  "un titre de section interpolé en texte brut serait bien détecté",
+  brut('<h2 className="x">{section.titre}</h2>').length === 1 &&
+    brut('<Riche as="h2" t={section.titre} />').length === 0 &&
+    brut('<li key={item.titre}>').length === 0
+);
+
+contreEpreuve(
+  "une entité HTML dans une réponse de FAQ serait bien détectée",
+  /&[a-z]+;|&#\d+;/.test('{ q: "…", a: "ce qu&rsquo;il se passe" }')
+);
 
 contreEpreuve(
   "un montant d'amende périmé est bien détecté",

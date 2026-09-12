@@ -87,12 +87,37 @@ const TONS_COLONNE = {
   neutre: "bg-ds-surface border-ds-border",
 } as const;
 
+/**
+ * Tout texte écrit par l'auteur passe par ici.
+ *
+ * Pourquoi. Les paragraphes étaient rendus en HTML (pour autoriser `<strong>`,
+ * `<em>`, `&rsquo;`) mais les *titres* étaient interpolés en texte brut : un
+ * `&rsquo;` écrit dans un titre de section s'affichait littéralement sur la
+ * page. Deux chemins de rendu pour un même type de contenu, et rien pour le
+ * signaler — l'erreur est allée en production.
+ *
+ * Le contenu vient des fichiers d'article et du registre, jamais d'une saisie
+ * utilisateur : `dangerouslySetInnerHTML` est ici le comportement voulu, pas un
+ * raccourci.
+ */
+function Riche({
+  t,
+  as: Tag = "span",
+  className,
+}: {
+  t: string;
+  as?: "h2" | "h3" | "p" | "span";
+  className?: string;
+}) {
+  return <Tag className={className} dangerouslySetInnerHTML={{ __html: t }} />;
+}
+
 function Bloc({ section }: { section: Section }) {
   switch (section.type) {
     case "texte":
       return (
         <section>
-          {section.titre && <h2 className="text-xl font-semibold text-white mb-4">{section.titre}</h2>}
+          {section.titre && <Riche as="h2" className="text-xl font-semibold text-white mb-4" t={section.titre} />}
           {section.paragraphes.map((p, i) => (
             <p
               key={i}
@@ -113,7 +138,7 @@ function Bloc({ section }: { section: Section }) {
           <div className={`flex gap-3 border rounded-xl p-5 ${t.cadre}`}>
             <t.Icone size={18} className={`shrink-0 mt-0.5 ${t.couleur}`} />
             <div>
-              <p className={`font-semibold mb-1 ${t.titre}`}>{section.titre}</p>
+              <Riche as="p" className={`font-semibold mb-1 ${t.titre}`} t={section.titre} />
               <p className="text-gray-400" dangerouslySetInnerHTML={{ __html: section.texte }} />
             </div>
           </div>
@@ -124,7 +149,7 @@ function Bloc({ section }: { section: Section }) {
     case "liste":
       return (
         <section>
-          {section.titre && <h2 className="text-xl font-semibold text-white mb-4">{section.titre}</h2>}
+          {section.titre && <Riche as="h2" className="text-xl font-semibold text-white mb-4" t={section.titre} />}
           {section.intro && (
             <p className="mb-5" dangerouslySetInnerHTML={{ __html: section.intro }} />
           )}
@@ -136,7 +161,7 @@ function Bloc({ section }: { section: Section }) {
                     {i + 1}
                   </span>
                   <div>
-                    <p className="text-white font-medium mb-1">{item.titre}</p>
+                    <Riche as="p" className="text-white font-medium mb-1" t={item.titre} />
                     <p className="text-gray-400" dangerouslySetInnerHTML={{ __html: item.texte }} />
                   </div>
                 </li>
@@ -146,7 +171,7 @@ function Bloc({ section }: { section: Section }) {
             <div className="space-y-3">
               {section.items.map((item) => (
                 <div key={item.titre} className="bg-ds-surface border border-ds-border rounded-xl p-5">
-                  <p className="text-white font-medium mb-1">{item.titre}</p>
+                  <Riche as="p" className="text-white font-medium mb-1" t={item.titre} />
                   <p className="text-gray-400" dangerouslySetInnerHTML={{ __html: item.texte }} />
                 </div>
               ))}
@@ -158,7 +183,7 @@ function Bloc({ section }: { section: Section }) {
     case "tableau":
       return (
         <section>
-          {section.titre && <h2 className="text-xl font-semibold text-white mb-4">{section.titre}</h2>}
+          {section.titre && <Riche as="h2" className="text-xl font-semibold text-white mb-4" t={section.titre} />}
           {section.intro && (
             <p className="mb-5" dangerouslySetInnerHTML={{ __html: section.intro }} />
           )}
@@ -172,9 +197,8 @@ function Bloc({ section }: { section: Section }) {
                     <th
                       key={c}
                       className="py-3 pr-4 last:pr-0 text-xs font-semibold text-gray-400 uppercase tracking-wider align-bottom"
-                    >
-                      {c}
-                    </th>
+                      dangerouslySetInnerHTML={{ __html: c }}
+                    />
                   ))}
                 </tr>
               </thead>
@@ -202,15 +226,15 @@ function Bloc({ section }: { section: Section }) {
     case "comparaison":
       return (
         <section>
-          {section.titre && <h2 className="text-xl font-semibold text-white mb-4">{section.titre}</h2>}
+          {section.titre && <Riche as="h2" className="text-xl font-semibold text-white mb-4" t={section.titre} />}
           {section.intro && (
             <p className="mb-5" dangerouslySetInnerHTML={{ __html: section.intro }} />
           )}
           <div className={`grid gap-4 ${section.colonnes.length > 2 ? "sm:grid-cols-3" : "sm:grid-cols-2"}`}>
             {section.colonnes.map((c) => (
               <div key={c.titre} className={`border rounded-xl p-5 ${TONS_COLONNE[c.ton]}`}>
-                <p className="text-xs font-semibold uppercase tracking-wider mb-2 text-gray-400">{c.titre}</p>
-                {c.sousTitre && <p className="text-white font-medium mb-2">{c.sousTitre}</p>}
+                <Riche as="p" className="text-xs font-semibold uppercase tracking-wider mb-2 text-gray-400" t={c.titre} />
+                {c.sousTitre && <Riche as="p" className="text-white font-medium mb-2" t={c.sousTitre} />}
                 <p className="text-gray-400" dangerouslySetInnerHTML={{ __html: c.texte }} />
               </div>
             ))}
@@ -224,7 +248,7 @@ function Bloc({ section }: { section: Section }) {
           <blockquote className="border-l-2 border-indigo-500/50 pl-5 py-1 text-gray-300 italic">
             <span dangerouslySetInnerHTML={{ __html: section.texte }} />
             {section.source && (
-              <footer className="text-xs text-gray-500 not-italic mt-2">— {section.source}</footer>
+              <footer className="text-xs text-gray-500 not-italic mt-2">— <Riche t={section.source} /></footer>
             )}
           </blockquote>
         </section>
@@ -325,8 +349,8 @@ export function ArticleLong({ slug, chapeau, enBref, sections, faq, sources, cta
 
             {cta && (
               <section className="bg-gradient-to-br from-indigo-900/40 to-violet-900/20 rounded-2xl border border-indigo-500/20 p-8 text-center">
-                <h2 className="text-xl font-semibold text-white mb-3">{cta.titre}</h2>
-                <p className="text-gray-400 mb-6 max-w-lg mx-auto">{cta.texte}</p>
+                <Riche as="h2" className="text-xl font-semibold text-white mb-3" t={cta.titre} />
+                <Riche as="p" className="text-gray-400 mb-6 max-w-lg mx-auto" t={cta.texte} />
                 <WaitlistButton
                   plan="free"
                   label="Essayer gratuitement"
