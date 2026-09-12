@@ -11,6 +11,27 @@ et c'est ce qui fait la différence entre une soumission qu'on accepte et une qu
 
 ---
 
+## Depuis quelle adresse envoyer
+
+**`contact@safetonestudio.com`**, et pas une adresse personnelle.
+
+Trois raisons, dans l'ordre d'importance. C'est un domaine que tu possèdes, avec un SPF strict
+(`v=spf1 include:mx.ovh.com -all`) et des MX chez OVH : les messages sont authentifiés, ce qui compte
+sur du démarchage à froid où le moindre signal fait basculer en indésirable. C'est l'adresse déjà
+publiée sur `safetonestudio.com/contact`, donc un destinataire méfiant peut la vérifier en trente
+secondes. Et les réponses arrivent dans une boîte que tu relèves — contrairement à
+`support@getdeviso.fr`, qui n'est aujourd'hui qu'une redirection ImprovMX dont l'alias n'a pas été
+confirmé.
+
+N'envoie pas depuis `noreply@getdeviso.fr` : plusieurs formulaires rejettent ces adresses, et
+personne ne peut y répondre.
+
+Comme SafeTone Studio fait du doublage audiovisuel et non de la facturation, chaque message porte une
+ligne qui explique le lien — sans elle, le destinataire qui clique sur le domaine ne comprend pas
+d'où vient la sollicitation.
+
+---
+
 ## La fiche produit, à réutiliser partout
 
 À coller telle quelle dans les formulaires qui demandent une description.
@@ -40,7 +61,7 @@ détaillé et vérifiable : https://getdeviso.fr/conformite
 Tarifs : offre gratuite, puis abonnements Solo et Pro
 Pays : France · Langue : français
 Éditeur : SafeTone Studio (SIREN 103 340 857), Léognan (33)
-Contact : support@getdeviso.fr
+Contact : contact@safetonestudio.com (éditeur)
 ```
 
 ---
@@ -73,6 +94,8 @@ Contact : support@getdeviso.fr
 >
 > Bien à vous,
 > S. Albert — Deviso
+> Deviso est édité par SafeTone Studio (SIREN 103 340 857), d'où l'adresse d'envoi.
+> https://getdeviso.fr · https://getdeviso.fr/a-propos
 
 ---
 
@@ -147,6 +170,7 @@ Contact : support@getdeviso.fr
 > Bien cordialement,
 > S. Albert
 > Deviso — https://getdeviso.fr · https://getdeviso.fr/a-propos
+> Deviso est édité par SafeTone Studio (SIREN 103 340 857), d'où l'adresse d'envoi.
 
 **Note** : les angles 1 et 2 correspondent aux deux articles publiés sur le blog le 11/09/2026
 (`/blog/plateforme-agreee-ou-solution-compatible` et `/blog/facture-electronique-refusee-que-faire`).
@@ -198,6 +222,8 @@ sans les sections sur Deviso. Un article dupliqué te coûterait les deux pages 
 >
 > Bien à vous,
 > S. Albert — Deviso
+> Deviso est édité par SafeTone Studio (SIREN 103 340 857), d'où l'adresse d'envoi.
+> https://getdeviso.fr · https://getdeviso.fr/a-propos
 
 ---
 
