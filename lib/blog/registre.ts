@@ -167,6 +167,33 @@ export const ARTICLES: Article[] = [
     ],
   },
   {
+    slug: "liste-plateformes-agreees",
+    categorie: "reforme",
+    titre: "Liste des plateformes agréées (PA)",
+    description:
+      "La liste officielle tient en deux fichiers, et leurs noms trompent. Ce qu’ils contiennent, ce qu’ils ne disent pas, et comment vérifier un éditeur en deux minutes.",
+    h1: "Liste des plateformes agréées : les deux fichiers officiels, et comment les lire",
+    og: {
+      titre: "Liste des plateformes agréées : les deux fichiers officiels",
+      description:
+        "Une plateforme immatriculée et une plateforme en attente ne figurent pas au même endroit. Les comparateurs mélangent les deux.",
+    },
+    publieLe: "2026-09-14",
+    misAJourLe: "2026-09-14",
+    dureeLecture: 7,
+    carte: {
+      titre: "La liste des plateformes agréées, lue à la source",
+      resume: "Deux fichiers, des noms trompeurs, et ce que la DGFiP ne publie pas",
+      badge: "Plateforme agréée",
+    },
+    lies: [
+      "choisir-plateforme-agreee-freelance",
+      "plateforme-agreee-ou-solution-compatible",
+      "facturation-electronique-2026",
+      "reforme-facturation-micro-entrepreneur",
+    ],
+  },
+  {
     slug: "e-reporting-freelance-2026",
     categorie: "reforme",
     titre: "E-reporting freelance : l'obligation B2C",

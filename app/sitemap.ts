@@ -34,10 +34,10 @@ import { categorie } from "@/lib/blog/categories";
  */
 
 /** Dernière révision des données de TJM. À avancer quand `TARIFS_DATA` change. */
-const REVISION_TARIFS = "2026-07-01";
+const REVISION_TARIFS = "2026-09-14";
 
 /** Dernière révision du contenu des landing pages métier. */
-const REVISION_LANDINGS = "2026-09-11";
+const REVISION_LANDINGS = "2026-09-14";
 
 export default function sitemap(): MetadataRoute.Sitemap {
   const maintenant = new Date();
