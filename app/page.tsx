@@ -211,7 +211,7 @@ export default function LandingPage() {
                 <div className="flex justify-between items-start mb-3">
                   <div>
                     <div className="font-semibold text-sm text-gray-900">Devis n°2026-047</div>
-                    <div className="text-xs text-gray-400 mt-0.5">Cabinet Durand &amp; Associés • Lyon</div>
+                    <div className="text-xs text-gray-500 mt-0.5">Cabinet Durand &amp; Associés • Lyon</div>
                   </div>
                   <div className="text-xs bg-amber-50 text-amber-700 px-2 py-0.5 rounded-full font-medium">
                     Brouillon

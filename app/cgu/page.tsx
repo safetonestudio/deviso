@@ -84,7 +84,7 @@ export default function CguPage() {
             Les données saisies par l&apos;utilisateur (informations clients, montants, descriptions de prestations)
             lui appartiennent. Deviso n&apos;utilise pas ces données à des fins commerciales. Pour plus de détails,
             consultez notre{" "}
-            <Link href="/confidentialite" className="text-indigo-600 hover:underline">politique de confidentialité</Link>.
+            <Link href="/confidentialite" className="text-indigo-400 hover:underline">politique de confidentialité</Link>.
           </p>
         </section>
 
@@ -127,7 +127,7 @@ export default function CguPage() {
           <h2 className="text-xl font-semibold text-white mb-3">11. Contact</h2>
           <p className="text-gray-400 leading-relaxed">
             Pour toute question relative aux présentes CGU :{" "}
-            <a href="mailto:support@getdeviso.fr" className="text-indigo-600 hover:underline">
+            <a href="mailto:support@getdeviso.fr" className="text-indigo-400 hover:underline">
               support@getdeviso.fr
                        </a>
           </p>

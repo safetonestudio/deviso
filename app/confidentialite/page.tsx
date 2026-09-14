@@ -31,7 +31,7 @@ export default function ConfidentialitePage() {
           <p className="text-gray-400 leading-relaxed">
             Le responsable du traitement des données personnelles est :<br /><br />
             <strong>SafeTone Studio</strong>, Auto-entrepreneur<br />
-            Email : <a href="mailto:support@getdeviso.fr" className="text-indigo-600 hover:underline">support@getdeviso.fr</a>
+            Email : <a href="mailto:support@getdeviso.fr" className="text-indigo-400 hover:underline">support@getdeviso.fr</a>
           </p>
         </section>
 
@@ -102,11 +102,11 @@ export default function ConfidentialitePage() {
             – <strong>Droit d&apos;opposition</strong> : vous opposer à certains traitements ;<br />
             – <strong>Droit à la limitation</strong> : restreindre temporairement le traitement.<br /><br />
             Pour exercer ces droits, contactez-nous à{" "}
-            <a href="mailto:support@getdeviso.fr" className="text-indigo-600 hover:underline">
+            <a href="mailto:support@getdeviso.fr" className="text-indigo-400 hover:underline">
               support@getdeviso.fr
             </a>.
             Vous disposez également du droit d&apos;introduire une réclamation auprès de la{" "}
-            <a href="https://www.cnil.fr" target="_blank" rel="noopener noreferrer" className="text-indigo-600 hover:underline">
+            <a href="https://www.cnil.fr" target="_blank" rel="noopener noreferrer" className="text-indigo-400 hover:underline">
               CNIL
             </a>.
           </p>

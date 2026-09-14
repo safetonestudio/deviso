@@ -297,7 +297,7 @@ export default function Page() {
                   <a href={`#${c.id}`} className="flex items-center gap-3 text-sm text-gray-400 hover:text-indigo-300 transition-colors group">
                     <span className={`font-mono text-xs font-bold ${numColorMap[c.color]} w-6`}>{c.num}</span>
                     <span className="group-hover:underline underline-offset-2">{c.title}</span>
-                    <span className="text-gray-700 text-xs">— {c.risk}</span>
+                    <span className="text-gray-400 text-xs">— {c.risk}</span>
                   </a>
                 </li>
               ))}

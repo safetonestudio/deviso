@@ -30,8 +30,16 @@ Site internet : https://www.superpdp.tech/
 Courriel de contact : contact@superpdp.tech
 ```
 
-Il **ne figure pas** dans le second fichier. Le premier fichier comptait 150 opérateurs, le second 14.
-Page impots.gouv.fr : publiée le 30/07/2024, dernière modification **10/09/2026**.
+Il **ne figure pas** dans le second fichier.
+
+**Comptes exacts, établis sur les classeurs XLSX** (et non sur le PDF) : le premier fichier porte
+151 lignes dont 2 d'en-tête, soit **149 opérateurs immatriculés** ; le second porte 18 lignes dont
+2 d'en-tête, soit **16 opérateurs en attente**. Page impots.gouv.fr : publiée le 30/07/2024,
+dernière modification **10/09/2026**.
+
+⚠️ **Compter à la main sur le PDF ne marche pas.** Trois lectures successives du même PDF ont
+donné 150, 168 et 149. Seul le classeur, où la ligne est une ligne, tranche. Tout chiffre publié
+sur `/conformite` ou dans un article doit venir de là.
 
 ## Ce que le fichier ne donne pas
 

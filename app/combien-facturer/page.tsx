@@ -4,7 +4,11 @@ import { DonneesStructurees } from "@/components/DonneesStructurees";
 import { SITE } from "@/lib/blog/registre";
 import Link from "next/link";
 import { TjmSimulator } from "@/components/landing/TjmSimulator";
-import { TARIFS_DATA } from "@/lib/tarifs-data";
+import {
+  TARIFS_DATA,
+  TAUX_COTISATIONS_BNC,
+  TAUX_COTISATIONS_BNC_CIPAV,
+} from "@/lib/tarifs-data";
 
 export const metadata: Metadata = {
   title: "Combien facturer en freelance ? TJM par métier 2026",
@@ -19,6 +23,17 @@ export const metadata: Metadata = {
     images: [{ url: "https://getdeviso.fr/opengraph-image" }],
   },
 };
+
+// Le taux de cotisations ne s'écrit nulle part en dur : il vit dans
+// lib/tarifs-data.ts, avec sa source et sa date. Cette page a affiché 22 %
+// pendant que le simulateur juste en dessous calculait à 25,6 %. Voir check:taux.
+const PCT = (TAUX_COTISATIONS_BNC * 100).toLocaleString("fr-FR", { maximumFractionDigits: 1 });
+const PCT_NET = ((1 - TAUX_COTISATIONS_BNC) * 100).toLocaleString("fr-FR", { maximumFractionDigits: 1 });
+const EX_TJM = 400;
+const EX_JOURS = 15;
+const EX_CA = EX_TJM * EX_JOURS;
+const EX_NET = Math.round(EX_CA * (1 - TAUX_COTISATIONS_BNC));
+const eur = (n: number) => n.toLocaleString("fr-FR");
 
 const jsonLd = {
   "@context": "https://schema.org",
@@ -39,7 +54,7 @@ const jsonLd = {
         name: "Comment calculer son revenu net en freelance à partir de son TJM ?",
         acceptedAnswer: {
           "@type": "Answer",
-          text: "En micro-BNC (prestation intellectuelle) : CA mensuel = TJM × jours facturables (≈15/mois). Cotisations URSSAF = CA × 22 %. Revenu net avant IR = CA × 78 %. Exemple : 400 €/j × 15 j = 6 000 € de CA → 4 680 € net avant impôt.",
+          text: `En micro-BNC (prestation intellectuelle) : CA mensuel = TJM × jours facturables (≈${EX_JOURS}/mois). Cotisations URSSAF = CA × ${PCT} % au régime général (${(TAUX_COTISATIONS_BNC_CIPAV * 100).toLocaleString("fr-FR", { maximumFractionDigits: 1 })} % à la Cipav). Revenu net avant IR = CA × ${PCT_NET} %. Exemple : ${EX_TJM} €/j × ${EX_JOURS} j = ${eur(EX_CA)} € de CA → ${eur(EX_NET)} € net avant impôt.`,
         },
       },
       {
@@ -161,8 +176,10 @@ export default function CombienFacturerPage() {
             <p className="text-gray-400 leading-relaxed mb-4">
               En <strong className="text-white">micro-BNC</strong> (régime le plus courant pour les
               prestations intellectuelles), vous versez{" "}
-              <strong className="text-white">22 % de cotisations URSSAF</strong> sur votre chiffre
-              d'affaires. Le reste est votre revenu net avant impôt sur le revenu.
+              <strong className="text-white">{PCT} % de cotisations URSSAF</strong> sur votre chiffre
+              d&apos;affaires (
+              {(TAUX_COTISATIONS_BNC_CIPAV * 100).toLocaleString("fr-FR", { maximumFractionDigits: 1 })} % si
+              vous relevez de la Cipav). Le reste est votre revenu net avant impôt sur le revenu.
             </p>
             <div className="space-y-3 text-sm text-gray-400">
               <div className="flex items-start gap-3">
@@ -171,7 +188,7 @@ export default function CombienFacturerPage() {
               </div>
               <div className="flex items-start gap-3">
                 <span className="text-indigo-400 font-mono font-bold mt-0.5">2</span>
-                <p><strong className="text-white">CA × 22 %</strong> = cotisations URSSAF à payer chaque trimestre</p>
+                <p><strong className="text-white">CA × {PCT} %</strong> = cotisations URSSAF à payer chaque trimestre</p>
               </div>
               <div className="flex items-start gap-3">
                 <span className="text-indigo-400 font-mono font-bold mt-0.5">3</span>

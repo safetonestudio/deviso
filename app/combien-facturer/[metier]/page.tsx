@@ -9,6 +9,7 @@ import {
   TARIFS_DATA,
   getTarifsMetier,
   ALL_METIER_SLUGS,
+  TAUX_COTISATIONS_BNC,
 } from "@/lib/tarifs-data";
 import { TjmSimulator } from "@/components/landing/TjmSimulator";
 
@@ -80,6 +81,14 @@ export default async function MetierTarifsPage({ params }: Props) {
   if (!data) notFound();
 
   const defaultTjm = Math.round((data.tjm.confirme.min + data.tjm.confirme.max) / 2);
+
+  // Le taux et le net se déduisent de TAUX_COTISATIONS_BNC. Un pourcentage écrit
+  // en dur ici a affiché 22 % à côté d'un simulateur qui calculait à 25,6 % —
+  // deux chiffres contradictoires sur le même écran. Voir check:taux.
+  const pctCotisations = (TAUX_COTISATIONS_BNC * 100).toLocaleString("fr-FR", {
+    maximumFractionDigits: 1,
+  });
+  const netMensuel = defaultTjm * data.joursFacturables * (1 - TAUX_COTISATIONS_BNC);
 
   // Le fil d'Ariane manquait sur tout le site. Il fait afficher le chemin de la
   // page dans les résultats Google au lieu de l'URL brute, et il coûte six lignes.
@@ -154,7 +163,7 @@ export default async function MetierTarifsPage({ params }: Props) {
         <div className="space-y-8">
           <div>
             <div className="inline-flex items-center gap-2 text-xs font-semibold text-indigo-400 bg-indigo-500/10 border border-indigo-500/20 rounded-full px-3 py-1 mb-4">
-              Barometre Malt 2026 · URSSAF
+              Baromètre Malt 2026 · URSSAF
             </div>
             <h1 className="text-3xl sm:text-4xl font-bold text-white leading-tight mb-3">
               {data.title}
@@ -164,20 +173,20 @@ export default async function MetierTarifsPage({ params }: Props) {
 
           <div className="grid grid-cols-3 gap-3 sm:gap-4">
             <TjmBadge
-              level="0–2 ans d'experience"
+              level="0–2 ans d'expérience"
               label="Junior"
               min={data.tjm.junior.min}
               max={data.tjm.junior.max}
             />
             <TjmBadge
-              level="2–5 ans d'experience"
-              label="Confirme"
+              level="2–5 ans d'expérience"
+              label="Confirmé"
               min={data.tjm.confirme.min}
               max={data.tjm.confirme.max}
               highlight
             />
             <TjmBadge
-              level="5+ ans d'experience"
+              level="5+ ans d'expérience"
               label="Senior"
               min={data.tjm.senior.min}
               max={data.tjm.senior.max}
@@ -185,7 +194,7 @@ export default async function MetierTarifsPage({ params }: Props) {
           </div>
 
           <div className="text-xs text-gray-400 flex items-center gap-2">
-            <span>Source : Malt Barometre 2026 · Tarifs HT, en €/jour · Marche francais · Mis a jour juillet 2026</span>
+            <span>Source : Malt Baromètre 2026 · Tarifs HT, en €/jour · Marché français · Mis à jour juillet 2026</span>
           </div>
         </div>
 
@@ -196,24 +205,25 @@ export default async function MetierTarifsPage({ params }: Props) {
               Simulez votre revenu net
             </h2>
             <p className="text-sm text-gray-400 leading-relaxed mb-4">
-              En <strong className="text-white">micro-BNC</strong> (regime standard pour les{" "}
-              {data.label}s), vous versez <strong className="text-white">22 % de cotisations URSSAF</strong>{" "}
-              sur votre CA. Le simulateur ci-contre calcule votre revenu net mensuel avant impot, ou le TJM
-              a atteindre pour un revenu cible.
+              En <strong className="text-white">micro-BNC</strong> (régime standard pour les{" "}
+              {data.label}s), vous versez{" "}
+              <strong className="text-white">{pctCotisations} % de cotisations URSSAF</strong> sur votre
+              CA. Le simulateur ci-contre calcule votre revenu net mensuel avant impôt, ou le TJM à
+              atteindre pour un revenu cible.
             </p>
             <div className="bg-ds-surface border border-ds-border rounded-xl p-4 space-y-2 text-sm">
               <div className="flex justify-between">
-                <span className="text-gray-500">Jours facturables estimes</span>
+                <span className="text-gray-500">Jours facturables estimés</span>
                 <span className="font-semibold text-white">{data.joursFacturables} j/mois</span>
               </div>
               <div className="flex justify-between">
-                <span className="text-gray-500">TJM median ({data.name} confirme)</span>
+                <span className="text-gray-500">TJM médian ({data.name} confirmé)</span>
                 <span className="font-semibold text-indigo-300">{defaultTjm} €/j</span>
               </div>
               <div className="flex justify-between border-t border-ds-border pt-2 mt-2">
-                <span className="text-gray-500">Revenu net estime / mois</span>
+                <span className="text-gray-500">Revenu net estimé / mois</span>
                 <span className="font-semibold text-emerald-400">
-                  {(defaultTjm * data.joursFacturables * 0.78).toLocaleString("fr-FR", { maximumFractionDigits: 0 })} €
+                  {netMensuel.toLocaleString("fr-FR", { maximumFractionDigits: 0 })} €
                 </span>
               </div>
             </div>
@@ -221,13 +231,13 @@ export default async function MetierTarifsPage({ params }: Props) {
           <TjmSimulator defaultTjm={defaultTjm} defaultJours={data.joursFacturables} />
         </section>
 
-        {/* Specialites */}
+        {/* Spécialités */}
         <section>
           <h2 className="text-xl font-bold text-white mb-2">
-            Specialites qui augmentent le TJM
+            Spécialités qui augmentent le TJM
           </h2>
           <p className="text-sm text-gray-500 mb-5">
-            Par rapport au TJM moyen d&apos;un {data.label} confirme ({defaultTjm} €/j).
+            Par rapport au TJM moyen d&apos;un {data.label} confirmé ({defaultTjm} €/j).
           </p>
           <div className="grid sm:grid-cols-2 gap-3">
             {data.specialites.map((s) => {
@@ -251,7 +261,7 @@ export default async function MetierTarifsPage({ params }: Props) {
         {/* Erreurs de tarification */}
         <section className="bg-ds-surface border border-ds-border rounded-2xl p-6 sm:p-8">
           <h2 className="text-xl font-bold text-white mb-5">
-            Erreurs de tarification a eviter
+            Erreurs de tarification à éviter
           </h2>
           <ul className="space-y-4">
             {data.erreurs.map((e) => (

@@ -33,7 +33,7 @@ export default function MentionsLegalesPage() {
             SIREN : 103 340 857<br />
             Adresse : 24 avenue de Gradignan, 33850 Léognan, France<br />
             Téléphone : +33 7 63 08 04 34<br />
-            Email : <a href="mailto:support@getdeviso.fr" className="text-indigo-600 hover:underline">support@getdeviso.fr</a>
+            Email : <a href="mailto:support@getdeviso.fr" className="text-indigo-400 hover:underline">support@getdeviso.fr</a>
           </p>
         </section>
 
@@ -51,7 +51,7 @@ export default function MentionsLegalesPage() {
             <strong>Vercel Inc.</strong><br />
             340 Pine Street, Suite 900<br />
             San Francisco, CA 94104, États-Unis<br />
-            <a href="https://vercel.com" target="_blank" rel="noopener noreferrer" className="text-indigo-600 hover:underline">vercel.com</a>
+            <a href="https://vercel.com" target="_blank" rel="noopener noreferrer" className="text-indigo-400 hover:underline">vercel.com</a>
           </p>
         </section>
 
@@ -68,7 +68,7 @@ export default function MentionsLegalesPage() {
           <h2 className="text-xl font-semibold text-white mb-3">Données personnelles</h2>
           <p className="text-gray-400 leading-relaxed">
             Pour toute information relative au traitement de vos données personnelles, consultez notre{" "}
-            <Link href="/confidentialite" className="text-indigo-600 hover:underline">politique de confidentialité</Link>.
+            <Link href="/confidentialite" className="text-indigo-400 hover:underline">politique de confidentialité</Link>.
           </p>
         </section>
 

@@ -236,8 +236,8 @@ export function FreelanceLanding({
                 <div className="w-3 h-3 rounded-full bg-red-500/70" />
                 <div className="w-3 h-3 rounded-full bg-yellow-500/70" />
                 <div className="w-3 h-3 rounded-full bg-green-500/70" />
-                <div className="flex-1 mx-4 bg-slate-700 rounded-md px-3 py-1 text-xs text-gray-500">
-                  app.deviso.fr/proposals/new
+                <div className="flex-1 mx-4 bg-slate-700 rounded-md px-3 py-1 text-xs text-gray-300">
+                  getdeviso.fr/proposals/new
                 </div>
               </div>
               <div className="p-6 text-white">
