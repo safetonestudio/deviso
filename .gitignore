@@ -43,3 +43,8 @@ facture-test.json
 
 # Journaux de traversee locaux
 _scratch_e2e/
+
+# Documents de reference personnels, remontes du dossier parent le 14/09/2026
+# (pour que Deviso/deviso suffise comme dossier attache). Hors Git : notes de
+# travail, pas du code.
+docs/reference/
