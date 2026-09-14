@@ -171,11 +171,15 @@ export default function ConformitePage() {
             <section>
               <h2 className="text-xl font-semibold text-white mb-4">Vérifiez-le vous-même</h2>
               <p className="mb-4">
-                La liste des plateformes agréées est publiée par la DGFiP et téléchargeable. Elle comporte{" "}
-                <strong className="text-white">deux niveaux</strong>, et la nuance a son importance :
-                l&apos;immatriculation <em>définitive</em> suppose un dossier complet <em>et</em> des tests
-                d&apos;interopérabilité réussis ; l&apos;immatriculation <em>sous réserve</em> correspond à un
-                dossier complet en attente de ces tests.
+                La liste des plateformes agréées est publiée par la DGFiP et téléchargeable. Elle se
+                présente en <strong className="text-white">deux fichiers</strong>, et la nuance a son
+                importance. Le premier réunit les «&nbsp;opérateurs satisfaisant à l&apos;ensemble des
+                conditions, incluant les tests d&apos;interopérabilité&nbsp;» : leur numéro
+                d&apos;immatriculation est délivré. Le second réunit les «&nbsp;opérateurs ayant déposé un
+                dossier complet et conforme et en attente de leur immatriculation définitive conditionnée à
+                la réussite des tests d&apos;interopérabilité&nbsp;» : le dossier est accepté, les tests
+                restent à passer. Ce sont les intitulés exacts employés par la DGFiP — c&apos;est sous ces
+                mots que vous les retrouverez.
               </p>
               <div className="bg-indigo-500/[0.07] border border-indigo-500/30 rounded-xl p-5 mb-4">
                 <a
