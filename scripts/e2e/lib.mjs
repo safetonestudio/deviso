@@ -20,6 +20,14 @@ export const BASE = process.env.E2E_BASE_URL || "https://getdeviso.fr";
  * test). Ils vivent dans .env.local, qui est ignoré par git : un secret écrit
  * en clair dans un script finirait dans l'historique du dépôt pour toujours.
  * Node ne lit pas .env.local tout seul pour les scripts, alors on le fait ici.
+ *
+ * ⚠️ Ce lecteur doit se comporter comme celui de Next, sinon une même ligne
+ * donne deux valeurs selon qui la lit. Le 14/09/2026, un commentaire de fin de
+ * ligne (`CLE=valeur    # à quoi ça sert`) était renvoyé COLLÉ à la valeur :
+ * l'application démarrait très bien — dotenv, lui, coupe au `#` — et les
+ * traversées, elles, interrogeaient Stripe avec un identifiant suivi d'un
+ * commentaire et récoltaient un 404 incompréhensible. Un écart de parseur est
+ * pire qu'un parseur absent : il ne se voit que dans la moitié des chemins.
  */
 export function secret(nom) {
   if (process.env[nom]) return process.env[nom];
@@ -28,7 +36,12 @@ export function secret(nom) {
       const eq = ligne.indexOf("=");
       if (eq < 1 || ligne.trimStart().startsWith("#")) continue;
       if (ligne.slice(0, eq).trim() !== nom) continue;
-      return ligne.slice(eq + 1).trim().replace(/^["']|["']$/g, "");
+      const brut = ligne.slice(eq + 1).trim();
+      // Valeur entre guillemets : elle peut contenir un « # », on la rend telle
+      // quelle. Sinon, un « # » précédé d'un espace ouvre un commentaire.
+      const cite = brut.match(/^(['"])([\s\S]*?)\1/);
+      if (cite) return cite[2];
+      return brut.split(/\s+#/)[0].trim();
     }
   }
   throw new Error(
