@@ -37,6 +37,7 @@ export default function BillingPage() {
   const [loading, setLoading] = useState(true);
   const [acting, setActing] = useState(false);
   const [portalError, setPortalError] = useState<string | null>(null);
+  const [changeOk, setChangeOk] = useState<string | null>(null);
   const [billing, setBilling] = useState<"monthly" | "annual">("monthly");
   const searchParams = useSearchParams();
 
@@ -47,18 +48,48 @@ export default function BillingPage() {
       .finally(() => setLoading(false));
   }, []);
 
+  /**
+   * Deux issues possibles, et c'est voulu.
+   *
+   * Sans abonnement en cours, la route renvoie l'URL d'un tunnel de paiement.
+   * Avec un abonnement en cours, elle a MODIFIÉ l'abonnement sur place et
+   * renvoie `changed` — il n'y a pas de page de paiement à ouvrir, et en
+   * ouvrir une créerait un second abonnement facturé en parallèle.
+   */
   async function handleUpgrade(plan: "solo" | "pro") {
     setActing(true);
     setPortalError(null);
-    const res = await fetch("/api/stripe/checkout", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ plan, billing }),
-    });
-    const data = await res.json();
-    if (data.url) window.location.href = data.url;
-    else {
-      setPortalError(data.error || "Erreur lors de la redirection vers le paiement.");
+    setChangeOk(null);
+    try {
+      const res = await fetch("/api/stripe/checkout", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ plan, billing }),
+      });
+      const data = await res.json();
+
+      if (data.url) {
+        window.location.href = data.url;
+        return;
+      }
+
+      if (data.changed) {
+        setChangeOk(
+          `Votre formule est passée à ${plan === "pro" ? "Pro" : "Solo"} ` +
+            `en facturation ${billing === "annual" ? "annuelle" : "mensuelle"}. ` +
+            `L'écart est ajusté au prorata sur votre prochaine facture.`
+        );
+        const r = await fetch("/api/profile");
+        const d = await r.json();
+        setProfile(d.profile);
+        setActing(false);
+        return;
+      }
+
+      setPortalError(data.message || data.error || "Le changement de formule n'a pas abouti.");
+      setActing(false);
+    } catch {
+      setPortalError("Erreur réseau. Réessayez dans quelques instants.");
       setActing(false);
     }
   }
@@ -105,6 +136,15 @@ export default function BillingPage() {
         <div className="bg-emerald-500/10 border border-emerald-500/20 rounded-xl px-5 py-4 mb-6 flex items-center gap-3">
           <PartyPopper size={22} className="shrink-0 text-emerald-400" />
           <p className="text-emerald-400 font-medium">Votre abonnement a bien été activé !</p>
+        </div>
+      )}
+
+      {changeOk && (
+        <div className="bg-emerald-500/10 border border-emerald-500/20 rounded-xl px-4 py-3 mb-6">
+          <p className="text-emerald-300 text-sm font-medium flex items-center gap-2">
+            <PartyPopper size={17} className="shrink-0" />
+            {changeOk}
+          </p>
         </div>
       )}
 
@@ -160,11 +200,19 @@ export default function BillingPage() {
         )}
       </div>
 
-      {plan !== "pro" && (
-        <div className="bg-ds-surface border border-ds-border rounded-xl p-6">
+      {/*
+        Ce bloc ne s'affichait que pour `plan !== "pro"`, et la carte Solo
+        seulement pour `plan === "free"`. Un abonné Pro n'avait donc aucun
+        moyen de redescendre en Solo, et personne ne pouvait basculer entre
+        mensuel et annuel — le portail Stripe a `subscription_update`
+        désactivé, il n'offrait pas d'issue non plus. Les deux formules sont
+        désormais toujours proposées ; c'est la route qui décide s'il s'agit
+        d'une souscription ou d'une modification.
+      */}
+      <div className="bg-ds-surface border border-ds-border rounded-xl p-6">
           <div className="flex items-center justify-between mb-5">
             <p className="text-xs font-semibold text-gray-500 uppercase tracking-wider">
-              {plan === "free" ? "Commencer votre essai gratuit" : "Passer à Pro"}
+              {plan === "free" ? "Commencer votre essai gratuit" : "Changer de formule"}
             </p>
             {/* Toggle mensuel / annuel */}
             <div className="flex items-center gap-1 bg-ds-elevated rounded-lg p-0.5">
@@ -188,16 +236,27 @@ export default function BillingPage() {
             </div>
           </div>
 
-          {/* Bandeau essai */}
-          <div className="bg-indigo-500/10 border border-indigo-500/20 rounded-xl px-4 py-3 mb-4 flex items-center gap-3">
-            <Gift size={18} className="shrink-0 text-indigo-400" />
-            <p className="text-sm text-indigo-300">
-              <span className="font-semibold">14 jours gratuits</span>, sans carte bancaire requise pour démarrer. Résiliable à tout moment.
-            </p>
-          </div>
+          {/* Bandeau essai — seulement pour qui n'a pas encore d'abonnement */}
+          {plan === "free" ? (
+            <div className="bg-indigo-500/10 border border-indigo-500/20 rounded-xl px-4 py-3 mb-4 flex items-center gap-3">
+              <Gift size={18} className="shrink-0 text-indigo-400" />
+              <p className="text-sm text-indigo-300">
+                <span className="font-semibold">14 jours gratuits</span>, sans carte bancaire requise pour démarrer. Résiliable à tout moment.
+              </p>
+            </div>
+          ) : (
+            <div className="bg-ds-elevated border border-ds-border rounded-xl px-4 py-3 mb-4 flex items-center gap-3">
+              <Gift size={18} className="shrink-0 text-gray-500" />
+              <p className="text-sm text-gray-400">
+                Le changement prend effet <span className="font-semibold text-gray-300">immédiatement</span>.
+                L&apos;écart est calculé au prorata et ajusté sur votre prochaine facture — rien n&apos;est
+                prélevé maintenant{isTrialing ? ", et vos jours d'essai restants sont conservés" : ""}.
+              </p>
+            </div>
+          )}
 
           <div className="flex flex-col gap-3">
-            {plan === "free" && (
+            {(
               <div className="flex items-center justify-between border border-indigo-500/30 bg-indigo-950/50 rounded-xl px-5 py-4">
                 <div>
                   <p className="font-semibold text-white">
@@ -213,7 +272,13 @@ export default function BillingPage() {
                   disabled={acting}
                   className="bg-indigo-600 text-white text-sm font-semibold px-5 py-2.5 rounded-xl hover:bg-indigo-500 transition-colors shrink-0 disabled:opacity-50"
                 >
-                  {acting ? "Redirection…" : "Essayer Solo →"}
+                  {acting
+                    ? "Un instant…"
+                    : plan === "free"
+                      ? "Essayer Solo →"
+                      : plan === "pro"
+                        ? "Revenir à Solo →"
+                        : "Appliquer à Solo →"}
                 </button>
               </div>
             )}
@@ -236,7 +301,13 @@ export default function BillingPage() {
                 disabled={acting}
                 className="bg-violet-600 text-white text-sm font-semibold px-5 py-2.5 rounded-xl hover:bg-violet-500 transition-colors shrink-0 disabled:opacity-50"
               >
-                {acting ? "Redirection…" : "Essayer Pro →"}
+                {acting
+                  ? "Un instant…"
+                  : plan === "free"
+                    ? "Essayer Pro →"
+                    : plan === "pro"
+                      ? "Appliquer à Pro →"
+                      : "Passer à Pro →"}
               </button>
             </div>
           </div>
@@ -244,8 +315,7 @@ export default function BillingPage() {
           {billing === "annual" && (
             <p className="text-xs text-gray-600 mt-3 text-center">Facturation annuelle en une fois · Sans engagement au-delà</p>
           )}
-        </div>
-      )}
+      </div>
     </div>
   );
 }

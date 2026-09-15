@@ -2,6 +2,33 @@ import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 import { stripe, PLANS } from "@/lib/stripe";
 import { MESSAGE_DEMO } from "@/lib/stripe-guard";
+import type Stripe from "stripe";
+
+/**
+ * Les statuts sous lesquels un abonnement existe encore chez Stripe et
+ * continue de porter — ou de reprendre — une facturation. En ouvrir un second
+ * pendant que l'un de ceux-là court, c'est facturer deux fois.
+ */
+const ABONNEMENT_VIVANT = new Set<Stripe.Subscription.Status>([
+  "active",
+  "trialing",
+  "past_due",
+  "unpaid",
+  "incomplete",
+  "paused",
+]);
+
+/** Tous les identifiants de prix de plan connus, mensuels et annuels. */
+function prixDePlan(): Set<string> {
+  return new Set(
+    [
+      PLANS.solo.priceId,
+      PLANS.solo.annualPriceId,
+      PLANS.pro.priceId,
+      PLANS.pro.annualPriceId,
+    ].filter(Boolean) as string[]
+  );
+}
 
 export async function POST(req: NextRequest) {
   const supabase = await createClient();
@@ -38,13 +65,106 @@ export async function POST(req: NextRequest) {
 
   const { data: profile } = await supabase
     .from("profiles")
-    .select("stripe_customer_id, email, full_name, is_demo")
+    .select("stripe_customer_id, stripe_subscription_id, email, full_name, is_demo")
     .eq("id", user.id)
     .single();
 
   // Bloquer les comptes démo, pas d'abonnement réel possible
   if (profile?.is_demo) {
     return NextResponse.json({ error: "DEMO", message: MESSAGE_DEMO }, { status: 403 });
+  }
+
+  /**
+   * Un abonnement en cours se MODIFIE ; il ne se double pas.
+   *
+   * Cette route ouvrait un tunnel de paiement quoi qu'il arrive. Un client
+   * Solo qui cliquait « Passer à Pro » se retrouvait donc avec DEUX
+   * abonnements actifs — 18 € + 34 € tous les mois — et le webhook écrasait
+   * `stripe_subscription_id` au passage, si bien que Deviso ne savait même
+   * plus que le premier existait, ni comment l'annuler.
+   *
+   * Ce n'est pas une hypothèse : le 11/07/2026, le client
+   * cus_UrZfhGPUjRshd1 a porté un Solo et un Pro en parallèle pendant
+   * vingt-huit jours. Les deux essais se sont éteints faute de carte, ce qui
+   * est la seule raison pour laquelle personne n'a rien payé.
+   *
+   * On remplace donc l'ARTICLE DE PLAN de l'abonnement existant. L'article
+   * « siège supplémentaire », qui vit sur le même abonnement, n'est pas touché :
+   * le remplacer reviendrait à faire perdre ses collaborateurs au client.
+   * Une fin d'essai en cours est conservée par Stripe.
+   */
+  const abonnementExistant = profile?.stripe_subscription_id;
+  if (abonnementExistant) {
+    let sub: Stripe.Subscription | null = null;
+    try {
+      sub = await stripe.subscriptions.retrieve(abonnementExistant, { expand: ["items"] });
+    } catch {
+      // L'abonnement mémorisé n'existe plus chez Stripe (compte de test,
+      // migration). On l'oublie et on repart sur un tunnel normal.
+      sub = null;
+      await supabase
+        .from("profiles")
+        .update({ stripe_subscription_id: null })
+        .eq("id", user.id);
+    }
+
+    if (sub && ABONNEMENT_VIVANT.has(sub.status)) {
+      const connus = prixDePlan();
+      const articlePlan = sub.items.data.find((a) => connus.has(a.price.id));
+
+      if (!articlePlan) {
+        // Aucun article ne correspond à un plan connu : on ne sait pas quoi
+        // remplacer, et deviner reviendrait à facturer au hasard.
+        console.error(
+          `[stripe/checkout] abonnement ${sub.id} : aucun article de plan connu ` +
+            `(${sub.items.data.map((a) => a.price.id).join(", ")})`
+        );
+        return NextResponse.json(
+          {
+            error: "PLAN_ILLISIBLE",
+            message:
+              "Votre abonnement actuel n'a pas pu être lu. Écrivez-nous à " +
+              "support@getdeviso.fr, nous le changeons à la main.",
+          },
+          { status: 409 }
+        );
+      }
+
+      if (articlePlan.price.id === priceId) {
+        return NextResponse.json(
+          {
+            error: "DEJA_SUR_CE_PLAN",
+            message: "Vous êtes déjà sur cette formule.",
+          },
+          { status: 409 }
+        );
+      }
+
+      try {
+        await stripe.subscriptions.update(sub.id, {
+          items: [{ id: articlePlan.id, price: priceId }],
+          // La proration est calculée et REPORTÉE sur la prochaine facture.
+          // `always_invoice` facturerait sur-le-champ — impossible pendant un
+          // essai sans carte, et brutal juste après.
+          proration_behavior: "create_prorations",
+          metadata: { target_plan: targetPlan, billing },
+        });
+      } catch (err: unknown) {
+        const message = err instanceof Error ? err.message : "Erreur Stripe inconnue";
+        console.error("[stripe/checkout] subscriptions.update error:", message);
+        return NextResponse.json({ error: message }, { status: 500 });
+      }
+
+      // Le webhook `customer.subscription.updated` pose le plan en base. On
+      // l'écrit aussi ici : l'écran doit refléter le changement tout de suite,
+      // sans dépendre du délai d'un webhook.
+      await supabase
+        .from("profiles")
+        .update({ plan: targetPlan })
+        .eq("id", user.id);
+
+      return NextResponse.json({ changed: true, plan: targetPlan, billing });
+    }
   }
 
   let customerId = profile?.stripe_customer_id;
