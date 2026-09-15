@@ -106,6 +106,34 @@ for (const dossier of ["app", "lib"]) {
   }
 }
 
+/**
+ * ── 3. La porte du banc d'essai reste fermée vers l'extérieur ─────────────
+ *
+ * `STRIPE_API_BASE` fait parler le SDK à un faux Stripe local : c'est ce qui
+ * permet de traverser le tunnel d'abonnement sans débit. Une variable qui
+ * détourne les appels Stripe est aussi, si on la laisse pointer où elle veut,
+ * un moyen d'envoyer la clé secrète et les données de facturation à un tiers.
+ * La restriction à la machine locale n'est donc pas un détail d'implémentation.
+ */
+{
+  const src = readFileSync(join(RACINE, "lib/stripe.ts"), "utf8");
+  const utiliseLaVariable = /STRIPE_API_BASE/.test(src);
+  const restreintALaMachine =
+    /hostname\s*!==\s*["']127\.0\.0\.1["']/.test(src) && /hostname\s*!==\s*["']localhost["']/.test(src);
+  const jette = /throw new Error/.test(src);
+
+  if (utiliseLaVariable && !(restreintALaMachine && jette)) {
+    problemes.push({
+      fichier: "lib/stripe.ts",
+      quoi: "STRIPE_API_BASE accepte un hôte qui n'est pas la machine locale",
+      quoiFaire:
+        "refuser toute valeur dont le hostname n'est ni 127.0.0.1 ni localhost, " +
+        "en levant une erreur. Sans cela, la variable devient un moyen " +
+        "d'exfiltrer la clé Stripe et les données de facturation.",
+    });
+  }
+}
+
 /** Contre-épreuves : le contrôle voit-il encore les deux défauts d'origine ? */
 const CONTRE_EPREUVES = [
   {
@@ -120,6 +148,13 @@ const CONTRE_EPREUVES = [
     quoi: "une quantité de sièges incrémentée",
     source: `await stripe.subscriptionItems.update(item.id, { quantity: (item.quantity ?? 0) + 1 });`,
     detecte: (src) => QUANTITE_INCREMENTEE.test(src),
+  },
+  {
+    quoi: "une base d'API Stripe ouverte à un hôte tiers",
+    source: `const u = new URL(process.env.STRIPE_API_BASE); return { host: u.hostname };`,
+    detecte: (src) =>
+      /STRIPE_API_BASE/.test(src) &&
+      !(/hostname\s*!==\s*["']127\.0\.0\.1["']/.test(src) && /throw new Error/.test(src)),
   },
   {
     quoi: "une écriture de siège qui ne calcule pas",

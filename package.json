@@ -49,6 +49,9 @@
     "check:taux": "node --experimental-strip-types --no-warnings scripts/check-taux.mjs",
     "check:abonnement": "node scripts/check-abonnement.mjs",
     "test:sieges": "node --experimental-strip-types --no-warnings scripts/e2e/sieges.mjs",
+    "test:banc": "node scripts/e2e/banc.mjs",
+    "test:abonnement": "node scripts/e2e/abonnement.mjs",
+    "test:webhook": "node scripts/e2e/webhook.mjs",
     "check:rendu": "node scripts/check-rendu.mjs",
     "verify:rendu": "npm run build && node scripts/check-rendu.mjs"
   },
