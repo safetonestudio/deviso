@@ -66,7 +66,7 @@ const CONTENT: Record<PageKey, { title: string; body: string }> = {
   },
   team: {
     title: "Équipe",
-    body: "Disponible en plan Pro. Invite jusqu'à 3 collaborateurs sur ton workspace (puis 5 €/mois par utilisateur supplémentaire). Chaque membre a son propre profil qui apparaît sur les devis qu'il crée. Active la \"Validation avant envoi\" pour qu'un devis ne puisse pas être envoyé sans ton approbation. Le pipeline de suivi te donne une vue d'ensemble sur l'activité de toute l'équipe.",
+    body: "Disponible en plan Pro. Invite 2 collaborateurs sans surcoût — le plan Pro inclut 3 utilisateurs, toi compris (puis 5 €/mois par utilisateur supplémentaire). Chaque membre a son propre profil qui apparaît sur les devis qu'il crée. Active la \"Validation avant envoi\" pour qu'un devis ne puisse pas être envoyé sans ton approbation. Le pipeline de suivi te donne une vue d'ensemble sur l'activité de toute l'équipe.",
   },
   profil: {
     title: "Paramètres",

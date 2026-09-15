@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
-import { addSeatToSubscription } from "@/lib/stripe-seats";
+import { synchroniserSieges } from "@/lib/stripe-seats";
 
 type Params = { params: Promise<{ token: string }> };
 
@@ -88,15 +88,18 @@ export async function GET(_req: NextRequest, { params }: Params) {
     return NextResponse.redirect(`${baseUrl}/dashboard?invite=already_accepted`);
   }
 
-  // Facturer le siège supplémentaire sur l'abonnement Stripe du propriétaire.
+  // Aligner les sièges facturés sur le nombre réel de membres actifs.
   //
   // L'échec était avalé par un `catch` vide, avec en commentaire « le billing
   // sera régularisé manuellement » — sauf que rien n'était écrit nulle part :
   // il n'existait aucune trace à partir de laquelle régulariser. Le siège
   // était activé et jamais facturé, définitivement et invisiblement.
-  await addSeatToSubscription(invite.owner_id).catch((err) => {
+  //
+  // Ce n'est plus un incrément mais un calcul : les deux premiers membres sont
+  // inclus dans le plan Pro, et un appel rejoué ne facture rien de plus.
+  await synchroniserSieges(invite.owner_id).catch((err) => {
     console.error(
-      `[team/accept] siège NON facturé pour l'espace ${invite.owner_id} ` +
+      `[team/accept] sièges NON synchronisés pour l'espace ${invite.owner_id} ` +
         `(membre ${user.id}, invitation ${invite.id}) :`,
       err
     );

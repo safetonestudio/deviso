@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
-import { removeSeatFromSubscription } from "@/lib/stripe-seats";
+import { synchroniserSieges } from "@/lib/stripe-seats";
 
 type Params = { params: Promise<{ memberId: string }> };
 
@@ -30,20 +30,27 @@ export async function DELETE(_req: NextRequest, { params }: Params) {
 
   if (error) return NextResponse.json({ error: error.message }, { status: 500 });
 
-  // Retirer le siège de l'abonnement Stripe seulement si le membre était actif
-  if (member?.status === "active") {
-    // Un échec ici coûte de l'argent au propriétaire : le collaborateur n'a
-    // plus accès, mais le siège reste facturé tous les mois. Le `catch` vide
-    // rendait la situation indétectable — personne ne peut régulariser ce que
-    // personne ne sait.
-    await removeSeatFromSubscription(user.id).catch((err) => {
-      console.error(
-        `[team/DELETE] siège NON retiré pour l'espace ${user.id} (membre ${memberId}) : ` +
-          `il continue d'être facturé.`,
-        err
-      );
-    });
-  }
+  // Réaligner les sièges facturés, quel que soit le statut du membre retiré.
+  //
+  // L'appel était conditionné à `status === "active"`, ce qui suffisait tant
+  // qu'il s'agissait de décrémenter un compteur. Ce n'en est plus un : la
+  // fonction lit les membres actifs et pose la quantité juste. La rappeler
+  // sans raison ne coûte rien — elle sort d'elle-même si la quantité est déjà
+  // bonne — et c'est précisément ce qui lui permet de RÉPARER une divergence
+  // au lieu de la propager.
+  //
+  // Un échec ici coûte de l'argent au propriétaire : le collaborateur n'a plus
+  // accès, mais le siège reste facturé tous les mois. Le `catch` vide rendait
+  // la situation indétectable — personne ne peut régulariser ce que personne
+  // ne sait.
+  await synchroniserSieges(user.id).catch((err) => {
+    console.error(
+      `[team/DELETE] sièges NON synchronisés pour l'espace ${user.id} ` +
+        `(membre ${memberId}, statut ${member?.status ?? "inconnu"}) : ` +
+        `un siège peut continuer d'être facturé.`,
+      err
+    );
+  });
 
   return NextResponse.json({ success: true });
 }
