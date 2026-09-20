@@ -32,10 +32,16 @@ Courriel de contact : contact@superpdp.tech
 
 Il **ne figure pas** dans le second fichier.
 
-**Comptes exacts, établis sur les classeurs XLSX** (et non sur le PDF) : le premier fichier porte
-151 lignes dont 2 d'en-tête, soit **149 opérateurs immatriculés** ; le second porte 18 lignes dont
-2 d'en-tête, soit **16 opérateurs en attente**. Page impots.gouv.fr : publiée le 30/07/2024,
-dernière modification **10/09/2026**.
+**Comptes exacts, établis sur les classeurs XLSX** (et non sur le PDF) :
+
+| Relevé | Immatriculés | En attente |
+|---|---|---|
+| 14/09/2026 | 149 | 16 |
+| 20/09/2026 | 149 | **14** |
+
+Deux opérateurs ont quitté la liste d'attente en six jours. C'est l'ordre de grandeur du
+mouvement : le compte des immatriculés, lui, n'a pas bougé. **Revérifier avant toute publication
+qui cite ces chiffres** — l'article `/blog/liste-plateformes-agreees` en dépend entièrement.
 
 ⚠️ **Compter à la main sur le PDF ne marche pas.** Trois lectures successives du même PDF ont
 donné 150, 168 et 149. Seul le classeur, où la ligne est une ligne, tranche. Tout chiffre publié
@@ -48,6 +54,9 @@ rien de plus. Toute mention d'un numéro d'immatriculation de Super PDP serait d
 voir règle nº3 de `CLAUDE.md`.
 
 ## Comment revérifier
+
+Le plus simple : `node _scratch_e2e/maj-dgfip.mjs` télécharge les deux classeurs, puis compter les
+lignes moins les deux d'en-tête. (Script jetable, hors dépôt.)
 
 Télécharger le PDF, y chercher `SUPER PDP`, et **vérifier dans lequel des deux fichiers il se
 trouve** — c'est le seul point qui change quelque chose. Relever la date de modification de la page.

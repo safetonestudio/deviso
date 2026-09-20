@@ -6,17 +6,22 @@ const SLUG = "liste-plateformes-agreees";
 export const metadata = metadonneesArticle(SLUG);
 
 /**
- * Les chiffres de cet article ont été relevés le 14/09/2026 dans les classeurs
- * XLSX de la DGFiP, pas dans les PDF ni chez un comparateur. Le relevé et la
- * manière de le refaire sont dans docs/superpdp/immatriculation.md.
+ * Les chiffres de cet article sont relevés dans les classeurs XLSX de la DGFiP,
+ * pas dans les PDF ni chez un comparateur. Le relevé et la manière de le refaire
+ * sont dans docs/superpdp/immatriculation.md.
+ *
+ * Relevé du 20/09/2026, avant mise en ligne. En six jours, la liste des
+ * opérateurs EN ATTENTE est passée de 16 à 14 ; les immatriculés sont restés
+ * 149. C'est précisément ce que l'article affirme — et la raison pour laquelle
+ * la date de relevé est écrite en haut de la page plutôt que sous-entendue.
  *
  * ⚠️ Ce sont des chiffres qui bougent : la liste a gagné 90 opérateurs en huit
  * mois. Les revérifier à chaque mise à jour de l'article, et avancer
  * `misAJourLe` — c'est tout l'argument de la page.
  */
-const RELEVE = "14 septembre 2026";
+const RELEVE = "20 septembre 2026";
 const IMMATRICULES = 149;
-const EN_ATTENTE = 16;
+const EN_ATTENTE = 14;
 
 const SECTIONS: Section[] = [
   {

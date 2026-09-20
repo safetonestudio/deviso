@@ -179,7 +179,7 @@ export const ARTICLES: Article[] = [
         "Une plateforme immatriculée et une plateforme en attente ne figurent pas au même endroit. Les comparateurs mélangent les deux.",
     },
     publieLe: "2026-09-14",
-    misAJourLe: "2026-09-14",
+    misAJourLe: "2026-09-20",
     dureeLecture: 7,
     carte: {
       titre: "La liste des plateformes agréées, lue à la source",
