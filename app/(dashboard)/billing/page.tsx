@@ -38,6 +38,9 @@ export default function BillingPage() {
   const [acting, setActing] = useState(false);
   const [portalError, setPortalError] = useState<string | null>(null);
   const [changeOk, setChangeOk] = useState<string | null>(null);
+  const [confirmation, setConfirmation] = useState<
+    { plan: "solo" | "pro"; message: string; nbMembres: number } | null
+  >(null);
   const [billing, setBilling] = useState<"monthly" | "annual">("monthly");
   const searchParams = useSearchParams();
 
@@ -56,7 +59,7 @@ export default function BillingPage() {
    * renvoie `changed` — il n'y a pas de page de paiement à ouvrir, et en
    * ouvrir une créerait un second abonnement facturé en parallèle.
    */
-  async function handleUpgrade(plan: "solo" | "pro") {
+  async function handleUpgrade(plan: "solo" | "pro", confirmerRetraitMembres = false) {
     setActing(true);
     setPortalError(null);
     setChangeOk(null);
@@ -64,7 +67,7 @@ export default function BillingPage() {
       const res = await fetch("/api/stripe/checkout", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ plan, billing }),
+        body: JSON.stringify({ plan, billing, confirmerRetraitMembres }),
       });
       const data = await res.json();
 
@@ -89,6 +92,18 @@ export default function BillingPage() {
         const d = await r.json();
         setProfile(d.profile);
         setActing(false);
+        return;
+      }
+
+      /**
+       * Passer à Solo avec une équipe n'est pas une erreur : c'est une
+       * décision qui se confirme. La route refuse le premier appel et dit
+       * combien de collaborateurs seraient retirés ; on pose la question
+       * plutôt que d'afficher un message d'échec.
+       */
+      if (data.error === "MEMBRES_A_RETIRER") {
+        setActing(false);
+        setConfirmation({ plan, message: data.message, nbMembres: data.nbMembres });
         return;
       }
 
@@ -142,6 +157,35 @@ export default function BillingPage() {
         <div className="bg-emerald-500/10 border border-emerald-500/20 rounded-xl px-5 py-4 mb-6 flex items-center gap-3">
           <PartyPopper size={22} className="shrink-0 text-emerald-400" />
           <p className="text-emerald-400 font-medium">Votre abonnement a bien été activé !</p>
+        </div>
+      )}
+
+      {confirmation && (
+        <div className="bg-amber-500/10 border border-amber-500/30 rounded-xl px-5 py-4 mb-6">
+          <p className="font-semibold text-white mb-1 flex items-center gap-2">
+            <TriangleAlert size={17} className="shrink-0 text-amber-400" />
+            Confirmer le passage à Solo
+          </p>
+          <p className="text-sm text-amber-100/90 mb-4">{confirmation.message}</p>
+          <div className="flex flex-wrap gap-3">
+            <button
+              onClick={() => {
+                const cible = confirmation.plan;
+                setConfirmation(null);
+                handleUpgrade(cible, true);
+              }}
+              disabled={acting}
+              className="text-sm font-semibold px-4 py-2 rounded-lg bg-amber-500/20 hover:bg-amber-500/30 text-amber-200 border border-amber-500/40 disabled:opacity-50 transition-colors"
+            >
+              Retirer {confirmation.nbMembres} collaborateur{confirmation.nbMembres > 1 ? "s" : ""} et passer à Solo
+            </button>
+            <button
+              onClick={() => setConfirmation(null)}
+              className="text-sm font-medium px-4 py-2 rounded-lg bg-ds-elevated hover:bg-gray-700 text-gray-300 transition-colors"
+            >
+              Annuler
+            </button>
+          </div>
         </div>
       )}
 

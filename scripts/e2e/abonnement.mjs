@@ -382,7 +382,7 @@ try {
     body: JSON.stringify({ plan: "pro", stripe_customer_id: "cus_banc", stripe_subscription_id: "sub_sieges" }),
   });
 
-  /** Installe n membres actifs, plus un de trop qu'on retirera. */
+  /** Installe n membres actifs (remplace ceux qui existent). */
   async function poserMembres(n) {
     await admin(`/rest/v1/team_members?owner_id=eq.${UID}`, { method: "DELETE" });
     const lignes = [];
@@ -420,6 +420,77 @@ try {
     "la quantité posée est toujours une valeur calculée, jamais un delta");
 
   await admin(`/rest/v1/team_members?owner_id=eq.${UID}`, { method: "DELETE" });
+
+  // ── 8. Pro → Solo avec une équipe ──────────────────────────────────
+  console.log("");
+  console.log("── 7. Redescendre en Solo avec des collaborateurs ────────────");
+  console.log("   Solo n'a qu'un utilisateur. Le client doit le savoir AVANT,");
+  console.log("   et ne plus payer de sièges APRÈS.");
+
+  await faux("/_etat", {
+    method: "POST",
+    body: JSON.stringify({
+      abonnements: [{
+        id: "sub_equipe", customer: "cus_banc", status: "active",
+        items: [
+          { id: "si_plan4", price: PRO_M, quantity: 1 },
+          { id: "si_siege4", price: SIEGE, quantity: 1 },
+        ],
+      }],
+    }),
+  });
+  await admin(`/rest/v1/profiles?id=eq.${UID}`, {
+    method: "PATCH",
+    body: JSON.stringify({ plan: "pro", subscription_status: "active",
+      stripe_customer_id: "cus_banc", stripe_subscription_id: "sub_equipe" }),
+  });
+  await poserMembres(3);
+
+  repere = (await journal()).length;
+  const sansConfirmation = await appel("/api/stripe/checkout", {
+    method: "POST", body: JSON.stringify({ plan: "solo", billing: "monthly" }),
+  });
+  appels = await appelsDepuis(repere);
+
+  verifier("sans confirmation, le passage à Solo est refusé",
+    sansConfirmation.status === 409 && sansConfirmation.body?.error === "MEMBRES_A_RETIRER",
+    `HTTP ${sansConfirmation.status} ${JSON.stringify(sansConfirmation.body).slice(0, 120)}`);
+  verifier("et le refus annonce le nombre exact de collaborateurs",
+    sansConfirmation.body?.nbMembres === 3,
+    `nbMembres = ${sansConfirmation.body?.nbMembres}`);
+  verifier("rien n'a été modifié chez Stripe",
+    !aAppele(appels, "POST", /subscription/),
+    appels.map((a) => `${a.methode} ${a.chemin}`).join(" · ") || "aucune écriture");
+
+  const membresIntacts = await admin(`/rest/v1/team_members?owner_id=eq.${UID}&select=id`).then((r) => r.json());
+  verifier("et l'équipe est intacte", membresIntacts?.length === 3, `${membresIntacts?.length} membre(s)`);
+
+  repere = (await journal()).length;
+  const avecConfirmation = await appel("/api/stripe/checkout", {
+    method: "POST",
+    body: JSON.stringify({ plan: "solo", billing: "monthly", confirmerRetraitMembres: true }),
+  });
+  appels = await appelsDepuis(repere);
+
+  verifier("avec confirmation, la formule passe à Solo",
+    aAppele(appels, "POST", /^\/v1\/subscriptions\/sub_equipe$/),
+    `HTTP ${avecConfirmation.status} · ${appels.map((a) => `${a.methode} ${a.chemin}`).join(" · ")}`);
+
+  const equipeApres = await admin(`/rest/v1/team_members?owner_id=eq.${UID}&select=id`).then((r) => r.json());
+  verifier("les collaborateurs sont retirés de l'espace",
+    Array.isArray(equipeApres) && equipeApres.length === 0,
+    `${equipeApres?.length} membre(s) restant(s)`);
+
+  const subApres = await fetch(`${FAUX}/v1/subscriptions/sub_equipe`).then((r) => r.json());
+  const siegeApres = subApres.items.data.find((a) => a.price.id === SIEGE);
+  verifier("et l'article « siège » ne figure plus sur l'abonnement",
+    !siegeApres,
+    siegeApres
+      ? `${siegeApres.quantity} siège(s) encore facturé(s) à un abonné Solo`
+      : "retiré");
+  verifier("l'abonnement porte bien le prix Solo",
+    subApres.items.data.some((a) => a.price.id === SOLO_M),
+    subApres.items.data.map((a) => `${a.price.id}×${a.quantity}`).join(" + "));
 
   // ── 7. Contre-épreuve ──────────────────────────────────────────────
   console.log("");

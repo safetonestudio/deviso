@@ -64,6 +64,41 @@ export default async function DashboardLayout({ children }: { children: React.Re
     redirect("/dashboard");
   }
 
+  /**
+   * Le multi-utilisateurs est une fonction du plan Pro : un collaborateur
+   * n'accède à un espace que tant que cet espace est Pro.
+   *
+   * Ce contrôle est un filet, pas le mécanisme principal. Quand un
+   * propriétaire redescend en Solo, la route de changement de formule retire
+   * elle-même les collaborateurs, après confirmation explicite. Mais cette
+   * purge peut échouer — et elle n'est pas la seule façon pour un espace de
+   * cesser d'être Pro : un impayé suffit. Sans ce contrôle, l'espace garderait
+   * son équipe entière sans que personne ne la paie, et le seul écran capable
+   * de la gérer serait devenu inaccessible au propriétaire.
+   *
+   * On ne supprime rien ici : si l'espace redevient Pro, les collaborateurs
+   * retrouvent leur accès tel quel.
+   */
+  if (isMember && plan !== "pro") {
+    return (
+      <div className="min-h-screen bg-ds-bg flex items-center justify-center px-4">
+        <div className="max-w-md text-center">
+          <h1 className="text-xl font-semibold text-white mb-3">
+            Cet espace n&apos;est plus partagé
+          </h1>
+          <p className="text-gray-400 text-sm leading-relaxed">
+            L&apos;espace de travail auquel vous étiez rattaché n&apos;est plus sur la formule
+            Pro, qui est celle qui permet de travailler à plusieurs. Votre accès est suspendu
+            le temps que son propriétaire la rétablisse — rien n&apos;a été supprimé.
+          </p>
+          <p className="text-gray-500 text-xs mt-6">
+            Une question ? Écrivez-nous à support@getdeviso.fr
+          </p>
+        </div>
+      </div>
+    );
+  }
+
   const initials = (profile?.full_name || user.email || "U")
     .split(" ")
     .map((n: string) => n[0])

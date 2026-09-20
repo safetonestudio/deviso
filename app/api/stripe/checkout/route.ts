@@ -2,6 +2,8 @@ import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 import { stripe, PLANS } from "@/lib/stripe";
 import { MESSAGE_DEMO } from "@/lib/stripe-guard";
+import { createAdminClient } from "@/lib/supabase/admin";
+import { synchroniserSieges } from "@/lib/stripe-seats";
 import type Stripe from "stripe";
 
 /**
@@ -130,6 +132,47 @@ export async function POST(req: NextRequest) {
         );
       }
 
+      /**
+       * Redescendre en Solo, c'est renoncer à son équipe — il faut le dire
+       * avant, pas le découvrir après.
+       *
+       * Le chemin Pro → Solo n'existait pas avant le 15/09 ; en l'ouvrant, on a
+       * créé deux situations que rien ne traitait. L'article « siège » reste
+       * sur l'abonnement, donc un abonné Solo continue de payer 5 € par
+       * collaborateur. Et ses collaborateurs gardent leur accès, alors que la
+       * page Équipe lui répond « plan insuffisant » : il paie pour des gens
+       * qu'il ne peut plus gérer.
+       *
+       * On demande donc une confirmation explicite, en annonçant le nombre de
+       * collaborateurs qui seront retirés. Sans elle, rien n'est modifié.
+       */
+      const cibleSansEquipe = targetPlan === "solo";
+      let membresARetirer = 0;
+
+      if (cibleSansEquipe) {
+        const { count } = await supabase
+          .from("team_members")
+          .select("*", { count: "exact", head: true })
+          .eq("owner_id", user.id)
+          .eq("status", "active");
+        membresARetirer = count ?? 0;
+
+        if (membresARetirer > 0 && body.confirmerRetraitMembres !== true) {
+          return NextResponse.json(
+            {
+              error: "MEMBRES_A_RETIRER",
+              nbMembres: membresARetirer,
+              message:
+                `La formule Solo ne comporte qu'un seul utilisateur. Passer à Solo ` +
+                `retirera ${membresARetirer} collaborateur${membresARetirer > 1 ? "s" : ""} ` +
+                `de votre espace : ${membresARetirer > 1 ? "ils perdront" : "il perdra"} ` +
+                `immédiatement l'accès. Vos devis et factures, eux, sont conservés.`,
+            },
+            { status: 409 }
+          );
+        }
+      }
+
       if (articlePlan.price.id === priceId) {
         return NextResponse.json(
           {
@@ -173,6 +216,44 @@ export async function POST(req: NextRequest) {
        * La règle est désormais celle du webhook, mot pour mot : actif ou en
        * essai. Sinon on laisse le plan tel quel et on le dit à l'utilisateur.
        */
+      /**
+       * La formule est changée : on retire maintenant l'équipe, puis on
+       * réaligne les sièges.
+       *
+       * Dans cet ordre, et après Stripe. Purger d'abord exposerait à supprimer
+       * les collaborateurs d'un client dont le changement de formule aurait
+       * ensuite échoué. Ici, un échec laisse l'équipe en place, ce qui se
+       * répare d'un second clic.
+       *
+       * `synchroniserSieges` recalcule depuis les membres restants — zéro —
+       * et supprime donc l'article « siège » de lui-même. Aucune quantité n'est
+       * écrite à la main.
+       */
+      if (cibleSansEquipe && membresARetirer > 0) {
+        const admin = createAdminClient();
+        const { error: erreurPurge } = await admin
+          .from("team_members")
+          .delete()
+          .eq("owner_id", user.id);
+
+        if (erreurPurge) {
+          console.error(
+            `[stripe/checkout] passage à Solo de ${user.id} : les ${membresARetirer} ` +
+              `collaborateur(s) n'ont PAS été retirés — ils gardent l'accès et ` +
+              `leurs sièges restent facturés.`,
+            erreurPurge
+          );
+        } else {
+          await synchroniserSieges(user.id).catch((err) => {
+            console.error(
+              `[stripe/checkout] passage à Solo de ${user.id} : équipe retirée mais ` +
+                `sièges NON réalignés — ils continuent d'être facturés.`,
+              err
+            );
+          });
+        }
+      }
+
       const aJour = sub.status === "active" || sub.status === "trialing";
       if (aJour) {
         // L'écran doit refléter le changement tout de suite, sans dépendre du
