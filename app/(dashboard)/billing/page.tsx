@@ -74,10 +74,16 @@ export default function BillingPage() {
       }
 
       if (data.changed) {
+        // La route distingue deux cas : abonnement à jour, où le plan est déjà
+        // actif, et abonnement en retard de paiement, où la formule est bien
+        // changée mais l'accès attend le règlement. Le message vient d'elle
+        // dans le second cas — l'écran ne doit pas promettre un accès que la
+        // base n'a pas accordé.
         setChangeOk(
-          `Votre formule est passée à ${plan === "pro" ? "Pro" : "Solo"} ` +
-            `en facturation ${billing === "annual" ? "annuelle" : "mensuelle"}. ` +
-            `L'écart est ajusté au prorata sur votre prochaine facture.`
+          data.message ??
+            `Votre formule est passée à ${plan === "pro" ? "Pro" : "Solo"} ` +
+              `en facturation ${billing === "annual" ? "annuelle" : "mensuelle"}. ` +
+              `L'écart est ajusté au prorata sur votre prochaine facture.`
         );
         const r = await fetch("/api/profile");
         const d = await r.json();

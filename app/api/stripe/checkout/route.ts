@@ -155,15 +155,47 @@ export async function POST(req: NextRequest) {
         return NextResponse.json({ error: message }, { status: 500 });
       }
 
-      // Le webhook `customer.subscription.updated` pose le plan en base. On
-      // l'écrit aussi ici : l'écran doit refléter le changement tout de suite,
-      // sans dépendre du délai d'un webhook.
-      await supabase
-        .from("profiles")
-        .update({ plan: targetPlan })
-        .eq("id", user.id);
+      /**
+       * Le plan n'est écrit en base QUE si l'abonnement est à jour.
+       *
+       * `ABONNEMENT_VIVANT` inclut volontairement les impayés : face à un
+       * client en retard, on veut MODIFIER son abonnement plutôt que lui en
+       * ouvrir un second — c'est tout l'objet de cette branche. Mais modifier
+       * n'est pas payer.
+       *
+       * La version précédente écrivait `plan: targetPlan` sans condition. Un
+       * client que le webhook venait de repasser en `free` pour impayé
+       * récupérait donc un accès payant d'un seul clic ; et si cette écriture
+       * arrivait APRÈS celle du webhook, elle gagnait, sans rien pour la
+       * corriger avant le prochain événement Stripe. Trouvé en relecture le
+       * 20/09/2026, pas par le banc — qui ne jouait qu'un abonnement à jour.
+       *
+       * La règle est désormais celle du webhook, mot pour mot : actif ou en
+       * essai. Sinon on laisse le plan tel quel et on le dit à l'utilisateur.
+       */
+      const aJour = sub.status === "active" || sub.status === "trialing";
+      if (aJour) {
+        // L'écran doit refléter le changement tout de suite, sans dépendre du
+        // délai d'un webhook.
+        await supabase
+          .from("profiles")
+          .update({ plan: targetPlan })
+          .eq("id", user.id);
+      }
 
-      return NextResponse.json({ changed: true, plan: targetPlan, billing });
+      return NextResponse.json({
+        changed: true,
+        plan: targetPlan,
+        billing,
+        aJour,
+        ...(aJour
+          ? {}
+          : {
+              message:
+                "Votre formule est modifiée. L'accès reprendra dès le règlement " +
+                "de la facture en attente.",
+            }),
+      });
     }
   }
 

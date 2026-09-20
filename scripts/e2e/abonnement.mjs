@@ -292,6 +292,75 @@ try {
     profilNettoye?.[0]?.stripe_subscription_id === null,
     `${profilNettoye?.[0]?.stripe_subscription_id}`);
 
+  // ── 6 bis. Un impayé ne rachète pas son accès d'un clic ────────────
+  console.log("");
+  console.log("── 6. Client en retard de paiement ───────────────────────────");
+  console.log("   Modifier l'abonnement d'un impayé est voulu — lui en ouvrir");
+  console.log("   un second serait pire. Mais modifier n'est pas payer : le");
+  console.log("   plan en base ne doit pas repasser à Pro.");
+
+  await faux("/_etat", {
+    method: "POST",
+    body: JSON.stringify({
+      abonnements: [{
+        id: "sub_impaye", customer: "cus_banc", status: "past_due",
+        items: [{ id: "si_plan3", price: SOLO_M, quantity: 1 }],
+      }],
+    }),
+  });
+  // L'état exact que laisse le webhook après un impayé : accès retiré.
+  await admin(`/rest/v1/profiles?id=eq.${UID}`, {
+    method: "PATCH",
+    body: JSON.stringify({ plan: "free", subscription_status: "past_due",
+      stripe_customer_id: "cus_banc", stripe_subscription_id: "sub_impaye" }),
+  });
+
+  repere = (await journal()).length;
+  const impaye = await appel("/api/stripe/checkout", {
+    method: "POST", body: JSON.stringify({ plan: "pro", billing: "monthly" }),
+  });
+  appels = await appelsDepuis(repere);
+
+  /*
+   * On juge l'ÉTAT, pas le code de retour.
+   *
+   * Une première version de ce scénario lisait la réponse HTTP. Elle est tombée
+   * une fois sur un 409 « déjà sur cette formule » : le client HTTP de Node
+   * avait rejoué la requête après une connexion coupée, et le second passage
+   * constatait, à juste titre, que le plan était déjà changé. La vérification
+   * qui devait attraper la faille passait alors au vert pour une mauvaise
+   * raison — elle n'avait simplement jamais atteint le code fautif.
+   *
+   * Le journal du faux Stripe et la base disent, eux, ce qui s'est réellement
+   * produit, quel que soit le nombre de passages.
+   */
+  const modificationFaite = aAppele(appels, "POST", /^\/v1\/subscriptions\/sub_impaye$/);
+  verifier("l'abonnement de l'impayé est bien modifié, pas doublé",
+    modificationFaite && !aAppele(appels, "POST", /^\/v1\/checkout\/sessions$/),
+    `HTTP ${impaye.status} · ${appels.map((a) => `${a.methode} ${a.chemin}`).join(" · ") || "aucun appel"}`);
+
+  const profilImpaye = await admin(`/rest/v1/profiles?id=eq.${UID}&select=plan`).then((r) => r.json());
+  verifier("mais son plan en base RESTE gratuit",
+    profilImpaye?.[0]?.plan === "free",
+    `plan = ${profilImpaye?.[0]?.plan} — un « pro » ici voudrait dire qu'un ` +
+    `client en impayé retrouve l'accès payant d'un seul clic`);
+
+  // Le message n'a de sens que sur la réponse d'un passage qui a modifié ;
+  // sur un rejeu, la route répond 409 et c'est le bon comportement.
+  if (impaye.body?.changed === true) {
+    verifier("et l'écran le dit au lieu de promettre un accès",
+      impaye.body?.aJour === false && /r[èe]glement/i.test(impaye.body?.message ?? ""),
+      `aJour=${impaye.body?.aJour} message=${JSON.stringify(impaye.body?.message)}`);
+  } else {
+    console.log(`  ·    réponse ${impaye.status} (rejeu du client HTTP) — message non jugé ici`);
+  }
+
+  // On remet un abonnement à jour pour la suite du banc.
+  await admin(`/rest/v1/profiles?id=eq.${UID}`, {
+    method: "PATCH",
+    body: JSON.stringify({ plan: "pro", subscription_status: "active" }),
+  });
+
   // ── 7. Sièges : la quantité posée chez Stripe ──────────────────────
   console.log("");
   console.log("── 6. Sièges facturés ────────────────────────────────────────");
