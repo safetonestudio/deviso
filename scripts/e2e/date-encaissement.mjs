@@ -77,6 +77,31 @@ const AUJOURDHUI = jour(0);
 const PAYEE_LE = jour(-17);
 
 console.log("");
+/**
+ * Attendre que la Plateforme Agreee ait fini d'ingerer la facture.
+ *
+ * Tant qu'elle n'a pose que `api:uploaded`, elle refuse tout evenement de
+ * cycle de vie dessus — « La facture liee est en cours de traitement,
+ * reessayer plus tard ». Le `fr:212` part alors dans le vide, et ce script
+ * echouait en annoncant « l'encaissement n'est pas declare » : un diagnostic
+ * faux, puisque le produit rattrape ce refus transitoire a la synchronisation
+ * suivante (voir lib/superpdp-sync.ts).
+ *
+ * Ce que ce script mesure, c'est la DATE declaree, pas la vitesse de la
+ * plateforme. On attend donc qu'elle soit prete avant de pointer le paiement.
+ * Meme lecon que scripts/e2e/encaissement-concurrent.mjs : un test qui echoue
+ * au hasard finit par etre ignore, et c'est pire que pas de test.
+ */
+async function attendreIngestion(idFacture) {
+  for (let essai = 0; essai < 6; essai++) {
+    const d = await appel(`/api/superpdp/invoices/${idFacture}/declaration`);
+    const codes = (d.body?.evenements ?? []).map((e) => e.code);
+    if (codes.some((c) => c !== "api:uploaded")) return true;
+    await new Promise((r) => setTimeout(r, 8000));
+  }
+  return false;
+}
+
 console.log("── Date d'encaissement : de l'écran jusqu'au fisc ─────────────");
 console.log(`   base : ${BASE}`);
 console.log(`   payée le ${PAYEE_LE}, pointée le ${AUJOURDHUI}`);
@@ -122,6 +147,8 @@ verifier(
   `HTTP ${emise.status} ${JSON.stringify(emise.body).slice(0, 200)}`,
 );
 if (!emise.body?.superpdpId) process.exit(bilan());
+
+await attendreIngestion(id);
 
 // ── Le geste réel de l'écran : « payée », avec sa date ─────────────────────
 const marquee = await appel(`/api/invoices/${id}`, {
@@ -238,6 +265,7 @@ if (idSansDate) {
   await appel(`/api/invoices/${idSansDate}`, { method: "PATCH", body: JSON.stringify({ status: "sent" }) });
   const em = await appel(`/api/superpdp/invoices/${idSansDate}/emettre`, { method: "POST" });
   if (em.status === 200) {
+    await attendreIngestion(idSansDate);
     const m = await appel(`/api/invoices/${idSansDate}`, {
       method: "PATCH",
       body: JSON.stringify({ status: "paid" }),

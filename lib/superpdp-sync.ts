@@ -456,7 +456,7 @@ export async function synchroniserFactures(userId: string): Promise<ResultatSync
   try {
     const { data: aRattraper } = await admin
       .from("invoices")
-      .select("id")
+      .select("id, paid_at")
       .eq("user_id", userId)
       .eq("status", "paid")
       .not("superpdp_invoice_id", "is", null)
@@ -474,7 +474,21 @@ export async function synchroniserFactures(userId: string): Promise<ResultatSync
       .limit(20);
 
     for (const facture of aRattraper ?? []) {
-      const r = await envoyerEncaissementPdp(userId, facture.id);
+      // La date de paiement REELLE, pas celle du rattrapage.
+      //
+      // Sans elle, `envoyerEncaissementPdp` laisse la plateforme dater
+      // l'evenement du jour. Or ce rattrapage tourne justement sur les
+      // factures dont la premiere declaration a ete refusee : entre le
+      // paiement et le passage qui aboutit, il peut s'ecouler des jours. La
+      // TVA sur les prestations de services etant exigible A L'ENCAISSEMENT,
+      // dater du rattrapage revient a declarer une exigibilite fausse — le
+      // defaut exact que le parametre `dateEncaissement` a ete ajoute pour
+      // empecher, et que ce chemin contournait en ne le passant pas.
+      //
+      // `paid_at` absent (facture marquee payee sans date saisie) : on
+      // n'invente rien, la plateforme date, et c'est la regle deja posee.
+      const datePaiement = facture.paid_at ? String(facture.paid_at).slice(0, 10) : null;
+      const r = await envoyerEncaissementPdp(userId, facture.id, datePaiement);
       if (r.ok) encaissementsRattrapes++;
       // Un échec n'est pas signalé ici : la facture reste éligible et le
       // prochain passage réessaiera. Ce qu'il ne faut pas, c'est boucler.
