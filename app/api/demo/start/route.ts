@@ -750,6 +750,24 @@ async function seedDemoData(userId: string) {
     },
   ]);
 
+  // 4 bis. Remettre les compteurs de numérotation au niveau de ce qui vient
+  // d'être semé. Les factures de démonstration portent des numéros écrits en
+  // dur ; sans ce rattrapage, le premier acompte créé par le visiteur se verrait
+  // attribuer « AC-2026-001 », déjà pris ci-dessus, et l'index unique
+  // (user_id, invoice_number) refuserait l'écriture — 500 sans explication.
+  // Les générateurs SQL savent depuis le 20/09 sauter un numéro déjà pris,
+  // mais un compteur juste vaut mieux qu'un rattrapage : la démo enchaîne
+  // naturellement sur AC-2026-002.
+  await admin.from("document_sequences").upsert(
+    {
+      user_id: userId,
+      doc_type: "invoice_acompte",
+      year: new Date().getFullYear(),
+      last_seq: 1,
+    },
+    { onConflict: "user_id,doc_type,year" }
+  );
+
   // 5. Membres d'équipe
   await admin.from("team_members").insert([
     {
