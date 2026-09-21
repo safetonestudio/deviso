@@ -166,7 +166,7 @@ export default function BillingPage() {
             <TriangleAlert size={17} className="shrink-0 text-amber-400" />
             Confirmer le passage à Solo
           </p>
-          <p className="text-sm text-amber-100/90 mb-4">{confirmation.message}</p>
+          <p className="text-sm text-amber-200 mb-4">{confirmation.message}</p>
           <div className="flex flex-wrap gap-3">
             <button
               onClick={() => {
