@@ -36,7 +36,24 @@ console.log("── Mise en place ───────────────�
 const owner = await openSession("propriétaire");
 const member = await openSession("membre");
 await linkAsTeamMember(owner, member);
-console.log("  propriétaire et membre rattaché");
+
+// L'envoi (facture et devis) est désormais soumis à autorisation. Ce script
+// teste l'ACCÈS du membre aux documents de l'espace — un 400 « email manquant »
+// prouve qu'il a franchi la recherche du document, un 404 signalerait le retour
+// de la panne d'antan. On accorde donc au membre les droits d'envoi, pour que
+// la garde d'autorisation ne masque pas ce qu'on veut mesurer. (Le refus par
+// défaut, lui, est couvert par permissions.mjs.)
+{
+  const eq = await owner.call("/api/team");
+  const l = (eq.body?.members ?? []).find((m) => m.member_id === member.userId && m.status === "active");
+  if (l?.id) {
+    await owner.call(`/api/team/${l.id}`, {
+      method: "PATCH",
+      body: doc({ permissions: { envoyer_devis: true, envoyer_facture: true, transmettre_pa: false, deposer_chorus: false, refuser_facture_recue: false } }),
+    });
+  }
+}
+console.log("  propriétaire et membre rattaché (droits d'envoi accordés)");
 console.log("");
 
 // Documents volontairement privés d'email client : ils permettent d'exercer
