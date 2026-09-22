@@ -1,9 +1,11 @@
 /**
  * Traversée deux rôles.
  *
- * Hypothèse testée : dans un espace de travail, un membre d'équipe doit pouvoir
- * faire sur les documents tout ce que le propriétaire peut faire. C'est la
- * promesse du plan Pro, vendue 34 €/mois.
+ * Hypothèse testée : dans un espace de travail, un membre d'équipe accède aux
+ * DOCUMENTS de l'espace comme le propriétaire (les documents appartiennent à
+ * l'espace, pas à la personne). Les surfaces réservées au titulaire — CRM,
+ * statistiques, FEC, encaissement, suppression — lui sont fermées : voir le
+ * modèle des autorisations (CLAUDE.md) et scripts/e2e/permissions.mjs.
  *
  * Ce que ça aurait attrapé : onze routes filtraient sur l'identifiant de
  * l'utilisateur au lieu de celui de l'espace de travail. Le collaborateur voyait
@@ -98,8 +100,10 @@ const routes = [
   { m: "GET",  p: "/api/invoices" },
   { m: "GET",  p: "/api/proposals" },
   { m: "GET",  p: "/api/catalog" },
-  { m: "GET",  p: "/api/crm" },
-  { m: "GET",  p: "/api/stats" },
+  // CRM complet et statistiques : réservés au titulaire (modèle des
+  // autorisations du 22/09). Le membre reçoit 403 — c'est le comportement voulu.
+  { m: "GET",  p: "/api/crm",   membreAttendu: [403] },
+  { m: "GET",  p: "/api/stats", membreAttendu: [403] },
   { m: "GET",  p: "/api/notifications" },
   { m: "GET",  p: "/api/templates" },
   { m: "GET",  p: "/api/recurring" },
@@ -124,8 +128,9 @@ for (const r of routes) {
   const prop = await owner.call(chemin, init);
   verifier(`${r.m} ${chemin} — propriétaire`, attendu.includes(prop.status), `HTTP ${prop.status}`);
 
+  const attenduMembre = r.membreAttendu ?? attendu;
   const memb = await member.call(chemin, init);
-  verifier(`${r.m} ${chemin} — membre d'équipe`, attendu.includes(memb.status),
+  verifier(`${r.m} ${chemin} — membre d'équipe`, attenduMembre.includes(memb.status),
     `HTTP ${memb.status}${memb.status === 404 ? " (route filtrée sur l'utilisateur au lieu de l'espace)" : ""}`);
 }
 

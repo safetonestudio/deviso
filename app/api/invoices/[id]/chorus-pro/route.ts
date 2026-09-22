@@ -146,6 +146,14 @@ export async function POST(
   } = await supabase.auth.getUser();
   if (!user)
     return NextResponse.json({ error: "Non authentifié" }, { status: 401 });
+
+  // L'autorisation d'abord : un collaborateur sans le droit « déposer sur
+  // Chorus » doit s'entendre dire ça, avant tout autre motif de refus.
+  // Les documents appartiennent à l'espace de travail, pas au collaborateur.
+  const workspaceId = await getWorkspaceUserId(user.id);
+  const refusActe = await exigerActe(user.id, workspaceId, "deposer_chorus");
+  if (refusActe) return refusActe;
+
   // Aucun dépôt chez un tiers depuis un compte de démonstration. Voir
   // lib/garde-demo.ts : PISTE et la Plateforme Agréée sont en production, et le
   // jeu de données de démonstration contient de vrais destinataires — dont une
@@ -153,12 +161,6 @@ export async function POST(
   if (await estCompteDemo(user.id)) {
     return NextResponse.json({ error: "DEMO", message: MESSAGE_DEMO_TIERS }, { status: 403 });
   }
-
-  // Les documents appartiennent à l'espace de travail, pas au collaborateur :
-  // filtrer sur user.id renvoyait 404 à tout membre d'équipe.
-  const workspaceId = await getWorkspaceUserId(user.id);
-  const refusActe = await exigerActe(user.id, workspaceId, "deposer_chorus");
-  if (refusActe) return refusActe;
 
   const admin = createAdminClient();
 

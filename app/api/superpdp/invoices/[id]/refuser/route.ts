@@ -51,6 +51,14 @@ export async function POST(req: NextRequest, ctx: { params: Promise<{ id: string
   // On valide contre la liste que l'API nous a elle-même donnée, plutôt que de
   // relayer n'importe quelle chaîne et de laisser Super PDP répondre en anglais
   // technique. Il n'existe pas de motif « Autre » pour ce statut.
+  // L'autorisation d'abord : un collaborateur sans le droit « refuser une
+  // facture reçue » doit s'entendre dire ça, avant la validation du motif.
+  const workspaceId = await getWorkspaceUserId(user.id);
+  const refusActe = await exigerActe(user.id, workspaceId, "refuser_facture_recue");
+  if (refusActe) return refusActe;
+
+  // On valide contre la liste que l'API nous a elle-même donnée, plutôt que de
+  // relayer n'importe quelle chaîne.
   if (!estMotifValide(motif)) {
     return NextResponse.json(
       { error: "Motif invalide", message: "Choisissez un motif de refus dans la liste." },
@@ -58,9 +66,6 @@ export async function POST(req: NextRequest, ctx: { params: Promise<{ id: string
     );
   }
 
-  const workspaceId = await getWorkspaceUserId(user.id);
-  const refusActe = await exigerActe(user.id, workspaceId, "refuser_facture_recue");
-  if (refusActe) return refusActe;
   const admin = createAdminClient();
 
   // Appartenance vérifiée avant tout appel : le jeton utilisé est celui du
