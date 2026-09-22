@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 import { getWorkspaceUserId, getWorkspaceProfile } from "@/lib/workspace";
+import { exigerTitulaire } from "@/lib/droits";
 import { toSiren } from "@/lib/facturx-helpers";
 import {
   SUPERPDP_HOST,
@@ -47,6 +48,12 @@ export async function GET() {
   // Le raccordement appartient à l'entreprise, pas au collaborateur : un membre
   // d'équipe connecte le compte du propriétaire de l'espace de travail.
   const workspaceId = await getWorkspaceUserId(user.id);
+
+  // Le raccordement à la Plateforme Agréée engage l'entreprise (jeton d'un an,
+  // SIREN émetteur) : titulaire seul. Un membre ne relie pas — et ne peut donc
+  // pas écraser — le compte PA de l'espace.
+  const refusT = exigerTitulaire(user.id, workspaceId);
+  if (refusT) return refusT;
 
   const profile = await getWorkspaceProfile<{ siret: string | null; email: string | null }>(
     workspaceId,

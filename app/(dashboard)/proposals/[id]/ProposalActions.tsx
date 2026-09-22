@@ -4,7 +4,6 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import {
   Send,
-  Hourglass,
   Bell,
   Link2,
   Download,
@@ -16,6 +15,7 @@ import {
   Check,
 } from "lucide-react";
 import type { Proposal } from "@/types";
+import { usePermission } from "@/components/PlanContext";
 
 interface Props {
   proposal: Proposal;
@@ -23,7 +23,6 @@ interface Props {
   compact?: boolean;
   panel?: boolean;
   isOwner?: boolean;
-  requireApproval?: boolean;
 }
 
 export default function ProposalActions({
@@ -32,7 +31,6 @@ export default function ProposalActions({
   compact = false,
   panel = false,
   isOwner = true,
-  requireApproval = false,
 }: Props) {
   const router = useRouter();
   const [copied, setCopied] = useState(false);
@@ -40,8 +38,6 @@ export default function ProposalActions({
   const [deleting, setDeleting] = useState(false);
   const [confirmDelete, setConfirmDelete] = useState(false);
   const [reminding, setReminding] = useState(false);
-  const [submitting, setSubmitting] = useState(false);
-  const [approvingOrRejecting, setApprovingOrRejecting] = useState(false);
   const [reminderCount, setReminderCount] = useState(proposal.reminder_count || 0);
 
   // Dropdown "Convertir en facture"
@@ -78,35 +74,6 @@ export default function ProposalActions({
     setSending(false);
   };
 
-  const submitForApproval = async () => {
-    setSubmitting(true);
-    const res = await fetch(`/api/proposals/${proposal.id}/submit-for-approval`, { method: "POST" });
-    if (res.ok) {
-      router.refresh();
-    } else {
-      const d = await res.json();
-      alert(d.error || "Erreur lors de la soumission");
-    }
-    setSubmitting(false);
-  };
-
-  const handleApprove = async () => {
-    setApprovingOrRejecting(true);
-    const res = await fetch(`/api/proposals/${proposal.id}/approve`, { method: "POST" });
-    if (res.ok) router.refresh();
-    else alert("Erreur lors de l'approbation");
-    setApprovingOrRejecting(false);
-  };
-
-  const handleReject = async () => {
-    if (!confirm("Refuser ce devis ? Le collaborateur pourra le modifier et le soumettre à nouveau.")) return;
-    setApprovingOrRejecting(true);
-    const res = await fetch(`/api/proposals/${proposal.id}/reject`, { method: "POST" });
-    if (res.ok) router.refresh();
-    else alert("Erreur lors du refus");
-    setApprovingOrRejecting(false);
-  };
-
   const handleDelete = async () => {
     setDeleting(true);
     await fetch(`/api/proposals/${proposal.id}`, { method: "DELETE" });
@@ -129,11 +96,9 @@ export default function ProposalActions({
     setReminding(false);
   };
 
+  const peutEnvoyer = usePermission("envoyer_devis");
   const isDraft = proposal.status === "draft";
-  const approvalStatus = proposal.approval_status;
-  const showValidationFlow = isDraft && !isOwner && requireApproval;
-  const showApprovalActions = isDraft && isOwner && approvalStatus === "pending_review";
-  const canMarkSent = isDraft && (isOwner || !requireApproval || approvalStatus === "approved");
+  const canMarkSent = isDraft && peutEnvoyer;
   const canConvert = ["signed", "sent", "viewed"].includes(proposal.status);
   const canRemind = ["sent", "viewed"].includes(proposal.status) && !!proposal.client_email;
 
@@ -158,64 +123,8 @@ export default function ProposalActions({
         </div>
 
         <div className="p-4 space-y-2">
-          {/* ── Groupe 1 : Approbation propriétaire ── */}
-          {showApprovalActions && (
-            <>
-              <button
-                onClick={handleApprove}
-                disabled={approvingOrRejecting}
-                className="w-full bg-emerald-600 hover:bg-emerald-500 disabled:opacity-50 text-white text-sm font-semibold px-4 py-2.5 rounded-lg transition-colors text-left flex items-center gap-2"
-              >
-                <span>✓</span>
-                <span>{approvingOrRejecting ? "…" : "Approuver"}</span>
-              </button>
-              <button
-                onClick={handleReject}
-                disabled={approvingOrRejecting}
-                className="w-full text-sm font-medium px-4 py-2.5 rounded-lg border border-red-500/30 hover:bg-red-500/10 text-red-400 disabled:opacity-50 transition-colors text-left flex items-center gap-2"
-              >
-                <span>✗</span>
-                <span>{approvingOrRejecting ? "…" : "Refuser"}</span>
-              </button>
-              <div className="h-px bg-ds-border my-1" />
-            </>
-          )}
-
-          {/* ── Groupe 2 : Flow validation collaborateur ── */}
-          {showValidationFlow && (
-            <>
-              {(approvalStatus === null || approvalStatus === "rejected") && (
-                <button
-                  onClick={submitForApproval}
-                  disabled={submitting}
-                  className="w-full bg-amber-500 hover:bg-amber-600 disabled:opacity-50 text-white text-sm font-semibold px-4 py-2.5 rounded-lg transition-colors text-left flex items-center gap-2"
-                >
-                  <Send size={17} className="shrink-0" />
-                  <span>{submitting ? "Envoi…" : approvalStatus === "rejected" ? "Soumettre à nouveau" : "Soumettre pour validation"}</span>
-                </button>
-              )}
-              {approvalStatus === "pending_review" && (
-                <div className="flex items-center gap-2 px-4 py-2.5 rounded-lg bg-amber-500/10 border border-amber-500/20">
-                  <Hourglass size={16} className="shrink-0 text-amber-400" />
-                  <span className="text-xs text-amber-300 font-medium">En attente de validation</span>
-                </div>
-              )}
-              {approvalStatus === "approved" && (
-                <button
-                  onClick={markAsSent}
-                  disabled={sending}
-                  className="w-full bg-indigo-600 hover:bg-indigo-500 disabled:opacity-50 text-white text-sm font-semibold px-4 py-2.5 rounded-lg transition-colors text-left flex items-center gap-2"
-                >
-                  <Send size={17} className="shrink-0" />
-                  <span>{sending ? "…" : "Marquer envoyé"}</span>
-                </button>
-              )}
-              <div className="h-px bg-ds-border my-1" />
-            </>
-          )}
-
-          {/* ── Groupe 3 : Actions principales ── */}
-          {canMarkSent && !showValidationFlow && (
+          {/* ── Actions principales ── */}
+          {canMarkSent && (
             <button
               onClick={markAsSent}
               disabled={sending}
@@ -239,6 +148,7 @@ export default function ProposalActions({
 
           {/* ── Groupe 4 : Lien + impression ── */}
           <div className="h-px bg-ds-border my-3" />
+          {peutEnvoyer && (
           <button
             onClick={copyLink}
             className="w-full text-sm font-medium px-4 py-2.5 rounded-lg border border-ds-border hover:bg-ds-elevated/60 text-gray-400 transition-colors text-left flex items-center gap-2"
@@ -246,6 +156,7 @@ export default function ProposalActions({
             <Link2 size={17} className="shrink-0" />
             <span className="flex items-center gap-1.5">{copied && <Check size={16} className="shrink-0" />}{copied ? "Lien copié !" : "Copier le lien client"}</span>
           </button>
+          )}
           <button
             onClick={handlePrint}
             className="w-full no-print text-sm font-medium px-4 py-2.5 rounded-lg border border-ds-border hover:bg-ds-elevated/60 text-gray-400 transition-colors text-left flex items-center gap-2"
@@ -356,9 +267,9 @@ export default function ProposalActions({
             </>
           )}
 
-          {/* ── Zone danger ── */}
-          <div className="h-px bg-ds-border my-3" />
-          {!confirmDelete ? (
+          {/* ── Zone danger (suppression : titulaire seul) ── */}
+          {isOwner && <div className="h-px bg-ds-border my-3" />}
+          {isOwner && (!confirmDelete ? (
             <button
               onClick={() => setConfirmDelete(true)}
               className="w-full text-xs text-gray-600 hover:text-red-400 px-4 py-2 text-left transition-colors"
@@ -384,7 +295,7 @@ export default function ProposalActions({
                 </button>
               </div>
             </div>
-          )}
+          ))}
         </div>
       </div>
     );
@@ -395,33 +306,13 @@ export default function ProposalActions({
   const BTN_PRIMARY = "whitespace-nowrap text-sm font-medium px-3 py-1.5 rounded-lg bg-indigo-600 text-white hover:bg-indigo-500 disabled:opacity-60 transition-colors";
   const BTN_GREEN = "whitespace-nowrap text-sm font-medium px-3 py-1.5 rounded-lg bg-green-600 text-white hover:bg-green-700 transition-colors";
   const BTN_RED = "whitespace-nowrap text-sm font-medium px-3 py-1.5 rounded-lg border border-red-200 text-red-400 hover:bg-red-500/10 disabled:opacity-50 transition-colors";
-  const BTN_AMBER = "whitespace-nowrap text-sm font-medium px-3 py-1.5 rounded-lg bg-amber-500 text-white hover:bg-amber-600 disabled:opacity-60 transition-colors";
 
   return (
     <div className="flex items-center gap-2 flex-wrap">
-      <button onClick={copyLink} className={BTN_BASE}>{copied ? "Copié !" : "Copier le lien"}</button>
+      {peutEnvoyer && <button onClick={copyLink} className={BTN_BASE}>{copied ? "Copié !" : "Copier le lien"}</button>}
       <button onClick={handlePrint} className={`${BTN_BASE} no-print`}>Imprimer</button>
 
-      {showApprovalActions && (
-        <>
-          <button onClick={handleApprove} disabled={approvingOrRejecting} className={BTN_GREEN}>{approvingOrRejecting ? "…" : "✓ Approuver"}</button>
-          <button onClick={handleReject} disabled={approvingOrRejecting} className={BTN_RED}>{approvingOrRejecting ? "…" : "Refuser"}</button>
-        </>
-      )}
-      {showValidationFlow && (
-        <>
-          {(approvalStatus === null || approvalStatus === "rejected") && (
-            <button onClick={submitForApproval} disabled={submitting} className={BTN_AMBER}>{submitting ? "Envoi…" : approvalStatus === "rejected" ? "Soumettre à nouveau" : "Soumettre pour validation"}</button>
-          )}
-          {approvalStatus === "pending_review" && (
-            <span className="inline-flex items-center gap-1.5 whitespace-nowrap text-sm font-medium px-3 py-1.5 rounded-lg bg-amber-500/10 text-amber-400 border border-amber-500/20"><Hourglass size={15} className="shrink-0" />En attente</span>
-          )}
-          {approvalStatus === "approved" && (
-            <button onClick={markAsSent} disabled={sending} className={BTN_PRIMARY}>{sending ? "…" : "Marquer envoyé"}</button>
-          )}
-        </>
-      )}
-      {canMarkSent && !showValidationFlow && (
+      {canMarkSent && (
         <button onClick={markAsSent} disabled={sending} className={BTN_PRIMARY}>{sending ? "…" : "Marquer envoyé"}</button>
       )}
       {canRemind && (
@@ -469,7 +360,7 @@ export default function ProposalActions({
           )}
         </div>
       )}
-      <button onClick={() => confirm("Supprimer ce devis ?") && handleDelete()} disabled={deleting} className={BTN_RED}>{deleting ? "…" : "Supprimer"}</button>
+      {isOwner && <button onClick={() => confirm("Supprimer ce devis ?") && handleDelete()} disabled={deleting} className={BTN_RED}>{deleting ? "…" : "Supprimer"}</button>}
     </div>
   );
 }

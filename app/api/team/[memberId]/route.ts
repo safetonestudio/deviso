@@ -2,6 +2,8 @@ import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { synchroniserSieges } from "@/lib/stripe-seats";
+import { getWorkspaceUserId } from "@/lib/workspace";
+import { exigerTitulaire, normaliserPermissions } from "@/lib/droits";
 
 type Params = { params: Promise<{ memberId: string }> };
 
@@ -11,6 +13,10 @@ export async function DELETE(_req: NextRequest, { params }: Params) {
   const supabase = await createClient();
   const { data: { user }, error: authError } = await supabase.auth.getUser();
   if (authError || !user) return NextResponse.json({ error: "Non autorisé" }, { status: 401 });
+
+  // Retirer un membre est réservé au titulaire.
+  const refusT = exigerTitulaire(user.id, await getWorkspaceUserId(user.id));
+  if (refusT) return refusT;
 
   const admin = createAdminClient();
 
@@ -53,4 +59,41 @@ export async function DELETE(_req: NextRequest, { params }: Params) {
   });
 
   return NextResponse.json({ success: true });
+}
+
+
+// PATCH /api/team/[memberId] — régler les autorisations d'un membre.
+//
+// Cinq cases binaires, réservées au titulaire. On ne fait confiance à aucune
+// clé venue du corps : on repart des cinq actes connus et on ne garde que
+// `=== true`. Une case absente vaut donc « non autorisé ».
+export async function PATCH(req: NextRequest, { params }: Params) {
+  const { memberId } = await params;
+  const supabase = await createClient();
+  const { data: { user }, error: authError } = await supabase.auth.getUser();
+  if (authError || !user) return NextResponse.json({ error: "Non autorisé" }, { status: 401 });
+
+  const workspaceId = await getWorkspaceUserId(user.id);
+  const refusT = exigerTitulaire(user.id, workspaceId);
+  if (refusT) return refusT;
+
+  const body = await req.json().catch(() => ({}));
+  const brut = body?.permissions;
+  if (!brut || typeof brut !== "object") {
+    return NextResponse.json({ error: "Autorisations manquantes" }, { status: 400 });
+  }
+  const permissions = normaliserPermissions(brut);
+
+  const admin = createAdminClient();
+  const { data: membre, error } = await admin
+    .from("team_members")
+    .update({ permissions })
+    .eq("id", memberId)
+    .eq("owner_id", workspaceId)
+    .select("id, permissions")
+    .maybeSingle();
+
+  if (error) return NextResponse.json({ error: error.message }, { status: 500 });
+  if (!membre) return NextResponse.json({ error: "Membre introuvable" }, { status: 404 });
+  return NextResponse.json({ success: true, permissions: membre.permissions });
 }

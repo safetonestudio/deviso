@@ -9,7 +9,6 @@ import { ProposalPreviewWrapper } from "@/components/ProposalPreviewWrapper";
 import { GuidedTourBanner } from "@/components/GuidedTourBanner";
 import type { Proposal, Profile } from "@/types";
 import { publicBaseUrl, proposalShareUrl } from "@/lib/public-url";
-import { Hourglass } from "lucide-react";
 
 const supabaseAdmin = createAdminClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -53,11 +52,10 @@ export default async function ProposalDetailPage({ params }: { params: Promise<{
   // Fetch owner profile (company info + template + require_approval + subdomain)
   const { data: ownerProfile } = await supabaseAdmin
     .from("profiles")
-    .select(`${PROFILE_FIELDS}, require_approval`)
+    .select(PROFILE_FIELDS)
     .eq("id", workspaceId)
     .single();
 
-  const requireApproval: boolean = ownerProfile?.require_approval ?? false;
 
   // If the proposal was created by a collaborator, merge their personal info
   let mergedProfile: Partial<Profile> | null = ownerProfile ?? null;
@@ -82,11 +80,6 @@ export default async function ProposalDetailPage({ params }: { params: Promise<{
   // Une seule fonction décide de l'adresse publique, ici comme dans les relances.
   const shareUrl = proposalShareUrl(publicBaseUrl(ownerProfile), proposal.share_token);
 
-  // Approval banner config
-  const approvalStatus = proposal.approval_status;
-  const showPendingBanner = proposal.status === "draft" && approvalStatus === "pending_review";
-  const showApprovedBanner = proposal.status === "draft" && approvalStatus === "approved";
-  const showRejectedBanner = proposal.status === "draft" && approvalStatus === "rejected";
 
   return (
     <div className="max-w-5xl mx-auto">
@@ -113,21 +106,6 @@ export default async function ProposalDetailPage({ params }: { params: Promise<{
               <span className={`text-xs font-semibold px-2.5 py-1 rounded-full ${status.color}`}>
                 {status.label}
               </span>
-              {approvalStatus === "pending_review" && (
-                <span className="text-xs font-semibold px-2.5 py-1 rounded-full bg-amber-500/10 text-amber-400">
-                  <span className="inline-flex items-center gap-1.5"><Hourglass size={12} className="shrink-0" />En attente de validation</span>
-                </span>
-              )}
-              {approvalStatus === "approved" && proposal.status === "draft" && (
-                <span className="text-xs font-semibold px-2.5 py-1 rounded-full bg-emerald-500/10 text-emerald-400">
-                  ✓ Approuvé
-                </span>
-              )}
-              {approvalStatus === "rejected" && (
-                <span className="text-xs font-semibold px-2.5 py-1 rounded-full bg-red-500/10 text-red-400">
-                  ✗ Validation refusée
-                </span>
-              )}
             </div>
             <p className="text-sm text-gray-500">
               Créé le {new Date(proposal.created_at).toLocaleDateString("fr-FR")}
@@ -136,32 +114,6 @@ export default async function ProposalDetailPage({ params }: { params: Promise<{
               )}
             </p>
           </div>
-
-          {/* Approval info banners */}
-          {showPendingBanner && isOwner && (
-            <div className="mb-5 bg-amber-500/10 border border-amber-500/20 rounded-xl px-5 py-4">
-              <p className="text-sm font-semibold text-amber-400 mb-0.5">En attente de votre validation</p>
-              <p className="text-xs text-amber-400/70">
-                Un collaborateur a soumis ce devis pour approbation. Vérifiez le contenu, puis approuvez ou refusez.
-              </p>
-            </div>
-          )}
-          {showRejectedBanner && !isOwner && (
-            <div className="mb-5 bg-red-500/10 border border-red-500/20 rounded-xl px-5 py-4">
-              <p className="text-sm font-semibold text-red-400 mb-0.5">Validation refusée</p>
-              <p className="text-xs text-red-400/70">
-                Le propriétaire a refusé ce devis. Modifiez-le et soumettez-le à nouveau.
-              </p>
-            </div>
-          )}
-          {showApprovedBanner && !isOwner && (
-            <div className="mb-5 bg-emerald-500/10 border border-emerald-500/20 rounded-xl px-5 py-4">
-              <p className="text-sm font-semibold text-emerald-400 mb-0.5">Devis approuvé ✓</p>
-              <p className="text-xs text-emerald-400/70">
-                Ce devis a été approuvé. Vous pouvez le marquer comme envoyé.
-              </p>
-            </div>
-          )}
 
           {/* Document devis */}
           <div id="proposal-print">
@@ -177,7 +129,6 @@ export default async function ProposalDetailPage({ params }: { params: Promise<{
           proposal={proposal}
           shareUrl={shareUrl}
           isOwner={isOwner}
-          requireApproval={requireApproval}
           panel={true}
         />
       </div>

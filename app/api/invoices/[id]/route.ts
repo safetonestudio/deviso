@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 import { createClient as createAdminClient } from "@supabase/supabase-js";
 import { getWorkspaceUserId } from "@/lib/workspace";
+import { exigerTitulaire, exigerActe } from "@/lib/droits";
 import { envoyerEncaissementPdp } from "@/lib/superpdp-encaissement";
 
 type Params = { params: Promise<{ id: string }> };
@@ -58,6 +59,23 @@ export async function PATCH(req: NextRequest, { params }: Params) {
   const workspaceId = await getWorkspaceUserId(user.id);
 
   const body = await req.json();
+
+  // Marquer « payée » et dater le paiement déclenchent la déclaration
+  // d'encaissement (fr:212) : réservé au titulaire du compte (décision du
+  // 21/09, voir CLAUDE.md). Un membre édite la facture, il ne pointe pas les
+  // paiements ni ne déclare la TVA.
+  if (body.status === "paid" || body.paid_at !== undefined) {
+    const refusT = exigerTitulaire(user.id, workspaceId);
+    if (refusT) return refusT;
+  }
+
+  // Passer une facture à « envoyée », c'est l'envoyer au client : soumis à
+  // l'autorisation `envoyer_facture` (même règle que le devis). Le paiement,
+  // lui, reste titulaire seul (ci-dessus).
+  if (body.status === "sent") {
+    const refusActe = await exigerActe(user.id, workspaceId, "envoyer_facture");
+    if (refusActe) return refusActe;
+  }
 
   // Whitelist des champs modifiables, jamais user_id, invoice_number, etc.
   const ALLOWED = [
@@ -174,12 +192,40 @@ export async function DELETE(_req: NextRequest, { params }: Params) {
 
   const workspaceId = await getWorkspaceUserId(user.id);
 
-  const { error } = await supabase
+  // Supprimer un document est réservé au titulaire.
+  const refusT = exigerTitulaire(user.id, workspaceId);
+  if (refusT) return refusT;
+
+  // Une facture déjà transmise à la Plateforme Agréée n'est JAMAIS supprimable,
+  // titulaire compris : elle existe chez le client et chez l'administration, et
+  // la faire disparaître de Deviso trouerait la numérotation continue et le FEC
+  // (art. 242 nonies A). La voie légale est l'avoir.
+  const { data: facture } = await supabase
+    .from("invoices")
+    .select("superpdp_invoice_id")
+    .eq("id", id)
+    .eq("user_id", workspaceId)
+    .maybeSingle();
+  if (facture?.superpdp_invoice_id) {
+    return NextResponse.json(
+      { error: "FACTURE_TRANSMISE", message: "Cette facture a été transmise à la Plateforme Agréée : elle ne peut pas être supprimée. Établissez un avoir." },
+      { status: 409 }
+    );
+  }
+
+  // `.select()` pour SAVOIR si une ligne a été supprimée. Sans lui, une
+  // suppression qui ne touche aucune ligne (id inconnu, mauvais espace)
+  // répondait « success » — l'écran redirigeait, l'utilisateur croyait la
+  // facture partie.
+  const { data: supprimee, error } = await supabase
     .from("invoices")
     .delete()
     .eq("id", id)
-    .eq("user_id", workspaceId);
+    .eq("user_id", workspaceId)
+    .select("id")
+    .maybeSingle();
 
   if (error) return NextResponse.json({ error: error.message }, { status: 500 });
+  if (!supprimee) return NextResponse.json({ error: "Facture introuvable" }, { status: 404 });
   return NextResponse.json({ success: true });
 }

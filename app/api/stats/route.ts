@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 import { getWorkspaceUserId, getWorkspaceProfile } from "@/lib/workspace";
+import { exigerTitulaire } from "@/lib/droits";
 
 // GET /api/stats, Solo + Pro (analytics Pro en bonus)
 export async function GET() {
@@ -22,6 +23,8 @@ export async function GET() {
   );
 
   const workspaceId = await getWorkspaceUserId(user.id);
+  const refusT = exigerTitulaire(user.id, workspaceId);
+  if (refusT) return refusT;
 
   if (!["solo", "pro"].includes(profile?.plan ?? "")) {
     return NextResponse.json({ error: "PLAN_REQUIRED" }, { status: 403 });

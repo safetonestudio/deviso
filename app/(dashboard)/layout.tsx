@@ -2,6 +2,7 @@ import { redirect } from "next/navigation";
 import { headers } from "next/headers";
 import { createClient } from "@/lib/supabase/server";
 import { getWorkspaceUserId } from "@/lib/workspace";
+import { droitsDe } from "@/lib/droits";
 import { DashboardThemeProvider, ThemeToggle } from "@/components/DashboardTheme";
 import { MobileNav } from "@/components/MobileNav";
 import { SidebarNav } from "@/components/SidebarNav";
@@ -29,6 +30,7 @@ export default async function DashboardLayout({ children }: { children: React.Re
   const pathname = headersList.get("x-pathname") || "";
   const workspaceUserId = await getWorkspaceUserId(user.id);
   const isMember = workspaceUserId !== user.id;
+  const droits = await droitsDe(user.id, workspaceUserId);
 
   const [{ data: profile }, { data: workspacePlan }, { data: raccordement }] = await Promise.all([
     supabase.from("profiles").select("full_name, company_name, is_demo").eq("id", user.id).single(),
@@ -110,7 +112,7 @@ export default async function DashboardLayout({ children }: { children: React.Re
 
   return (
     <DashboardThemeProvider>
-    <PlanProvider plan={plan} isMember={isMember}>
+    <PlanProvider plan={plan} isMember={isMember} droits={droits}>
       <div className="min-h-screen bg-ds-bg flex overflow-x-hidden">
         <MobileNav
           initials={initials}

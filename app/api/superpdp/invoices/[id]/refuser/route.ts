@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { getWorkspaceUserId } from "@/lib/workspace";
+import { exigerActe } from "@/lib/droits";
 import { superpdpFetch, SuperPdpNotConnected, SuperPdpSessionPending } from "@/lib/superpdp";
 import { estMotifValide } from "@/lib/superpdp-motifs";
 
@@ -58,6 +59,8 @@ export async function POST(req: NextRequest, ctx: { params: Promise<{ id: string
   }
 
   const workspaceId = await getWorkspaceUserId(user.id);
+  const refusActe = await exigerActe(user.id, workspaceId, "refuser_facture_recue");
+  if (refusActe) return refusActe;
   const admin = createAdminClient();
 
   // Appartenance vérifiée avant tout appel : le jeton utilisé est celui du

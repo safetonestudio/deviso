@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 import { getWorkspaceUserId, getWorkspaceProfile } from "@/lib/workspace";
+import { exigerTitulaire } from "@/lib/droits";
 
 // GET /api/export/invoices-csv?year=2025, Pro only
 export async function GET(req: NextRequest) {
@@ -26,6 +27,8 @@ export async function GET(req: NextRequest) {
   }
 
   const workspaceId = await getWorkspaceUserId(user.id);
+  const refusT = exigerTitulaire(user.id, workspaceId);
+  if (refusT) return refusT;
   const year = req.nextUrl.searchParams.get("year") ?? String(new Date().getFullYear());
 
   const { data: invoices, error } = await supabase

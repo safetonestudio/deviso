@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { getWorkspaceUserId, getWorkspaceProfile } from "@/lib/workspace";
+import { exigerActe } from "@/lib/droits";
 import { envoyerCourriel } from "@/lib/resend";
 import { piedDePageMarque } from "@/lib/emails/branding";
 import { echapperHtml, echapperUrl } from "@/lib/emails/html";
@@ -25,6 +26,8 @@ export async function POST(req: NextRequest, { params }: Params) {
   }
 
   const workspaceId = await getWorkspaceUserId(user.id);
+  const refusActe = await exigerActe(user.id, workspaceId, "envoyer_devis");
+  if (refusActe) return refusActe;
 
   const profileData = await getWorkspaceProfile<{
     company_name: string | null;

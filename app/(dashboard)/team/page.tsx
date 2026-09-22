@@ -1,13 +1,14 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, Fragment } from "react";
 import { GuidedTourBanner } from "@/components/GuidedTourBanner";
 import { useIsMember } from "@/components/PlanContext";
 import { KpiCard } from "@/components/ui/KpiCard";
 import {
   UsersRound, TrendingUp, FileText, CheckCircle2,
-  Mail, Crown, Send, ShieldCheck, Check, Hourglass,
+  Mail, Crown, Send, Check, Hourglass, SlidersHorizontal,
 } from "lucide-react";
+import { GrillePermissions, type PermissionsMembre } from "@/components/PermissionsMembre";
 
 interface Member {
   id: string;
@@ -17,6 +18,7 @@ interface Member {
   invited_at: string;
   accepted_at: string | null;
   member_id: string | null;
+  permissions?: PermissionsMembre | null;
 }
 
 interface MemberStat {
@@ -90,8 +92,7 @@ export default function TeamPage() {
   const [inviteMsg, setInviteMsg] = useState<{ type: "success" | "error"; text: string } | null>(null);
   const [activeTab, setActiveTab] = useState<"pipeline" | "membres">("pipeline");
   const [isOwner, setIsOwner] = useState(false);
-  const [requireApproval, setRequireApproval] = useState(false);
-  const [savingApproval, setSavingApproval] = useState(false);
+  const [permOuvert, setPermOuvert] = useState<string | null>(null);
 
   const loadMembers = () =>
     fetch("/api/team")
@@ -112,7 +113,6 @@ export default function TeamPage() {
   useEffect(() => {
     fetch("/api/profile").then((r) => r.json()).then((d) => {
       if (d.is_owner !== undefined) setIsOwner(d.is_owner);
-      if (d.profile?.require_approval !== undefined) setRequireApproval(d.profile.require_approval);
     });
     loadPipeline();
     Promise.all([loadMembers()]).finally(() => setLoading(false));
@@ -147,16 +147,8 @@ export default function TeamPage() {
     setMembers((prev) => prev.filter((m) => m.id !== id));
   }
 
-  async function handleToggleApproval() {
-    setSavingApproval(true);
-    const newVal = !requireApproval;
-    const res = await fetch("/api/profile", {
-      method: "PATCH",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ require_approval: newVal }),
-    });
-    if (res.ok) setRequireApproval(newVal);
-    setSavingApproval(false);
+  function majPermissions(id: string, permissions: PermissionsMembre) {
+    setMembers((prev) => prev.map((m) => (m.id === id ? { ...m, permissions } : m)));
   }
 
   // Gate Pro — jamais affiché aux membres (ils utilisent les features de l'owner)
@@ -358,40 +350,6 @@ export default function TeamPage() {
             </div>
           )}
 
-          {/* Paramètres d'équipe, visible uniquement au propriétaire */}
-          {isOwner && (
-            <div className="bg-ds-surface border border-ds-border rounded-xl p-5">
-              <h2 className="font-semibold text-white mb-1 flex items-center gap-2">
-                <ShieldCheck size={15} className="text-indigo-400" />
-                Paramètres d&apos;équipe
-              </h2>
-              <p className="text-xs text-gray-500 mb-4">Ces réglages s&apos;appliquent à tous les collaborateurs de votre workspace.</p>
-              <div className="flex items-center justify-between gap-4">
-                <div>
-                  <div className="text-sm font-medium text-white">Validation avant envoi</div>
-                  <div className="text-xs text-gray-500 mt-0.5">
-                    Les collaborateurs doivent soumettre leurs devis pour votre approbation avant de pouvoir les envoyer au client.
-                  </div>
-                </div>
-
-                <button
-                  onClick={handleToggleApproval}
-                  disabled={savingApproval}
-                  className={`relative shrink-0 w-11 h-6 rounded-full transition-colors duration-200 focus:outline-none ${
-                    requireApproval ? "bg-indigo-600" : "bg-ds-elevated border border-ds-border"
-                  } ${savingApproval ? "opacity-50" : ""}`}
-                  aria-label="Activer/désactiver la validation avant envoi"
-                >
-                  <span
-                    className={`absolute top-0.5 left-0.5 w-5 h-5 rounded-full bg-white shadow transition-transform duration-200 ${
-                      requireApproval ? "translate-x-5" : "translate-x-0"
-                    }`}
-                  />
-                </button>
-              </div>
-            </div>
-          )}
-
           <div className="flex items-center gap-3">
             <div className="flex-1 bg-ds-elevated rounded-full h-1.5 overflow-hidden">
               <div
@@ -434,12 +392,32 @@ export default function TeamPage() {
                     </span>
                   </div>
                   {isOwner && (
-                    <button
-                      onClick={() => handleRemove(m.id)}
-                      className="mt-3 text-xs text-red-400 hover:text-red-300 font-medium transition-colors"
-                    >
-                      Retirer
-                    </button>
+                    <div className="mt-3 flex items-center gap-4">
+                      {m.status === "active" && (
+                        <button
+                          onClick={() => setPermOuvert(permOuvert === m.id ? null : m.id)}
+                          className="inline-flex items-center gap-1.5 text-xs text-indigo-400 hover:text-indigo-300 font-medium transition-colors"
+                        >
+                          <SlidersHorizontal size={13} className="shrink-0" />
+                          Autorisations
+                        </button>
+                      )}
+                      <button
+                        onClick={() => handleRemove(m.id)}
+                        className="text-xs text-red-400 hover:text-red-300 font-medium transition-colors"
+                      >
+                        Retirer
+                      </button>
+                    </div>
+                  )}
+                  {isOwner && m.status === "active" && permOuvert === m.id && (
+                    <div className="mt-3">
+                      <GrillePermissions
+                        memberId={m.id}
+                        permissionsInitiales={m.permissions}
+                        onChange={(pp) => majPermissions(m.id, pp)}
+                      />
+                    </div>
                   )}
                 </div>
               ))}
@@ -458,7 +436,8 @@ export default function TeamPage() {
 
                 <tbody className="divide-y divide-ds-border">
                   {members.map((m) => (
-                    <tr key={m.id} className="hover:bg-ds-elevated/50 transition-colors">
+                    <Fragment key={m.id}>
+                    <tr className="hover:bg-ds-elevated/50 transition-colors">
                       <td className="px-4 py-3">
                         <div className="font-medium text-white">{m.email}</div>
                         {m.accepted_at && (
@@ -477,17 +456,45 @@ export default function TeamPage() {
                         </span>
                       </td>
                       <td className="px-4 py-3 text-right text-gray-500 text-xs">{fmtDate(m.invited_at)}</td>
-                      <td className="px-4 py-3 text-right">
+                      <td className="px-4 py-3 text-right whitespace-nowrap">
                         {isOwner && (
-                          <button
-                            onClick={() => handleRemove(m.id)}
-                            className="text-xs text-red-400 hover:text-red-300 font-medium transition-colors"
-                          >
-                            Retirer
-                          </button>
+                          <div className="inline-flex items-center gap-4">
+                            {m.status === "active" && (
+                              <button
+                                onClick={() => setPermOuvert(permOuvert === m.id ? null : m.id)}
+                                className="inline-flex items-center gap-1.5 text-xs text-indigo-400 hover:text-indigo-300 font-medium transition-colors"
+                              >
+                                <SlidersHorizontal size={13} className="shrink-0" />
+                                Autorisations
+                              </button>
+                            )}
+                            <button
+                              onClick={() => handleRemove(m.id)}
+                              className="text-xs text-red-400 hover:text-red-300 font-medium transition-colors"
+                            >
+                              Retirer
+                            </button>
+                          </div>
                         )}
                       </td>
                     </tr>
+                    {isOwner && m.status === "active" && permOuvert === m.id && (
+                      <tr>
+                        <td colSpan={4} className="px-4 pb-4 bg-ds-elevated/20">
+                          <div className="pt-1">
+                            <p className="text-xs text-gray-500 mb-2">
+                              Autorisations de <span className="text-gray-300">{m.email}</span> — cochez ce que ce collaborateur a le droit de faire.
+                            </p>
+                            <GrillePermissions
+                              memberId={m.id}
+                              permissionsInitiales={m.permissions}
+                              onChange={(pp) => majPermissions(m.id, pp)}
+                            />
+                          </div>
+                        </td>
+                      </tr>
+                    )}
+                    </Fragment>
                   ))}
                 </tbody>
               </table>

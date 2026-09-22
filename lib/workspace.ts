@@ -7,12 +7,19 @@ import { createAdminClient } from "@/lib/supabase/admin";
  */
 export async function getWorkspaceUserId(userId: string): Promise<string> {
   const supabase = createAdminClient();
-  const { data } = await supabase
+  const { data, error } = await supabase
     .from("team_members")
     .select("owner_id")
     .eq("member_id", userId)
     .eq("status", "active")
     .maybeSingle();
+  // Une ERREUR de lecture n'est pas « aucune appartenance ». Retomber en silence
+  // sur `userId` ferait créer les documents d'un membre sous SON propre espace —
+  // numéro tiré d'une autre séquence, doublon de numérotation, facture invisible
+  // pour l'entreprise. On refuse plutôt que de deviner.
+  if (error) {
+    throw new Error(`Résolution de l'espace de travail impossible : ${error.message}`);
+  }
   return data?.owner_id ?? userId;
 }
 

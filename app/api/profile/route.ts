@@ -40,7 +40,7 @@ export async function PATCH(req: NextRequest) {
     // désynchroniser du code postal et de la ville.
     "full_name", "company_name", "siret", "email", "phone",
     "tva_number", "logo_url", "proposal_template", "proposal_color",
-    "require_approval", "tva_regime", "tva_periodicite",
+    "tva_regime", "tva_periodicite",
     "payment_method", "payment_link_provider", "payment_link_profile",
     "bank_iban", "bank_bic", "bank_account_name",
     "cgv_text",

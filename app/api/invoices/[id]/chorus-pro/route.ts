@@ -4,6 +4,7 @@ import { createAdminClient } from "@/lib/supabase/admin";
 import { generateFacturXPdf } from "@/lib/facturx";
 import type { Invoice } from "@/types";
 import { getWorkspaceUserId } from "@/lib/workspace";
+import { exigerActe } from "@/lib/droits";
 import { estCompteDemo, MESSAGE_DEMO_TIERS } from "@/lib/garde-demo";
 
 // ─── Config PISTE ────────────────────────────────────────────────────────────
@@ -156,6 +157,8 @@ export async function POST(
   // Les documents appartiennent à l'espace de travail, pas au collaborateur :
   // filtrer sur user.id renvoyait 404 à tout membre d'équipe.
   const workspaceId = await getWorkspaceUserId(user.id);
+  const refusActe = await exigerActe(user.id, workspaceId, "deposer_chorus");
+  if (refusActe) return refusActe;
 
   const admin = createAdminClient();
 
@@ -182,7 +185,11 @@ export async function POST(
     .select(
       "chorus_pro_login, chorus_pro_password, chorus_pro_fournisseur_id, chorus_pro_bank_code, chorus_pro_user_id"
     )
-    .eq("id", user.id)
+    // Le compte fournisseur Chorus Pro de l'ESPACE, pas celui du collaborateur.
+    // Sur .eq("id", user.id), un membre déposait la facture B2G de l'entreprise
+    // sous SON identifiant fournisseur — l'administration paie alors sur son
+    // compte. La déposition reste réglée par la permission deposer_chorus.
+    .eq("id", workspaceId)
     .single();
 
   if (
@@ -293,7 +300,7 @@ export async function POST(
     // Génère le PDF Factur-X directement (appel fonction, pas fetch HTTP interne)
     let pdfBase64: string;
     try {
-      pdfBase64 = await buildInvoicePdfBase64(invoice as Invoice, user.id, admin);
+      pdfBase64 = await buildInvoicePdfBase64(invoice as Invoice, workspaceId, admin);
     } catch (e: any) {
       return NextResponse.json(
         { error: `Génération PDF : ${e.message}` },

@@ -1,6 +1,7 @@
 "use client";
 import { useState } from "react";
 import type { Proposal, Profile } from "@/types";
+import { usePermission } from "@/components/PlanContext";
 
 interface Props {
   proposal: Proposal;
@@ -9,6 +10,10 @@ interface Props {
 }
 
 export default function ShareSection({ proposal, shareUrl, profile }: Props) {
+  // Partager / envoyer un devis = l'acte « envoyer_devis ». Un collaborateur qui
+  // ne l'a pas ne voit pas ce panneau : son interface reste épurée, et le
+  // titulaire (droits complets) le voit toujours.
+  const peutEnvoyer = usePermission("envoyer_devis");
   const [copied, setCopied] = useState(false);
   const [sending, setSending] = useState(false);
   const [sent, setSent] = useState(false);
@@ -46,6 +51,8 @@ export default function ShareSection({ proposal, shareUrl, profile }: Props) {
     }
     setSending(false);
   };
+
+  if (!peutEnvoyer) return null;
 
   return (
     <div className="bg-ds-surface rounded-xl border border-ds-border p-5 space-y-4 mt-4">

@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 import { getWorkspaceUserId } from "@/lib/workspace";
+import { exigerTitulaire } from "@/lib/droits";
 import { envoyerEncaissementPdp } from "@/lib/superpdp-encaissement";
 
 /**
@@ -29,6 +30,8 @@ export async function POST(req: NextRequest, ctx: { params: Promise<{ id: string
   const dateEncaissement = typeof corps?.date === "string" ? corps.date : null;
 
   const workspaceId = await getWorkspaceUserId(user.id);
+  const refusT = exigerTitulaire(user.id, workspaceId);
+  if (refusT) return refusT;
   const resultat = await envoyerEncaissementPdp(workspaceId, id, dateEncaissement);
 
   if (!resultat.ok) {

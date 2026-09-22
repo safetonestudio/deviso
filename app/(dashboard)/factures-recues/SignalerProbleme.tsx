@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { MOTIFS_REFUS, motifParCode } from "@/lib/superpdp-motifs";
+import { usePermission } from "@/components/PlanContext";
 
 /**
  * La seule action proposée sur une facture reçue.
@@ -67,6 +68,7 @@ export function SignalerProbleme({
   statutActuel: string | null;
 }) {
   const router = useRouter();
+  const peutRefuser = usePermission("refuser_facture_recue");
   const [ouvert, setOuvert] = useState(false);
   const [etape, setEtape] = useState<"choix" | "refus">("choix");
   const [motif, setMotif] = useState("");
@@ -195,7 +197,10 @@ export function SignalerProbleme({
 
               {erreur && <p className="text-sm text-red-400 mt-3">{erreur}</p>}
 
-              {/* Le refus est en dessous, séparé, et annoncé pour ce qu'il est. */}
+              {/* Le refus est en dessous, séparé, et annoncé pour ce qu'il est.
+                  Masqué pour un collaborateur sans l'autorisation : l'interface
+                  invitée reste épurée tant que le gérant n'a rien accordé. */}
+              {peutRefuser && (
               <div className="mt-4 pt-4 border-t border-ds-border">
                 <button
                   onClick={() => {
@@ -215,6 +220,7 @@ export function SignalerProbleme({
                   </span>
                 </button>
               </div>
+              )}
 
               <button
                 onClick={fermer}

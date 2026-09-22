@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { getWorkspaceUserId, getWorkspaceProfile } from "@/lib/workspace";
+import { exigerTitulaire } from "@/lib/droits";
 
 export async function GET() {
   const supabase = await createClient();
@@ -26,6 +27,8 @@ export async function GET() {
   }
 
   const workspaceId = await getWorkspaceUserId(user.id);
+  const refusT = exigerTitulaire(user.id, workspaceId);
+  if (refusT) return refusT;
   const admin = createAdminClient();
 
   const [

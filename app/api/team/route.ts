@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { getWorkspaceUserId } from "@/lib/workspace";
+import { exigerTitulaire } from "@/lib/droits";
 import { envoyerCourriel } from "@/lib/resend";
 import { inviteEmailHtml } from "@/lib/emails/invite";
 
@@ -27,7 +28,7 @@ export async function GET() {
 
   const { data: members } = await admin
     .from("team_members")
-    .select("id, email, role, status, invited_at, accepted_at, member_id")
+    .select("id, email, role, status, invited_at, accepted_at, member_id, permissions")
     .eq("owner_id", workspaceOwnerId)
     .order("invited_at", { ascending: false });
 
@@ -39,6 +40,10 @@ export async function POST(req: NextRequest) {
   const supabase = await createClient();
   const { data: { user }, error: authError } = await supabase.auth.getUser();
   if (authError || !user) return NextResponse.json({ error: "Non autorisé" }, { status: 401 });
+
+  // Gérer l'équipe (inviter) est réservé au titulaire.
+  const refusT = exigerTitulaire(user.id, await getWorkspaceUserId(user.id));
+  if (refusT) return refusT;
 
   const { data: profile } = await supabase
     .from("profiles")

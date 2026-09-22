@@ -5,6 +5,7 @@ import { useParams, useRouter } from "next/navigation";
 import Link from "next/link";
 import { GuidedTourBanner } from "@/components/GuidedTourBanner";
 import { FacturXCompliance } from "@/components/FacturXCompliance";
+import { usePermission, useIsMember } from "@/components/PlanContext";
 import {
   Send,
   CreditCard,
@@ -55,6 +56,10 @@ function ActionPanel({ invoice, id, router, hasChorusPro }: {
   const [sendingReminder, setSendingReminder] = useState(false);
   const [sendingEmail, setSendingEmail] = useState(false);
   const [emailSent, setEmailSent] = useState(false);
+  const isMember = useIsMember();
+  const peutEnvoyerFacture = usePermission("envoyer_facture");
+  const peutTransmettrePa = usePermission("transmettre_pa");
+  const peutDeposerChorus = usePermission("deposer_chorus");
   const [depositingChorus, setDepositingChorus] = useState(false);
   const [emission, setEmission] = useState(false);
   const [verification, setVerification] = useState(false);
@@ -313,10 +318,10 @@ function ActionPanel({ invoice, id, router, hasChorusPro }: {
   // aurait la même conséquence de chaque côté — réclamer au client de l'argent
   // qu'on est en train de lui rendre.
   const estAvoir = inv.invoice_type === "avoir";
-  const canSendEmail = !!inv.client_email && inv.status !== "cancelled";
+  const canSendEmail = !!inv.client_email && inv.status !== "cancelled" && peutEnvoyerFacture;
   const canPaymentLink = !estAvoir && inv.status !== "paid" && inv.status !== "cancelled";
-  const canMarkPaid = !estAvoir && inv.status !== "paid" && inv.status !== "cancelled";
-  const canMarkSent = inv.status === "draft";
+  const canMarkPaid = !estAvoir && inv.status !== "paid" && inv.status !== "cancelled" && !isMember;
+  const canMarkSent = inv.status === "draft" && peutEnvoyerFacture;
   const canRemind = !estAvoir && inv.status === "sent" && !!inv.client_email;
   /**
    * Transmet la facture à la Plateforme Agréée.
@@ -363,13 +368,13 @@ function ActionPanel({ invoice, id, router, hasChorusPro }: {
     }
   }
 
-  const canChorus = inv.status === "sent" && !chorusRef && hasChorusPro;
+  const canChorus = inv.status === "sent" && !chorusRef && hasChorusPro && peutDeposerChorus;
 
   // Émission vers la Plateforme Agréée. Une facture ne se transmet qu'une fois :
   // un second envoi arriverait en double chez le client, qui la refuserait pour
   // « DOUBLON ». D'où la condition sur l'absence d'identifiant.
   const dejaTransmise = Boolean(inv.superpdp_invoice_id);
-  const peutEmettre = inv.status !== "draft" && inv.status !== "cancelled" && !dejaTransmise;
+  const peutEmettre = inv.status !== "draft" && inv.status !== "cancelled" && !dejaTransmise && peutTransmettrePa;
 
   return (
     <div className="bg-ds-surface border border-ds-border rounded-xl overflow-hidden sticky top-8">
@@ -648,9 +653,9 @@ function ActionPanel({ invoice, id, router, hasChorusPro }: {
           </div>
         )}
 
-        {/* ── Groupe 4 : Zone danger ── */}
-        <div className="h-px bg-ds-border my-3" />
-        {!confirmDelete ? (
+        {/* ── Groupe 4 : Zone danger (suppression : titulaire seul) ── */}
+        {!isMember && <div className="h-px bg-ds-border my-3" />}
+        {!isMember && (!confirmDelete ? (
           <button
             onClick={() => setConfirmDelete(true)}
             className="w-full text-xs text-gray-600 hover:text-red-400 px-4 py-2 text-left transition-colors"
@@ -676,7 +681,7 @@ function ActionPanel({ invoice, id, router, hasChorusPro }: {
               </button>
             </div>
           </div>
-        )}
+        ))}
       </div>
     </div>
   );

@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 import { getWorkspaceUserId, getWorkspaceProfile } from "@/lib/workspace";
+import { exigerTitulaire } from "@/lib/droits";
 
 function fecDate(dateStr: string): string {
   const d = new Date(dateStr);
@@ -55,6 +56,8 @@ export async function GET(req: NextRequest) {
   );
 
   const workspaceId = await getWorkspaceUserId(user.id);
+  const refusT = exigerTitulaire(user.id, workspaceId);
+  if (refusT) return refusT;
 
   if (!["solo", "pro"].includes(profile?.plan ?? "")) {
     return NextResponse.json({ error: "PLAN_REQUIRED" }, { status: 403 });

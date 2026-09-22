@@ -7,7 +7,7 @@ import type { Invoice } from "@/types";
 import { UpgradeBanner } from "@/components/UpgradeBanner";
 import { RefreshCw, Trash2, Plus, X, ChevronDown, Download, Coins, CircleCheck, TriangleAlert, Lock } from "lucide-react";
 import { GuidedTourBanner } from "@/components/GuidedTourBanner";
-import { usePlan } from "@/components/PlanContext";
+import { usePlan, useIsMember, usePermission } from "@/components/PlanContext";
 import { phraseManques } from "@/lib/superpdp-precontrole";
 import { etatPdp } from "@/lib/superpdp-etat-facture";
 
@@ -57,6 +57,8 @@ const EMPTY_ITEM = { description: "", quantity: 1, unit: "forfait", unit_price: 
 export default function InvoicesPage() {
   const router = useRouter();
   const plan = usePlan(); // plan workspace depuis le layout, instantané, zéro fetch
+  const isMember = useIsMember();
+  const peutTransmettre = usePermission("transmettre_pa");
   const [tab, setTab] = useState<"invoices" | "recurring">("invoices");
   const [invoices, setInvoices] = useState<Invoice[]>([]);
   const [newDropdownOpen, setNewDropdownOpen] = useState(false);
@@ -280,7 +282,7 @@ export default function InvoicesPage() {
           <p className="text-gray-400 text-sm mt-1">Factur-X EN 16931 · PDF/A-3 · conforme réforme 2026</p>
         </div>
         <div className="flex items-center gap-2 flex-wrap">
-          {isPro && tab === "invoices" && (
+          {isPro && !isMember && tab === "invoices" && (
             <div className="flex items-center gap-1.5 border border-ds-border rounded-lg overflow-hidden">
               <select
                 value={exportYear}
@@ -403,7 +405,7 @@ export default function InvoicesPage() {
               Sous la réforme, une facture émise et jamais transmise n'existe
               pas pour l'administration. Ce compte doit se lire sans chercher,
               comme un solde impayé — pas se déduire en parcourant la liste. */}
-          {raccordePdp && aTransmettre > 0 && (
+          {raccordePdp && aTransmettre > 0 && peutTransmettre && (
             <div className="bg-amber-500/10 border border-amber-500/30 rounded-xl px-4 py-3 mb-5 flex items-center gap-3">
               <TriangleAlert size={18} className="shrink-0 text-amber-400" />
               <p className="text-sm text-amber-300">
@@ -510,7 +512,7 @@ export default function InvoicesPage() {
                       pleine largeur, au même titre que le téléchargement. */}
                   {raccordePdp && (() => {
                     const e = etatPdp(inv, sandboxPdp);
-                    if (!e?.aFaire) return null;
+                    if (!e?.aFaire || !peutTransmettre) return null;
                     return (
                       <button
                         onClick={(ev) => transmettrePdp(inv, ev)}
@@ -581,7 +583,7 @@ export default function InvoicesPage() {
                           {(() => {
                             const e = etatPdp(inv, sandboxPdp);
                             if (!e) return <span className="text-gray-600 text-xs">—</span>;
-                            if (e.aFaire)
+                            if (e.aFaire && peutTransmettre)
                               return (
                                 <button
                                   onClick={(ev) => transmettrePdp(inv, ev)}
