@@ -4,15 +4,14 @@
  * Ce que couvrait déjà la suite : la création, la vue publique et la signature
  * (promesses.mjs), plus les droits de lecture des deux rôles (two-roles.mjs).
  *
- * Ce que personne ne testait, et que ce script ajoute : le refus par le client,
- * le circuit de validation interne (soumission par un collaborateur, puis
- * approbation ou refus par le propriétaire), et surtout **les garde-fous** —
- * qui a le droit de faire quoi, et ce qui se passe quand un devis est traité
- * deux fois. C'est là que se logent les défauts coûteux : un devis signé qu'on
- * peut re-signer, un collaborateur qui approuve ses propres devis.
+ * Ce que personne ne testait, et que ce script ajoute : le refus par le client
+ * et surtout **les garde-fous** — ce qui se passe quand un devis est traité
+ * deux fois. C'est là que se logent les défauts coûteux, comme un devis signé
+ * qu'on peut re-signer. (Les autorisations des membres — qui a le droit
+ * d'envoyer — sont couvertes par permissions.mjs.)
  *
  * Choix assumé : ce script n'exerce **aucun envoi d'email réel**. Les routes de
- * signature, de refus et de soumission notifient toutes le propriétaire par
+ * signature et de refus notifient toutes le propriétaire par
  * Resend, à l'adresse de son profil — sur un compte de démonstration, c'est une
  * adresse fictive, donc un rejet dur qui abîme la réputation d'envoi du domaine
  * pour les vrais clients. On s'arrête donc aux contrôles qui répondent AVANT
@@ -165,112 +164,6 @@ if (dejaSigne) {
   verifier("relire un devis déjà signé reste possible", revoir.status === 200, `HTTP ${revoir.status}`);
 }
 
-// ── Circuit de validation interne : qui a le droit ? ─────────────────────────
-console.log("");
-console.log("── Circuit de validation interne ─────────────────────────────");
-
-const devisValidation = await creerDevis(owner, "Devis — circuit de validation");
-const idValidation = devisValidation.body?.proposal?.id;
-
-const approbation = await owner.call(`/api/proposals/${idValidation}/approve`, { method: "POST" });
-verifier(
-  "le propriétaire approuve un devis de son espace",
-  approbation.status === 200 && approbation.body?.success === true,
-  `HTTP ${approbation.status} ${doc(approbation.body).slice(0, 120)}`
-);
-
-const apresApprobation = await owner.call(`/api/proposals/${idValidation}`);
-verifier(
-  "l'approbation est bien enregistrée sur le devis",
-  apresApprobation.body?.proposal?.approval_status === "approved",
-  `approval_status ${apresApprobation.body?.proposal?.approval_status}`
-);
-
-const refusProprietaire = await owner.call(`/api/proposals/${idValidation}/reject`, { method: "POST" });
-const apresRefus = await owner.call(`/api/proposals/${idValidation}`);
-verifier(
-  "le propriétaire peut revenir sur son approbation en refusant",
-  refusProprietaire.status === 200 && apresRefus.body?.proposal?.approval_status === "rejected",
-  `HTTP ${refusProprietaire.status} → ${apresRefus.body?.proposal?.approval_status}`
-);
-
-// Le cœur du circuit : un collaborateur ne valide pas ses propres devis. Sans
-// ce contrôle, la fonction « exiger une validation » ne vaut rien.
-const approbationMembre = await member.call(`/api/proposals/${idValidation}/approve`, { method: "POST" });
-verifier(
-  "un membre d'équipe ne peut PAS approuver un devis",
-  approbationMembre.status === 403,
-  `HTTP ${approbationMembre.status} ${doc(approbationMembre.body).slice(0, 120)}`
-);
-
-const refusMembre = await member.call(`/api/proposals/${idValidation}/reject`, { method: "POST" });
-verifier(
-  "un membre d'équipe ne peut PAS refuser un devis",
-  refusMembre.status === 403,
-  `HTTP ${refusMembre.status}`
-);
-
-const approbationAnonyme = await anonymous.call(`/api/proposals/${idValidation}/approve`, { method: "POST" });
-verifier("un anonyme ne peut pas approuver", approbationAnonyme.status === 401, `HTTP ${approbationAnonyme.status}`);
-
-const approbationInconnue = await owner.call(
-  "/api/proposals/00000000-0000-0000-0000-000000000000/approve",
-  { method: "POST" }
-);
-verifier(
-  "approuver un devis inexistant renvoie 404, pas une erreur serveur",
-  approbationInconnue.status === 404,
-  `HTTP ${approbationInconnue.status}`
-);
-
-// ── Soumission pour validation ───────────────────────────────────────────────
-console.log("");
-console.log("── Soumission pour validation ────────────────────────────────");
-
-// Le propriétaire n'a personne à qui soumettre : la route doit le lui dire au
-// lieu de créer une demande de validation qui ne serait jamais traitée.
-const soumissionProprietaire = await owner.call(
-  `/api/proposals/${idValidation}/submit-for-approval`,
-  { method: "POST" }
-);
-verifier(
-  "le propriétaire ne soumet pas : il envoie directement",
-  soumissionProprietaire.status === 400,
-  `HTTP ${soumissionProprietaire.status} ${doc(soumissionProprietaire.body).slice(0, 120)}`
-);
-
-// Seul un brouillon se soumet : soumettre un devis déjà parti chez le client
-// n'a pas de sens, la validation arriverait après coup.
-const devisEnvoye = await creerDevis(owner, "Devis — déjà envoyé");
-const idEnvoye = devisEnvoye.body?.proposal?.id;
-await owner.call(`/api/proposals/${idEnvoye}`, { method: "PATCH", body: doc({ status: "sent" }) });
-
-const soumissionNonBrouillon = await member.call(
-  `/api/proposals/${idEnvoye}/submit-for-approval`,
-  { method: "POST" }
-);
-verifier(
-  "seul un brouillon peut être soumis pour validation",
-  soumissionNonBrouillon.status === 400,
-  `HTTP ${soumissionNonBrouillon.status} ${doc(soumissionNonBrouillon.body).slice(0, 120)}`
-);
-
-const soumissionInconnue = await member.call(
-  "/api/proposals/00000000-0000-0000-0000-000000000000/submit-for-approval",
-  { method: "POST" }
-);
-verifier(
-  "soumettre un devis inexistant renvoie 404",
-  soumissionInconnue.status === 404,
-  `HTTP ${soumissionInconnue.status}`
-);
-
-const soumissionAnonyme = await anonymous.call(
-  `/api/proposals/${idValidation}/submit-for-approval`,
-  { method: "POST" }
-);
-verifier("un anonyme ne peut pas soumettre", soumissionAnonyme.status === 401, `HTTP ${soumissionAnonyme.status}`);
-
 // ── Ce que ce script ne prouve pas ───────────────────────────────────────────
 aVerifierAutrement(
   "La signature elle-même (action « sign » aboutie)",
@@ -279,10 +172,6 @@ aVerifierAutrement(
 aVerifierAutrement(
   "Le refus client abouti (action « decline »)",
   "la route notifie le propriétaire par email avant de répondre ; sur un compte de démonstration l'adresse est fictive, donc un rejet dur. À couvrir dès qu'un garde-fou d'envoi existera (voir CLAUDE.md)."
-);
-aVerifierAutrement(
-  "La soumission pour validation aboutie (collaborateur → brouillon)",
-  "même raison : la route envoie un email au propriétaire avant de répondre. Ses quatre garde-fous sont couverts ci-dessus."
 );
 aVerifierAutrement(
   "Le rendu de la page publique du devis",

@@ -58,7 +58,7 @@ const FORMULAIRES = [
     // Champs calculés côté serveur : les envoyer écraserait le calcul.
     derives: ["address", "address_country"],
     // Champs enregistrés par leurs propres boutons, hors du formulaire principal.
-    ailleurs: ["subdomain", "reminder_intervals", "reminder_message", "cgv_text", "logo_url", "require_approval"],
+    ailleurs: ["subdomain", "reminder_intervals", "reminder_message", "cgv_text", "logo_url"],
   },
   {
     nom: "Paiements",
@@ -121,8 +121,8 @@ for (const f of FORMULAIRES) {
   });
 
   // Champs envoyés que plus personne ne pilote : ils réécrivent une valeur
-  // périmée par-dessus la base. C'est ainsi que `require_approval`, réglé sur la
-  // page Équipe, était annulé en enregistrant son profil.
+  // périmée par-dessus la base — un champ réglé par son propre bouton, ailleurs,
+  // se retrouvait annulé en enregistrant le formulaire principal.
   let orphelins = [];
   if (f.mode === "objet") {
     const envoyes = grab(/^\s*(\w+):/gm, corps);

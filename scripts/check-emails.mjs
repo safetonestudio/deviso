@@ -32,7 +32,6 @@ let echecs = 0;
 // propre entreprise n'aurait aucun sens. Un message adressé à SON client, si.
 const NOM_DEVISO_LEGITIME = [
   "app/api/team/route.ts",
-  "app/api/proposals/[id]/submit-for-approval/route.ts",
   // « Votre devis vient d'être signé / refusé » : destinataire = le
   // propriétaire du devis. Ce fichier passait jusqu'ici sans être vu, non
   // parce qu'il respectait la règle mais parce que l'adresse transitait par

@@ -52,9 +52,6 @@ const EXEMPTIONS = {
   // Invitation d'équipe : refuse déjà les adresses @deviso.internal, et un
   // compte de démonstration n'a pas de plan Pro.
   "app/api/team/route.ts": "refuse les adresses @deviso.internal",
-  // Demande de validation interne : le destinataire est le propriétaire de
-  // l'espace, pas un tiers.
-  "app/api/proposals/[id]/submit-for-approval/route.ts": "notifie le propriétaire de l'espace",
 };
 
 function controler(titre, fichiers, description, garde) {
