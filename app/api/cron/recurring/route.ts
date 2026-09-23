@@ -51,7 +51,7 @@ export async function GET(req: NextRequest) {
     // Récupérer le profil du propriétaire (pour numéro de facture, seller info, couleur)
     const { data: profile } = await supabase
       .from("profiles")
-      .select("full_name, company_name, siret, address, email, tva_number, plan, proposal_color, payment_method, payment_link_provider, payment_link_profile, bank_iban, bank_bic, bank_account_name")
+      .select("full_name, company_name, siret, address, email, tva_number, plan, proposal_color, payment_method, payment_link_provider, payment_link_profile, bank_iban, bank_bic, bank_account_name, is_demo")
       .eq("id", rec.user_id)
       .single();
 
@@ -107,6 +107,18 @@ export async function GET(req: NextRequest) {
      * garantit « au moins une fois », pas « exactement une fois ».
      */
     const next_billing_date = computeNextBillingDate(rec.interval, rec.day_of_month, rec.next_billing_date);
+    // Garde en dernier ressort : si la date n'a pas avancé (intervalle
+    // inconnu arrivé par un import ou une correction en base — il n'y a pas de
+    // contrainte CHECK ni de route de mise à jour aujourd'hui), la réservation
+    // atomique réussirait avec la MÊME date et l'échéance repasserait le
+    // lendemain : facture en double, nouveau numéro, courriel au client chaque
+    // jour. On saute plutôt que de produire un doublon légal.
+    if (new Date(next_billing_date) <= new Date(rec.next_billing_date)) {
+      console.error(
+        `[cron/recurring] abonnement ${rec.id} : intervalle « ${rec.interval} » n'avance pas l'échéance (${rec.next_billing_date}) — sauté pour éviter un doublon.`
+      );
+      continue;
+    }
     const { data: reservee } = await supabase
       .from("recurring_invoices")
       .update({ last_billed_at: new Date().toISOString(), next_billing_date })
@@ -192,7 +204,9 @@ export async function GET(req: NextRequest) {
 
         const html = buildInvoiceEmail({ clientName, senderName, invoiceNumber: number, amount, brand, dueDate: dueDateFormatted, plan: profile?.plan ?? null });
 
-        await resend.emails.send({
+        // Pas d'email réel depuis un compte de démonstration : la facture est
+        // générée (donnée jetable, purgée), mais rien ne part chez un tiers.
+        if (!profile.is_demo) await resend.emails.send({
           // Le client a reçu le devis ou la facture au nom de son prestataire.
           // Recevoir la relance de « Deviso », une société qu'il ne connaît pas,
           // ressemble à une tentative d'hameçonnage et abîme la crédibilité de

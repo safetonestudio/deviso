@@ -91,6 +91,7 @@ export default function NewInvoicePage() {
   const [clientEmail, setClientEmail] = useState("");
   const [clientCompany, setClientCompany] = useState("");
   const [clientSiren, setClientSiren] = useState("");
+  const [clientVat, setClientVat] = useState("");
   const [clientStreet, setClientStreet] = useState("");
   const [clientPostcode, setClientPostcode] = useState("");
   const [clientCity, setClientCity] = useState("");
@@ -394,6 +395,7 @@ export default function NewInvoicePage() {
         client_email: clientEmail,
         client_company: clientCompany,
         client_siren: clientSiren || null,
+        client_vat_number: clientVat || null,
         client_street: clientStreet || null,
         client_postcode: clientPostcode || null,
         client_city: clientCity || null,
@@ -685,6 +687,23 @@ export default function NewInvoicePage() {
                   SIREN client <span className="text-blue-400 text-xs">(B2B 2026)</span>
                 </label>
                 <input value={clientSiren} onChange={(e) => setClientSiren(e.target.value)} placeholder="123 456 789" className={inputCls} />
+              </div>
+              <div>
+                <label className="block text-xs font-medium text-gray-400 mb-1">
+                  N° TVA client {clientCountry !== "FR" && <span className="text-blue-400 text-xs">(intracommunautaire)</span>}
+                </label>
+                <input
+                  aria-label="N° TVA intracommunautaire client"
+                  value={clientVat}
+                  onChange={(e) => setClientVat(e.target.value)}
+                  placeholder="BE0123456789"
+                  className={inputCls}
+                />
+                {clientCountry !== "FR" && !clientVat.trim() && (
+                  <p className="text-[11px] text-gray-500 mt-1">
+                    Requis pour qualifier une livraison intracommunautaire (autoliquidation).
+                  </p>
+                )}
               </div>
               {/* Code postal et ville séparés : l'EN 16931 les exige comme
                   éléments distincts du XML (BT-53, BT-52). Facultatifs — rien

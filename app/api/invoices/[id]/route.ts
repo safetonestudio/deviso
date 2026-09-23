@@ -69,6 +69,15 @@ export async function PATCH(req: NextRequest, { params }: Params) {
     if (refusT) return refusT;
   }
 
+  // Annuler une facture (statut « cancelled ») retire un document de la
+  // comptabilité : même niveau qu'encaisser ou supprimer, réservé au
+  // titulaire. Sans cette garde, n'importe quel membre annulait une facture
+  // de l'espace, y compris émise.
+  if (body.status === "cancelled") {
+    const refusT = exigerTitulaire(user.id, workspaceId);
+    if (refusT) return refusT;
+  }
+
   // Passer une facture à « envoyée », c'est l'envoyer au client : soumis à
   // l'autorisation `envoyer_facture` (même règle que le devis). Le paiement,
   // lui, reste titulaire seul (ci-dessus).
@@ -84,7 +93,7 @@ export async function PATCH(req: NextRequest, { params }: Params) {
     // serveur ci-dessous dès que `items` ou `tva_rate` change (un PATCH pouvait
     // sinon poser « total HT : 5 € » sur trois lignes à 100 €, comme le POST
     // l'interdisait déjà).
-    "client_address", "items", "tva_rate",
+    "client_address", "client_vat_number", "items", "tva_rate",
     "issue_date", "due_date", "payment_terms", "notes", "invoice_type",
     "deposit_percentage", "linked_invoice_id", "operation_category",
     "payment_on_debit", "type_code", "chorus_pro_ref", "chorus_pro_submitted_at",
@@ -101,10 +110,41 @@ export async function PATCH(req: NextRequest, { params }: Params) {
   // (recalcul des totaux).
   const { data: current } = await supabase
     .from("invoices")
-    .select("status, invoice_number, items, tva_rate")
+    .select("status, invoice_number, items, tva_rate, superpdp_invoice_id, chorus_pro_ref")
     .eq("id", id)
     .eq("user_id", workspaceId)
     .single();
+
+  // Une facture transmise à la Plateforme Agréée, déposée sur Chorus Pro ou
+  // encaissée est un document opposable, parti chez le client et
+  // l'administration : son CONTENU ne se corrige plus, la voie légale est
+  // l'avoir. On laisse passer les seuls champs de cycle de vie (statut, date
+  // d'encaissement, références de dépôt) ; toute modification de lignes,
+  // montants, parties ou dates sur une telle facture est refusée. Sans cela, un
+  // PATCH { items } réécrivait total_ht/total_ttc en base et faisait diverger
+  // l'enregistrement Deviso du document légal déjà émis.
+  const CHAMPS_CONTENU = new Set([
+    "title", "client_name", "client_email", "client_company", "client_address",
+    "client_vat_number", "items", "tva_rate", "issue_date", "due_date",
+    "payment_terms", "notes", "invoice_type", "deposit_percentage",
+    "linked_invoice_id", "operation_category", "payment_on_debit", "type_code",
+  ]);
+  const modifieContenu = Object.keys(safeUpdate).some((k) => CHAMPS_CONTENU.has(k));
+  const factureFigee =
+    Boolean(current?.superpdp_invoice_id) ||
+    Boolean(current?.chorus_pro_ref) ||
+    current?.status === "paid";
+  if (modifieContenu && factureFigee) {
+    return NextResponse.json(
+      {
+        error: "FACTURE_FIGEE",
+        message:
+          "Cette facture a été émise (transmise, déposée ou encaissée) : son contenu " +
+          "ne peut plus être modifié. Pour la corriger, créez un avoir.",
+      },
+      { status: 409 }
+    );
+  }
 
   // Recalcul serveur des totaux dès que les lignes ou le taux changent. Les
   // montants d'un document fiscal ne dépendent jamais de valeurs envoyées par

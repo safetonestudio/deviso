@@ -74,7 +74,7 @@ export async function POST(req: NextRequest) {
   // PATCH a sa propre liste blanche ; la création l'avait perdue.
   const CHAMPS_FACTURE = new Set([
     "title", "notes", "proposal_id",
-    "client_name", "client_email", "client_company", "client_siren", "client_address",
+    "client_name", "client_email", "client_company", "client_siren", "client_vat_number", "client_address",
     "client_street", "client_postcode", "client_city", "client_country", "client_directory_address",
     "seller_name", "seller_company", "seller_siren", "seller_tva_number", "seller_address",
     "seller_street", "seller_postcode", "seller_city", "seller_country",

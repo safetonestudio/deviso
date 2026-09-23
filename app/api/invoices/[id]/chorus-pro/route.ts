@@ -356,6 +356,50 @@ export async function POST(
   // ─── Envoi à Chorus Pro via PISTE ────────────────────────────────────────
   const endpoint = `${PISTE_API_BASE}/factures/v1/deposer/flux`;
 
+  // Prise atomique juste avant le dépôt. La garde-lecture `chorus_pro_ref`
+  // plus haut ne suffit pas : deux appels concurrents (double-clic, deux
+  // onglets, réessai réseau) la franchissent tous deux et déposent DEUX fois
+  // la même facture B2G chez la collectivité, sous le compte AIFE de l'espace —
+  // refus « DOUBLON », il faut un avoir. On remplace donc la lecture par un
+  // verrou que la base arbitre, comme l'émission Super PDP : le premier obtient
+  // sa ligne, les suivants zéro. Le verrou se périme en 10 min pour qu'un
+  // plantage à mi-course ne bloque pas la facture indéfiniment.
+  const perimeDepot = new Date(Date.now() - 10 * 60 * 1000).toISOString();
+  const { data: priseDepot } = await admin
+    .from("invoices")
+    .update({ chorus_pro_depot_debute_at: new Date().toISOString() })
+    .eq("id", id)
+    .eq("user_id", workspaceId)
+    .is("chorus_pro_ref", null)
+    .or(`chorus_pro_depot_debute_at.is.null,chorus_pro_depot_debute_at.lt.${perimeDepot}`)
+    .select("id")
+    .maybeSingle();
+
+  if (!priseDepot) {
+    return NextResponse.json(
+      {
+        error: "Dépôt déjà en cours",
+        message:
+          "Cette facture est déjà en cours de dépôt sur Chorus Pro. Patientez quelques " +
+          "secondes et rechargez la page plutôt que de réessayer : un second dépôt la ferait " +
+          "arriver en double chez la collectivité, qui la refuserait pour doublon.",
+      },
+      { status: 409 }
+    );
+  }
+
+  // Rend le verrou si le dépôt n'aboutit pas, pour qu'un réessai (adresse
+  // corrigée, PISTE momentanément indisponible) ne se heurte pas à « déjà en
+  // cours » pendant 10 min. Sur succès, c'est chorus_pro_ref qui bloque le
+  // re-dépôt, le verrou peut rester posé.
+  const rendreVerrouDepot = () =>
+    admin
+      .from("invoices")
+      .update({ chorus_pro_depot_debute_at: null })
+      .eq("id", id)
+      .eq("user_id", workspaceId)
+      .then(() => undefined, () => undefined);
+
   const submitRes = await fetch(endpoint, {
     method: "POST",
     headers: {
@@ -367,6 +411,7 @@ export async function POST(
   });
 
   if (!submitRes.ok) {
+    await rendreVerrouDepot();
     const errText = await submitRes.text();
     return NextResponse.json(
       { error: `Chorus Pro API error: ${submitRes.status} ${errText}` },
