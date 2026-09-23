@@ -146,7 +146,7 @@ export async function POST(req: NextRequest, { params }: Params) {
       .from("proposals")
       .update(updateData)
       .eq("id", proposal.id)
-      .in("status", ["sent", "viewed"])
+      .not("status", "in", "(signed,declined)")
       .select()
       .maybeSingle();
 
@@ -212,7 +212,7 @@ export async function POST(req: NextRequest, { params }: Params) {
       .from("proposals")
       .update({ status: "declined", approval_status: "rejected" })
       .eq("id", proposal.id)
-      .in("status", ["sent", "viewed"])
+      .not("status", "in", "(signed,declined)")
       .select()
       .maybeSingle();
 
