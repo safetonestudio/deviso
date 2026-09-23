@@ -150,7 +150,18 @@ export async function GET(req: NextRequest) {
       .select()
       .single();
 
-    if (invoiceError || !invoice) continue;
+    if (invoiceError || !invoice) {
+      // L'échéance a déjà avancé (réservation atomique plus haut) : sur échec
+      // d'insertion, la facture du mois n'est PAS rattrapée et le numéro tiré
+      // est perdu (trou). On ne peut pas l'éviter sans risquer un doublon, mais
+      // on le TRACE — sinon un mois manquant passe totalement inaperçu.
+      console.error(
+        `[cron/recurring] facture récurrente NON créée pour ${rec.id} (client ${rec.client_name}) : ` +
+          `échéance avancée, numéro perdu, mois sauté.`,
+        invoiceError
+      );
+      continue;
+    }
 
     // Envoyer l'email si client_email défini
     if (rec.client_email) {

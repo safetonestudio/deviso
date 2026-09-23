@@ -57,6 +57,35 @@ export async function POST(req: NextRequest) {
   const body = await req.json();
   const invoiceType = body.invoice_type || "standard";
 
+  // Un avoir ne se crée QUE par la route dédiée (app/api/invoices/[id]/avoir),
+  // qui porte les gardes propres à l'avoir (un seul par facture, statut, lien).
+  // Sans ce refus, un appel direct fabriquerait un avoir en les contournant.
+  if (invoiceType === "avoir") {
+    return NextResponse.json(
+      { error: "AVOIR_ROUTE_DEDIEE", message: "Un avoir se crée depuis la facture d'origine, pas ici." },
+      { status: 400 }
+    );
+  }
+
+  // Liste blanche des champs acceptés à la création. Le reste du corps est
+  // ignoré : sans cela, `...body` laissait poser des colonnes de cycle de vie
+  // (superpdp_*, paid_at, chorus_pro_*, status…) par un appel API direct — une
+  // facture pouvait naître « déjà transmise » ou « encaissée ». La route sœur
+  // PATCH a sa propre liste blanche ; la création l'avait perdue.
+  const CHAMPS_FACTURE = new Set([
+    "title", "notes", "proposal_id",
+    "client_name", "client_email", "client_company", "client_siren", "client_address",
+    "client_street", "client_postcode", "client_city", "client_country", "client_directory_address",
+    "seller_name", "seller_company", "seller_siren", "seller_tva_number", "seller_address",
+    "seller_street", "seller_postcode", "seller_city", "seller_country",
+    "items", "tva_rate", "issue_date", "due_date", "payment_terms",
+    "invoice_type", "deposit_percentage", "linked_invoice_id", "operation_category",
+    "payment_on_debit", "type_code",
+  ]);
+  const champsFacture = Object.fromEntries(
+    Object.entries(body as Record<string, unknown>).filter(([k]) => CHAMPS_FACTURE.has(k))
+  );
+
   // Génère le numéro de facture auto si absent. La règle vit dans
   // lib/numerotation.ts, partagée avec la création d'avoir — voir ce fichier
   // pour le pourquoi du refus plutôt que du repli.
@@ -120,11 +149,16 @@ export async function POST(req: NextRequest) {
    * c'est le même calcul que celui de l'écran : arrondi au centime sur chaque
    * ligne, puis sur la somme.
    */
-  const itemsWithIds = ((body.items || []) as ProposalItem[]).map((item) => ({
-    ...item,
-    id: item.id || uuidv4(),
-    total: centimes(item.total),
-  }));
+  const itemsWithIds = ((body.items || []) as ProposalItem[]).map((item) => {
+    // Le total de ligne est RECALCULÉ depuis quantité × prix unitaire quand les
+    // deux sont fournis, plutôt que de faire confiance à `item.total` du client
+    // (une ligne « 10 × 100 € = 100 € » était acceptable sinon). Repli sur
+    // item.total pour un format sans quantité/prix.
+    const q = Number(item.quantity);
+    const pu = Number(item.unit_price);
+    const ligne = Number.isFinite(q) && Number.isFinite(pu) ? q * pu : Number(item.total);
+    return { ...item, id: item.id || uuidv4(), total: centimes(ligne) };
+  });
 
   const tvaRate = Number(body.tva_rate) || 0;
   const totalHtCalcule = centimes(itemsWithIds.reduce((s, it) => s + centimes(it.total), 0));
@@ -133,7 +167,7 @@ export async function POST(req: NextRequest) {
   const { data, error } = await supabase
     .from("invoices")
     .insert({
-      ...body,
+      ...champsFacture,
       client_street: clientAddr.street,
       client_postcode: clientAddr.postcode,
       client_city: clientAddr.city,

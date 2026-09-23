@@ -307,19 +307,43 @@ export async function POST(req: NextRequest) {
 
   const baseUrl = process.env.NEXT_PUBLIC_APP_URL || "https://getdeviso.fr";
 
+  // L'essai de 14 jours n'est accordé qu'UNE fois par client Stripe.
+  //
+  // Sans ce contrôle, l'essai était inconditionnel et sans carte
+  // (`payment_method_collection: "if_required"`), et le webhook remet
+  // `stripe_subscription_id` à null à l'annulation : un utilisateur pouvait
+  // donc souscrire → annuler → re-souscrire en boucle et cumuler des essais
+  // Pro gratuits à l'infini. On regarde si ce client a DÉJÀ eu un abonnement
+  // (quel que soit son état) ; si oui, pas de nouvel essai, et la carte est
+  // exigée immédiatement. En cas de doute (erreur Stripe), on refuse l'essai.
+  let aDejaEuUnAbonnement = false;
+  try {
+    const anterieurs = await stripe.subscriptions.list({
+      customer: customerId,
+      status: "all",
+      limit: 1,
+    });
+    aDejaEuUnAbonnement = anterieurs.data.length > 0;
+  } catch (err) {
+    console.error("[stripe/checkout] vérification d'essai antérieur impossible, essai refusé par prudence :", err);
+    aDejaEuUnAbonnement = true;
+  }
+
   let session;
   try {
     session = await stripe.checkout.sessions.create({
       customer: customerId,
       payment_method_types: ["card"],
-      payment_method_collection: "if_required", // sans carte bancaire pendant l'essai
+      // Essai (premier abonnement) : pas de carte pendant l'essai. Re-souscription
+      // ou changement : carte exigée tout de suite, la période est active.
+      payment_method_collection: aDejaEuUnAbonnement ? "always" : "if_required",
       line_items: [{ price: priceId, quantity: 1 }],
       mode: "subscription",
       success_url: `${baseUrl}/billing?upgraded=1`,
       cancel_url: `${baseUrl}/billing`,
       locale: "fr",
       subscription_data: {
-        trial_period_days: 14,
+        ...(aDejaEuUnAbonnement ? {} : { trial_period_days: 14 }),
         metadata: { target_plan: targetPlan, billing },
       },
       metadata: { target_plan: targetPlan, billing },

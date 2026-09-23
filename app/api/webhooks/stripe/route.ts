@@ -142,10 +142,17 @@ export async function POST(req: NextRequest) {
       if (!targetPlan) plan = planDeAbonnement(sub) ?? "solo";
       subscriptionStatus = sub.status; // "trialing", "active", etc.
 
+      // On n'accorde le plan payant que si l'abonnement est réellement à jour
+      // (active/trialing), comme le fait customer.subscription.updated. Sinon
+      // (incomplete, past_due…) le plan reste « free » : pas d'accès Pro sur un
+      // abonnement non honoré. Défense en profondeur — ce chemin est
+      // normalement en trialing, mais il n'a pas à faire confiance à ça.
+      const aJour = subscriptionStatus === "active" || subscriptionStatus === "trialing";
+
       const { data: touchees, error } = await supabase
         .from("profiles")
         .update({
-          plan,
+          plan: aJour ? plan : "free",
           stripe_customer_id: customerId,
           stripe_subscription_id: subscriptionId,
           subscription_status: subscriptionStatus,

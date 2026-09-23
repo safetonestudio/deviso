@@ -138,14 +138,20 @@ export async function POST(req: NextRequest, { params }: Params) {
     };
     if (signerName) updateData.signer_name = signerName;
 
+    // Update CONDITIONNEL sur le statut : deux signatures concurrentes passent
+    // toutes deux le contrôle plus haut (lu puis écrit). Sans cette condition,
+    // la seconde écraserait la piste d'audit (IP, empreinte, nom) de la
+    // première — sur une signature opposable. La base n'en laisse passer qu'une.
     const { data: updated, error: updateError } = await admin
       .from("proposals")
       .update(updateData)
       .eq("id", proposal.id)
+      .in("status", ["sent", "viewed"])
       .select()
-      .single();
+      .maybeSingle();
 
     if (updateError) return NextResponse.json({ error: updateError.message }, { status: 500 });
+    if (!updated) return NextResponse.json({ error: "Ce devis a déjà été traité." }, { status: 409 });
 
     // La notification en base d'abord, le courriel ensuite.
     //
@@ -172,10 +178,13 @@ export async function POST(req: NextRequest, { params }: Params) {
     try {
       const { data: profile } = await admin
         .from("profiles")
-        .select("email, full_name, company_name")
+        .select("email, full_name, company_name, is_demo")
         .eq("id", proposal.user_id)
         .single();
-      if (profile?.email) {
+      // Aucun courriel réel depuis un compte de démonstration : son adresse est
+      // fictive (rebond dur qui abîme la réputation d'envoi du domaine), et un
+      // visiteur peut signer un devis de la démo par son lien public.
+      if (profile?.email && !profile.is_demo) {
         const { resend } = await import("@/lib/resend");
         // Le nom du signataire vient du formulaire public : il est saisi par le
         // client, donc par n'importe qui détenant le lien. Interpolé tel quel,
@@ -203,10 +212,12 @@ export async function POST(req: NextRequest, { params }: Params) {
       .from("proposals")
       .update({ status: "declined", approval_status: "rejected" })
       .eq("id", proposal.id)
+      .in("status", ["sent", "viewed"])
       .select()
-      .single();
+      .maybeSingle();
 
     if (updateError) return NextResponse.json({ error: updateError.message }, { status: 500 });
+    if (!updated) return NextResponse.json({ error: "Ce devis a déjà été traité." }, { status: 409 });
 
     // Même raison que pour la signature : un refus se sait, et il se retrouve.
     await notifierProprietaire(admin, proposal.user_id, {
@@ -219,10 +230,10 @@ export async function POST(req: NextRequest, { params }: Params) {
     try {
       const { data: profile } = await admin
         .from("profiles")
-        .select("email, full_name, company_name")
+        .select("email, full_name, company_name, is_demo")
         .eq("id", proposal.user_id)
         .single();
-      if (profile?.email) {
+      if (profile?.email && !profile.is_demo) {
         const { resend } = await import("@/lib/resend");
         const titre = echapperHtml(proposal.title || "");
         await resend.emails.send({

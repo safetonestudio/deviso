@@ -80,7 +80,11 @@ export async function PATCH(req: NextRequest, { params }: Params) {
   // Whitelist des champs modifiables, jamais user_id, invoice_number, etc.
   const ALLOWED = [
     "status", "title", "client_name", "client_email", "client_company",
-    "client_address", "items", "total_ht", "tva_rate", "total_ttc",
+    // total_ht / total_ttc ne sont PAS repris du client : ils sont recalculés
+    // serveur ci-dessous dès que `items` ou `tva_rate` change (un PATCH pouvait
+    // sinon poser « total HT : 5 € » sur trois lignes à 100 €, comme le POST
+    // l'interdisait déjà).
+    "client_address", "items", "tva_rate",
     "issue_date", "due_date", "payment_terms", "notes", "invoice_type",
     "deposit_percentage", "linked_invoice_id", "operation_category",
     "payment_on_debit", "type_code", "chorus_pro_ref", "chorus_pro_submitted_at",
@@ -93,13 +97,34 @@ export async function PATCH(req: NextRequest, { params }: Params) {
     Object.entries(body).filter(([k]) => ALLOWED.includes(k as typeof ALLOWED[number]))
   );
 
-  // Charger la facture actuelle pour détecter le changement de statut
+  // Charger la facture actuelle : statut (changement d'état) et items+taux
+  // (recalcul des totaux).
   const { data: current } = await supabase
     .from("invoices")
-    .select("status, invoice_number")
+    .select("status, invoice_number, items, tva_rate")
     .eq("id", id)
     .eq("user_id", workspaceId)
     .single();
+
+  // Recalcul serveur des totaux dès que les lignes ou le taux changent. Les
+  // montants d'un document fiscal ne dépendent jamais de valeurs envoyées par
+  // le client : on repart des lignes effectives (celles du PATCH, sinon celles
+  // en base) et du taux effectif.
+  if ("items" in safeUpdate || "tva_rate" in safeUpdate) {
+    const centimes = (n: unknown) => Math.round((Number(n) || 0) * 100) / 100;
+    type Ligne = { quantity?: unknown; unit_price?: unknown; total?: unknown };
+    const lignesSrc = (("items" in safeUpdate ? safeUpdate.items : current?.items) || []) as Ligne[];
+    const taux = Number("tva_rate" in safeUpdate ? safeUpdate.tva_rate : current?.tva_rate) || 0;
+    const lignes = lignesSrc.map((it) => {
+      const q = Number(it.quantity), pu = Number(it.unit_price);
+      const ligne = Number.isFinite(q) && Number.isFinite(pu) ? q * pu : Number(it.total);
+      return { ...it, total: centimes(ligne) };
+    });
+    const totalHt = centimes(lignes.reduce((sum, it) => sum + centimes(it.total), 0));
+    safeUpdate.items = lignes;
+    safeUpdate.total_ht = totalHt;
+    safeUpdate.total_ttc = centimes(totalHt * (1 + taux / 100));
+  }
 
   const { data, error } = await supabase
     .from("invoices")

@@ -193,10 +193,25 @@ export async function GET(req: NextRequest) {
     });
 
     if (!emailError) {
-      await supabase
+      // Même garde que la boucle factures : incrément CONDITIONNEL + lecture du
+      // résultat. Sans elle, un update raté laissait `reminder_count` figé et la
+      // relance repartait au client tous les jours (le garde-fou `.lt(…, 10)`
+      // ne se déclenche jamais sur un compteur qui n'avance pas). Le
+      // `.eq("reminder_count", …)` ferme aussi la course entre deux exécutions.
+      const { data: majFaite, error: majErreur } = await supabase
         .from("proposals")
         .update({ last_reminder_sent_at: now, reminder_count: reminderNum })
-        .eq("id", proposal.id);
+        .eq("id", proposal.id)
+        .eq("reminder_count", proposal.reminder_count ?? 0)
+        .select("id");
+
+      if (majErreur || !majFaite || majFaite.length === 0) {
+        console.error(
+          `[cron/send-reminders] relance ${reminderNum} ENVOYÉE pour le devis ${proposal.id} ` +
+            `mais compteur non incrémenté : la relance repartira demain.`,
+          majErreur
+        );
+      }
       proposalsSent++;
     }
   }

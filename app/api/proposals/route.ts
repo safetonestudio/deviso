@@ -70,11 +70,19 @@ export async function POST(req: NextRequest) {
   }
   const proposalNumber = numData;
 
-  // Assigner un ID à chaque ligne si manquant
-  const itemsWithIds = (items as ProposalItem[]).map((item) => ({
-    ...item,
-    id: item.id || uuidv4(),
-  }));
+  // Lignes + totaux recalculés serveur. `items` absent ne doit pas faire un 500
+  // (`.map` sur undefined) ; et les totaux d'un document signable ne dépendent
+  // pas de valeurs envoyées par le client — l'empreinte de signature est
+  // calculée sur ces montants stockés.
+  const centimes = (n: unknown) => Math.round((Number(n) || 0) * 100) / 100;
+  const itemsWithIds = ((items || []) as ProposalItem[]).map((item) => {
+    const q = Number(item.quantity), pu = Number(item.unit_price);
+    const ligne = Number.isFinite(q) && Number.isFinite(pu) ? q * pu : Number(item.total);
+    return { ...item, id: item.id || uuidv4(), total: centimes(ligne) };
+  });
+  const tauxDevis = Number(tva_rate) || 0;
+  const totalHtDevis = centimes(itemsWithIds.reduce((sum, it) => sum + centimes(it.total), 0));
+  const totalTtcDevis = centimes(totalHtDevis * (1 + tauxDevis / 100));
 
   const { data, error } = await supabase
     .from("proposals")
@@ -107,9 +115,9 @@ export async function POST(req: NextRequest) {
       client_siren: client_siren || null,
       description,
       items: itemsWithIds,
-      total_ht,
-      tva_rate,
-      total_ttc,
+      total_ht: totalHtDevis,
+      tva_rate: tauxDevis,
+      total_ttc: totalTtcDevis,
       valid_until,
       payment_terms,
       notes,

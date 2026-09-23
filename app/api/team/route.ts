@@ -83,6 +83,17 @@ export async function POST(req: NextRequest) {
     }
   }
 
+  // Un membre DÉJÀ actif ne se ré-invite pas : le repasser en « pending » lui
+  // ferait perdre l'accès (getWorkspaceUserId filtre status=active) tout en
+  // laissant son siège facturé jusqu'à une autre opération d'équipe. Pour le
+  // retirer, on utilise la suppression, qui réaligne les sièges.
+  if (existing && existing.status === "active") {
+    return NextResponse.json(
+      { error: "MEMBRE_DEJA_ACTIF", message: "Cette personne fait déjà partie de votre équipe." },
+      { status: 409 }
+    );
+  }
+
   let inviteToken: string;
 
   if (existing) {
