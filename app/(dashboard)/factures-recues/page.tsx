@@ -4,25 +4,10 @@ import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { getWorkspaceUserId, getWorkspaceProfile } from "@/lib/workspace";
 import { SyncButton } from "./SyncButton";
-import { SignalerProbleme } from "./SignalerProbleme";
-import { libelleStatut, estCloture } from "@/lib/superpdp-statuts";
+import { FacturesRecuesListe } from "./FacturesRecuesListe";
 
 export const metadata: Metadata = { title: "Factures reçues" };
 export const dynamic = "force-dynamic";
-
-const euros = (v: number | null, devise: string | null) =>
-  v === null
-    ? "—"
-    : new Intl.NumberFormat("fr-FR", { style: "currency", currency: devise || "EUR" }).format(v);
-
-const jour = (v: string | null) =>
-  v ? new Date(v).toLocaleDateString("fr-FR", { day: "2-digit", month: "short", year: "numeric" }) : "—";
-
-function estEnRetard(f: { payment_due_date: string | null; last_status_code: string | null }) {
-  if (!f.payment_due_date) return false;
-  if (estCloture(f.last_status_code)) return false;
-  return new Date(f.payment_due_date) < new Date();
-}
 
 type Facture = {
   id: number;
@@ -50,13 +35,8 @@ export default async function FacturesRecues() {
   //
   // Le 29/08/2026, Selim a cherché pendant deux heures des factures reçues qui
   // existaient bel et bien — sur son compte. Son navigateur était connecté au
-  // compte fournisseur, dont la boîte est vide par construction. Rien sur
-  // l'écran ne permettait de s'en apercevoir : l'adresse d'annuaire s'affichait
-  // bien, mais `0225:315143296_57700` et `..._57701` ne se distinguent que par
-  // un chiffre, et aucun humain ne retient ça.
-  //
-  // Une page qui montre le contenu d'un compte doit dire de quel compte il
-  // s'agit. C'est vrai pour quiconque a un compte de test à côté du sien.
+  // compte fournisseur, dont la boîte est vide par construction. Une page qui
+  // montre le contenu d'un compte doit dire de quel compte il s'agit.
   const profil = await getWorkspaceProfile<{ company_name: string | null }>(
     workspaceId,
     "company_name"
@@ -69,8 +49,7 @@ export default async function FacturesRecues() {
       .select("session_status, directory_address, last_sync_at")
       .eq("user_id", workspaceId)
       .maybeSingle(),
-    // Seules les entrantes : les sortantes sont déjà dans « Factures », les
-    // afficher ici ferait doublon et brouillerait le sens de la page.
+    // Seules les entrantes : les sortantes sont déjà dans « Factures ».
     supabase
       .from("superpdp_invoices")
       .select("id, number, issue_date, payment_due_date, seller_name, total_with_vat, currency_code, last_status_code, received_at")
@@ -82,10 +61,6 @@ export default async function FacturesRecues() {
   const raccorde = raccordement?.session_status === "verified";
   const liste = (factures ?? []) as Facture[];
 
-  // Cadre commun des pages de liste — `max-w-5xl mx-auto`, aligné sur
-  // « Factures » qui sert de référence. Ici seule la largeur était posée : sans
-  // `mx-auto` la page se collait à gauche pendant que les voisines étaient
-  // centrées.
   return (
     <div className="max-w-5xl mx-auto">
       <div className="flex flex-wrap items-start justify-between gap-4 mb-2">
@@ -105,23 +80,9 @@ export default async function FacturesRecues() {
         {raccorde && <SyncButton derniere={raccordement?.last_sync_at ?? null} />}
       </div>
 
-      {/* L'adresse de réception n'était visible que sur l'écran vide. C'est
-          pourtant l'information qu'un fournisseur demande, et on la demande
-          justement quand on a déjà des factures — pas quand on n'en a aucune.
-          Elle reste donc affichée en permanence, sélectionnable d'un geste. */}
-      {raccorde && raccordement?.directory_address && (
-        <p className="text-xs text-gray-500 mt-3">
-          Vos fournisseurs vous adressent leurs factures à{" "}
-          <span className="font-mono text-gray-300 select-all">
-            {raccordement.directory_address}
-          </span>
-        </p>
-      )}
-
       {!raccorde ? (
-        // Pas de tableau vide trompeur : sans raccordement, l'absence de
-        // factures ne veut pas dire qu'on n'en a pas reçu — elle veut dire
-        // qu'on ne peut pas en recevoir. Ce n'est pas la même information.
+        // Sans raccordement, l'absence de factures ne veut pas dire qu'on n'en a
+        // pas reçu — elle veut dire qu'on ne peut pas en recevoir.
         <section className="bg-ds-surface border border-ds-border rounded-xl p-6 mt-6 text-center">
           <p className="text-white font-medium mb-1">Vous n&apos;êtes pas encore raccordé</p>
           <p className="text-sm text-gray-500 mb-4 max-w-md mx-auto">
@@ -136,15 +97,10 @@ export default async function FacturesRecues() {
           </a>
         </section>
       ) : erreurLecture ? (
-        // Une lecture qui échoue affichait « Aucune facture reçue » : le même
-        // repli silencieux que celui qui numérotait toutes les factures 001.
-        // Une panne doit se voir, sinon elle se lit comme une absence — et une
-        // absence de factures reçues, sous la réforme, se lit comme « rien à
-        // payer ». Il n'y a pas de repli acceptable ici.
+        // Une lecture qui échoue ne doit pas se lire comme « aucune facture » :
+        // une panne doit se voir. Il n'y a pas de repli acceptable ici.
         <section className="bg-ds-surface border border-red-500/30 rounded-xl p-6 mt-6 text-center">
-          <p className="text-white font-medium mb-1">
-            Impossible de lire vos factures reçues
-          </p>
+          <p className="text-white font-medium mb-1">Impossible de lire vos factures reçues</p>
           <p className="text-sm text-gray-500 max-w-md mx-auto">
             Vous en avez peut-être. Cette page n&apos;a pas pu les charger, alors elle ne
             prétend pas que vous n&apos;en avez aucune. Réessayez dans un instant ; si le
@@ -166,147 +122,10 @@ export default async function FacturesRecues() {
           </p>
         </section>
       ) : (
-        <>
-          {/* ── Téléphone : une carte par facture ───────────────────────────
-              Le tableau à sept colonnes débordait et imposait un défilement
-              horizontal. Constaté par Selim sur son téléphone : le bouton
-              « Télécharger » n'était atteignable qu'en faisant glisser, donc
-              seulement par quelqu'un qui savait déjà qu'il existait. Une action
-              qu'on ne trouve qu'en connaissant son existence n'existe pas.
-
-              L'ordre des informations suit celui du regard : qui m'écrit,
-              combien, pour quand. Le numéro de facture passe en dernier — il ne
-              sert qu'à retrouver la pièce, jamais à décider. */}
-          <section className="lg:hidden space-y-3 mt-6">
-            {liste.map((f) => {
-              const statut = libelleStatut(f.last_status_code);
-              const enRetard = estEnRetard(f);
-              return (
-                <article
-                  key={f.id}
-                  className="bg-ds-surface border border-ds-border rounded-xl p-4"
-                >
-                  <div className="flex items-start justify-between gap-3 mb-3">
-                    <div className="min-w-0">
-                      <p className="text-white font-semibold truncate">{f.seller_name ?? "—"}</p>
-                      <p className="text-xs text-gray-500 font-mono truncate mt-0.5">
-                        {f.number ?? "—"}
-                      </p>
-                    </div>
-                    <p className="text-white font-semibold whitespace-nowrap shrink-0">
-                      {euros(f.total_with_vat, f.currency_code)}
-                    </p>
-                  </div>
-
-                  <div className="flex items-center gap-2 flex-wrap text-xs mb-3">
-                    <span
-                      className={`px-2 py-0.5 rounded-full ${
-                        statut?.ton === "bien"
-                          ? "bg-emerald-500/15 text-emerald-400"
-                          : statut?.ton === "attention"
-                            ? "bg-amber-500/15 text-amber-400"
-                            : "bg-ds-elevated text-gray-400"
-                      }`}
-                    >
-                      {statut?.texte ?? f.last_status_code ?? "—"}
-                    </span>
-                    <span className={enRetard ? "text-red-400 font-medium" : "text-gray-500"}>
-                      {enRetard ? "En retard depuis le" : "Échéance"} {jour(f.payment_due_date)}
-                    </span>
-                  </div>
-
-                  {/* Pleine largeur : c'est la seule action de la carte, et le
-                      pouce doit la trouver sans viser. */}
-                  <a
-                    href={`/api/superpdp/invoices/${f.id}/download`}
-                    className="flex items-center justify-center gap-2 w-full px-3 py-2.5 rounded-lg border border-ds-border text-indigo-400 text-sm font-semibold hover:bg-ds-elevated transition-colors"
-                  >
-                    <svg className="w-4 h-4 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.8}>
-                      <path strokeLinecap="round" strokeLinejoin="round" d="M3 16.5v2.25A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75V16.5M16.5 12 12 16.5m0 0L7.5 12m4.5 4.5V3" />
-                    </svg>
-                    Télécharger la facture
-                  </a>
-
-                  <div className="mt-2 flex items-center justify-center">
-                    <SignalerProbleme
-                      factureId={f.id}
-                      fournisseur={f.seller_name ?? "ce fournisseur"}
-                      statutActuel={f.last_status_code}
-                    />
-                  </div>
-                </article>
-              );
-            })}
-          </section>
-
-          {/* ── Ordinateur : tableau ─────────────────────────────────────── */}
-          <section className="hidden lg:block bg-ds-surface border border-ds-border rounded-xl overflow-hidden mt-6">
-            <table className="w-full text-sm">
-              <thead>
-                <tr className="border-b border-ds-border text-left">
-                  <th className="px-4 py-3 font-medium text-gray-400">Fournisseur</th>
-                  <th className="px-4 py-3 font-medium text-gray-400">Numéro</th>
-                  <th className="px-4 py-3 font-medium text-gray-400">Émise le</th>
-                  <th className="px-4 py-3 font-medium text-gray-400">Échéance</th>
-                  <th className="px-4 py-3 font-medium text-gray-400 text-right">Montant TTC</th>
-                  <th className="px-4 py-3 font-medium text-gray-400">Statut</th>
-                  <th className="px-4 py-3" />
-                </tr>
-              </thead>
-              <tbody>
-                {liste.map((f) => {
-                  const statut = libelleStatut(f.last_status_code);
-                  const enRetard = estEnRetard(f);
-                  return (
-                    <tr key={f.id} className="border-b border-ds-border last:border-0 hover:bg-ds-elevated/40">
-                      <td className="px-4 py-3 text-white font-medium">{f.seller_name ?? "—"}</td>
-                      <td className="px-4 py-3 text-gray-400 font-mono text-xs">{f.number ?? "—"}</td>
-                      <td className="px-4 py-3 text-gray-400">{jour(f.issue_date)}</td>
-                      <td className={`px-4 py-3 ${enRetard ? "text-red-400 font-medium" : "text-gray-400"}`}>
-                        {jour(f.payment_due_date)}
-                      </td>
-                      <td className="px-4 py-3 text-white text-right whitespace-nowrap">
-                        {euros(f.total_with_vat, f.currency_code)}
-                      </td>
-                      <td className="px-4 py-3">
-                        <span
-                          className={`text-xs px-2 py-0.5 rounded-full whitespace-nowrap ${
-                            statut?.ton === "bien"
-                              ? "bg-emerald-500/15 text-emerald-400"
-                              : statut?.ton === "attention"
-                                ? "bg-amber-500/15 text-amber-400"
-                                : "bg-ds-elevated text-gray-400"
-                          }`}
-                        >
-                          {/* Un code inconnu s'affiche tel quel plutôt que
-                              « Inconnu » : leur nomenclature évolue, et un code
-                              brut reste consultable, contrairement à un mot
-                              vide de sens. */}
-                          {statut?.texte ?? f.last_status_code ?? "—"}
-                        </span>
-                      </td>
-                      <td className="px-4 py-3 text-right align-top">
-                        <div className="flex items-center justify-end gap-3">
-                          <a
-                            href={`/api/superpdp/invoices/${f.id}/download`}
-                            className="text-xs text-indigo-400 hover:text-indigo-300 font-medium whitespace-nowrap"
-                          >
-                            Télécharger
-                          </a>
-                          <SignalerProbleme
-                            factureId={f.id}
-                            fournisseur={f.seller_name ?? "ce fournisseur"}
-                            statutActuel={f.last_status_code}
-                          />
-                        </div>
-                      </td>
-                    </tr>
-                  );
-                })}
-              </tbody>
-            </table>
-          </section>
-        </>
+        <FacturesRecuesListe
+          factures={liste}
+          adresseAnnuaire={raccordement?.directory_address ?? null}
+        />
       )}
     </div>
   );

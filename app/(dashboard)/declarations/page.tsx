@@ -126,6 +126,19 @@ export default async function Declarations() {
             </div>
           )}
 
+          {declarations.length > 0 && (
+            <div className="grid grid-cols-2 gap-3 mt-6">
+              <div className="bg-ds-surface border border-ds-border rounded-xl px-4 py-3">
+                <p className="text-xs text-gray-400">Envoyées</p>
+                <p className="text-xl font-semibold mt-0.5 text-white">{declarations.length}</p>
+              </div>
+              <div className="bg-ds-surface border border-ds-border rounded-xl px-4 py-3">
+                <p className="text-xs text-gray-400">En échec</p>
+                <p className={`text-xl font-semibold mt-0.5 ${aTraiter > 0 ? "text-red-400" : "text-white"}`}>{aTraiter}</p>
+              </div>
+            </div>
+          )}
+
           <Apercu />
 
           {/* La seule obligation que Deviso ne couvre pas, dite à l'endroit où
