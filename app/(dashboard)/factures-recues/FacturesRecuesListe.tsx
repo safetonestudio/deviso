@@ -26,13 +26,28 @@ type Facture = {
   received_at: string | null;
 };
 
-const euros = (v: number | null, devise: string | null) =>
-  v === null
-    ? "—"
-    : new Intl.NumberFormat("fr-FR", { style: "currency", currency: devise || "EUR" }).format(v);
+// Formatage déterministe : identique côté serveur et côté navigateur.
+// Intl diffère d'un ICU à l'autre (l'espace des milliers / avant € n'est pas le
+// même entre Node et le navigateur), ce qui cassait l'hydratation de ce
+// composant client (erreur React #418) et gelait les clics. On fixe donc tout.
+const ESP = " "; // espace insécable, imposée des deux côtés
+const MOIS = ["janv.", "févr.", "mars", "avr.", "mai", "juin", "juil.", "août", "sept.", "oct.", "nov.", "déc."];
 
-const jour = (v: string | null) =>
-  v ? new Date(v).toLocaleDateString("fr-FR", { day: "2-digit", month: "short", year: "numeric" }) : "—";
+const euros = (v: number | null, devise: string | null) => {
+  if (v === null) return "—";
+  const [ent, dec] = Math.abs(v).toFixed(2).split(".");
+  const groupe = ent.replace(/\B(?=(\d{3})+(?!\d))/g, ESP);
+  const signe = v < 0 ? "-" : "";
+  const code = devise && devise !== "EUR" ? " " + devise : ESP + "€";
+  return signe + groupe + "," + dec + code;
+};
+
+const jour = (v: string | null) => {
+  if (!v) return "—";
+  const d = new Date(v);
+  const jj = String(d.getUTCDate()).padStart(2, "0");
+  return jj + " " + MOIS[d.getUTCMonth()] + " " + d.getUTCFullYear();
+};
 
 function estEnRetard(f: { payment_due_date: string | null; last_status_code: string | null }) {
   if (!f.payment_due_date) return false;
