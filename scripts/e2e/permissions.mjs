@@ -87,6 +87,12 @@ await reglerDroits(TOUS_FAUX);
   const envD = await member.call(`/api/proposals/${devis}`, { method: "PATCH", body: doc({ status: "sent" }) });
   verifier("envoyer un devis est refusé (envoyer_devis décoché)", estRefuseActe(envD), `HTTP ${envD.status} ${doc(envD.body).slice(0,90)}`);
 
+  const relF = await member.call(`/api/invoices/${facture}/send-reminder`, { method: "POST" });
+  verifier("relancer une facture est refusé (envoyer_facture décoché)", estRefuseActe(relF), `HTTP ${relF.status} ${doc(relF.body).slice(0,90)}`);
+
+  const relD = await member.call(`/api/proposals/${devis}/remind`, { method: "POST" });
+  verifier("relancer un devis est refusé (envoyer_devis décoché)", estRefuseActe(relD), `HTTP ${relD.status} ${doc(relD.body).slice(0,90)}`);
+
   const pa = await member.call(`/api/superpdp/invoices/${facture}/emettre`, { method: "POST" });
   verifier("transmettre à la PA est refusé (transmettre_pa décoché)", estRefuseActe(pa), `HTTP ${pa.status} ${doc(pa.body).slice(0,90)}`);
 

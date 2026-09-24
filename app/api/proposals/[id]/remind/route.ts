@@ -4,6 +4,7 @@ import { envoyerCourriel } from "@/lib/resend";
 import { publicBaseUrl, proposalShareUrl } from "@/lib/public-url";
 import { getWorkspaceUserId, getWorkspaceProfile } from "@/lib/workspace";
 import { piedDePageMarque } from "@/lib/emails/branding";
+import { exigerActe } from "@/lib/droits";
 
 type Params = { params: Promise<{ id: string }> };
 
@@ -17,6 +18,8 @@ export async function POST(_req: NextRequest, { params }: Params) {
   // filtrer sur user.id renvoyait 404 à tout membre d'équipe, alors que la
   // liste les affichait. Le plan Pro est vendu sur le multi-utilisateurs.
   const workspaceId = await getWorkspaceUserId(user.id);
+  const refusActe = await exigerActe(user.id, workspaceId, "envoyer_devis");
+  if (refusActe) return refusActe;
 
   const { data: proposal } = await supabase
     .from("proposals")

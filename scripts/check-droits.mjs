@@ -23,6 +23,8 @@ function lire(chemin) {
 const ACTES = [
   ["proposals/[id]/send-email/route.ts", "envoyer_devis"],
   ["invoices/[id]/send-email/route.ts", "envoyer_facture"],
+  ["proposals/[id]/remind/route.ts", "envoyer_devis"],
+  ["invoices/[id]/send-reminder/route.ts", "envoyer_facture"],
   ["superpdp/invoices/[id]/emettre/route.ts", "transmettre_pa"],
   ["invoices/[id]/chorus-pro/route.ts", "deposer_chorus"],
   ["superpdp/invoices/[id]/refuser/route.ts", "refuser_facture_recue"],
