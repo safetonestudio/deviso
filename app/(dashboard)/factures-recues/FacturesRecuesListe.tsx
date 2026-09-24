@@ -121,7 +121,7 @@ export function FacturesRecuesListe({
                   {euros(f.total_with_vat, f.currency_code)}
                 </span>
                 <svg
-                  className="w-4 h-4 shrink-0 text-gray-500 transition-transform group-open:rotate-180"
+                  className="w-4 h-4 shrink-0 text-gray-400 transition-transform group-open:rotate-180"
                   fill="none"
                   viewBox="0 0 24 24"
                   stroke="currentColor"
@@ -176,7 +176,7 @@ export function FacturesRecuesListe({
       </div>
 
       {adresseAnnuaire && (
-        <p className="text-xs text-gray-500 mt-3">
+        <p className="text-xs text-gray-400 mt-3">
           Vos fournisseurs vous adressent leurs factures à{" "}
           <span className="font-mono text-gray-400 select-all">{adresseAnnuaire}</span>
         </p>

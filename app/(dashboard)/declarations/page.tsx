@@ -87,11 +87,11 @@ export default async function Declarations() {
     <div className="max-w-5xl mx-auto">
       <div>
         <h1 className="text-2xl font-semibold text-white">Déclarations au fisc</h1>
-        <p className="text-sm text-gray-500 mt-1">
+        <p className="text-sm text-gray-400 mt-1">
           Ce que la Plateforme Agréée déclare à l&apos;administration en votre nom. Pour tout ce que
           vous facturez, vous n&apos;avez rien à envoyer&nbsp;: transmettre la facture suffit.
         </p>
-        <p className="text-xs text-gray-500 mt-2">
+        <p className="text-xs text-gray-400 mt-2">
           Compte affiché : <span className="text-gray-300 font-medium">{nomCompte}</span>
         </p>
       </div>
@@ -99,7 +99,7 @@ export default async function Declarations() {
       {!raccorde ? (
         <section className="bg-ds-surface border border-ds-border rounded-xl p-6 mt-6 text-center">
           <p className="text-white font-medium mb-1">Vous n&apos;êtes pas encore raccordé</p>
-          <p className="text-sm text-gray-500 mb-4 max-w-md mx-auto">
+          <p className="text-sm text-gray-400 mb-4 max-w-md mx-auto">
             Les déclarations d&apos;e-reporting sont produites par votre Plateforme Agréée. Sans
             raccordement, il n&apos;y en a aucune.
           </p>
@@ -175,7 +175,7 @@ export default async function Declarations() {
           ) : declarations.length === 0 ? (
             <section className="bg-ds-surface border border-ds-border rounded-xl p-6 mt-6 text-center">
               <p className="text-white font-medium mb-1">Aucune déclaration pour l&apos;instant</p>
-              <p className="text-sm text-gray-500 max-w-lg mx-auto">
+              <p className="text-sm text-gray-400 max-w-lg mx-auto">
                 Les déclarations sont déposées selon un calendrier qui dépend de votre périodicité
                 de TVA. Elles apparaîtront ici une fois envoyées.
               </p>
@@ -213,7 +213,7 @@ export default async function Declarations() {
                           {d.statut}
                         </span>
                       </td>
-                      <td className="px-4 py-3 text-gray-500">{jour(d.le)}</td>
+                      <td className="px-4 py-3 text-gray-400">{jour(d.le)}</td>
                     </tr>
                   ))}
                 </tbody>

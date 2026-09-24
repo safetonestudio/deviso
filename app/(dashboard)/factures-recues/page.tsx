@@ -66,14 +66,14 @@ export default async function FacturesRecues() {
       <div className="flex flex-wrap items-start justify-between gap-4 mb-2">
         <div>
           <h1 className="text-2xl font-semibold text-white">Factures reçues</h1>
-          <p className="text-sm text-gray-500 mt-1">
+          <p className="text-sm text-gray-400 mt-1">
             Les factures électroniques que vos fournisseurs vous adressent via la Plateforme Agréée.
           </p>
-          <p className="text-xs text-gray-500 mt-2">
+          <p className="text-xs text-gray-400 mt-2">
             Compte affiché :{" "}
             <span className="text-gray-300 font-medium">{nomCompte}</span>
             {user.email && nomCompte !== user.email && (
-              <span className="text-gray-600"> · {user.email}</span>
+              <span className="text-gray-400"> · {user.email}</span>
             )}
           </p>
         </div>
@@ -85,7 +85,7 @@ export default async function FacturesRecues() {
         // pas reçu — elle veut dire qu'on ne peut pas en recevoir.
         <section className="bg-ds-surface border border-ds-border rounded-xl p-6 mt-6 text-center">
           <p className="text-white font-medium mb-1">Vous n&apos;êtes pas encore raccordé</p>
-          <p className="text-sm text-gray-500 mb-4 max-w-md mx-auto">
+          <p className="text-sm text-gray-400 mb-4 max-w-md mx-auto">
             À partir du 1ᵉʳ septembre 2026, toutes les entreprises doivent pouvoir recevoir des
             factures électroniques. Le raccordement se fait depuis vos paramètres.
           </p>
@@ -101,7 +101,7 @@ export default async function FacturesRecues() {
         // une panne doit se voir. Il n'y a pas de repli acceptable ici.
         <section className="bg-ds-surface border border-red-500/30 rounded-xl p-6 mt-6 text-center">
           <p className="text-white font-medium mb-1">Impossible de lire vos factures reçues</p>
-          <p className="text-sm text-gray-500 max-w-md mx-auto">
+          <p className="text-sm text-gray-400 max-w-md mx-auto">
             Vous en avez peut-être. Cette page n&apos;a pas pu les charger, alors elle ne
             prétend pas que vous n&apos;en avez aucune. Réessayez dans un instant ; si le
             problème persiste, signalez-le avec ce détail&nbsp;:
@@ -113,7 +113,7 @@ export default async function FacturesRecues() {
       ) : liste.length === 0 ? (
         <section className="bg-ds-surface border border-ds-border rounded-xl p-6 mt-6 text-center">
           <p className="text-white font-medium mb-1">Aucune facture reçue pour l&apos;instant</p>
-          <p className="text-sm text-gray-500 max-w-md mx-auto">
+          <p className="text-sm text-gray-400 max-w-md mx-auto">
             Vos fournisseurs peuvent vous adresser leurs factures à l&apos;adresse{" "}
             <span className="font-mono text-gray-400 select-all">
               {raccordement?.directory_address ?? "—"}

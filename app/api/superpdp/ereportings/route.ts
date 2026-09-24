@@ -41,19 +41,6 @@ export async function GET(req: NextRequest) {
 
   const workspaceId = await getWorkspaceUserId(user.id);
 
-  // ⚠️⚠️ STUB TEMPORAIRE — revue d'UI par Selim, scopé à son compte uniquement.
-  // À RETIRER après la revue (aucune autre entreprise n'est affectée).
-  if (workspaceId === "767be0c3-6978-4a43-a15f-454fa38146e3") {
-    return NextResponse.json({
-      declarations: [
-        { id: 9001, nature: "Transactions", role: "Ventes", debut: "2026-08-01", fin: "2026-08-31", statut: "Acceptée", ton: "bien", le: "2026-09-05", aTraiter: false },
-        { id: 9002, nature: "Encaissements", role: "Ventes", debut: "2026-08-01", fin: "2026-08-31", statut: "Reçue par l'administration", ton: "neutre", le: "2026-09-06", aTraiter: false },
-        { id: 9003, nature: "Transactions", role: "Ventes", debut: "2026-07-01", fin: "2026-07-31", statut: "Rejetée par l'administration", ton: "attention", le: "2026-08-04", aTraiter: true },
-        { id: 9004, nature: "Encaissements", role: "Ventes", debut: "2026-09-01", fin: "2026-09-30", statut: "Déposée", ton: "neutre", le: "2026-09-24", aTraiter: false },
-      ],
-      total: 4,
-    });
-  }
   const role = req.nextUrl.searchParams.get("role_code");
 
   try {
