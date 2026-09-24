@@ -90,13 +90,18 @@ export function FacturesRecuesListe({
         <Tuile libelle="À traiter" valeur={String(nbATraiter)} alerte={nbATraiter > 0} />
       </div>
 
-      <div className="bg-ds-surface border border-ds-border rounded-xl overflow-hidden mt-4 divide-y divide-ds-border">
+      <div className="space-y-2.5 mt-4">
         {factures.map((f) => {
           const statut = libelleStatut(f.last_status_code);
           const enRetard = estEnRetard(f);
           const isOpen = ouvert === f.id;
           return (
-            <div key={f.id}>
+            <div
+              key={f.id}
+              className={`bg-ds-surface border rounded-xl overflow-hidden shadow-sm transition-colors ${
+                isOpen ? "border-indigo-500/40 shadow-md" : "border-ds-border hover:border-gray-600"
+              }`}
+            >
               <button
                 onClick={() => setOuvert(isOpen ? null : f.id)}
                 aria-expanded={isOpen}
