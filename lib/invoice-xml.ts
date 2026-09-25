@@ -286,13 +286,21 @@ export function generateFacturXml(
   // de "0225" (SIREN). On pose les deux : la note ne dépend pas de la présence
   // d'un email, l'adresse EM est un signal redondant quand l'email existe.
   const isB2C = isB2CInvoice(invoice);
+  // Le BT-49 (adresse de facturation électronique de l'acheteur) est obligatoire
+  // (règle française BR-FR-12). Une seule occurrence est autorisée (CII-SR-460),
+  // donc on choisit UNE source, dans l'ordre : adresse d'annuaire/SIREN si on en
+  // a une, sinon l'e-mail (schemeID "EM"). Ce repli e-mail vaut aussi pour les
+  // ventes internationales (B2BInt) : hors de France, le client n'a pas
+  // d'adresse d'annuaire, et un BT-49 vide fait échouer la validation — alors
+  // qu'un BT-49 rempli avec l'e-mail passe (vérifié au validateur le 25/09/2026).
+  const emailComm = invoice.client_email
+    ? `<ram:URIUniversalCommunication><ram:URIID schemeID="EM">${esc(invoice.client_email)}</ram:URIID></ram:URIUniversalCommunication>`
+    : "";
   const buyerElectronicAddress = isB2C
-    ? invoice.client_email
-      ? `<ram:URIUniversalCommunication><ram:URIID schemeID="EM">${esc(invoice.client_email)}</ram:URIID></ram:URIUniversalCommunication>`
-      : ""
+    ? emailComm
     : buyerEas
       ? `<ram:URIUniversalCommunication><ram:URIID schemeID="${esc(buyerAdresse.scheme)}">${esc(buyerEas)}</ram:URIID></ram:URIUniversalCommunication>`
-      : "";
+      : emailComm;
 
   const lines = invoice.items
     .map(

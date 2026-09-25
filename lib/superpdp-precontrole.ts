@@ -25,6 +25,7 @@ export function manquesPourEmission(facture: {
   client_company?: string | null;
   client_name?: string | null;
   client_country?: string | null;
+  client_email?: string | null;
   seller_postcode?: string | null;
   seller_city?: string | null;
   seller_tva_number?: string | null;
@@ -70,12 +71,19 @@ export function manquesPourEmission(facture: {
   // n'est pas déductible du nom — et l'annuaire français ne référence pas ces
   // entreprises. Seul le client la connaît.
   //
-  // On la demande donc avant le clic plutôt que de laisser partir un document
-  // dont on sait qu'il sera rejeté.
-  if (nature === "B2BInt" && !facture.client_directory_address?.trim()) {
+  // Le BT-49 est obligatoire (BR-FR-12). Hors de France, le client n'a en
+  // général pas d'adresse d'annuaire ; l'e-mail fait alors office de BT-49
+  // (schemeID "EM"), ce que le validateur accepte (vérifié le 25/09/2026, cf.
+  // lib/invoice-xml.ts). On exige donc une adresse d'annuaire OU un e-mail,
+  // plutôt qu'une adresse d'annuaire que le client étranger n'a presque jamais.
+  if (
+    nature === "B2BInt" &&
+    !facture.client_directory_address?.trim() &&
+    !facture.client_email?.trim()
+  ) {
     manques.push(
-      `l'adresse de facturation électronique de ${facture.client_name || "votre client"} ` +
-        `(à lui demander : hors de France, elle ne se déduit d'aucune autre donnée)`
+      `l'e-mail de ${facture.client_name || "votre client"} ` +
+        `(il sert d'adresse de facturation électronique pour une opération internationale)`
     );
   }
 
