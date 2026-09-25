@@ -80,6 +80,25 @@ export default async function FacturesRecues() {
         {raccorde && <SyncButton derniere={raccordement?.last_sync_at ?? null} />}
       </div>
 
+      {/* Les factures d'un fournisseur ÉTRANGER n'arrivent pas ici : elles ne
+          passent pas par la Plateforme Agréée. On oriente vers la saisie des
+          achats étrangers, dont l'acquisition doit être déclarée séparément. */}
+      {raccorde && (
+        <div className="bg-ds-surface border border-ds-border rounded-xl px-4 py-3 mt-4 flex flex-wrap items-center justify-between gap-3">
+          <p className="text-xs text-gray-400 max-w-xl">
+            Une facture d&apos;un fournisseur <span className="text-gray-300">hors de France</span>{" "}
+            n&apos;arrive pas ici&nbsp;: elle vous parvient par courriel et son acquisition se déclare
+            à part.
+          </p>
+          <a
+            href="/achats-internationaux"
+            className="text-sm font-semibold text-indigo-400 hover:text-indigo-300 transition-colors whitespace-nowrap"
+          >
+            Saisir un achat étranger →
+          </a>
+        </div>
+      )}
+
       {!raccorde ? (
         // Sans raccordement, l'absence de factures ne veut pas dire qu'on n'en a
         // pas reçu — elle veut dire qu'on ne peut pas en recevoir.

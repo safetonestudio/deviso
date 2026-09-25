@@ -13,6 +13,7 @@ import {
   CreditCard,
   Inbox,
   Landmark,
+  Globe,
   type LucideIcon,
 } from "lucide-react";
 
@@ -78,6 +79,10 @@ export const NAVIGATION: NavItem[] = [
   // qu'émises. D'où la position immédiatement après.
   { href: "/factures-recues", label: "Factures reçues", icon: Inbox, ownerOnly: true },
   { href: "/declarations", label: "Déclarations", icon: Landmark, ownerOnly: true },
+  // Achats auprès de fournisseurs étrangers : l'obligation d'e-reporting
+  // d'acquisition, que la Plateforme Agréée n'alimente pas d'elle-même. Rangé
+  // ici, juste après les déclarations, parce que c'en est une.
+  { href: "/achats-internationaux", label: "Achats à l'étranger", icon: Globe, ownerOnly: true },
 
   { section: "Clients", ownerOnly: true },
   { href: "/crm", label: "Mes clients", icon: Users, ownerOnly: true },

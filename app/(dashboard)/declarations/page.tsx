@@ -48,16 +48,27 @@ export default async function Declarations() {
   const workspaceId = await getWorkspaceUserId(user.id);
   const admin = createAdminClient();
 
-  const [{ data: raccordement }, profil] = await Promise.all([
+  const [{ data: raccordement }, profil, { data: achats }] = await Promise.all([
     admin
       .from("superpdp_connections")
       .select("session_status")
       .eq("user_id", workspaceId)
       .maybeSingle(),
     getWorkspaceProfile<{ company_name: string | null }>(workspaceId, "company_name"),
+    admin
+      .from("superpdp_achats_int")
+      .select("transmission_status")
+      .eq("user_id", workspaceId),
   ]);
 
   const raccorde = raccordement?.session_status === "verified";
+
+  // Achats étrangers : synthèse pour l'encart ci-dessous. Le détail et la saisie
+  // vivent sur leur page dédiée.
+  const achatsTotal = achats?.length ?? 0;
+  const achatsEnAttente = (achats ?? []).filter(
+    (a) => a.transmission_status !== "transmis"
+  ).length;
   const nomCompte = profil?.company_name?.trim() || user.email || "compte sans nom";
 
   // On lit par la route, et non en direct : elle porte déjà la traduction des
@@ -141,30 +152,42 @@ export default async function Declarations() {
 
           <Apercu />
 
-          {/* La seule obligation que Deviso ne couvre pas, dite à l'endroit où
-              l'utilisateur croit justement que tout est couvert.
-
+          {/* Achats à l'étranger — désormais couverts.
               L'article 290-II du CGI oblige l'entreprise française à déclarer
-              aussi ses ACHATS auprès d'un fournisseur étranger — le sens
-              « Bi2B ». Ces factures-là n'arrivent pas par la Plateforme
-              Agréée : elles arrivent par courriel, en PDF, comme avant. Deviso
-              ne les saisit pas, donc ne les déclare pas, et la ligne « Achats »
-              du tableau ci-dessous restera vide même quand l'obligation court.
-
-              Un écran qui affirme « vous n'avez rien à envoyer » et se tait
-              là-dessus ne laisse à l'utilisateur aucune chance de découvrir le
-              trou avant un contrôle. Le dire coûte quatre lignes. */}
-          <div className="bg-amber-500/5 border border-amber-500/20 rounded-xl px-4 py-3 mt-6">
-            <p className="text-sm text-amber-300 font-medium mb-1">
-              Vos achats à l&apos;étranger ne sont pas couverts
-            </p>
-            <p className="text-xs text-gray-400 leading-relaxed">
-              Si vous achetez à un fournisseur établi hors de France, c&apos;est à vous de déclarer
-              ces achats (article 290-II du CGI) — sa facture ne passe pas par votre Plateforme
-              Agréée. Deviso ne saisit pas les factures d&apos;achat&nbsp;: cette déclaration se fait
-              aujourd&apos;hui auprès de votre Plateforme Agréée ou de votre comptable. Vos ventes,
-              elles, sont entièrement couvertes.
-            </p>
+              ses ACHATS auprès d'un fournisseur étranger. Ces factures
+              n'arrivent pas par la Plateforme Agréée (courriel, PDF) : Deviso
+              les saisit et les déclare depuis leur page dédiée. On garde ici un
+              rappel de l'obligation et un accès direct, avec l'état de ce qui
+              reste à transmettre. */}
+          <div className="bg-ds-surface border border-ds-border rounded-xl px-4 py-4 mt-6">
+            <div className="flex flex-wrap items-start justify-between gap-3">
+              <div className="max-w-xl">
+                <p className="text-sm text-white font-medium mb-1">Vos achats à l&apos;étranger</p>
+                <p className="text-xs text-gray-400 leading-relaxed">
+                  Un achat auprès d&apos;un fournisseur hors de France doit être déclaré par vos soins
+                  (article 290-II du CGI) — sa facture ne passe pas par la Plateforme Agréée.
+                  Saisissez-la dans Deviso&nbsp;: la déclaration d&apos;acquisition part
+                  automatiquement.
+                </p>
+                {achatsTotal > 0 && (
+                  <p className="text-xs text-gray-400 mt-2">
+                    {achatsTotal} achat{achatsTotal > 1 ? "s" : ""} enregistré{achatsTotal > 1 ? "s" : ""}
+                    {achatsEnAttente > 0 && (
+                      <span className="text-amber-400">
+                        {" "}· {achatsEnAttente} en attente de transmission
+                      </span>
+                    )}
+                    .
+                  </p>
+                )}
+              </div>
+              <a
+                href="/achats-internationaux"
+                className="inline-block px-4 py-2 rounded-lg bg-indigo-600 text-white text-sm font-semibold hover:bg-indigo-500 transition-colors whitespace-nowrap"
+              >
+                {achatsTotal > 0 ? "Gérer mes achats" : "Saisir un achat"}
+              </a>
+            </div>
           </div>
 
           {erreur ? (

@@ -48,3 +48,6 @@ _scratch_e2e/
 # (pour que Deviso/deviso suffise comme dossier attache). Hors Git : notes de
 # travail, pas du code.
 docs/reference/
+
+# Sondes locales (jamais commitees)
+scripts/tmp*
