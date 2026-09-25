@@ -288,37 +288,37 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* ── Témoignages ── */}
+      {/* ── Mot du fondateur ──
+          Remplace d'anciens témoignages fictifs (personnes et avis inventés,
+          notés 5 étoiles) : sur un produit encore en pré-lancement, sans
+          clients réels, les présenter comme authentiques est une pratique
+          trompeuse. On dit la vérité — un produit jeune, un fondateur
+          joignable — ce qui inspire davantage confiance qu'une preuve sociale
+          fabriquée. À remplacer par de vrais témoignages, avec accord, quand
+          il y en aura. */}
       <section className="py-20 px-4 sm:px-6">
-        <div className="max-w-5xl mx-auto">
-          <div className="text-center mb-12">
-            <h2 className="text-3xl sm:text-4xl font-semibold text-white mb-3 tracking-tight">Quelques retours</h2>
-            <p className="text-gray-500">Ce que nos utilisateurs nous disent.</p>
-          </div>
-          <div className="grid md:grid-cols-3 gap-4">
-            {[
-              { name: "Sarah M.", role: "Graphiste indépendante", initials: "SM", text: "Avant je faisais mes devis sur Pages, ça me prenait une heure. Maintenant je le génère pendant que je suis encore au téléphone avec le client." },
-              { name: "Julien T.", role: "Développeur web freelance", initials: "JT", text: "Ce que j'apprécie surtout, c'est de savoir exactement quand mon client a ouvert le devis. Je sais quand c'est le bon moment pour le relancer." },
-              { name: "Antoine B.", role: "Studio de création, 3 personnes", initials: "AB", text: "On est trois associés. On avait besoin que tout le monde crée des devis cohérents sans se marcher dessus. Deviso a vraiment simplifié ça." },
-            ].map((t) => (
-              <div key={t.initials} className="bg-ds-surface border border-white/[0.07] rounded-xl p-5">
-                <div className="flex gap-0.5 mb-4" aria-label="5 étoiles">
-                  {Array(5).fill(null).map((_, i) => (
-                    <span key={i} className="text-amber-400 text-sm" aria-hidden="true">★</span>
-                  ))}
-                </div>
-                <p className="text-gray-400 text-sm leading-relaxed mb-5">&ldquo;{t.text}&rdquo;</p>
-                <div className="flex items-center gap-3">
-                  <div className="w-8 h-8 rounded-full bg-white/[0.07] text-gray-300 font-semibold text-xs flex items-center justify-center shrink-0">
-                    {t.initials}
-                  </div>
-                  <div>
-                    <div className="text-white font-medium text-sm">{t.name}</div>
-                    <div className="text-gray-600 text-xs">{t.role}</div>
-                  </div>
-                </div>
+        <div className="max-w-2xl mx-auto">
+          <div className="bg-ds-surface border border-white/[0.07] rounded-xl p-8 sm:p-10">
+            <p className="text-indigo-400 text-xs font-semibold uppercase tracking-wide mb-4">Le mot du fondateur</p>
+            <p className="text-gray-300 text-base leading-relaxed mb-4">
+              J&apos;ai créé Deviso parce que je perdais trop de temps sur mes propres devis et
+              factures — et parce que la réforme de la facturation électronique arrivait sans outil
+              vraiment simple pour les indépendants et les petites structures.
+            </p>
+            <p className="text-gray-400 text-sm leading-relaxed mb-6">
+              Deviso est encore jeune : je le développe et l&apos;éprouve avec soin avant de l&apos;ouvrir
+              largement. Si vous l&apos;essayez maintenant, votre retour façonne directement ce qu&apos;il
+              devient — écrivez-moi, je lis tout.
+            </p>
+            <div className="flex items-center gap-3">
+              <div className="w-9 h-9 rounded-full bg-white/[0.07] text-gray-300 font-semibold text-xs flex items-center justify-center shrink-0">
+                SA
               </div>
-            ))}
+              <div>
+                <div className="text-white font-medium text-sm">S. Albert</div>
+                <div className="text-gray-600 text-xs">Fondateur de Deviso</div>
+              </div>
+            </div>
           </div>
         </div>
       </section>
