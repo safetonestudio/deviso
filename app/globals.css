@@ -61,12 +61,12 @@
 .bg-site {
   background-color: var(--ds-bg);
   background-image:
-    linear-gradient(rgba(8,8,10,0.42), rgba(8,8,10,0.55)),
+    linear-gradient(rgba(8,8,10,0.40), rgba(8,8,10,0.52)),
     url('/site-bg.webp');
-  background-repeat: no-repeat, no-repeat;
-  background-size: cover, cover;
-  background-position: center, center;
-  background-attachment: fixed, fixed;
+  background-repeat: no-repeat, repeat;
+  background-size: cover, 1500px auto;
+  background-position: center, top center;
+  background-attachment: scroll, scroll;
 }
 
 .light {
