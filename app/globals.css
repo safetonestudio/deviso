@@ -64,7 +64,7 @@
     linear-gradient(rgba(8,8,10,0.40), rgba(8,8,10,0.52)),
     url('/site-bg.webp');
   background-repeat: no-repeat, repeat;
-  background-size: cover, 1500px auto;
+  background-size: cover, 1456px auto;
   background-position: center, top center;
   background-attachment: scroll, scroll;
 }
