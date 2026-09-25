@@ -3,7 +3,7 @@
 import { useState, useEffect, useCallback } from "react";
 import { X } from "lucide-react";
 
-const TOUR_KEY = "deviso_tour_v5";
+const TOUR_KEY = "deviso_tour_v6";
 const TOUR_KEY_MEMBER = "deviso_tour_member_v1";
 
 // Tour complet, propriétaires
@@ -22,6 +22,21 @@ const STEPS_OWNER = [
     target: "invoices",
     title: "Factures Factur-X conformes 2026",
     body: "Convertis un devis signé en facture en un clic. Deviso génère un PDF/A-3 Factur-X au profil EN 16931, la norme obligatoire en France à partir de 2026. Tu peux créer des factures d'acompte (ex. 30 % à la commande) et de solde liées entre elles, avec numérotation automatique. En Pro, programme des factures récurrentes pour tes abonnements et contrats mensuels. Pour les marchés publics, dépose ta facture directement sur Chorus Pro en un clic depuis la facture.",
+  },
+  {
+    target: "factures-recues",
+    title: "Factures reçues",
+    body: "L'autre bout de la réforme : les factures que tes fournisseurs t'adressent par voie électronique arrivent ici, via la Plateforme Agréée, dès que ton entreprise y est raccordée. Recevoir une facture et être d'accord ne demande aucune action de ta part. En cas de problème, une seule porte : signaler — mettre en attente, contester, ou refuser avec un motif conforme.",
+  },
+  {
+    target: "declarations",
+    title: "Déclarations au fisc",
+    body: "Ce que la Plateforme Agréée déclare à l'administration en ton nom (e-reporting), une fois raccordé. Pour tout ce que tu factures, tu n'as rien à envoyer : transmettre la facture suffit. Cet écran te montre l'état de chaque déclaration — et surtout les refus, la seule chose qui demande une action.",
+  },
+  {
+    target: "achats-internationaux",
+    title: "Achats à l'étranger",
+    body: "Quand tu achètes un bien ou un service à un fournisseur établi hors de France, tu dois déclarer cette acquisition toi-même (article 290-II du CGI) : sa facture ne passe pas par la Plateforme Agréée. Saisis-la ici pour la conserver et préparer sa déclaration.",
   },
   {
     target: "paiements",

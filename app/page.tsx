@@ -10,7 +10,7 @@ import { Zap, PenLine, Bell, FileText, BarChart3, Timer, type LucideIcon } from 
 export const metadata: Metadata = {
   title: "Deviso, Logiciel devis et facturation pour freelances français",
   description:
-    "Créez vos devis en 30 secondes avec l'IA, facturez en Factur-X conforme 2026, relances automatiques, suivi du CA URSSAF. Essai gratuit 14 jours.",
+    "Créez vos devis en 30 secondes avec l'IA, facturez en Factur-X (norme 2026) via une plateforme agréée, relances automatiques, suivi du CA URSSAF. Essai gratuit 14 jours.",
   alternates: {
     canonical: "https://getdeviso.fr",
   },
@@ -36,6 +36,7 @@ const jsonLd = {
     "Génération de devis par IA",
     "Signature électronique client",
     "Facturation électronique Factur-X",
+    "Émission et réception de factures via une plateforme agréée (Super PDP)",
     "Conformité droit français",
     "Suivi du chiffre d'affaires URSSAF",
     "Relances automatiques",
@@ -65,8 +66,8 @@ const features = [
   },
   {
     icon: FileText as LucideIcon,
-    title: "Factur-X + Chorus Pro",
-    desc: "Facture électronique conforme à la réforme 2026 en 1 clic. Dépôt Chorus Pro pour le secteur public directement depuis la facture, sans quitter Deviso.",
+    title: "Factur-X & Plateforme Agréée",
+    desc: "Factures au format Factur-X (norme EN 16931), émises et reçues via Super PDP, la plateforme agréée. Suivi du cycle de vie de chaque facture, refus compris. Dépôt Chorus Pro pour le secteur public, sans quitter Deviso.",
   },
   {
     icon: BarChart3 as LucideIcon,
@@ -111,8 +112,8 @@ export default function LandingPage() {
       <div className="fixed top-0 left-0 right-0 bg-indigo-950/95 backdrop-blur-sm border-b border-indigo-500/20 py-2 px-4 text-center text-xs sm:text-sm" style={{ zIndex: 60 }}>
         <span className="text-indigo-300 font-semibold">Réforme 2026&nbsp;:</span>
         <span className="text-gray-300 ml-1.5 hidden sm:inline">La facturation électronique B2B devient obligatoire en France.&nbsp;</span>
-        <span className="text-indigo-400 font-medium">Deviso est déjà conforme Factur-X.</span>
-        <a href="#fonctionnalites" className="ml-2 text-indigo-300 hover:text-white font-semibold transition-colors underline underline-offset-2 hidden sm:inline">Voir comment →</a>
+        <span className="text-indigo-400 font-medium">Deviso génère du Factur-X et s&apos;appuie sur une plateforme agréée.</span>
+        <a href="/conformite" className="ml-2 text-indigo-300 hover:text-white font-semibold transition-colors underline underline-offset-2 hidden sm:inline">En savoir plus →</a>
       </div>
 
       {/* ── Navbar ── */}
