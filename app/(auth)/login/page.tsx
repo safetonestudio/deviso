@@ -51,7 +51,7 @@ function LoginForm() {
   };
 
   return (
-    <div className="min-h-screen bg-ds-bg flex items-center justify-center px-4 relative" suppressHydrationWarning>
+    <div className="min-h-screen bg-site flex items-center justify-center px-4 relative" suppressHydrationWarning>
       <div className="absolute inset-0 bg-indigo-600/5 blur-3xl pointer-events-none" />
       <div className="w-full max-w-md relative">
         <div className="text-center mb-8">
@@ -164,7 +164,7 @@ function LoginForm() {
  */
 function LoginSkeleton() {
   return (
-    <div className="min-h-screen bg-ds-bg flex items-center justify-center px-4">
+    <div className="min-h-screen bg-site flex items-center justify-center px-4">
       <div className="w-full max-w-md">
         <div className="text-center mb-8">
           <span className="font-semibold text-xl text-white">Deviso</span>

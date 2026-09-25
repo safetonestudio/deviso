@@ -62,7 +62,7 @@ const QUESTIONS = [
 
 export default function ConformitePage() {
   return (
-    <div className="min-h-screen bg-ds-bg">
+    <div className="min-h-screen bg-site">
       <DonneesStructurees donnees={jsonLd} />
 
       {/* ── Navbar ── */}

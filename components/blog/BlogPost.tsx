@@ -104,7 +104,7 @@ export function BlogPost({
     new Date(iso).toLocaleDateString("fr-FR", { year: "numeric", month: "long", day: "numeric" });
 
   return (
-    <div className="min-h-screen bg-ds-bg">
+    <div className="min-h-screen bg-site">
       <DonneesStructurees donnees={jsonLdArticle(slug, faq)} />
       {/* ── Bandeau réforme 2026 ── */}
       <div

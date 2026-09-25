@@ -84,7 +84,7 @@ const ECHEANCES = [
 
 export default function FacturationElectronique2026Page() {
   return (
-    <div className="min-h-screen bg-ds-bg">
+    <div className="min-h-screen bg-site">
       <DonneesStructurees donnees={jsonLdArticle(SLUG, FAQ)} />
 
       {/* Bandeau */}

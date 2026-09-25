@@ -63,7 +63,7 @@ export default function AProposPage() {
   const reforme = articlesDe("reforme");
 
   return (
-    <div className="min-h-screen bg-ds-bg">
+    <div className="min-h-screen bg-site">
       <DonneesStructurees donnees={jsonLd} />
 
       <nav className="fixed top-0 left-0 right-0 z-50 bg-ds-bg/80 backdrop-blur-xl border-b border-white/[0.06]">

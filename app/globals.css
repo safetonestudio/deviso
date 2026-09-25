@@ -55,6 +55,20 @@
 .text-gray-500 { color: #9ca3af !important; }
 .text-gray-600 { color: #9ca3af !important; }
 
+/* === Fond de page a relief (pages publiques, hors app) ===
+   Grain fin + lueur indigo. Uniquement sur les wrappers publics via .bg-site.
+   L'app garde bg-ds-bg (plat). Les cartes (bg-ds-surface) ne sont pas touchees. */
+.bg-site {
+  background-color: var(--ds-bg);
+  background-image:
+    radial-gradient(1100px 560px at 50% -8%, rgba(99,102,241,0.16), rgba(99,102,241,0) 62%),
+    radial-gradient(820px 460px at 88% 2%, rgba(139,92,246,0.08), rgba(139,92,246,0) 58%),
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='150' height='150'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+  background-repeat: no-repeat, no-repeat, repeat;
+  background-size: 1100px 560px, 820px 460px, 150px 150px;
+  background-position: top center, top right, top left;
+}
+
 .light {
   /* DS tokens : fond gris neutre doux, cartes blanches */
   --ds-bg:       #F4F4F6;

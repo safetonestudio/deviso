@@ -155,7 +155,7 @@ export function FreelanceLanding({
   };
 
   return (
-    <div className="min-h-screen bg-ds-bg">
+    <div className="min-h-screen bg-site">
       <DonneesStructurees donnees={jsonLd} />
       {/* ── Bandeau réforme 2026 ── */}
       <div

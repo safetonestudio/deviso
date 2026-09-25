@@ -32,7 +32,7 @@ const FAQ = [
 
 export default function EReportingFreelancePage() {
   return (
-    <div className="min-h-screen bg-ds-bg">
+    <div className="min-h-screen bg-site">
       <DonneesStructurees donnees={jsonLdArticle(SLUG, FAQ)} />
 
       <div className="fixed top-0 left-0 right-0 bg-amber-950/90 backdrop-blur-sm border-b border-amber-500/20 py-2 px-4 text-center text-sm" style={{ zIndex: 60 }}>

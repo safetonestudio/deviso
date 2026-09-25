@@ -50,7 +50,7 @@ function SignupForm() {
 
   if (success) {
     return (
-      <div className="min-h-screen bg-ds-bg flex items-center justify-center px-4">
+      <div className="min-h-screen bg-site flex items-center justify-center px-4">
         <div className="w-full max-w-md text-center">
           <MailCheck size={44} className="mx-auto mb-4 text-indigo-400" />
           <h2 className="text-2xl font-bold text-white mb-2">Vérifie tes emails</h2>
@@ -67,7 +67,7 @@ function SignupForm() {
   }
 
   return (
-    <div className="min-h-screen bg-ds-bg flex items-center justify-center px-4">
+    <div className="min-h-screen bg-site flex items-center justify-center px-4">
       <div className="w-full max-w-md">
         <div className="text-center mb-8">
           <Link href="/" className="inline-flex items-center gap-2">
@@ -158,7 +158,7 @@ function SignupForm() {
  */
 function SignupSkeleton() {
   return (
-    <div className="min-h-screen bg-ds-bg flex items-center justify-center px-4">
+    <div className="min-h-screen bg-site flex items-center justify-center px-4">
       <div className="w-full max-w-md">
         <div className="text-center mb-8">
           <span className="font-bold text-xl text-white">Deviso</span>

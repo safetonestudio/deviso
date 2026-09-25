@@ -121,7 +121,7 @@ export default async function MetierTarifsPage({ params }: Props) {
   const otherMetiers = TARIFS_DATA.filter((m) => m.slug !== data.slug).slice(0, 5);
 
   return (
-    <div className="min-h-screen bg-ds-bg text-white">
+    <div className="min-h-screen bg-site text-white">
       <DonneesStructurees donnees={jsonLd} />
 
       {/* Navbar */}

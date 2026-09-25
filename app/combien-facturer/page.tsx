@@ -79,7 +79,7 @@ const jsonLd = {
 
 export default function CombienFacturerPage() {
   return (
-    <div className="min-h-screen bg-ds-bg text-white">
+    <div className="min-h-screen bg-site text-white">
       <DonneesStructurees donnees={jsonLd} />
 
       {/* ── Navbar ── */}

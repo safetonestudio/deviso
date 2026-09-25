@@ -58,7 +58,7 @@ export default function JoinPage() {
 
   if (state.status === "loading" || state.status === "accepting") {
     return (
-      <div className="min-h-screen bg-[#0B0F19] flex items-center justify-center">
+      <div className="min-h-screen bg-site flex items-center justify-center">
         <div className="text-center space-y-4">
           <div className="animate-spin w-8 h-8 border-4 border-indigo-600 border-t-transparent rounded-full mx-auto" />
           <p className="text-gray-400 text-sm">
@@ -71,7 +71,7 @@ export default function JoinPage() {
 
   if (state.status === "already_accepted") {
     return (
-      <div className="min-h-screen bg-[#0B0F19] flex items-center justify-center px-4">
+      <div className="min-h-screen bg-site flex items-center justify-center px-4">
         <div className="bg-[#111827] border border-[#2B3444] rounded-2xl p-10 text-center max-w-md w-full">
           <div className="w-12 h-12 rounded-xl bg-emerald-500/20 flex items-center justify-center mx-auto mb-4">
             <UsersRound size={22} className="text-emerald-400" />
@@ -91,7 +91,7 @@ export default function JoinPage() {
 
   if (state.status === "error") {
     return (
-      <div className="min-h-screen bg-[#0B0F19] flex items-center justify-center px-4">
+      <div className="min-h-screen bg-site flex items-center justify-center px-4">
         <div className="bg-[#111827] border border-[#2B3444] rounded-2xl p-10 text-center max-w-md w-full">
           <div className="w-12 h-12 rounded-xl bg-red-500/20 flex items-center justify-center mx-auto mb-4">
             <UsersRound size={22} className="text-red-400" />
@@ -113,7 +113,7 @@ export default function JoinPage() {
   if (state.status === "wrong_account") {
     const signoutUrl = `/join/${token}`;
     return (
-      <div className="min-h-screen bg-[#0B0F19] flex items-center justify-center px-4">
+      <div className="min-h-screen bg-site flex items-center justify-center px-4">
         <div className="bg-[#111827] border border-[#2B3444] rounded-2xl p-10 text-center max-w-md w-full">
           <div className="w-12 h-12 rounded-xl bg-amber-500/20 flex items-center justify-center mx-auto mb-4">
             <AlertCircle size={22} className="text-amber-400" />
@@ -157,7 +157,7 @@ export default function JoinPage() {
   const loginUrl = `/login?next=/join/${token}&email=${encodeURIComponent(state.inviteeEmail)}`;
 
   return (
-    <div className="min-h-screen bg-[#0B0F19] flex items-center justify-center px-4">
+    <div className="min-h-screen bg-site flex items-center justify-center px-4">
       <div className="bg-[#111827] border border-[#2B3444] rounded-2xl p-10 text-center max-w-md w-full">
 
         {/* Logo */}

@@ -54,7 +54,7 @@ export default function Page() {
   const lectures = suggestionsDeLecture(SLUG);
 
   return (
-    <div className="min-h-screen bg-ds-bg">
+    <div className="min-h-screen bg-site">
       <DonneesStructurees donnees={jsonLdArticle(SLUG, FAQ)} />
 
       {/* ── Navbar ── */}

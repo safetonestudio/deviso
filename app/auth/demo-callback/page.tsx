@@ -42,7 +42,7 @@ export default function DemoCallbackPage() {
   }, [router]);
 
   return (
-    <div className="min-h-screen bg-[#0B0F19] flex items-center justify-center">
+    <div className="min-h-screen bg-site flex items-center justify-center">
       <div className="text-center">
         <div className="w-8 h-8 border-2 border-indigo-500/30 border-t-indigo-500 rounded-full animate-spin mx-auto mb-4" />
         <p className="text-gray-400 text-sm">Chargement de ta démo…</p>
