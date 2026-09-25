@@ -55,7 +55,7 @@ export function NavbarMobile() {
             >
               Blog
             </Link>
-            <div className="border-t border-white/[0.06] my-2" />
+            <div className="my-2" />
             <Link
               href="/login"
               onClick={() => setOpen(false)}

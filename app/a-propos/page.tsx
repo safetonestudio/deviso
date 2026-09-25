@@ -222,7 +222,7 @@ export default function AProposPage() {
               </p>
             </section>
 
-            <section className="border-t border-ds-border pt-8">
+            <section className="pt-8">
               <h2 className="text-xl font-semibold text-white mb-3">Une erreur, une question, un désaccord</h2>
               <p className="text-gray-400">
                 Écrivez à{" "}

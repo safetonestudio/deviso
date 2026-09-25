@@ -392,7 +392,7 @@ export function FreelanceLanding({
 
       {/* ── Pour aller plus loin : les deux autres pages du même métier ── */}
       {metier && (metier.article || metier.tarifs) && (
-        <section className="py-16 px-4 sm:px-6 border-t border-ds-border">
+        <section className="py-16 px-4 sm:px-6">
           <div className="max-w-5xl mx-auto">
             <h2 className="text-2xl font-semibold text-white mb-2">
               Pour aller plus loin

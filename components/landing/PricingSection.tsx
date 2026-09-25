@@ -35,7 +35,7 @@ export function PricingSection() {
   const proPeriod = billing === "annual" ? "facturé 326,40€/an" : "3 utilisateurs inclus";
 
   return (
-    <section id="tarifs" className="py-20 px-4 sm:px-6 border-t border-white/[0.04]">
+    <section id="tarifs" className="py-20 px-4 sm:px-6">
       <div className="max-w-5xl mx-auto">
         <div className="text-center mb-10">
           <h2 className="text-3xl sm:text-4xl font-semibold text-white mb-3 tracking-tight">

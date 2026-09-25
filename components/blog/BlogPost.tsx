@@ -233,7 +233,7 @@ export function BlogPost({
                   </div>
                 ))}
               </div>
-              <div className="px-5 py-4 bg-ds-elevated/50 flex items-center justify-between border-t border-ds-border">
+              <div className="px-5 py-4 bg-ds-elevated/50 flex items-center justify-between">
                 <p className="text-gray-400 text-sm font-medium">Total HT</p>
                 <p className="text-indigo-400 font-semibold text-lg">{exampleTotal}</p>
               </div>
@@ -342,7 +342,7 @@ export function BlogPost({
           <Signature />
 
           {/* ── Autres métiers ── */}
-          <section className="border-t border-ds-border pt-10">
+          <section className="pt-10">
             <p className="text-sm text-gray-500 mb-4 font-medium uppercase tracking-wider">Deviso par métier</p>
             <div className="flex flex-wrap gap-2">
               {METIERS_LANDING.filter((x) => x.landing !== landingHref).map((x) => (

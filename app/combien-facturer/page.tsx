@@ -285,7 +285,7 @@ export default function CombienFacturerPage() {
         </section>
 
         {/* ── Footer métiers ── */}
-        <nav aria-label="Tous les TJM par métier" className="border-t border-ds-border pt-8 pb-4">
+        <nav aria-label="Tous les TJM par métier" className="pt-8 pb-4">
           <div className="flex flex-wrap gap-x-6 gap-y-2 text-xs text-gray-500">
             {TARIFS_DATA.map((m) => (
               <Link

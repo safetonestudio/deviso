@@ -292,7 +292,7 @@ export default function ConformitePage() {
             </section>
 
             {/* ── 6. Une question ── */}
-            <section className="border-t border-ds-border pt-8">
+            <section className="pt-8">
               <h2 className="text-xl font-semibold text-white mb-3">Une question sur tout ça ?</h2>
               <p className="text-gray-400">
                 Écrivez à{" "}

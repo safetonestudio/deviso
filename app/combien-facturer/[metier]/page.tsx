@@ -220,7 +220,7 @@ export default async function MetierTarifsPage({ params }: Props) {
                 <span className="text-gray-500">TJM médian ({data.name} confirmé)</span>
                 <span className="font-semibold text-indigo-300">{defaultTjm} €/j</span>
               </div>
-              <div className="flex justify-between border-t border-ds-border pt-2 mt-2">
+              <div className="flex justify-between pt-2 mt-2">
                 <span className="text-gray-500">Revenu net estimé / mois</span>
                 <span className="font-semibold text-emerald-400">
                   {netMensuel.toLocaleString("fr-FR", { maximumFractionDigits: 0 })} €
@@ -365,7 +365,7 @@ export default async function MetierTarifsPage({ params }: Props) {
         </section>
 
         {/* Footer */}
-        <nav aria-label="Naviguer" className="border-t border-ds-border pt-6 pb-2 text-xs text-gray-400 flex flex-wrap gap-4">
+        <nav aria-label="Naviguer" className="pt-6 pb-2 text-xs text-gray-400 flex flex-wrap gap-4">
           <Link href="/" className="hover:text-gray-500 transition-colors">Accueil</Link>
           <Link href="/combien-facturer" className="hover:text-gray-500 transition-colors">Tarifs freelance</Link>
           <Link href={data.landingHref} className="hover:text-gray-500 transition-colors">

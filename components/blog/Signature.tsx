@@ -15,7 +15,7 @@ import { AUTEUR } from "@/lib/blog/auteur";
  */
 export function Signature() {
   return (
-    <section className="border-t border-ds-border pt-8 mt-12">
+    <section className="pt-8 mt-12">
       <div className="flex gap-4">
         <div className="w-11 h-11 rounded-full bg-gradient-to-br from-indigo-600 to-violet-600 flex items-center justify-center shrink-0">
           <span className="text-white font-semibold text-sm">SA</span>

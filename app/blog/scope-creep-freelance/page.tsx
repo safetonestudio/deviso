@@ -223,7 +223,7 @@ export default function Page() {
           </div>
 
           {/* Métiers */}
-          <div className="mt-14 pt-8 border-t border-ds-border">
+          <div className="mt-14 pt-8">
             <p className="text-xs text-gray-400 mb-4">Guides par métier</p>
             <div className="flex flex-wrap gap-2">
               {metierLinks.map((m) => (

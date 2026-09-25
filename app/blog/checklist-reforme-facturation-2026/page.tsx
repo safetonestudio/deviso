@@ -220,7 +220,7 @@ export default function ChecklistReforme2026Page() {
                   <p className="text-sm text-gray-400">{item.description}</p>
                 </div>
               </div>
-              <div className="px-5 py-4 border-t border-ds-border bg-ds-bg space-y-3">
+              <div className="px-5 py-4 bg-ds-bg space-y-3">
                 <div className="flex gap-2">
                   <span className="text-xs font-semibold text-indigo-400 shrink-0 mt-0.5">→ ACTION</span>
                   <p className="text-xs text-gray-300">{item.action}</p>

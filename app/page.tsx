@@ -242,7 +242,7 @@ export default function LandingPage() {
       </section>
 
       {/* ── Comment ça marche ── */}
-      <section id="comment" className="py-20 px-4 sm:px-6 border-t border-white/[0.04]">
+      <section id="comment" className="py-20 px-4 sm:px-6">
         <div className="max-w-5xl mx-auto">
           <div className="text-center mb-14">
             <h2 className="text-3xl sm:text-4xl font-semibold text-white mb-3 tracking-tight">
@@ -263,7 +263,7 @@ export default function LandingPage() {
       </section>
 
       {/* ── Fonctionnalités ── */}
-      <section id="fonctionnalites" className="py-20 px-4 sm:px-6 border-t border-white/[0.04]">
+      <section id="fonctionnalites" className="py-20 px-4 sm:px-6">
         <div className="max-w-5xl mx-auto">
           <div className="text-center mb-14">
             <h2 className="text-3xl sm:text-4xl font-semibold text-white mb-3 tracking-tight">
@@ -289,7 +289,7 @@ export default function LandingPage() {
       </section>
 
       {/* ── Témoignages ── */}
-      <section className="py-20 px-4 sm:px-6 border-t border-white/[0.04]">
+      <section className="py-20 px-4 sm:px-6">
         <div className="max-w-5xl mx-auto">
           <div className="text-center mb-12">
             <h2 className="text-3xl sm:text-4xl font-semibold text-white mb-3 tracking-tight">Quelques retours</h2>

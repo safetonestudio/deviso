@@ -68,7 +68,7 @@ export function MenuCategorie({
         </span>
       </summary>
 
-      <div className="border-t border-ds-border divide-y divide-ds-border">
+      <div className="divide-y divide-ds-border">
         {articles.map((art) => {
           const Icone = icones[art.slug] ?? FileText;
           return (

@@ -227,7 +227,7 @@ export default function Page() {
             <WaitlistButton plan="free" label="Essayer Deviso gratuitement" className="inline-block bg-indigo-600 hover:bg-indigo-500 text-white font-semibold px-8 py-3 rounded-xl transition-all" />
           </div>
 
-          <div className="mt-14 pt-8 border-t border-ds-border">
+          <div className="mt-14 pt-8">
             <p className="text-xs text-gray-400 mb-4">Guides par métier</p>
             <div className="flex flex-wrap gap-2">
               {metierLinks.map((m) => (

@@ -106,9 +106,9 @@ export default function Page() {
                   <div className="bg-ds-elevated rounded-xl p-4 font-mono text-xs text-gray-300 space-y-1">
                     <p>Revenu net mensuel souhaité : 3 000 €</p>
                     <p>+ Charges URSSAF + mutuelle + retraite (~45%) : 2 455 €</p>
-                    <p className="border-t border-ds-border pt-1 mt-1">= CA mensuel nécessaire : 5 455 €</p>
+                    <p className="pt-1 mt-1">= CA mensuel nécessaire : 5 455 €</p>
                     <p>÷ Jours facturables / mois (17 sur 20) : 17 jours</p>
-                    <p className="border-t border-ds-border pt-1 mt-1 text-indigo-400 font-bold">= TJM minimum : 321 €/jour</p>
+                    <p className="pt-1 mt-1 text-indigo-400 font-bold">= TJM minimum : 321 €/jour</p>
                   </div>
                   <p className="text-xs text-gray-400 mt-3">Ajoutez une marge de 20-30% pour les périodes creuses, les formations, les imprévus. TJM recommandé ici : ~400€/jour.</p>
                 </div>
@@ -229,7 +229,7 @@ export default function Page() {
             <WaitlistButton plan="free" label="Générer mon premier devis, gratuit" className="inline-block bg-indigo-600 hover:bg-indigo-500 text-white font-semibold px-8 py-3 rounded-xl transition-all" />
           </div>
 
-          <div className="mt-14 pt-8 border-t border-ds-border">
+          <div className="mt-14 pt-8">
             <p className="text-xs text-gray-400 mb-4">Guides par métier</p>
             <div className="flex flex-wrap gap-2">
               {metierLinks.map((m) => (
