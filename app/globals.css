@@ -62,7 +62,7 @@
   background-color: var(--ds-bg);
   background-image:
     linear-gradient(rgba(8,8,10,0.40), rgba(8,8,10,0.52)),
-    url('/site-bg.webp');
+    url('/site-bg-v2.webp');
   background-repeat: no-repeat, repeat;
   background-size: cover, 1456px auto;
   background-position: center, top center;
