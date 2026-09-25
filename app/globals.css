@@ -61,12 +61,12 @@
 .bg-site {
   background-color: var(--ds-bg);
   background-image:
-    radial-gradient(1100px 560px at 50% -8%, rgba(99,102,241,0.16), rgba(99,102,241,0) 62%),
-    radial-gradient(820px 460px at 88% 2%, rgba(139,92,246,0.08), rgba(139,92,246,0) 58%),
-    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='150' height='150'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
-  background-repeat: no-repeat, no-repeat, repeat;
-  background-size: 1100px 560px, 820px 460px, 150px 150px;
-  background-position: top center, top right, top left;
+    linear-gradient(rgba(8,8,10,0.42), rgba(8,8,10,0.55)),
+    url('/site-bg.webp');
+  background-repeat: no-repeat, no-repeat;
+  background-size: cover, cover;
+  background-position: center, center;
+  background-attachment: fixed, fixed;
 }
 
 .light {
