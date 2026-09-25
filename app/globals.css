@@ -48,6 +48,13 @@
    Activé par la classe .light sur <html>, gérée par DashboardThemeProvider.
    Les landing pages n'utilisent jamais ce layout → toujours en mode sombre.
    ───────────────────────────────────────────────────────────────── */
+/* === Lisibilite du texte secondaire (theme sombre) ===
+   gray-500 / gray-600 sont sous le seuil AA sur fonds sombres (#080808 / #141414).
+   On les aligne sur la nuance gray-400 (~7:1) : lisible, reposant, uniforme.
+   Le bloc .light ci-dessous reste prioritaire (specificite superieure). */
+.text-gray-500 { color: #9ca3af !important; }
+.text-gray-600 { color: #9ca3af !important; }
+
 .light {
   /* DS tokens : fond gris neutre doux, cartes blanches */
   --ds-bg:       #F4F4F6;
@@ -73,8 +80,8 @@
 .light .text-gray-200 { color: #2C2C35 !important; }
 .light .text-gray-300 { color: #3D3D48 !important; }
 .light .text-gray-400 { color: #5E5E6B !important; }
-.light .text-gray-500 { color: #80808D !important; }
-.light .text-gray-600 { color: #9E9EAA !important; }
+.light .text-gray-500 { color: #5E5E6B !important; }
+.light .text-gray-600 { color: #5E5E6B !important; }
 .light .text-gray-700 { color: #C0C0C8 !important; }
 
 /* ── Hover text ── */
