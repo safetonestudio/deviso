@@ -174,8 +174,9 @@ const ARTICLES: Record<string, Article> = {
                 description, quantité, unité et prix unitaire HT.
               </p>
               <Tip>
-                <B>Gain de temps :</B> si ton <B>catalogue de prestations</B> est configuré (section Services),
+                <B>Gain de temps :</B> si ton <B>catalogue de prestations</B> est configuré,
                 clique sur <B>Depuis le catalogue</B> pour insérer une prestation en un clic, prix inclus.
+                Le catalogue se configure via le menu <B>Catalogue</B> (plan Pro).
               </Tip>
             </Step>
             <Step n={5} title="Vérifie la TVA et les totaux">
@@ -218,7 +219,7 @@ const ARTICLES: Record<string, Article> = {
 
         <Section title="Ce que Deviso gère automatiquement">
           <Ul>
-            <Li>Numérote tes devis dans l&apos;ordre (DEV-2025-001, DEV-2025-002…)</Li>
+            <Li>Numérote tes devis dans l&apos;ordre (DEV-2026-001, DEV-2026-002…)</Li>
             <Li>Calcule HT, TVA et TTC à chaque modification</Li>
             <Li>Génère un PDF professionnel téléchargeable</Li>
             <Li>Te notifie par email dès que ton client ouvre le devis</Li>
@@ -256,16 +257,16 @@ const ARTICLES: Record<string, Article> = {
 
         <Section title="Créer une facture d'acompte">
           <Steps>
-            <Step n={1} title="Ouvre le devis accepté">
+            <Step n={1} title="Ouvre le devis signé">
               <p>
                 Dans <B>Devis</B>, ouvre le devis signé par ton client (statut{" "}
-                <em>Accepté</em>). En bas de page, clique sur <B>Créer une facture d&apos;acompte</B>.
+                <em>Signé</em>). En bas de page, clique sur <B>Créer une facture d&apos;acompte</B>.
               </p>
             </Step>
             <Step n={2} title="Définis le montant">
               <p>
                 Saisis un pourcentage ou un montant fixe. La facture d&apos;acompte reçoit
-                automatiquement une numérotation distincte : <em>AC-2025-001</em>.
+                automatiquement une numérotation distincte : <em>AC-2026-001</em>.
               </p>
             </Step>
             <Step n={3} title="Envoie-la comme une facture normale">
@@ -327,7 +328,7 @@ const ARTICLES: Record<string, Article> = {
       <>
         <Note>
           Le catalogue de prestations est disponible sur le plan <B>Pro</B>.
-          Accède-y via <B>Services</B> dans le menu.
+          Accède-y via <B>Catalogue</B> dans le menu.
         </Note>
 
         <Section title="Deux types de prestations">
@@ -349,7 +350,7 @@ const ARTICLES: Record<string, Article> = {
 
         <Section title="Ajouter une prestation à l'acte">
           <Steps>
-            <Step n={1} title="Services → + Prestation">
+            <Step n={1} title="Catalogue → + Prestation">
               <p>
                 Clique sur <B>+ Prestation</B> dans la section <em>À l&apos;acte</em>.
                 Renseigne : nom, description courte (optionnelle), unité (forfait, jour, page…)
@@ -371,7 +372,7 @@ const ARTICLES: Record<string, Article> = {
 
         <Section title="Ajouter un taux horaire">
           <Steps>
-            <Step n={1} title="Services → + Taux horaire">
+            <Step n={1} title="Catalogue → + Taux horaire">
               <p>
                 Saisis le nom de l&apos;activité (ex : <em>Développement</em>,{" "}
                 <em>Conseil stratégique</em>, <em>Formation</em>) et ton tarif horaire HT.
@@ -414,7 +415,7 @@ const ARTICLES: Record<string, Article> = {
       <>
         <Note>
           Le catalogue de prestations est disponible sur le plan <B>Pro</B>.
-          Accède-y via <B>Services</B> dans le menu.
+          Accède-y via <B>Catalogue</B> dans le menu.
         </Note>
 
         <Section title="Comment l'IA utilise ton catalogue">
@@ -704,10 +705,9 @@ const ARTICLES: Record<string, Article> = {
             {[
               { label: "Brouillon", color: "text-gray-400", desc: "Non envoyé. Visible uniquement par toi." },
               { label: "Envoyé", color: "text-blue-400", desc: "Ton client a reçu le lien. Deviso te notifie quand il l'ouvre." },
-              { label: "Vu", color: "text-indigo-400", desc: "Ouvert au moins une fois. Le bon moment pour relancer." },
-              { label: "Accepté", color: "text-green-400", desc: "Signé ou validé par le client. Tu peux facturer." },
+              { label: "Consulté", color: "text-amber-400", desc: "Ouvert au moins une fois. Le bon moment pour relancer." },
+              { label: "Signé", color: "text-emerald-400", desc: "Signé électroniquement par le client. Tu peux facturer." },
               { label: "Refusé", color: "text-red-400", desc: "Le client a refusé. Prends contact pour comprendre." },
-              { label: "Expiré", color: "text-yellow-500", desc: "Date de validité dépassée sans réponse." },
             ].map((s) => (
               <div key={s.label} className="flex items-center gap-3 px-4 py-3 border-b border-ds-border last:border-0 bg-ds-surface">
                 <span className={`text-xs font-semibold shrink-0 w-14 ${s.color}`}>{s.label}</span>
@@ -731,10 +731,11 @@ const ARTICLES: Record<string, Article> = {
 
         <Section title="Relances automatiques (Pro)">
           <Steps>
-            <Step n={1} title="Paramètres → Relances">
+            <Step n={1} title="Paramètres → Profil → Relances automatiques">
               <p>
-                Configure des intervalles automatiques : par exemple{" "}
-                <em>J+3, J+7, J+14 si pas de réponse</em>.
+                Dans <B>Paramètres → Profil</B>, descends jusqu&apos;à la section{" "}
+                <em>Relances automatiques</em>. Configure tes délais (en jours après envoi) :
+                par exemple <em>J+3, J+7, J+14</em>.
               </p>
             </Step>
             <Step n={2} title="Personnalise le message">
@@ -758,7 +759,7 @@ const ARTICLES: Record<string, Article> = {
 
         <Section title="Relance manuelle">
           <p>
-            Ouvre n&apos;importe quel devis en statut <em>Envoyé</em> ou <em>Expiré</em> et clique
+            Ouvre n&apos;importe quel devis en statut <em>Envoyé</em> ou <em>Consulté</em> et clique
             sur <B>Relancer</B>. Un email est envoyé instantanément avec le lien vers le devis.
           </p>
           <Warning>
@@ -773,7 +774,7 @@ const ARTICLES: Record<string, Article> = {
   // ── 7. Équipe ─────────────────────────────────────────────────
   "gerer-equipe": {
     title: "Gérer son équipe sur Deviso",
-    description: "Invite des collaborateurs, configure les niveaux d'accès et le workflow de validation pour travailler efficacement à plusieurs.",
+    description: "Invite des collaborateurs et règle, acte par acte, ce que chacun a le droit de faire dans ton espace.",
     readingTime: 4,
     cta: { label: "Gérer l'équipe", href: "/team" },
     content: (
@@ -783,22 +784,22 @@ const ARTICLES: Record<string, Article> = {
           Le propriétaire + 2 membres sont inclus. Chaque siège supplémentaire est à 5 €/mois.
         </Note>
 
-        <Section title="Les deux rôles">
+        <Section title="Deux rôles, des autorisations à la carte">
           <div className="space-y-3 mt-1">
             <Card
               icon={Crown}
-              title="Propriétaire"
-              desc="Accès complet : facturation Deviso, paiements, clients, stats, paramètres, équipe."
+              title="Titulaire (toi)"
+              desc="Accès complet : abonnement Deviso, paiements, clients, activité, paramètres, identité de l'entreprise et gestion de l'équipe. Certains actes sensibles (encaissement, comptabilité, suppression, raccordement) te restent toujours réservés."
             />
             <Card
               icon={User}
               title="Membre"
-              desc="Peut créer des devis et factures, accéder au catalogue et modifier son profil. N'a pas accès à la facturation Deviso, aux stats globales ni aux paramètres de l'entreprise."
+              desc="Crée et prépare devis et factures, accède au catalogue et modifie son profil. Pour chaque membre, tu coches précisément les actes qu'il a le droit de réaliser. Il n'a jamais accès à l'abonnement, à l'activité globale ni aux paramètres de l'entreprise."
             />
           </div>
           <Tip>
             Le rôle Membre est idéal pour un associé, un alternant ou un commercial.
-            Il peut créer des devis en ton nom sans accéder à tes données financières sensibles.
+            Il peut préparer des devis en ton nom sans accéder à tes données financières sensibles.
           </Tip>
         </Section>
 
@@ -825,35 +826,38 @@ const ARTICLES: Record<string, Article> = {
           </Steps>
         </Section>
 
-        <Section title="Workflow de validation">
+        <Section title="Régler les autorisations d'un membre">
           <p>
-            Dans <B>Équipe → Paramètres</B>, active <B>Validation requise avant envoi</B>.
-            Les membres ne pourront plus envoyer directement un devis au client -
-            ils devront le soumettre pour approbation.
+            Dans <B>Équipe</B>, chaque membre dispose d&apos;une grille d&apos;autorisations.
+            Tu coches, acte par acte, ce qu&apos;il a le droit de faire. L&apos;enregistrement
+            est immédiat à chaque changement.
           </p>
           <Steps>
-            <Step n={1} title="Le membre soumet le devis">
+            <Step n={1} title="Ouvre la fiche du membre">
               <p>
-                À la place du bouton <em>Envoyer</em>, il voit un bouton{" "}
-                <em>Soumettre pour validation</em>.
+                Dans l&apos;onglet <B>Membres</B>, déplie la grille d&apos;autorisations
+                du collaborateur concerné.
               </p>
             </Step>
-            <Step n={2} title="Tu reçois une notification">
+            <Step n={2} title="Coche les actes autorisés">
               <p>
-                En tant que propriétaire, tu es notifié. Tu peux approuver, ou renvoyer
-                le devis avec des commentaires.
+                Par défaut, un membre <em>prépare</em> devis et factures sans pouvoir les envoyer.
+                Tu peux l&apos;autoriser à <B>envoyer un devis</B> et à <B>envoyer une facture</B>{" "}
+                lui-même. D&apos;autres actes liés à la facturation électronique apparaissent au fur
+                et à mesure que ces fonctions sont activées sur ton compte.
               </p>
             </Step>
-            <Step n={3} title="Une fois approuvé, le membre peut envoyer">
+            <Step n={3} title="C'est appliqué immédiatement">
               <p>
-                Le devis approuvé devient envoyable. Chaque étape reste traçable
-                dans l&apos;historique.
+                Aucun bouton à valider : chaque case cochée ou décochée prend effet tout de suite.
+                Sans autorisation d&apos;envoi, le membre prépare le document et c&apos;est toi qui l&apos;envoies.
               </p>
             </Step>
           </Steps>
           <Tip>
-            Active la validation pour les membres juniors ou en période d&apos;essai.
-            Désactive-la pour les collaborateurs de confiance afin de ne pas ralentir le flux.
+            Laisse les autorisations d&apos;envoi décochées pour un membre junior ou en période d&apos;essai :
+            tu gardes la main sur ce qui part chez le client. Coche-les pour les collaborateurs de
+            confiance afin de ne pas ralentir le flux.
           </Tip>
         </Section>
       </>
@@ -868,7 +872,10 @@ const ARTICLES: Record<string, Article> = {
     cta: { label: "Voir les exports", href: "/stats" },
     content: (
       <>
-        <Note>Les exports comptables sont disponibles sur le plan <B>Pro</B>.</Note>
+        <Note>
+          L&apos;<B>export FEC</B> est inclus dès le plan <B>Solo</B>. Les exports{" "}
+          <B>CSV factures</B> et <B>récapitulatif mensuel</B> sont réservés au plan <B>Pro</B>.
+        </Note>
 
         <Section title="Les trois exports disponibles">
           <div className="space-y-3 mt-1">
@@ -892,9 +899,9 @@ const ARTICLES: Record<string, Article> = {
 
         <Section title="Générer un export">
           <Steps>
-            <Step n={1} title="Performance → Exports comptables">
+            <Step n={1} title="Activité → Exports comptables">
               <p>
-                Depuis le menu <B>Performance</B>, descends jusqu&apos;à la section{" "}
+                Depuis le menu <B>Activité</B>, descends jusqu&apos;à la section{" "}
                 <em>Exports comptables</em>.
               </p>
             </Step>
