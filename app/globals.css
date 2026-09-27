@@ -74,9 +74,7 @@
    opaques au survol. C'est l'etat prefere de Selim (retabli le 27/09/2026).
    A n'appliquer qu'aux cartes posees sur .bg-site. */
 .carte-site {
-  background-color: rgba(20, 20, 20, 0.5);
-  -webkit-backdrop-filter: blur(8px);
-  backdrop-filter: blur(8px);
+  background-color: rgba(20, 20, 20, 0.3);
   border: 1px solid rgba(255, 255, 255, 0.07);
   transition: background-color 0.2s ease, border-color 0.2s ease;
 }
