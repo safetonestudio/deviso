@@ -88,7 +88,7 @@
 .light .bg-app-relief {
   background-color: var(--ds-bg);
   background-image:
-    linear-gradient(rgba(244,244,246,0.42), rgba(244,244,246,0.52)),
+    linear-gradient(rgba(244,244,246,0.10), rgba(244,244,246,0.18)),
     url('/site-bg-v2-light.webp');
 }
 
