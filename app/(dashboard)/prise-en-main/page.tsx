@@ -13,6 +13,7 @@ import {
   Wallet,
   Palette,
   Bell,
+  Repeat,
   UsersRound,
   FileSpreadsheet,
   LayoutDashboard,
@@ -63,6 +64,13 @@ const GUIDES: {
     time: 4,
   },
   {
+    slug: "factures-recurrentes",
+    icon: Repeat,
+    title: "Automatiser ses factures récurrentes",
+    desc: "Abonnements et forfaits mensuels : configure une fois, Deviso facture tout seul.",
+    time: 4,
+  },
+  {
     slug: "catalogue-prestations",
     icon: Package,
     title: "Maîtriser son catalogue de prestations",
@@ -110,6 +118,13 @@ const GUIDES: {
     title: "Exporter sa comptabilité",
     desc: "FEC, CSV, récap mensuel : tout ce dont ton comptable a besoin.",
     time: 3,
+  },
+  {
+    slug: "reforme-facturation-electronique",
+    icon: ShieldCheck,
+    title: "La réforme de la facturation électronique 2026",
+    desc: "Ce qui change, le calendrier par taille d'entreprise, et comment Deviso te met en conformité.",
+    time: 5,
   },
   {
     slug: "conformite-plateforme-agreee",

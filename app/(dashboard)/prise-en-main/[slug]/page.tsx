@@ -318,6 +318,106 @@ const ARTICLES: Record<string, Article> = {
     ),
   },
 
+  // ── 2b. Factures recurrentes ──────────────────────────────────
+  "factures-recurrentes": {
+    title: "Automatiser ses factures récurrentes",
+    description: "Pour tes abonnements, forfaits mensuels et contrats de maintenance : configure la facture une fois, Deviso l'émet automatiquement à chaque échéance.",
+    readingTime: 4,
+    cta: { label: "Gérer mes récurrentes", href: "/invoices" },
+    content: (
+      <>
+        <Note>
+          Les factures récurrentes sont disponibles sur le plan <B>Pro</B>.
+          Elles se gèrent dans <B>Factures</B>, onglet <em>Récurrentes</em>.
+        </Note>
+
+        <Section title="À quoi ça sert">
+          <p>
+            Dès que tu factures le même montant au même client à intervalle régulier,
+            une facture récurrente t&apos;évite de la recréer à la main chaque mois :
+            abonnement, forfait de maintenance, prestation au mois, <em>retainer</em>.
+            Tu la configures une fois, Deviso s&apos;occupe du reste.
+          </p>
+        </Section>
+
+        <Section title="Créer une facture récurrente">
+          <Steps>
+            <Step n={1} title="Factures → Récurrentes → Nouvelle">
+              <p>
+                Dans <B>Factures</B>, ouvre l&apos;onglet <em>Récurrentes</em> et clique
+                sur <B>Nouvelle récurrente</B>.
+              </p>
+            </Step>
+            <Step n={2} title="Renseigne le client et les lignes">
+              <p>
+                Nom du client, email, entreprise et adresse, puis les lignes de prestation
+                (description, quantité, prix unitaire HT), le taux de TVA, les conditions de
+                paiement et une note éventuelle. Exactement comme une facture normale.
+              </p>
+              <Tip>
+                <B>Renseigne l&apos;email du client.</B> C&apos;est lui qui déclenche l&apos;envoi
+                automatique (voir plus bas). Sans email, la facture sera créée mais restera à
+                envoyer toi-même.
+              </Tip>
+            </Step>
+            <Step n={3} title="Choisis la fréquence et le jour">
+              <p>
+                Fréquence <B>mensuelle</B>, <B>trimestrielle</B> ou <B>annuelle</B>, et le{" "}
+                <B>jour du mois</B> d&apos;émission (par exemple le 1er). La prochaine échéance
+                s&apos;affiche sur la fiche.
+              </p>
+            </Step>
+            <Step n={4} title="Enregistre">
+              <p>
+                L&apos;abonnement est actif immédiatement. Tu peux en créer autant que tu veux,
+                un par client ou par contrat.
+              </p>
+            </Step>
+          </Steps>
+        </Section>
+
+        <Section title="Ce que Deviso fait automatiquement">
+          <div className="space-y-3 mt-1">
+            <Card
+              icon={Calendar}
+              title="Émission à chaque échéance"
+              desc="À la date prévue, Deviso crée la facture au format Factur-X, numérotée automatiquement dans ta série habituelle. Aucune action de ta part."
+            />
+            <Card
+              icon={CircleCheck}
+              title="Envoi automatique si l'email est renseigné"
+              desc="Quand le client a un email, la facture lui part directement, PDF Factur-X en pièce jointe et tes coordonnées de paiement incluses, comme une facture envoyée à la main."
+              accent
+            />
+            <Card
+              icon={Info}
+              title="Sinon, un brouillon prêt à envoyer"
+              desc="Sans email client, la facture est générée en brouillon. Tu la retrouves dans la liste et tu l'envoies quand tu veux."
+            />
+          </div>
+          <Warning>
+            Configurer une récurrente sans avoir renseigné tes moyens de paiement dans{" "}
+            <B>Paiements</B>. La facture partirait au client sans IBAN ni lien de paiement,
+            il ne saurait pas où régler, tous les mois. Configure les paiements d&apos;abord.
+          </Warning>
+        </Section>
+
+        <Section title="Mettre en pause, modifier, reprendre">
+          <p>
+            Depuis l&apos;onglet <em>Récurrentes</em>, chaque abonnement peut être{" "}
+            <B>mis en pause</B> puis réactivé, ou <B>modifié</B> (montant, fréquence, jour).
+            La fiche indique la prochaine échéance et la date de la dernière facture émise.
+          </p>
+          <Tip>
+            <B>À la fin d&apos;un contrat, mets l&apos;abonnement en pause plutôt que de le
+            supprimer.</B> Tu gardes l&apos;historique et tu peux le relancer si le client
+            reconduit.
+          </Tip>
+        </Section>
+      </>
+    ),
+  },
+
   // ── 3. Catalogue ─────────────────────────────────────────────
   "catalogue-prestations": {
     title: "Maîtriser son catalogue de prestations",
@@ -943,6 +1043,104 @@ const ARTICLES: Record<string, Article> = {
           <Note>
             Les factures Deviso sont au format <B>Factur-X EN 16931</B> (PDF/A-3 avec données XML
             embarquées), conformes à la réforme de facturation électronique 2026.
+          </Note>
+        </Section>
+      </>
+    ),
+  },
+
+  // ── 9b. Reforme (vue d'ensemble, visible) ─────────────────────
+  "reforme-facturation-electronique": {
+    title: "La réforme de la facturation électronique 2026",
+    description: "Ce qui change pour ton entreprise, le calendrier selon ta taille, et ce que Deviso gère déjà pour te mettre en conformité sans effort.",
+    readingTime: 5,
+    cta: { label: "Voir mes factures", href: "/invoices" },
+    content: (
+      <>
+        <Section title="De quoi on parle">
+          <p>
+            La réforme généralise la <B>facturation électronique</B> entre entreprises (B2B)
+            en France. Concrètement, deux obligations distinctes :
+          </p>
+          <Ul>
+            <Li>
+              <B>La facture électronique :</B> une facture entre entreprises ne s&apos;échange
+              plus par un simple PDF envoyé par email, mais dans un format structuré, transmise
+              via une plateforme dédiée.
+            </Li>
+            <Li>
+              <B>L&apos;e-reporting :</B> pour certaines opérations (clients particuliers,
+              clients étrangers), les données de la transaction sont transmises à
+              l&apos;administration fiscale.
+            </Li>
+          </Ul>
+        </Section>
+
+        <Section title="Le calendrier">
+          <div className="mt-1 rounded-xl border border-ds-border overflow-hidden">
+            <div className="flex items-start gap-3 px-4 py-3 border-b border-ds-border bg-ds-surface">
+              <span className="text-xs font-semibold shrink-0 w-28 text-indigo-400">1er sept. 2026</span>
+              <span className="text-xs text-gray-400 leading-relaxed">
+                <B>Toutes</B> les entreprises doivent pouvoir <B>recevoir</B> une facture
+                électronique. Les <B>grandes entreprises</B> et les <B>ETI</B> doivent aussi
+                commencer à en <B>émettre</B>.
+              </span>
+            </div>
+            <div className="flex items-start gap-3 px-4 py-3 bg-ds-surface">
+              <span className="text-xs font-semibold shrink-0 w-28 text-indigo-400">1er sept. 2027</span>
+              <span className="text-xs text-gray-400 leading-relaxed">
+                L&apos;obligation d&apos;<B>émettre</B> s&apos;étend aux <B>PME</B> et aux{" "}
+                <B>micro-entreprises</B>.
+              </span>
+            </div>
+          </div>
+          <Note>
+            Aucune exception de régime : micro-entrepreneurs et franchise en base de TVA sont
+            concernés comme les autres. La réception, elle, s&apos;applique à tout le monde depuis 2026.
+          </Note>
+        </Section>
+
+        <Section title="Ce que Deviso fait déjà pour toi">
+          <div className="space-y-3 mt-1">
+            <Card
+              icon={CircleCheck}
+              title="Format Factur-X conforme"
+              desc="Tes factures sont générées au format Factur-X (norme EN 16931, PDF/A-3), celui qu'impose la réforme. Côté document, tu es déjà prêt, sans rien changer à ta façon de facturer."
+              accent
+            />
+            <Card
+              icon={Landmark}
+              title="Marchés publics"
+              desc="Pour le secteur public (B2G), le dépôt sur Chorus Pro se fait déjà depuis Deviso. Ce circuit existe avant la réforme et continue."
+            />
+          </div>
+        </Section>
+
+        <Section title="Ce qui arrive dans Deviso">
+          <p>
+            Deviso est une <B>solution compatible</B> adossée à une <B>Plateforme Agréée</B>,
+            l&apos;intermédiaire immatriculé par l&apos;administration qui achemine les factures
+            et transmet les données au fisc. Quand le raccordement sera activé sur ton compte,{" "}
+            <B>l&apos;émission</B> de tes factures, la <B>réception</B> de celles de tes
+            fournisseurs et l&apos;<B>e-reporting</B> se feront directement depuis Deviso, sans
+            changer ta façon de travailler.
+          </p>
+          <Tip>
+            Tu n&apos;as rien à installer ni à anticiper techniquement : le raccordement se fera
+            en quelques clics depuis tes paramètres, et on te préviendra dès qu&apos;il sera
+            disponible sur ton compte.
+          </Tip>
+        </Section>
+
+        <Section title="Ce que tu peux faire dès maintenant">
+          <Ul>
+            <Li>Compléter ton profil : SIRET, numéro de TVA, adresse, régime fiscal.</Li>
+            <Li>Garder ton catalogue et tes tarifs à jour pour des factures propres.</Li>
+            <Li>Configurer tes moyens de paiement, pour que chaque facture parte complète.</Li>
+          </Ul>
+          <Note>
+            En clair : continue de facturer normalement dans Deviso. La mise en conformité se
+            fera en arrière-plan le moment venu, tu n&apos;as pas à t&apos;en préoccuper aujourd&apos;hui.
           </Note>
         </Section>
       </>
