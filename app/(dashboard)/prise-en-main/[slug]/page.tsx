@@ -941,6 +941,196 @@ const ARTICLES: Record<string, Article> = {
       </>
     ),
   },
+
+  // ── 10. Réforme : émettre via la Plateforme Agréée ─────────────
+  "conformite-plateforme-agreee": {
+    title: "Réforme 2026 : émettre via la Plateforme Agréée",
+    description: "Comment Deviso transmet tes factures à l'administration, et comment suivre leur cycle de vie.",
+    readingTime: 5,
+    cta: { label: "Voir ma conformité", href: "/declarations" },
+    content: (
+      <>
+        <Section title="Ce que change la réforme">
+          <p>
+            À partir de la réforme, une facture entre entreprises ne s&apos;envoie plus
+            simplement par email : elle transite par une <B>Plateforme Agréée</B> (PA),
+            immatriculée par l&apos;administration, qui la dépose et transmet les données au fisc.
+          </p>
+          <p>
+            Deviso est une <B>solution compatible</B> adossée à <B>Super PDP</B>, une plateforme
+            agréée. Concrètement : tu continues de créer tes factures dans Deviso, et la
+            transmission se fait en arrière-plan, une fois ton entreprise raccordée.
+          </p>
+        </Section>
+
+        <Section title="Raccorder ton entreprise">
+          <Steps>
+            <Step n={1} title="Paramètres → raccordement">
+              <p>
+                Depuis <B>Paramètres</B>, lance le raccordement à la Plateforme Agréée. Tu
+                autorises Deviso à agir pour ton compte via une connexion sécurisée (OAuth) :
+                aucun mot de passe n&apos;est stocké.
+              </p>
+            </Step>
+            <Step n={2} title="Vérification">
+              <p>
+                La plateforme vérifie le rattachement de ton entreprise à ton compte,
+                généralement sous 24 h. Tu peux continuer à travailler pendant ce temps.
+              </p>
+            </Step>
+            <Step n={3} title="Régime de TVA">
+              <p>
+                Renseigne ta périodicité de TVA dans ton profil : elle fixe le calendrier de
+                tes déclarations. En franchise en base, rien à déclarer de ce côté.
+              </p>
+            </Step>
+          </Steps>
+        </Section>
+
+        <Section title="Émettre une facture">
+          <p>
+            Une fois raccordé, chaque facture peut être transmise à la Plateforme Agréée en un
+            clic. Deviso génère le fichier Factur-X et le dépose pour toi.
+          </p>
+          <Tip>
+            <B>Adresse du destinataire :</B> pour une entreprise française, le SIREN du client
+            suffit. Renseigne-le sur la facture pour qu&apos;elle soit acheminée correctement.
+          </Tip>
+          <Warning>
+            Sans raccordement vérifié, la transmission n&apos;est pas possible. Le raccordement se
+            fait une seule fois, depuis tes paramètres.
+          </Warning>
+        </Section>
+
+        <Section title="Suivre le cycle de vie">
+          <p>
+            Une facture transmise passe par plusieurs états (déposée, reçue, encaissée, ou
+            refusée). Tu les suis directement sur la facture, et un refus est signalé
+            clairement : c&apos;est la seule situation qui demande une action de ta part.
+          </p>
+        </Section>
+      </>
+    ),
+  },
+
+  // ── 11. Factures reçues ────────────────────────────────────────
+  "factures-recues": {
+    title: "Recevoir les factures de tes fournisseurs",
+    description: "Depuis septembre 2026, toute entreprise doit pouvoir recevoir des factures électroniques. Voici comment ça marche dans Deviso.",
+    readingTime: 3,
+    cta: { label: "Ouvrir Factures reçues", href: "/factures-recues" },
+    content: (
+      <>
+        <Section title="Une obligation pour tout le monde">
+          <p>
+            Depuis le 1er septembre 2026, toute entreprise assujettie à la TVA doit pouvoir
+            <B> recevoir</B> une facture électronique via une plateforme agréée. Sans exception
+            de taille ni de régime : micro-entrepreneurs et franchise en base comprises.
+          </p>
+        </Section>
+
+        <Section title="Où les trouver">
+          <p>
+            Les factures que tes fournisseurs t&apos;adressent arrivent dans l&apos;onglet{" "}
+            <B>Factures reçues</B>, dès que ton entreprise est raccordée à la Plateforme Agréée.
+          </p>
+        </Section>
+
+        <Section title="Répondre à une facture">
+          <p>
+            Recevoir une facture et être d&apos;accord ne demande <B>aucune action</B> : rien
+            n&apos;expire, rien n&apos;avance tout seul. La seule action réelle sert au cas où
+            quelque chose cloche.
+          </p>
+          <Ul>
+            <Li><B>Mettre en attente :</B> le temps d&apos;obtenir une pièce ou une précision, réversible.</Li>
+            <Li><B>Contester :</B> signaler ton désaccord sans annuler la facture.</Li>
+            <Li><B>Refuser :</B> définitif, la facture est annulée auprès de l&apos;administration.</Li>
+          </Ul>
+          <Warning>
+            Le refus est terminal et oblige ton fournisseur à passer un avoir. Préfère
+            « mettre en attente » ou « contester » tant qu&apos;un accord reste possible.
+          </Warning>
+        </Section>
+      </>
+    ),
+  },
+
+  // ── 12. Déclarations / e-reporting ─────────────────────────────
+  "declarations-ereporting": {
+    title: "Tes déclarations au fisc (e-reporting)",
+    description: "Ce que la Plateforme Agréée déclare pour toi, et le peu qui reste à ta charge.",
+    readingTime: 3,
+    cta: { label: "Voir mes déclarations", href: "/declarations" },
+    content: (
+      <>
+        <Section title="Ce que c'est">
+          <p>
+            L&apos;e-reporting, c&apos;est la transmission au fisc des données de transaction et de
+            paiement. Pour tout ce que tu factures via la Plateforme Agréée, tu n&apos;as{" "}
+            <B>rien à envoyer</B> : transmettre la facture suffit, la plateforme s&apos;occupe du reste.
+          </p>
+        </Section>
+
+        <Section title="Où le suivre">
+          <p>
+            L&apos;onglet <B>Déclarations</B> te montre ce qui a été déclaré en ton nom et l&apos;état
+            de chaque envoi. Les déclarations partent selon un calendrier qui dépend de ta
+            périodicité de TVA.
+          </p>
+          <Tip>
+            La seule chose qui demande ton attention est un <B>refus</B> de l&apos;administration :
+            c&apos;est la seule alerte qui existe sur ce sujet, et elle est affichée clairement.
+          </Tip>
+        </Section>
+
+        <Section title="Ce qui reste à ta charge">
+          <p>
+            Une exception : tes <B>achats auprès de fournisseurs étrangers</B> se déclarent par
+            tes soins (leur facture ne passe pas par ta Plateforme Agréée). Deviso le gère aussi,
+            voir le guide dédié.
+          </p>
+        </Section>
+      </>
+    ),
+  },
+
+  // ── 13. Achats à l'étranger ────────────────────────────────────
+  "achats-etranger": {
+    title: "Déclarer tes achats à l'étranger",
+    description: "Quand tu achètes hors de France, l'acquisition se déclare par tes soins. Voici comment Deviso s'en occupe.",
+    readingTime: 3,
+    cta: { label: "Saisir un achat", href: "/achats-internationaux" },
+    content: (
+      <>
+        <Section title="L'obligation">
+          <p>
+            Si tu achètes un bien ou un service à un fournisseur établi hors de France, tu dois
+            déclarer cette acquisition toi-même (article 290-II du CGI). Sa facture ne passe pas
+            par ta Plateforme Agréée : elle t&apos;arrive par email, comme avant.
+          </p>
+        </Section>
+
+        <Section title="Saisir un achat">
+          <Steps>
+            <Step n={1} title="Achats à l'étranger → Saisir un achat">
+              <p>Renseigne le fournisseur, son pays et son numéro de TVA s&apos;il est connu.</p>
+            </Step>
+            <Step n={2} title="Recopie les montants">
+              <p>Date de la facture, montant HT, taux et montant de TVA, et la nature (biens ou services).</p>
+            </Step>
+            <Step n={3} title="Enregistre">
+              <p>L&apos;achat est conservé et sa déclaration d&apos;acquisition est préparée pour l&apos;administration.</p>
+            </Step>
+          </Steps>
+          <Tip>
+            <B>Autoliquidation :</B> pour un service intra-UE, la facture du fournisseur porte
+            souvent 0 de TVA (tu autoliquides). Dans ce cas, laisse le montant de TVA à 0.
+          </Tip>
+        </Section>
+      </>
+    ),
+  },
 };
 
 // ── Page ──────────────────────────────────────────────────────────

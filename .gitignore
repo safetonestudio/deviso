@@ -52,3 +52,4 @@ docs/reference/
 # Sondes locales (jamais commitees)
 scripts/tmp*
 .fuse_hidden*  
+build.log 

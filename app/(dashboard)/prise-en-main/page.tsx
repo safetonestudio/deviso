@@ -20,6 +20,10 @@ import {
   BarChart3,
   LayoutTemplate,
   Settings,
+  ShieldCheck,
+  Inbox,
+  Landmark,
+  Globe,
   type LucideIcon,
 } from "lucide-react";
 import { useGuidedTour } from "@/hooks/useGuidedTour";
@@ -41,6 +45,8 @@ const GUIDES: {
   title: string;
   desc: string;
   time: number;
+  /** Guide sur la reforme/PA : masque de la liste tant que REFORME_PUBLIEE est false. */
+  reforme?: boolean;
 }[] = [
   {
     slug: "premier-devis",
@@ -105,9 +111,49 @@ const GUIDES: {
     desc: "FEC, CSV, récap mensuel : tout ce dont ton comptable a besoin.",
     time: 3,
   },
+  {
+    slug: "conformite-plateforme-agreee",
+    icon: ShieldCheck,
+    title: "Réforme 2026 : émettre via la Plateforme Agréée",
+    desc: "Raccordement, transmission de tes factures et suivi du cycle de vie.",
+    time: 5,
+    reforme: true,
+  },
+  {
+    slug: "factures-recues",
+    icon: Inbox,
+    title: "Recevoir les factures de tes fournisseurs",
+    desc: "L'obligation de réception et comment répondre à une facture reçue.",
+    time: 3,
+    reforme: true,
+  },
+  {
+    slug: "declarations-ereporting",
+    icon: Landmark,
+    title: "Tes déclarations au fisc (e-reporting)",
+    desc: "Ce que la Plateforme Agréée déclare pour toi, et ce qui reste à ta charge.",
+    time: 3,
+    reforme: true,
+  },
+  {
+    slug: "achats-etranger",
+    icon: Globe,
+    title: "Déclarer tes achats à l'étranger",
+    desc: "L'obligation d'e-reporting d'acquisition, et comment la saisir.",
+    time: 3,
+    reforme: true,
+  },
 ];
 
 const STORAGE_KEY = "deviso_guides_read";
+
+/**
+ * Bascule de publication des guides « réforme / Plateforme Agréée ».
+ * Ces guides décrivent des flux pas encore actifs en prod pour les clients :
+ * ils restent masqués de la liste tant que ce drapeau est false. Passer à true
+ * le jour où Super PDP est activé en production.
+ */
+const REFORME_PUBLIEE = false;
 
 const PAGES: { icon: LucideIcon; label: string; desc: string }[] = [
   { icon: LayoutDashboard, label: "Tableau de bord", desc: "KPIs, alertes et vue d'ensemble de votre activité" },
@@ -135,6 +181,8 @@ export default function PriseEnMainPage() {
   if (!mounted) return null;
 
   const readCount = readSlugs.size;
+  // Guides visibles : les guides « réforme » restent masqués tant que la bascule est fermée.
+  const guides = GUIDES.filter((g) => REFORME_PUBLIEE || !g.reforme);
 
   return (
     <div className="max-w-2xl mx-auto">
@@ -186,7 +234,7 @@ export default function PriseEnMainPage() {
           <h2 className="font-semibold text-white text-base">Guides Deviso</h2>
           {readCount > 0 && (
             <span className="text-xs text-gray-500">
-              {readCount}/{GUIDES.length} lu{readCount > 1 ? "s" : ""}
+              {readCount}/{guides.length} lu{readCount > 1 ? "s" : ""}
             </span>
           )}
         </div>
@@ -195,7 +243,7 @@ export default function PriseEnMainPage() {
         </p>
 
         <div className="space-y-2">
-          {GUIDES.map((guide) => {
+          {guides.map((guide) => {
             const isRead = readSlugs.has(guide.slug);
             const Icon = guide.icon;
             return (
