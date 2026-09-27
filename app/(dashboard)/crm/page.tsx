@@ -227,7 +227,7 @@ export default function CRMPage() {
   // référence. Les formulaires (Paramètres, Paiements, Abonnement) restent
   // volontairement plus étroits : une colonne courte se saisit mieux.
   return (
-    <div className="space-y-8 max-w-5xl mx-auto">
+    <div className="space-y-8 max-w-7xl mx-auto">
       <GuidedTourBanner pageKey="crm" />
       <div className="flex items-center justify-between">
         <div>

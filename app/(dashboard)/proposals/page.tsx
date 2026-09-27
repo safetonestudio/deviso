@@ -43,7 +43,7 @@ export default async function ProposalsPage() {
   // référence. Cette page n'avait ni largeur ni centrage : elle s'étalait sur
   // toute la fenêtre pendant que ses voisines étaient contenues.
   return (
-    <div className="max-w-5xl mx-auto">
+    <div className="max-w-7xl mx-auto">
       <GuidedTourBanner pageKey="proposals" />
       <PageHeader
         title="Mes devis"

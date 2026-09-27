@@ -109,7 +109,7 @@ export default function StatsPage() {
 
   if (loading || !stats) {
     return (
-      <div className="space-y-6 max-w-5xl mx-auto animate-pulse">
+      <div className="space-y-6 max-w-7xl mx-auto animate-pulse">
         <div>
           <div className="h-6 w-32 bg-ds-elevated rounded mb-2" />
           <div className="h-4 w-48 bg-ds-elevated rounded" />
@@ -127,7 +127,7 @@ export default function StatsPage() {
   const maxCa = Math.max(...stats.monthly_ca.map((m) => m.ca), 1);
 
   return (
-    <div className="space-y-8 max-w-5xl mx-auto">
+    <div className="space-y-8 max-w-7xl mx-auto">
       <GuidedTourBanner pageKey="stats" />
       <div>
         <h1 className="text-3xl font-semibold text-white tracking-tight">Activité</h1>

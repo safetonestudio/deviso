@@ -95,7 +95,7 @@ export default async function Declarations() {
   const aTraiter = declarations.filter((d) => d.aTraiter).length;
 
   return (
-    <div className="max-w-5xl mx-auto">
+    <div className="max-w-7xl mx-auto">
       <div>
         <h1 className="text-2xl font-semibold text-white">Déclarations au fisc</h1>
         <p className="text-sm text-gray-400 mt-1">

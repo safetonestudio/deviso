@@ -62,7 +62,7 @@ export default async function FacturesRecues() {
   const liste = (factures ?? []) as Facture[];
 
   return (
-    <div className="max-w-5xl mx-auto">
+    <div className="max-w-7xl mx-auto">
       <div className="flex flex-wrap items-start justify-between gap-4 mb-2">
         <div>
           <h1 className="text-2xl font-semibold text-white">Factures reçues</h1>

@@ -273,7 +273,7 @@ export default function InvoicesPage() {
   const inputCls = "w-full bg-ds-elevated border border-ds-border rounded-lg px-3 py-2 text-sm text-white placeholder-gray-500 focus:outline-none focus:border-indigo-500";
 
   return (
-    <div className="max-w-5xl mx-auto">
+    <div className="max-w-7xl mx-auto">
       <GuidedTourBanner pageKey="invoices" />
       {/* Header */}
       <div className="flex flex-wrap items-start justify-between gap-3 mb-8">
