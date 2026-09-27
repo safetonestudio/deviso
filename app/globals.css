@@ -69,6 +69,29 @@
   background-attachment: scroll, scroll;
 }
 
+/* === Fond a relief DANS l'app (dashboard), clair et sombre ===
+   Meme base de relief que la landing (memes galets). Le mode clair utilise
+   une variante derivee EXACTEMENT de la meme image (site-bg-v2-light.webp),
+   remappee sur une tonalite claire. Les cartes de l'app restent opaques
+   (bg-ds-surface) : le relief n'apparait que dans les marges, pour ne pas
+   nuire a la lisibilite des donnees. */
+.bg-app-relief {
+  background-color: var(--ds-bg);
+  background-image:
+    linear-gradient(rgba(8,8,10,0.40), rgba(8,8,10,0.52)),
+    url('/site-bg-v2.webp');
+  background-repeat: no-repeat, repeat;
+  background-size: cover, 1456px auto;
+  background-position: center, top center;
+  background-attachment: scroll, scroll;
+}
+.light .bg-app-relief {
+  background-color: var(--ds-bg);
+  background-image:
+    linear-gradient(rgba(244,244,246,0.42), rgba(244,244,246,0.52)),
+    url('/site-bg-v2-light.webp');
+}
+
 /* === Cartes des pages publiques : verre depoli ===
    Translucides par defaut pour laisser transparaitre le fond a relief,
    opaques au survol. C'est l'etat prefere de Selim (retabli le 27/09/2026).
