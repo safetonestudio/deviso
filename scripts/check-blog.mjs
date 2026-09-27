@@ -400,7 +400,8 @@ const contenus = [
 const perimes = contenus.filter(({ src }) =>
   /250\s*€?\s*(par|\/)\s*(transaction|transmission)/i.test(src) ||
   /amende[^.]{0,60}\b250\s*€/i.test(src) ||
-  /1737\s*IV/i.test(src)
+  /1737\s*IV/i.test(src) ||
+  /\b15\s*€\s*(par|\/)\s*facture/i.test(src)
 );
 exige(
   "aucun montant d'amende d'avant le 1er septembre 2026",
@@ -417,6 +418,21 @@ exige(
   echeanceInventee.length === 0,
   `cette date n'existe pas. Grandes entreprises ET ETI relèvent du 1er septembre 2026, TPE, PME\n` +
     `     et micro-entreprises du 1er septembre 2027.\n     En cause : ${echeanceInventee.map((c) => c.chemin).join(", ")}`
+);
+
+// Seuils de franchise en base de TVA. La loi du 03/11/2025 a abrogé le seuil unique à 25 000 €
+// et rétabli les seuils antérieurs : services 37 500 / 41 250 €, ventes 85 000 / 93 500 €.
+// Les anciens 36 800 € (services) et 91 900 € (commerce) sont donc périmés partout.
+const seuilsPerimes = contenus.filter(
+  ({ src }) => /\b36[\s ]?800\b/.test(src) || /\b91[\s ]?900\b/.test(src)
+);
+exige(
+  "aucun ancien seuil de franchise en base de TVA (36 800 / 91 900)",
+  seuilsPerimes.length === 0,
+  `le seuil de franchise en services est 37 500 € (base) et 41 250 € (majoré), celui du commerce\n` +
+    `     85 000 € (base) et 93 500 € (majoré). Voir /blog/plafonds-micro-entreprise-2026.\n     En cause : ${seuilsPerimes
+      .map((c) => c.chemin)
+      .join(", ")}`
 );
 
 // ── 9. FAQ : ce qui est balisé est affiché ───────────────────────────────────
@@ -506,6 +522,14 @@ contreEpreuve(
 contreEpreuve(
   "l'échéance inventée est bien détectée",
   /1er\s+d[ée]cembre\s+2026/i.test("ETI au 1er décembre 2026, PME au 1er septembre 2027")
+);
+contreEpreuve(
+  "l'ancien montant d'émission (15 € par facture) est bien détecté",
+  /\b15\s*€\s*(par|\/)\s*facture/i.test("une amende de 15 € par facture, plafonnée à 15 000 €")
+);
+contreEpreuve(
+  "un ancien seuil de franchise en base de TVA est bien détecté",
+  /\b36[\s ]?800\b/.test("Seuil services : 36 800 €") && /\b91[\s ]?900\b/.test("Commerce : 91 900 € / an")
 );
 contreEpreuve(
   "une URL d'article en dur dans le sitemap serait bien détectée",

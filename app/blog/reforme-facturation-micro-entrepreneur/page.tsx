@@ -191,11 +191,11 @@ export default function ReformeFacturationMicroEntrepreneurPage() {
             <div className="mt-4 bg-ds-surface border border-ds-border rounded-xl p-4 text-sm">
               <div className="grid grid-cols-2 gap-2">
                 <div><span className="text-gray-500">Prestation de services BIC :</span></div>
-                <div className="text-white font-semibold">36 800 € / an</div>
+                <div className="text-white font-semibold">37 500 € / an</div>
                 <div><span className="text-gray-500">Activités libérales BNC :</span></div>
-                <div className="text-white font-semibold">36 800 € / an</div>
+                <div className="text-white font-semibold">37 500 € / an</div>
                 <div><span className="text-gray-500">Commerce / hébergement :</span></div>
-                <div className="text-white font-semibold">91 900 € / an</div>
+                <div className="text-white font-semibold">85 000 € / an</div>
               </div>
             </div>
             <p className="mt-3 text-sm">

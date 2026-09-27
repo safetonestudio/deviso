@@ -90,7 +90,7 @@ const CHECKLIST: ChecklistItem[] = [
     urgency: "medium",
     action: "Vérifier votre statut TVA actuel (franchise 293B CGI vs assujetti) et les seuils applicables à votre activité pour 2026-2027.",
     details: [
-      "Seuil franchise BNC : 36 800€ (2024-2026), vérifier la revalorisation 2027",
+      "Seuil de franchise TVA en services (BIC et BNC) : 37 500 € de base, 41 250 € en seuil majoré",
       "Si CA > seuil franchise → vous devenez assujetti TVA → e-invoicing plein",
       "Si franchise → e-reporting simplifié (modalités à préciser par décret)",
     ],

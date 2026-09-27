@@ -100,7 +100,7 @@ export const ARTICLES: Article[] = [
         "Calendrier, formats Factur-X, plateformes agréées, e-reporting, tout comprendre en 10 minutes.",
     },
     publieLe: "2026-07-10",
-    misAJourLe: "2026-09-11",
+    misAJourLe: "2026-09-27",
     dureeLecture: 10,
     carte: {
       titre: "Guide complet réforme facturation électronique 2026",
@@ -130,7 +130,7 @@ export const ARTICLES: Article[] = [
         "La franchise TVA ne vous exempte pas. Voici ce que vous devez savoir et faire avant septembre 2027.",
     },
     publieLe: "2026-07-10",
-    misAJourLe: "2026-09-11",
+    misAJourLe: "2026-09-27",
     dureeLecture: 8,
     carte: {
       titre: "Micro-entrepreneur : ce que la réforme change pour toi",
@@ -283,7 +283,7 @@ export const ARTICLES: Article[] = [
         "7 points à vérifier pour être en conformité avec la réforme de facturation électronique.",
     },
     publieLe: "2026-07-10",
-    misAJourLe: "2026-09-11",
+    misAJourLe: "2026-09-27",
     dureeLecture: 10,
     carte: {
       titre: "Checklist réforme 2026 : êtes-vous prêt ?",

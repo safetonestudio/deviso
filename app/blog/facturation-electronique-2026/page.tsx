@@ -304,7 +304,7 @@ export default function FacturationElectronique2026Page() {
               <strong className="text-white">Mythe fréquent : "Je suis en franchise de TVA, donc je ne suis pas concerné."</strong>
             </p>
             <p className="mt-3">
-              C&apos;est faux. La franchise en base de TVA (auto-entrepreneurs sous 36 800 € de CA, ou TPE sous seuil) est un régime fiscal. L&apos;obligation de facturation électronique est une obligation administrative distincte.
+              C&apos;est faux. La franchise en base de TVA (auto-entrepreneurs sous 37 500 € de CA, ou TPE sous seuil) est un régime fiscal. L&apos;obligation de facturation électronique est une obligation administrative distincte.
             </p>
             <p className="mt-3">
               Un freelance en franchise de TVA devra quand même :
@@ -367,7 +367,7 @@ export default function FacturationElectronique2026Page() {
                 },
                 {
                   q: "Est-ce que je risque une amende si je ne suis pas prêt en septembre 2027 ?",
-                  a: "La non-émission d'une facture électronique lorsqu'elle est obligatoire peut entraîner une amende de 15 € par facture, plafonnée à 15 000 € par an. La réglementation prévoit également des dispositions de tolérance pendant la période de démarrage.",
+                  a: "La non-émission d'une facture électronique lorsqu'elle est obligatoire peut entraîner une amende de 50 € par facture, plafonnée à 15 000 € par an. La réglementation prévoit également des dispositions de tolérance pendant la période de démarrage.",
                 },
                 {
                   q: "Deviso sera-t-il conforme en septembre 2027 ?",
