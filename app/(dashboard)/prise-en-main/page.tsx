@@ -194,7 +194,7 @@ export default function PriseEnMainPage() {
       </div>
 
       {/* ── Mode guidé ── */}
-      <section className="bg-ds-surface border border-ds-border rounded-xl p-6 mb-6">
+      <section className="carte-app rounded-xl p-6 mb-6">
         <div className="flex items-center justify-between gap-6">
           <div>
             <h2 className="font-semibold text-white text-base">Mode guidé</h2>
@@ -250,7 +250,7 @@ export default function PriseEnMainPage() {
               <Link
                 key={guide.slug}
                 href={`/prise-en-main/${guide.slug}`}
-                className="flex items-center gap-4 bg-ds-surface hover:bg-ds-elevated border border-ds-border hover:border-indigo-500/30 rounded-xl px-4 py-3.5 transition-all group"
+                className="flex items-center gap-4 carte-app hover:bg-ds-elevated hover:border-indigo-500/30 rounded-xl px-4 py-3.5 transition-all group"
               >
                 <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-ds-elevated border border-ds-border text-indigo-400 group-hover:border-indigo-500/30 transition-colors">
                   <Icon size={18} />
@@ -277,7 +277,7 @@ export default function PriseEnMainPage() {
           })}
         </div>
 
-        {readCount === GUIDES.length && (
+        {readCount >= guides.length && guides.length > 0 && (
           <div className="mt-4 flex items-center gap-2 bg-indigo-500/10 border border-indigo-500/20 rounded-lg px-3 py-2.5">
             <CheckCircle size={14} className="text-indigo-400 shrink-0" />
             <span className="text-sm text-indigo-300">Tu as lu tous les guides, tu maîtrises Deviso !</span>
@@ -286,7 +286,7 @@ export default function PriseEnMainPage() {
       </section>
 
       {/* ── Pages couvertes ── */}
-      <section className="bg-ds-surface border border-ds-border rounded-xl p-5">
+      <section className="carte-app rounded-xl p-5">
         <h2 className="font-semibold text-white mb-4 text-sm">Pages couvertes par le mode guidé</h2>
         <div className="space-y-3">
           {PAGES.map((page) => {

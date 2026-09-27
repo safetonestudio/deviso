@@ -114,6 +114,23 @@
   background-color: var(--ds-surface);
 }
 
+/* === Cartes DANS l'app posees sur le fond a relief ===
+   Le fond a relief a un ton moyen proche de var(--ds-surface) (#141414) :
+   une carte opaque simple ne se detache plus et parait translucide. On lui
+   donne une ombre portee (assombrit le relief juste autour de la carte) plus
+   une bordure nette : la carte se lit comme surelevee meme quand son fond a la
+   meme luminance que le relief, sans avoir a assombrir le relief lui-meme.
+   A appliquer aux cartes du dashboard qui reposent directement sur le relief
+   (banniere du mode guide, cartes de la prise en main). */
+.carte-app {
+  background-color: var(--ds-surface);
+  border: 1px solid var(--ds-border);
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.45), 0 0 0 1px rgba(255, 255, 255, 0.04);
+}
+.light .carte-app {
+  box-shadow: var(--ds-shadow-card);
+}
+
 .light {
   /* DS tokens : fond gris neutre doux, cartes blanches */
   --ds-bg:       #F4F4F6;
