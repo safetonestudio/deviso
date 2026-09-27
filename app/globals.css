@@ -69,6 +69,30 @@
   background-attachment: scroll, scroll;
 }
 
+/* === Cartes des pages publiques : verre depoli ===
+   Translucides par defaut pour laisser transparaitre le fond a relief,
+   opaques au survol. C'est l'etat prefere de Selim (retabli le 27/09/2026).
+   A n'appliquer qu'aux cartes posees sur .bg-site. */
+.carte-site {
+  background-color: rgba(20, 20, 20, 0.5);
+  -webkit-backdrop-filter: blur(8px);
+  backdrop-filter: blur(8px);
+  border: 1px solid rgba(255, 255, 255, 0.07);
+  transition: background-color 0.2s ease, border-color 0.2s ease;
+}
+.carte-site:hover {
+  background-color: var(--ds-surface);
+  border-color: rgba(255, 255, 255, 0.14);
+}
+/* Mode clair (au cas ou une page publique l'active un jour) */
+.light .carte-site {
+  background-color: rgba(255, 255, 255, 0.6);
+  border-color: rgba(0, 0, 0, 0.08);
+}
+.light .carte-site:hover {
+  background-color: var(--ds-surface);
+}
+
 .light {
   /* DS tokens : fond gris neutre doux, cartes blanches */
   --ds-bg:       #F4F4F6;

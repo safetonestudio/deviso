@@ -253,7 +253,7 @@ export default function LandingPage() {
           </div>
           <div className="grid md:grid-cols-3 gap-6">
             {steps.map((step) => (
-              <div key={step.num} className="bg-ds-surface border border-white/[0.07] rounded-xl p-6">
+              <div key={step.num} className="carte-site rounded-xl p-6">
                 <div className="text-xs font-semibold text-indigo-400 mb-3 tabular-nums">{step.num}</div>
                 <h3 className="text-base font-semibold text-white mb-2">{step.title}</h3>
                 <p className="text-gray-500 text-sm leading-relaxed">{step.desc}</p>
@@ -278,7 +278,7 @@ export default function LandingPage() {
             {features.map((f) => (
               <div
                 key={f.title}
-                className="bg-ds-surface border border-white/[0.07] rounded-xl p-5 hover:border-white/[0.14] transition-colors"
+                className="carte-site rounded-xl p-5"
               >
                 <div className="mb-3 text-indigo-400" aria-hidden="true"><f.icon size={20} /></div>
                 <h3 className="text-sm font-semibold text-white mb-1.5">{f.title}</h3>
@@ -299,7 +299,7 @@ export default function LandingPage() {
           il y en aura. */}
       <section className="py-20 px-4 sm:px-6">
         <div className="max-w-2xl mx-auto">
-          <div className="bg-ds-surface border border-white/[0.07] rounded-xl p-8 sm:p-10">
+          <div className="carte-site rounded-xl p-8 sm:p-10">
             <p className="text-indigo-400 text-xs font-semibold uppercase tracking-wide mb-4">Le mot du fondateur</p>
             <p className="text-gray-300 text-base leading-relaxed mb-4">
               J&apos;ai créé Deviso parce que je perdais trop de temps sur mes propres devis et
@@ -330,7 +330,7 @@ export default function LandingPage() {
       {/* ── CTA Final ── */}
       <section className="py-20 px-4 sm:px-6">
         <div className="max-w-2xl mx-auto">
-          <div className="bg-ds-surface border border-white/[0.07] rounded-xl p-12 text-center">
+          <div className="carte-site rounded-xl p-12 text-center">
             <h2 className="text-2xl sm:text-3xl font-semibold text-white mb-3 tracking-tight">
               Prêt à envoyer ton prochain devis en 30 secondes ?
             </h2>

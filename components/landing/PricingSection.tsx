@@ -110,7 +110,7 @@ export function PricingSection() {
           </div>
 
           {/* ── Pro ── */}
-          <div className="rounded-2xl p-7 border bg-ds-surface border-white/[0.09] flex flex-col">
+          <div className="rounded-2xl p-7 carte-site flex flex-col">
             <div className="mb-5">
               <div className="inline-block bg-violet-500/15 text-violet-300 text-xs font-semibold px-2.5 py-1 rounded-full mb-3">
                 Recommandé
