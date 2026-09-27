@@ -87,7 +87,7 @@ export function GuidedTourBanner({ pageKey }: GuidedTourBannerProps) {
   if (!content) return null;
 
   return (
-    <div className="bg-indigo-500/8 border border-indigo-500/25 rounded-xl px-4 py-4 mb-6 flex items-start gap-3">
+    <div className="bg-ds-surface border border-indigo-500/30 rounded-xl px-4 py-4 mb-6 flex items-start gap-3">
       <Lightbulb size={17} className="shrink-0 mt-0.5 text-indigo-400" />
       <div className="flex-1 min-w-0">
         <p className="font-semibold text-indigo-300 text-sm mb-1">{content.title}</p>

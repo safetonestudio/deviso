@@ -967,6 +967,9 @@ export default async function GuideArticlePage({
         Retour à la prise en main
       </Link>
 
+      {/* Panneau de lecture opaque : le texte ne doit pas etre pose sur le
+          fond a relief, il perdrait en lisibilite. */}
+      <article className="bg-ds-surface border border-ds-border rounded-2xl p-6 sm:p-8">
       {/* Header */}
       <div className="mb-10">
         <div className="flex items-center gap-2 mb-3">
@@ -998,6 +1001,8 @@ export default async function GuideArticlePage({
           </Link>
         </div>
       )}
+
+      </article>
 
       {/* Footer */}
       <div className="mt-10 pt-6 border-t border-ds-border flex items-center justify-between">
