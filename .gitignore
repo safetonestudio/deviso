@@ -53,3 +53,4 @@ docs/reference/
 scripts/tmp*
 .fuse_hidden*  
 build.log 
+_scratch/

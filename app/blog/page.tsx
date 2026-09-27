@@ -12,6 +12,7 @@ import {
   FileMinus, FilePlus, FileSignature, Globe, GraduationCap, HandCoins, HardHat,
   Hash, Laptop, Link2, ListChecks, Palette, PenLine, Plane, RadioTower, Receipt, ScrollText,
   ShieldCheck, Smartphone, Stamp, Target,
+  Ban, FileCode, Gavel,
   Zap, type LucideIcon,
 } from "lucide-react";
 
@@ -40,6 +41,9 @@ const ICONES: Record<string, LucideIcon> = {
   "e-reporting-freelance-2026": RadioTower,
   "checklist-reforme-facturation-2026": CircleCheck,
   "facturation-electronique-petit-chiffre-affaires": Coins,
+  "pas-de-plateforme-gratuite-etat": Ban,
+  "amendes-facturation-electronique-2026": Gavel,
+  "factur-x-explique-freelance": FileCode,
   // Documents
   "facture-acompte-freelance": FilePlus,
   "facture-avoir-erreur-facture": FileMinus,

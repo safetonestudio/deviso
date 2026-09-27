@@ -318,6 +318,87 @@ export const ARTICLES: Article[] = [
       "reforme-facturation-micro-entrepreneur",
     ],
   },
+  {
+    slug: "pas-de-plateforme-gratuite-etat",
+    categorie: "reforme",
+    titre: "Pas de plateforme gratuite de l'État",
+    description:
+      "Le portail public gratuit de facturation a été abandonné en 2024. Ce qu'il devait être, ce qu'il est devenu, et pourquoi tout le monde passe par un opérateur privé.",
+    h1: "Non, il n'y a pas de plateforme gratuite de l'État pour vos factures électroniques",
+    og: {
+      titre: "Non, il n'y a pas de plateforme gratuite de l'État",
+      description:
+        "Le portail public gratuit devait tout gérer. Il a été abandonné en 2024. Voici ce qui existe vraiment, et comment ne pas payer trop cher.",
+    },
+    publieLe: "2026-09-27",
+    misAJourLe: "2026-09-27",
+    dureeLecture: 7,
+    carte: {
+      titre: "Pas de plateforme gratuite de l'État",
+      resume:
+        "Le portail public gratuit a été abandonné en 2024. Ce qui existe vraiment, et comment ne pas trop payer",
+      badge: "Réforme 2026",
+    },
+    lies: [
+      "facturation-electronique-2026",
+      "choisir-plateforme-agreee-freelance",
+      "plateforme-agreee-ou-solution-compatible",
+    ],
+  },
+  {
+    slug: "amendes-facturation-electronique-2026",
+    categorie: "reforme",
+    titre: "Amendes de la facturation électronique 2026",
+    description:
+      "Les montants réels depuis le 1er septembre 2026 : 50 € par facture, 500 € par e-reporting, 500 € en réception, plafond 15 000 €. Ce que le web n'a pas encore mis à jour.",
+    h1: "Amendes de la facturation électronique : les montants réels depuis le 1er septembre 2026",
+    og: {
+      titre: "Amendes de la facturation électronique : les montants réels",
+      description:
+        "50 € par facture, 500 € par e-reporting, 500 € en réception, plafond 15 000 € par an. La loi de finances 2026 a tout changé, et presque personne ne l'a répercuté.",
+    },
+    publieLe: "2026-09-27",
+    misAJourLe: "2026-09-27",
+    dureeLecture: 8,
+    carte: {
+      titre: "Les amendes réelles depuis septembre 2026",
+      resume:
+        "50 € par facture, 500 € par e-reporting, plafond 15 000 € : les montants que la moitié du web ignore encore",
+      badge: "Réforme 2026",
+    },
+    lies: [
+      "facturation-electronique-2026",
+      "e-reporting-freelance-2026",
+      "checklist-reforme-facturation-2026",
+    ],
+  },
+  {
+    slug: "factur-x-explique-freelance",
+    categorie: "reforme",
+    titre: "Factur-X expliqué simplement",
+    description:
+      "Factur-X, c'est un PDF normal doublé d'un fichier que les logiciels savent lire. À quoi ça sert, ce que ça change pour vous, et pourquoi vous n'avez rien à faire à la main.",
+    h1: "Factur-X expliqué à quelqu'un qui n'est pas comptable",
+    og: {
+      titre: "Factur-X expliqué à quelqu'un qui n'est pas comptable",
+      description:
+        "Un PDF que l'humain lit et que la machine lit aussi. Ce qu'est vraiment Factur-X, sans jargon, et ce que ça change pour un freelance.",
+    },
+    publieLe: "2026-09-27",
+    misAJourLe: "2026-09-27",
+    dureeLecture: 7,
+    carte: {
+      titre: "Factur-X expliqué simplement",
+      resume:
+        "Un PDF que l'humain et la machine lisent tous les deux. Ce que c'est, sans jargon comptable",
+      badge: "Réforme 2026",
+    },
+    lies: [
+      "facturation-electronique-2026",
+      "plateforme-agreee-ou-solution-compatible",
+      "e-reporting-freelance-2026",
+    ],
+  },
   // ── Famille « documents » ──────────────────────────────────────────────────
   {
     slug: "facture-acompte-freelance",
