@@ -91,7 +91,7 @@ export default async function ProposalsPage() {
                     </span>
                   </div>
                   <div className="flex items-center justify-between">
-                    <div className="text-sm text-gray-400">{proposal.client_name || "—"}</div>
+                    <div className="text-sm text-gray-400">{proposal.client_name || "-"}</div>
                     <div className="text-sm font-semibold text-white">{fmt(proposal.total_ttc)}</div>
                   </div>
                   <div className="text-xs text-gray-500 mt-1.5">

@@ -56,7 +56,7 @@ export default function BillingPage() {
    *
    * Sans abonnement en cours, la route renvoie l'URL d'un tunnel de paiement.
    * Avec un abonnement en cours, elle a MODIFIÉ l'abonnement sur place et
-   * renvoie `changed` — il n'y a pas de page de paiement à ouvrir, et en
+   * renvoie `changed`, il n'y a pas de page de paiement à ouvrir, et en
    * ouvrir une créerait un second abonnement facturé en parallèle.
    */
   async function handleUpgrade(plan: "solo" | "pro", confirmerRetraitMembres = false) {
@@ -80,7 +80,7 @@ export default function BillingPage() {
         // La route distingue deux cas : abonnement à jour, où le plan est déjà
         // actif, et abonnement en retard de paiement, où la formule est bien
         // changée mais l'accès attend le règlement. Le message vient d'elle
-        // dans le second cas — l'écran ne doit pas promettre un accès que la
+        // dans le second cas, l'écran ne doit pas promettre un accès que la
         // base n'a pas accordé.
         setChangeOk(
           data.message ??
@@ -232,12 +232,12 @@ export default function BillingPage() {
           )}
         </div>
 
-        {/* Bandeau trial — incite à ajouter une carte avant expiration */}
+        {/* Bandeau trial, incite à ajouter une carte avant expiration */}
         {isTrialing && (
           <div className="mt-4 bg-amber-500/10 border border-amber-500/20 rounded-xl px-4 py-3 flex items-center justify-between gap-4">
             <p className="text-sm text-amber-200">
               <span className="font-semibold inline-flex items-center gap-1.5"><Hourglass size={16} className="shrink-0" />Essai en cours.</span>{" "}
-              Ajoutez une carte maintenant pour continuer automatiquement à la fin des 14 jours — sans interruption.
+              Ajoutez une carte maintenant pour continuer automatiquement à la fin des 14 jours, sans interruption.
             </p>
             <button
               onClick={handlePortal}
@@ -254,7 +254,7 @@ export default function BillingPage() {
         Ce bloc ne s'affichait que pour `plan !== "pro"`, et la carte Solo
         seulement pour `plan === "free"`. Un abonné Pro n'avait donc aucun
         moyen de redescendre en Solo, et personne ne pouvait basculer entre
-        mensuel et annuel — le portail Stripe a `subscription_update`
+        mensuel et annuel, le portail Stripe a `subscription_update`
         désactivé, il n'offrait pas d'issue non plus. Les deux formules sont
         désormais toujours proposées ; c'est la route qui décide s'il s'agit
         d'une souscription ou d'une modification.
@@ -286,7 +286,7 @@ export default function BillingPage() {
             </div>
           </div>
 
-          {/* Bandeau essai — seulement pour qui n'a pas encore d'abonnement */}
+          {/* Bandeau essai, seulement pour qui n'a pas encore d'abonnement */}
           {plan === "free" ? (
             <div className="bg-indigo-500/10 border border-indigo-500/20 rounded-xl px-4 py-3 mb-4 flex items-center gap-3">
               <Gift size={18} className="shrink-0 text-indigo-400" />
@@ -299,7 +299,7 @@ export default function BillingPage() {
               <Gift size={18} className="shrink-0 text-gray-500" />
               <p className="text-sm text-gray-400">
                 Le changement prend effet <span className="font-semibold text-gray-300">immédiatement</span>.
-                L&apos;écart est calculé au prorata et ajusté sur votre prochaine facture — rien n&apos;est
+                L&apos;écart est calculé au prorata et ajusté sur votre prochaine facture, rien n&apos;est
                 prélevé maintenant{isTrialing ? ", et vos jours d'essai restants sont conservés" : ""}.
               </p>
             </div>

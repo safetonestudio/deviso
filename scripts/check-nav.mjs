@@ -5,7 +5,7 @@
  *
  * Première version : elle comparait deux listes écrites à la main et vérifiait
  * la **présence** de chaque entrée. Elle est passée au vert alors que la
- * navigation mobile était réorganisée autrement — « Paiements clients » sous
+ * navigation mobile était réorganisée autrement, « Paiements clients » sous
  * *Facturation* au lieu de *Gestion*, « Activité » sous *Clients*, la section
  * *Gestion* purement absente. J'ai annoncé « les douze autres entrées
  * concordent » sur la foi de ce vert. C'était faux : j'avais posé au contrôle
@@ -14,7 +14,7 @@
  *
  * Version actuelle : la navigation vit dans `lib/navigation.ts`, un seul
  * endroit, et les deux composants la consomment. Le contrôle ne compare donc
- * plus deux listes — il vérifie qu'il n'en existe **qu'une**. C'est plus fort :
+ * plus deux listes, il vérifie qu'il n'en existe **qu'une**. C'est plus fort :
  * on ne surveille pas une divergence, on la rend impossible.
  *
  * Ce qu'il ne prouve toujours pas : que le menu s'affiche correctement, qu'il
@@ -87,5 +87,5 @@ if (echecs > 0) {
   process.exit(1);
 }
 console.log(
-  `✓ Navigation — ${chemins.length} entrées, une seule source, consommée par les deux supports`
+  `✓ Navigation, ${chemins.length} entrées, une seule source, consommée par les deux supports`
 );

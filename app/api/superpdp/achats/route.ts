@@ -11,7 +11,7 @@ import {
 } from "@/lib/superpdp-achats";
 
 /**
- * Achats internationaux — e-reporting des acquisitions auprès de fournisseurs
+ * Achats internationaux, e-reporting des acquisitions auprès de fournisseurs
  * étrangers. Réservé au titulaire de l'espace (comme les pages « Factures
  * reçues » et « Déclarations » qui l'affichent) : c'est une obligation
  * déclarative de l'entreprise, pas un acte délégable à un membre.

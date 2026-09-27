@@ -5,14 +5,14 @@
  * (promesses.mjs), plus les droits de lecture des deux rôles (two-roles.mjs).
  *
  * Ce que personne ne testait, et que ce script ajoute : le refus par le client
- * et surtout **les garde-fous** — ce qui se passe quand un devis est traité
+ * et surtout **les garde-fous**, ce qui se passe quand un devis est traité
  * deux fois. C'est là que se logent les défauts coûteux, comme un devis signé
- * qu'on peut re-signer. (Les autorisations des membres — qui a le droit
- * d'envoyer — sont couvertes par permissions.mjs.)
+ * qu'on peut re-signer. (Les autorisations des membres, qui a le droit
+ * d'envoyer, sont couvertes par permissions.mjs.)
  *
  * Choix assumé : ce script n'exerce **aucun envoi d'email réel**. Les routes de
  * signature et de refus notifient toutes le propriétaire par
- * Resend, à l'adresse de son profil — sur un compte de démonstration, c'est une
+ * Resend, à l'adresse de son profil, sur un compte de démonstration, c'est une
  * adresse fictive, donc un rejet dur qui abîme la réputation d'envoi du domaine
  * pour les vrais clients. On s'arrête donc aux contrôles qui répondent AVANT
  * l'envoi, ce qui couvre l'essentiel de la logique. Voir la section « non
@@ -60,7 +60,7 @@ const creerDevis = (session, titre, extra = {}) =>
 // ── Vue publique par jeton de partage ────────────────────────────────────────
 console.log("── Vue publique par jeton de partage ─────────────────────────");
 
-const devisPublic = await creerDevis(owner, "Devis — vue publique");
+const devisPublic = await creerDevis(owner, "Devis, vue publique");
 const jeton = devisPublic.body?.proposal?.share_token;
 verifier("un devis créé porte un jeton de partage", Boolean(jeton), `HTTP ${devisPublic.status}`);
 
@@ -85,7 +85,7 @@ verifier("un jeton inconnu renvoie 404, pas une erreur serveur", jetonInconnu.st
 console.log("");
 console.log("── Passage automatique en « vu » ─────────────────────────────");
 
-const devisVu = await creerDevis(owner, "Devis — passage en vu");
+const devisVu = await creerDevis(owner, "Devis, passage en vu");
 const idVu = devisVu.body?.proposal?.id;
 const jetonVu = devisVu.body?.proposal?.share_token;
 await owner.call(`/api/proposals/${idVu}`, { method: "PATCH", body: doc({ status: "sent" }) });

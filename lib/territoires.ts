@@ -4,7 +4,7 @@
  * Fichier volontairement SANS AUCUN import : il est chargé tel quel par les
  * traversées de `scripts/e2e/`, qui tournent sous node sans le résolveur
  * d'alias de Next. C'est la même contrainte, et la même raison, que pour
- * `lib/superpdp-fermeture.ts` — une règle qu'on veut pouvoir éprouver sans
+ * `lib/superpdp-fermeture.ts`, une règle qu'on veut pouvoir éprouver sans
  * réseau ne doit pas traîner derrière elle la moitié de l'application.
  *
  * Monaco est traité comme la France au regard de la TVA (art. 302 F du CGI).
@@ -23,7 +23,7 @@ export const CODES_UE = new Set([
 
 /**
  * Un pays absent n'est pas une information : c'est une absence, et on la traite
- * comme la France — le comportement le moins surprenant pour un logiciel
+ * comme la France, le comportement le moins surprenant pour un logiciel
  * français, et celui que `parseAddress` applique déjà par défaut.
  */
 export function estFrance(code: string | null | undefined): boolean {

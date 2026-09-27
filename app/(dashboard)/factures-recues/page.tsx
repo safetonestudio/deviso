@@ -34,7 +34,7 @@ export default async function FacturesRecues() {
   // Quelle entreprise regarde-t-on, au juste.
   //
   // Le 29/08/2026, Selim a cherché pendant deux heures des factures reçues qui
-  // existaient bel et bien — sur son compte. Son navigateur était connecté au
+  // existaient bel et bien, sur son compte. Son navigateur était connecté au
   // compte fournisseur, dont la boîte est vide par construction. Une page qui
   // montre le contenu d'un compte doit dire de quel compte il s'agit.
   const profil = await getWorkspaceProfile<{ company_name: string | null }>(
@@ -101,7 +101,7 @@ export default async function FacturesRecues() {
 
       {!raccorde ? (
         // Sans raccordement, l'absence de factures ne veut pas dire qu'on n'en a
-        // pas reçu — elle veut dire qu'on ne peut pas en recevoir.
+        // pas reçu, elle veut dire qu'on ne peut pas en recevoir.
         <section className="bg-ds-surface border border-ds-border rounded-xl p-6 mt-6 text-center">
           <p className="text-white font-medium mb-1">Vous n&apos;êtes pas encore raccordé</p>
           <p className="text-sm text-gray-400 mb-4 max-w-md mx-auto">
@@ -135,7 +135,7 @@ export default async function FacturesRecues() {
           <p className="text-sm text-gray-400 max-w-md mx-auto">
             Vos fournisseurs peuvent vous adresser leurs factures à l&apos;adresse{" "}
             <span className="font-mono text-gray-400 select-all">
-              {raccordement?.directory_address ?? "—"}
+              {raccordement?.directory_address ?? "-"}
             </span>
             .
           </p>

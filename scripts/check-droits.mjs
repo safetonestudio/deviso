@@ -1,6 +1,6 @@
 // Garde statique du modèle d'autorisations (voir CLAUDE.md, « Membres d'équipe »).
 //
-// Il ne teste pas le comportement — c'est le rôle des e2e — mais il empêche la
+// Il ne teste pas le comportement, c'est le rôle des e2e, mais il empêche la
 // régression la plus probable : qu'un refactor déplace ou supprime une garde
 // sans que personne ne le voie. Chaque route sensible DOIT porter sa garde.
 // Si tu ajoutes une route qui accomplit un des cinq actes, ou un acte
@@ -90,7 +90,7 @@ for (const mort of ["proposals/[id]/approve", "proposals/[id]/reject", "proposal
 
 console.log("");
 if (echecs > 0) {
-  console.log(`check:droits — ${echecs} échec(s). Le modèle d'autorisations n'est pas intègre.`);
+  console.log(`check:droits, ${echecs} échec(s). Le modèle d'autorisations n'est pas intègre.`);
   process.exit(1);
 }
-console.log("check:droits — modèle d'autorisations intègre : 5 actes gardés, titulaire-seul gardé, ancien circuit absent.");
+console.log("check:droits, modèle d'autorisations intègre : 5 actes gardés, titulaire-seul gardé, ancien circuit absent.");

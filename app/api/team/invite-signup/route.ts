@@ -44,7 +44,7 @@ export async function POST(req: NextRequest) {
   // Sans ce contrôle, le jeton d'invitation devenait une fabrique de comptes
   // vérifiés sous n'importe quelle adresse : `email_confirm: true` ci-dessous
   // marque l'e-mail comme prouvé sans qu'aucune preuve n'ait été apportée.
-  // Quelqu'un qui reçoit — ou intercepte, ou se voit transférer — une seule
+  // Quelqu'un qui reçoit, ou intercepte, ou se voit transférer, une seule
   // invitation pouvait ouvrir un compte au nom de `compta@grand-client.fr` :
   // la vraie personne ne pouvait plus s'inscrire, et selon la configuration
   // Supabase un futur lien magique sur cette adresse atterrissait chez lui.

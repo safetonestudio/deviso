@@ -156,7 +156,7 @@ export async function POST(
 
   // Aucun dépôt chez un tiers depuis un compte de démonstration. Voir
   // lib/garde-demo.ts : PISTE et la Plateforme Agréée sont en production, et le
-  // jeu de données de démonstration contient de vrais destinataires — dont une
+  // jeu de données de démonstration contient de vrais destinataires, dont une
   // facture B2G adressée au SIREN d'une commune réelle.
   if (await estCompteDemo(user.id)) {
     return NextResponse.json({ error: "DEMO", message: MESSAGE_DEMO_TIERS }, { status: 403 });
@@ -189,7 +189,7 @@ export async function POST(
     )
     // Le compte fournisseur Chorus Pro de l'ESPACE, pas celui du collaborateur.
     // Sur .eq("id", user.id), un membre déposait la facture B2G de l'entreprise
-    // sous SON identifiant fournisseur — l'administration paie alors sur son
+    // sous SON identifiant fournisseur, l'administration paie alors sur son
     // compte. La déposition reste réglée par la permission deposer_chorus.
     .eq("id", workspaceId)
     .single();
@@ -359,7 +359,7 @@ export async function POST(
   // Prise atomique juste avant le dépôt. La garde-lecture `chorus_pro_ref`
   // plus haut ne suffit pas : deux appels concurrents (double-clic, deux
   // onglets, réessai réseau) la franchissent tous deux et déposent DEUX fois
-  // la même facture B2G chez la collectivité, sous le compte AIFE de l'espace —
+  // la même facture B2G chez la collectivité, sous le compte AIFE de l'espace -
   // refus « DOUBLON », il faut un avoir. On remplace donc la lecture par un
   // verrou que la base arbitre, comme l'émission Super PDP : le premier obtient
   // sa ligne, les suivants zéro. Le verrou se périme en 10 min pour qu'un

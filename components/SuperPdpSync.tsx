@@ -6,7 +6,7 @@ import { useRouter } from "next/navigation";
 /**
  * Déclenche une synchronisation des factures à l'ouverture de l'application.
  *
- * Rendu uniquement pour les espaces réellement raccordés — la vérification se
+ * Rendu uniquement pour les espaces réellement raccordés, la vérification se
  * fait côté serveur dans le gabarit du tableau de bord. Le monter pour tout le
  * monde ajouterait un aller-retour inutile à chaque chargement de page pour
  * l'immense majorité des comptes, qui ne sont pas raccordés.

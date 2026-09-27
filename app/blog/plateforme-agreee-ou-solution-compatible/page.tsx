@@ -23,7 +23,7 @@ const FAQ = [
   },
   {
     q: "Comment savoir si mon éditeur est agréé ou simplement compatible ?",
-    a: "Demandez-le, et vérifiez. La liste des plateformes agréées est publiée par la DGFiP sur impots.gouv.fr et téléchargeable. Si votre éditeur ne figure pas dessus, il est au mieux une solution compatible — ce qui est parfaitement valable, à condition qu'il puisse nommer la plateforme agréée à laquelle il est adossé.",
+    a: "Demandez-le, et vérifiez. La liste des plateformes agréées est publiée par la DGFiP sur impots.gouv.fr et téléchargeable. Si votre éditeur ne figure pas dessus, il est au mieux une solution compatible, ce qui est parfaitement valable, à condition qu'il puisse nommer la plateforme agréée à laquelle il est adossé.",
   },
   {
     q: "Est-ce moins bien d'utiliser une solution compatible ?",
@@ -140,7 +140,7 @@ export default function Page() {
                 <li className="flex gap-2">
                   <span className="text-indigo-400 shrink-0">→</span>
                   <span>
-                    Donc la question à poser à votre éditeur n&apos;est pas « êtes-vous conforme ? » — tout le
+                    Donc la question à poser à votre éditeur n&apos;est pas « êtes-vous conforme ? », tout le
                     monde répond oui. C&apos;est{" "}
                     <strong className="text-white">« êtes-vous agréé, ou adossé à qui ? »</strong>
                   </span>
@@ -227,7 +227,7 @@ export default function Page() {
                   <p className="text-gray-300">
                     Votre capacité à vérifier. Si votre éditeur est agréé, vous le trouvez sur la liste
                     officielle. S&apos;il est une solution compatible, il doit pouvoir nommer sa plateforme
-                    agréée — et vous vérifiez celle-là. Un éditeur qui ne répond ni à l&apos;une ni à
+                    agréée, et vous vérifiez celle-là. Un éditeur qui ne répond ni à l&apos;une ni à
                     l&apos;autre de ces questions est le seul cas réellement problématique.
                   </p>
                 </div>
@@ -290,7 +290,7 @@ export default function Page() {
                     contredisent : le nombre de plateformes agréées y est annoncé entre 137 et 166 selon les
                     pages, et certains attribuent à la même plateforme un statut définitif sur un site et « sous
                     réserve » sur un autre. Ils ne peuvent pas tous avoir raison. Pour une question de
-                    conformité, allez à la source — c&apos;est deux minutes.
+                    conformité, allez à la source, c&apos;est deux minutes.
                   </p>
                 </div>
               </div>
@@ -314,7 +314,7 @@ export default function Page() {
                   {
                     q: "Si vous êtes une solution compatible, à quelle plateforme agréée êtes-vous adossé ?",
                     pourquoi:
-                      "Le nom, pas une formule. Sans nom, il n'y a rien à vérifier — et donc rien à croire.",
+                      "Le nom, pas une formule. Sans nom, il n'y a rien à vérifier, et donc rien à croire.",
                   },
                   {
                     q: "Cette plateforme figure-t-elle sur la liste de la DGFiP, et sur laquelle des deux ?",
@@ -384,7 +384,7 @@ export default function Page() {
                     rel="noopener noreferrer"
                     className="text-indigo-400 hover:text-indigo-300 transition-colors"
                   >
-                    impots.gouv.fr — Facturation électronique et plateformes agréées
+                    impots.gouv.fr, Facturation électronique et plateformes agréées
                   </a>{" "}
                   (définitions de la plateforme agréée et de la solution compatible, durée de trois ans)
                 </li>
@@ -395,7 +395,7 @@ export default function Page() {
                     rel="noopener noreferrer"
                     className="text-indigo-400 hover:text-indigo-300 transition-colors"
                   >
-                    impots.gouv.fr — Je consulte la liste des plateformes agréées
+                    impots.gouv.fr, Je consulte la liste des plateformes agréées
                   </a>{" "}
                   (les deux listes, définitive et sous réserve)
                 </li>

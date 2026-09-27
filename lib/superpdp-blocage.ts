@@ -6,7 +6,7 @@ import { estCloture } from "./superpdp-statuts.ts";
  * Pourquoi ce fichier existe. Chacun des défauts trouvés le 30/08/2026 avait le
  * même profil : l'échec ne levait rien. Une facture acceptée par l'API mais
  * jamais acheminée reste « transmise » pour toujours, et personne ne l'apprend
- * — ni au moment de l'envoi, ni après. Sous la réforme, une facture émise et
+ *, ni au moment de l'envoi, ni après. Sous la réforme, une facture émise et
  * jamais remise est une facture qui, pour l'administration, n'existe pas : le
  * jour où l'utilisateur s'en aperçoit est le jour du contrôle.
  *
@@ -24,7 +24,7 @@ import { estCloture } from "./superpdp-statuts.ts";
  *   - les **statuts d'attente d'un humain** (`fr:202`, `fr:203`, `fr:204`,
  *     `fr:205`, `fr:211`…) décrivent une facture correctement remise, dont le
  *     destinataire n'a pas encore fait sa part. Y rester des semaines est
- *     normal — c'est le délai de paiement. Les signaler serait du bruit, et le
+ *     normal, c'est le délai de paiement. Les signaler serait du bruit, et le
  *     bruit fait ignorer les vraies alertes.
  *
  * Un statut clôturant (encaissée, refusée, rejetée, irrecevable) n'est jamais
@@ -44,7 +44,7 @@ const STATUTS_TRANSPORT = new Set([
 ]);
 
 /**
- * Un jour. Généreux : l'acheminement nominal prend quelques secondes — sept
+ * Un jour. Généreux : l'acheminement nominal prend quelques secondes, sept
  * factures semées le 29/08 sont arrivées en quatre secondes. Un seuil serré
  * attraperait des lenteurs passagères et apprendrait à l'utilisateur à ignorer
  * l'alerte, ce qui est pire que pas d'alerte du tout.
@@ -77,7 +77,7 @@ function heuresDepuis(date: string | null | undefined, maintenant: number): numb
  * Cette facture est-elle bloquée ? `null` si tout va bien.
  *
  * Pure et sans dépendance serveur, pour que la liste des factures, la tâche
- * horaire et les tests jugent avec la même règle — même raison que
+ * horaire et les tests jugent avec la même règle, même raison que
  * `manquesPourEmission` : deux copies d'une règle finissent par diverger.
  *
  * `maintenant` est injectable pour que les tests n'aient pas à attendre.
@@ -111,7 +111,7 @@ export function factureBloquee(
         raison: "Transmise, mais la Plateforme Agréée n'a renvoyé aucun statut",
         remede:
           "Vérifiez votre raccordement dans Paramètres. Si le problème persiste, " +
-          "contactez la Plateforme Agréée en citant cette facture — ne la retransmettez pas.",
+          "contactez la Plateforme Agréée en citant cette facture, ne la retransmettez pas.",
         heures: Math.floor(h),
       };
     }
@@ -122,7 +122,7 @@ export function factureBloquee(
   //
   // `source: "aucune"` n'est posé que pour le B2C (voir la route d'émission) :
   // un particulier n'a pas d'adresse de facturation électronique, et une
-  // facture B2B sans adresse résoluble n'est jamais partie — la route la
+  // facture B2B sans adresse résoluble n'est jamais partie, la route la
   // bloque avant. Ces factures restent donc à `api:uploaded` **définitivement
   // et normalement** : la plateforme n'a rien à acheminer, elle les retient
   // pour l'e-reporting.
@@ -131,7 +131,7 @@ export function factureBloquee(
   // `api:uploaded`, aucune n'ayant jamais progressé, là où les factures avec
   // adresse atteignent `fr:202` ou `fr:212` en quelques minutes. Sans cette
   // exception, le détecteur aurait signalé comme bloquée chaque facture à un
-  // particulier, pour toujours — c'est-à-dire exactement le défaut contre
+  // particulier, pour toujours, c'est-à-dire exactement le défaut contre
   // lequel ce module est écrit : une alerte qu'on apprend à ignorer.
   if (facture.superpdp_adresse_source === "aucune") return null;
 
@@ -145,12 +145,12 @@ export function factureBloquee(
       const adresseDeduite = facture.superpdp_adresse_source === "siren";
       return {
         raison: adresseDeduite
-          ? "Jamais remise au destinataire — l'adresse avait été déduite de son SIREN"
+          ? "Jamais remise au destinataire, l'adresse avait été déduite de son SIREN"
           : "Bloquée en cours d'acheminement",
         remede: adresseDeduite
           ? "Demandez à votre client son adresse de facturation électronique, " +
             "renseignez-la sur sa fiche, puis retransmettez la facture."
-          : "Contactez la Plateforme Agréée en citant cette facture — ne la retransmettez pas.",
+          : "Contactez la Plateforme Agréée en citant cette facture, ne la retransmettez pas.",
         heures: Math.floor(h),
       };
     }
@@ -159,7 +159,7 @@ export function factureBloquee(
   return null;
 }
 
-/** « depuis 3 jours », « depuis 8 heures » — pour l'affichage. */
+/** « depuis 3 jours », « depuis 8 heures », pour l'affichage. */
 export function depuis(heures: number): string {
   if (heures < 48) return `depuis ${heures} heure${heures > 1 ? "s" : ""}`;
   return `depuis ${Math.floor(heures / 24)} jours`;

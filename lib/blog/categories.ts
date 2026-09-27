@@ -4,7 +4,7 @@ import type { LucideIcon } from "lucide-react";
  * Les catégories du blog, déclarées une fois.
  *
  * Pourquoi ce fichier existe. L'index `/blog` affichait deux menus dépliants
- * écrits à la main — un pour la réforme, un pour les métiers — plus des cartes
+ * écrits à la main, un pour la réforme, un pour les métiers, plus des cartes
  * à plat pour tout le reste. Trois présentations différentes, dont deux codées
  * en dur avec leur titre, leur compteur et leur couleur. Ajouter une catégorie
  * voulait dire écrire un troisième bloc de JSX, et ajouter un article à une
@@ -12,7 +12,7 @@ import type { LucideIcon } from "lucide-react";
  *
  * Désormais une catégorie est une ligne de données. L'index en dérive un menu
  * dépliant, le fil d'Ariane son libellé, et `check-blog` vérifie qu'aucun
- * article ne référence une catégorie qui n'existe pas — et qu'aucune catégorie
+ * article ne référence une catégorie qui n'existe pas, et qu'aucune catégorie
  * déclarée ne reste vide, parce qu'un menu vide est un bug visible.
  *
  * L'ordre du tableau est l'ordre d'affichage. Il n'est pas alphabétique : il va
@@ -21,12 +21,12 @@ import type { LucideIcon } from "lucide-react";
 
 /**
  * Les identifiants de catégorie. Le type se déduit du tableau plus bas, donc
- * ajouter une catégorie, c'est ajouter une entrée — pas maintenir une union à
+ * ajouter une catégorie, c'est ajouter une entrée, pas maintenir une union à
  * part qui finirait par diverger.
  */
 export type Categorie = (typeof CATEGORIES)[number]["id"];
 
-/** La forme d'une catégorie, hors identifiant — pour éviter une référence circulaire. */
+/** La forme d'une catégorie, hors identifiant, pour éviter une référence circulaire. */
 type FormeCategorie = {
   id: string;
   /** Titre du menu dépliant sur `/blog`. */

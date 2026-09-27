@@ -48,7 +48,7 @@ export default async function DashboardPage() {
   //
   // Ces deux requêtes s'en remettaient entièrement à la politique de sécurité
   // de la base : côté application, rien ne disait à quel espace elles se
-  // limitent. C'est un pari sur une configuration qui vit ailleurs — et le
+  // limitent. C'est un pari sur une configuration qui vit ailleurs, et le
   // fichier `supabase/schema.sql` versionné dans ce dépôt contient justement
   // une ancienne policy qui, réappliquée, ouvrirait la lecture des devis de
   // tous les comptes. Le jour où elle reviendrait, cet écran afficherait les
@@ -109,7 +109,7 @@ export default async function DashboardPage() {
 
   // ── KPI 3 : Encaissé vs Facturé ce mois ──────────────────────────────────
   // Même règle que pour l'encours, et pour la même raison : un avoir se
-  // retranche. Elle était appliquée au KPI 1 et oubliée ici — dans le même
+  // retranche. Elle était appliquée au KPI 1 et oubliée ici, dans le même
   // fichier, dix lignes plus bas. Une facture encaissée puis annulée par un
   // avoir affichait « encaissé ce mois » au double du montant réel.
   const signeCa = (i: { invoice_type?: string | null }) => (i.invoice_type === "avoir" ? -1 : 1);
@@ -117,7 +117,7 @@ export default async function DashboardPage() {
   // ── Récap du chiffre d'affaires encaissé, mois par mois ──────────────────
   //
   // Le composant existait déjà, complet et soigné, mais n'était monté nulle
-  // part — alors que le tour du produit le promet noir sur blanc (« le widget
+  // part, alors que le tour du produit le promet noir sur blanc (« le widget
   // URSSAF te donne ton CA trimestriel et annuel, prêt à reporter dans ta
   // déclaration »). Promettre une fonctionnalité qu'on n'affiche pas est un
   // défaut à part entière : l'utilisateur la cherche, ne la trouve pas, et
@@ -145,7 +145,7 @@ export default async function DashboardPage() {
   }
 
   // Les échéances URSSAF affichées par le widget sont celles du
-  // micro-entrepreneur. On ne les montre que lorsqu'on peut l'affirmer — la
+  // micro-entrepreneur. On ne les montre que lorsqu'on peut l'affirmer, la
   // franchise en base est le seul indice fiable dont on dispose, faute de
   // champ « forme juridique ». Le récapitulatif, lui, s'affiche pour tous :
   // savoir ce qu'on a encaissé par trimestre n'a pas de régime.
@@ -172,7 +172,7 @@ export default async function DashboardPage() {
       return {
         type: "overdue_invoice" as const,
         id: i.id,
-        label: `${i.invoice_number} · ${i.client_name || "—"}`,
+        label: `${i.invoice_number} · ${i.client_name || "-"}`,
         sublabel: `En retard de ${days}j · ${fmt(i.total_ttc)}`,
         urgency: "high" as const,
         href: `/invoices/${i.id}`,
@@ -361,7 +361,7 @@ export default async function DashboardPage() {
                         {proposal.title}
                       </div>
                       <div className="text-xs text-gray-500 mt-0.5">
-                        {proposal.client_name || "—"}
+                        {proposal.client_name || "-"}
                         {" · "}
                         <span className={age >= 7 && ["sent", "viewed"].includes(proposal.status) ? "text-amber-500" : ""}>
                           {age === 0 ? "aujourd'hui" : `il y a ${age}j`}
@@ -418,8 +418,8 @@ export default async function DashboardPage() {
                     >
                       <div className="flex-1 min-w-0">
                         <div className="font-medium text-white text-sm truncate group-hover:text-gray-100 transition-colors">
-                          {invoice.invoice_number || "—"}
-                          <span className="text-gray-500 font-normal ml-2 text-xs">{invoice.client_name || "—"}</span>
+                          {invoice.invoice_number || "-"}
+                          <span className="text-gray-500 font-normal ml-2 text-xs">{invoice.client_name || "-"}</span>
                         </div>
                         <div className={`text-xs mt-0.5 ${isOverdue ? "text-red-400 font-medium" : "text-gray-500"}`}>
                           {isOverdue

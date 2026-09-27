@@ -5,7 +5,7 @@
  * Stripe dans le compte de production quand un visiteur de la démo cliquait
  * « Gérer mon abonnement ». Le tunnel de paiement, lui, avait le contrôle. Le
  * défaut n'était donc pas une règle absente mais une règle appliquée à un
- * endroit sur deux — exactement le genre de trou qu'une relecture ne voit pas,
+ * endroit sur deux, exactement le genre de trou qu'une relecture ne voit pas,
  * puisque chaque fichier lu isolément semble correct.
  *
  * Ce script énumère tout appel qui **écrit** dans Stripe et exige que le fichier
@@ -50,7 +50,7 @@ for (const chemin of [...fichiers("app"), ...fichiers("lib")]) {
   vus.push({ chemin, appels: appels.length, protege });
 
   const marque = protege ? "  ok  " : " ÉCHEC";
-  console.log(`${marque}  ${chemin} — ${appels.length} écriture(s) Stripe`);
+  console.log(`${marque}  ${chemin}, ${appels.length} écriture(s) Stripe`);
   if (!protege) {
     echecs++;
     console.log(`        aucun refus des comptes de démonstration dans ce fichier.`);

@@ -11,7 +11,7 @@ const SECTIONS: Section[] = [
     titre: "La question que personne ne pose à voix haute",
     paragraphes: [
       "Sur les forums de micro-entrepreneurs, la même inquiétude revient, formulée presque toujours de la même façon : <em>je fais 800 € de chiffre d&rsquo;affaires dans l&rsquo;année, on me parle d&rsquo;un abonnement à 15 ou 20 € par mois, est-ce que je ne devrais pas simplement arrêter ?</em>",
-      "C&rsquo;est une question légitime, et la réponse est non — mais pas parce qu&rsquo;il faudrait « faire un effort ». Parce que le calcul sur lequel repose l&rsquo;inquiétude est faux : une grande partie des très petites activités n&rsquo;a, en réalité, <strong>aucun abonnement à payer</strong>, et certaines ne sont même pas concernées par l&rsquo;obligation d&rsquo;émettre.",
+      "C&rsquo;est une question légitime, et la réponse est non, mais pas parce qu&rsquo;il faudrait « faire un effort ». Parce que le calcul sur lequel repose l&rsquo;inquiétude est faux : une grande partie des très petites activités n&rsquo;a, en réalité, <strong>aucun abonnement à payer</strong>, et certaines ne sont même pas concernées par l&rsquo;obligation d&rsquo;émettre.",
       "Le problème est que la réforme est presque toujours présentée en bloc. Découpée correctement, elle se réduit à deux ou trois questions simples.",
     ],
   },
@@ -27,9 +27,9 @@ const SECTIONS: Section[] = [
     titre: "Première question : qui sont vos clients ?",
     paragraphes: [
       "C&rsquo;est la question décisive, et elle passe avant toute considération de prix.",
-      "L&rsquo;obligation de facture électronique ne concerne que les opérations <strong>entre entreprises établies en France</strong>. Si vous ne facturez que des <strong>particuliers</strong> — cours, coaching, artisanat vendu sur un marché ou en ligne à des consommateurs —, vous n&rsquo;aurez jamais à émettre de facture électronique pour ces ventes. Vous continuerez à remettre un document ordinaire à vos clients.",
-      "Ce qui vous concernera à partir de septembre 2027, dans ce cas, c&rsquo;est l&rsquo;<strong>e-reporting</strong> : la transmission des données de ces transactions — pas la facture elle-même, pas son format, pas son canal. Une contrainte réelle, mais d&rsquo;une nature différente, et que la plupart des outils de facturation traiteront sans que vous ayez à y penser.",
-      "Si en revanche vous facturez ne serait-ce qu&rsquo;un seul client professionnel français, vous entrez dans l&rsquo;obligation d&rsquo;émission — pour ces factures-là — à partir du 1<sup>er</sup> septembre 2027.",
+      "L&rsquo;obligation de facture électronique ne concerne que les opérations <strong>entre entreprises établies en France</strong>. Si vous ne facturez que des <strong>particuliers</strong>, cours, coaching, artisanat vendu sur un marché ou en ligne à des consommateurs, vous n&rsquo;aurez jamais à émettre de facture électronique pour ces ventes. Vous continuerez à remettre un document ordinaire à vos clients.",
+      "Ce qui vous concernera à partir de septembre 2027, dans ce cas, c&rsquo;est l&rsquo;<strong>e-reporting</strong> : la transmission des données de ces transactions, pas la facture elle-même, pas son format, pas son canal. Une contrainte réelle, mais d&rsquo;une nature différente, et que la plupart des outils de facturation traiteront sans que vous ayez à y penser.",
+      "Si en revanche vous facturez ne serait-ce qu&rsquo;un seul client professionnel français, vous entrez dans l&rsquo;obligation d&rsquo;émission, pour ces factures-là, à partir du 1<sup>er</sup> septembre 2027.",
     ],
   },
   {
@@ -64,7 +64,7 @@ const SECTIONS: Section[] = [
     type: "texte",
     titre: "Deuxième question : combien ça coûte réellement ?",
     paragraphes: [
-      "Il faut d&rsquo;abord écarter une fausse piste, parce qu&rsquo;elle circule encore beaucoup : <strong>le portail public de facturation ne fournira pas de service gratuit d&rsquo;émission et de réception</strong>. Ce rôle a été abandonné en octobre 2024 ; le portail public conserve des fonctions d&rsquo;annuaire et de concentration des données, mais ce n&rsquo;est plus lui qui transportera vos factures. Les articles plus anciens qui promettaient « une solution gratuite de l&rsquo;État » sont périmés — et ils sont nombreux.",
+      "Il faut d&rsquo;abord écarter une fausse piste, parce qu&rsquo;elle circule encore beaucoup : <strong>le portail public de facturation ne fournira pas de service gratuit d&rsquo;émission et de réception</strong>. Ce rôle a été abandonné en octobre 2024 ; le portail public conserve des fonctions d&rsquo;annuaire et de concentration des données, mais ce n&rsquo;est plus lui qui transportera vos factures. Les articles plus anciens qui promettaient « une solution gratuite de l&rsquo;État » sont périmés, et ils sont nombreux.",
       "Le transport passe donc par une <strong>plateforme agréée</strong>. Mais « plateforme agréée » ne veut pas dire « abonnement mensuel ». Le marché s&rsquo;est structuré autour de trois niveaux, et les très petites activités relèvent des deux premiers.",
     ],
   },
@@ -86,7 +86,7 @@ const SECTIONS: Section[] = [
       {
         titre: "Abonnement complet : pour qui en a l&rsquo;usage",
         texte:
-          "Les 15 à 30 € par mois correspondent à un outil de gestion complet — devis, relances, suivi des encaissements, pilotage des seuils. C&rsquo;est cher pour 800 € de CA annuel, et ça n&rsquo;a rien d&rsquo;obligatoire. Ne payez pour un outil de gestion que si vous voulez un outil de gestion.",
+          "Les 15 à 30 € par mois correspondent à un outil de gestion complet, devis, relances, suivi des encaissements, pilotage des seuils. C&rsquo;est cher pour 800 € de CA annuel, et ça n&rsquo;a rien d&rsquo;obligatoire. Ne payez pour un outil de gestion que si vous voulez un outil de gestion.",
       },
     ],
   },
@@ -122,7 +122,7 @@ const SECTIONS: Section[] = [
       {
         titre: "Répondez à la question « clients pros ou particuliers ? »",
         texte:
-          "Si la réponse est « aucun client professionnel français », vous n&rsquo;avez pas d&rsquo;émission électronique à préparer — seulement l&rsquo;e-reporting de septembre 2027.",
+          "Si la réponse est « aucun client professionnel français », vous n&rsquo;avez pas d&rsquo;émission électronique à préparer, seulement l&rsquo;e-reporting de septembre 2027.",
       },
       {
         titre: "Si vous avez des clients pros : comparez sur le volume",
@@ -141,7 +141,7 @@ const SECTIONS: Section[] = [
     titre: "Et la tolérance annoncée ?",
     paragraphes: [
       "Le guide de démarrage publié par la DGFiP en juillet 2026 évoque une tolérance pour les difficultés techniques documentées. Il faut lire cette formulation pour ce qu&rsquo;elle est : l&rsquo;administration précise expressément qu&rsquo;il ne s&rsquo;agit <strong>ni d&rsquo;un report, ni d&rsquo;une suspension</strong> de la réforme.",
-      "Autrement dit, une tolérance s&rsquo;adresse à qui a entrepris la démarche et a rencontré un obstacle — pas à qui n&rsquo;a rien commencé. Le raisonnement « ça va encore être repoussé » a déjà coûté cher à beaucoup d&rsquo;entreprises sur les échéances précédentes de cette réforme.",
+      "Autrement dit, une tolérance s&rsquo;adresse à qui a entrepris la démarche et a rencontré un obstacle, pas à qui n&rsquo;a rien commencé. Le raisonnement « ça va encore être repoussé » a déjà coûté cher à beaucoup d&rsquo;entreprises sur les échéances précédentes de cette réforme.",
     ],
   },
   {
@@ -149,7 +149,7 @@ const SECTIONS: Section[] = [
     ton: "succes",
     titre: "Ce qu&rsquo;il faut retenir si vous hésitez à continuer votre activité",
     texte:
-      "Une très petite activité n&rsquo;a pas à payer un abonnement mensuel pour être en règle. Elle a besoin d&rsquo;un <strong>canal de réception</strong>, souvent gratuit, et — seulement si elle facture des professionnels français — d&rsquo;un moyen d&rsquo;émettre au format requis d&rsquo;ici septembre 2027, pour un coût proportionné à son volume. Arrêter une activité rentable à cause d&rsquo;un abonnement qu&rsquo;on n&rsquo;est pas obligé de prendre serait la seule vraie mauvaise décision.",
+      "Une très petite activité n&rsquo;a pas à payer un abonnement mensuel pour être en règle. Elle a besoin d&rsquo;un <strong>canal de réception</strong>, souvent gratuit, et, seulement si elle facture des professionnels français, d&rsquo;un moyen d&rsquo;émettre au format requis d&rsquo;ici septembre 2027, pour un coût proportionné à son volume. Arrêter une activité rentable à cause d&rsquo;un abonnement qu&rsquo;on n&rsquo;est pas obligé de prendre serait la seule vraie mauvaise décision.",
   },
 ];
 
@@ -186,17 +186,17 @@ const FAQ = [
 
 const SOURCES: Source[] = [
   {
-    libelle: "DGFiP — facturation électronique, calendrier et obligations",
+    libelle: "DGFiP, facturation électronique, calendrier et obligations",
     url: "https://www.impots.gouv.fr/facturation-electronique",
     precision: "réception au 1er septembre 2026, émission des TPE/PME au 1er septembre 2027",
   },
   {
-    libelle: "KPMG Avocats — le schéma initialement prévu est modifié",
+    libelle: "KPMG Avocats, le schéma initialement prévu est modifié",
     url: "https://kpmg.com/av/fr/avocats/eclairages/2024/10/facturation-electronique-le-schema-initialement-prevu-est-modifie.html",
     precision: "abandon du service gratuit d'émission et de réception du portail public",
   },
   {
-    libelle: "Légifrance — loi n° 2026-103 du 19 février 2026 de finances pour 2026",
+    libelle: "Légifrance, loi n° 2026-103 du 19 février 2026 de finances pour 2026",
     url: "https://www.legifrance.gouv.fr/jorf/id/JORFTEXT000052100000",
     precision: "article 123 : montants des sanctions",
   },
@@ -206,10 +206,10 @@ export default function Page() {
   return (
     <ArticleLong
       slug={SLUG}
-      chapeau="« Je fais 800 € par an, on me parle de 20 € par mois, est-ce que je ne devrais pas arrêter ? » La question revient sans cesse, et elle repose sur un calcul faux. Beaucoup de très petites activités n&rsquo;ont aucun abonnement à payer — et certaines ne sont pas concernées par l&rsquo;émission."
+      chapeau="« Je fais 800 € par an, on me parle de 20 € par mois, est-ce que je ne devrais pas arrêter ? » La question revient sans cesse, et elle repose sur un calcul faux. Beaucoup de très petites activités n&rsquo;ont aucun abonnement à payer, et certaines ne sont pas concernées par l&rsquo;émission."
       enBref={[
         "<strong>Recevoir</strong> : obligatoire pour tous depuis le 1<sup>er</sup> septembre 2026. <strong>Émettre</strong> : septembre 2027 pour les TPE et micro-entreprises.",
-        "Si vous ne facturez <strong>que des particuliers</strong>, vous n&rsquo;aurez jamais de facture électronique à émettre — seulement de l&rsquo;e-reporting.",
+        "Si vous ne facturez <strong>que des particuliers</strong>, vous n&rsquo;aurez jamais de facture électronique à émettre, seulement de l&rsquo;e-reporting.",
         "Le portail public de l&rsquo;État <strong>ne fournit pas</strong> de service gratuit d&rsquo;émission et de réception : ce rôle a été abandonné en 2024.",
         "La <strong>réception est gratuite</strong> chez plusieurs plateformes agréées, et de petits volumes d&rsquo;émission se facturent à l&rsquo;unité.",
         "Un seul manquement (50 € par facture, 500 € par défaut de réception) coûte plus cher qu&rsquo;une année d&rsquo;outil adapté.",

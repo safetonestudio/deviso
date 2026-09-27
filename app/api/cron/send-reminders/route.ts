@@ -69,7 +69,7 @@ export async function GET(req: NextRequest) {
     // qu'il paie l'argent qu'on lui doit est le message le plus gênant que ce
     // produit puisse envoyer, et il partirait tout seul, la nuit, sans que
     // personne l'ait demandé. Un avoir porte une échéance au jour de son
-    // émission — il serait donc « en retard » dès le lendemain.
+    // émission, il serait donc « en retard » dès le lendemain.
     .neq("invoice_type", "avoir")
     .lt("due_date", now)
     .lt("reminder_count", 10)
@@ -117,8 +117,8 @@ export async function GET(req: NextRequest) {
     if (!emailError) {
       // Mise à jour CONDITIONNELLE, et on lit ce qu'elle a touché.
       //
-      // Le retour de cet `update` était ignoré. S'il échouait — coupure
-      // passagère de la base, délai dépassé — `reminder_count` ne bougeait
+      // Le retour de cet `update` était ignoré. S'il échouait, coupure
+      // passagère de la base, délai dépassé, `reminder_count` ne bougeait
       // pas, `isDue` redevenait vrai le lendemain, et la même relance
       // repartait. Tous les jours, indéfiniment : le garde-fou
       // `.lt("reminder_count", 10)` ne se déclenche jamais sur un compteur qui
@@ -126,7 +126,7 @@ export async function GET(req: NextRequest) {
       // freelance.
       //
       // `.eq("reminder_count", …)` ferme en plus la course entre deux
-      // exécutions du cron — Vercel garantit « au moins une fois ».
+      // exécutions du cron, Vercel garantit « au moins une fois ».
       const { data: majFaite, error: majErreur } = await supabase
         .from("invoices")
         .update({ last_reminder_sent_at: now, reminder_count: reminderNum })

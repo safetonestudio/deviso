@@ -9,7 +9,7 @@ const nomPays = (code: string) =>
   PAYS_FACTURATION.find((p) => p.code === code)?.nom ?? code;
 
 const jour = (v: string | null) =>
-  v ? new Date(v).toLocaleDateString("fr-FR", { day: "2-digit", month: "short", year: "numeric" }) : "—";
+  v ? new Date(v).toLocaleDateString("fr-FR", { day: "2-digit", month: "short", year: "numeric" }) : "-";
 
 const montant = (n: number, devise: string) =>
   new Intl.NumberFormat("fr-FR", { style: "currency", currency: devise || "EUR" }).format(n);

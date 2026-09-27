@@ -4,14 +4,14 @@ import { superpdpFetch, SuperPdpNotConnected, SuperPdpSessionPending } from "@/l
  * Régime de TVA déclaré à la Plateforme Agréée.
  *
  * Pourquoi ça existe. Super PDP construit les déclarations d'e-reporting selon
- * un calendrier qui dépend du régime de TVA de l'entreprise — leur documentation
+ * un calendrier qui dépend du régime de TVA de l'entreprise, leur documentation
  * est explicite : « Pour faire fonctionner l'e-reporting, il faut paramétrer le
  * régime de TVA au niveau de son entreprise. » Tant que ce champ est vide chez
  * eux, **toute facture B2C est refusée** avec « Le régime de TVA est invalide ».
  *
  * Ce réglage n'existe que par l'API : il n'apparaît ni dans l'interface de Super
  * PDP, ni nulle part ailleurs. Sans cette fonction, aucun client raccordé
- * n'aurait jamais pu facturer un particulier — et rien ne le lui aurait
+ * n'aurait jamais pu facturer un particulier, et rien ne le lui aurait
  * expliqué.
  *
  * ⚠️ Deux notions à ne pas confondre, elles ne se recouvrent pas :
@@ -28,15 +28,15 @@ import { superpdpFetch, SuperPdpNotConnected, SuperPdpSessionPending } from "@/l
 export type VatRegime = "monthly" | "quarterly" | "simplified" | "vat_exemption";
 
 export const PERIODICITES_TVA = [
-  { value: "monthly", label: "Mensuelle — régime réel normal" },
-  { value: "quarterly", label: "Trimestrielle — régime réel normal" },
-  { value: "simplified", label: "Annuelle — régime simplifié (RSI)" },
+  { value: "monthly", label: "Mensuelle, régime réel normal" },
+  { value: "quarterly", label: "Trimestrielle, régime réel normal" },
+  { value: "simplified", label: "Annuelle, régime simplifié (RSI)" },
 ] as const;
 
 /**
  * Traduit le profil Deviso en régime Super PDP.
  *
- * Renvoie `null` quand l'information manque — un assujetti qui n'a pas encore
+ * Renvoie `null` quand l'information manque, un assujetti qui n'a pas encore
  * renseigné sa périodicité. On ne devine pas : envoyer `monthly` par défaut
  * ferait déclarer au mauvais rythme, ce qui est une faute déclarative, pas un
  * détail de configuration.
@@ -56,7 +56,7 @@ export function regimeSuperPdp(profil: {
  *
  * Tous ces champs sont marqués `required` par le schéma `company` : ce n'est
  * pas de l'information optionnelle, c'est ce que la plateforme retient de nous.
- * `env` en particulier dit `sandbox` ou `production` — comparer sa valeur à
+ * `env` en particulier dit `sandbox` ou `production`, comparer sa valeur à
  * notre propre variable d'environnement est un contrôle gratuit contre le
  * scénario où l'on croit tester alors qu'on émet pour de vrai.
  */

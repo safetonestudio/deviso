@@ -4,7 +4,7 @@
  *
  * Pourquoi un script séparé de `emails.mjs`. Celui-ci envoie de VRAIS emails :
  * c'est ce qu'il faut pour juger un rendu, une pièce jointe ou un champ « De »,
- * mais c'est pour cette raison qu'il ne peut pas entrer dans `npm run verify` —
+ * mais c'est pour cette raison qu'il ne peut pas entrer dans `npm run verify` -
  * une suite qui tourne plusieurs fois par jour ne peut pas arroser une boîte de
  * réception, ni brûler le quota d'envoi.
  *
@@ -12,7 +12,7 @@
  * rendus AVANT l'appel à Resend : authentification, appartenance du document à
  * l'espace de travail, données manquantes, état incompatible. C'est là que se
  * trouve la logique qui casse en silence, et c'est précisément la partie que
- * `emails.mjs` ne teste pas — lui vérifie le chemin heureux.
+ * `emails.mjs` ne teste pas, lui vérifie le chemin heureux.
  *
  * Le contrôle le plus important est ailleurs qu'il n'y paraît : un membre
  * d'équipe doit atteindre les documents de l'espace. Onze routes filtraient
@@ -38,7 +38,7 @@ const member = await openSession("membre");
 await linkAsTeamMember(owner, member);
 
 // L'envoi (facture et devis) est désormais soumis à autorisation. Ce script
-// teste l'ACCÈS du membre aux documents de l'espace — un 400 « email manquant »
+// teste l'ACCÈS du membre aux documents de l'espace, un 400 « email manquant »
 // prouve qu'il a franchi la recherche du document, un 404 signalerait le retour
 // de la panne d'antan. On accorde donc au membre les droits d'envoi, pour que
 // la garde d'autorisation ne masque pas ce qu'on veut mesurer. (Le refus par
@@ -105,7 +105,7 @@ for (const [chemin, intitule] of [
     headers: { "content-type": "application/json" },
     body: doc({ to: "intrus@example.fr", shareUrl: "https://getdeviso.fr/p/x" }),
   });
-  verifier(`${intitule} — un anonyme est refusé`, r.status === 401, `HTTP ${r.status}`);
+  verifier(`${intitule}, un anonyme est refusé`, r.status === 401, `HTTP ${r.status}`);
 }
 
 // ── Document inexistant ──────────────────────────────────────────────────────
@@ -122,7 +122,7 @@ for (const [chemin, intitule] of [
     method: "POST",
     body: doc({ to: "client@example.fr", shareUrl: "https://getdeviso.fr/p/x" }),
   });
-  verifier(`${intitule} — document inexistant : 404`, r.status === 404, `HTTP ${r.status} ${doc(r.body).slice(0, 120)}`);
+  verifier(`${intitule}, document inexistant : 404`, r.status === 404, `HTTP ${r.status} ${doc(r.body).slice(0, 120)}`);
 }
 
 // ── Email client manquant ────────────────────────────────────────────────────

@@ -4,7 +4,7 @@ import { SITE } from "./registre";
  * Qui écrit. Une seule déclaration, partagée par les pages et le balisage.
  *
  * Pourquoi ce fichier existe. Les dix-neuf articles étaient signés
- * `author: { "@type": "Organization", name: "Deviso" }` — c'est-à-dire par une
+ * `author: { "@type": "Organization", name: "Deviso" }`, c'est-à-dire par une
  * marque que personne ne connaît encore. Sur des sujets fiscaux et
  * réglementaires, Google valorise un auteur identifiable, et un lecteur aussi :
  * « Deviso vous explique les spécifications de la DGFiP » n'a pas le même poids
@@ -25,7 +25,7 @@ export const AUTEUR = {
 
   /** Une phrase, pour le bas d'un article. */
   resume:
-    "Développeur indépendant en Gironde, fondateur de Deviso. J'ai lu les spécifications externes de la DGFiP pour écrire le code qui s'y conforme — c'est de là que vient tout ce que vous lisez ici.",
+    "Développeur indépendant en Gironde, fondateur de Deviso. J'ai lu les spécifications externes de la DGFiP pour écrire le code qui s'y conforme, c'est de là que vient tout ce que vous lisez ici.",
 
   /**
    * Ce qui rend la signature légitime. Chaque ligne est vérifiable : elle décrit
@@ -34,7 +34,7 @@ export const AUTEUR = {
    */
   legitimite: [
     "J'ai construit Deviso seul, y compris l'intégration à une plateforme agréée, le cycle de vie des factures et la génération Factur-X.",
-    "J'ai travaillé sur les spécifications externes de la DGFiP — les tableaux de statuts, les motifs de refus, les règles métier — parce qu'il fallait les implémenter, pas les résumer.",
+    "J'ai travaillé sur les spécifications externes de la DGFiP, les tableaux de statuts, les motifs de refus, les règles métier, parce qu'il fallait les implémenter, pas les résumer.",
     "Je suis moi-même micro-entrepreneur en France. Les obligations dont je parle sont aussi les miennes.",
     "Quand je ne sais pas, je l'écris. Plusieurs pages de ce site disent explicitement ce qui reste incertain dans les textes, et renvoient à la source officielle.",
   ],

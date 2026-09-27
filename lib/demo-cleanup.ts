@@ -19,7 +19,7 @@ export const DEMO_IDLE_MS = 10 * 60 * 1000;
  *
  * Deux critères, pour deux situations différentes :
  *
- * 1. **Inactivité** — plus de battement de cœur depuis `DEMO_IDLE_MS`. C'est le
+ * 1. **Inactivité**, plus de battement de cœur depuis `DEMO_IDLE_MS`. C'est le
  *    cas de la fermeture brutale : onglet fermé, navigateur planté, appareil
  *    éteint. Aucun code ne s'exécute alors côté client, donc on ne peut pas
  *    être prévenu du départ ; on l'infère de l'absence de preuve de présence.
@@ -27,13 +27,13 @@ export const DEMO_IDLE_MS = 10 * 60 * 1000;
  *    change simplement d'onglet sur mobile : supprimer sur ce signal reviendrait
  *    à effacer le compte de quelqu'un en train de s'en servir.
  *
- * 2. **Âge absolu** — plus de `DEMO_MAX_AGE_MS`, même si la session est vivante.
+ * 2. **Âge absolu**, plus de `DEMO_MAX_AGE_MS`, même si la session est vivante.
  *    Un onglet laissé ouvert des jours ne doit pas immobiliser un compte.
  *
  * Pourquoi ce n'est pas qu'un cron : le plan Vercel Hobby limite les tâches
  * planifiées à une exécution par jour. On appelle donc aussi cette fonction au
  * lancement de chaque démo **et** à chaque battement de cœur : tant qu'une
- * session vit, elle fait le ménage des autres. Reste un angle mort assumé — la
+ * session vit, elle fait le ménage des autres. Reste un angle mort assumé, la
  * toute dernière démo fermée sans visiteur derrière attend le cron quotidien.
  *
  * `maxDeletions` borne la latence : au-delà, le reste part au prochain passage.

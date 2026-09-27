@@ -153,7 +153,7 @@ function TotalsBox({ proposal, color, p }: { proposal: Proposal; color: string; 
           </div>
         ) : (
           <div className={`flex justify-between text-sm ${p.text400} italic`}>
-            <span>TVA non applicable (art. 293 B CGI)</span><span>—</span>
+            <span>TVA non applicable (art. 293 B CGI)</span><span>-</span>
           </div>
         )}
         <div className={`flex justify-between text-base font-semibold ${p.text900} border-t ${p.border} pt-1.5`}>
@@ -236,7 +236,7 @@ function BrandingFooter({ p }: { p: ReturnType<typeof palette> }) {
       <p className={`text-xs ${p.footerText}`}>
         Devis créé avec{" "}
         <a href="https://getdeviso.fr" className={`${p.footerLink} hover:underline`}>Deviso</a>
-        {" "}— l&apos;outil de devis IA pour freelances
+        {" "}, l&apos;outil de devis IA pour freelances
       </p>
     </div>
   );

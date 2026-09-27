@@ -24,13 +24,13 @@ import { envoyerEncaissementPdp } from "@/lib/superpdp-encaissement";
  *   - `has_after` indique qu'il reste des pages.
  *
  * D'où le curseur `last_invoice_id`. Filtrer sur une date de création à la
- * place semblerait équivalent et ne l'est pas — deux écritures concurrentes
+ * place semblerait équivalent et ne l'est pas, deux écritures concurrentes
  * peuvent produire des dates dans le désordre, et on perdrait des factures sans
  * jamais le voir. C'est le piège que leur documentation prend soin de nommer.
  *
  * Deux détails qui ont dicté la forme du code, constatés sur une vraie facture
  * reçue le 12/08/2026 :
- *   1. la liste est **maigre** — elle ne contient ni montant ni nom de vendeur.
+ *   1. la liste est **maigre**, elle ne contient ni montant ni nom de vendeur.
  *      Il faut un appel de détail par facture ;
  *   2. elle contient les deux sens. `direction` vaut `in` ou `out` ; on garde
  *      les deux, l'affichage filtrera.
@@ -40,7 +40,7 @@ import { envoyerEncaissementPdp } from "@/lib/superpdp-encaissement";
  * Le statut qui fait foi, parmi une liste d'événements.
  *
  * ⚠️ Ne pas simplifier en `events.at(-1)`. La spécification s'ouvre sur cet
- * avertissement : « **this is not a state machine** — This property is an array
+ * avertissement : « **this is not a state machine**, This property is an array
  * of statuses. There is no formal state machine governing the transitions. »
  *
  * L'énumération mélange trois familles : les `fr:*` (cycle de vie officiel
@@ -54,7 +54,7 @@ import { envoyerEncaissementPdp } from "@/lib/superpdp-encaissement";
  * Conséquences si on se trompe, toutes constatées en revue le 29/08/2026 : la
  * pastille affiche un code brut, la facture refusée repasse « en retard » en
  * rouge parce qu'elle n'est plus reconnue comme clôturée, et l'écran du
- * fournisseur cesse d'afficher « Refusée par le client » — c'est-à-dire
+ * fournisseur cesse d'afficher « Refusée par le client », c'est-à-dire
  * l'information qui l'oblige à passer un avoir.
  *
  * On retient donc, dans l'ordre : le dernier statut **clôturant** s'il y en a
@@ -76,7 +76,7 @@ export function statutQuiFaitFoi(
   //
   // L'accusé de réception du destinataire arrive APRÈS l'encaissement, avec un
   // identifiant supérieur. Prendre le dernier `fr:*` affiche donc « Reçue par
-  // la plateforme » sur une facture encaissée — et, plus grave que l'affichage,
+  // la plateforme » sur une facture encaissée, et, plus grave que l'affichage,
   // `estCloture` cesse de la reconnaître comme terminée : elle repasse « en
   // retard » en rouge, et la détection de blocage recommence à la surveiller.
   //
@@ -122,7 +122,7 @@ type FactureListe = {
   created_at?: string;
   direction: "in" | "out";
   processing_rule?: string;
-  /** Présents seulement si `expand[]` a été demandé — voir la boucle. */
+  /** Présents seulement si `expand[]` a été demandé, voir la boucle. */
   en_invoice?: Record<string, unknown> | null;
   events?: { status_code?: string }[] | null;
 };
@@ -182,7 +182,7 @@ export async function synchroniserFactures(userId: string): Promise<ResultatSync
     // Rattrapage de l'adresse de réception.
     //
     // Elle est renseignée au moment du raccordement, mais tout raccordement
-    // établi avant l'ajout de ce champ l'a laissée vide — et l'écran, qui
+    // établi avant l'ajout de ce champ l'a laissée vide, et l'écran, qui
     // n'affiche le bloc que si l'adresse existe, ne montrait alors rien du
     // tout. Une migration ne pouvait pas la remplir : l'information est chez
     // Super PDP, pas chez nous. On la récupère donc à la première occasion.
@@ -206,7 +206,7 @@ export async function synchroniserFactures(userId: string): Promise<ResultatSync
       // `expand[]` et `limit` : cent un appels HTTP deviennent un seul.
       //
       // Le commentaire de tête de ce fichier affirmait que « la liste est
-      // maigre — il faut un appel de détail par facture ». C'était vrai de
+      // maigre, il faut un appel de détail par facture ». C'était vrai de
       // l'observation faite sans paramètre, et la spec en donne la raison :
       // « By default, the `en_invoice` property is not returned, **for
       // performance reasons**. Use the expand parameter to control the amount
@@ -214,13 +214,13 @@ export async function synchroniserFactures(userId: string): Promise<ResultatSync
       //
       // `en_invoice_overview` déclare `number`, `issue_date`, `currency_code`
       // et `totals` comme requis, plus `seller`, `buyer` et
-      // `payment_due_date` — c'est-à-dire exactement tout ce que l'écriture
+      // `payment_due_date`, c'est-à-dire exactement tout ce que l'écriture
       // ci-dessous allait chercher une facture à la fois.
       //
       // Ce que ça change au-delà du coût : une page de cent factures faisait
       // cent-un appels SÉQUENTIELS dans une seule invocation serverless. Le
       // curseur n'étant sauvegardé qu'après la page complète, une expiration à
-      // la soixantième facture perdait les cinquante-neuf précédentes — et une
+      // la soixantième facture perdait les cinquante-neuf précédentes, et une
       // page qui ne tient jamais dans le budget bloquait la synchronisation
       // pour toujours, en boucle.
       //
@@ -236,7 +236,7 @@ export async function synchroniserFactures(userId: string): Promise<ResultatSync
       // `expand[]` accepte des valeurs GRANULAIRES, et c'est ce qui manquait.
       //
       // `en_invoice` seul renvoie un `en_invoice_overview`, dont le schéma dit
-      // que `seller`, `buyer` et `lines` sont optionnels — et la plateforme les
+      // que `seller`, `buyer` et `lines` sont optionnels, et la plateforme les
       // omet. On avait donc ajouté un appel de détail en repli, une facture à
       // la fois : sur une première synchronisation d'un compte fourni, c'est
       // une requête HTTP séquentielle par facture dans une seule invocation
@@ -244,7 +244,7 @@ export async function synchroniserFactures(userId: string): Promise<ResultatSync
       // expiration en cours de route reperdait tout le travail.
       //
       // Demander explicitement les parties et les lignes supprime ce repli dans
-      // le cas nominal — le détail reste là pour les cas où il manquerait
+      // le cas nominal, le détail reste là pour les cas où il manquerait
       // encore quelque chose.
       params.append("expand[]", "en_invoice");
       params.append("expand[]", "en_invoice.seller");
@@ -257,7 +257,7 @@ export async function synchroniserFactures(userId: string): Promise<ResultatSync
       if (!res.ok) {
         // Sans cette écriture, un 500 persistant de la plateforme laissait
         // l'écran afficher un raccordement sain pendant que plus rien
-        // n'arrivait — le cas que le bloc catch plus bas déclare inacceptable,
+        // n'arrivait, le cas que le bloc catch plus bas déclare inacceptable,
         // mais qui passait par ce chemin-ci sans laisser de trace.
         const detail = `HTTP ${res.status} sur ${chemin}`;
         await saveConnection(userId, { last_error: detail.slice(0, 500) }).catch(() => {});
@@ -285,8 +285,8 @@ export async function synchroniserFactures(userId: string): Promise<ResultatSync
         // Une facture reçue sans expéditeur n'est pas une facture, c'est une
         // ligne comptable orpheline.
         //
-        // On garde l'expansion — elle évite l'appel de détail quand elle
-        // suffit — mais on redescend chercher le détail dès qu'il manque
+        // On garde l'expansion, elle évite l'appel de détail quand elle
+        // suffit, mais on redescend chercher le détail dès qu'il manque
         // l'identité des parties. Le coût reste borné : le curseur ne repasse
         // jamais sur une facture déjà écrite, donc chaque facture n'est
         // détaillée qu'une fois dans sa vie.
@@ -300,7 +300,7 @@ export async function synchroniserFactures(userId: string): Promise<ResultatSync
           if (!d.ok) {
           // ⚠️ Surtout pas `continue`. Le curseur est commun au lot : sauter
           // cette facture et laisser les suivantes le faire avancer la rend
-          // INATTEIGNABLE pour toujours — `starting_after_id` ne ramène que les
+          // INATTEIGNABLE pour toujours, `starting_after_id` ne ramène que les
           // identifiants strictement supérieurs. L'utilisateur serait
           // légalement destinataire d'une facture qu'il ne verra jamais, et
           // rien ne le lui dirait.
@@ -353,7 +353,7 @@ export async function synchroniserFactures(userId: string): Promise<ResultatSync
         );
 
         // Le commentaire disait « le curseur n'avance qu'après écriture
-        // réussie » — mais l'erreur n'était pas lue, donc la garantie
+        // réussie », mais l'erreur n'était pas lue, donc la garantie
         // n'existait pas. Une contrainte violée, une colonne absente après
         // migration, et la facture était perdue pendant que le compteur
         // annonçait fièrement l'avoir récupérée.
@@ -397,12 +397,12 @@ export async function synchroniserFactures(userId: string): Promise<ResultatSync
     // On inscrit l'échec sur le raccordement. Sans cela, une synchronisation qui
     // échoue ne laisse aucune trace visible : l'écran continue d'afficher un
     // raccordement sain pendant que plus rien n'arrive. C'est le pire des cas
-    // pour de la facturation électronique — l'utilisateur est légalement
+    // pour de la facturation électronique, l'utilisateur est légalement
     // destinataire de factures qu'il ne voit jamais, et rien ne le lui signale.
     //
     // `invalid_grant` est à part : le refresh token est mort (rotation OAuth 2.1
     // perdue, révocation, autorisation retirée). Aucun réessai ne le ranimera,
-    // il faut refaire le tunnel d'autorisation — d'où le statut `error`, qui
+    // il faut refaire le tunnel d'autorisation, d'où le statut `error`, qui
     // permet à l'interface de proposer un rebranchement au lieu d'attendre.
     const grantMort = /invalid_grant/i.test(detail);
     await saveConnection(userId, {
@@ -438,13 +438,13 @@ export async function synchroniserFactures(userId: string): Promise<ResultatSync
 
   // ── Rattrapage des encaissements que la plateforme a fait attendre ───────
   //
-  // Constaté le 04/09/2026 : déclarer l'encaissement juste après l'émission —
+  // Constaté le 04/09/2026 : déclarer l'encaissement juste après l'émission -
   // ce que la documentation demande explicitement pour « les factures déjà
-  // encaissées à l'émission » — se heurte à « La facture liée est en cours de
+  // encaissées à l'émission », se heurte à « La facture liée est en cours de
   // traitement. Réessayer plus tard ». C'est un refus TRANSITOIRE, et nous le
   // traitions comme définitif : la réservation était rendue, personne ne
-  // rejouait, et le `fr:212` — statut obligatoire du fournisseur, source de
-  // l'e-reporting de paiement — ne partait jamais. En silence.
+  // rejouait, et le `fr:212`, statut obligatoire du fournisseur, source de
+  // l'e-reporting de paiement, ne partait jamais. En silence.
   //
   // Une facture payée et transmise doit finir par déclarer son encaissement.
   // On le refait donc à chaque synchronisation, jusqu'à ce que ça passe. C'est
@@ -465,7 +465,7 @@ export async function synchroniserFactures(userId: string): Promise<ResultatSync
       //
       // Le rattrapage vise un refus transitoire, qui se résout en secondes ou
       // en minutes. Une facture qui échoue encore au bout d'une semaine échoue
-      // pour une raison qui ne passera pas avec le temps — et la rejouer toutes
+      // pour une raison qui ne passera pas avec le temps, et la rejouer toutes
       // les trois minutes, indéfiniment, serait du martèlement d'API sans
       // aucune chance d'aboutir. Passé ce délai, la facture cesse d'être
       // rattrapée : c'est `superpdp_error` et l'écran qui doivent prendre le
@@ -481,7 +481,7 @@ export async function synchroniserFactures(userId: string): Promise<ResultatSync
       // factures dont la premiere declaration a ete refusee : entre le
       // paiement et le passage qui aboutit, il peut s'ecouler des jours. La
       // TVA sur les prestations de services etant exigible A L'ENCAISSEMENT,
-      // dater du rattrapage revient a declarer une exigibilite fausse — le
+      // dater du rattrapage revient a declarer une exigibilite fausse, le
       // defaut exact que le parametre `dateEncaissement` a ete ajoute pour
       // empecher, et que ce chemin contournait en ne le passant pas.
       //
@@ -502,7 +502,7 @@ export async function synchroniserFactures(userId: string): Promise<ResultatSync
   // nouveau » de « on n'a pas regardé depuis hier ».
   // Le succès efface l'erreur précédente : sans cela, un incident passager
   // laisserait une alerte affichée indéfiniment, et l'utilisateur cesserait de
-  // la croire — donc de la lire le jour où elle est vraie.
+  // la croire, donc de la lire le jour où elle est vraie.
   await saveConnection(userId, {
     last_sync_at: new Date().toISOString(),
     ...(conn.last_error ? { last_error: null } : {}),
@@ -528,7 +528,7 @@ type EvenementFacture = {
  * **événement**. Une facture déjà synchronisée n'est donc plus jamais relue.
  *
  * Constaté en traversée : une facture refusée continuait d'afficher « Reçue par
- * la plateforme ». Les statuts se figeaient à leur valeur du jour d'arrivée —
+ * la plateforme ». Les statuts se figeaient à leur valeur du jour d'arrivée -
  * Refusée, Approuvée, Encaissée : rien n'aurait jamais remonté. La documentation
  * de Super PDP le dit d'ailleurs explicitement, « pour les invoice_events, il
  * faut procéder de la même manière ». Je ne l'avais pas fait.
@@ -574,8 +574,8 @@ async function synchroniserEvenements(userId: string): Promise<number> {
     // doit lire. Cette boucle-ci, elle, appliquait les deux familles dans
     // l'ordre d'arrivée.
     //
-    // Aujourd'hui l'ordre nominal les sépare — les `api:*` précèdent les
-    // `fr:*` — et le défaut ne se voit pas. Mais un seul `api:*` tardif ferait
+    // Aujourd'hui l'ordre nominal les sépare, les `api:*` précèdent les
+    // `fr:*`, et le défaut ne se voit pas. Mais un seul `api:*` tardif ferait
     // repasser une facture REFUSÉE en « transmise », c'est-à-dire exactement
     // le défaut du 29/08/2026 que ce fichier a été écrit pour corriger. Leur
     // nomenclature évolue (fr:220 est apparu le 07/08/2026) : une règle qui
@@ -604,7 +604,7 @@ async function synchroniserEvenements(userId: string): Promise<number> {
       // dit où en est l'acheminement administratif, pas où en est la facture.
       if (ev.status_code && estStatutAffichable(ev.status_code)) {
         // Rétrogradation refusée, selon la même hiérarchie que
-        // `statutQuiFaitFoi` — c'est la même colonne, ce doit être la même
+        // `statutQuiFaitFoi`, c'est la même colonne, ce doit être la même
         // règle :
         //
         //   1. un statut clôturant ne se fait jamais remplacer par un statut

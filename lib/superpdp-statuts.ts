@@ -18,17 +18,17 @@
  *     donc que dans une norme payante, et aucune traduction de ces codes n'est
  *     défendable. C'est ce qui justifie `libelleStatut` : un code inconnu
  *     s'affiche brut plutôt que sous un libellé inventé ;
- *   - quatre statuts, et quatre seulement, sont marqués « Obligatoire » —
+ *   - quatre statuts, et quatre seulement, sont marqués « Obligatoire » -
  *     200, 210, 212, 213. Confirmé par l'onglet « Statuts » de l'annexe 2
- *     (« Format sémantique FE CDV — Flux 6 », v2.3), qui n'en liste pas
+ *     (« Format sémantique FE CDV, Flux 6 », v2.3), qui n'en liste pas
  *     d'autres pour l'objet facture. Le champ `obligatoire` ci-dessous est
  *     donc exact, et il l'est désormais par vérification et non par mémoire.
  *
  * Trois familles, que la spec distingue :
- *   - `fr:*` — le cycle de vie officiel français ;
- *   - `api:*` — les statuts internes de Super PDP, « used when an invoice does
+ *   - `fr:*`, le cycle de vie officiel français ;
+ *   - `api:*`, les statuts internes de Super PDP, « used when an invoice does
  *     not belong to the French framework » (factures Peppol) ;
- *   - `ppf:*` — les accusés d'acheminement vers le Portail Public de
+ *   - `ppf:*`, les accusés d'acheminement vers le Portail Public de
  *     Facturation. Ils intéressent le support, jamais l'utilisateur, et ils
  *     arrivent EN MÊME TEMPS que leur `fr:*` correspondant. Ils ne doivent donc
  *     ni s'afficher ni écraser un statut lisible (voir `statutQuiFaitFoi`).
@@ -62,7 +62,7 @@ export const STATUTS: Record<string, Statut> = {
   "fr:212": { texte: "Encaissée", ton: "bien", obligatoire: true, cloture: true },
   "fr:213": { texte: "Rejetée", ton: "attention", obligatoire: true, cloture: true },
   // 214 : présent dans l'énumération `status_code` de Super PDP, ABSENT du
-  // tableau 8 de la DGFiP — vérifié le 07/09/2026 sur le document lui-même,
+  // tableau 8 de la DGFiP, vérifié le 07/09/2026 sur le document lui-même,
   // qui s'arrête à 213. Ce n'est donc pas un statut du cycle de vie français
   // documenté, et le libellé ci-dessous est une glose, pas une citation. On le
   // garde parce qu'un code reçu doit s'afficher en français plutôt qu'en brut,
@@ -75,7 +75,7 @@ export const STATUTS: Record<string, Statut> = {
 
   // ── Factures hors cadre français (Peppol) ────────────────────────────────
   "api:uploaded": { texte: "Déposée, en attente de contrôle", ton: "neutre" },
-  "api:invalid": { texte: "Invalide — non transmise", ton: "attention", cloture: true },
+  "api:invalid": { texte: "Invalide, non transmise", ton: "attention", cloture: true },
   "api:validated": { texte: "Contrôles passés", ton: "neutre" },
   "api:sent": { texte: "Transmise", ton: "neutre" },
   "api:rejected": { texte: "Rejetée par le destinataire", ton: "attention", cloture: true },
@@ -91,14 +91,14 @@ export const estStatutAcheminement = (code: string) => code.startsWith("ppf:");
  * Une facture est-elle encore en attente de paiement ?
  *
  * L'échéance dépassée ne suffit pas. Une facture **encaissée** est payée, et
- * une facture **refusée**, **rejetée** ou **irrecevable** est annulée — le
+ * une facture **refusée**, **rejetée** ou **irrecevable** est annulée, le
  * fournisseur doit passer un avoir. Les afficher en rouge réclamerait un
  * paiement pour des factures qui n'ont plus lieu d'être payées, et noierait les
  * vrais retards au milieu.
  *
  * Constaté sur une capture de Selim : une facture refusée gardait son échéance
  * en rouge. La liste des statuts clôturants était alors écrite en dur et
- * ignorait les `api:*` — une facture Peppol rejetée restait « en retard ».
+ * ignorait les `api:*`, une facture Peppol rejetée restait « en retard ».
  */
 export function estCloture(code: string | null | undefined): boolean {
   if (!code) return false;

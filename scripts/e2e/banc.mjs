@@ -37,7 +37,7 @@ function lancer(commande, args, env = {}) {
  * `spawn` avec `shell: true` lance un `cmd` qui lance node : `p.kill()` tue le
  * `cmd` et laisse node écouter sur son port. Le banc suivant trouvait donc le
  * port pris, ne démarrait pas son propre serveur, et restait suspendu sur un
- * serveur de la fois d'avant — qui tournait encore l'ANCIEN code. Un banc qui
+ * serveur de la fois d'avant, qui tournait encore l'ANCIEN code. Un banc qui
  * mesure une version qu'on croit avoir remplacée est pire qu'un banc absent.
  * `taskkill /T` tue l'arbre entier.
  */
@@ -59,7 +59,7 @@ async function attendreQue(url, quoi, secondes = 90) {
   for (let i = 0; i < secondes; i++) {
     try {
       // Toute réponse HTTP suffit : on attend qu'un serveur réponde, pas qu'il
-      // dise oui. `/api/profile` répond 401 sans session — un 401 prouve que
+      // dise oui. `/api/profile` répond 401 sans session, un 401 prouve que
       // l'application est debout, et c'est exactement ce qu'on veut savoir.
       await fetch(url);
       return true;
@@ -106,7 +106,7 @@ console.log(`  application   ${BASE_APP}`);
  * `next dev` compile chaque route à son PREMIER appel. Le banc a été coupé une
  * fois par un « Headers Timeout » sur `/api/stripe/checkout` : le scénario
  * attendait une réponse pendant que Turbopack compilait la route. Ce n'était
- * pas un échec de vérification, mais c'en avait l'air — et une traversée dont
+ * pas un échec de vérification, mais c'en avait l'air, et une traversée dont
  * on ne sait pas distinguer la panne du verdict ne sert à rien.
  *
  * On appelle donc chaque route sans session (401 immédiat, aucun effet) pour

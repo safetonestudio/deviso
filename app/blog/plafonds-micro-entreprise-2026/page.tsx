@@ -19,14 +19,14 @@ const SECTIONS: Section[] = [
       ["Activité mixte", "188 700 € dont 77 700 € de services", "<strong>203 100 € dont 83 600 €</strong> de services"],
     ],
     note:
-      "Ces montants s&rsquo;entendent en chiffre d&rsquo;affaires hors taxes encaissé sur l&rsquo;année civile. Ils déterminent le maintien au régime micro, pas l&rsquo;assujettissement à la TVA — et c&rsquo;est tout l&rsquo;objet de la section suivante.",
+      "Ces montants s&rsquo;entendent en chiffre d&rsquo;affaires hors taxes encaissé sur l&rsquo;année civile. Ils déterminent le maintien au régime micro, pas l&rsquo;assujettissement à la TVA, et c&rsquo;est tout l&rsquo;objet de la section suivante.",
   },
   {
     type: "encadre",
     ton: "alerte",
     titre: "Le piège : ce ne sont pas les seuils que vous franchirez en premier",
     texte:
-      "Si vous rendez des services, votre plafond de régime micro est de <strong>83 600 €</strong> — mais votre seuil de franchise en base de TVA n&rsquo;est que de <strong>37 500 €</strong>. Ce sont deux dispositifs différents, avec des montants différents et des conséquences différentes. Dans l&rsquo;immense majorité des cas, vous deviendrez assujetti à la TVA bien avant de sortir du régime micro. Confondre les deux, c&rsquo;est se croire tranquille jusqu&rsquo;à 83 600 € et découvrir une TVA rétroactive à 37 500 €.",
+      "Si vous rendez des services, votre plafond de régime micro est de <strong>83 600 €</strong>, mais votre seuil de franchise en base de TVA n&rsquo;est que de <strong>37 500 €</strong>. Ce sont deux dispositifs différents, avec des montants différents et des conséquences différentes. Dans l&rsquo;immense majorité des cas, vous deviendrez assujetti à la TVA bien avant de sortir du régime micro. Confondre les deux, c&rsquo;est se croire tranquille jusqu&rsquo;à 83 600 € et découvrir une TVA rétroactive à 37 500 €.",
   },
   {
     type: "comparaison",
@@ -62,15 +62,15 @@ const SECTIONS: Section[] = [
       ["Avocats, auteurs, artistes-interprètes", "50 000 €", "régime spécifique"],
     ],
     note:
-      "Si vous dépassez le seuil de base une année, vous devenez assujetti au 1<sup>er</sup> janvier de l&rsquo;année suivante. Si vous dépassez le seuil <em>majoré</em> en cours d&rsquo;année, vous devenez assujetti <strong>dès le premier jour du mois de dépassement</strong> — et les factures de ce mois-là doivent porter la TVA.",
+      "Si vous dépassez le seuil de base une année, vous devenez assujetti au 1<sup>er</sup> janvier de l&rsquo;année suivante. Si vous dépassez le seuil <em>majoré</em> en cours d&rsquo;année, vous devenez assujetti <strong>dès le premier jour du mois de dépassement</strong>, et les factures de ce mois-là doivent porter la TVA.",
   },
   {
     type: "texte",
     titre: "Ce qu&rsquo;il se passe quand vous dépassez un seuil de TVA en cours d&rsquo;année",
     paragraphes: [
       "C&rsquo;est le scénario qui prend les gens au dépourvu, et il mérite d&rsquo;être décrit précisément.",
-      "Imaginons que vous rendiez des services et que votre chiffre d&rsquo;affaires cumulé franchisse <strong>41 250 €</strong> le 18 octobre. Vous devenez assujetti à la TVA <strong>au 1<sup>er</sup> octobre</strong>, rétroactivement. Toutes les factures émises depuis le début du mois doivent donc porter la TVA — celles que vous avez déjà envoyées sans TVA sont à corriger par un avoir et une facture rectificative.",
-      "Si vous dépassez seulement le seuil de base — entre 37 500 € et 41 250 € — vous restez en franchise jusqu&rsquo;au 31 décembre, et vous devenez assujetti au 1<sup>er</sup> janvier suivant. C&rsquo;est beaucoup plus confortable, et c&rsquo;est la raison pour laquelle la zone entre les deux seuils mérite d&rsquo;être surveillée de près plutôt que franchie par inadvertance.",
+      "Imaginons que vous rendiez des services et que votre chiffre d&rsquo;affaires cumulé franchisse <strong>41 250 €</strong> le 18 octobre. Vous devenez assujetti à la TVA <strong>au 1<sup>er</sup> octobre</strong>, rétroactivement. Toutes les factures émises depuis le début du mois doivent donc porter la TVA, celles que vous avez déjà envoyées sans TVA sont à corriger par un avoir et une facture rectificative.",
+      "Si vous dépassez seulement le seuil de base, entre 37 500 € et 41 250 €, vous restez en franchise jusqu&rsquo;au 31 décembre, et vous devenez assujetti au 1<sup>er</sup> janvier suivant. C&rsquo;est beaucoup plus confortable, et c&rsquo;est la raison pour laquelle la zone entre les deux seuils mérite d&rsquo;être surveillée de près plutôt que franchie par inadvertance.",
       "Dans les deux cas, il faut demander un numéro de TVA à votre service des impôts des entreprises, et vos factures changent : taux, montant de TVA, total TTC, et disparition de la mention de l&rsquo;article 293 B.",
     ],
   },
@@ -87,7 +87,7 @@ const SECTIONS: Section[] = [
     paragraphes: [
       "Dépasser le plafond du régime micro une seule année ne vous en fait pas sortir. Il faut <strong>deux années civiles consécutives</strong> de dépassement pour basculer au régime réel, à compter du 1<sup>er</sup> janvier de l&rsquo;année suivante.",
       "C&rsquo;est une tolérance réelle, et elle laisse le temps de s&rsquo;organiser : changer de statut juridique si c&rsquo;est pertinent, prendre un comptable, ajuster sa tarification. Ce n&rsquo;est pas un couperet.",
-      "Attention tout de même à ne pas lire cette tolérance comme une autorisation : le franchissement du seuil de TVA, lui, est immédiat. Vous pouvez donc parfaitement être assujetti à la TVA tout en restant au régime micro — c&rsquo;est même la situation de beaucoup d&rsquo;indépendants qui font entre 40 000 et 80 000 € de chiffre d&rsquo;affaires en services.",
+      "Attention tout de même à ne pas lire cette tolérance comme une autorisation : le franchissement du seuil de TVA, lui, est immédiat. Vous pouvez donc parfaitement être assujetti à la TVA tout en restant au régime micro, c&rsquo;est même la situation de beaucoup d&rsquo;indépendants qui font entre 40 000 et 80 000 € de chiffre d&rsquo;affaires en services.",
     ],
   },
   {
@@ -112,7 +112,7 @@ const SECTIONS: Section[] = [
       {
         titre: "Vos frais refacturés, qui gonflent le cumul",
         texte:
-          "Un train refacturé à un client entre dans votre chiffre d&rsquo;affaires, et donc dans le calcul des seuils — sauf s&rsquo;il remplit les conditions du débours, qui sont strictes.",
+          "Un train refacturé à un client entre dans votre chiffre d&rsquo;affaires, et donc dans le calcul des seuils, sauf s&rsquo;il remplit les conditions du débours, qui sont strictes.",
       },
     ],
   },
@@ -121,7 +121,7 @@ const SECTIONS: Section[] = [
     ton: "alerte",
     titre: "Des pages officielles encore périmées",
     texte:
-      "Au moment d&rsquo;écrire cet article, certaines pages de <em>impots.gouv.fr</em> affichaient encore 188 700 € et 77 700 € en les qualifiant de seuils « 2023-2025 » — sans mentionner la revalorisation. Ce n&rsquo;est pas rassurant, mais c&rsquo;est utile à savoir : si vous tombez sur ces chiffres, vérifiez la date de mise à jour de la page. Nous indiquons nos sources et la date de la nôtre en bas de cet article, précisément pour que vous puissiez faire le même contrôle sur nous.",
+      "Au moment d&rsquo;écrire cet article, certaines pages de <em>impots.gouv.fr</em> affichaient encore 188 700 € et 77 700 € en les qualifiant de seuils « 2023-2025 », sans mentionner la revalorisation. Ce n&rsquo;est pas rassurant, mais c&rsquo;est utile à savoir : si vous tombez sur ces chiffres, vérifiez la date de mise à jour de la page. Nous indiquons nos sources et la date de la nôtre en bas de cet article, précisément pour que vous puissiez faire le même contrôle sur nous.",
   },
 ];
 
@@ -148,18 +148,18 @@ const FAQ = [
   },
   {
     q: "Les frais que je refacture comptent-ils dans le plafond ?",
-    a: "Oui, sauf exception. Un frais refacturé à un client — un billet de train, une nuit d'hôtel, l'achat d'une licence — entre dans votre chiffre d'affaires, et donc dans le calcul des seuils comme dans l'assiette de vos cotisations. La seule échappatoire est le mécanisme du débours, dont les conditions sont strictes et souvent mal comprises.",
+    a: "Oui, sauf exception. Un frais refacturé à un client, un billet de train, une nuit d'hôtel, l'achat d'une licence, entre dans votre chiffre d'affaires, et donc dans le calcul des seuils comme dans l'assiette de vos cotisations. La seule échappatoire est le mécanisme du débours, dont les conditions sont strictes et souvent mal comprises.",
   },
 ];
 
 const SOURCES: Source[] = [
   {
-    libelle: "BOFiP — BOI-TVA-DECLA-40-10-10, version du 1er juillet 2026",
+    libelle: "BOFiP, BOI-TVA-DECLA-40-10-10, version du 1er juillet 2026",
     url: "https://bofip.impots.gouv.fr/bofip/849-PGP.html/identifiant=BOI-TVA-DECLA-40-10-10-20260701",
     precision: "seuils de franchise en base de TVA : 85 000 / 93 500 € et 37 500 / 41 250 €",
   },
   {
-    libelle: "BOFiP — actualité ACTU-2025-00144",
+    libelle: "BOFiP, actualité ACTU-2025-00144",
     url: "https://bofip.impots.gouv.fr/bofip/14799-PGP.html/ACTU-2025-00144",
     precision: "abrogation du seuil unique à 25 000 € par la loi du 3 novembre 2025",
   },
@@ -174,7 +174,7 @@ const SOURCES: Source[] = [
     precision: "régime micro-BNC",
   },
   {
-    libelle: "CCI Paris Île-de-France — Revalorisation des seuils pour 2026-2028",
+    libelle: "CCI Paris Île-de-France, Revalorisation des seuils pour 2026-2028",
     url: "https://www.entreprises.cci-paris-idf.fr/actualites/micro-entrepreneur-revalorisation-des-seuils-pour-2026-2028",
     precision: "montants revalorisés de la période triennale",
   },
@@ -184,7 +184,7 @@ export default function Page() {
   return (
     <ArticleLong
       slug={SLUG}
-      chapeau="Les plafonds ont bougé au 1<sup>er</sup> janvier 2026, et beaucoup de pages — y compris officielles — affichent encore les anciens. Mais le vrai problème n&rsquo;est pas là : c&rsquo;est qu&rsquo;il existe <strong>deux séries de seuils</strong>, et que la plus basse est celle qu&rsquo;on oublie."
+      chapeau="Les plafonds ont bougé au 1<sup>er</sup> janvier 2026, et beaucoup de pages, y compris officielles, affichent encore les anciens. Mais le vrai problème n&rsquo;est pas là : c&rsquo;est qu&rsquo;il existe <strong>deux séries de seuils</strong>, et que la plus basse est celle qu&rsquo;on oublie."
       enBref={[
         "Plafonds du régime micro 2026-2028 : <strong>203 100 €</strong> en vente, <strong>83 600 €</strong> en services.",
         "Seuils de <strong>franchise en base de TVA</strong>, inchangés : 85 000 / 93 500 € en biens, <strong>37 500 / 41 250 €</strong> en services.",
@@ -198,7 +198,7 @@ export default function Page() {
       cta={{
         titre: "Savoir où vous en êtes, sans tenir un tableur",
         texte:
-          "Deviso suit votre chiffre d&rsquo;affaires encaissé depuis le 1<sup>er</sup> janvier et affiche la distance au seuil qui compte pour vous — pas seulement au plafond du régime micro.",
+          "Deviso suit votre chiffre d&rsquo;affaires encaissé depuis le 1<sup>er</sup> janvier et affiche la distance au seuil qui compte pour vous, pas seulement au plafond du régime micro.",
       }}
     />
   );

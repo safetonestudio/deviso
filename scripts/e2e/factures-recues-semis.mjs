@@ -1,8 +1,8 @@
 /**
  * Fait arriver de vraies factures dans la boîte de réception d'un compte.
  *
- * Pourquoi ce script existe. Pour juger l'écran « Factures reçues » — et pour
- * savoir si la chaîne de transmission fonctionne encore après un changement —
+ * Pourquoi ce script existe. Pour juger l'écran « Factures reçues », et pour
+ * savoir si la chaîne de transmission fonctionne encore après un changement -
  * il faut des factures dedans. La tentation est d'insérer des lignes en base :
  * ça remplit l'écran et ça ne prouve rien. Une ligne fabriquée à la main ne dit
  * ni que l'émission passe, ni que l'Annuaire répond, ni que la synchronisation
@@ -11,7 +11,7 @@
  * Ici, chaque facture est réellement créée dans Deviso par un compte
  * fournisseur, réellement transmise à la Plateforme Agréée, et réellement
  * relue par la synchronisation du destinataire. Si une seule maille de la
- * chaîne casse, le script le dit — c'est donc aussi un test de non-régression.
+ * chaîne casse, le script le dit, c'est donc aussi un test de non-régression.
  *
  * Toutes passent par les routes de l'application. Aucun appel direct à
  * Super PDP : un script qui rafraîchit un jeton sans le persister invalide le
@@ -85,14 +85,14 @@ const jour = (decalage) => {
  * plausible plutôt que « Prestation de test ».
  */
 const MODELES = [
-  { libelle: "Approvisionnement pains briochés — semaine 34", pu: 412.5, q: 1, echeance: -22 },
+  { libelle: "Approvisionnement pains briochés, semaine 34", pu: 412.5, q: 1, echeance: -22 },
   { libelle: "Steaks surgelés, carton de 120", pu: 189.9, q: 6, echeance: -9 },
   { libelle: "Nettoyage des hottes et conduits", pu: 780, q: 1, echeance: -3 },
   { libelle: "Emballages compostables, palette", pu: 1245, q: 1, echeance: 6 },
-  { libelle: "Maintenance friteuses — contrat trimestriel", pu: 340, q: 1, echeance: 14 },
+  { libelle: "Maintenance friteuses, contrat trimestriel", pu: 340, q: 1, echeance: 14 },
   { libelle: "Boissons, réassort mensuel", pu: 97.4, q: 12, echeance: 21 },
   { libelle: "Formation hygiène HACCP, 2 sessions", pu: 650, q: 2, echeance: 30 },
-  { libelle: "Sauces et condiments — commande 4408", pu: 233.15, q: 3, echeance: 38 },
+  { libelle: "Sauces et condiments, commande 4408", pu: 233.15, q: 3, echeance: 38 },
 ];
 
 const combien = Math.min(Number(process.argv[2] || 6), MODELES.length);
@@ -115,7 +115,7 @@ for (let i = 0; i < combien; i++) {
   const ttc = Math.round(ht * 1.2 * 100) / 100;
   // BT-2 : la Plateforme Agréée refuse une date de facture postérieure à
   // aujourd'hui. Une échéance lointaine ne doit donc pas repousser l'émission
-  // dans le futur — on la ramène à aujourd'hui au plus tard.
+  // dans le futur, on la ramène à aujourd'hui au plus tard.
   const emission = jour(Math.min(m.echeance - 30, 0));
 
   const creee = await appel("/api/invoices", {
@@ -129,7 +129,7 @@ for (let i = 0; i < combien; i++) {
       // L'adresse d'acheminement est donnée explicitement, et c'est
       // indispensable ici. Les sociétés du bac à sable ne figurent pas à
       // l'Annuaire national : la résolution retombe alors sur le SIREN nu,
-      // `0225:315143296` — que Tricatel ET Burger Queen partagent. La
+      // `0225:315143296`, que Tricatel ET Burger Queen partagent. La
       // Plateforme Agréée accepte la facture, ne sait pas à qui la remettre, et
       // la laisse à `api:uploaded` sans le dire. Six heures d'enquête le
       // 29/08/2026 pour ça. Voir CLAUDE.md.
@@ -165,7 +165,7 @@ for (let i = 0; i < combien; i++) {
 
   const ok = envoi.status === 200 && envoi.body?.emise === true && Number(envoi.body?.superpdpId) > 0;
   verifier(
-    `${numero} — ${m.libelle.slice(0, 38)} — transmise`,
+    `${numero}, ${m.libelle.slice(0, 38)}, transmise`,
     ok,
     `HTTP ${envoi.status} ${doc(envoi.body).slice(0, 220)}`
   );
@@ -179,7 +179,7 @@ for (let i = 0; i < combien; i++) {
 //
 // Ce qui dépend de nous s'arrête à l'acceptation par la Plateforme Agréée. Le
 // reste est à leur main : le 29/08/2026, six factures acceptées sont restées
-// `api:uploaded` plus de trente minutes, puis tout un lot est passé d'un coup —
+// `api:uploaded` plus de trente minutes, puis tout un lot est passé d'un coup -
 // leur bac à sable traite par vagues, pas au fil de l'eau. Un script qui
 // exigeait l'arrivée en quinze secondes déclarait donc en panne une chaîne qui
 // fonctionnait, et aurait fait chercher un bug côté Deviso.
@@ -204,7 +204,7 @@ while (entrantes < emises.length && Date.now() - debut < budgetMs) {
   entrantes += b.entrantes ?? 0;
   echecsSync += b.echecs ?? 0;
   const ecoule = Math.round((Date.now() - debut) / 1000);
-  console.log(`   +${ecoule}s : ${b.entrantes ?? 0} entrante(s), ${b.echecs ?? 0} échec(s) — cumul ${entrantes}/${emises.length}`);
+  console.log(`   +${ecoule}s : ${b.entrantes ?? 0} entrante(s), ${b.echecs ?? 0} échec(s), cumul ${entrantes}/${emises.length}`);
   if (entrantes >= emises.length) break;
   await new Promise((r) => setTimeout(r, 30000));
 }

@@ -1,4 +1,4 @@
-# Audit SEO de getdeviso.fr — 11 septembre 2026
+# Audit SEO de getdeviso.fr, 11 septembre 2026
 
 Audit conduit sur le code source (`/home/claude/deviso`, à jour de `origin/main` au commit `4741547`)
 et sur les sources normatives en ligne. Tous les constats techniques ont été vérifiés dans le code ;
@@ -18,7 +18,7 @@ place.
 ## Verdict en une page
 
 Le SEO de Deviso est **structurellement bien meilleur que la moyenne des SaaS pré-lancement**.
-Il y a 43 pages publiques — dont 33 indexables — une architecture en clusters, des canoniques explicites page par page,
+Il y a 43 pages publiques, dont 33 indexables, une architecture en clusters, des canoniques explicites page par page,
 du JSON-LD sur toutes les pages de contenu, des `noindex` correctement posés sur les espaces privés,
 une police auto-hébergée. Ce n'est pas un chantier à démarrer, c'est un actif à corriger et à nourrir.
 
@@ -28,7 +28,7 @@ Il y a cependant **quatre problèmes qui coûtent cher aujourd'hui**, et un qui 
 |---|---|---|---|
 | 1 | Le blog publie des montants d'amendes **périmés depuis le 1er septembre 2026** (250 € au lieu de 500 €) | **Critique** | 1 h |
 | 2 | Une date de calendrier **fausse** dans le JSON-LD de l'article phare (« ETI au 1er décembre 2026 ») | **Critique** | 15 min |
-| 3 | Six landing pages affichent un « Total TTC (TVA 20 %) » **égal au total HT** — sur un produit de facturation | **Élevée** | 30 min |
+| 3 | Six landing pages affichent un « Total TTC (TVA 20 %) » **égal au total HT**, sur un produit de facturation | **Élevée** | 30 min |
 | 4 | Le cluster `/combien-facturer` (11 pages, priorité 0.9) n'est lié que depuis **une seule page** du site | **Élevée** | 2 h |
 | 5 | Un nouvel article = **150 à 490 lignes de TSX** + une entrée sitemap à la main + du JSON-LD recopié | **Structurelle** | 1 à 2 j |
 
@@ -38,7 +38,7 @@ en §5.
 
 ---
 
-## 1. Exactitude du contenu — le plus grave, et c'est inattendu
+## 1. Exactitude du contenu, le plus grave, et c'est inattendu
 
 C'est le constat que je n'attendais pas en ouvrant cet audit, et c'est le plus dommageable.
 Deviso se positionne sur l'expertise de la réforme de facturation électronique. Cette expertise est
@@ -53,20 +53,20 @@ a relevé les sanctions, applicables **depuis le 1er septembre 2026** :
 |---|---|---|
 | Défaut d'émission en électronique | 15 €/facture | **50 €/facture**, plafond 15 000 €/an |
 | Défaut de transmission des données (e-reporting) | 250 €/transmission | **500 €/transmission**, plafond 15 000 €/an |
-| Non-recours à une plateforme agréée **en réception** | — | **500 €** après mise en demeure de 3 mois, puis **1 000 € tous les 3 mois** |
+| Non-recours à une plateforme agréée **en réception** |, | **500 €** après mise en demeure de 3 mois, puis **1 000 € tous les 3 mois** |
 
-Source de synthèse officielle : [Service-Public Entreprendre — les sanctions évoluent](https://entreprendre.service-public.gouv.fr/actualites/A18802?lang=fr).
+Source de synthèse officielle : [Service-Public Entreprendre, les sanctions évoluent](https://entreprendre.service-public.gouv.fr/actualites/A18802?lang=fr).
 
 **Ce que le site publie aujourd'hui**, aux trois endroits suivants :
 
-- `app/blog/e-reporting-freelance-2026/page.tsx:53` — dans le **JSON-LD `FAQPage`**, donc
+- `app/blog/e-reporting-freelance-2026/page.tsx:53`, dans le **JSON-LD `FAQPage`**, donc
   éligible à l'affichage direct dans Google : « une amende de 250 € par transaction non transmise ».
-- `app/blog/e-reporting-freelance-2026/page.tsx:261` — dans le corps : « **250 € par transaction** ».
-- `app/blog/checklist-reforme-facturation-2026/page.tsx:93` — « les amendes sont significatives (250 €/transaction) ».
-- `app/blog/page.tsx:68` — sur l'index du blog : « Amendes : 250 €/transaction ».
+- `app/blog/e-reporting-freelance-2026/page.tsx:261`, dans le corps : « **250 € par transaction** ».
+- `app/blog/checklist-reforme-facturation-2026/page.tsx:93`, « les amendes sont significatives (250 €/transaction) ».
+- `app/blog/page.tsx:68`, sur l'index du blog : « Amendes : 250 €/transaction ».
 
-Le montant réel est le double. Et l'amende de réception — celle qui frappe **tout le monde, y
-compris les micro-entrepreneurs, dès maintenant** — n'est mentionnée nulle part. C'est précisément
+Le montant réel est le double. Et l'amende de réception, celle qui frappe **tout le monde, y
+compris les micro-entrepreneurs, dès maintenant**, n'est mentionnée nulle part. C'est précisément
 l'information la plus actionnable pour ta cible, et c'est la seule qui manque.
 
 Pourquoi c'est grave au-delà du SEO : un freelance qui lit ces chiffres, les croit, et se fait
@@ -91,7 +91,7 @@ Cette phrase est dans une réponse de FAQ structurée. Google peut l'afficher te
 ### 1.3 Le temps des verbes : la réforme est en vigueur, le site parle au futur
 
 Tout le contenu réforme est écrit en anticipation (« deviendra obligatoire », « vous devrez »).
-Depuis le 1er septembre 2026 — il y a dix jours — **toute entreprise assujettie à la TVA doit être
+Depuis le 1er septembre 2026, il y a dix jours, **toute entreprise assujettie à la TVA doit être
 en capacité de recevoir une facture électronique via une plateforme agréée**, sans exception de
 taille ni de régime. Micro-entrepreneurs et franchise en base incluses.
 
@@ -104,7 +104,7 @@ conclusion, en moins subtil.
 Par souci d'équilibre : le reste du contenu réglementaire est bon, et meilleur que la moyenne.
 
 - Le seuil de franchise en base de TVA cité à **37 500 € en 2026** pour les prestations de services
-  est **correct** — le seuil unique à 25 000 € a été abandonné ([Portail Auto-Entrepreneur](https://www.portail-autoentrepreneur.fr/academie/statut-auto-entrepreneur/tva)).
+  est **correct**, le seuil unique à 25 000 € a été abandonné ([Portail Auto-Entrepreneur](https://www.portail-autoentrepreneur.fr/academie/statut-auto-entrepreneur/tva)).
   Beaucoup de concurrents se trompent là-dessus.
 - L'abandon du PPF comme plateforme d'échange est correctement expliqué (`facturation-electronique-2026`).
   C'est un point que la plupart des contenus concurrents traitent mal.
@@ -130,7 +130,7 @@ avec quelle PA s'il y a lieu, et ce que ça implique pour l'utilisateur.
 
 ---
 
-## 2. Exactitude des pages produit — un bug arithmétique public
+## 2. Exactitude des pages produit, un bug arithmétique public
 
 Les 10 landing pages métier affichent une maquette de devis avec des lignes et un total libellé
 **« Total TTC (TVA 20 %) »** (`components/landing/FreelanceLanding.tsx:258`).
@@ -157,12 +157,12 @@ devis. C'est le genre de détail qu'un prospect attentif remarque et n'oublie pa
 Il y a un second sujet, de fond celui-là : les quatre pages fautives (artisan, coach, community
 manager, traducteur) ciblent des profils très majoritairement **en franchise en base de TVA**.
 Afficher « TVA 20 % » dans leur maquette est faux pour la plupart d'entre eux. La bonne correction
-n'est pas d'ajouter 20 % partout — c'est d'afficher **« Total HT »** sur ces quatre pages, ou mieux,
+n'est pas d'ajouter 20 % partout, c'est d'afficher **« Total HT »** sur ces quatre pages, ou mieux,
 de montrer la mention « TVA non applicable, art. 293 B du CGI » : ça prouve que Deviso connaît son
 utilisateur.
 
 Il manque aussi un garde-fou. Ce bug est exactement du même type que ceux que `check-comptable.mjs`
-attrape : une promesse affichée qui ne correspond pas au calcul. Il mérite le même traitement —
+attrape : une promesse affichée qui ne correspond pas au calcul. Il mérite le même traitement -
 voir la recommandation en §7.
 
 ---
@@ -174,29 +174,29 @@ voir la recommandation en §7.
 - **43 pages publiques**, dont 33 indexables, organisées en trois familles cohérentes :
   10 landing pages métier, 19 articles de blog (+ l'index), 11 pages tarifs
   (`/combien-facturer` + 10 métiers), et 3 pages légales.
-- Une **canonique absolue explicite sur chaque page indexable** — pas de canonique globale
+- Une **canonique absolue explicite sur chaque page indexable**, pas de canonique globale
   hasardeuse, chaque page déclare la sienne. C'est la bonne pratique, rarement appliquée.
 - Les `noindex` sont **correctement placés** : `app/(auth)/layout.tsx`, `app/auth/layout.tsx`,
-  et surtout `app/(public)/layout.tsx` qui couvre `/p/[token]` — les devis clients ne sont pas
+  et surtout `app/(public)/layout.tsx` qui couvre `/p/[token]`, les devis clients ne sont pas
   indexables, ce qui est une question de confidentialité autant que de SEO.
 - `robots.ts` interdit `/dashboard/` et `/api/`, et déclare le sitemap.
 - `metadataBase` est posé, le template de titre `%s | Deviso` est propre, `max-image-preview: large`
   et `max-snippet: -1` sont explicitement autorisés.
 - Aucune balise `<img>` brute dans tout le code : tout passe par `next/image` ou est en SVG inline.
-- La police Inter est **téléchargée au build et servie depuis le domaine** — aucune requête vers
+- La police Inter est **téléchargée au build et servie depuis le domaine**, aucune requête vers
   Google chez le visiteur. Bon pour la performance et pour le RGPD.
 
 ### 3.2 Le cluster `/combien-facturer` est presque orphelin
 
 C'est le défaut de maillage le plus coûteux, et il est invisible sans chercher.
 
-`/combien-facturer` est déclaré en **priorité 0.9 dans le sitemap** — la deuxième plus haute du
+`/combien-facturer` est déclaré en **priorité 0.9 dans le sitemap**, la deuxième plus haute du
 site, juste après l'accueil. Ses 10 pages métier sont en 0.8. Onze pages, donc, signalées comme
 importantes.
 
 Or le seul lien vers `/combien-facturer` venant **de l'extérieur du cluster** est une ligne dans le
 pied de page de `/blog` (`app/blog/page.tsx:393`). Ni l'accueil, ni aucune des 10 landing pages, ni
-aucun des 19 articles n'y mène. À l'intérieur, les 10 pages métier remontent bien vers le hub — mais
+aucun des 19 articles n'y mène. À l'intérieur, les 10 pages métier remontent bien vers le hub, mais
 un cluster qui ne se lie qu'à lui-même ne reçoit rien à redistribuer.
 
 Conséquence : les pages TJM sont à trois clics de l'accueil, derrière un goulot d'un seul lien.
@@ -222,7 +222,7 @@ Les liens existants :
 - tarifs → landing : **oui** (`data.landingHref`, deux fois, plus les liens croisés entre métiers)
 - tarifs → article : **non**
 
-Soit un triangle de trois pages sur un même métier, relié par deux arêtes sur six — et les deux
+Soit un triangle de trois pages sur un même métier, relié par deux arêtes sur six, et les deux
 vont dans le même sens, vers la landing. C'est le
 gisement de maillage interne le plus facile du site : **trois liens à ajouter dans deux composants
 partagés** (`FreelanceLanding.tsx` et `BlogPost.tsx`), et les 30 pages en bénéficient d'un coup.
@@ -254,7 +254,7 @@ mauvais pour le temps passé, et ça gâche l'autorité que ces pages reçoivent
 
 Il existe trois pieds de page distincts, écrits à la main, dans `app/page.tsx`,
 `components/blog/BlogPost.tsx` et `components/landing/FreelanceLanding.tsx`. Ils ne contiennent pas
-les mêmes liens — c'est exactement pour ça que `/combien-facturer` a disparu de deux d'entre eux.
+les mêmes liens, c'est exactement pour ça que `/combien-facturer` a disparu de deux d'entre eux.
 
 Un composant `<SiteFooter />` unique réglerait le problème une fois, au lieu de trois fois à chaque
 ajout de section.
@@ -263,15 +263,15 @@ ajout de section.
 
 ## 4. Sitemap, données structurées, métadonnées
 
-### 4.1 Le sitemap est écrit à la main — et il a déjà commencé à dériver
+### 4.1 Le sitemap est écrit à la main, et il a déjà commencé à dériver
 
 `app/sitemap.ts` liste 43 URL **en dur**, une par une, 270 lignes. J'ai comparé cette liste aux
 pages réellement présentes dans `app/` :
 
 - les 10 slugs de `/combien-facturer/[metier]` correspondent **exactement** à `ALL_METIER_SLUGS`
-  dans `lib/tarifs-data.ts` — aujourd'hui. Rien ne garantit que ce sera encore vrai au 11e métier.
+  dans `lib/tarifs-data.ts`, aujourd'hui. Rien ne garantit que ce sera encore vrai au 11e métier.
 - `/cgu`, `/confidentialite`, `/mentions-legales` sont absents du sitemap. C'est cohérent, elles
-  sont en `noindex` — mais voir 4.4, je pense que c'est une erreur de les exclure.
+  sont en `noindex`, mais voir 4.4, je pense que c'est une erreur de les exclure.
 
 Le vrai problème n'est pas l'état actuel, il est bon. C'est que **la moindre page ajoutée sans
 entrée sitemap est invisible**, et que rien ne le signale. Le sitemap doit être généré depuis la
@@ -285,7 +285,7 @@ Chaque entrée du sitemap déclare comme date de dernière modification… l'ins
 déploiement qui n'a touché aucune d'entre elles.
 
 Google n'est pas dupe de ça : un `lastmod` qui bouge toujours est un `lastmod` qu'il cesse de lire.
-Tu perds le signal exact au moment où tu vas en avoir le plus besoin — quand tu mettras à jour
+Tu perds le signal exact au moment où tu vas en avoir le plus besoin, quand tu mettras à jour
 les articles réforme et que tu voudras que Google le remarque vite.
 
 Il faut une date réelle par page. Elle existe déjà, d'ailleurs : chaque article porte un
@@ -300,12 +300,12 @@ datePublished: "2026-07-10",
 dateModified:  "2026-07-10",
 ```
 
-Aucun ne sera jamais mis à jour par construction — il faut éditer le fichier à la main, et personne
+Aucun ne sera jamais mis à jour par construction, il faut éditer le fichier à la main, et personne
 ne pense à modifier les deux lignes quand on corrige un paragraphe. C'est le cœur technique du
 conseil de ton expert : **la fraîcheur ne se décrète pas, elle se mesure**, et ici elle n'est pas
 mesurable.
 
-### 4.4 `cgu`, `confidentialite`, `mentions-legales` en `noindex` — à reconsidérer
+### 4.4 `cgu`, `confidentialite`, `mentions-legales` en `noindex`, à reconsidérer
 
 Ces trois pages sont en `robots: { index: false }`. Je pense que c'est un réflexe à l'envers.
 Pour un logiciel qui va manipuler la facturation et les données fiscales de ses utilisateurs, des
@@ -327,7 +327,7 @@ Deux manques :
   d'affichage direct, pour un effort faible et centralisable dans un composant.
 - **`author` est une `Organization`, jamais une `Person`.** Les 19 articles sont signés « Deviso ».
   Sur des sujets réglementaires, Google valorise un auteur identifiable. Tu es la personne qui a lu
-  les spécifications externes v3.2 de la DGFiP ligne par ligne — c'est un actif d'autorité que tu
+  les spécifications externes v3.2 de la DGFiP ligne par ligne, c'est un actif d'autorité que tu
   laisses sur la table en signant du nom d'une marque inconnue. Une vraie page auteur, avec ton nom
   et ce qui te rend légitime, changerait la lecture de ces 19 articles.
 
@@ -337,7 +337,7 @@ Deux manques :
   montre la même vignette. Next.js permet un `opengraph-image.tsx` par route, généré dynamiquement
   avec le titre de l'article. Effort moyen, gain réel sur le partage social.
 - **`keywords` dans `app/layout.tsx`** : 12 mots-clés déclarés. Google ignore cette balise depuis
-  2009. Inoffensif, mais ça ne sert à rien — et ça peut donner l'illusion que le travail est fait.
+  2009. Inoffensif, mais ça ne sert à rien, et ça peut donner l'illusion que le travail est fait.
 
 ### 4.7 Performance : un détail sur la police
 
@@ -380,7 +380,7 @@ Une correction réglementaire qui touche dix articles, c'est dix fichiers à ouv
 
 Un **registre de contenu** séparé du rendu. Concrètement, trois pièces :
 
-1. **Un fichier de données par article** — MDX ou un module TS exportant un objet typé
+1. **Un fichier de données par article**, MDX ou un module TS exportant un objet typé
    (`frontmatter` + corps). Le `frontmatter` porte : slug, titre, description, `datePublished`,
    `dateModified`, catégorie, articles liés, métier rattaché. Le corps porte le texte.
 2. **Un index construit** (`lib/blog/registre.ts`) qui lit tous les articles. `app/sitemap.ts`,
@@ -409,12 +409,12 @@ Garde-fous à écrire dans la foulée, dans la convention `scripts/check-*.mjs` 
 
 ## 6. Plan d'action, par ordre de rentabilité
 
-### Cette semaine — 4 heures, et ça ne peut pas attendre
+### Cette semaine, 4 heures, et ça ne peut pas attendre
 
 1. **Corriger les montants d'amendes** aux 4 endroits du §1.1 : 500 €/transmission, 50 €/facture,
    et ajouter l'amende de réception (500 € puis 1 000 €/3 mois), en citant la LF 2026 art. 123.
 2. **Corriger « ETI au 1er décembre 2026 »** → 1er septembre 2026, grandes entreprises et ETI.
-3. **Corriger les 4 totaux TTC = HT** — en passant ces quatre pages en « Total HT » plutôt qu'en
+3. **Corriger les 4 totaux TTC = HT**, en passant ces quatre pages en « Total HT » plutôt qu'en
    ajoutant 20 % à des profils en franchise.
 4. **Passer le contenu réforme au présent** et ajouter en tête de l'article pilier un encadré
    « au 11 septembre 2026, voici ce qui s'applique déjà ». Cet encadré est, en soi, une pièce de
@@ -422,7 +422,7 @@ Garde-fous à écrire dans la foulée, dans la convention `scripts/check-*.mjs` 
 5. **Mettre `dateModified` à jour** sur les articles corrigés. C'est la première vraie date de
    modification du site.
 
-### Ce mois-ci — 1 à 2 jours
+### Ce mois-ci, 1 à 2 jours
 
 6. **Le registre de contenu** du §5, avec les garde-fous.
 7. **Le maillage interne** : un `<SiteFooter />` unique ; landing → article + landing → tarifs dans
@@ -458,18 +458,18 @@ Quatre choses que cet audit n'a pas pu établir et qui demandent un accès que j
   Semrush avant d'engager beaucoup de temps d'écriture.
 - **Le fichier officiel des plateformes agréées** (ODS/XLSX sur impots.gouv.fr) : l'écosystème
   annonce entre 137 et 166 plateformes selon les sources, qui se contredisent toutes. Télécharger le
-  fichier et publier le compte exact, daté, est une opportunité de contenu à part entière —
+  fichier et publier le compte exact, daté, est une opportunité de contenu à part entière -
   détaillée dans le document 02.
 
 ---
 
 ## Sources
 
-- [Légifrance — loi n° 2026-103 du 19 février 2026, art. 123](https://www.legifrance.gouv.fr/eli/loi/2026/2/19/CPPX2524517L/jo/article_123)
-- [Service-Public Entreprendre — Facturation électronique : les sanctions évoluent](https://entreprendre.service-public.gouv.fr/actualites/A18802?lang=fr)
-- [economie.gouv.fr — Facturation électronique entre entreprises : coup d'envoi de la réforme](https://www.economie.gouv.fr/actualites/facturation-electronique-entre-entreprises-coup-denvoi-de-la-reforme)
-- [impots.gouv.fr — Facturation électronique et plateformes agréées](https://www.impots.gouv.fr/facturation-electronique-et-plateformes-agreees)
-- [impots.gouv.fr — Je consulte la liste des plateformes agréées](https://www.impots.gouv.fr/je-consulte-la-liste-des-plateformes-agreees)
-- [Pennylane — Calendrier facture électronique : les dates officielles 2026 et 2027](https://www.pennylane.com/fr/fiches-pratiques/facture-electronique/facturation-electronique-dates-cles-et-calendrier)
-- [Portail Auto-Entrepreneur — Tout comprendre sur la TVA pour les auto-entrepreneurs en 2026](https://www.portail-autoentrepreneur.fr/academie/statut-auto-entrepreneur/tva)
-- [Urssaf — La facturation électronique obligatoire au 1er septembre 2026](https://www.urssaf.fr/accueil/actualites/facturation-electronique.html)
+- [Légifrance, loi n° 2026-103 du 19 février 2026, art. 123](https://www.legifrance.gouv.fr/eli/loi/2026/2/19/CPPX2524517L/jo/article_123)
+- [Service-Public Entreprendre, Facturation électronique : les sanctions évoluent](https://entreprendre.service-public.gouv.fr/actualites/A18802?lang=fr)
+- [economie.gouv.fr, Facturation électronique entre entreprises : coup d'envoi de la réforme](https://www.economie.gouv.fr/actualites/facturation-electronique-entre-entreprises-coup-denvoi-de-la-reforme)
+- [impots.gouv.fr, Facturation électronique et plateformes agréées](https://www.impots.gouv.fr/facturation-electronique-et-plateformes-agreees)
+- [impots.gouv.fr, Je consulte la liste des plateformes agréées](https://www.impots.gouv.fr/je-consulte-la-liste-des-plateformes-agreees)
+- [Pennylane, Calendrier facture électronique : les dates officielles 2026 et 2027](https://www.pennylane.com/fr/fiches-pratiques/facture-electronique/facturation-electronique-dates-cles-et-calendrier)
+- [Portail Auto-Entrepreneur, Tout comprendre sur la TVA pour les auto-entrepreneurs en 2026](https://www.portail-autoentrepreneur.fr/academie/statut-auto-entrepreneur/tva)
+- [Urssaf, La facturation électronique obligatoire au 1er septembre 2026](https://www.urssaf.fr/accueil/actualites/facturation-electronique.html)

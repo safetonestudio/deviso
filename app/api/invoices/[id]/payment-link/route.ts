@@ -38,8 +38,8 @@ export async function POST(_req: NextRequest, { params }: Params) {
   // Ce `.eq("id", user.id)` était un défaut discret et coûteux : sur un plan
   // Pro multi-utilisateurs, un collaborateur agissant sur un document de
   // l'espace lisait SON profil. Selon la route, cela donnait un PDF portant
-  // son IBAN (ou aucun) au lieu de celui de l'entreprise — le client paie
-  // alors sur le mauvais compte — ou un refus « plan insuffisant » sur une
+  // son IBAN (ou aucun) au lieu de celui de l'entreprise, le client paie
+  // alors sur le mauvais compte, ou un refus « plan insuffisant » sur une
   // fonction que l'espace paie pourtant.
   const profile = await getWorkspaceProfile<{ payment_method: string | null; payment_link_profile: string | null }>(
     workspaceId,

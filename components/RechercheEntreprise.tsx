@@ -7,12 +7,12 @@ import { Search } from "lucide-react";
  * Chercher un client dans l'Annuaire national plutôt que lui demander son SIREN.
  *
  * Pourquoi ça existe. Pour émettre une facture B2B, il faut le SIREN du
- * destinataire — et Deviso le demandait à l'utilisateur, qui devait le réclamer
+ * destinataire, et Deviso le demandait à l'utilisateur, qui devait le réclamer
  * à son client ou le recopier depuis un document. Une faute de frappe se solde
  * par une facture rejetée, constatée bien plus tard.
  *
  * `GET /french_directory/companies` rend d'un coup le SIREN, la raison sociale
- * et l'adresse postale complète — tous les champs requis du Factur-X. Et
+ * et l'adresse postale complète, tous les champs requis du Factur-X. Et
  * « Companies in this directory are eligible to the french invoicing law » : y
  * figurer, c'est relever de la réforme, ce qui est en soi une information.
  */
@@ -66,7 +66,7 @@ export function RechercheEntreprise({
         // Les deux cas appellent une conduite différente, et l'utilisateur ne
         // peut la choisir que s'il connaît l'alternative.
         setMessage(
-          "Aucune entreprise trouvée. La recherche porte sur le début du nom officiel — " +
+          "Aucune entreprise trouvée. La recherche porte sur le début du nom officiel, " +
             "essayez une orthographe plus courte, ou ajoutez le code postal. " +
             "Si vous êtes sûr du nom, c'est que cette entreprise n'est pas assujettie à la TVA : " +
             "elle n'est alors pas concernée par la facturation électronique, et vous pouvez " +

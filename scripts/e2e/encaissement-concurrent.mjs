@@ -14,7 +14,7 @@
  *
  * Consequence : `fr:212` est le message a partir duquel est construit
  * l'e-reporting de paiement. Deux messages pour un seul encaissement, c'est une
- * declaration de TVA en double aupres de l'administration — sur la donnee meme
+ * declaration de TVA en double aupres de l'administration, sur la donnee meme
  * qui determine l'exigibilite. Aucun ecran ne rattrape ca.
  *
  * On teste donc ce que la base arbitre : deux appels simultanes, et on compte
@@ -150,15 +150,15 @@ if (!idPdp) process.exit(bilan());
 //
 // La facture vient d'etre deposee. Tant que la Plateforme Agreee ne l'a pas
 // fait passer par ses propres controles, elle refuse tout evenement de cycle de
-// vie dessus — « Reessayez dans un moment », en toutes lettres dans sa reponse.
+// vie dessus, « Reessayez dans un moment », en toutes lettres dans sa reponse.
 // Les deux appels repartent alors en 502 ensemble, et la suite echouait en
 // annoncant « 0 declaration » : exactement le contraire du defaut surveille,
 // puisque ce test cherche un DOUBLON, pas une absence.
 //
 // Constate le 08/09/2026 : meme commit, deux executions, un echec et un succes.
 // Un test qui echoue au hasard finit par etre ignore, et c'est pire que pas de
-// test. On rejoue donc le couple concurrent — jamais un seul appel, sans quoi
-// on ne mesurerait plus la concurrence — jusqu'a ce que la plateforme soit
+// test. On rejoue donc le couple concurrent, jamais un seul appel, sans quoi
+// on ne mesurerait plus la concurrence, jusqu'a ce que la plateforme soit
 // prete.
 const date = jour(-1);
 const transitoire = (r) => r.status === 502 && /r[ée]essayez/i.test(JSON.stringify(r.body ?? ""));
@@ -201,7 +201,7 @@ const doublons = reponses.filter((x) => x.body?.dejaEncaissee === true);
 verifier(
   "une seule des deux déclare l'encaissement",
   declarees.length === 1,
-  `${declarees.length} déclaration(s) — deux signifierait un e-reporting de paiement en double au PPF`,
+  `${declarees.length} déclaration(s), deux signifierait un e-reporting de paiement en double au PPF`,
 );
 
 verifier(
@@ -228,7 +228,7 @@ verifier(
 verifier(
   "et c'est la date réelle du paiement, pas celle du clic",
   typeof encaisseAt === "string" && encaisseAt.slice(0, 10) === date,
-  `${String(encaisseAt).slice(0, 10)} attendu ${date} — c'est cette date qui détermine l'exigibilité de la TVA`,
+  `${String(encaisseAt).slice(0, 10)} attendu ${date}, c'est cette date qui détermine l'exigibilité de la TVA`,
 );
 
 // ── Un troisième appel, plus tard, ne redéclare pas ────────────────────────
@@ -275,7 +275,7 @@ if (idJamais) {
   verifier(
     "et elle ne porte AUCUNE date d'encaissement",
     !relueJamais.body?.invoice?.superpdp_encaisse_at,
-    `superpdp_encaisse_at = ${relueJamais.body?.invoice?.superpdp_encaisse_at ?? "null"} — une réservation posée ici empêcherait le fr:212 le jour de la transmission`,
+    `superpdp_encaisse_at = ${relueJamais.body?.invoice?.superpdp_encaisse_at ?? "null"}, une réservation posée ici empêcherait le fr:212 le jour de la transmission`,
   );
 
   await appel(`/api/invoices/${idJamais}`, { method: "DELETE" });

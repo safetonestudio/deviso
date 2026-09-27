@@ -8,7 +8,7 @@ import "./globals.css";
 // Quatre graisses, et pas sept. Sept étaient chargées (300 à 900) ; en comptant
 // les classes Tailwind réellement utilisées, `normal` (400), `medium` (500),
 // `semibold` (600) et `bold` (700) le sont massivement, `300` ne l'était jamais,
-// et `800`/`900` apparaissaient cinq fois en tout — désormais remplacées par 700.
+// et `800`/`900` apparaissaient cinq fois en tout, désormais remplacées par 700.
 // Chaque graisse est un fichier woff2 de plus sur le chemin critique de rendu,
 // sur mobile en 4G.
 const inter = Inter({

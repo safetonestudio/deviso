@@ -138,7 +138,7 @@ export async function PATCH(req: NextRequest) {
 
   // Le régime de TVA vit à deux endroits : ici, et chez la Plateforme Agréée où
   // il commande le calendrier d'e-reporting. Les laisser diverger revient à
-  // déclarer au mauvais rythme — ou, si le champ est resté vide chez eux, à voir
+  // déclarer au mauvais rythme, ou, si le champ est resté vide chez eux, à voir
   // toutes les factures B2C refusées. On resynchronise donc à chaque
   // enregistrement, en best-effort : le profil est déjà sauvegardé, un échec de
   // transmission ne doit pas le remettre en cause.
@@ -146,8 +146,8 @@ export async function PATCH(req: NextRequest) {
     // `getWorkspaceUserId`, pas `user.id`. Le raccordement appartient à
     // l'espace de travail, et toutes les autres routes Super PDP l'indexent
     // ainsi. Avec `user.id`, un collaborateur ne trouvait aucun raccordement,
-    // repartait avec `non_raccorde` — une raison explicitement exclue du
-    // journal juste en dessous — et le changement de périodicité partait dans
+    // repartait avec `non_raccorde`, une raison explicitement exclue du
+    // journal juste en dessous, et le changement de périodicité partait dans
     // le vide sans laisser la moindre trace.
     const workspaceId = await getWorkspaceUserId(user.id);
     const r = await pousserRegimeTva(workspaceId, {

@@ -3,8 +3,8 @@
  *
  * Hypothèse testée : dans un espace de travail, un membre d'équipe accède aux
  * DOCUMENTS de l'espace comme le propriétaire (les documents appartiennent à
- * l'espace, pas à la personne). Les surfaces réservées au titulaire — CRM,
- * statistiques, FEC, encaissement, suppression — lui sont fermées : voir le
+ * l'espace, pas à la personne). Les surfaces réservées au titulaire, CRM,
+ * statistiques, FEC, encaissement, suppression, lui sont fermées : voir le
  * modèle des autorisations (CLAUDE.md) et scripts/e2e/permissions.mjs.
  *
  * Ce que ça aurait attrapé : onze routes filtraient sur l'identifiant de
@@ -101,7 +101,7 @@ const routes = [
   { m: "GET",  p: "/api/proposals" },
   { m: "GET",  p: "/api/catalog" },
   // CRM complet et statistiques : réservés au titulaire (modèle des
-  // autorisations du 22/09). Le membre reçoit 403 — c'est le comportement voulu.
+  // autorisations du 22/09). Le membre reçoit 403, c'est le comportement voulu.
   { m: "GET",  p: "/api/crm",   membreAttendu: [403] },
   { m: "GET",  p: "/api/stats", membreAttendu: [403] },
   { m: "GET",  p: "/api/notifications" },
@@ -123,14 +123,14 @@ for (const r of routes) {
   const init = { method: r.m };
 
   const anon = await anonymous.call(chemin, init);
-  verifier(`${r.m} ${chemin} — anonyme refusé`, anon.status === 401 || anon.status === 307, `HTTP ${anon.status}`);
+  verifier(`${r.m} ${chemin}, anonyme refusé`, anon.status === 401 || anon.status === 307, `HTTP ${anon.status}`);
 
   const prop = await owner.call(chemin, init);
-  verifier(`${r.m} ${chemin} — propriétaire`, attendu.includes(prop.status), `HTTP ${prop.status}`);
+  verifier(`${r.m} ${chemin}, propriétaire`, attendu.includes(prop.status), `HTTP ${prop.status}`);
 
   const attenduMembre = r.membreAttendu ?? attendu;
   const memb = await member.call(chemin, init);
-  verifier(`${r.m} ${chemin} — membre d'équipe`, attenduMembre.includes(memb.status),
+  verifier(`${r.m} ${chemin}, membre d'équipe`, attenduMembre.includes(memb.status),
     `HTTP ${memb.status}${memb.status === 404 ? " (route filtrée sur l'utilisateur au lieu de l'espace)" : ""}`);
 }
 

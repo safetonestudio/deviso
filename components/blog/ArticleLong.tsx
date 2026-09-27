@@ -14,7 +14,7 @@ import { CircleCheck, Info, TriangleAlert } from "lucide-react";
  *
  * Pourquoi ce fichier existe. Les dix premiers articles « devis par métier »
  * passaient déjà par un gabarit (`BlogPost`), et ça se voyait : ils coûtaient
- * 90 lignes chacun. Les neuf articles de fond, eux, étaient écrits à la main —
+ * 90 lignes chacun. Les neuf articles de fond, eux, étaient écrits à la main -
  * entre 250 et 490 lignes de JSX par article, avec leur propre navbar, leur
  * propre fil d'Ariane, leur propre pied de page, leur propre mise en forme de
  * FAQ. C'est ce qui rendait la publication chère, et c'est ce qui a laissé
@@ -28,7 +28,7 @@ import { CircleCheck, Info, TriangleAlert } from "lucide-react";
  *
  * Ce que ça garantit, au-delà du confort : la FAQ affichée et le `FAQPage`
  * balisé sortent forcément de la même liste, la signature est forcément visible,
- * et les sources sont forcément en bas de page — trois choses qu'on oublie quand
+ * et les sources sont forcément en bas de page, trois choses qu'on oublie quand
  * on écrit chaque article à la main.
  */
 
@@ -94,7 +94,7 @@ const TONS_COLONNE = {
  * `<em>`, `&rsquo;`) mais les *titres* étaient interpolés en texte brut : un
  * `&rsquo;` écrit dans un titre de section s'affichait littéralement sur la
  * page. Deux chemins de rendu pour un même type de contenu, et rien pour le
- * signaler — l'erreur est allée en production.
+ * signaler, l'erreur est allée en production.
  *
  * Le contenu vient des fichiers d'article et du registre, jamais d'une saisie
  * utilisateur : `dangerouslySetInnerHTML` est ici le comportement voulu, pas un
@@ -248,7 +248,7 @@ function Bloc({ section }: { section: Section }) {
           <blockquote className="border-l-2 border-indigo-500/50 pl-5 py-1 text-gray-300 italic">
             <span dangerouslySetInnerHTML={{ __html: section.texte }} />
             {section.source && (
-              <footer className="text-xs text-gray-500 not-italic mt-2">— <Riche t={section.source} /></footer>
+              <footer className="text-xs text-gray-500 not-italic mt-2">, <Riche t={section.source} /></footer>
             )}
           </blockquote>
         </section>
@@ -385,7 +385,7 @@ export function ArticleLong({ slug, chapeau, enBref, sections, faq, sources, cta
                       >
                         {s.libelle}
                       </a>
-                      {s.precision && <span> — {s.precision}</span>}
+                      {s.precision && <span>, {s.precision}</span>}
                     </li>
                   ))}
                 </ul>

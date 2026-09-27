@@ -15,7 +15,7 @@ import { cronAutorise } from "@/lib/cron-auth";
  * impose « une exécution par jour **par tâche** » et autorise jusqu'à cent
  * tâches par projet. Vingt-quatre tâches programmées chacune à une heure
  * différente respectent donc la règle à la lettre, et donnent ensemble une
- * couverture horaire — gratuitement. Vercel ne garantit pas la minute exacte
+ * couverture horaire, gratuitement. Vercel ne garantit pas la minute exacte
  * (une tâche prévue à 1 h peut partir à 1 h 59), ce qui est sans conséquence
  * pour de la facturation.
  */
@@ -64,7 +64,7 @@ export async function GET(req: Request) {
   // celui qui l'ouvre : un utilisateur qui ne se connecte pas de la semaine ne
   // verra pas que ses factures ne sont jamais arrivées, et c'est précisément
   // celui-là qu'il faut protéger. Ce passage horaire regarde pour lui, et
-  // laisse une trace côté serveur — la seule chose qui permette de découvrir
+  // laisse une trace côté serveur, la seule chose qui permette de découvrir
   // une panne d'acheminement autrement que par la plainte d'un client.
   //
   // On ne fait qu'observer : aucune retransmission automatique. Réémettre une
@@ -83,7 +83,7 @@ export async function GET(req: Request) {
       bloquees++;
       console.error(
         `[superpdp-blocage] facture ${f.invoice_number} (${f.id}, compte ${f.user_id}) : ` +
-          `${b.raison} — ${b.heures} h dans « ${f.superpdp_status ?? "aucun statut"} »`
+          `${b.raison}, ${b.heures} h dans « ${f.superpdp_status ?? "aucun statut"} »`
       );
     }
   } catch (err) {
@@ -94,8 +94,8 @@ export async function GET(req: Request) {
 
   console.log(
     `[superpdp-sync] ${comptes} compte(s), ${factures} facture(s) dont ${entrantes} entrante(s)` +
-      (echecs ? ` — ${echecs} échec(s)` : "") +
-      (bloquees ? ` — ${bloquees} facture(s) bloquée(s)` : "")
+      (echecs ? `, ${echecs} échec(s)` : "") +
+      (bloquees ? `, ${bloquees} facture(s) bloquée(s)` : "")
   );
 
   return NextResponse.json({ comptes, factures, entrantes, echecs, bloquees });

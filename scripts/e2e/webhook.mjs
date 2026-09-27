@@ -3,7 +3,7 @@
  *
  * C'est le maillon dont tout dépend et que personne ne voit : si un événement
  * est perdu, le client a payé et son plan reste « free », sans que rien ne le
- * signale. Le fichier porte d'ailleurs le récit de deux défauts déjà corrigés —
+ * signale. Le fichier porte d'ailleurs le récit de deux défauts déjà corrigés -
  * la marque d'idempotence posée AVANT le traitement, qui enterrait
  * définitivement un événement au premier incident réseau, et les erreurs
  * renvoyées en 200, qui disaient à Stripe de ne jamais réessayer.
@@ -192,7 +192,7 @@ try {
   p = await profil(UID);
   verifier("un abonnement sur un prix hors grille n'est pas traité en silence",
     inconnu.status === 200 && p?.plan === "pro",
-    `l'événement est acquitté et journalisé, mais AUCUN plan n'est modifié — ` +
+    `l'événement est acquitté et journalisé, mais AUCUN plan n'est modifié, ` +
     `plan resté à ${p?.plan}. C'est la raison pour laquelle les anciens prix ` +
     `doivent être archivés dans Stripe (voir test:stripe-prix).`);
 

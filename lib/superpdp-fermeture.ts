@@ -3,7 +3,7 @@
  *
  * Cette règle vit dans son propre fichier, sans aucune dépendance, pour deux
  * raisons. D'abord parce qu'elle est éprouvable telle quelle, sans toucher à la
- * Plateforme Agréée — et c'est décisif ici : fermer une ligne pour de vrai rend
+ * Plateforme Agréée, et c'est décisif ici : fermer une ligne pour de vrai rend
  * une entreprise injoignable, on ne peut donc pas l'essayer « pour voir ».
  * Ensuite parce que c'est elle, et non l'appel de suppression, qui porte tout
  * le risque de cette fonctionnalité.
@@ -51,7 +51,7 @@ export function decisionFermeture(
       raison: "migration",
       message:
         "Votre ligne est en cours de transfert depuis une autre Plateforme Agréée. " +
-        "La fermer maintenant interromprait ce transfert. Attendez qu'il aboutisse — " +
+        "La fermer maintenant interromprait ce transfert. Attendez qu'il aboutisse, " +
         "l'ancienne plateforme a cinq jours pour répondre.",
     };
   }

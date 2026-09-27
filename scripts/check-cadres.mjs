@@ -1,8 +1,8 @@
 /**
  * Contrôle : toutes les pages du tableau de bord partagent le même cadre.
  *
- * Pourquoi ce contrôle existe. Les trois onglets de facturation — Devis,
- * Factures, Factures reçues — se présentaient de trois façons différentes :
+ * Pourquoi ce contrôle existe. Les trois onglets de facturation, Devis,
+ * Factures, Factures reçues, se présentaient de trois façons différentes :
  * l'une s'étalait sur toute la fenêtre faute de largeur, l'autre se collait à
  * gauche parce que `mx-auto` manquait, la troisième était correcte. En élargissant
  * la mesure, quatre largeurs distinctes cohabitaient sur les pages de liste.
@@ -51,7 +51,7 @@ const PAGES = {
  *
  * On vise le `return (` indenté de deux espaces, celui du composant de page :
  * les retours anticipés (chargement, écran vide) sont plus profonds. Cette
- * distinction compte — une première version de ce script lisait l'état vide de
+ * distinction compte, une première version de ce script lisait l'état vide de
  * « Mes clients » et croyait la page centrée sur une colonne étroite.
  */
 function cadreDe(chemin) {
@@ -71,7 +71,7 @@ for (const [chemin, attendu] of Object.entries(PAGES)) {
   try {
     classes = cadreDe(chemin);
   } catch {
-    console.log(`✗ ${chemin} — fichier introuvable`);
+    console.log(`✗ ${chemin}, fichier introuvable`);
     echecs++;
     continue;
   }
@@ -80,7 +80,7 @@ for (const [chemin, attendu] of Object.entries(PAGES)) {
 
   if (classes === null) {
     echecs++;
-    console.log(`✗ ${nom} — conteneur racine non reconnu`);
+    console.log(`✗ ${nom}, conteneur racine non reconnu`);
     console.log(`    la page doit commencer par un <div className="…"> portant le cadre.`);
     continue;
   }
@@ -88,7 +88,7 @@ for (const [chemin, attendu] of Object.entries(PAGES)) {
   if (!porteCadre(classes, attendu)) {
     echecs++;
     const type = attendu === LISTE ? "liste" : "formulaire";
-    console.log(`✗ ${nom} — cadre « ${type} » attendu`);
+    console.log(`✗ ${nom}, cadre « ${type} » attendu`);
     console.log(`    attendu : ${attendu}`);
     console.log(`    trouvé  : ${classes}`);
   }
@@ -108,5 +108,5 @@ if (echecs > 0) {
   process.exit(1);
 }
 console.log(
-  `✓ Cadres — ${Object.keys(PAGES).length} pages, deux largeurs seulement (liste / formulaire)`
+  `✓ Cadres, ${Object.keys(PAGES).length} pages, deux largeurs seulement (liste / formulaire)`
 );

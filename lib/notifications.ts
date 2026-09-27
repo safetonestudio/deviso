@@ -5,13 +5,13 @@ import type { SupabaseClient } from "@supabase/supabase-js";
  *
  * Pourquoi ce fichier existe. Deviso avait une table `notifications`, une
  * cloche dans l'interface, et même des icônes prêtes pour `proposal_signed` et
- * `proposal_declined` — mais rien n'insérait jamais ces lignes. Le seul signal
+ * `proposal_declined`, mais rien n'insérait jamais ces lignes. Le seul signal
  * qu'un devis venait d'être signé était un courriel, envoyé dans un `try/catch`
  * dont la branche d'erreur était vide. Un refus passager de Resend, et le
  * freelance n'apprenait jamais qu'il avait décroché la mission.
  *
  * C'est le pire endroit possible pour un signal fragile : la signature d'un
- * devis est l'événement qui déclenche tout le reste — la facture, l'acompte, le
+ * devis est l'événement qui déclenche tout le reste, la facture, l'acompte, le
  * travail. Une notification en base, elle, attend qu'on la lise.
  *
  * Deux propriétés que le reste du code n'avait pas :

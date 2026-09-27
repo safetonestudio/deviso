@@ -4,14 +4,14 @@
  * Pourquoi cette traversee existe. `DELETE /directory_entries/{id}` etait le
  * seul appel destructeur de toute l'integration, et le seul qu'aucune traversee
  * ne jouait : l'eprouver sur la ligne principale aurait rendu le compte de test
- * INJOIGNABLE, casse toutes les autres traversees, et — en bac a sable — ne
+ * INJOIGNABLE, casse toutes les autres traversees, et, en bac a sable, ne
  * l'aurait meme pas restitue a l'identique, puisque la reouverture reconstruit
  * `0225:SIREN` alors que les deux societes de test se distinguent par un
  * suffixe. Le garde-fou etait eprouve, l'appel ne l'etait pas.
  *
- * On ouvre donc une ligne SECONDAIRE — l'annuaire l'autorise explicitement,
+ * On ouvre donc une ligne SECONDAIRE, l'annuaire l'autorise explicitement,
  * « toutes les entreprises sont libres de creer autant de lignes qu'elles le
- * souhaitent » — on la ferme, et on verifie que la principale n'a pas bouge.
+ * souhaitent », on la ferme, et on verifie que la principale n'a pas bouge.
  *
  * La derniere verification est la plus importante du fichier : si la ligne
  * principale disparaissait, ce test aurait rendu le compte injoignable en
@@ -141,7 +141,7 @@ verifier(
 //
 // Si elle échoue, cette traversée vient de rendre le compte injoignable.
 verifier(
-  "l'adresse principale est INTACTE — le compte reste joignable",
+  "l'adresse principale est INTACTE, le compte reste joignable",
   principales.every((p) => apresFermeture.some((l) => l.adresse === p.adresse)),
   `avant : ${adressesPrincipales.join(", ")} · après : ${apresFermeture.map((l) => l.adresse).join(", ")}`,
 );

@@ -5,9 +5,9 @@ import { METIERS_LANDING } from "@/lib/blog/metiers";
 /**
  * Le pied de page du site public, en un seul exemplaire.
  *
- * Pourquoi ce fichier existe. Il y avait trois pieds de page écrits à la main —
+ * Pourquoi ce fichier existe. Il y avait trois pieds de page écrits à la main -
  * dans `app/page.tsx`, `components/blog/BlogPost.tsx` et
- * `components/landing/FreelanceLanding.tsx` — et ils ne contenaient pas les
+ * `components/landing/FreelanceLanding.tsx`, et ils ne contenaient pas les
  * mêmes liens. C'est exactement comme ça que le hub `/combien-facturer`, onze
  * pages déclarées en priorité 0.9 dans le sitemap, a fini par ne recevoir qu'un
  * seul lien interne venant de l'extérieur de son propre cluster : il avait été
@@ -17,7 +17,7 @@ import { METIERS_LANDING } from "@/lib/blog/metiers";
  * apparaît partout, et un lien oublié est oublié nulle part.
  *
  * La colonne « Ressources » est celle qui compte pour le référencement. Elle
- * relie les trois familles de pages entre elles — produit, blog, tarifs — et
+ * relie les trois familles de pages entre elles, produit, blog, tarifs, et
  * c'est ce maillage, pas le chiffre écrit dans le sitemap, qui dit à Google
  * quelles pages comptent.
  */

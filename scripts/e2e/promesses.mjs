@@ -8,7 +8,7 @@
  * parce qu'aucun contrôle ne reliait une promesse à une preuve.
  *
  * Ce script établit ce lien. Il ne cherche pas à tout prouver : ce qu'il ne sait
- * pas vérifier, il le dit — c'est aussi utile que ce qu'il valide.
+ * pas vérifier, il le dit, c'est aussi utile que ce qu'il valide.
  *
  * Usage : node scripts/e2e/promesses.mjs
  */
@@ -27,7 +27,7 @@ const gen = await s.call("/api/proposals/generate", {
   method: "POST",
   body: doc({ brief: "Refonte d'un site vitrine de cinq pages pour un restaurant" }),
 });
-verifier("« Devis IA en 30 secondes » — la génération répond",
+verifier("« Devis IA en 30 secondes », la génération répond",
   gen.status === 200 && Array.isArray(gen.body?.proposal?.items), `HTTP ${gen.status}`);
 
 const devis = await s.call("/api/proposals", {
@@ -47,18 +47,18 @@ verifier("un devis est créé avec un jeton de partage", Boolean(token), `HTTP $
 // ── Signature électronique ───────────────────────────────────────────────────
 if (token) {
   const vue = await s.call(`/api/public/proposals/${token}`);
-  verifier("« Signature électronique » — le devis est consultable publiquement",
+  verifier("« Signature électronique », le devis est consultable publiquement",
     vue.status === 200 && Boolean(vue.body?.proposal), `HTTP ${vue.status}`);
 
   // `signer_name`, pas `signerName` : la route lit la forme en tirets bas, comme
   // la page publique qui l'appelle. Ce script a longtemps envoyé la mauvaise
-  // clé — la signature aboutissait quand même, sans nom de signataire, et
+  // clé, la signature aboutissait quand même, sans nom de signataire, et
   // l'assertion passait sans rien prouver du chemin le plus important.
   const sign = await s.call(`/api/public/proposals/${token}`, {
     method: "POST",
     body: doc({ action: "sign", signer_name: "Jean Témoin" }),
   });
-  verifier("« Signature électronique » — la signature aboutit",
+  verifier("« Signature électronique », la signature aboutit",
     sign.status === 200, `HTTP ${sign.status} ${doc(sign.body).slice(0, 100)}`);
 
   const apres = await s.call(`/api/proposals/${devisId}`);
@@ -86,14 +86,14 @@ if (token) {
   const notifs = await s.call("/api/notifications");
   const signee = (notifs.body?.notifications ?? []).find((n) => n.type === "proposal_signed");
   verifier(
-    "« Signature electronique » — le vendeur en est notifie durablement",
+    "« Signature electronique », le vendeur en est notifie durablement",
     Boolean(signee),
     `${(notifs.body?.notifications ?? []).length} notification(s), aucune de type proposal_signed`,
   );
   verifier(
     "et la notification nomme le signataire et mene au devis",
     Boolean(signee) && /Jean Témoin/.test(signee.body ?? "") && String(signee.link ?? "").startsWith("/proposals/"),
-    `${signee?.body ?? "—"} → ${signee?.link ?? "—"}`,
+    `${signee?.body ?? "-"} → ${signee?.link ?? "-"}`,
   );
 }
 
@@ -118,7 +118,7 @@ const creerFacture = (type, extra = {}) =>
 const std = await creerFacture("standard");
 const acompte = await creerFacture("acompte", { deposit_percentage: 30 });
 const solde = await creerFacture("solde", { linked_invoice_id: acompte.body?.invoice?.id });
-verifier("« Factures acompte et solde » — les trois types se créent",
+verifier("« Factures acompte et solde », les trois types se créent",
   [std, acompte, solde].every((r) => r.status === 201),
   `${std.status}/${acompte.status}/${solde.status}`);
 verifier("l'acompte suit une numérotation indépendante",
@@ -134,12 +134,12 @@ const recur = await s.call("/api/recurring", {
     next_billing_date: "2026-09-01", active: true,
   }),
 });
-verifier("« Factures récurrentes » — une récurrence se crée",
+verifier("« Factures récurrentes », une récurrence se crée",
   [200, 201].includes(recur.status), `HTTP ${recur.status} ${doc(recur.body).slice(0, 100)}`);
 
 // ── Factur-X ────────────────────────────────────────────────────────────────
 // Le téléchargement est déjà traversé par two-roles.mjs. Ce qu'un code HTTP ne
-// dit pas, c'est ce que contient le fichier — et c'est là que se jouait la
+// dit pas, c'est ce que contient le fichier, et c'est là que se jouait la
 // conformité. La validation du XML est faite séparément contre le validateur
 // officiel ; on ne la refait pas ici pour ne pas prétendre l'avoir prouvée.
 aVerifierAlaMain(
@@ -154,7 +154,7 @@ for (const [chemin, promesse] of [
   ["/api/export/monthly-recap", "« Récap mensuel »"],
 ]) {
   const r = await s.call(chemin);
-  verifier(`${promesse} — ${chemin}`, r.status === 200, `HTTP ${r.status}`);
+  verifier(`${promesse}, ${chemin}`, r.status === 200, `HTTP ${r.status}`);
 }
 
 // ── CRM, analytics, catalogue ────────────────────────────────────────────────
@@ -164,7 +164,7 @@ for (const [chemin, promesse] of [
   ["/api/catalog", "« Catalogue prestations »"],
 ]) {
   const r = await s.call(chemin);
-  verifier(`${promesse} — ${chemin}`, r.status === 200, `HTTP ${r.status}`);
+  verifier(`${promesse}, ${chemin}`, r.status === 200, `HTTP ${r.status}`);
 }
 
 // ── Réglages Pro ─────────────────────────────────────────────────────────────
@@ -172,17 +172,17 @@ const relances = await s.call("/api/profile", {
   method: "PATCH",
   body: doc({ reminder_intervals: [5, 12], reminder_message: "Message de test" }),
 });
-verifier("« Relances automatiques programmables » — les intervalles s'enregistrent",
+verifier("« Relances automatiques programmables », les intervalles s'enregistrent",
   relances.status === 200 && doc(relances.body?.profile?.reminder_intervals) === "[5,12]",
   `HTTP ${relances.status} → ${doc(relances.body?.profile?.reminder_intervals)}`);
 
 const sous = `test-${Date.now().toString(36)}`;
 const sd = await s.call("/api/profile", { method: "PATCH", body: doc({ subdomain: sous }) });
-verifier("« Sous-domaine de partage » — il s'enregistre",
+verifier("« Sous-domaine de partage », il s'enregistre",
   sd.status === 200 && sd.body?.profile?.subdomain === sous, `HTTP ${sd.status}`);
 
 const couleur = await s.call("/api/profile", { method: "PATCH", body: doc({ proposal_color: "#0f766e" }) });
-verifier("« Couleur d'accent sur vos PDF » — elle s'enregistre",
+verifier("« Couleur d'accent sur vos PDF », elle s'enregistre",
   couleur.status === 200 && couleur.body?.profile?.proposal_color === "#0f766e", `HTTP ${couleur.status}`);
 
 // ── Promesses non couvertes par ce script ────────────────────────────────────
@@ -192,11 +192,11 @@ aVerifierAlaMain("« Dépôt Chorus Pro B2G »", "exige des identifiants PISTE d
 // Le composant existait, complet, mais n'etait monte nulle part : le tour le
 // promettait (« le widget URSSAF te donne ton CA trimestriel et annuel ») et
 // aucun ecran ne l'affichait. Cette promesse figurait ici meme comme « non
-// prouvee, affichage seul » — c'etait vrai, et c'est precisement ce qui l'avait
+// prouvee, affichage seul », c'etait vrai, et c'est precisement ce qui l'avait
 // laissee passer. On lit donc le HTML du tableau de bord.
 const html = await fetch(`${BASE}/dashboard`, { headers: { cookie: s.cookie } }).then((r) => r.text());
 verifier(
-  "« Widget CA URSSAF » — le recapitulatif est bien affiche sur le tableau de bord",
+  "« Widget CA URSSAF », le recapitulatif est bien affiche sur le tableau de bord",
   /Récap (CA, URSSAF|chiffre d&#x27;affaires|chiffre d'affaires)/.test(html),
   "le composant CaUrssafWidget n'apparait pas dans la page rendue",
 );

@@ -2,7 +2,7 @@
  * Socle des traversées de bout en bout.
  *
  * Pourquoi ce fichier existe. Les audits précédents lisaient du code et
- * concluaient « 46 routes protégées » — ce qui voulait dire qu'elles refusent un
+ * concluaient « 46 routes protégées », ce qui voulait dire qu'elles refusent un
  * anonyme, jamais qu'elles acceptent le bon utilisateur. Onze routes renvoyaient
  * 404 à tout membre d'équipe et aucun audit ne l'a vu, parce qu'aucun audit
  * n'avait jamais ouvert une session de membre d'équipe.
@@ -24,7 +24,7 @@ export const BASE = process.env.E2E_BASE_URL || "https://getdeviso.fr";
  * ⚠️ Ce lecteur doit se comporter comme celui de Next, sinon une même ligne
  * donne deux valeurs selon qui la lit. Le 14/09/2026, un commentaire de fin de
  * ligne (`CLE=valeur    # à quoi ça sert`) était renvoyé COLLÉ à la valeur :
- * l'application démarrait très bien — dotenv, lui, coupe au `#` — et les
+ * l'application démarrait très bien, dotenv, lui, coupe au `#`, et les
  * traversées, elles, interrogeaient Stripe avec un identifiant suivi d'un
  * commentaire et récoltaient un 404 incompréhensible. Un écart de parseur est
  * pire qu'un parseur absent : il ne se voit que dans la moitié des chemins.
@@ -54,7 +54,7 @@ export function secret(nom) {
 const PROJECT_REF = "mjhsafxzbufpughtxhnw";
 
 /**
- * Les comptes de démonstration sont limités à dix par heure et par adresse IP —
+ * Les comptes de démonstration sont limités à dix par heure et par adresse IP -
  * garde-fou légitime contre l'abus. La suite en consomme deux par exécution et
  * se retrouvait bloquée au bout de cinq lancements. On réutilise donc les
  * sessions tant qu'elles vivent, ce qui rend aussi la suite nettement plus rapide.
@@ -77,7 +77,7 @@ const ecrireCache = (o) => writeFileSync(CACHE, JSON.stringify(o, null, 2));
 /**
  * Le cookie de session attendu par @supabase/ssr : `base64-` suivi du JSON de
  * session encodé. C'est la clé qui permet d'appeler n'importe quelle route
- * authentifiée depuis un script — la recette a coûté du temps à retrouver.
+ * authentifiée depuis un script, la recette a coûté du temps à retrouver.
  */
 function cookieFor(tokens) {
   const session = {
@@ -132,7 +132,7 @@ export async function openSession(label) {
    * L'adresse de CONNEXION du compte, lue dans le jeton.
    *
    * `profile.email` est l'adresse de contact de l'entreprise, un champ libre du
-   * profil — et le jeu de données de démonstration donne la MÊME à tous les
+   * profil, et le jeu de données de démonstration donne la MÊME à tous les
    * comptes (« marie@studiocreatimd.fr »). Deux sessions distinctes semblaient
    * donc porter la même adresse, ce qui a fait inviter un collaborateur à
    * l'adresse du propriétaire : l'acceptation refusait, à juste titre, et onze
@@ -195,7 +195,7 @@ export async function linkAsTeamMember(owner, member) {
 
   // On invite l'adresse de CONNEXION du collaborateur, pas l'adresse de contact
   // de son profil : c'est celle que la route d'acceptation compare, et c'est
-  // aussi ce qui se passe en production — on invite quelqu'un à l'adresse avec
+  // aussi ce qui se passe en production, on invite quelqu'un à l'adresse avec
   // laquelle il se connectera.
   const invite = await owner.call("/api/team", {
     method: "POST",
@@ -213,7 +213,7 @@ export async function linkAsTeamMember(owner, member) {
 
   // On VÉRIFIE que le rattachement a eu lieu, au lieu de se fier à la redirection.
   //
-  // Toutes les issues de cette route redirigent — succès, « mauvais compte »,
+  // Toutes les issues de cette route redirigent, succès, « mauvais compte »,
   // « déjà acceptée ». Se contenter du code 307 revenait donc à ne rien
   // vérifier du tout : un refus légitime passait pour un succès, et la
   // traversée qui suivait annonçait onze routes en échec au lieu de nommer la
@@ -239,7 +239,7 @@ const resultats = [];
 export function verifier(intitule, condition, detail = "") {
   resultats.push({ intitule, ok: Boolean(condition), detail });
   const marque = condition ? "  ok  " : "ÉCHEC ";
-  console.log(`${marque} ${intitule}${detail && !condition ? ` — ${detail}` : ""}`);
+  console.log(`${marque} ${intitule}${detail && !condition ? `, ${detail}` : ""}`);
 }
 
 export function bilan() {
@@ -249,7 +249,7 @@ export function bilan() {
   if (echecs.length) {
     console.log("");
     console.log("Échecs :");
-    for (const e of echecs) console.log(`  · ${e.intitule}${e.detail ? ` — ${e.detail}` : ""}`);
+    for (const e of echecs) console.log(`  · ${e.intitule}${e.detail ? `, ${e.detail}` : ""}`);
   }
   return echecs.length;
 }

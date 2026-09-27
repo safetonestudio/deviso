@@ -404,7 +404,7 @@ export default function InvoicesPage() {
           {/* Combien de factures n'ont pas encore été transmises.
               Sous la réforme, une facture émise et jamais transmise n'existe
               pas pour l'administration. Ce compte doit se lire sans chercher,
-              comme un solde impayé — pas se déduire en parcourant la liste. */}
+              comme un solde impayé, pas se déduire en parcourant la liste. */}
           {raccordePdp && aTransmettre > 0 && peutTransmettre && (
             <div className="bg-amber-500/10 border border-amber-500/30 rounded-xl px-4 py-3 mb-5 flex items-center gap-3">
               <TriangleAlert size={18} className="shrink-0 text-amber-400" />
@@ -427,7 +427,7 @@ export default function InvoicesPage() {
                   {bloquees} facture{bloquees > 1 ? "s" : ""} ne peu{bloquees > 1 ? "vent" : "t"} pas être transmise{bloquees > 1 ? "s" : ""}
                 </span>{" "}
                 <span className="text-red-400/80">
-                  — il y manque une information. Survolez l&apos;état de la ligne pour savoir laquelle.
+                  - il y manque une information. Survolez l&apos;état de la ligne pour savoir laquelle.
                 </span>
               </p>
             </div>
@@ -582,7 +582,7 @@ export default function InvoicesPage() {
                         <td className="px-5 py-3.5 text-center">
                           {(() => {
                             const e = etatPdp(inv, sandboxPdp);
-                            if (!e) return <span className="text-gray-600 text-xs">—</span>;
+                            if (!e) return <span className="text-gray-600 text-xs">-</span>;
                             if (e.aFaire && peutTransmettre)
                               return (
                                 <button

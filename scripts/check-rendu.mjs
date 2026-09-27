@@ -17,7 +17,7 @@
  *   - une entité affichée littéralement (`&amp;rsquo;` dans la sortie), donc un
  *     texte qui aurait dû être rendu en HTML et ne l'a pas été ;
  *   - une balise affichée comme du texte (`&lt;strong&gt;`), l'erreur inverse ;
- *   - une entité recopiée dans un contexte texte brut — JSON-LD, `<meta>` —
+ *   - une entité recopiée dans un contexte texte brut, JSON-LD, `<meta>` -
  *     où Google lit « qu&rsquo;il » au lieu de « qu'il ».
  *
  * Usage : npm run build && node scripts/check-rendu.mjs
@@ -30,14 +30,14 @@ import { readFileSync, globSync, existsSync } from "node:fs";
 const RACINE = ".next/server/app";
 
 if (!existsSync(RACINE)) {
-  console.error("check:rendu — aucun build trouvé dans .next. Lancez `npm run build` d'abord.");
+  console.error("check:rendu, aucun build trouvé dans .next. Lancez `npm run build` d'abord.");
   process.exit(1);
 }
 
 const pages = globSync(`${RACINE}/**/*.html`).map((f) => f.replace(/\\/g, "/"));
 
 if (pages.length === 0) {
-  console.error("check:rendu — build présent mais aucune page HTML pré-rendue. Rien n'a été vérifié.");
+  console.error("check:rendu, build présent mais aucune page HTML pré-rendue. Rien n'a été vérifié.");
   process.exit(1);
 }
 
@@ -89,7 +89,7 @@ for (const f of pages) {
 
 // Un conteneur `display:flex` traite CHAQUE enfant comme une colonne. Un <li>
 // en flex qui contient à la fois du texte nu et des <strong>/<sup> voit donc sa
-// phrase découpée en colonnes — c'est illisible, et ça ne lève rien. Le markup
+// phrase découpée en colonnes, c'est illisible, et ça ne lève rien. Le markup
 // correct met un marqueur, puis UN seul élément qui porte toute la phrase.
 function signaleFlexEclate(html, page) {
   for (const m of html.matchAll(/<li class="([^"]*)">([\s\S]*?)<\/li>/g)) {
@@ -159,7 +159,7 @@ if (anomalies.length === 0) {
     parPage.get(a.page).push(a);
   }
   for (const [page, liste] of parPage) {
-    console.error(`✗ ${page} — ${liste.length} anomalie(s)`);
+    console.error(`✗ ${page}, ${liste.length} anomalie(s)`);
     for (const a of liste.slice(0, 4)) console.error(`     ${a.genre} : « ${a.extrait} »`);
   }
 }
@@ -176,9 +176,9 @@ if (anomalies.length > 0) {
   console.error("");
   console.error(
     `${anomalies.length} anomalie(s) de rendu. Un texte écrit avec des entités doit passer par le\n` +
-      `même chemin de rendu que les paragraphes — sinon le lecteur voit le code source.`
+      `même chemin de rendu que les paragraphes, sinon le lecteur voit le code source.`
   );
   process.exit(1);
 }
 
-console.log("check:rendu — aucune entité ni balise affichée telle quelle, JSON-LD et métadonnées propres.");
+console.log("check:rendu, aucune entité ni balise affichée telle quelle, JSON-LD et métadonnées propres.");

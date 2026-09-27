@@ -13,7 +13,7 @@ const INTERVALLE_MS = 60_000;
  *
  * Exporté parce que la déconnexion doit suivre exactement le même chemin que le
  * bouton « Quitter la démo ». Deux implémentations séparées finiraient par
- * diverger — c'est précisément le défaut qui a laissé le portail de facturation
+ * diverger, c'est précisément le défaut qui a laissé le portail de facturation
  * sans garde-fou alors que le tunnel de paiement en avait un.
  */
 export async function terminerDemo(destination = "/") {
@@ -47,7 +47,7 @@ export async function terminerDemo(destination = "/") {
  * moyen fiable de savoir qu'un onglet vient d'être fermé : si le navigateur
  * plante ou si l'appareil s'éteint, aucun code ne s'exécute. `pagehide` +
  * `sendBeacon` fonctionnent souvent, mais partent aussi lors d'un simple
- * changement d'onglet sur mobile — supprimer le compte sur ce signal reviendrait
+ * changement d'onglet sur mobile, supprimer le compte sur ce signal reviendrait
  * à couper la démo de quelqu'un en train de s'en servir. On inverse donc :
  * la session prouve régulièrement qu'elle est vivante, et le serveur conclut du
  * silence que le visiteur est parti.

@@ -51,7 +51,7 @@ export async function POST(req: NextRequest) {
   // repli silencieux donnait le même numéro à tous les devis d'un compte dès
   // que la séquence échouait, et rien ne le signalait. Un devis est moins
   // encadré qu'une facture, mais deux devis homonymes chez un même client
-  // rendent la référence contractuelle inutilisable — et c'est elle qu'on cite
+  // rendent la référence contractuelle inutilisable, et c'est elle qu'on cite
   // sur la facture qui suit.
   const { data: numData, error: numErr } = await supabase
     .rpc("next_proposal_number", { p_user_id: workspaceId });
@@ -72,7 +72,7 @@ export async function POST(req: NextRequest) {
 
   // Lignes + totaux recalculés serveur. `items` absent ne doit pas faire un 500
   // (`.map` sur undefined) ; et les totaux d'un document signable ne dépendent
-  // pas de valeurs envoyées par le client — l'empreinte de signature est
+  // pas de valeurs envoyées par le client, l'empreinte de signature est
   // calculée sur ces montants stockés.
   const centimes = (n: unknown) => Math.round((Number(n) || 0) * 100) / 100;
   const itemsWithIds = ((items || []) as ProposalItem[]).map((item) => {

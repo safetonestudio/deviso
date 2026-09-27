@@ -1,5 +1,5 @@
 /**
- * Autorisations des membres d'équipe — le comportement, pas seulement le code.
+ * Autorisations des membres d'équipe, le comportement, pas seulement le code.
  *
  * Modèle (CLAUDE.md, « Membres d'équipe ») : cinq actes réglables par le gérant
  * (envoyer devis, envoyer facture, transmettre PA, déposer Chorus, refuser une

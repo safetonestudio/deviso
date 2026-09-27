@@ -39,7 +39,7 @@ export async function GET() {
   }
   // Aucun dépôt chez un tiers depuis un compte de démonstration. Voir
   // lib/garde-demo.ts : PISTE et la Plateforme Agréée sont en production, et le
-  // jeu de données de démonstration contient de vrais destinataires — dont une
+  // jeu de données de démonstration contient de vrais destinataires, dont une
   // facture B2G adressée au SIREN d'une commune réelle.
   if (await estCompteDemo(user.id)) {
     return NextResponse.json({ error: "DEMO", message: MESSAGE_DEMO_TIERS }, { status: 403 });
@@ -50,8 +50,8 @@ export async function GET() {
   const workspaceId = await getWorkspaceUserId(user.id);
 
   // Le raccordement à la Plateforme Agréée engage l'entreprise (jeton d'un an,
-  // SIREN émetteur) : titulaire seul. Un membre ne relie pas — et ne peut donc
-  // pas écraser — le compte PA de l'espace.
+  // SIREN émetteur) : titulaire seul. Un membre ne relie pas, et ne peut donc
+  // pas écraser, le compte PA de l'espace.
   const refusT = exigerTitulaire(user.id, workspaceId);
   if (refusT) return refusT;
 
@@ -79,14 +79,14 @@ export async function GET() {
   // ⚠️ Les noms de ces paramètres sont préfixés `superpdp_`. La première version
   // envoyait `company_number` / `company_number_scheme` / `company_name` : des
   // paramètres inexistants, donc ignorés en silence. Rien n'aurait signalé
-  // l'erreur — le tunnel se serait simplement affiché vide, ce qu'on aurait mis
+  // l'erreur, le tunnel se serait simplement affiché vide, ce qu'on aurait mis
   // sur le compte du produit et non du code. Noms vérifiés dans la
   // documentation « Authentification » le 12/08/2026.
   //
   // ⚠️ Le pré-remplissage de l'entreprise est **désactivé par défaut**, et ce
   // n'est pas de la prudence de principe. Testé le 12/08/2026 : envoyer un
   // numéro qui ne correspond à aucune entreprise connue de Super PDP ne se
-  // contente pas d'ignorer le paramètre, cela **interrompt tout le tunnel** —
+  // contente pas d'ignorer le paramètre, cela **interrompt tout le tunnel** -
   // « No company found with these superpdp_company_number_scheme and
   // superpdp_company_number ». En bac à sable c'est systématique, puisque les
   // entreprises y sont fictives et ne portent pas de vrai SIREN.
@@ -108,7 +108,7 @@ export async function GET() {
   // L'adresse qui sera créée si l'utilisateur active la réception.
   //
   // Envoyé indépendamment du pré-remplissage de l'entreprise : la
-  // documentation « Authentification » le décrit seul — « pour les entreprises
+  // documentation « Authentification » le décrit seul, « pour les entreprises
   // fr_siren il est possible de configurer l'adresse de facturation
   // électronique qui sera créée dans le cas où l'utilisateur active la
   // réception des factures ». Il ne porte donc pas le risque de blocage du
@@ -123,7 +123,7 @@ export async function GET() {
   if (profile?.email) params.set("login_hint", profile.email);
 
   // Le point décisif pour nous. Sans ce paramètre l'interface laisse le choix
-  // d'ouvrir ou non une ligne d'annuaire — or « pour recevoir une facture, il
+  // d'ouvrir ou non une ligne d'annuaire, or « pour recevoir une facture, il
   // faut avoir ouvert une ligne d'annuaire ». Un utilisateur qui passe outre
   // croirait être raccordé tout en restant incapable de recevoir, c'est-à-dire
   // hors de l'obligation du 1ᵉʳ septembre 2026. On force donc la réception,
@@ -132,7 +132,7 @@ export async function GET() {
   // Paramètre **documenté**, section « Authentification » : `any` (défaut)
   // laisse le choix, `send` masque la réception, `receive` « force
   // l'utilisateur à accepter l'enregistrement d'une ligne dans l'annuaire ».
-  // Un audit l'avait signalé comme absent de la référence OpenAPI — il l'est,
+  // Un audit l'avait signalé comme absent de la référence OpenAPI, il l'est,
   // mais il figure bien dans la documentation. Vérifié le 30/08/2026.
   params.set("superpdp_send_and_receive", "receive");
 
@@ -149,7 +149,7 @@ export async function GET() {
     // l'utilisateur revenait sur un « la demande a expiré » sans comprendre ce
     // qu'il avait fait de travers. Allonger la fenêtre ne coûte rien en
     // sécurité : le `state` est à usage unique, le cookie est httpOnly, et il
-    // est effacé au retour du tunnel — quelle qu'en soit l'issue.
+    // est effacé au retour du tunnel, quelle qu'en soit l'issue.
     maxAge: 1800,
   };
   res.cookies.set("superpdp_state", state, cookieOpts);

@@ -9,9 +9,9 @@ import { getWorkspaceUserId, getWorkspaceProfile } from "@/lib/workspace";
 // catalog, invoices, proposals/send-email, superpdp/connect et templates :
 // cette route filtrait sur `user.id` directement au lieu de l'espace de
 // travail. Pour l'owner ça ne se voyait pas (son id EST celui de l'espace).
-// Pour un membre, ça cassait sur trois niveaux à la fois — plan lu sur son
+// Pour un membre, ça cassait sur trois niveaux à la fois, plan lu sur son
 // propre profil (jamais "pro"), team_members et proposals filtrés sur un
-// owner_id qui n'existe pas pour lui — d'où l'écran vide, sans erreur visible.
+// owner_id qui n'existe pas pour lui, d'où l'écran vide, sans erreur visible.
 export async function GET() {
   const supabase = await createClient();
   const { data: { user }, error: authError } = await supabase.auth.getUser();
@@ -86,7 +86,7 @@ export async function GET() {
     const declined = myProposals.filter((p) => p.status === "declined").length;
     const pending = myProposals.filter((p) => ["sent", "viewed"].includes(p.status)).length;
     const draft = myProposals.filter((p) => p.status === "draft").length;
-    // CA hors taxes, avoirs retranchés — même règle que `app/api/stats`. Ce
+    // CA hors taxes, avoirs retranchés, même règle que `app/api/stats`. Ce
     // chiffre sert à comparer les collaborateurs : sommer du TTC le gonflait
     // d'un cinquième pour un assujetti, et additionner les avoirs récompensait
     // celui qui annule le plus.

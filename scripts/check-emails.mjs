@@ -7,7 +7,7 @@
  *
  *  1. Les relances partaient au nom de « Deviso » alors que le devis initial
  *     partait au nom du prestataire. Le client recevait donc un rappel de
- *     paiement d'une société inconnue — ça ressemble à de l'hameçonnage et ça
+ *     paiement d'une société inconnue, ça ressemble à de l'hameçonnage et ça
  *     abîme la crédibilité de l'émetteur.
  *
  *  2. Les corps de message étaient écrits sans accents : « en attente de
@@ -48,7 +48,7 @@ for (const f of fichiers) {
 
   if (/from:\s*"Deviso </.test(src)) {
     console.error(
-      `✗ ${chemin} — envoi au nom de « Deviso » : le client doit reconnaître son prestataire`
+      `✗ ${chemin}, envoi au nom de « Deviso » : le client doit reconnaître son prestataire`
     );
     echecs++;
   }
@@ -80,7 +80,7 @@ for (const f of fichiers) {
       );
       if (motif.test(ligne)) {
         console.error(
-          `✗ ${f.replace(/\\/g, "/")}:${i + 1} — « ${faux} » sans accent, attendu « ${juste} »`
+          `✗ ${f.replace(/\\/g, "/")}:${i + 1}, « ${faux} » sans accent, attendu « ${juste} »`
         );
         echecs++;
         return;
@@ -91,7 +91,7 @@ for (const f of fichiers) {
 
 // ── 3. Le pied de page « via Deviso » doit être conditionnel ────────────────
 // Décision du 12/08 : badge visible uniquement pour les inscrits sans essai.
-// L'essai de 14 jours donne la formule complète, badge retiré compris — c'est
+// L'essai de 14 jours donne la formule complète, badge retiré compris, c'est
 // ce que la grille tarifaire annonce. Un pied de page écrit en dur réintroduit
 // la marque chez un client payant, exactement ce qu'on vient de corriger.
 for (const f of fichiers) {
@@ -106,13 +106,13 @@ for (const f of fichiers) {
     .some((l) => /href="https:\/\/getdeviso\.fr"/.test(l) && !l.includes("piedDePageMarque"));
   if (enDur) {
     console.error(
-      `✗ ${chemin} — pied de page « via Deviso » écrit en dur : il apparaîtra chez les abonnés. Utiliser piedDePageMarque().`
+      `✗ ${chemin}, pied de page « via Deviso » écrit en dur : il apparaîtra chez les abonnés. Utiliser piedDePageMarque().`
     );
     echecs++;
   }
 }
 
 if (echecs === 0) {
-  console.log("✓ Emails clients — expéditeur au nom du prestataire, textes accentués, marque conditionnelle");
+  console.log("✓ Emails clients, expéditeur au nom du prestataire, textes accentués, marque conditionnelle");
 }
 process.exit(echecs > 0 ? 1 : 0);

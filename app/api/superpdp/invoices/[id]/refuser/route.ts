@@ -7,14 +7,14 @@ import { superpdpFetch, SuperPdpNotConnected, SuperPdpSessionPending } from "@/l
 import { estMotifValide } from "@/lib/superpdp-motifs";
 
 /**
- * Refuse une facture reçue — statut 210 « Refusée ».
+ * Refuse une facture reçue, statut 210 « Refusée ».
  *
  * Ce n'est pas une commodité. Le tableau 8 du dossier de spécifications
  * externes de la DGFiP (v3.2) classe ce statut parmi les quatre **obligatoires**,
  * et précise qu'il est posé par le destinataire : « Le destinataire refuse la
  * facture dans son intégralité. » Sans cette route, un utilisateur raccordé via
  * Deviso devrait aller sur l'interface de Super PDP pour refuser une facture
- * erronée — nous l'aurions rendu joignable sans lui donner de quoi répondre.
+ * erronée, nous l'aurions rendu joignable sans lui donner de quoi répondre.
  *
  * Forme de la requête, découverte auprès de l'API le 12/08/2026 en lui envoyant
  * des corps volontairement incomplets :

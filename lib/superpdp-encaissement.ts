@@ -14,13 +14,13 @@ export type ResultatEncaissement =
         /** Déclaré auprès de la plateforme, mais pas noté chez nous : ne pas rejouer. */
         | "non_enregistre"
         /**
-         * L'appel est parti et on n'a jamais su ce qu'il est devenu — coupure,
+         * L'appel est parti et on n'a jamais su ce qu'il est devenu, coupure,
          * délai dépassé. La réservation est CONSERVÉE : rejouer risquerait une
          * seconde déclaration de paiement au PPF pour le même encaissement.
          */
         | "incertain"
         /**
-         * La facture a déjà fini sa vie autrement — rejetée, refusée. Aucun
+         * La facture a déjà fini sa vie autrement, rejetée, refusée. Aucun
          * encaissement ne peut s'y rattacher, et réessayer n'y changera rien.
          */
         | "facture_close";
@@ -34,7 +34,7 @@ export type ResultatEncaissement =
  * facture Deviso déjà émise.
  *
  * Statut obligatoire posé par le fournisseur (art. 290 A du CGI, tableau 8 des
- * spécifications externes DGFiP v3.2) — voir CLAUDE.md, section Super PDP.
+ * spécifications externes DGFiP v3.2), voir CLAUDE.md, section Super PDP.
  *
  * Corps minimal volontaire : `{ invoice_id, status_code: "fr:212" }`, sans
  * `details`. Vérifié en bac à sable le 29/08/2026 : Super PDP calcule
@@ -44,14 +44,14 @@ export type ResultatEncaissement =
  * utile que pour un encaissement partiel, qu'on ne gère pas ici : « Marquer
  * comme payée » sur Deviso ne représente qu'un encaissement total.
  *
- * Appelée depuis deux endroits — le bouton « Marquer comme payée » et le
- * webhook Stripe (paiement par lien) — et centralisée ici pour que les deux
+ * Appelée depuis deux endroits, le bouton « Marquer comme payée » et le
+ * webhook Stripe (paiement par lien), et centralisée ici pour que les deux
  * chemins se comportent identiquement. Ne pas la dupliquer : c'est
  * exactement le défaut qui avait fait diverger `superpdp_connections` avant
  * la leçon de `saveConnection` (12/08/2026).
  *
  * Best-effort : ne lève jamais d'exception. Un échec de transmission à la PA
- * ne doit pas empêcher Deviso de considérer la facture payée — ce sont deux
+ * ne doit pas empêcher Deviso de considérer la facture payée, ce sont deux
  * systèmes distincts. Le résultat typé permet à l'appelant de prévenir
  * l'utilisateur sans bloquer son propre flux.
  */
@@ -96,11 +96,11 @@ export async function envoyerEncaissementPdp(
   //
   // Une facture rejetée par la plateforme (`fr:213`) ou refusée par le
   // destinataire (`fr:210`) porte un statut CLÔTURANT. La Plateforme Agréée
-  // refuse alors le `fr:212` — « La facture possède déjà un statut final » — et
+  // refuse alors le `fr:212`, « La facture possède déjà un statut final », et
   // sans ce contrôle on relayait ce refus sous la forme « Réessayez dans un
   // moment ». C'est un mensonge par omission : aucun réessai n'aboutira jamais,
-  // et pendant ce temps la vraie information — votre facture a été rejetée, il
-  // faut la refaire — n'est pas dite.
+  // et pendant ce temps la vraie information, votre facture a été rejetée, il
+  // faut la refaire, n'est pas dite.
   //
   // On s'arrête donc avant l'appel, et on nomme la cause.
   //
@@ -144,7 +144,7 @@ export async function envoyerEncaissementPdp(
   // Le piège : sans `details` du tout, la plateforme construit ce bloc elle-même
   // et tout passe. En fournir un incomplet DÉSACTIVE ce calcul et fait échouer
   // la validation. La branche « date » n'était donc pas seulement inutile, elle
-  // empêchait le `fr:212` — le statut obligatoire du fournisseur — de partir.
+  // empêchait le `fr:212`, le statut obligatoire du fournisseur, de partir.
   // Aucune interface ne l'appelait encore : le défaut était armé, pas déclenché.
   //
   // La forme exacte a été lue sur un bloc que la plateforme a produit seule
@@ -177,7 +177,7 @@ export async function envoyerEncaissementPdp(
       : null;
 
   // La date qu'on note chez nous doit être celle qui part réellement. Sans le
-  // bloc, c'est la plateforme qui date l'événement — donc aujourd'hui. Noter la
+  // bloc, c'est la plateforme qui date l'événement, donc aujourd'hui. Noter la
   // date fournie ferait croire à une déclaration qu'on n'a pas faite.
   const horodatage = blocMen
     ? new Date(`${dateValide}T12:00:00Z`).toISOString()
@@ -193,13 +193,13 @@ export async function envoyerEncaissementPdp(
   // deux. Tous deux lisent `null`, tous deux postent `fr:212`, et la donnée
   // d'e-reporting de paiement part **deux fois** au PPF pour un seul
   // encaissement. Le commentaire du bloc d'écriture décrivait déjà ce danger
-  // comme la chose à ne pas laisser arriver — la garde, elle, ne l'empêchait
+  // comme la chose à ne pas laisser arriver, la garde, elle, ne l'empêchait
   // que pour deux clics espacés.
   //
   // On inverse donc l'ordre : on réserve d'abord, par une écriture
   // conditionnelle que la base sérialise, et on relâche si l'envoi n'a pas eu
   // lieu. Le seul cas où l'on garde la réservation sans certitude est celui où
-  // l'on ignore ce qu'est devenu l'appel — parce qu'une déclaration fiscale en
+  // l'on ignore ce qu'est devenu l'appel, parce qu'une déclaration fiscale en
   // double est un incident, là où une déclaration manquante se rattrape en
   // reprenant la facture.
   const { data: prise, error: erreurReservation } = await admin
@@ -212,14 +212,14 @@ export async function envoyerEncaissementPdp(
     .maybeSingle();
 
   if (erreurReservation) {
-    console.error(`[superpdp/encaissement] ${invoiceId} : réservation impossible — ${erreurReservation.message}`);
+    console.error(`[superpdp/encaissement] ${invoiceId} : réservation impossible, ${erreurReservation.message}`);
     return { ok: false, raison: "non_enregistre", detail: erreurReservation.message };
   }
 
   // Quelqu'un d'autre a réservé entre-temps. Attention au raccourci : « réservé
   // par un autre » ne veut pas dire « déclaré ». Si cet autre échoue et rend sa
   // réservation, répondre « déjà encaissée » annoncerait un succès à un
-  // utilisateur dont la facture n'a rien de déclaré — l'échec silencieux, de
+  // utilisateur dont la facture n'a rien de déclaré, l'échec silencieux, de
   // nouveau, et sur le statut obligatoire du fournisseur.
   //
   // On laisse donc au gagnant le temps de conclure, puis on regarde le
@@ -237,7 +237,7 @@ export async function envoyerEncaissementPdp(
     if (apres?.superpdp_encaisse_at) return { ok: true, dejaEncaissee: true };
 
     // Le gagnant a rendu sa réservation : il a échoué, et il a déjà dit
-    // pourquoi à son propre appelant. On ne rejoue pas ici — deux appels qui se
+    // pourquoi à son propre appelant. On ne rejoue pas ici, deux appels qui se
     // relancent mutuellement tourneraient en rond. On dit ce qui est vrai.
     return {
       ok: false,
@@ -269,7 +269,7 @@ export async function envoyerEncaissementPdp(
         // Corps minimal par défaut : la plateforme calcule alors elle-même la
         // ventilation par taux à partir de la facture qu'elle connaît déjà. On
         // ne pose `details` que pour porter la date d'encaissement, et
-        // seulement avec un bloc MEN complet — un bloc partiel désactive son
+        // seulement avec un bloc MEN complet, un bloc partiel désactive son
         // calcul sans satisfaire BR-FR-CDV-14.
         ...(blocMen ? { details: [{ reported_data: [blocMen] }] } : {}),
       }),
@@ -302,7 +302,7 @@ export async function envoyerEncaissementPdp(
       return { ok: false, raison: "verification_en_cours" };
     }
 
-    // Tout le reste — coupure réseau, délai dépassé, réponse illisible — laisse
+    // Tout le reste, coupure réseau, délai dépassé, réponse illisible, laisse
     // le sort de l'appel inconnu. On GARDE la réservation, délibérément :
     // rejouer un `fr:212` qui serait déjà passé ferait partir une seconde
     // déclaration de paiement au PPF pour le même encaissement, ce qu'aucun

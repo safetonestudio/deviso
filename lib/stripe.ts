@@ -9,7 +9,7 @@ import { lazyClient } from "@/lib/lazy-client";
  *
  * Vérifier qu'un changement de formule modifie l'abonnement au lieu d'en créer
  * un second demandait, jusqu'ici, un abonnement vivant sur le compte de
- * production — donc un vrai débit. `STRIPE_API_BASE` permet de faire parler le
+ * production, donc un vrai débit. `STRIPE_API_BASE` permet de faire parler le
  * SDK à un faux Stripe local (`scripts/e2e/faux-stripe.mjs`) et de traverser
  * les vraies routes sans toucher au compte réel.
  *

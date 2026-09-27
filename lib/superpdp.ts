@@ -2,7 +2,7 @@ import { createHash, randomBytes } from "crypto";
 import { createAdminClient } from "@/lib/supabase/admin";
 
 /**
- * Client Super PDP — notre Plateforme Agréée pour la facturation électronique.
+ * Client Super PDP, notre Plateforme Agréée pour la facturation électronique.
  *
  * L'hôte est **le même** en bac à sable et en production : c'est le type de
  * compte, côté Super PDP, qui détermine l'environnement. `SUPERPDP_SANDBOX`
@@ -86,7 +86,7 @@ async function tokenRequest(params: Record<string, string>): Promise<TokenSet> {
 
   let res = await attempt(true);
 
-  // Repli sur l'authentification par corps — mais JAMAIS sur un
+  // Repli sur l'authentification par corps, mais JAMAIS sur un
   // `refresh_token`.
   //
   // Sur un échange de code, un 401 signifie « mauvaise méthode
@@ -95,7 +95,7 @@ async function tokenRequest(params: Record<string, string>): Promise<TokenSet> {
   //
   // Sur un rafraîchissement, un 401 signifie le plus souvent « ce jeton est
   // mort ». Rejouer le MÊME refresh token est précisément le geste qui, sous
-  // rotation OAuth 2.1, peut faire révoquer toute la famille de jetons — donc
+  // rotation OAuth 2.1, peut faire révoquer toute la famille de jetons, donc
   // transformer une erreur passagère en raccordement définitivement perdu.
   if (res.status === 401 && params.grant_type !== "refresh_token") {
     res = await attempt(false);
@@ -188,14 +188,14 @@ export async function getConnection(userId: string): Promise<SuperPdpConnection 
  *
  * ⚠️ Ne pas remplacer par un `upsert` inconditionnel, c'était le défaut initial.
  * Un `upsert` PostgREST est un `INSERT … ON CONFLICT DO UPDATE` : PostgreSQL
- * valide d'abord l'INSERT, donc une mise à jour partielle — n'écrire que
- * `last_invoice_id`, par exemple — viole les contraintes NOT NULL de
+ * valide d'abord l'INSERT, donc une mise à jour partielle, n'écrire que
+ * `last_invoice_id`, par exemple, viole les contraintes NOT NULL de
  * `refresh_token`, `session_status` et `connected_at` et échoue **avant même**
  * d'atteindre la résolution de conflit.
  *
  * Constaté en traversée le 12/08/2026 : la première synchronisation a bien
  * enregistré la facture reçue, mais le curseur est resté nul. La conséquence
- * réelle aurait été plus grave qu'un compteur faux — sans curseur, chaque
+ * réelle aurait été plus grave qu'un compteur faux, sans curseur, chaque
  * passage recommence depuis la première facture, et au-delà de la borne de
  * pagination on cesse purement et simplement de recevoir les nouvelles. Le
  * même défaut cassait la mise en cache du jeton d'accès, donc tous les appels
@@ -234,13 +234,13 @@ export class SuperPdpSessionPending extends Error {}
  *
  * ⚠️ Ne pas revenir à déduire cet état d'un 403. C'est ce que faisait
  * `superpdpFetch` : tout refus était interprété comme « vérification en cours »,
- * ce qui confondait deux situations opposées — `needs_review`, où il faut
+ * ce qui confondait deux situations opposées, `needs_review`, où il faut
  * patienter, et `failed`, où il faut refaire le raccordement. Un utilisateur en
  * échec attendait donc indéfiniment un feu vert qui ne viendrait jamais.
  *
  * `GET /oauth2_sessions/me` donne les deux statuts explicitement. On garde
- * l'interception du 403 comme filet — la route de session peut elle-même
- * répondre 403 — mais l'état affiché vient désormais de la source.
+ * l'interception du 403 comme filet, la route de session peut elle-même
+ * répondre 403, mais l'état affiché vient désormais de la source.
  */
 export type EtatSession = {
   entreprise: "verified" | "needs_review" | "failed";
@@ -276,7 +276,7 @@ export function statutDepuisEtat(etat: EtatSession): "verified" | "pending" | "e
 /**
  * Ce qu'il faut dire à l'utilisateur, selon l'état réel de sa session.
  *
- * `user_identity_verification_status` était lu, typé, transporté — et jamais
+ * `user_identity_verification_status` était lu, typé, transporté, et jamais
  * utilisé. Or il change complètement le message : `not_verified` signifie « The
  * user has either not started the process », c'est-à-dire **une action attendue
  * de sa part**. On lui affichait « Super PDP vérifie le rattachement de votre
@@ -288,7 +288,7 @@ export function messageEtatSession(etat: EtatSession): { texte: string; agir: bo
     return {
       texte:
         "Super PDP attend que vous vérifiiez votre identité. Tant que ce n'est pas fait, " +
-        "rien ne peut avancer — la vérification se termine sur leur interface.",
+        "rien ne peut avancer, la vérification se termine sur leur interface.",
       agir: true,
     };
   }
@@ -326,7 +326,7 @@ const MARGE_EXPIRATION_MS = 60_000;
  * ⚠️ Ne pas revenir à « rafraîchir à chaque appel ». OAuth 2.1 **impose la
  * rotation du refresh token** : l'ancien meurt dès qu'on s'en sert. Rafraîchir
  * systématiquement multiplie donc les occasions de perdre le raccordement pour
- * de bon — deux appels simultanés, ou une coupure entre la réponse de Super PDP
+ * de bon, deux appels simultanés, ou une coupure entre la réponse de Super PDP
  * et notre écriture en base, et l'utilisateur doit refaire tout le tunnel
  * d'autorisation. Le jeton d'accès vit 30 minutes : on s'en sert.
  */
@@ -360,7 +360,7 @@ async function accessTokenValide(
     //     requêtes qui voient toutes deux un jeton d'accès expiré rafraîchissent
     //     avec le MÊME refresh token ; la première réussit et fait tourner le
     //     jeton, la seconde reçoit `invalid_grant`. Le raccordement est
-    //     parfaitement sain — c'est la perdante qui arrive en retard.
+    //     parfaitement sain, c'est la perdante qui arrive en retard.
     //
     // On les confondait, et on inscrivait `session_status = "error"` dans les
     // deux cas. Conséquence réelle : la tâche horaire et un chargement de page
@@ -392,7 +392,7 @@ async function accessTokenValide(
   // Écriture CONDITIONNELLE sur l'ancien refresh token.
   //
   // OAuth 2.1 impose la rotation : l'ancien jeton meurt dès qu'on s'en sert.
-  // Rien ne sérialisait deux rafraîchissements concurrents — la tâche horaire
+  // Rien ne sérialisait deux rafraîchissements concurrents, la tâche horaire
   // et un chargement de page peuvent se croiser, voir tous deux un jeton
   // expiré, et rafraîchir en parallèle avec le MÊME refresh token. Le second
   // reçoit `invalid_grant`, et surtout le perdant écrasait en base le jeton
@@ -445,7 +445,7 @@ export async function superpdpFetch(
   let res = await appel(await accessTokenValide(conn));
 
   // 401 : le jeton d'accès a été invalidé côté serveur avant son expiration
-  // nominale — révocation, rebranchement, redémarrage de leur côté. Il n'était
+  // nominale, révocation, rebranchement, redémarrage de leur côté. Il n'était
   // pas traité : chaque appelant recevait une erreur générique, et l'émission
   // affichait « la Plateforme Agréée a refusé la facture » là où il fallait
   // lire « reconnectez votre compte ». Un seul réessai après rafraîchissement
@@ -462,7 +462,7 @@ export async function superpdpFetch(
     // ⚠️ Ne rien écrire ici.
     //
     // La spec produit le MÊME 403 pour `needs_review` (vérification en cours)
-    // et pour `failed` (« Support has determined the user is not authorized —
+    // et pour `failed` (« Support has determined the user is not authorized -
     // Access is blocked »). Écrire `pending` écrasait donc activement le
     // diagnostic que `lireEtatSession` venait d'établir à la source : un
     // utilisateur définitivement refusé lisait « vérification en cours,

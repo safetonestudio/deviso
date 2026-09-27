@@ -40,10 +40,10 @@ const CRONS = ["/api/cron/send-reminders", "/api/cron/recurring", "/api/cron/cle
 console.log("── Protection des tâches planifiées ─────────────────────────");
 for (const c of CRONS) {
   const sans = await anonymous.call(c);
-  verifier(`${c} — refusé sans le secret`, sans.status === 401, `HTTP ${sans.status}`);
+  verifier(`${c}, refusé sans le secret`, sans.status === 401, `HTTP ${sans.status}`);
 
   const mauvais = await fetch(`${BASE}${c}`, { headers: { authorization: "Bearer mauvais-secret" } });
-  verifier(`${c} — refusé avec un mauvais secret`, mauvais.status === 401, `HTTP ${mauvais.status}`);
+  verifier(`${c}, refusé avec un mauvais secret`, mauvais.status === 401, `HTTP ${mauvais.status}`);
 }
 
 if (!secret) {

@@ -207,7 +207,7 @@ export interface Invoice {
   // Acompte / Solde
   /**
    * `avoir` : note de crédit (type_code 381) annulant la facture désignée par
-   * `linked_invoice_id`. Ses montants restent positifs — c'est le type de
+   * `linked_invoice_id`. Ses montants restent positifs, c'est le type de
    * document qui porte le sens, pas leur signe (BR-27).
    */
   invoice_type: "standard" | "acompte" | "solde" | "avoir";

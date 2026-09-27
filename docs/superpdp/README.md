@@ -7,7 +7,7 @@
 
 **Pourquoi il est ici.** Toute l'intégration a d'abord été construite en devinant : une route
 essayée, un 404, un enum deviné en envoyant une valeur absurde pour lire l'erreur. Ça a produit deux
-diagnostics faux le même jour — « l'entreprise est en lecture seule » (la route était
+diagnostics faux le même jour, « l'entreprise est en lecture seule » (la route était
 `PATCH /v1.beta/companies`, pas `/companies/me`) et « le régime de TVA n'a que trois valeurs »
 (il en a quatre, `vat_exemption` manquait). Lire la spéc coûte une minute et évite les deux.
 

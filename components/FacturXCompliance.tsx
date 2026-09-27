@@ -30,7 +30,7 @@ export function FacturXCompliance({ invoice }: { invoice: Invoice }) {
       invoice.client_address
     ).formatted,
     isFranchise: motifExoneration(invoice).categorie === "E",
-    // Les obligations d'adressage (SIREN, adresse structurée) ne valent qu'en B2B —
+    // Les obligations d'adressage (SIREN, adresse structurée) ne valent qu'en B2B -
     // les réclamer à un freelance qui facture des particuliers afficherait une
     // alerte rouge permanente et fausse. Étape 5 du plan Super PDP, traitée le
     // 29/08/2026 : B2C géré nativement (note BAR/B2C + adresse EM), donc plus
@@ -44,7 +44,7 @@ export function FacturXCompliance({ invoice }: { invoice: Invoice }) {
   // Une facture à 0 % émise par un assujetti doit dire POURQUOI. Deviso
   // écrivait jusqu'ici « art. 293 B du CGI » dans tous les cas, ce qui revenait
   // à déclarer à sa place un régime de franchise en base. Il écrit maintenant
-  // une mention neutre quand il ne peut pas trancher — et le dit ici, sans quoi
+  // une mention neutre quand il ne peut pas trancher, et le dit ici, sans quoi
   // l'utilisateur ne saurait pas qu'il manque quelque chose à sa facture.
   const exo = motifExoneration(invoice);
   const issues = exo.certaine

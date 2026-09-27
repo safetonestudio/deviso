@@ -3,14 +3,14 @@
  *
  * Pourquoi ce fichier existe. Les gabarits d'e-mail de Deviso sont des gabarits
  * de chaîne : `<p>Bonjour ${clientName},</p>`. C'est lisible, et c'est le bon
- * choix pour du HTML d'e-mail — mais toute valeur interpolée est du HTML, pas
+ * choix pour du HTML d'e-mail, mais toute valeur interpolée est du HTML, pas
  * du texte. Un nom de société contenant `<` ou `"` casse la mise en page ; un
  * nom choisi exprès injecte une balise, donc un lien, dans un message qui part
  * avec la signature du domaine.
  *
  * Ces valeurs viennent toutes de champs libres : raison sociale du profil,
  * titre du devis, nom du client. Personne ne les valide, et il n'y a aucune
- * raison qu'on les valide — un nom d'entreprise a le droit de contenir une
+ * raison qu'on les valide, un nom d'entreprise a le droit de contenir une
  * apostrophe. C'est à l'insertion qu'on les rend inoffensives.
  *
  * `attribut` sert pour ce qui atterrit dans un `href` ou un `style` : on y

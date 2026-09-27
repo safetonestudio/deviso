@@ -53,7 +53,7 @@ export async function GET(_req: NextRequest, { params }: Params) {
   //
   // Cette réponse part chez le client final, non authentifié : tout ce qu'elle
   // contient est lisible par quiconque détient le lien. `*` y faisait passer
-  // des champs qui n'ont rien à y faire — le brouillon d'IA (`ai_brief`), le
+  // des champs qui n'ont rien à y faire, le brouillon d'IA (`ai_brief`), le
   // compteur de relances et la date de la dernière, et surtout l'empreinte de
   // signature, l'IP et le user-agent du signataire. Ces trois derniers sont la
   // piste d'audit : elle est faite pour être opposable, pas pour circuler.
@@ -141,7 +141,7 @@ export async function POST(req: NextRequest, { params }: Params) {
     // Update CONDITIONNEL sur le statut : deux signatures concurrentes passent
     // toutes deux le contrôle plus haut (lu puis écrit). Sans cette condition,
     // la seconde écraserait la piste d'audit (IP, empreinte, nom) de la
-    // première — sur une signature opposable. La base n'en laisse passer qu'une.
+    // première, sur une signature opposable. La base n'en laisse passer qu'une.
     const { data: updated, error: updateError } = await admin
       .from("proposals")
       .update(updateData)
@@ -158,7 +158,7 @@ export async function POST(req: NextRequest, { params }: Params) {
     // La signature d'un devis est l'événement commercial le plus important du
     // produit, et il n'en restait AUCUNE trace durable : le seul signal était
     // un courriel dont l'échec était avalé par un `catch` vide. Resend refuse
-    // une fois, et le freelance n'apprend jamais qu'il a décroché la mission —
+    // une fois, et le freelance n'apprend jamais qu'il a décroché la mission -
     // sauf s'il pense à rouvrir son tableau de bord.
     //
     // `NotificationBell` savait pourtant déjà afficher `proposal_signed` et

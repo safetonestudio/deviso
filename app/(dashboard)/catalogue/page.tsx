@@ -102,7 +102,7 @@ export default function CataloguePage() {
 
   if (loading) return <div className="text-center py-16 text-gray-500">Chargement…</div>;
 
-  // Gate Pro — jamais affiché aux membres (ils utilisent les features de l'owner)
+  // Gate Pro, jamais affiché aux membres (ils utilisent les features de l'owner)
   if (!isMember && plan !== "pro") {
     return (
       <div className="max-w-2xl mx-auto">
@@ -146,7 +146,7 @@ export default function CataloguePage() {
               : <Package size={15} className="text-indigo-400" />
             }
             <h2 className="font-semibold text-white text-sm">
-              {editId ? "Modifier" : "Nouvelle prestation"} —{" "}
+              {editId ? "Modifier" : "Nouvelle prestation"}, {" "}
               <span className={formType === "hourly" ? "text-violet-400" : "text-indigo-400"}>
                 {formType === "hourly" ? "Taux horaire" : "À l'acte"}
               </span>

@@ -87,7 +87,7 @@ export default function ProfilPage() {
     e.preventDefault();
     setSaving(true);
     setError("");
-    // N'envoyer QUE les champs du formulaire principal — pas reminder_intervals, subdomain, chorus_pro_*
+    // N'envoyer QUE les champs du formulaire principal, pas reminder_intervals, subdomain, chorus_pro_*
     // qui déclenchent des checks de plan dans le backend et bloquent la sauvegarde pour les non-Pro
     const mainFields = {
       full_name: profile.full_name ?? null,
@@ -522,7 +522,7 @@ Les présentes CGV sont soumises au droit français. Tout litige relève de la c
               : <p className="text-xs text-gray-400 italic">TVA {selectedRegime.rate}% applicable · Taux en vigueur à la date d&apos;émission</p>}
           </div>
 
-          {/* Périodicité de déclaration — assujettis uniquement.
+          {/* Périodicité de déclaration, assujettis uniquement.
               Distincte du régime ci-dessus : celui-là fixe le taux, celle-ci le
               calendrier de déclaration. La Plateforme Agréée l'exige pour
               l'e-reporting ; sans elle, les factures aux particuliers sont

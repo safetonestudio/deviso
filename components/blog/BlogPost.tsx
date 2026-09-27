@@ -15,7 +15,7 @@ import { metierDeLanding, METIERS_LANDING } from "@/lib/blog/metiers";
  * métier et son libellé en propriétés, et chaque page d'article les redonnait
  * une deuxième fois dans son `export const metadata` et une troisième dans son
  * objet `jsonLd`. Trois copies de la même information par article, dix articles :
- * l'audit du 11/09/2026 a trouvé, sans surprise, qu'elles avaient divergé — des
+ * l'audit du 11/09/2026 a trouvé, sans surprise, qu'elles avaient divergé, des
  * `dateModified` figés à la date de publication, et aucun `BreadcrumbList` nulle
  * part, parce qu'ajouter un quatrième bloc de balisage à la main dans dix
  * fichiers ne se fait jamais.
@@ -25,7 +25,7 @@ import { metierDeLanding, METIERS_LANDING } from "@/lib/blog/metiers";
  *
  * La conséquence la plus utile est invisible : le `FAQPage` est construit à
  * partir de la **même** liste `faq` que celle affichée. Il ne peut plus annoncer
- * à Google une réponse absente de la page — c'est exactement le genre de
+ * à Google une réponse absente de la page, c'est exactement le genre de
  * décalage qui fait perdre l'affichage enrichi, et il était structurellement
  * possible avant.
  */

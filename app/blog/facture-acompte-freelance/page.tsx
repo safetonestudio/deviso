@@ -10,7 +10,7 @@ const SECTIONS: Section[] = [
     type: "texte",
     titre: "Pourquoi un document séparé, et pas juste un virement",
     paragraphes: [
-      "Un acompte est un paiement partiel reçu avant la livraison. Dès qu&rsquo;il est encaissé, il correspond à une somme perçue dans le cadre de votre activité : il doit donc être appuyé par un document, entrer dans votre comptabilité, et être déclaré. Le devis signé ne suffit pas — un devis n&rsquo;est pas une pièce comptable, c&rsquo;est un engagement.",
+      "Un acompte est un paiement partiel reçu avant la livraison. Dès qu&rsquo;il est encaissé, il correspond à une somme perçue dans le cadre de votre activité : il doit donc être appuyé par un document, entrer dans votre comptabilité, et être déclaré. Le devis signé ne suffit pas, un devis n&rsquo;est pas une pièce comptable, c&rsquo;est un engagement.",
       "La facture d&rsquo;acompte est ce document. Elle a la même valeur et les mêmes contraintes qu&rsquo;une facture ordinaire : un numéro dans votre séquence, une date, les mentions obligatoires. Ce n&rsquo;est pas un brouillon, ni un reçu.",
       "Et c&rsquo;est la raison pour laquelle on ne peut pas « régulariser plus tard » : une fois l&rsquo;argent encaissé, le document doit exister à cette date-là.",
     ],
@@ -19,7 +19,7 @@ const SECTIONS: Section[] = [
     type: "liste",
     titre: "Ce qu&rsquo;une facture d&rsquo;acompte doit contenir",
     intro:
-      "Les mentions sont celles de toute facture, plus deux qui lui sont propres. Le reste — identité, numéro SIREN, date, coordonnées du client — ne change pas.",
+      "Les mentions sont celles de toute facture, plus deux qui lui sont propres. Le reste, identité, numéro SIREN, date, coordonnées du client, ne change pas.",
     items: [
       {
         titre: "La mention « facture d&rsquo;acompte »",
@@ -29,7 +29,7 @@ const SECTIONS: Section[] = [
       {
         titre: "Un numéro dans votre séquence unique",
         texte:
-          "Pas une numérotation parallèle. Une facture d&rsquo;acompte consomme un numéro de la même série continue que vos autres factures — sinon vous créez un trou, ce qui est précisément ce que la réglementation interdit.",
+          "Pas une numérotation parallèle. Une facture d&rsquo;acompte consomme un numéro de la même série continue que vos autres factures, sinon vous créez un trou, ce qui est précisément ce que la réglementation interdit.",
       },
       {
         titre: "Le montant de l&rsquo;acompte, et le montant total de la commande",
@@ -44,12 +44,12 @@ const SECTIONS: Section[] = [
       {
         titre: "La désignation de la prestation",
         texte:
-          "Même si elle n&rsquo;est pas encore réalisée. « Acompte de 30 % sur refonte du site — devis n° 2026-014 » est suffisant et précis.",
+          "Même si elle n&rsquo;est pas encore réalisée. « Acompte de 30 % sur refonte du site, devis n° 2026-014 » est suffisant et précis.",
       },
       {
         titre: "Le régime de TVA applicable",
         texte:
-          "Si vous êtes en franchise en base, la mention « TVA non applicable, art. 293 B du CGI ». Si vous êtes assujetti, la TVA est due sur l&rsquo;acompte dès son encaissement pour une prestation de services — voir plus bas, c&rsquo;est le point qui surprend.",
+          "Si vous êtes en franchise en base, la mention « TVA non applicable, art. 293 B du CGI ». Si vous êtes assujetti, la TVA est due sur l&rsquo;acompte dès son encaissement pour une prestation de services, voir plus bas, c&rsquo;est le point qui surprend.",
       },
     ],
   },
@@ -58,14 +58,14 @@ const SECTIONS: Section[] = [
     ton: "alerte",
     titre: "La TVA sur un acompte de prestation de services est due à l&rsquo;encaissement",
     texte:
-      "Pour une prestation de services, la TVA devient exigible au moment où vous <strong>encaissez</strong> — pas à la livraison. Un acompte encaissé en décembre porte donc une TVA à déclarer sur décembre, même si la prestation n&rsquo;est exécutée qu&rsquo;en mars. C&rsquo;est l&rsquo;erreur la plus courante chez les prestataires qui viennent de sortir de la franchise en base. Pour une livraison de biens, la règle est différente : la TVA suit la livraison, pas l&rsquo;acompte.",
+      "Pour une prestation de services, la TVA devient exigible au moment où vous <strong>encaissez</strong>, pas à la livraison. Un acompte encaissé en décembre porte donc une TVA à déclarer sur décembre, même si la prestation n&rsquo;est exécutée qu&rsquo;en mars. C&rsquo;est l&rsquo;erreur la plus courante chez les prestataires qui viennent de sortir de la franchise en base. Pour une livraison de biens, la règle est différente : la TVA suit la livraison, pas l&rsquo;acompte.",
   },
   {
     type: "texte",
     titre: "La facture de solde : le seul endroit où l&rsquo;acompte se déduit",
     paragraphes: [
       "À la fin de la mission, vous émettez une facture de solde. Elle reprend le total de la prestation, puis <strong>déduit l&rsquo;acompte déjà facturé</strong>, en citant le numéro et la date de la facture d&rsquo;acompte. Le net à payer correspond au reste.",
-      "C&rsquo;est cette déduction explicite qui évite la double facturation. Sans elle, vous avez deux documents qui réclament la même somme, et c&rsquo;est exactement ce qu&rsquo;un contrôle — ou un client méticuleux — relèvera.",
+      "C&rsquo;est cette déduction explicite qui évite la double facturation. Sans elle, vous avez deux documents qui réclament la même somme, et c&rsquo;est exactement ce qu&rsquo;un contrôle, ou un client méticuleux, relèvera.",
     ],
   },
   {
@@ -79,19 +79,19 @@ const SECTIONS: Section[] = [
       ["Facture d&rsquo;acompte n° 2026-015", "« Acompte 30 % sur devis n° 2026-014 du 3 mars 2026 »", "900 €"],
       [
         "Facture de solde n° 2026-031",
-        "Total 3 000 €, puis « Acompte déjà facturé — facture n° 2026-015 du 5 mars 2026 : −900 € »",
+        "Total 3 000 €, puis « Acompte déjà facturé, facture n° 2026-015 du 5 mars 2026 : −900 € »",
         "2 100 €",
       ],
     ],
     note:
-      "Les numéros se suivent dans une seule série. L&rsquo;acompte consomme le 015, le solde prend le numéro courant au moment de son émission — il n&rsquo;est pas réservé à l&rsquo;avance.",
+      "Les numéros se suivent dans une seule série. L&rsquo;acompte consomme le 015, le solde prend le numéro courant au moment de son émission, il n&rsquo;est pas réservé à l&rsquo;avance.",
   },
   {
     type: "texte",
     titre: "Ce qu&rsquo;il faut déclarer, et quand",
     paragraphes: [
       "En micro-entreprise, vous déclarez votre chiffre d&rsquo;affaires <strong>encaissé</strong>, pas facturé. L&rsquo;acompte entre donc dans la déclaration de la période où il a été reçu sur votre compte, et le solde dans celle de son propre encaissement.",
-      "Conséquence pratique : un acompte versé en décembre et un solde payé en février se déclarent sur deux périodes, voire deux années civiles différentes. Ça peut jouer sur le franchissement d&rsquo;un seuil — c&rsquo;est d&rsquo;ailleurs un levier légitime quand on est proche d&rsquo;une limite, à condition que les dates soient réelles et non arrangées après coup.",
+      "Conséquence pratique : un acompte versé en décembre et un solde payé en février se déclarent sur deux périodes, voire deux années civiles différentes. Ça peut jouer sur le franchissement d&rsquo;un seuil, c&rsquo;est d&rsquo;ailleurs un levier légitime quand on est proche d&rsquo;une limite, à condition que les dates soient réelles et non arrangées après coup.",
       "Et si le solde n&rsquo;est jamais payé, vous ne déclarez que l&rsquo;acompte. Vous ne déclarez jamais un chiffre d&rsquo;affaires que vous n&rsquo;avez pas touché.",
     ],
   },
@@ -112,7 +112,7 @@ const SECTIONS: Section[] = [
       {
         titre: "Oublier de déduire l&rsquo;acompte sur le solde",
         texte:
-          "Vous réclamez alors 3 900 € pour une mission à 3 000 €. Le client le verra, et la correction passera par un avoir — plus de travail pour tout le monde.",
+          "Vous réclamez alors 3 900 € pour une mission à 3 000 €. Le client le verra, et la correction passera par un avoir, plus de travail pour tout le monde.",
       },
       {
         titre: "Demander un acompte sans l&rsquo;avoir prévu au devis",
@@ -133,7 +133,7 @@ const SECTIONS: Section[] = [
 const FAQ = [
   {
     q: "Une facture d'acompte est-elle obligatoire ?",
-    a: "Dès que vous encaissez une somme, elle doit être appuyée par une facture. Le devis signé ne suffit pas : ce n'est pas une pièce comptable. En pratique, si un acompte entre sur votre compte et qu'aucune facture ne lui correspond, il vous manque une pièce — et c'est le genre de manque qui se voit immédiatement en cas de contrôle ou quand un comptable reprend vos comptes.",
+    a: "Dès que vous encaissez une somme, elle doit être appuyée par une facture. Le devis signé ne suffit pas : ce n'est pas une pièce comptable. En pratique, si un acompte entre sur votre compte et qu'aucune facture ne lui correspond, il vous manque une pièce, et c'est le genre de manque qui se voit immédiatement en cas de contrôle ou quand un comptable reprend vos comptes.",
   },
   {
     q: "Faut-il un numéro de facture différent pour un acompte ?",
@@ -141,11 +141,11 @@ const FAQ = [
   },
   {
     q: "Comment déduire l'acompte sur la facture finale ?",
-    a: "Sur la facture de solde, vous portez le total de la prestation, puis une ligne négative qui déduit l'acompte en citant le numéro et la date de la facture d'acompte. Par exemple : « Acompte déjà facturé — facture n° 2026-015 du 5 mars 2026 : −900 € ». Le net à payer est le reste. Cette mention explicite est ce qui évite de réclamer deux fois la même somme.",
+    a: "Sur la facture de solde, vous portez le total de la prestation, puis une ligne négative qui déduit l'acompte en citant le numéro et la date de la facture d'acompte. Par exemple : « Acompte déjà facturé, facture n° 2026-015 du 5 mars 2026 : −900 € ». Le net à payer est le reste. Cette mention explicite est ce qui évite de réclamer deux fois la même somme.",
   },
   {
     q: "Dois-je payer la TVA sur un acompte ?",
-    a: "Si vous êtes en franchise en base, non : vous portez la mention de l'article 293 B du CGI et aucune TVA n'est due. Si vous êtes assujetti et que vous vendez une prestation de services, oui — et dès l'encaissement, pas à la livraison. Un acompte reçu en décembre génère donc une TVA à déclarer sur décembre, même si la prestation n'est exécutée qu'au printemps. Pour une livraison de biens, la règle diffère : la TVA suit la livraison.",
+    a: "Si vous êtes en franchise en base, non : vous portez la mention de l'article 293 B du CGI et aucune TVA n'est due. Si vous êtes assujetti et que vous vendez une prestation de services, oui, et dès l'encaissement, pas à la livraison. Un acompte reçu en décembre génère donc une TVA à déclarer sur décembre, même si la prestation n'est exécutée qu'au printemps. Pour une livraison de biens, la règle diffère : la TVA suit la livraison.",
   },
   {
     q: "Quel pourcentage d'acompte demander ?",
@@ -184,7 +184,7 @@ export default function Page() {
   return (
     <ArticleLong
       slug={SLUG}
-      chapeau="Votre devis est signé, le client vous verse 30 % pour démarrer, et personne ne vous a jamais dit quel document émettre. C&rsquo;est une facture — une vraie, avec un numéro dans votre série — et deux ou trois détails décident de sa validité."
+      chapeau="Votre devis est signé, le client vous verse 30 % pour démarrer, et personne ne vous a jamais dit quel document émettre. C&rsquo;est une facture, une vraie, avec un numéro dans votre série, et deux ou trois détails décident de sa validité."
       enBref={[
         "Un acompte encaissé exige une <strong>facture d&rsquo;acompte</strong> : le devis signé n&rsquo;est pas une pièce comptable.",
         "Elle prend un numéro dans votre <strong>série unique et continue</strong>, jamais dans une série parallèle.",

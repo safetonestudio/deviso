@@ -4,7 +4,7 @@
  * Elle vit dans son propre fichier pour deux raisons. D'abord, c'est une règle
  * **contractuelle** avant d'être technique : elle traduit une phrase des CGU,
  * et elle doit pouvoir être relue à côté de cette phrase. Ensuite, un module
- * sans dépendance se vérifie directement — `scripts/e2e/sieges.mjs` l'importe
+ * sans dépendance se vérifie directement, `scripts/e2e/sieges.mjs` l'importe
  * et le confronte au texte des CGU, ce qui serait impossible à travers
  * `lib/stripe-seats.ts` et ses alias de chemin.
  */
@@ -12,8 +12,8 @@
 /**
  * Membres inclus dans le plan Pro, **en plus** du titulaire du compte.
  *
- * Source : CGU, article « Plan Pro » — « 3 utilisateurs inclus — le titulaire
- * du compte et 2 membres —, +5 €/mois/utilisateur supplémentaire ».
+ * Source : CGU, article « Plan Pro », « 3 utilisateurs inclus, le titulaire
+ * du compte et 2 membres, +5 €/mois/utilisateur supplémentaire ».
  * Ne pas changer cette valeur sans changer les CGU : `npm run test:sieges`
  * compare les deux et échoue si elles divergent.
  */

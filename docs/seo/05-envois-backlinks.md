@@ -1,4 +1,4 @@
-# Envois backlinks — textes prêts à partir
+# Envois backlinks, textes prêts à partir
 
 Tout est rédigé, il n'y a plus qu'à copier, relire et envoyer. **Je n'envoie rien moi-même** : ce sont
 des messages en ton nom, et des formulaires qui t'engagent.
@@ -33,7 +33,7 @@ Les deux `include` sont nécessaires : Amazon SES pour les e-mails transactionne
 domaine.
 
 **À surveiller sur les premiers envois.** Le message de confirmation de Google est lui-même arrivé en
-indésirable — un domaine récent qui émet via une redirection part avec un handicap de réputation.
+indésirable, un domaine récent qui émet via une redirection part avec un handicap de réputation.
 Vérifie que ton premier message atterrit bien en boîte de réception, et si possible demande au
 destinataire de confirmer. Une campagne de sept messages qui part entièrement en spam ne produit
 aucun retour, et rien ne te le signale.
@@ -77,7 +77,7 @@ Contact : support@getdeviso.fr
 
 ---
 
-## 1. Tool Advisor — annuaire gratuit
+## 1. Tool Advisor, annuaire gratuit
 
 - **Où** : https://tool-advisor.fr/contact/, choisir l'option « Je souhaite ajouter mon logiciel à
   l'annuaire (gratuit) ». Ou directement `hello@tool-advisor.fr`.
@@ -85,7 +85,7 @@ Contact : support@getdeviso.fr
 - **Calendrier** : leurs comparatifs éditoriaux ne sont mis à jour qu'**en janvier et en juillet**. Pour
   attraper la fenêtre de janvier, envoie en décembre.
 
-> Objet : Ajout de Deviso à l'annuaire — devis et facturation pour freelances
+> Objet : Ajout de Deviso à l'annuaire, devis et facturation pour freelances
 >
 > Bonjour,
 >
@@ -104,12 +104,12 @@ Contact : support@getdeviso.fr
 > [FICHE PRODUIT]
 >
 > Bien à vous,
-> S. Albert — Deviso
+> S. Albert, Deviso
 > https://getdeviso.fr · https://getdeviso.fr/a-propos
 
 ---
 
-## 2. Appvizer — annuaire gratuit
+## 2. Appvizer, annuaire gratuit
 
 - **Où** : https://www.appvizer.fr/partenaires, « Inscrivez votre logiciel gratuitement ».
 - **Effort** : 30 minutes. Il faut créer un compte éditeur et remplir une fiche.
@@ -120,37 +120,37 @@ Contact : support@getdeviso.fr
 
 ---
 
-## 3. AlternativeTo — annuaire gratuit
+## 3. AlternativeTo, annuaire gratuit
 
 - **Où** : https://alternativeto.net/ → « Suggest new application ». Règles : https://alternativeto.net/faq
 - **Effort** : 20 minutes. Modération de quelques jours à une semaine.
 - **Pourquoi ça vaut le coup malgré le nofollow** : le site se positionne sur « alternative à X », et
   c'est exactement le cluster D du plan éditorial. Tu y seras trouvé par les gens qui cherchent une
   alternative à Abby, Freebe ou Indy.
-- **À renseigner** : plateformes (Web), licence (Freemium), et dans les tags — `invoicing`,
+- **À renseigner** : plateformes (Web), licence (Freemium), et dans les tags, `invoicing`,
   `quotes`, `freelance`, `france`, `e-invoicing`, `factur-x`.
 - **À déclarer comme alternatives à** : Abby, Freebe, Indy, Henrri, Tiime. Sois honnête : ce sont des
   concurrents réels, les déclarer te place dans la bonne comparaison.
 
 ---
 
-## 4. Compta Facile — article invité · la meilleure cible
+## 4. Compta Facile, article invité · la meilleure cible
 
 - **Où** : `content@compta-facile.com`. La page : https://www.compta-facile.com/devenir-auteur/
 - **Ce que tu obtiens** : une page auteur **avec liens vers ton site et tes réseaux**, la newsletter,
   une mise en avant en page d'accueil. ~350 000 visiteurs/mois, public de professionnels comptables.
 - **Effort** : l'email est court ; l'article demandera une demi-journée. Mais tu l'as déjà écrit pour
-  l'essentiel — voir la note en bas de cette section.
+  l'essentiel, voir la note en bas de cette section.
 
-> Objet : Proposition d'article — la réforme de facturation électronique vue du côté des indépendants
+> Objet : Proposition d'article, la réforme de facturation électronique vue du côté des indépendants
 >
 > Bonjour,
 >
 > Je découvre votre page « devenir auteur » et je me permets de vous proposer un sujet.
 >
 > Je développe Deviso, un logiciel de devis et facturation pour indépendants. Pour le construire, j'ai
-> dû lire le dossier de spécifications externes de la DGFiP dans le détail — les tableaux de statuts
-> du cycle de vie, les motifs de refus, les règles de gestion — parce qu'on ne peut pas implémenter un
+> dû lire le dossier de spécifications externes de la DGFiP dans le détail, les tableaux de statuts
+> du cycle de vie, les motifs de refus, les règles de gestion, parce qu'on ne peut pas implémenter un
 > cycle de vie de facture à partir d'une synthèse de presse.
 >
 > J'en ai retiré trois constats qui pourraient intéresser vos lecteurs, et que je ne vois traités
@@ -168,50 +168,50 @@ Contact : support@getdeviso.fr
 > 3. **Les montants d'amendes qui circulent sont périmés.** La loi de finances pour 2026 (art. 123) a
 >    doublé les sanctions au 1er septembre 2026 : l'e-reporting est passé de 250 à 500 € par
 >    transmission, l'émission de 15 à 50 € par facture, et une amende de réception a été créée. Une
->    bonne partie du web est restée sur les anciens chiffres — j'en faisais partie jusqu'à récemment,
+>    bonne partie du web est restée sur les anciens chiffres, j'en faisais partie jusqu'à récemment,
 >    et j'ai corrigé mes pages.
 >
 > Je peux écrire sur l'un de ces trois angles, au format qui vous convient, avec les sources
 > (Légifrance, impots.gouv.fr, Service-Public) en bas de l'article. Je n'y parlerai pas de mon produit
-> — ce n'est pas l'objet, et ça discréditerait le reste.
+>, ce n'est pas l'objet, et ça discréditerait le reste.
 >
 > Dites-moi si l'un des trois vous intéresse, et je vous envoie un plan détaillé.
 >
 > Bien cordialement,
 > S. Albert
-> Deviso — https://getdeviso.fr · https://getdeviso.fr/a-propos
+> Deviso, https://getdeviso.fr · https://getdeviso.fr/a-propos
 
 **Note** : les angles 1 et 2 correspondent aux deux articles publiés sur le blog le 11/09/2026
 (`/blog/plateforme-agreee-ou-solution-compatible` et `/blog/facture-electronique-refusee-que-faire`).
-Ne les envoie pas tels quels — réécris-les pour leur public, qui est plus comptable que freelance, et
+Ne les envoie pas tels quels, réécris-les pour leur public, qui est plus comptable que freelance, et
 sans les sections sur Deviso. Un article dupliqué te coûterait les deux pages au lieu de t'en gagner une.
 
 ---
 
-## 5. Compta Online — article invité · le plus gros volume
+## 5. Compta Online, article invité · le plus gros volume
 
 - **Où** : https://www.compta-online.com/contributeurs, puis leur formulaire de contact.
 - **Ce que tu obtiens** : une page auteur avec liens, et tu conserves tes droits. 249 contributeurs,
   15 millions de visites par an annoncées.
 - **Même email que Compta Facile**, avec deux ajustements : mentionne que tu as lu leur section
-  « pourquoi publier un article », et propose en priorité l'angle 2 (facture refusée) — c'est le plus
+  « pourquoi publier un article », et propose en priorité l'angle 2 (facture refusée), c'est le plus
   technique des trois, et c'est leur public.
 
 ---
 
-## 6. Independant.io — comparateur, la cible la mieux positionnée
+## 6. Independant.io, comparateur, la cible la mieux positionnée
 
 - **Où** : pas de formulaire éditeur. Le lien « Contactez-nous » en pied de page de
   https://independant.io/
 - **Pourquoi eux** : le site s'adresse littéralement aux indépendants, et ils tiennent déjà l'une des
   listes de plateformes les plus à jour (mise à jour septembre 2026).
 
-> Objet : Deviso — logiciel de devis et facturation pour indépendants, à ajouter à vos comparatifs
+> Objet : Deviso, logiciel de devis et facturation pour indépendants, à ajouter à vos comparatifs
 >
 > Bonjour,
 >
 > Je suis tombé sur votre comparatif des logiciels de facturation pour freelances, et sur votre liste
-> des plateformes de dématérialisation — qui est, de loin, la plus à jour que j'aie trouvée.
+> des plateformes de dématérialisation, qui est, de loin, la plus à jour que j'aie trouvée.
 >
 > Je développe Deviso, un logiciel de devis et de facturation pour indépendants français. Je ne vous
 > demande pas un avis favorable : je vous donne les éléments pour nous évaluer, et vous en faites ce
@@ -221,21 +221,21 @@ sans les sections sur Deviso. Un article dupliqué te coûterait les deux pages 
 >
 > Deux choses qui vous intéresseront peut-être, puisque ce sont vos critères :
 >
-> — notre statut est écrit noir sur blanc, avec le lien vers la liste officielle pour que vos lecteurs
+>, notre statut est écrit noir sur blanc, avec le lien vers la liste officielle pour que vos lecteurs
 >   vérifient eux-mêmes : https://getdeviso.fr/conformite
-> — nous avons publié une page qui explique la distinction plateforme agréée / solution compatible,
+>, nous avons publié une page qui explique la distinction plateforme agréée / solution compatible,
 >   sourcée sur impots.gouv.fr. Si elle vous est utile pour votre propre méthodologie, servez-vous :
 >   https://getdeviso.fr/blog/plateforme-agreee-ou-solution-compatible
 >
 > Accès de test à disposition si vous voulez l'essayer.
 >
 > Bien à vous,
-> S. Albert — Deviso
+> S. Albert, Deviso
 > https://getdeviso.fr · https://getdeviso.fr/a-propos
 
 ---
 
-## 7. Comparateur Facturation Électronique — un email, réponse sous 24 h
+## 7. Comparateur Facturation Électronique, un email, réponse sous 24 h
 
 - **Où** : `contact@comparateur-facturation-electronique.fr`
 - **Effort** : cinq minutes. Envoie la fiche produit avec un mot d'introduction et le lien
@@ -243,10 +243,10 @@ sans les sections sur Deviso. Un article dupliqué te coûterait les deux pages 
 
 ---
 
-## 8. Comparateur e-Facturation — à garder pour plus tard
+## 8. Comparateur e-Facturation, à garder pour plus tard
 
 - **Où** : https://comparateur-efacturation.fr/methodologie puis leur page contact.
-- **Pourquoi pas maintenant** : leur méthodologie est explicite, et je l'ai vérifiée — leur annuaire
+- **Pourquoi pas maintenant** : leur méthodologie est explicite, et je l'ai vérifiée, leur annuaire
   recense **uniquement les plateformes immatriculées par la DGFiP**. Le référencement n'est pas payant,
   mais il n'est pas achetable non plus : tant que Deviso est une solution compatible, tu n'y entres
   pas. Super PDP, en revanche, y figure.
@@ -289,4 +289,4 @@ payé qui existe.
 | Independant.io | | | |
 | Comparateur Facturation Électronique | | | |
 
-Une relance unique, deux semaines après, suffit. Au-delà, c'est un non — passe à la suivante.
+Une relance unique, deux semaines après, suffit. Au-delà, c'est un non, passe à la suivante.

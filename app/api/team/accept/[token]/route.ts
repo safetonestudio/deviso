@@ -43,7 +43,7 @@ export async function GET(_req: NextRequest, { params }: Params) {
   //
   // Ce contrôle n'existait que côté navigateur : `app/(public)/join/[token]`
   // affichait « mauvais compte », mais cette route, appelée directement,
-  // acceptait n'importe quel compte connecté. Or le jeton circule — il est
+  // acceptait n'importe quel compte connecté. Or le jeton circule, il est
   // renvoyé en clair par `POST /api/team` pour que le propriétaire le
   // transmette lui-même, il passe par un courriel, il reste dans un historique
   // de navigation. Quiconque le récupérait entrait dans l'espace : devis,
@@ -62,8 +62,8 @@ export async function GET(_req: NextRequest, { params }: Params) {
   // jour elle-même, et on regarde combien de lignes ont bougé.
   //
   // Le contrôle « déjà acceptée » vivait plus haut, dans une lecture séparée.
-  // Sur une route GET, deux requêtes concurrentes — un double clic, un
-  // préchargement du navigateur, deux onglets — lisaient toutes deux
+  // Sur une route GET, deux requêtes concurrentes, un double clic, un
+  // préchargement du navigateur, deux onglets, lisaient toutes deux
   // « pending », franchissaient toutes deux le garde, et appelaient chacune
   // `addSeatToSubscription`. Deux sièges facturés au propriétaire pour un seul
   // collaborateur, sans que rien ne le signale.
@@ -82,7 +82,7 @@ export async function GET(_req: NextRequest, { params }: Params) {
     return NextResponse.redirect(`${baseUrl}/dashboard?invite=error`);
   }
 
-  // Zéro ligne : quelqu'un d'autre — ou nous-mêmes, une milliseconde plus tôt —
+  // Zéro ligne : quelqu'un d'autre, ou nous-mêmes, une milliseconde plus tôt -
   // vient d'accepter. On ne facture pas un second siège.
   if (!acceptees || acceptees.length === 0) {
     return NextResponse.redirect(`${baseUrl}/dashboard?invite=already_accepted`);
@@ -91,7 +91,7 @@ export async function GET(_req: NextRequest, { params }: Params) {
   // Aligner les sièges facturés sur le nombre réel de membres actifs.
   //
   // L'échec était avalé par un `catch` vide, avec en commentaire « le billing
-  // sera régularisé manuellement » — sauf que rien n'était écrit nulle part :
+  // sera régularisé manuellement », sauf que rien n'était écrit nulle part :
   // il n'existait aucune trace à partir de laquelle régulariser. Le siège
   // était activé et jamais facturé, définitivement et invisiblement.
   //

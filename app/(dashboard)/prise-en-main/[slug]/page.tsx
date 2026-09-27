@@ -157,7 +157,7 @@ const ARTICLES: Record<string, Article> = {
                 Ces informations apparaîtront sur le PDF final.
               </p>
               <Tip>
-                <B>Bonne pratique :</B> renseigne l&apos;adresse complète dès maintenant —
+                <B>Bonne pratique :</B> renseigne l&apos;adresse complète dès maintenant -
                 elle sera reprise automatiquement sur toutes tes prochaines factures pour ce client.
               </Tip>
             </Step>
@@ -249,7 +249,7 @@ const ARTICLES: Record<string, Article> = {
           </Ul>
           <Tip>
             <B>Repère courant :</B> 30 à 50 % d&apos;acompte pour les missions créatives ou de conseil.
-            Pour un projet long (développement, formation), un découpage en trois tiers —
+            Pour un projet long (développement, formation), un découpage en trois tiers -
             démarrage / mi-parcours / livraison, fonctionne très bien.
           </Tip>
         </Section>
@@ -385,7 +385,7 @@ const ARTICLES: Record<string, Article> = {
             </Step>
           </Steps>
           <Tip>
-            Crée un taux horaire par activité si tes tarifs varient selon les missions —
+            Crée un taux horaire par activité si tes tarifs varient selon les missions -
             développement front, conseil, formation. Tu gardes une granularité utile sur tes devis.
           </Tip>
         </Section>
@@ -481,7 +481,7 @@ const ARTICLES: Record<string, Article> = {
                 est plus exploitable pour l&apos;IA qu&apos;<em>« Travail graphique »</em>.
               </p>
               <Tip>
-                Une bonne description de catalogue sert aussi directement aux clients —
+                Une bonne description de catalogue sert aussi directement aux clients -
                 ils lisent les lignes du devis, pas seulement le total.
               </Tip>
             </Step>
@@ -495,7 +495,7 @@ const ARTICLES: Record<string, Article> = {
             <Step n={4} title="Maintenir les prix à jour">
               <p>
                 L&apos;IA retranscrit tes tarifs catalogues tels quels dans les devis.
-                Un tarif obsolète dans le catalogue se retrouve directement dans le devis généré —
+                Un tarif obsolète dans le catalogue se retrouve directement dans le devis généré -
                 et devra être corrigé à la main à chaque fois.
               </p>
               <Warning>
@@ -828,7 +828,7 @@ const ARTICLES: Record<string, Article> = {
         <Section title="Workflow de validation">
           <p>
             Dans <B>Équipe → Paramètres</B>, active <B>Validation requise avant envoi</B>.
-            Les membres ne pourront plus envoyer directement un devis au client —
+            Les membres ne pourront plus envoyer directement un devis au client -
             ils devront le soumettre pour approbation.
           </p>
           <Steps>

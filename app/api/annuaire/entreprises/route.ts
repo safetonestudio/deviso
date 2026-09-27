@@ -6,17 +6,17 @@ import { SUPERPDP_API } from "@/lib/superpdp";
  * Recherche une entreprise dans l'Annuaire national.
  *
  * Pourquoi ça change quelque chose. Pour émettre une facture B2B, Deviso a
- * besoin du SIREN du client — et le demandait à l'utilisateur, qui devait le
+ * besoin du SIREN du client, et le demandait à l'utilisateur, qui devait le
  * réclamer à son client ou le recopier depuis un document. Une faute de frappe
  * se solde par une facture rejetée, constatée plus tard.
  *
  * `GET /v1.beta/french_directory/companies` fait ça correctement : on cherche
  * par nom et code postal, on récupère `number` (le SIREN), `formal_name` et
- * l'adresse postale complète — tous les champs requis du Factur-X, d'un coup.
+ * l'adresse postale complète, tous les champs requis du Factur-X, d'un coup.
  *
  * Deux propriétés notables :
  *   - la route est **publique** (`"security": []`), donc utilisable par un
- *     utilisateur non encore raccordé — c'est-à-dire tout le monde aujourd'hui ;
+ *     utilisateur non encore raccordé, c'est-à-dire tout le monde aujourd'hui ;
  *   - « Companies in this directory are **eligible to the french invoicing
  *     law** » : la présence d'un client dans cet annuaire est en soi
  *     l'information « ce client relève de la réforme ».

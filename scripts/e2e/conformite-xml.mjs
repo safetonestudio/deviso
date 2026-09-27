@@ -3,13 +3,13 @@
  *
  * Pourquoi cette traversee existe. Tout le reste de nos tests verifie que
  * *notre* code fait ce que *nous* avons decide. Celui-ci verifie que le
- * document que nous fabriquons est conforme a la norme — et c'est la seule
+ * document que nous fabriquons est conforme a la norme, et c'est la seule
  * question qui compte au moment ou une facture part chez un client.
  *
  * Le juge n'est pas nous : `POST /validation_reports` est le validateur de la
  * Plateforme Agreee, qui applique « les derniers jeux de regles de validation
  * en vigueur, les schematrons » (documentation Super PDP, article 6). Il est
- * public — `security: []` dans la specification — donc utilisable sans jeton et
+ * public, `security: []` dans la specification, donc utilisable sans jeton et
  * sans rien emettre.
  *
  * On passe par les routes de l'application (`/api/invoices` puis
@@ -201,7 +201,7 @@ const CAS = [
     client_country: "BE",
   }),
 
-  facture("B2BInt sans adresse électronique — doit être bloqué en amont", {
+  facture("B2BInt sans adresse électronique, doit être bloqué en amont", {
     client_directory_address: null,
     client_name: "Tricatel Deutschland",
     client_company: "Tricatel Deutschland",
@@ -222,7 +222,7 @@ const CAS = [
   // Pas de cas « avoir » ici, et c'est un constat, pas un oubli.
   //
   // Un premier essai envoyait un type 381 avec des montants negatifs. Le
-  // validateur l'a refuse — [BR-27] « The Item net price (BT-146) shall NOT be
+  // validateur l'a refuse, [BR-27] « The Item net price (BT-146) shall NOT be
   // negative » : dans la norme, un avoir porte des montants POSITIFS, c'est le
   // type de document qui en dit le sens.
   //
@@ -231,9 +231,9 @@ const CAS = [
   // `invoice_type` ne connait que standard / acompte / solde. Tester un
   // document qu'aucun utilisateur ne peut creer aurait mesure une fiction.
   //
-  // L'absence d'avoir est une lacune fonctionnelle reelle — sous la reforme,
+  // L'absence d'avoir est une lacune fonctionnelle reelle, sous la reforme,
   // une facture transmise ne se modifie plus, et l'avoir est le seul moyen de
-  // la corriger — mais elle se traite en construisant la fonctionnalite, pas
+  // la corriger, mais elle se traite en construisant la fonctionnalite, pas
   // en l'affirmant ici.
 ];
 
@@ -253,14 +253,14 @@ for (const cas of CAS) {
   });
   const id = creee.body?.invoice?.id;
   if (!id) {
-    verifier(`${cas.nom} — facture créée`, false, `HTTP ${creee.status} ${JSON.stringify(creee.body).slice(0, 220)}`);
+    verifier(`${cas.nom}, facture créée`, false, `HTTP ${creee.status} ${JSON.stringify(creee.body).slice(0, 220)}`);
     continue;
   }
   aNettoyer.push(id);
 
   const r = await appel(`/api/superpdp/invoices/${id}/valider`, { method: "POST" });
   if (r.status !== 200) {
-    verifier(`${cas.nom} — validation obtenue`, false, `HTTP ${r.status} ${JSON.stringify(r.body).slice(0, 220)}`);
+    verifier(`${cas.nom}, validation obtenue`, false, `HTTP ${r.status} ${JSON.stringify(r.body).slice(0, 220)}`);
     continue;
   }
 
@@ -269,10 +269,10 @@ for (const cas of CAS) {
 
   // Certains cas ne doivent PAS produire un document conforme : ils doivent
   // etre arretes par le pre-controle, avant qu'un XML ne parte. Verifier leur
-  // conformite n'aurait pas de sens — c'est leur blocage qu'on verifie.
+  // conformite n'aurait pas de sens, c'est leur blocage qu'on verifie.
   if (cas.attendu === "manque") {
     verifier(
-      `${cas.nom} — arrêtée par le pré-contrôle`,
+      `${cas.nom}, arrêtée par le pré-contrôle`,
       manques.length > 0 && r.body?.conforme === false,
       `manques = ${JSON.stringify(manques)}`,
     );
@@ -283,13 +283,13 @@ for (const cas of CAS) {
   // Le validateur peut être momentanément indisponible : ne pas confondre
   // « la facture est mauvaise » avec « le juge n'a pas répondu ».
   if (v.indisponible) {
-    verifier(`${cas.nom} — validateur joignable`, false, v.indisponible);
+    verifier(`${cas.nom}, validateur joignable`, false, v.indisponible);
     continue;
   }
 
   const echecs = v.echecs ?? [];
   verifier(
-    `${cas.nom} — Factur-X conforme`,
+    `${cas.nom}, Factur-X conforme`,
     v.valide === true && echecs.length === 0,
     echecs.slice(0, 4).join(" · ") || JSON.stringify(v).slice(0, 200),
   );

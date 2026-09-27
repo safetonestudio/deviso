@@ -6,8 +6,8 @@ import { createClient } from "@/lib/supabase/server";
  *
  * Pourquoi cette route existe. La page « Factures reçues » est rendue côté
  * serveur : elle lit la base directement, et rien de ce qu'elle affiche n'était
- * atteignable autrement. Conséquence, le refus d'une facture reçue (fr:210) —
- * l'un des quatre statuts que la DGFiP classe **obligatoires** — était classé
+ * atteignable autrement. Conséquence, le refus d'une facture reçue (fr:210) -
+ * l'un des quatre statuts que la DGFiP classe **obligatoires**, était classé
  * « non testable » : aucune traversée ne pouvait retrouver l'identifiant d'une
  * entrante pour la refuser.
  *

@@ -151,7 +151,7 @@ export default function TeamPage() {
     setMembers((prev) => prev.map((m) => (m.id === id ? { ...m, permissions } : m)));
   }
 
-  // Gate Pro — jamais affiché aux membres (ils utilisent les features de l'owner)
+  // Gate Pro, jamais affiché aux membres (ils utilisent les features de l'owner)
   if (!isPro && !isMember) {
     return (
       <div className="max-w-lg mx-auto mt-24 text-center space-y-4">
@@ -483,7 +483,7 @@ export default function TeamPage() {
                         <td colSpan={4} className="px-4 pb-4 bg-ds-elevated/20">
                           <div className="pt-1">
                             <p className="text-xs text-gray-500 mb-2">
-                              Autorisations de <span className="text-gray-300">{m.email}</span> — cochez ce que ce collaborateur a le droit de faire.
+                              Autorisations de <span className="text-gray-300">{m.email}</span>, cochez ce que ce collaborateur a le droit de faire.
                             </p>
                             <GrillePermissions
                               memberId={m.id}

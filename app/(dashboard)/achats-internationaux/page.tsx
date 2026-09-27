@@ -12,7 +12,7 @@ export const metadata: Metadata = { title: "Achats à l'étranger" };
 export const dynamic = "force-dynamic";
 
 /**
- * Achats auprès de fournisseurs étrangers — e-reporting d'acquisition.
+ * Achats auprès de fournisseurs étrangers, e-reporting d'acquisition.
  *
  * L'obligation manquante que l'écran « Déclarations » signalait sans pouvoir la
  * remplir : une entreprise française qui achète hors de France doit déclarer

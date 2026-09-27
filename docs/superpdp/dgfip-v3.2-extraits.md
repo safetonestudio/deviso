@@ -1,4 +1,4 @@
-# Extraits normatifs — spécifications externes DGFiP v3.2
+# Extraits normatifs, spécifications externes DGFiP v3.2
 
 Source : `specifications-externes-v3.2.zip`, publié par la DGFiP / AIFE le
 30/04/2026 sur impots.gouv.fr. Lu le 07/09/2026.
@@ -7,7 +7,7 @@ Ce fichier existe parce que ces tables ont été, pendant des semaines,
 **supposées**. Deux libellés de motif de refus écrits de mémoire se sont
 révélés faux, et un statut a été traduit à l'envers. Chaque fois, le code
 compilait, les tests passaient, et l'erreur n'était visible que pour
-l'utilisateur — sous la forme d'une facture annulée pour la mauvaise raison.
+l'utilisateur, sous la forme d'une facture annulée pour la mauvaise raison.
 Ce qui suit est recopié du document, pas reformulé.
 
 Le paquet lui-même n'est pas versionné ici : 6,7 Mo de binaire, dont l'essentiel
@@ -16,18 +16,18 @@ Le paquet lui-même n'est pas versionné ici : 6,7 Mo de binaire, dont l'essenti
 
 Contenu du paquet, pour mémoire :
 
-- `0- Dossier de spécifications externes FE - Dossier général_v3.2.pdf` — le
+- `0- Dossier de spécifications externes FE - Dossier général_v3.2.pdf`, le
   document général, d'où viennent le tableau 8 et la règle de l'avoir interne ;
-- `2- Annexes_v3.2/…Annexe 2 - Format sémantique FE CDV - Flux 6 - V2.3.xlsx` —
+- `2- Annexes_v3.2/…Annexe 2 - Format sémantique FE CDV - Flux 6 - V2.3.xlsx` -
   le format du cycle de vie, onglets « Statuts » et « CDV FE - CI ARM » ;
-- `2- Annexes_v3.2/…Annexe 7 - Règles de gestion - V1.9.xlsx` — onglet
+- `2- Annexes_v3.2/…Annexe 7 - Règles de gestion - V1.9.xlsx`, onglet
   « Tableau des motifs de refus », la nomenclature MDT-113 ;
 - annexes 1 (e-invoicing), 3 (annuaire), 6 (e-reporting), les XSD et le Swagger
   annuaire.
 
 ---
 
-## Tableau 8 — Les statuts d'une facture
+## Tableau 8, Les statuts d'une facture
 
 > Les statuts possibles (**liste non exhaustive**, voir norme AFNOR XP Z12-012)
 
@@ -82,12 +82,12 @@ transmises), `REJ_COH` (cohérence).
 Statuts obligatoires : `REJ_INC` (cohérence des statuts), `REJ_INEX`
 (conformité des statuts autorisés), `REJ_RG` (règles de gestion), `REJ_HAB`
 (droits et habilitations), `REJ_ENCAISSEMENT` (**encaissements conformes à la
-répartition par taux de TVA déclarée** — c'est le contrôle que le bloc MDG-43 /
+répartition par taux de TVA déclarée**, c'est le contrôle que le bloc MDG-43 /
 MDT-207 « MEN » sert à satisfaire, voir `lib/superpdp-encaissement.ts`).
 
 ---
 
-## MDT-113 — Code motif rejet (annexe 2, onglet « CDV FE - CI ARM »)
+## MDT-113, Code motif rejet (annexe 2, onglet « CDV FE - CI ARM »)
 
 Cardinalité 0..1, longueur 50, règles de gestion G7.08 / G7.18 / G7.19 / G7.39.
 Définition : « En cas d'irrecevabilité / rejet / refus : Code motif ».
@@ -96,7 +96,7 @@ L'attribut `MDT-113-1` (Nom liste) sert à « nommer la liste des codes privés 
 rejet ». **Il n'existe donc pas de code list normative fermée pour MDT-113** :
 la liste ci-dessous est la nomenclature de référence publiée par la DGFiP, et
 c'est la plateforme qui décide lesquels de ces codes elle accepte pour un
-statut donné. Pour le statut 210, Super PDP en accepte treize — voir
+statut donné. Pour le statut 210, Super PDP en accepte treize, voir
 `lib/superpdp-motifs.ts`.
 
 ## Tableau des motifs de refus (annexe 7)
@@ -152,7 +152,7 @@ Deux pièges que cette table lève, et que Deviso avait tous les deux :
   *données réglementaires F1*. Pour une facture reçue deux fois, le motif est
   `DOUBLON`. Deviso affichait « Double facturation », c'est-à-dire le seul
   libellé qu'aurait choisi un utilisateur facturé deux fois ;
-- **`CMD_ERR` n'est pas « facture non conforme à la commande »** — ce libellé
+- **`CMD_ERR` n'est pas « facture non conforme à la commande »**, ce libellé
   appartient à `FACT_NON_CONFORME`. C'est un problème de numéro de commande, et
   il ne justifie un refus que si l'acheteur a fourni ce numéro avant la
   facturation.
@@ -161,7 +161,7 @@ Deux pièges que cette table lève, et que Deviso avait tous les deux :
 
 | ID | Nom | Notes |
 | --- | --- | --- |
-| MDT-114 | Libellé motif rejet | 0..n, 250 caractères — le texte libre qui accompagne le code |
+| MDT-114 | Libellé motif rejet | 0..n, 250 caractères, le texte libre qui accompagne le code |
 | MDT-121 | Code action attendue | « Ce code permet d'indiquer l'action attendue (de type demande d'avoir ou facture rectificative…) » |
 | MDT-123 | Données invalides | Désigne le champ fautif |
 

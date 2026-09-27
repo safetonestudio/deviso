@@ -42,7 +42,7 @@ export function SessionGuard() {
     if (isDemoLocal && !isDemoSession) {
       // On sait ici que la session précédente est bel et bien terminée : le
       // navigateur a été fermé puis rouvert. C'est donc un départ certain, pas
-      // une inférence — on supprime le compte factice au lieu de se contenter
+      // une inférence, on supprime le compte factice au lieu de se contenter
       // d'une déconnexion qui le laisserait en base jusqu'à expiration.
       terminerDemo();
       return;

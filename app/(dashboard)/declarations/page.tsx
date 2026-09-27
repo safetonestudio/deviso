@@ -13,7 +13,7 @@ export const dynamic = "force-dynamic";
  *
  * Pourquoi cet écran existe. Deviso ne fabrique pas l'e-reporting : Super PDP
  * agrège seul les données de transaction et de paiement, et les dépose au
- * rythme dicté par le régime de TVA. Leur documentation le confirme — pour une
+ * rythme dicté par le régime de TVA. Leur documentation le confirme, pour une
  * facture B2B, « en nous confiant une facture, nous satisfaisons les deux
  * obligations d'e-invoicing et d'e-reporting ».
  *
@@ -36,7 +36,7 @@ type Declaration = {
 };
 
 const jour = (v: string | null) =>
-  v ? new Date(v).toLocaleDateString("fr-FR", { day: "2-digit", month: "short", year: "numeric" }) : "—";
+  v ? new Date(v).toLocaleDateString("fr-FR", { day: "2-digit", month: "short", year: "numeric" }) : "-";
 
 export default async function Declarations() {
   const supabase = await createClient();
@@ -130,7 +130,7 @@ export default async function Declarations() {
                   {aTraiter} déclaration{aTraiter > 1 ? "s" : ""} en échec
                 </span>{" "}
                 <span className="text-red-400/80">
-                  — l&apos;administration ne l&apos;a pas acceptée. C&apos;est la seule alerte qui
+                  - l&apos;administration ne l&apos;a pas acceptée. C&apos;est la seule alerte qui
                   existe sur ce sujet.
                 </span>
               </p>
@@ -152,7 +152,7 @@ export default async function Declarations() {
 
           <Apercu />
 
-          {/* Achats à l'étranger — désormais couverts.
+          {/* Achats à l'étranger, désormais couverts.
               L'article 290-II du CGI oblige l'entreprise française à déclarer
               ses ACHATS auprès d'un fournisseur étranger. Ces factures
               n'arrivent pas par la Plateforme Agréée (courriel, PDF) : Deviso
@@ -165,7 +165,7 @@ export default async function Declarations() {
                 <p className="text-sm text-white font-medium mb-1">Vos achats à l&apos;étranger</p>
                 <p className="text-xs text-gray-400 leading-relaxed">
                   Un achat auprès d&apos;un fournisseur hors de France doit être déclaré par vos soins
-                  (article 290-II du CGI) — sa facture ne passe pas par la Plateforme Agréée.
+                  (article 290-II du CGI), sa facture ne passe pas par la Plateforme Agréée.
                   Saisissez-la dans Deviso&nbsp;: la déclaration d&apos;acquisition part
                   automatiquement.
                 </p>
@@ -219,7 +219,7 @@ export default async function Declarations() {
                   {declarations.map((d) => (
                     <tr key={d.id} className="border-b border-ds-border last:border-0">
                       <td className="px-4 py-3 text-white">
-                        {jour(d.debut)} — {jour(d.fin)}
+                        {jour(d.debut)}, {jour(d.fin)}
                       </td>
                       <td className="px-4 py-3 text-gray-400">{d.nature}</td>
                       <td className="px-4 py-3 text-gray-400">{d.role}</td>

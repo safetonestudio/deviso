@@ -1,11 +1,11 @@
 /**
- * Catalogue de prestations et modèles de devis — écriture, pas seulement lecture.
+ * Catalogue de prestations et modèles de devis, écriture, pas seulement lecture.
  *
  * Ce qui était testé jusqu'ici : `GET /api/catalog` répond 200 (promesses.mjs et
  * two-roles.mjs). Rien d'autre. Or c'est à l'écriture que la panne récurrente de
  * ce projet se manifeste : une route qui filtre sur l'identifiant de
  * l'utilisateur au lieu de celui de l'espace de travail marche pour le
- * propriétaire — son identifiant EST celui de l'espace — et casse pour tout
+ * propriétaire, son identifiant EST celui de l'espace, et casse pour tout
  * collaborateur. Onze routes en souffraient ; la liste s'affichait, l'action
  * renvoyait 404.
  *
@@ -35,7 +35,7 @@ console.log(`  propriétaire, membre rattaché, et un espace étranger`);
 console.log("");
 
 // ── Catalogue : lecture ──────────────────────────────────────────────────────
-console.log("── Catalogue — lecture ───────────────────────────────────────");
+console.log("── Catalogue, lecture ───────────────────────────────────────");
 
 const lectureAnonyme = await anonymous.call("/api/catalog");
 verifier("un anonyme ne lit pas le catalogue", lectureAnonyme.status === 401, `HTTP ${lectureAnonyme.status}`);
@@ -51,12 +51,12 @@ const lectureMembre = await member.call("/api/catalog");
 verifier(
   "un membre lit le catalogue de l'espace, pas un catalogue vide",
   lectureMembre.status === 200 && (lectureMembre.body?.items ?? []).length > 0,
-  `HTTP ${lectureMembre.status} — ${(lectureMembre.body?.items ?? []).length} prestation(s)`
+  `HTTP ${lectureMembre.status}, ${(lectureMembre.body?.items ?? []).length} prestation(s)`
 );
 
 // ── Catalogue : création ─────────────────────────────────────────────────────
 console.log("");
-console.log("── Catalogue — création ──────────────────────────────────────");
+console.log("── Catalogue, création ──────────────────────────────────────");
 
 const sansNom = await owner.call("/api/catalog", { method: "POST", body: doc({ unit_price: 100 }) });
 verifier("une prestation sans nom est refusée", sansNom.status === 400, `HTTP ${sansNom.status}`);
@@ -121,7 +121,7 @@ verifier(
 
 // ── Catalogue : modification et suppression ──────────────────────────────────
 console.log("");
-console.log("── Catalogue — modification et suppression ───────────────────");
+console.log("── Catalogue, modification et suppression ───────────────────");
 
 const idForfait = forfait.body?.item?.id;
 
@@ -207,7 +207,7 @@ const modelesMembre = await member.call("/api/templates");
 verifier(
   "un membre lit les modèles de l'espace",
   modelesMembre.status === 200 && (modelesMembre.body?.templates ?? []).length > 0,
-  `HTTP ${modelesMembre.status} — ${(modelesMembre.body?.templates ?? []).length} modèle(s)`
+  `HTTP ${modelesMembre.status}, ${(modelesMembre.body?.templates ?? []).length} modèle(s)`
 );
 
 const modeleSansNom = await owner.call("/api/templates", { method: "POST", body: doc({ items: [] }) });

@@ -69,7 +69,7 @@ export async function POST(req: NextRequest) {
 
   // Liste blanche des champs acceptés à la création. Le reste du corps est
   // ignoré : sans cela, `...body` laissait poser des colonnes de cycle de vie
-  // (superpdp_*, paid_at, chorus_pro_*, status…) par un appel API direct — une
+  // (superpdp_*, paid_at, chorus_pro_*, status…) par un appel API direct, une
   // facture pouvait naître « déjà transmise » ou « encaissée ». La route sœur
   // PATCH a sa propre liste blanche ; la création l'avait perdue.
   const CHAMPS_FACTURE = new Set([
@@ -87,7 +87,7 @@ export async function POST(req: NextRequest) {
   );
 
   // Génère le numéro de facture auto si absent. La règle vit dans
-  // lib/numerotation.ts, partagée avec la création d'avoir — voir ce fichier
+  // lib/numerotation.ts, partagée avec la création d'avoir, voir ce fichier
   // pour le pourquoi du refus plutôt que du repli.
   let invoiceNumber = body.invoice_number;
   if (!invoiceNumber) {
@@ -105,14 +105,14 @@ export async function POST(req: NextRequest) {
   }
 
   // Adresses : on dérive la forme affichable des champs saisis, des deux côtés.
-  // Rien n'est requis — une facture doit pouvoir être créée avec une adresse
+  // Rien n'est requis, une facture doit pouvoir être créée avec une adresse
   // incomplète, quitte à ce que la bannière de conformité le signale ensuite.
   //
   // ⚠️ `country` doit être transmis. Il ne l'était pas, et `resolveAddress`
   // retombe alors sur « FR » : le pays du client ne pouvait donc JAMAIS valoir
   // autre chose que la France, quoi que l'utilisateur saisisse. Conséquence,
   // une facture à un client belge était classée B2B et envoyée dans le circuit
-  // national, qui n'a pas à l'acheminer — le B2BInt était impossible par
+  // national, qui n'a pas à l'acheminer, le B2BInt était impossible par
   // construction, pas par oubli d'implémentation.
   const clientAddr = resolveAddress(
     {
@@ -141,7 +141,7 @@ export async function POST(req: NextRequest) {
    * Ils l'étaient : `...body` insérait `total_ht` et `total_ttc` tels que le
    * navigateur les avait calculés, sans qu'aucune vérification ne les relie
    * aux lignes ni au taux de TVA. Toute la justesse des montants d'une facture
-   * — un document fiscal — reposait donc sur du code client, qu'un appel API
+   *, un document fiscal, reposait donc sur du code client, qu'un appel API
    * direct contourne en une ligne. On pouvait enregistrer une facture de trois
    * lignes à 100 € portant « total HT : 5 € ».
    *

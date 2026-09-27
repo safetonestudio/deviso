@@ -112,7 +112,7 @@ export async function GET(req: NextRequest) {
     // Le statut se LIT, il ne se déduit pas d'un 200.
     //
     // On posait `verified` dès que `/companies/me` répondait. C'était une
-    // inférence : toute autre cause de non-200 — réseau, 500 — devenait
+    // inférence : toute autre cause de non-200, réseau, 500, devenait
     // silencieusement « vérification en cours », avec `last_error` effacé. La
     // personne lisait « Super PDP vérifie… » pour une panne technique.
     //
@@ -145,7 +145,7 @@ export async function GET(req: NextRequest) {
     // Adresse de réception. C'est la seule information du raccordement qui
     // intéresse l'utilisateur : c'est ce qu'il communique à ses clients.
     // On écarte la ligne suffixée `_replyto`, adresse technique de retour pour
-    // les messages de cycle de vie — l'afficher ferait croire à deux adresses.
+    // les messages de cycle de vie, l'afficher ferait croire à deux adresses.
     let directoryAddress: string | null = null;
     let directoryId: string | null = null;
     if (status === "verified") {
@@ -171,7 +171,7 @@ export async function GET(req: NextRequest) {
     // `last_invoice_id` et `last_event_id` sont des bornes « ne me redonne rien
     // en dessous ». Rebrancher sans les remettre à zéro fait donc sauter, en
     // silence et définitivement, toutes les factures de la nouvelle entreprise
-    // dont l'identifiant est inférieur à la borne héritée de l'ancienne —
+    // dont l'identifiant est inférieur à la borne héritée de l'ancienne -
     // c'est-à-dire l'antériorité complète d'une entreprise qui utilisait déjà
     // la Plateforme Agréée avant de passer par Deviso. Un débranchement suivi
     // d'un rebranchement efface la ligne et n'a pas ce problème ; refaire le
@@ -194,8 +194,8 @@ export async function GET(req: NextRequest) {
       last_error: null,
       connected_at: new Date().toISOString(),
       // On garde le jeton d'accès qu'on vient d'obtenir. Sans cela, le tout
-      // premier appel d'API rafraîchirait immédiatement — donc ferait tourner
-      // le refresh token — alors qu'on en a un tout neuf, valable 30 minutes.
+      // premier appel d'API rafraîchirait immédiatement, donc ferait tourner
+      // le refresh token, alors qu'on en a un tout neuf, valable 30 minutes.
       access_token: tokens.access_token,
       access_token_expires_at: new Date(
         Date.now() + (tokens.expires_in ?? 1800) * 1000
@@ -204,7 +204,7 @@ export async function GET(req: NextRequest) {
 
     // Régime de TVA : à pousser dès le raccordement, sinon la première facture
     // B2C du client sera refusée sans qu'il comprenne pourquoi. Ce réglage
-    // n'existe que par l'API — ni son interface Super PDP ni la nôtre ne le
+    // n'existe que par l'API, ni son interface Super PDP ni la nôtre ne le
     // montrent. Best-effort : un échec ne doit pas casser un raccordement qui
     // vient d'aboutir, et le prochain enregistrement de profil rattrapera.
     if (status === "verified") {

@@ -7,7 +7,7 @@ import { estFrance } from "@/lib/territoires";
  *
  * Pourquoi ce fichier existe. La route d'émission déclarait
  * `processing_rule: isB2C ? "B2C" : "B2B"`. Une facture à un client belge,
- * allemand ou suisse partait donc étiquetée **B2B** — c'est-à-dire annoncée au
+ * allemand ou suisse partait donc étiquetée **B2B**, c'est-à-dire annoncée au
  * réseau national de facturation, qui n'a pas à l'acheminer. Cas massivement
  * fréquent chez les freelances techniques, et jamais traité.
  *
@@ -18,13 +18,13 @@ import { estFrance } from "@/lib/territoires";
  *     e-reporting de la transaction et de l'encaissement.
  *   - **B2BInt** : le client est une entreprise hors de France. Pas
  *     d'acheminement national non plus, mais un e-reporting des opérations
- *     internationales — et il porte aussi sur les ACHATS, ce que Deviso ne
+ *     internationales, et il porte aussi sur les ACHATS, ce que Deviso ne
  *     couvre pas encore.
  *   - **B2B** : tout le reste, c'est-à-dire une entreprise française.
  *
  * Le pays est déterminant et n'était lu nulle part. Attention : `parseAddress`
  * met « FR » par défaut quand rien n'est renseigné, donc un pays vide n'est PAS
- * une information — c'est une absence, et on la traite comme la France, ce qui
+ * une information, c'est une absence, et on la traite comme la France, ce qui
  * est le comportement le moins surprenant pour un logiciel français.
  */
 export type NatureOperation = "B2B" | "B2C" | "B2BInt";

@@ -11,7 +11,7 @@
  * Ce serveur implémente les seuls endpoints que Deviso appelle, en mémoire. Il
  * ne simule pas Stripe : il en imite la forme des réponses et, surtout, il
  * ENREGISTRE chaque appel reçu. C'est le journal des appels qui fait la preuve
- * — « a-t-on appelé subscriptions.update, ou checkout.sessions.create ? » est
+ *, « a-t-on appelé subscriptions.update, ou checkout.sessions.create ? » est
  * une question à laquelle aucune relecture de code ne répond avec certitude.
  *
  * Usage : node scripts/e2e/faux-stripe.mjs [port]

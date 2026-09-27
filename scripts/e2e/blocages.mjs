@@ -114,7 +114,7 @@ verifier(
 
 // Le cas que le test initial avait manque, et que les donnees reelles ont
 // rattrape : 16 factures B2C sur 16 dormaient a api:uploaded sans avoir jamais
-// progresse. Un particulier n'a pas d'adresse electronique — la plateforme n'a
+// progresse. Un particulier n'a pas d'adresse electronique, la plateforme n'a
 // rien a acheminer et retient la facture pour l'e-reporting. Les signaler
 // aurait noye toutes les vraies alertes.
 verifier(

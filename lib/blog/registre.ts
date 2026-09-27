@@ -5,14 +5,14 @@
  * la même information à six endroits : les métadonnées Next, le JSON-LD de la
  * page, l'entrée du sitemap, la carte de l'index `/blog`, le `hasPart` du
  * `CollectionPage`, et les liens « articles liés ». Six saisies manuelles dont
- * deux qu'on peut oublier **en silence** — un article absent du sitemap n'est
+ * deux qu'on peut oublier **en silence**, un article absent du sitemap n'est
  * signalé par rien, il est seulement invisible.
  *
  * L'audit SEO du 11/09/2026 a montré ce que ça coûtait. 19 articles, 4 398
  * lignes de TSX, et quatre erreurs factuelles dispersées dans quatre fichiers :
  * des montants d'amendes périmés depuis le 1er septembre 2026, recopiés à la
  * fois dans le corps d'un article, dans un JSON-LD `FAQPage` et sur l'index.
- * Le problème n'était pas la volonté de tenir le blog à jour — c'était son prix
+ * Le problème n'était pas la volonté de tenir le blog à jour, c'était son prix
  * unitaire.
  *
  * Trois propriétés que le code précédent n'avait pas :
@@ -22,7 +22,7 @@
  *   - **une erreur de slug casse la compilation.** `article("typo")` lève, donc
  *     un lien interne mort ne peut plus atteindre la production ;
  *   - **`misAJourLe` est une vraie date.** Elle ne bouge que quand on modifie
- *     le contenu, ce qui rend enfin la fraîcheur mesurable — c'est le signal
+ *     le contenu, ce qui rend enfin la fraîcheur mesurable, c'est le signal
  *     qu'un blog réglementaire doit pouvoir envoyer.
  *
  * Ce que ce fichier ne contient pas, volontairement : les icônes (elles
@@ -39,7 +39,7 @@ export const SITE = "https://getdeviso.fr";
  * Les catégories vivent dans `lib/blog/categories.ts`, et le type s'en déduit :
  * ajouter une catégorie, c'est ajouter une entrée là-bas, et le compilateur
  * accepte aussitôt les articles qui s'y rattachent. Une catégorie inventée ici
- * casse la compilation — c'est le but.
+ * casse la compilation, c'est le but.
  */
 export type { Categorie } from "./categories";
 import type { Categorie } from "./categories";
@@ -59,7 +59,7 @@ export type Article = {
   publieLe: string;
   /**
    * Date de dernière modification *de fond*. À avancer quand on corrige un
-   * chiffre, une date, un paragraphe — jamais pour faire joli : un `lastmod`
+   * chiffre, une date, un paragraphe, jamais pour faire joli : un `lastmod`
    * qui bouge sans raison est un `lastmod` que Google finit par ignorer.
    */
   misAJourLe: string;
@@ -303,7 +303,7 @@ export const ARTICLES: Article[] = [
     og: {
       titre: "Petit chiffre d'affaires et facturation électronique : les options réelles",
       description:
-        "Entre la réception obligatoire depuis 2026 et l'émission en 2027, ce qu'un très petit CA doit faire — et ce qu'il ne doit pas payer.",
+        "Entre la réception obligatoire depuis 2026 et l'émission en 2027, ce qu'un très petit CA doit faire, et ce qu'il ne doit pas payer.",
     },
     publieLe: "2026-09-12",
     misAJourLe: "2026-09-12",
@@ -345,12 +345,12 @@ export const ARTICLES: Article[] = [
     categorie: "documents",
     titre: "Erreur sur une facture : l'avoir, pas la gomme",
     description:
-      "Une facture émise ne se modifie ni ne se supprime. Comment corriger : avoir total, avoir partiel, facture rectificative — et ce que la facturation électronique change.",
+      "Une facture émise ne se modifie ni ne se supprime. Comment corriger : avoir total, avoir partiel, facture rectificative, et ce que la facturation électronique change.",
     h1: "J'ai fait une erreur sur une facture : pourquoi on ne la supprime jamais, et quoi faire",
     og: {
       titre: "Corriger une facture : avoir, rectification, et ce que la réforme change",
       description:
-        "Une facture émise est définitive. L'avoir est le seul outil de correction — et depuis la facturation électronique, le rattrapage n'est plus le même.",
+        "Une facture émise est définitive. L'avoir est le seul outil de correction, et depuis la facturation électronique, le rattrapage n'est plus le même.",
     },
     publieLe: "2026-09-12",
     misAJourLe: "2026-09-12",
@@ -419,7 +419,7 @@ export const ARTICLES: Article[] = [
     og: {
       titre: "Plafonds micro-entreprise 2026-2028 : 203 100 € et 83 600 €",
       description:
-        "Les plafonds ont été revalorisés de 7,6 % pour 2026-2028. Les seuils de TVA, eux, n'ont pas bougé — et c'est eux que vous franchirez d'abord.",
+        "Les plafonds ont été revalorisés de 7,6 % pour 2026-2028. Les seuils de TVA, eux, n'ont pas bougé, et c'est eux que vous franchirez d'abord.",
     },
     publieLe: "2026-09-12",
     misAJourLe: "2026-09-12",
@@ -490,7 +490,7 @@ export const ARTICLES: Article[] = [
     titre: "Numéroter ses factures, et réparer un trou",
     description:
       "La numérotation doit être continue et sans trou : c'est une obligation du CGI. Les formats qui tiennent, et comment réparer une série déjà cassée.",
-    h1: "Numéroter ses factures sans se tromper — et que faire si c'est déjà raté",
+    h1: "Numéroter ses factures sans se tromper, et que faire si c'est déjà raté",
     og: {
       titre: "Numérotation des factures : les règles, les formats, et comment réparer",
       description:
@@ -880,7 +880,7 @@ export function cheminArticle(slug: string): string {
   return `/blog/${slug}`;
 }
 
-/** Les articles liés, résolus en objets — et donc vérifiés. */
+/** Les articles liés, résolus en objets, et donc vérifiés. */
 export function articlesLies(slug: string): Article[] {
   return (article(slug).lies ?? []).map(article);
 }

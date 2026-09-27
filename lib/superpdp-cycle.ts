@@ -1,8 +1,8 @@
 /**
  * Ce qu'un destinataire peut répondre à une facture reçue.
  *
- * Pourquoi ça existe. `status_code_create` accepte dix codes — `fr:204` à
- * `fr:212` plus `fr:220` — et Deviso n'en émettait que deux : le refus et
+ * Pourquoi ça existe. `status_code_create` accepte dix codes, `fr:204` à
+ * `fr:212` plus `fr:220`, et Deviso n'en émettait que deux : le refus et
  * l'encaissement. Face à une facture douteuse, la seule action offerte était
  * donc le **refus**, dont la route dit elle-même qu'il est « définitif et
  * global » et « oblige le fournisseur à procéder à une annulation comptable ».
@@ -12,7 +12,7 @@
  * facture entière, et son fournisseur doit passer un avoir pour une virgule.
  * Le litige (`fr:207`) et la suspension (`fr:208`) existent exactement pour ça.
  *
- * Aucun de ces codes n'est obligatoire au sens du tableau 8 de la DGFiP — seuls
+ * Aucun de ces codes n'est obligatoire au sens du tableau 8 de la DGFiP, seuls
  * 200, 210, 212 et 213 le sont. Ils sont là parce qu'ils rendent la relation
  * commerciale utilisable, pas parce que la loi les impose.
  */

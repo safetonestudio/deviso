@@ -25,7 +25,7 @@ import type { ReactElement } from "react";
  * Elle manquait, et le XML embarqué dans le PDF était donc, pour un avoir, non
  * conforme à BR-FR-CO-05 : « une référence à une facture antérieure (BT-25)
  * **avec sa date (BT-26)** ». Sans la date, le validateur officiel ne compte
- * pas la référence du tout — « Références entête trouvées : 0 ».
+ * pas la référence du tout, « Références entête trouvées : 0 ».
  *
  * Le XML transmis à la Plateforme Agréée, lui, la portait déjà (la route
  * d'émission résout les deux champs). Il y avait donc deux XML différents pour
@@ -246,7 +246,7 @@ function setDocumentId(pdfDoc: PDFDocument, invoice: Invoice): void {
  * Injecte les métadonnées XMP Factur-X dans le catalogue du PDF.
  *
  * Le schéma d'extension `fx` déclare le type de document, le nom du fichier
- * joint et le profil de conformité — c'est la signature qui distingue un
+ * joint et le profil de conformité, c'est la signature qui distingue un
  * Factur-X d'un simple PDF avec une pièce jointe.
  *
  * `pdfaid:part = 3` / `conformance = B` est déclaré car les conditions sont

@@ -97,7 +97,7 @@ export default function ChoisirPlateformeAgreeePage() {
               <li className="flex gap-2"><span className="text-indigo-400 shrink-0">2.</span> <span><strong className="text-white">Déclarer les données fiscales</strong> à la DGFiP en temps réel (montants, TVA, parties, date)</span></li>
             </ul>
             <p className="mt-3">
-              Avant 2024, on espérait pouvoir utiliser le Portail Public de Facturation (PPF) gratuitement pour émettre et recevoir. La DGFiP a abandonné cette fonction en octobre 2024, et l&apos;État a arrêté le développement du portail en août 2025 : il ne reste que les plateformes agréées privées. Vous devez donc en avoir une — mais dans la plupart des cas, votre logiciel de facturation s&apos;en charge pour vous.
+              Avant 2024, on espérait pouvoir utiliser le Portail Public de Facturation (PPF) gratuitement pour émettre et recevoir. La DGFiP a abandonné cette fonction en octobre 2024, et l&apos;État a arrêté le développement du portail en août 2025 : il ne reste que les plateformes agréées privées. Vous devez donc en avoir une, mais dans la plupart des cas, votre logiciel de facturation s&apos;en charge pour vous.
             </p>
           </section>
 

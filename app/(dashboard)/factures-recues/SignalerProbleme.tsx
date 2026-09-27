@@ -14,7 +14,7 @@ import { usePermission } from "@/components/PlanContext";
  * ressemblait donc à une tâche en attente d'arbitrage.
  *
  * Elle ne l'est pas. La documentation Super PDP est explicite sur `status_code`
- * — « **this is not a state machine** […] their presence indicates an event has
+ *, « **this is not a state machine** […] their presence indicates an event has
  * occurred rather than a current, exclusive state ». Rien n'expire, rien
  * n'avance tout seul, aucun délai ne court. Et sur les quatorze statuts du
  * cycle de vie, un seul incombe au destinataire : le refus (`fr:210`). Prise en
@@ -22,7 +22,7 @@ import { usePermission } from "@/components/PlanContext";
  * transmis sont facultatifs et ne remontent pas à l'administration.
  *
  * Recevoir une facture et être d'accord avec elle ne demande donc **aucune
- * action**. Sept boutons pour zéro obligation, c'est du travail inventé — et
+ * action**. Sept boutons pour zéro obligation, c'est du travail inventé, et
  * c'est ce qui a fait dire à Selim, le 31/08/2026, que traiter les factures une
  * par une était « une galère pas possible ». Il avait raison : la corvée était
  * de notre fait.
@@ -261,8 +261,8 @@ export function SignalerProbleme({
               {/* La description du motif choisi, mot pour mot de la
                   nomenclature officielle. Un refus est terminal : il oblige le
                   fournisseur à passer un avoir. Deux libellés se ressemblent
-                  assez pour être confondus — « Facture en doublon » et
-                  « Données réglementaires F1 en doublon » — et un troisième
+                  assez pour être confondus, « Facture en doublon » et
+                  « Données réglementaires F1 en doublon », et un troisième
                   porte une restriction d'emploi qu'aucun libellé ne peut
                   contenir. Le texte lève l'ambiguïté au moment du choix. */}
               {motifParCode(motif)?.description && (

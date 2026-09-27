@@ -16,12 +16,12 @@ import { superpdpFetch, SuperPdpNotConnected, SuperPdpSessionPending } from "@/l
  * période voulue), `kind` (`transaction` = flux 10.1/10.3, `payment` = flux
  * 10.2/10.4) et `role_code` (`SE` ventes, `BY` achats).
  *
- * ⚠️ La réponse est du **XML uniquement** — contrairement à
+ * ⚠️ La réponse est du **XML uniquement**, contrairement à
  * `/ereportings/{id}` qui accepte `format=json`. Et un `204` signifie « rien à
  * déclarer sur cette période », ce qui est une information, pas une erreur.
  *
  * ⚠️ La granularité n'est PAS le mois. L'exemple de la spec pour un régime
- * `monthly` — `2026-01-13` renvoie la période du 11 au 20 janvier — montre un
+ * `monthly`, `2026-01-13` renvoie la période du 11 au 20 janvier, montre un
  * découpage par décades. Le comportement pour `quarterly` et `simplified`
  * n'est pas documenté : on ne calcule donc aucune période nous-mêmes, on passe
  * la date que l'utilisateur regarde et on affiche ce que la plateforme

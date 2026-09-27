@@ -22,7 +22,7 @@ function amt(n: number): string {
  * Il était dérivé de l'INDEX DE LA LIGNE dans l'export. Deux conséquences :
  * un même client changeait de code auxiliaire à chaque facture, et `C00001`
  * désignait un client différent d'une année sur l'autre. Le lettrage
- * auxiliaire — la raison d'être de cette colonne — était donc inexploitable.
+ * auxiliaire, la raison d'être de cette colonne, était donc inexploitable.
  *
  * On le dérive maintenant du nom normalisé du client, stable par construction.
  * Un préfixe alphabétique plus une empreinte courte : pas de collision en
@@ -47,8 +47,8 @@ export async function GET(req: NextRequest) {
   // Ce `.eq("id", user.id)` était un défaut discret et coûteux : sur un plan
   // Pro multi-utilisateurs, un collaborateur agissant sur un document de
   // l'espace lisait SON profil. Selon la route, cela donnait un PDF portant
-  // son IBAN (ou aucun) au lieu de celui de l'entreprise — le client paie
-  // alors sur le mauvais compte — ou un refus « plan insuffisant » sur une
+  // son IBAN (ou aucun) au lieu de celui de l'entreprise, le client paie
+  // alors sur le mauvais compte, ou un refus « plan insuffisant » sur une
   // fonction que l'espace paie pourtant.
   const profile = await getWorkspaceProfile<{ plan: string | null }>(
     await getWorkspaceUserId(user.id),
@@ -96,8 +96,8 @@ export async function GET(req: NextRequest) {
      * Un avoir s'enregistre en SENS INVERSE d'une facture.
      *
      * Il passait dans le même moule que la facture qu'il annule. Les montants
-     * d'un avoir sont positifs — c'est la règle BR-27, le type du document
-     * porte le sens — donc une facture de 1 000 € HT suivie de son avoir
+     * d'un avoir sont positifs, c'est la règle BR-27, le type du document
+     * porte le sens, donc une facture de 1 000 € HT suivie de son avoir
      * produisait 2 000 € de crédit au 706 et 400 € de TVA collectée au lieu de
      * zéro. L'équilibre débit/crédit tenait, ce qui est le pire des cas : le
      * contrôle de cohérence du cabinet ne voyait rien, et le chiffre d'affaires
@@ -150,7 +150,7 @@ export async function GET(req: NextRequest) {
       //
       // `updated_at` bouge à la moindre modification : une facture réglée le
       // 15/12 puis simplement rouverte le 03/01 produisait une écriture de
-      // banque datée du 03/01 **dans le FEC de l'année précédente** — une
+      // banque datée du 03/01 **dans le FEC de l'année précédente**, une
       // écriture hors exercice, que le contrôle de la DGFiP relève.
       const payDate = fecDate(inv.paid_at || inv.updated_at || inv.issue_date);
       const payNum = `BQ${String(i + 1).padStart(6, "0")}`;

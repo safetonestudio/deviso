@@ -2,7 +2,7 @@
  * Traversée du contenu des PDF de facture.
  *
  * `two-roles.mjs` vérifie que le téléchargement répond 200. Ce qu'un code HTTP
- * ne dit pas, c'est ce que contient le fichier — et c'est là que tout s'est joué
+ * ne dit pas, c'est ce que contient le fichier, et c'est là que tout s'est joué
  * jusqu'ici : des glyphes cassés, une police non embarquée, un XML absent, des
  * mentions légales manquantes. Un PDF valide et vide répond 200 lui aussi.
  *
@@ -57,7 +57,7 @@ verifier("le PDF se télécharge", res.status === 200 && octets.length > 5000, `
 
 // ── Structure, lue par un vrai parseur ──────────────────────────────────────
 // Première version de ce script : recherche de « OutputIntent » et « FontFile2 »
-// dans les octets bruts. Elle signalait deux bugs inexistants — un PDF compresse
+// dans les octets bruts. Elle signalait deux bugs inexistants, un PDF compresse
 // ses objets, la chaîne n'y apparaît pas en clair. Un test qui crie au loup est
 // pire qu'aucun test : on apprend à l'ignorer.
 const pdf = await PDFDocument.load(octets, { updateMetadata: false });
@@ -116,7 +116,7 @@ verifier(
 );
 
 console.log("");
-console.log("PDF conservé dans scripts/e2e/.facture-test.pdf — ouvre-le pour juger du rendu,");
+console.log("PDF conservé dans scripts/e2e/.facture-test.pdf, ouvre-le pour juger du rendu,");
 console.log("c'est la seule chose qu'un script ne sait pas faire.");
 console.log("");
 

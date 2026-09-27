@@ -118,7 +118,7 @@ function ActionPanel({ invoice, id, router, hasChorusPro }: {
   //
   // Cette date ne peut PAS être corrigée après coup : rejouer un `fr:212` ferait
   // partir une seconde déclaration de paiement pour le même encaissement. Il n'y
-  // a donc pas de « on verra plus tard » possible — c'est maintenant ou jamais,
+  // a donc pas de « on verra plus tard » possible, c'est maintenant ou jamais,
   // et c'est ce qui justifie de demander avant plutôt que de proposer de
   // modifier après.
   //
@@ -161,7 +161,7 @@ function ActionPanel({ invoice, id, router, hasChorusPro }: {
       setDemandeDatePaiement(false);
       // L'encaissement (fr:212) est désormais déclaré par la route PATCH
       // elle-même, au moment où la facture passe à « payée ». Il l'était ici,
-      // dans le navigateur — ce qui obligeait chaque nouveau chemin menant au
+      // dans le navigateur, ce qui obligeait chaque nouveau chemin menant au
       // paiement à penser à le recâbler. La route renvoie la facture relue,
       // donc `superpdp_encaisse_at` est déjà à jour dans `data.invoice`.
     }
@@ -173,8 +173,8 @@ function ActionPanel({ invoice, id, router, hasChorusPro }: {
    *
    * C'est le seul chemin de correction d'une facture déjà transmise : sous la
    * réforme elle ne se modifie plus, et un refus du client (fr:210) est
-   * terminal. L'avoir naît en brouillon — l'utilisateur peut réduire les
-   * lignes pour n'en annuler qu'une partie — et on l'y emmène directement,
+   * terminal. L'avoir naît en brouillon, l'utilisateur peut réduire les
+   * lignes pour n'en annuler qu'une partie, et on l'y emmène directement,
    * parce qu'un document créé qu'on ne voit pas est un document oublié.
    */
   async function handleAvoir() {
@@ -212,7 +212,7 @@ function ActionPanel({ invoice, id, router, hasChorusPro }: {
       //
       // Le lien de paiement est celui de l'utilisateur : l'argent va
       // directement de son client à lui, sans passer par Deviso. Deviso ne peut
-      // donc pas savoir que la facture a été réglée — et c'est le passage à
+      // donc pas savoir que la facture a été réglée, et c'est le passage à
       // « payée » qui déclare l'encaissement (fr:212) à la Plateforme Agréée,
       // l'un des quatre statuts obligatoires de la réforme.
       //
@@ -223,7 +223,7 @@ function ActionPanel({ invoice, id, router, hasChorusPro }: {
       alert(
         "Lien de paiement copié.\n\n" +
           "Ce lien envoie l'argent directement sur votre compte : Deviso ne voit pas " +
-          "le paiement. Pensez à marquer la facture « payée » quand vous serez réglé — " +
+          "le paiement. Pensez à marquer la facture « payée » quand vous serez réglé, " +
           "c'est ce geste qui déclare l'encaissement à l'administration."
       );
     } else if (data.error === "PAYMENT_NOT_CONFIGURED") {
@@ -315,7 +315,7 @@ function ActionPanel({ invoice, id, router, hasChorusPro }: {
 
   // Un avoir n'appelle aucun règlement : c'est le vendeur qui doit. Lui
   // proposer un lien de paiement, un « marquer comme payée » ou une relance
-  // aurait la même conséquence de chaque côté — réclamer au client de l'argent
+  // aurait la même conséquence de chaque côté, réclamer au client de l'argent
   // qu'on est en train de lui rendre.
   const estAvoir = inv.invoice_type === "avoir";
   const canSendEmail = !!inv.client_email && inv.status !== "cancelled" && peutEnvoyerFacture;
@@ -566,7 +566,7 @@ function ActionPanel({ invoice, id, router, hasChorusPro }: {
           // fonction. Ce panneau jugeait sur `superpdp_invoice_id` seul et
           // affichait un « Transmise » vert dès que le POST avait abouti : une
           // facture rejetée, invalide, ou expédiée à une adresse déduite d'un
-          // SIREN ambigu — donc possiblement jamais remise — portait le même
+          // SIREN ambigu, donc possiblement jamais remise, portait le même
           // vert rassurant qu'une facture réellement acceptée. La liste, elle,
           // avertissait déjà. Les deux écrans disent maintenant la même chose.
           const etat = etatPdp(inv, sandboxPdp);
@@ -577,9 +577,9 @@ function ActionPanel({ invoice, id, router, hasChorusPro }: {
               <div className="flex flex-col gap-0.5">
                 <span>{etat?.texte ?? "Transmise à la Plateforme Agréée"}</span>
                 {/* Un code que notre table ne connaît pas s'affiche brut plutôt
-                    que de disparaître : leur nomenclature évolue — `fr:220` a
+                    que de disparaître : leur nomenclature évolue, `fr:220` a
                     été ajouté par Super PDP le 07/08/2026 sans que la norme en
-                    publie l'usage — et un code consultable vaut mieux qu'un
+                    publie l'usage, et un code consultable vaut mieux qu'un
                     silence. Même règle que la liste des factures reçues. */}
                 {(statut || inv.superpdp_status) && (
                   <span className="text-[11px] opacity-70">

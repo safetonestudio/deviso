@@ -19,7 +19,7 @@ import {
  * L'index du blog, entièrement dérivé du registre et des catégories.
  *
  * Ce fichier portait sa propre copie des dix-neuf articles, puis deux menus
- * dépliants écrits à la main et des cartes à plat pour le reste — trois
+ * dépliants écrits à la main et des cartes à plat pour le reste, trois
  * présentations pour une seule liste. Ajouter une catégorie demandait d'écrire
  * un troisième bloc de JSX ; un article rattaché à une catégorie sans bloc
  * n'apparaissait nulle part.

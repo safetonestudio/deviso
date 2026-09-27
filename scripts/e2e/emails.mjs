@@ -2,7 +2,7 @@
  * Traversée des emails sortants.
  *
  * Pourquoi en premier. Tout le produit passe par là : un devis qui ne part pas
- * n'est pas un devis. Et cette zone nous a déjà piégés — la clé Resend n'avait
+ * n'est pas un devis. Et cette zone nous a déjà piégés, la clé Resend n'avait
  * pas la portée annoncée, et aucune route ne posait de Reply-To, si bien qu'une
  * réponse de client tombait dans le vide. Aucun de ces deux défauts n'était
  * visible autrement qu'en envoyant réellement.
@@ -89,7 +89,7 @@ verifier("l'email de facture part sans erreur, pièce jointe Factur-X comprise",
   envoiFacture.status === 200 && envoiFacture.body?.success === true,
   `HTTP ${envoiFacture.status} ${doc(envoiFacture.body).slice(0, 160)}`);
 
-// L'envoi doit faire passer la facture en « envoyée » — c'est ce statut qui
+// L'envoi doit faire passer la facture en « envoyée », c'est ce statut qui
 // conditionne les relances. Copier un lien de paiement, lui, ne doit rien changer.
 const apres = await s.call(`/api/invoices/${factureId}`);
 verifier("l'envoi par email fait bien passer la facture en « envoyée »",

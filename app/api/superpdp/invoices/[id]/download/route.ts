@@ -10,14 +10,14 @@ import { superpdpFetch, SuperPdpNotConnected, SuperPdpSessionPending } from "@/l
  * ⚠️ La route Super PDP est `GET /invoices/{id}?format=factur-x`, **pas**
  * `/invoices/{id}/download`. Sur `/download`, le paramètre `format` est ignoré
  * en silence et la réponse est du XML CII quel que soit l'en-tête `Accept`
- * envoyé — vérifié le 12/08/2026 sur les trois variantes. Leur note de version
+ * envoyé, vérifié le 12/08/2026 sur les trois variantes. Leur note de version
  * 1.22.0.beta est explicite : la vue lisible est servie par `/convert`,
  * `/generate_test_invoice` et `/invoices/{id}?format=factur-x`.
  *
  * La première version appelait `/download` et étiquetait la réponse
  * `application/pdf`. Le fichier n'était pas corrompu : c'était un XML portant
  * une extension `.pdf`, et Acrobat refusait de l'ouvrir. Rien dans le code ne
- * pouvait le montrer — les deux côtés répondaient 200.
+ * pouvait le montrer, les deux côtés répondaient 200.
  *
  * Format Factur-X plutôt que XML brut : le PDF est lisible par un humain et
  * porte le XML en pièce jointe. Une facture reçue doit pouvoir être ouverte,
@@ -72,7 +72,7 @@ export async function GET(req: NextRequest, ctx: { params: Promise<{ id: string 
     // Repli sur le rendu de la plateforme.
     //
     // « To ignore the embedded PDFs and always use the SUPER PDP invoice
-    // renderer » — c'est exactement le cas où le PDF embarqué par l'émetteur
+    // renderer », c'est exactement le cas où le PDF embarqué par l'émetteur
     // est illisible. Sans ce repli, l'utilisateur restait sur une impasse pour
     // une pièce dont la conservation est une obligation légale.
     if (!res.ok) {
@@ -106,7 +106,7 @@ export async function GET(req: NextRequest, ctx: { params: Promise<{ id: string 
     }
 
     // On ne décrète pas le type de ce qu'on renvoie : on constate celui qu'on a
-    // reçu. C'est précisément ce contrôle qui manquait — la version précédente
+    // reçu. C'est précisément ce contrôle qui manquait, la version précédente
     // étiquetait `application/pdf` un contenu qui était du XML, et le défaut
     // n'apparaissait que dans Acrobat, chez l'utilisateur.
     const typeRecu = res.headers.get("content-type") ?? "";

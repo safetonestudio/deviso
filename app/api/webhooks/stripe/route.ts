@@ -36,7 +36,7 @@ export async function POST(req: NextRequest) {
    * Elle était écrite AVANT le traitement, et c'était un piège à événement
    * perdu. `stripe.subscriptions.retrieve` juste en dessous n'est protégé par
    * aucun `try` : au moindre incident réseau ou 500 de Stripe, l'exception
-   * remontait, Next renvoyait 500, Stripe réessayait — et la deuxième
+   * remontait, Next renvoyait 500, Stripe réessayait, et la deuxième
    * tentative tombait sur la marque déjà posée et repartait avec
    * « duplicate: true » sans rien faire. Toutes les suivantes aussi, y compris
    * un rejeu manuel depuis le tableau de bord Stripe.
@@ -47,8 +47,8 @@ export async function POST(req: NextRequest) {
    * Dans ce sens-ci, le risque résiduel est le double traitement quand deux
    * livraisons du même événement se croisent. Il est sans conséquence : tous
    * les traitements ci-dessous sont des `update` vers un état fixe, donc
-   * idempotents par nature, et l'unique effet non idempotent — la déclaration
-   * d'encaissement — porte sa propre réservation atomique
+   * idempotents par nature, et l'unique effet non idempotent, la déclaration
+   * d'encaissement, porte sa propre réservation atomique
    * (`lib/superpdp-encaissement.ts`).
    */
   const { data: dejaTraite } = await supabase
@@ -68,7 +68,7 @@ export async function POST(req: NextRequest) {
    * ajoute un SECOND article sur le même abonnement dès qu'un collaborateur
    * est invité, et Stripe ne garantit aucun ordre. Si l'article « siège »
    * arrivait en premier, `planFromPriceId` renvoyait `null` et
-   * `customer.subscription.updated` était abandonné en entier — y compris les
+   * `customer.subscription.updated` était abandonné en entier, y compris les
    * événements portant `past_due` ou `canceled`. Un client Pro avec un
    * collaborateur pouvait donc cesser de payer sans jamais être déclassé.
    */
@@ -103,14 +103,14 @@ export async function POST(req: NextRequest) {
        * Ce bloc traitait les sessions `mode: "payment"` portant un
        * `metadata.invoice_id` : il marquait la facture payée et déclarait
        * l'encaissement à la Plateforme Agréée. Il était devenu du CODE MORT,
-       * et c'est plus grave que de l'inutile — il donnait à lire, au milieu du
+       * et c'est plus grave que de l'inutile, il donnait à lire, au milieu du
        * webhook, l'affirmation qu'un paiement par lien se rapproche tout seul.
        *
        * Ce n'est pas le cas, et ce ne PEUT pas l'être :
        * `app/api/invoices/[id]/payment-link` ne crée plus aucune session
        * Stripe. Elle renvoie le lien de paiement personnel de l'utilisateur,
        * configuré dans son profil. L'argent va directement de son client à
-       * lui — il ne transite jamais par le compte Stripe de Deviso, et ce
+       * lui, il ne transite jamais par le compte Stripe de Deviso, et ce
        * webhook, qui n'écoute que ce compte-là, ne peut par construction rien
        * en voir. Aucune session `mode: "payment"` n'est plus créée nulle part
        * (`grep metadata.invoice_id` ne trouve aucun émetteur).
@@ -145,7 +145,7 @@ export async function POST(req: NextRequest) {
       // On n'accorde le plan payant que si l'abonnement est réellement à jour
       // (active/trialing), comme le fait customer.subscription.updated. Sinon
       // (incomplete, past_due…) le plan reste « free » : pas d'accès Pro sur un
-      // abonnement non honoré. Défense en profondeur — ce chemin est
+      // abonnement non honoré. Défense en profondeur, ce chemin est
       // normalement en trialing, mais il n'a pas à faire confiance à ça.
       const aJour = subscriptionStatus === "active" || subscriptionStatus === "trialing";
 
@@ -222,7 +222,7 @@ export async function POST(req: NextRequest) {
     }
 
     default:
-      // Événement non géré — on ignore silencieusement
+      // Événement non géré, on ignore silencieusement
       break;
   }
   } catch (err) {
@@ -232,7 +232,7 @@ export async function POST(req: NextRequest) {
     // Stripe considérait l'événement remis et n'insistait plus jamais. Une
     // coupure passagère de la base pendant `customer.subscription.deleted`
     // laissait donc un abonnement résilié chez Stripe et un plan Pro actif
-    // chez nous, indéfiniment — et l'inverse est vrai aussi.
+    // chez nous, indéfiniment, et l'inverse est vrai aussi.
     console.error(`[stripe/webhook] ${event.type} (${event.id}) :`, err);
     return NextResponse.json({ error: "traitement_echoue" }, { status: 500 });
   }

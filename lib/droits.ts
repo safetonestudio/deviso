@@ -5,7 +5,7 @@ import { createAdminClient } from "@/lib/supabase/admin";
 /**
  * Droits d'un membre invité dans un espace de travail.
  *
- * Modèle arrêté le 22/09/2026 (voir CLAUDE.md, « Membres d'équipe — périmètre
+ * Modèle arrêté le 22/09/2026 (voir CLAUDE.md, « Membres d'équipe, périmètre
  * d'accès »). Cinq actes réglables par le gérant, chacun autorisé ou non par
  * membre. Le titulaire (user.id == owner de l'espace) a tout, implicitement, et
  * n'est jamais lu dans `team_members`.
@@ -48,7 +48,7 @@ export const LIBELLE_ACTE: Record<Acte, string> = {
 /**
  * Normalise un jsonb quelconque en `Permissions` complet.
  *
- * Une clé absente vaut `false` — jamais `true` par défaut : un droit qu'on n'a
+ * Une clé absente vaut `false`, jamais `true` par défaut : un droit qu'on n'a
  * pas su lire est un droit qu'on n'accorde pas. Toute valeur non strictement
  * `true` est fausse.
  */

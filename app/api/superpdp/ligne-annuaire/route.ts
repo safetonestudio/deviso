@@ -43,7 +43,7 @@ export async function POST(req: Request) {
 
   const workspaceId = await getWorkspaceUserId(user.id);
 
-  // Suffixe d'organisation interne. Absent dans l'usage courant — un freelance
+  // Suffixe d'organisation interne. Absent dans l'usage courant, un freelance
   // n'a qu'une adresse, son SIREN. Présent, il ouvre une ligne SECONDAIRE, ce
   // qui est le seul moyen d'éprouver la fermeture sans fermer l'adresse qui
   // rend le compte joignable.
@@ -53,7 +53,7 @@ export async function POST(req: Request) {
   try {
     // On ne crée pas une deuxième ligne si une existe déjà : l'annuaire n'est
     // pas un endroit où l'on empile les doublons. Sauf demande explicite d'une
-    // ligne secondaire, que l'annuaire autorise — « toutes les entreprises sont
+    // ligne secondaire, que l'annuaire autorise, « toutes les entreprises sont
     // libres de créer autant de lignes qu'elles le souhaitent ».
     const existante = await lireLigneAnnuaire(workspaceId);
     if (!suffixe && existante && existante.etat !== "absente") {
@@ -92,7 +92,7 @@ export async function POST(req: Request) {
 /**
  * Ferme une ligne de réception, et lit l'état de toutes les lignes.
  *
- * `GET` liste — l'écran n'en montre qu'une, mais l'annuaire en autorise
+ * `GET` liste, l'écran n'en montre qu'une, mais l'annuaire en autorise
  * plusieurs et il faut pouvoir les désigner. `DELETE` ferme celle qu'on nomme,
  * ou la principale à défaut.
  *
@@ -100,7 +100,7 @@ export async function POST(req: Request) {
  * était atteignable que comme effet de bord, ce qui avait deux conséquences :
  * quelqu'un qui aurait ouvert une ligne secondaire ne pouvait pas la refermer,
  * et surtout le seul appel destructeur de toute l'intégration était le seul
- * qu'aucune traversée ne pouvait jouer — l'éprouver aurait rendu le compte
+ * qu'aucune traversée ne pouvait jouer, l'éprouver aurait rendu le compte
  * injoignable et forcé un nouveau tunnel d'autorisation.
  *
  * Réservée au propriétaire, comme l'ouverture : fermer une ligne, c'est rendre

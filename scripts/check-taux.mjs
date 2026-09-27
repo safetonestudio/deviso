@@ -1,5 +1,5 @@
 /**
- * check:taux — aucun taux de cotisations écrit en dur hors de sa source.
+ * check:taux, aucun taux de cotisations écrit en dur hors de sa source.
  *
  * Pourquoi ce contrôle existe. Le 13/09/2026, `lib/tarifs-data.ts` a été corrigé :
  * il appliquait 22 % de cotisations avec un commentaire admettant « taux 2024 »,
@@ -7,7 +7,7 @@
  * (Cipav). La constante a été corrigée. **Les textes qui la doublaient ne l'ont
  * pas été** : le 14/09, `/combien-facturer` et les dix pages
  * `/combien-facturer/<métier>` affichaient encore « 22 % de cotisations URSSAF »
- * et un revenu net à « × 0.78 » — à côté d'un simulateur qui, lui, lisait la
+ * et un revenu net à « × 0.78 », à côté d'un simulateur qui, lui, lisait la
  * constante et calculait à 25,6 %. Deux chiffres contradictoires sur le même
  * écran, sur la vitrine d'un logiciel de facturation.
  *
@@ -15,13 +15,13 @@
  * source et sa date. Partout ailleurs, il se lit ; il ne se recopie pas.
  *
  * ⚠️ Ce que ce contrôle NE couvre PAS :
- *   · il ne dit pas si la valeur de `lib/tarifs-data.ts` est **juste** — un taux
+ *   · il ne dit pas si la valeur de `lib/tarifs-data.ts` est **juste**, un taux
  *     réglementaire est une date de péremption sans alarme, à relire chaque année ;
  *   · il ne voit pas un taux épelé en lettres (« vingt-cinq virgule six ») ;
  *   · il ne voit pas un taux calculé à partir d'une autre constante fausse ;
  *   · **il ne lit pas les articles de blog** (`app/blog/`). Un article peut
- *     légitimement citer un autre taux — celui des BIC, un agrégat
- *     « URSSAF + mutuelle + retraite », une tranche d'impôt — et distinguer
+ *     légitimement citer un autre taux, celui des BIC, un agrégat
+ *     « URSSAF + mutuelle + retraite », une tranche d'impôt, et distinguer
  *     l'erreur de la citation demande un jugement éditorial qu'un script n'a
  *     pas. Les chiffres réglementaires des articles se relisent une fois l'an,
  *     à la main, et se datent : voir `docs/seo/journal.md` ;
@@ -134,7 +134,7 @@ const ratees = CONTRE_EPREUVES.filter(({ ligne }) => {
   return !parPourcent && !parComplement;
 });
 if (ratees.length > 0) {
-  console.error("check:taux — le contrôle ne détecte plus le défaut qu'il surveille :");
+  console.error("check:taux, le contrôle ne détecte plus le défaut qu'il surveille :");
   for (const r of ratees) console.error(`  raté : ${r.quoi}\n    ${r.ligne}`);
   process.exit(1);
 }
@@ -142,14 +142,14 @@ if (ratees.length > 0) {
 if (problemes.length === 0) {
   for (const c of CONTRE_EPREUVES) console.log(`  ·    contre-épreuve : ${c.quoi} bien détecté`);
   console.log(
-    `check:taux — ${lus} fichiers, aucun taux de cotisations en dur ` +
+    `check:taux, ${lus} fichiers, aucun taux de cotisations en dur ` +
     `(source : ${(TAUX_COTISATIONS_BNC * 100).toLocaleString("fr-FR")} % / ` +
     `${(TAUX_COTISATIONS_BNC_CIPAV * 100).toLocaleString("fr-FR")} % Cipav).`
   );
   process.exit(0);
 }
 
-console.error(`check:taux — ${problemes.length} taux de cotisations écrit en dur :\n`);
+console.error(`check:taux, ${problemes.length} taux de cotisations écrit en dur :\n`);
 for (const p of problemes) {
   console.error(`  ${p.fichier}:${p.ligne}  ${p.quoi}`);
   console.error(`    ${p.extrait}`);

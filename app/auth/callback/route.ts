@@ -11,7 +11,7 @@ export async function GET(request: Request) {
   // Recollé tel quel à `origin`, il ouvrait une redirection vers l'extérieur :
   // `?next=@exemple.fr` produit `https://getdeviso.fr@exemple.fr`, que tout
   // analyseur d'URL résout vers l'hôte `exemple.fr`. Le lien reste alors un
-  // lien getdeviso.fr aux yeux de qui le lit, et il mène ailleurs — c'est
+  // lien getdeviso.fr aux yeux de qui le lit, et il mène ailleurs, c'est
   // exactement la forme qu'on attend d'un lien de connexion piégé.
   //
   // Un chemin interne commence par `/` et ne commence pas par `//` (qui

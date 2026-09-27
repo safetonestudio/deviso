@@ -36,7 +36,7 @@ export async function GET() {
   // Une vérification en attente ne se débloque pas toute seule.
   //
   // `session_status` est écrit au raccordement, puis n'est relu à la source que
-  // par la synchronisation — laquelle n'est montée que pour les comptes DÉJÀ
+  // par la synchronisation, laquelle n'est montée que pour les comptes DÉJÀ
   // vérifiés. Le cas nominal (KYB en revue au retour du tunnel, validé par le
   // support 24 h plus tard) n'était donc jamais rattrapé : l'utilisateur lisait
   // « Vérification en cours » indéfiniment, sans recevoir la moindre facture,
@@ -64,7 +64,7 @@ export async function GET() {
           // régime de TVA.
           //
           // Il n'était poussé qu'au retour du tunnel, et seulement si le compte
-          // en ressortait déjà `verified` — c'est-à-dire jamais dans le cas
+          // en ressortait déjà `verified`, c'est-à-dire jamais dans le cas
           // nominal, où la vérification prend un moment. Rien ne le rattrapait
           // ensuite : il fallait que l'utilisateur rouvre son profil et
           // réenregistre. Entre-temps, `vat_regime` restait vide chez Super PDP
@@ -93,7 +93,7 @@ export async function GET() {
   // `env` est marqué `required` sur le schéma `company` : la plateforme dit
   // elle-même si ce compte est en bac à sable ou en production. Deviso le
   // déduisait d'une variable locale. Une variable mal positionnée fait signer
-  // des factures réelles depuis un compte de test — ou l'inverse — sans que
+  // des factures réelles depuis un compte de test, ou l'inverse, sans que
   // rien ne le détecte. Le contrôle coûte une comparaison.
   let discordanceEnv: string | null = null;
 
@@ -134,15 +134,15 @@ export async function GET() {
   //
   // Le rattrapage plus haut ne se déclenche qu'au moment où la vérification
   // d'identité *change* d'état. Un compte déjà `verified` depuis longtemps,
-  // dont le régime n'a jamais été poussé — parce que le tunnel d'origine est
-  // antérieur à ce code, ou parce que le PATCH avait échoué ce jour-là — ne
+  // dont le régime n'a jamais été poussé, parce que le tunnel d'origine est
+  // antérieur à ce code, ou parce que le PATCH avait échoué ce jour-là, ne
   // repasse jamais par cette transition. Il restait donc bloqué à vie avec un
   // `vat_regime` vide et toutes ses factures aux particuliers refusées, sans
   // autre issue que de rouvrir son profil et réenregistrer.
   //
   // On juge donc sur ce que la plateforme dit vraiment : si elle ne connaît
   // pas le régime alors que le profil permet de le déterminer, on le pousse.
-  // Le cas nominal ne coûte rien — `regimeTva` est déjà rempli.
+  // Le cas nominal ne coûte rien, `regimeTva` est déjà rempli.
   if (statut === "verified" && !regimeTva) {
     try {
       const profil = await getWorkspaceProfile<{

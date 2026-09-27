@@ -25,7 +25,7 @@ import { CircleCheck } from "lucide-react";
  */
 
 export const metadata: Metadata = {
-  title: "À propos — qui écrit sur ce site",
+  title: "À propos, qui écrit sur ce site",
   description:
     "Deviso est construit par un développeur indépendant en Gironde, lui-même micro-entrepreneur. Qui écrit les guides de ce site, et pourquoi les faire relire.",
   alternates: { canonical: `${SITE}/a-propos` },
@@ -45,7 +45,7 @@ const jsonLd = {
       "@type": "ProfilePage",
       "@id": `${SITE}/a-propos`,
       url: `${SITE}/a-propos`,
-      name: "À propos — qui écrit sur ce site",
+      name: "À propos, qui écrit sur ce site",
       inLanguage: "fr",
       mainEntity: AUTEUR_JSONLD,
     },
@@ -148,7 +148,7 @@ export default function AProposPage() {
                 La seconde, c&apos;est que <strong className="text-white">beaucoup de ce qui circule est
                 faux</strong>, y compris sur des faits vérifiables : des montants d&apos;amendes périmés, des
                 échéances qui n&apos;existent pas, un nombre de plateformes agréées qui varie du simple au
-                double selon les sites. J&apos;en ai moi-même publié certains avant de les corriger —{" "}
+                double selon les sites. J&apos;en ai moi-même publié certains avant de les corriger, {" "}
                 <Link href="/blog/facturation-electronique-2026" className="text-indigo-400 hover:text-indigo-300 transition-colors">
                   le guide de la réforme
                 </Link>{" "}
@@ -213,8 +213,8 @@ export default function AProposPage() {
                 ))}
               </div>
               <p className="mt-4 text-gray-400">
-                Et si vous voulez savoir ce que Deviso est exactement au sens de la réforme — plateforme agréée
-                ou solution compatible —{" "}
+                Et si vous voulez savoir ce que Deviso est exactement au sens de la réforme, plateforme agréée
+                ou solution compatible, {" "}
                 <Link href="/conformite" className="text-indigo-400 hover:text-indigo-300 transition-colors">
                   c&apos;est écrit noir sur blanc ici
                 </Link>

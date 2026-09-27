@@ -41,13 +41,13 @@ export async function DELETE(_req: NextRequest, { params }: Params) {
   // L'appel était conditionné à `status === "active"`, ce qui suffisait tant
   // qu'il s'agissait de décrémenter un compteur. Ce n'en est plus un : la
   // fonction lit les membres actifs et pose la quantité juste. La rappeler
-  // sans raison ne coûte rien — elle sort d'elle-même si la quantité est déjà
-  // bonne — et c'est précisément ce qui lui permet de RÉPARER une divergence
+  // sans raison ne coûte rien, elle sort d'elle-même si la quantité est déjà
+  // bonne, et c'est précisément ce qui lui permet de RÉPARER une divergence
   // au lieu de la propager.
   //
   // Un échec ici coûte de l'argent au propriétaire : le collaborateur n'a plus
   // accès, mais le siège reste facturé tous les mois. Le `catch` vide rendait
-  // la situation indétectable — personne ne peut régulariser ce que personne
+  // la situation indétectable, personne ne peut régulariser ce que personne
   // ne sait.
   await synchroniserSieges(user.id).catch((err) => {
     console.error(
@@ -62,7 +62,7 @@ export async function DELETE(_req: NextRequest, { params }: Params) {
 }
 
 
-// PATCH /api/team/[memberId] — régler les autorisations d'un membre.
+// PATCH /api/team/[memberId], régler les autorisations d'un membre.
 //
 // Cinq cases binaires, réservées au titulaire. On ne fait confiance à aucune
 // clé venue du corps : on repart des cinq actes connus et on ne garde que

@@ -40,8 +40,8 @@ export async function POST(req: NextRequest, { params }: Params) {
   // Ce `.eq("id", user.id)` était un défaut discret et coûteux : sur un plan
   // Pro multi-utilisateurs, un collaborateur agissant sur un document de
   // l'espace lisait SON profil. Selon la route, cela donnait un PDF portant
-  // son IBAN (ou aucun) au lieu de celui de l'entreprise — le client paie
-  // alors sur le mauvais compte — ou un refus « plan insuffisant » sur une
+  // son IBAN (ou aucun) au lieu de celui de l'entreprise, le client paie
+  // alors sur le mauvais compte, ou un refus « plan insuffisant » sur une
   // fonction que l'espace paie pourtant.
   const profileData = await getWorkspaceProfile<{ proposal_color: string | null; payment_method: string | null; payment_link_provider: string | null; payment_link_profile: string | null; bank_iban: string | null; bank_bic: string | null; bank_account_name: string | null; plan: string | null; company_name: string | null; full_name: string | null; email: string | null }>(
     workspaceId,
@@ -163,8 +163,8 @@ export async function POST(req: NextRequest, { params }: Params) {
     ...(profileData?.email ? { replyTo: profileData.email } : {}),
     to: invoice.client_email,
     subject: estAvoir
-      ? `Avoir de ${invoiceDisplayName} — ${invoice.invoice_number} (${amount})`
-      : `Votre facture de ${invoiceDisplayName} — ${invoice.invoice_number} (${amount})`,
+      ? `Avoir de ${invoiceDisplayName}, ${invoice.invoice_number} (${amount})`
+      : `Votre facture de ${invoiceDisplayName}, ${invoice.invoice_number} (${amount})`,
     html,
     attachments: [
       {

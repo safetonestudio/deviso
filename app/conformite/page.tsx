@@ -12,7 +12,7 @@ import { CircleCheck, ExternalLink, ShieldCheck, TriangleAlert } from "lucide-re
  * Ce que Deviso est, au sens de la réforme, écrit noir sur blanc.
  *
  * Pourquoi cette page existe. Depuis le 1er septembre 2026, la première question
- * que pose un prospect — et le premier critère de tri de tous les comparateurs —
+ * que pose un prospect, et le premier critère de tri de tous les comparateurs -
  * est : « êtes-vous une plateforme agréée, ou une solution compatible adossée à
  * qui ? » Le site ne le disait nulle part. L'audit SEO du 11/09/2026 a relevé
  * que le silence, sur ce point précis, se lit comme un aveu : les comparateurs
@@ -21,7 +21,7 @@ import { CircleCheck, ExternalLink, ShieldCheck, TriangleAlert } from "lucide-re
  * La page sert donc deux publics à la fois, et c'est volontaire : l'utilisateur
  * qui veut savoir s'il sera conforme, et le comparateur qui a besoin d'une
  * information citable. D'où les liens vers la source officielle plutôt qu'une
- * simple affirmation — une page qui dit « vérifiez vous-même » est la seule qui
+ * simple affirmation, une page qui dit « vérifiez vous-même » est la seule qui
  * mérite d'être crue.
  */
 
@@ -133,7 +133,7 @@ export default function ConformitePage() {
               </p>
               <p className="mb-4">
                 Autrement dit, la question utile à poser à un éditeur de logiciel n&apos;est pas « êtes-vous
-                conforme ? » — tout le monde répond oui. C&apos;est : <strong className="text-white">« êtes-vous
+                conforme ? », tout le monde répond oui. C&apos;est : <strong className="text-white">« êtes-vous
                 agréé, ou adossé à qui ? »</strong>
               </p>
               <div className="bg-ds-surface border border-ds-border rounded-xl p-5">
@@ -142,7 +142,7 @@ export default function ConformitePage() {
                 </p>
                 <p className="text-gray-400">
                   Rien dans votre usage quotidien : vous créez vos devis et vos factures dans Deviso comme
-                  d&apos;habitude, et la transmission se fait en arrière-plan. La distinction compte ailleurs —
+                  d&apos;habitude, et la transmission se fait en arrière-plan. La distinction compte ailleurs -
                   dans la chaîne de responsabilité, et dans votre capacité à vérifier que le maillon agréé
                   existe vraiment. C&apos;est pour ça que nous nommons le nôtre.
                 </p>
@@ -178,7 +178,7 @@ export default function ConformitePage() {
                 d&apos;immatriculation est délivré. Le second réunit les «&nbsp;opérateurs ayant déposé un
                 dossier complet et conforme et en attente de leur immatriculation définitive conditionnée à
                 la réussite des tests d&apos;interopérabilité&nbsp;» : le dossier est accepté, les tests
-                restent à passer. Ce sont les intitulés exacts employés par la DGFiP — c&apos;est sous ces
+                restent à passer. Ce sont les intitulés exacts employés par la DGFiP, c&apos;est sous ces
                 mots que vous les retrouverez.
               </p>
               <div className="bg-indigo-500/[0.07] border border-indigo-500/30 rounded-xl p-5 mb-4">
@@ -194,7 +194,7 @@ export default function ConformitePage() {
                 <p className="text-gray-400 text-xs mt-2">
                   Cherchez « Super PDP ». Nous ne reproduisons pas son statut ici : il peut évoluer, et une
                   information recopiée est une information qui se périme. Plusieurs comparateurs en ligne
-                  publient d&apos;ailleurs des statuts contradictoires — la source officielle est la seule qui
+                  publient d&apos;ailleurs des statuts contradictoires, la source officielle est la seule qui
                   compte.
                 </p>
               </div>
@@ -204,7 +204,7 @@ export default function ConformitePage() {
                   <p className="font-semibold text-white mb-1">Méfiez-vous des comparateurs</p>
                   <p className="text-gray-400">
                     Une partie des sites qui comparent les solutions de facturation électronique vivent de
-                    l&apos;affiliation, et leurs chiffres se contredisent — le nombre de plateformes agréées y
+                    l&apos;affiliation, et leurs chiffres se contredisent, le nombre de plateformes agréées y
                     est annoncé entre 137 et 166 selon les pages. Ils ne peuvent pas tous avoir raison. Pour
                     une question de conformité, allez à la source.
                   </p>
@@ -262,7 +262,7 @@ export default function ConformitePage() {
                   <p className="text-gray-300">
                     Depuis le 1<sup>er</sup> septembre 2026, toute entreprise assujettie à la TVA doit pouvoir
                     recevoir une facture électronique via une plateforme agréée. Sans exception de taille ni de
-                    régime — micro-entrepreneurs et franchise en base comprises.
+                    régime, micro-entrepreneurs et franchise en base comprises.
                   </p>
                 </div>
                 <div className="bg-ds-surface border border-ds-border rounded-xl p-5">

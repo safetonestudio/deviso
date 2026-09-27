@@ -17,7 +17,7 @@ export default function PublicProposalPage() {
   const [done, setDone] = useState<"signed" | "declined" | null>(null);
   const [signError, setSignError] = useState<string | null>(null);
 
-  // Champs e-signature avec piste d'audit (Pro) — IP, user-agent, horodatage
+  // Champs e-signature avec piste d'audit (Pro), IP, user-agent, horodatage
   // serveur et hash SHA-256 capturés côté API. Pas « avancée » au sens eIDAS.
   const [signerName, setSignerName] = useState("");
   const [confirmed, setConfirmed] = useState(false);

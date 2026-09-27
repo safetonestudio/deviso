@@ -754,7 +754,7 @@ async function seedDemoData(userId: string) {
   // d'être semé. Les factures de démonstration portent des numéros écrits en
   // dur ; sans ce rattrapage, le premier acompte créé par le visiteur se verrait
   // attribuer « AC-2026-001 », déjà pris ci-dessus, et l'index unique
-  // (user_id, invoice_number) refuserait l'écriture — 500 sans explication.
+  // (user_id, invoice_number) refuserait l'écriture, 500 sans explication.
   // Les générateurs SQL savent depuis le 20/09 sauter un numéro déjà pris,
   // mais un compteur juste vaut mieux qu'un rattrapage : la démo enchaîne
   // naturellement sur AC-2026-002.

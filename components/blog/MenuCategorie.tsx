@@ -6,8 +6,8 @@ import type { Article } from "@/lib/blog/registre";
 /**
  * Un menu dépliant de catégorie, pour l'index du blog.
  *
- * Pourquoi ce composant existe. L'index portait deux menus écrits à la main —
- * un pour la réforme, un pour les métiers — chacun avec son titre, son résumé,
+ * Pourquoi ce composant existe. L'index portait deux menus écrits à la main -
+ * un pour la réforme, un pour les métiers, chacun avec son titre, son résumé,
  * son compteur et ses couleurs codés en dur, plus des cartes à plat pour le
  * reste. Trois présentations pour une seule liste d'articles, et aucun endroit
  * où brancher une quatrième catégorie sans recopier trente lignes de JSX.
@@ -19,7 +19,7 @@ import type { Article } from "@/lib/blog/registre";
  *
  * Le repli utilise `<details>`/`<summary>` plutôt qu'un état React : ça
  * fonctionne sans JavaScript, c'est accessible au clavier par défaut, et le
- * contenu replié reste dans le HTML — donc lisible par Google, ce qui n'est pas
+ * contenu replié reste dans le HTML, donc lisible par Google, ce qui n'est pas
  * le cas d'un accordéon qui monte son contenu à l'ouverture.
  */
 export function MenuCategorie({

@@ -27,7 +27,7 @@ import { motifExoneration } from "@/lib/exoneration";
  *
  * PDF/A-3 interdit de dépendre des polices installées sur la machine du lecteur :
  * tout doit être embarqué. Les 14 polices « standard » PDF (Helvetica…) ne le sont
- * jamais, d'où le passage à Liberation Sans — métriquement compatible avec
+ * jamais, d'où le passage à Liberation Sans, métriquement compatible avec
  * Helvetica, donc le rendu des factures existantes est inchangé.
  */
 const FONT_DIR = path.join(process.cwd(), "assets", "fonts");
@@ -311,7 +311,7 @@ const styles = StyleSheet.create({
 
 function fmt(n: number) {
   // Intl fr-FR utilise l'espace fine insécable (U+202F) comme séparateur de
-  // milliers — glyphe absent de Helvetica dans @react-pdf, qui rend "/" à la
+  // milliers, glyphe absent de Helvetica dans @react-pdf, qui rend "/" à la
   // place. On normalise vers une espace classique.
   return new Intl.NumberFormat("fr-FR", {
     style: "currency",
@@ -358,7 +358,7 @@ export function InvoicePDF({ invoice, accentColor, paymentInfo, linkedInvoiceNum
   // (lib/exoneration.ts). `isFranchise` ne désigne plus « taux à zéro » mais
   // bien le régime de franchise en base : le PDF imprimait « art. 293 B du
   // CGI » sur toute facture à 0 %, y compris une livraison intracommunautaire
-  // émise par un assujetti — une déclaration écrite, et fausse, de son régime
+  // émise par un assujetti, une déclaration écrite, et fausse, de son régime
   // fiscal.
   const exo = motifExoneration(invoice);
   const exonere = exo.categorie !== "S";
@@ -400,11 +400,11 @@ export function InvoicePDF({ invoice, accentColor, paymentInfo, linkedInvoiceNum
    * Les textes multi-lignes sont assemblés ici plutôt qu'en JSX.
    *
    * Un <Text> à enfants multiples fait émettre à @react-pdf un run de texte
-   * vide dans la police par défaut (Helvetica), non incorporée — ce qui suffit
+   * vide dans la police par défaut (Helvetica), non incorporée, ce qui suffit
    * à invalider la conformité PDF/A. Un enfant unique de type chaîne l'évite.
    */
   const bankText = [
-    `Virement bancaire${paymentInfo?.bankAccountName ? ` — Titulaire : ${paymentInfo.bankAccountName}` : ""}`,
+    `Virement bancaire${paymentInfo?.bankAccountName ? `, Titulaire : ${paymentInfo.bankAccountName}` : ""}`,
     `IBAN : ${paymentInfo?.bankIban ?? ""}`,
     paymentInfo?.bankBic ? `BIC : ${paymentInfo.bankBic}` : "",
   ]
@@ -476,7 +476,7 @@ export function InvoicePDF({ invoice, accentColor, paymentInfo, linkedInvoiceNum
             <Text style={styles.typeBannerText}>
               Facture d&apos;acompte
               {invoice.deposit_percentage
-                ? ` — ${invoice.deposit_percentage}% du montant total de la prestation`
+                ? `, ${invoice.deposit_percentage}% du montant total de la prestation`
                 : ""}
               . Le solde fera l&apos;objet d&apos;une facture distincte.
             </Text>
@@ -487,7 +487,7 @@ export function InvoicePDF({ invoice, accentColor, paymentInfo, linkedInvoiceNum
             <Text style={styles.typeBannerText}>
               Facture de solde
               {linkedNumber
-                ? ` — vient en déduction de la facture d'acompte n° ${linkedNumber}`
+                ? `, vient en déduction de la facture d'acompte n° ${linkedNumber}`
                 : ""}
               .
             </Text>
@@ -641,7 +641,7 @@ export function InvoicePDF({ invoice, accentColor, paymentInfo, linkedInvoiceNum
         <View style={styles.footer} fixed>
           <Text style={styles.footerText}>{footerText}</Text>
           <Text style={[styles.facturxBadge, { color: accent }]}>
-            Factur-X EN 16931 — Conforme réforme 2026
+            Factur-X EN 16931, Conforme réforme 2026
           </Text>
         </View>
       </Page>

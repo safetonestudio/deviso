@@ -11,7 +11,7 @@ const STEPS_OWNER = [
   {
     target: "dashboard",
     title: "Ton tableau de bord",
-    body: "Ta page de départ chaque matin. Tu vois en un coup d'œil ton CA encaissé ce mois, les devis en attente de réponse, ton taux de conversion, et toutes les alertes actives : factures impayées, relances en retard, approbations en attente. Le récapitulatif de chiffre d'affaires te donne ton CA encaissé par trimestre et par mois — et, si tu es en franchise en base, les échéances URSSAF qui vont avec.",
+    body: "Ta page de départ chaque matin. Tu vois en un coup d'œil ton CA encaissé ce mois, les devis en attente de réponse, ton taux de conversion, et toutes les alertes actives : factures impayées, relances en retard, approbations en attente. Le récapitulatif de chiffre d'affaires te donne ton CA encaissé par trimestre et par mois, et, si tu es en franchise en base, les échéances URSSAF qui vont avec.",
   },
   {
     target: "proposals",
@@ -26,12 +26,12 @@ const STEPS_OWNER = [
   {
     target: "factures-recues",
     title: "Factures reçues",
-    body: "L'autre bout de la réforme : les factures que tes fournisseurs t'adressent par voie électronique arrivent ici, via la Plateforme Agréée, dès que ton entreprise y est raccordée. Recevoir une facture et être d'accord ne demande aucune action de ta part. En cas de problème, une seule porte : signaler — mettre en attente, contester, ou refuser avec un motif conforme.",
+    body: "L'autre bout de la réforme : les factures que tes fournisseurs t'adressent par voie électronique arrivent ici, via la Plateforme Agréée, dès que ton entreprise y est raccordée. Recevoir une facture et être d'accord ne demande aucune action de ta part. En cas de problème, une seule porte : signaler, mettre en attente, contester, ou refuser avec un motif conforme.",
   },
   {
     target: "declarations",
     title: "Déclarations au fisc",
-    body: "Ce que la Plateforme Agréée déclare à l'administration en ton nom (e-reporting), une fois raccordé. Pour tout ce que tu factures, tu n'as rien à envoyer : transmettre la facture suffit. Cet écran te montre l'état de chaque déclaration — et surtout les refus, la seule chose qui demande une action.",
+    body: "Ce que la Plateforme Agréée déclare à l'administration en ton nom (e-reporting), une fois raccordé. Pour tout ce que tu factures, tu n'as rien à envoyer : transmettre la facture suffit. Cet écran te montre l'état de chaque déclaration, et surtout les refus, la seule chose qui demande une action.",
   },
   {
     target: "achats-internationaux",

@@ -9,7 +9,7 @@
  * 2. **Le mécanisme est trop agressif.** Symétrique et bien plus grave
  *    commercialement : une session vivante supprimée sous les pieds d'un
  *    prospect. Un test qui ne vérifierait que la suppression laisserait passer
- *    ce cas — il faut prouver les deux sens.
+ *    ce cas, il faut prouver les deux sens.
  * 3. **Un vrai compte peut être supprimé par ces routes.** Elles s'exécutent
  *    avec la clé de service, qui ignore les politiques RLS.
  *
@@ -26,9 +26,9 @@ for (const chemin of ["/api/demo/end", "/api/demo/heartbeat"]) {
   const anon = await anonymous.call(chemin, { method: "POST" });
   const attendu = chemin === "/api/demo/end" ? [200] : [401];
   verifier(
-    `${chemin} — sans session : ${attendu.join("/")}`,
+    `${chemin}, sans session : ${attendu.join("/")}`,
     attendu.includes(anon.status),
-    `HTTP ${anon.status} — /end répond 200 volontairement : rien à supprimer, ` +
+    `HTTP ${anon.status}, /end répond 200 volontairement : rien à supprimer, ` +
       `et un double clic sur « Quitter » ne doit pas afficher d'erreur`
   );
 }
@@ -51,14 +51,14 @@ const apresPurge = await vivante.call("/api/profile");
 verifier(
   "la session survit à la purge qu'elle vient de déclencher",
   apresPurge.status === 200,
-  `HTTP ${apresPurge.status} — un 401 signifierait que la démo se coupe elle-même`
+  `HTTP ${apresPurge.status}, un 401 signifierait que la démo se coupe elle-même`
 );
 
 const purge = jsonDe(battement).purge;
 verifier(
   "la purge s'exécute depuis le battement, sans échec",
   purge && purge.errors === 0,
-  `${JSON.stringify(purge)} — c'est ce qui rend le ménage proportionnel aux ` +
+  `${JSON.stringify(purge)}, c'est ce qui rend le ménage proportionnel aux ` +
     `sessions actives et non aux démos créées`
 );
 
@@ -83,7 +83,7 @@ const apres = await sortante.call("/api/profile");
 verifier(
   "le compte n'existe plus après la sortie",
   apres.status === 401 || apres.status === 404,
-  `HTTP ${apres.status} — un 200 signifierait que « Quitter la démo » ne fait ` +
+  `HTTP ${apres.status}, un 200 signifierait que « Quitter la démo » ne fait ` +
     `que déconnecter, en laissant le compte factice en base`
 );
 

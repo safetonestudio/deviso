@@ -7,7 +7,7 @@ import { libelleStatut, estCloture } from "@/lib/superpdp-statuts";
  * ⚠️ Composant SERVEUR volontairement, et dépliage en <details>/<summary>
  * NATIF. La première version était un composant client avec useState : le
  * formatage des montants/dates s'exécutait alors des deux côtés et différait
- * (espaces Intl entre Node et le navigateur) — erreur React #418, hydratation
+ * (espaces Intl entre Node et le navigateur), erreur React #418, hydratation
  * cassée, plus aucun clic. Le <details> natif est géré par le navigateur sans
  * JavaScript à hydrater : le dépliage marche quoi qu'il arrive, et le
  * formatage ne tourne plus que sur le serveur.
@@ -29,7 +29,7 @@ const ESP = " ";
 const MOIS = ["janv.", "févr.", "mars", "avr.", "mai", "juin", "juil.", "août", "sept.", "oct.", "nov.", "déc."];
 
 const euros = (v: number | null, devise: string | null) => {
-  if (v === null) return "—";
+  if (v === null) return "-";
   const [ent, dec] = Math.abs(v).toFixed(2).split(".");
   const groupe = ent.replace(/\B(?=(\d{3})+(?!\d))/g, ESP);
   const signe = v < 0 ? "-" : "";
@@ -38,7 +38,7 @@ const euros = (v: number | null, devise: string | null) => {
 };
 
 const jour = (v: string | null) => {
-  if (!v) return "—";
+  if (!v) return "-";
   const d = new Date(v);
   const jj = String(d.getUTCDate()).padStart(2, "0");
   return jj + " " + MOIS[d.getUTCMonth()] + " " + d.getUTCFullYear();
@@ -62,7 +62,7 @@ function Puce({ statut, code }: { statut: ReturnType<typeof libelleStatut>; code
             : "bg-ds-elevated text-gray-400"
       }`}
     >
-      {statut?.texte ?? code ?? "—"}
+      {statut?.texte ?? code ?? "-"}
     </span>
   );
 }
@@ -110,7 +110,7 @@ export function FacturesRecuesListe({
               <summary className="flex items-center gap-3 px-4 py-3 cursor-pointer list-none [&::-webkit-details-marker]:hidden hover:bg-ds-elevated/40 transition-colors">
                 <div className="min-w-0 flex-1">
                   <div className="flex items-center gap-2 flex-wrap">
-                    <span className="text-white font-medium truncate">{f.seller_name ?? "—"}</span>
+                    <span className="text-white font-medium truncate">{f.seller_name ?? "-"}</span>
                     <Puce statut={statut} code={f.last_status_code} />
                   </div>
                   <p className={`text-xs mt-0.5 ${enRetard ? "text-red-400 font-medium" : "text-gray-400"}`}>
@@ -135,7 +135,7 @@ export function FacturesRecuesListe({
                 <dl className="grid grid-cols-2 sm:grid-cols-4 gap-x-4 gap-y-2 text-sm mb-4">
                   <div>
                     <dt className="text-xs text-gray-400">Numéro</dt>
-                    <dd className="text-gray-300 font-mono text-xs">{f.number ?? "—"}</dd>
+                    <dd className="text-gray-300 font-mono text-xs">{f.number ?? "-"}</dd>
                   </div>
                   <div>
                     <dt className="text-xs text-gray-400">Émise le</dt>

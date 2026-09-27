@@ -2,7 +2,7 @@
  * Traversée du pied de page « via Deviso ».
  *
  * Décision du 12/08 : badge visible pour les inscrits sans essai (`plan = free`),
- * masqué dès Solo ou Pro, essai de 14 jours compris — l'essai donne la formule
+ * masqué dès Solo ou Pro, essai de 14 jours compris, l'essai donne la formule
  * complète, c'est ce que la grille tarifaire annonce.
  *
  * Un code HTTP ne dit rien de ce que contient l'email. On envoie donc deux fois

@@ -12,7 +12,7 @@ interface Props {
    * Le chiffre d'affaires encaissé par trimestre et par mois intéresse toute
    * entreprise ; les dates « 30 avril », « 31 juillet » sont, elles, celles du
    * micro-entrepreneur. Les afficher à une société serait une information
-   * fausse, imprimée par l'outil et non par l'utilisateur — exactement la
+   * fausse, imprimée par l'outil et non par l'utilisateur, exactement la
    * faute qu'on a corrigée sur les mentions de TVA.
    *
    * On les montre donc quand on peut l'affirmer, et on se tait sinon : le
@@ -121,7 +121,7 @@ export function CaUrssafWidget({ monthlyHT, currentMonth, currentYear, echeances
                     {isCurrent && <span className="text-[9px] bg-indigo-500/20 text-indigo-300 px-1 rounded">en cours</span>}
                   </div>
                   <div className={`text-sm font-bold ${isFuture ? "text-gray-600" : isCurrent ? "text-white" : "text-gray-300"}`}>
-                    {isFuture ? "—" : fmt(ca)}
+                    {isFuture ? "-" : fmt(ca)}
                   </div>
                   {!isFuture && (
                     <div className="mt-2 h-1.5 rounded-full bg-ds-bg overflow-hidden">
@@ -155,7 +155,7 @@ export function CaUrssafWidget({ monthlyHT, currentMonth, currentYear, echeances
                       />
                     </div>
                     <span className={`text-xs font-medium w-20 text-right shrink-0 ${isFutureMonth ? "text-gray-700" : ca === 0 ? "text-gray-600" : "text-gray-300"}`}>
-                      {isFutureMonth ? "—" : fmt(ca)}
+                      {isFutureMonth ? "-" : fmt(ca)}
                     </span>
                   </div>
                 );
@@ -203,7 +203,7 @@ export function CaUrssafWidget({ monthlyHT, currentMonth, currentYear, echeances
                   <div className={`text-sm font-bold ${
                     isFuture ? "text-gray-600" : isCurrent ? "text-white" : "text-gray-300"
                   }`}>
-                    {isFuture ? "—" : fmt(ca)}
+                    {isFuture ? "-" : fmt(ca)}
                   </div>
                   {!isFuture && (
                     <div className="mt-1.5 h-1.5 rounded-full bg-ds-bg overflow-hidden">

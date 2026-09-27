@@ -2,8 +2,8 @@
  * Contre-épreuve du contrôle PDF.
  *
  * Les assertions de pdf.mjs sont-elles porteuses ? On les rejoue sur deux PDF
- * volontairement dégradés — un sans profil colorimétrique, un sans fichier
- * associé — et on vérifie qu'elles tombent.
+ * volontairement dégradés, un sans profil colorimétrique, un sans fichier
+ * associé, et on vérifie qu'elles tombent.
  *
  * Sans cette étape, « 8/8 » ne prouve rien : la première version de pdf.mjs
  * signalait deux bugs inexistants parce qu'elle cherchait des chaînes de
@@ -25,7 +25,7 @@ let echecs = 0;
 
 for (const [chemin, libelle, oiAttendu, afAttendu] of cas) {
   if (!existsSync(chemin)) {
-    console.log(`  ignoré  ${libelle} — fichier absent`);
+    console.log(`  ignoré  ${libelle}, fichier absent`);
     continue;
   }
   const pdf = await PDFDocument.load(readFileSync(chemin), { updateMetadata: false });
@@ -34,7 +34,7 @@ for (const [chemin, libelle, oiAttendu, afAttendu] of cas) {
 
   const ok = oi === oiAttendu && af === afAttendu;
   console.log(
-    `${ok ? "  ok  " : "ÉCHEC "} ${libelle} — profil ${oi ? "présent" : "absent"}, ` +
+    `${ok ? "  ok  " : "ÉCHEC "} ${libelle}, profil ${oi ? "présent" : "absent"}, ` +
       `fichier associé ${af ? "présent" : "absent"}`
   );
   if (!ok) echecs++;

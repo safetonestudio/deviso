@@ -20,7 +20,7 @@ export async function GET(req: Request) {
 
   console.log(
     `[cleanup-demo] ${result.deleted}/${result.expired} comptes supprimés` +
-      (result.errors ? ` — ${result.errors} échec(s)` : "")
+      (result.errors ? `, ${result.errors} échec(s)` : "")
   );
 
   // Un échec de suppression doit être visible : c'est ainsi qu'une contrainte

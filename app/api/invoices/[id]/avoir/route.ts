@@ -11,12 +11,12 @@ import { verdictAvoir } from "@/lib/superpdp-avoir";
  * modifie plus**. Elle est partie chez le destinataire et, par le circuit,
  * chez l'administration ; la corriger sur place n'aurait aucun sens puisque la
  * version corrigée ne remplacerait rien. Le seul instrument de correction est
- * l'avoir — un second document, de type 381, qui annule le premier.
+ * l'avoir, un second document, de type 381, qui annule le premier.
  *
  * Et ce n'est pas une commodité : le refus (`fr:210`) est **terminal**. Le
  * destinataire qui refuse une facture pour une virgule oblige le fournisseur à
  * passer un avoir, sans alternative. Jusqu'ici, un utilisateur de Deviso dont
- * la facture était refusée n'avait rien pour régulariser — il devait rouvrir
+ * la facture était refusée n'avait rien pour régulariser, il devait rouvrir
  * son ancien outil, ou fabriquer le document à la main.
  *
  * ⚠️ Les montants d'un avoir sont **POSITIFS**. C'est contre-intuitif et c'est
@@ -27,7 +27,7 @@ import { verdictAvoir } from "@/lib/superpdp-avoir";
  *
  * On copie la facture d'origine plutôt que de demander une ressaisie : un avoir
  * total est le cas courant, et le retaper est l'occasion de se tromper sur les
- * montants — précisément ce qu'un document de régularisation ne doit pas faire.
+ * montants, précisément ce qu'un document de régularisation ne doit pas faire.
  * L'avoir naît en brouillon : l'utilisateur peut réduire les lignes pour un
  * avoir partiel avant de le transmettre.
  */
@@ -87,7 +87,7 @@ export async function POST(_req: NextRequest, ctx: { params: Promise<{ id: strin
   }
 
   // Une facture ne s'annule pas deux fois. Sans ce contrôle, deux clics
-  // produiraient deux avoirs, donc un crédit du double du montant — et chez le
+  // produiraient deux avoirs, donc un crédit du double du montant, et chez le
   // client, une écriture comptable de trop.
   const { data: dejaAvoir } = await supabase
     .from("invoices")
@@ -123,15 +123,15 @@ export async function POST(_req: NextRequest, ctx: { params: Promise<{ id: strin
 
   const aujourdhui = new Date().toISOString().slice(0, 10);
 
-  // On reprend tout de la facture d'origine — parties, adresses, lignes,
-  // montants, régime de TVA — et on ne change QUE ce qui fait de ce document
+  // On reprend tout de la facture d'origine, parties, adresses, lignes,
+  // montants, régime de TVA, et on ne change QUE ce qui fait de ce document
   // un avoir. Énumérer les champs à copier plutôt que ceux à écarter ferait
   // manquer, au premier champ ajouté, une information que l'avoir doit porter
   // à l'identique pour annuler quoi que ce soit.
   //
   // Rien de l'histoire de la facture d'origine ne se transmet : l'avoir est un
   // document neuf, jamais transmis, jamais payé, jamais relancé. Recopier un
-  // `superpdp_invoice_id` serait le pire des cas — l'avoir se croirait déjà
+  // `superpdp_invoice_id` serait le pire des cas, l'avoir se croirait déjà
   // émis et ne partirait jamais.
   const ecarte = new Set([
     "id",
@@ -199,7 +199,7 @@ export async function POST(_req: NextRequest, ctx: { params: Promise<{ id: strin
   }
 
   // L'utilisateur doit savoir MAINTENANT si cet avoir se transmet ou reste
-  // dans ses livres — pas au moment où il cliquera « Transmettre » pour se
+  // dans ses livres, pas au moment où il cliquera « Transmettre » pour se
   // voir opposer un refus. Voir lib/superpdp-avoir.ts.
   const verdict = verdictAvoir(origine.superpdp_status);
 

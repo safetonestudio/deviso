@@ -12,7 +12,7 @@ import { purgeExpiredDemoAccounts } from "@/lib/demo-cleanup";
  *
  * Effet de bord voulu : chaque battement déclenche aussi la purge. Le ménage
  * devient ainsi proportionnel au nombre de sessions **actives** et non au nombre
- * de démos **créées** — c'était le défaut de départ, une démo lancée puis
+ * de démos **créées**, c'était le défaut de départ, une démo lancée puis
  * abandonnée restait en base tant que personne d'autre n'en lançait une.
  */
 export async function POST() {
@@ -46,7 +46,7 @@ export async function POST() {
 
   // Compte réel : on ne renvoie pas d'erreur, l'interface n'a rien fait de mal
   // si un battement traîne après un changement de compte. On ne purge pas non
-  // plus — inutile de faire travailler la base sur un appel qui n'aurait pas dû
+  // plus, inutile de faire travailler la base sur un appel qui n'aurait pas dû
   // partir.
   if (!data) {
     return NextResponse.json({ alive: false, demo: false });

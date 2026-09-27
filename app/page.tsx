@@ -293,8 +293,8 @@ export default function LandingPage() {
           Remplace d'anciens témoignages fictifs (personnes et avis inventés,
           notés 5 étoiles) : sur un produit encore en pré-lancement, sans
           clients réels, les présenter comme authentiques est une pratique
-          trompeuse. On dit la vérité — un produit jeune, un fondateur
-          joignable — ce qui inspire davantage confiance qu'une preuve sociale
+          trompeuse. On dit la vérité, un produit jeune, un fondateur
+          joignable, ce qui inspire davantage confiance qu'une preuve sociale
           fabriquée. À remplacer par de vrais témoignages, avec accord, quand
           il y en aura. */}
       <section className="py-20 px-4 sm:px-6">
@@ -303,13 +303,13 @@ export default function LandingPage() {
             <p className="text-indigo-400 text-xs font-semibold uppercase tracking-wide mb-4">Le mot du fondateur</p>
             <p className="text-gray-300 text-base leading-relaxed mb-4">
               J&apos;ai créé Deviso parce que je perdais trop de temps sur mes propres devis et
-              factures — et parce que la réforme de la facturation électronique arrivait sans outil
+              factures, et parce que la réforme de la facturation électronique arrivait sans outil
               vraiment simple pour les indépendants et les petites structures.
             </p>
             <p className="text-gray-400 text-sm leading-relaxed mb-6">
               Deviso est encore jeune : je le développe et l&apos;éprouve avec soin avant de l&apos;ouvrir
               largement. Si vous l&apos;essayez maintenant, votre retour façonne directement ce qu&apos;il
-              devient — écrivez-moi, je lis tout.
+              devient, écrivez-moi, je lis tout.
             </p>
             <div className="flex items-center gap-3">
               <div className="w-9 h-9 rounded-full bg-white/[0.07] text-gray-300 font-semibold text-xs flex items-center justify-center shrink-0">

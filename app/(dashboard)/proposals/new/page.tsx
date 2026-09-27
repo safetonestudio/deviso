@@ -545,7 +545,7 @@ export default function NewProposalPage() {
                   </div>
                 ) : (
                   <div className="flex justify-between text-gray-500 text-xs italic">
-                    <span>TVA non applicable (art. 293 B CGI)</span><span>—</span>
+                    <span>TVA non applicable (art. 293 B CGI)</span><span>-</span>
                   </div>
                 )}
                 <div className="flex justify-between font-semibold text-base text-white pt-1 border-t border-ds-border">
@@ -561,7 +561,7 @@ export default function NewProposalPage() {
             <div className="flex items-center gap-2 mb-3">
               <Zap size={17} className="shrink-0 text-indigo-400" />
               <span className="text-sm font-semibold text-indigo-300">Affiner avec l&apos;IA</span>
-              <span className="text-xs text-gray-500">— dis ce que tu veux changer</span>
+              <span className="text-xs text-gray-500">, dis ce que tu veux changer</span>
             </div>
 
             {/* Chips de suggestions rapides */}
@@ -654,7 +654,7 @@ export default function NewProposalPage() {
               <input className={inputCls} placeholder="123 456 789" value={clientSiren} onChange={(e) => setClientSiren(e.target.value)} />
             </div>
             {/* Code postal et ville en champs distincts : l'EN 16931 les exige
-                séparés dans le XML. Facultatifs — ils ne bloquent jamais
+                séparés dans le XML. Facultatifs, ils ne bloquent jamais
                 l'enregistrement, le manque est signalé sur la facture. */}
             <div className="sm:col-span-2">
               <label className="block text-sm font-medium text-gray-300 mb-1.5">Adresse du client</label>

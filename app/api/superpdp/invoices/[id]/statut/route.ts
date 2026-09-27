@@ -68,7 +68,7 @@ export async function POST(req: NextRequest, ctx: { params: Promise<{ id: string
   // Autorisation : poser un statut de cycle de vie sur une facture REÇUE
   // (approbation fr:205 qui engage à payer, litige fr:207, suspension…) est
   // un traitement de facture reçue, au même titre que le refus. Même acte,
-  // même garde AVANT tout effet — sans elle, un membre sans aucun droit
+  // même garde AVANT tout effet, sans elle, un membre sans aucun droit
   // approuvait ou contestait officiellement les factures fournisseurs de
   // l'espace auprès de la Plateforme Agréée. Le gérant a tous les actes.
   const refusActe = await exigerActe(user.id, workspaceId, "refuser_facture_recue", admin);

@@ -14,7 +14,7 @@ export async function getWorkspaceUserId(userId: string): Promise<string> {
     .eq("status", "active")
     .maybeSingle();
   // Une ERREUR de lecture n'est pas « aucune appartenance ». Retomber en silence
-  // sur `userId` ferait créer les documents d'un membre sous SON propre espace —
+  // sur `userId` ferait créer les documents d'un membre sous SON propre espace -
   // numéro tiré d'une autre séquence, doublon de numérotation, facture invisible
   // pour l'entreprise. On refuse plutôt que de deviner.
   if (error) {
@@ -38,7 +38,7 @@ export async function isTeamMember(userId: string): Promise<boolean> {
  * reste volontairement en RLS par utilisateur : sa ligne contient l'IBAN, les
  * identifiants Chorus Pro et les références Stripe, et la RLS ne sait pas
  * restreindre par colonne. Un membre d'équipe ne doit donc jamais la lire
- * directement — mais les routes ont besoin du plan et des coordonnées de
+ * directement, mais les routes ont besoin du plan et des coordonnées de
  * l'entreprise pour fonctionner. C'est ce détour qui concilie les deux.
  *
  * Sans lui, un collaborateur recevait un 403 « plan insuffisant » parce que la

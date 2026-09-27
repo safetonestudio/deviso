@@ -33,8 +33,8 @@ export async function GET(_req: NextRequest, { params }: Params) {
   // Ce `.eq("id", user.id)` était un défaut discret et coûteux : sur un plan
   // Pro multi-utilisateurs, un collaborateur agissant sur un document de
   // l'espace lisait SON profil. Selon la route, cela donnait un PDF portant
-  // son IBAN (ou aucun) au lieu de celui de l'entreprise — le client paie
-  // alors sur le mauvais compte — ou un refus « plan insuffisant » sur une
+  // son IBAN (ou aucun) au lieu de celui de l'entreprise, le client paie
+  // alors sur le mauvais compte, ou un refus « plan insuffisant » sur une
   // fonction que l'espace paie pourtant.
   const profileData = await getWorkspaceProfile<{ proposal_color: string | null; payment_method: string | null; payment_link_provider: string | null; payment_link_profile: string | null; bank_iban: string | null; bank_bic: string | null; bank_account_name: string | null }>(
     workspaceId,
@@ -52,7 +52,7 @@ export async function GET(_req: NextRequest, { params }: Params) {
   } : undefined;
 
   // Solde ET avoir : numéro et date du document lié. Cette route ne traitait
-  // que le solde, et ne lisait que le numéro — voir lib/document-lie.ts.
+  // que le solde, et ne lisait que le numéro, voir lib/document-lie.ts.
   const lie = await documentLie(supabase, invoice, workspaceId);
 
   const pdfBuffer = await generateFacturXPdf(invoice, accentColor, paymentInfo, lie.numero, lie.date);

@@ -20,7 +20,7 @@ console.log("── Refus attendus ───────────────
 
 for (const chemin of ["/api/stripe/checkout", "/api/stripe/portal"]) {
   const anon = await anonymous.call(chemin, { method: "POST" });
-  verifier(`${chemin} — anonyme refusé`, anon.status === 401, `HTTP ${anon.status}`);
+  verifier(`${chemin}, anonyme refusé`, anon.status === 401, `HTTP ${anon.status}`);
 }
 
 const planInvalide = await s.call("/api/stripe/checkout", {

@@ -6,7 +6,7 @@ import { exigerTitulaire } from "@/lib/droits";
 import { envoyerCourriel } from "@/lib/resend";
 import { inviteEmailHtml } from "@/lib/emails/invite";
 
-// GET /api/team — liste les membres de l'équipe du workspace
+// GET /api/team, liste les membres de l'équipe du workspace
 // Pour un membre invité, retourne les membres de l'owner (pas le sien propre).
 export async function GET() {
   const supabase = await createClient();
@@ -129,7 +129,7 @@ export async function POST(req: NextRequest) {
   // démonstration ont le plan Pro, donc accès aux invitations d'équipe. Un
   // visiteur pouvait donc faire partir un courriel « X vous invite » vers
   // l'adresse de son choix. `envoyerCourriel` court-circuite l'envoi réel pour
-  // ces comptes — voir lib/resend.ts.
+  // ces comptes, voir lib/resend.ts.
   if (!estFictif) {
     await envoyerCourriel(user.id, {
       from: "Deviso <noreply@getdeviso.fr>",

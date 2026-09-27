@@ -14,14 +14,14 @@ import type { Invoice } from "@/types";
  * Vérifie une facture sans la transmettre.
  *
  * Deux niveaux, dans cet ordre :
- *   1. le pré-contrôle Deviso — ce qui manque, dit en français ;
- *   2. la validation officielle (`POST /validation_reports`) — 189 contrôles
+ *   1. le pré-contrôle Deviso, ce qui manque, dit en français ;
+ *   2. la validation officielle (`POST /validation_reports`), 189 contrôles
  *      Schematron et XSD, avec la localisation de l'erreur dans le XML.
  *
  * Le second est celui qui manquait. Le panneau de conformité de Deviso applique
  * des règles écrites à la main ; celui-ci fait tourner les validateurs réels
  * (FNFE, Factur-X EN16931). Une facture peut passer le premier et échouer au
- * second — et c'est précisément ce qui produisait un `api:invalid` asynchrone,
+ * second, et c'est précisément ce qui produisait un `api:invalid` asynchrone,
  * constaté des heures après une transmission qu'on croyait réussie.
  *
  * Aucune écriture, aucune transmission : cette route est sans conséquence.
@@ -68,12 +68,12 @@ export async function POST(req: NextRequest, ctx: { params: Promise<{ id: string
   // Découvrir l'ambiguïté d'adresse seulement au moment du clic « Transmettre »
   // ferait de ce bouton un piège, ce que le pré-contrôle existe pour éviter.
   // Seule l'ambiguïté bloque. Une adresse pas encore en vigueur laisse
-  // l'émission se faire sur le SIREN nu — voir lib/superpdp-annuaire.ts pour
+  // l'émission se faire sur le SIREN nu, voir lib/superpdp-annuaire.ts pour
   // pourquoi refuser serait pire.
   if (resolution.obstacle === "ambigu") {
     manques.push(
       `l'adresse de facturation électronique à utiliser pour ${facture.client_name || "votre client"} ` +
-        `— il en publie plusieurs, une par service : ${(resolution.candidats ?? []).join(", ")}`
+        `, il en publie plusieurs, une par service : ${(resolution.candidats ?? []).join(", ")}`
     );
   }
 

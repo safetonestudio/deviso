@@ -4,7 +4,7 @@
  * Le multi-utilisateurs est ce qui justifie l'écart de prix entre Solo et Pro
  * (34 €/mois, 3 sièges inclus puis 5 €/siège). Jusqu'ici, la seule chose qu'on
  * en testait était la lecture : `two-roles.mjs` emprunte bien le vrai tunnel
- * d'invitation, mais en **préalable** — si l'invitation casse, le script lève
+ * d'invitation, mais en **préalable**, si l'invitation casse, le script lève
  * une exception au lieu de rendre un échec de vérification, et personne ne teste
  * ce qui l'entoure : la page d'accueil de l'invitation, la ré-invitation, la
  * limite de sièges, le retrait d'un membre.
@@ -37,7 +37,7 @@ console.log("");
 
 // Tout ce que ce script crée est retiré à la fin de sa section, pour que les
 // comptes de démonstration partagés avec les autres scripts restent dans l'état
-// où on les a trouvés — en particulier le décompte de sièges.
+// où on les a trouvés, en particulier le décompte de sièges.
 const aRetirer = [];
 
 // ── Lecture de l'équipe ──────────────────────────────────────────────────────
@@ -60,7 +60,7 @@ const equipeMembre = await member.call("/api/team");
 verifier(
   "un membre voit l'équipe de l'espace de travail, pas une liste vide",
   equipeMembre.status === 200 && (equipeMembre.body?.members ?? []).length > 0,
-  `HTTP ${equipeMembre.status} — ${(equipeMembre.body?.members ?? []).length} membre(s)`
+  `HTTP ${equipeMembre.status}, ${(equipeMembre.body?.members ?? []).length} membre(s)`
 );
 
 // ── Invitation ───────────────────────────────────────────────────────────────
@@ -166,13 +166,13 @@ verifier(
 
 // La panne corrigée le 12/08 : pour un membre, le plan était lu sur son propre
 // profil (jamais « pro ») et les listes filtrées sur un owner_id inexistant.
-// Résultat : un écran vide, sans message d'erreur. Un 200 ne suffit donc pas —
+// Résultat : un écran vide, sans message d'erreur. Un 200 ne suffit donc pas -
 // on exige des données.
 const pipelineMembre = await member.call("/api/team/pipeline");
 verifier(
   "un membre lit le pipeline de l'espace, avec des données",
   pipelineMembre.status === 200 && (pipelineMembre.body?.team ?? []).length > 0,
-  `HTTP ${pipelineMembre.status} — ${(pipelineMembre.body?.team ?? []).length} entrée(s)`
+  `HTTP ${pipelineMembre.status}, ${(pipelineMembre.body?.team ?? []).length} entrée(s)`
 );
 
 verifier(
@@ -190,7 +190,7 @@ let refusSiege = null;
 let siegesAvantRefus = null;
 
 // On invite jusqu'au refus, borné pour ne jamais tourner en boucle si la limite
-// venait à disparaître — auquel cas le test doit échouer, pas s'emballer.
+// venait à disparaître, auquel cas le test doit échouer, pas s'emballer.
 for (let i = 0; i < 14 && !refusSiege; i++) {
   const depart = (await owner.call("/api/team")).body?.members?.length ?? 0;
   const r = await owner.call("/api/team", { method: "POST", body: doc({ email: fictive(`siege-${i}`) }) });
@@ -279,7 +279,7 @@ aVerifierAutrement(
 );
 aVerifierAutrement(
   "Le refus de s'inviter soi-même",
-  "le contrôle porte sur l'adresse d'authentification du compte, qu'aucune route ne renvoie — donc inatteignable depuis un script."
+  "le contrôle porte sur l'adresse d'authentification du compte, qu'aucune route ne renvoie, donc inatteignable depuis un script."
 );
 aVerifierAutrement(
   "L'invitation d'une invitation déjà acceptée (409 already_accepted)",

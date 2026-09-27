@@ -31,7 +31,7 @@ const securityHeaders = [
 ];
 
 const nextConfig: NextConfig = {
-  // Erreurs TypeScript corrigées le 13/07/2026 — le build est strict désormais.
+  // Erreurs TypeScript corrigées le 13/07/2026, le build est strict désormais.
   typescript: { ignoreBuildErrors: false },
   images: {
     remotePatterns: [

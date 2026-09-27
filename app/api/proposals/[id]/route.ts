@@ -10,8 +10,8 @@ export async function GET(_req: NextRequest, { params }: Params) {
   const { id } = await params;
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
-  // Sans garde, un appel anonyme repartait avec 404 « devis introuvable » —
-  // la RLS bloquait la lecture — au lieu d'un franc 401.
+  // Sans garde, un appel anonyme repartait avec 404 « devis introuvable » -
+  // la RLS bloquait la lecture, au lieu d'un franc 401.
   if (!user) return NextResponse.json({ error: "Non autorisé" }, { status: 401 });
 
   const workspaceId = await getWorkspaceUserId(user.id);
@@ -27,7 +27,7 @@ export async function GET(_req: NextRequest, { params }: Params) {
   // Comparaison à l'espace de travail, pas à la personne. Cette route comparait
   // à `user.id` : un collaborateur recevait 403 sur les devis de son propre
   // espace. Elle avait échappé à la correction d'hier parce qu'elle exprimait
-  // le contrôle autrement que les autres — d'où l'intérêt de la traversée.
+  // le contrôle autrement que les autres, d'où l'intérêt de la traversée.
   if (data.user_id !== workspaceId) {
     return NextResponse.json({ error: "Accès refusé" }, { status: 403 });
   }
@@ -61,8 +61,8 @@ export async function PATCH(req: NextRequest, { params }: Params) {
   //     qu'à ce que personne n'appelle l'API directement ;
   //   - `signed_at`, `signer_name`, `signer_ip`, `signature_hash` l'étaient
   //     aussi. Toute la piste d'audit que la route publique de signature
-  //     construit côté serveur — empreinte SHA-256 du document figé, IP,
-  //     user-agent, horodatage serveur — était réinscriptible par le vendeur
+  //     construit côté serveur, empreinte SHA-256 du document figé, IP,
+  //     user-agent, horodatage serveur, était réinscriptible par le vendeur
   //     lui-même. Un devis « signé » ne prouvait donc rien, ce qui est
   //     exactement ce qu'une signature électronique doit prouver.
   //

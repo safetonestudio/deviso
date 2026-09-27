@@ -10,7 +10,7 @@ import { synchroniserFactures } from "@/lib/superpdp-sync";
  * C'est le déclencheur principal, et non un complément du cron. Le plan Vercel
  * Hobby limite chaque tâche planifiée à une exécution par jour ; s'en remettre
  * à elle seule ferait apparaître les factures avec jusqu'à 24 h de retard.
- * Quelqu'un qui ouvre Deviso veut voir ses factures maintenant — on regarde à
+ * Quelqu'un qui ouvre Deviso veut voir ses factures maintenant, on regarde à
  * ce moment-là.
  *
  * Le délai minimal évite qu'une navigation entre plusieurs pages ne déclenche
@@ -26,7 +26,7 @@ const DELAI_MINIMAL_MS = 3 * 60 * 1000;
  * Un clic n'est pas un automatisme : quelqu'un qui appuie sur « Vérifier
  * maintenant » demande une action, et lui répondre « déjà vérifié » parce qu'une
  * synchronisation de fond vient de tourner est incompréhensible de son point de
- * vue — il n'a rien vu passer.
+ * vue, il n'a rien vu passer.
  *
  * Constaté par Selim : il ouvre la page, le déclencheur automatique part, il
  * clique dans la foulée, et son **premier** clic est refusé.

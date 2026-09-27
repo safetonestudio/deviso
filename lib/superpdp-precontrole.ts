@@ -40,7 +40,7 @@ export function manquesPourEmission(facture: {
     manques.push("votre SIREN (à renseigner dans Paramètres)");
   }
 
-  // Un particulier n'a pas de SIREN — l'exiger bloquerait toute facture B2C.
+  // Un particulier n'a pas de SIREN, l'exiger bloquerait toute facture B2C.
   // Super PDP détecte le B2C autrement (note BAR + adresse email), voir
   // lib/invoice-xml.ts.
   //
@@ -54,21 +54,21 @@ export function manquesPourEmission(facture: {
 
   // En revanche, une opération internationale doit dire d'où vient le client :
   // sans pays, elle ne serait pas classable, et Deviso la traiterait comme
-  // française par défaut — c'est-à-dire à tort.
+  // française par défaut, c'est-à-dire à tort.
   if (nature === "B2BInt" && !facture.client_country?.trim()) {
     manques.push(`le pays de ${facture.client_name || "votre client"}`);
   }
 
   // Un client étranger doit fournir son adresse de facturation électronique.
   //
-  // BT-49 est obligatoire — règle française BR-FR-12, confirmée le 01/09/2026
+  // BT-49 est obligatoire, règle française BR-FR-12, confirmée le 01/09/2026
   // par le validateur officiel, qui a refusé une facture à un client belge :
   // « Le BT-49 est obligatoire. Valeur actuelle : BT-49="" ».
   //
   // Pour un client français, Deviso sait la construire : c'est le SIREN, ou
   // l'entrée d'annuaire qui lui correspond. Hors de France, il n'existe aucune
-  // règle de dérivation — le numéro d'entreprise belge, allemand ou espagnol
-  // n'est pas déductible du nom — et l'annuaire français ne référence pas ces
+  // règle de dérivation, le numéro d'entreprise belge, allemand ou espagnol
+  // n'est pas déductible du nom, et l'annuaire français ne référence pas ces
   // entreprises. Seul le client la connaît.
   //
   // Le BT-49 est obligatoire (BR-FR-12). Hors de France, le client n'a en

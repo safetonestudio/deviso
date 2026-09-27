@@ -10,7 +10,7 @@ const SECTIONS: Section[] = [
     type: "texte",
     titre: "Pourquoi une facture émise est définitive",
     paragraphes: [
-      "Une facture n&rsquo;est pas un document de travail. Dès qu&rsquo;elle est émise et transmise, elle devient une pièce comptable qui existe aussi dans les comptes de votre client, dans sa déclaration de TVA s&rsquo;il est assujetti, et — depuis la réforme — dans les données transmises à l&rsquo;administration.",
+      "Une facture n&rsquo;est pas un document de travail. Dès qu&rsquo;elle est émise et transmise, elle devient une pièce comptable qui existe aussi dans les comptes de votre client, dans sa déclaration de TVA s&rsquo;il est assujetti, et, depuis la réforme, dans les données transmises à l&rsquo;administration.",
       "La modifier après coup, ce serait désynchroniser tout ça. Et la supprimer créerait un trou dans votre numérotation, ce que la réglementation interdit explicitement : la séquence doit être continue, sans rupture, précisément pour qu&rsquo;on ne puisse pas faire disparaître une vente.",
       "D&rsquo;où la règle, qui n&rsquo;a pas d&rsquo;exception : <strong>on ne corrige pas une facture, on en émet une autre qui l&rsquo;annule</strong>. Ce document s&rsquo;appelle un avoir.",
     ],
@@ -64,7 +64,7 @@ const SECTIONS: Section[] = [
       {
         titre: "Un numéro de votre série continue",
         texte:
-          "Même série que vos factures. Un avoir consomme un numéro — c&rsquo;est d&rsquo;ailleurs la raison pour laquelle annuler une facture ne « libère » jamais son numéro.",
+          "Même série que vos factures. Un avoir consomme un numéro, c&rsquo;est d&rsquo;ailleurs la raison pour laquelle annuler une facture ne « libère » jamais son numéro.",
       },
       {
         titre: "La référence à la facture annulée",
@@ -84,7 +84,7 @@ const SECTIONS: Section[] = [
       {
         titre: "Le même régime de TVA que la facture annulée",
         texte:
-          "Si la facture portait 20 % de TVA, l&rsquo;avoir porte 20 % de TVA en négatif — c&rsquo;est ce qui permet de récupérer la TVA déjà déclarée. Si elle était en franchise, l&rsquo;avoir l&rsquo;est aussi.",
+          "Si la facture portait 20 % de TVA, l&rsquo;avoir porte 20 % de TVA en négatif, c&rsquo;est ce qui permet de récupérer la TVA déjà déclarée. Si elle était en franchise, l&rsquo;avoir l&rsquo;est aussi.",
       },
     ],
   },
@@ -92,9 +92,9 @@ const SECTIONS: Section[] = [
     type: "texte",
     titre: "Avoir total ou avoir partiel",
     paragraphes: [
-      "Un <strong>avoir total</strong> annule la facture entière. C&rsquo;est le cas quand l&rsquo;erreur porte sur l&rsquo;identité du client, sur le taux de TVA, sur la nature de la prestation — tout ce qui rend le document faux dans son principe.",
+      "Un <strong>avoir total</strong> annule la facture entière. C&rsquo;est le cas quand l&rsquo;erreur porte sur l&rsquo;identité du client, sur le taux de TVA, sur la nature de la prestation, tout ce qui rend le document faux dans son principe.",
       "Un <strong>avoir partiel</strong> ne retire qu&rsquo;une partie : une ligne facturée en trop, une remise accordée après coup, un rabais pour retard de livraison. La facture d&rsquo;origine reste valable pour le reste, et vous n&rsquo;avez pas de facture rectificative à émettre.",
-      "Le choix n&rsquo;est pas esthétique. Un avoir partiel évite de refaire tout le circuit pour une ligne, mais il suppose que le reste du document soit juste. En cas de doute — par exemple si le client a changé d&rsquo;entité — préférez l&rsquo;avoir total : il est plus lourd, il est plus propre.",
+      "Le choix n&rsquo;est pas esthétique. Un avoir partiel évite de refaire tout le circuit pour une ligne, mais il suppose que le reste du document soit juste. En cas de doute, par exemple si le client a changé d&rsquo;entité, préférez l&rsquo;avoir total : il est plus lourd, il est plus propre.",
     ],
   },
   {
@@ -107,7 +107,7 @@ const SECTIONS: Section[] = [
       ["Facture n° 2026-042", "1 200 € HT, TVA 10 % (erreur : le taux correct est 20 %)", "+1 200 €"],
       [
         "Avoir n° 2026-043",
-        "« Annulation de la facture n° 2026-042 du 14 mars 2026 — motif : taux de TVA erroné », TVA 10 % en négatif",
+        "« Annulation de la facture n° 2026-042 du 14 mars 2026, motif : taux de TVA erroné », TVA 10 % en négatif",
         "−1 200 €",
       ],
       ["Facture n° 2026-044", "1 200 € HT, TVA 20 %, mention « remplace la facture n° 2026-042 »", "+1 200 €"],
@@ -121,7 +121,7 @@ const SECTIONS: Section[] = [
     paragraphes: [
       "Tant que les factures circulaient en PDF, une correction rapide passait souvent. Ce n&rsquo;est plus le cas, et pour une raison simple : une facture déposée via une plateforme agréée a un identifiant et un cycle de vie suivi. L&rsquo;administration sait qu&rsquo;elle existe.",
       "Deux conséquences pratiques. D&rsquo;abord, <strong>le délai de correction se resserre</strong> : plus la facture avance dans son cycle, plus l&rsquo;annulation devient visible. Ensuite, et c&rsquo;est le point que presque personne n&rsquo;explique, <strong>tous les avoirs ne se transmettent pas</strong>.",
-      "Un avoir qui annule une facture ayant abouti — remise accordée, retour, geste commercial — part normalement dans le circuit : l&rsquo;administration n&rsquo;a aucun autre moyen de l&rsquo;apprendre. En revanche, un avoir qui annule une facture <strong>refusée</strong> par le client ou <strong>rejetée</strong> par une plateforme reste interne : le statut d&rsquo;échec a déjà informé l&rsquo;administration, et transmettre l&rsquo;avoir créerait un doublon de données.",
+      "Un avoir qui annule une facture ayant abouti, remise accordée, retour, geste commercial, part normalement dans le circuit : l&rsquo;administration n&rsquo;a aucun autre moyen de l&rsquo;apprendre. En revanche, un avoir qui annule une facture <strong>refusée</strong> par le client ou <strong>rejetée</strong> par une plateforme reste interne : le statut d&rsquo;échec a déjà informé l&rsquo;administration, et transmettre l&rsquo;avoir créerait un doublon de données.",
     ],
   },
   {
@@ -129,7 +129,7 @@ const SECTIONS: Section[] = [
     ton: "info",
     titre: "Une distinction que votre logiciel devrait faire à votre place",
     texte:
-      "Savoir si un avoir se transmet dépend du statut de la facture qu&rsquo;il annule. Personne ne devrait avoir à s&rsquo;en souvenir au moment de l&rsquo;émettre. C&rsquo;est exactement le type de règle qu&rsquo;un outil doit porter — et qu&rsquo;il faut vérifier avant de choisir le sien.",
+      "Savoir si un avoir se transmet dépend du statut de la facture qu&rsquo;il annule. Personne ne devrait avoir à s&rsquo;en souvenir au moment de l&rsquo;émettre. C&rsquo;est exactement le type de règle qu&rsquo;un outil doit porter, et qu&rsquo;il faut vérifier avant de choisir le sien.",
   },
   {
     type: "liste",
@@ -138,7 +138,7 @@ const SECTIONS: Section[] = [
       {
         titre: "Supprimer la facture et en refaire une avec le même numéro",
         texte:
-          "Le plus fréquent, et le plus problématique. Vous perdez la trace, et vous vous retrouvez avec deux documents différents ayant porté le même numéro — ce qui est exactement ce qu&rsquo;un contrôle cherche.",
+          "Le plus fréquent, et le plus problématique. Vous perdez la trace, et vous vous retrouvez avec deux documents différents ayant porté le même numéro, ce qui est exactement ce qu&rsquo;un contrôle cherche.",
       },
       {
         titre: "Émettre un avoir sans référence à la facture annulée",
@@ -167,11 +167,11 @@ const SECTIONS: Section[] = [
 const FAQ = [
   {
     q: "Peut-on supprimer une facture déjà envoyée ?",
-    a: "Non. Une facture émise est une pièce comptable qui existe aussi chez votre client, et sa suppression créerait un trou dans votre numérotation — ce que la réglementation interdit, la séquence devant être continue. La seule façon de l'annuler est d'émettre un avoir qui la référence, puis, si nécessaire, une facture rectificative.",
+    a: "Non. Une facture émise est une pièce comptable qui existe aussi chez votre client, et sa suppression créerait un trou dans votre numérotation, ce que la réglementation interdit, la séquence devant être continue. La seule façon de l'annuler est d'émettre un avoir qui la référence, puis, si nécessaire, une facture rectificative.",
   },
   {
     q: "Quelle est la différence entre un avoir et une facture rectificative ?",
-    a: "L'avoir annule, la facture rectificative remplace. Dans le cas général vous avez besoin des deux : l'avoir efface comptablement la facture fausse, la facture rectificative porte les bonnes informations. Si l'erreur ne portait que sur une ligne ou un montant à la baisse, un avoir partiel peut suffire seul — la facture d'origine reste valable pour le reste.",
+    a: "L'avoir annule, la facture rectificative remplace. Dans le cas général vous avez besoin des deux : l'avoir efface comptablement la facture fausse, la facture rectificative porte les bonnes informations. Si l'erreur ne portait que sur une ligne ou un montant à la baisse, un avoir partiel peut suffire seul, la facture d'origine reste valable pour le reste.",
   },
   {
     q: "L'avoir doit-il porter un numéro de facture ?",
@@ -183,7 +183,7 @@ const FAQ = [
   },
   {
     q: "Faut-il transmettre l'avoir via la plateforme agréée ?",
-    a: "Cela dépend du statut de la facture annulée. Un avoir qui annule une facture ayant abouti se transmet normalement : l'administration n'a aucun autre moyen d'en être informée. Mais un avoir qui annule une facture refusée par le client ou rejetée par une plateforme reste interne à votre comptabilité — le statut d'échec a déjà informé l'administration, et transmettre l'avoir créerait un doublon de données.",
+    a: "Cela dépend du statut de la facture annulée. Un avoir qui annule une facture ayant abouti se transmet normalement : l'administration n'a aucun autre moyen d'en être informée. Mais un avoir qui annule une facture refusée par le client ou rejetée par une plateforme reste interne à votre comptabilité, le statut d'échec a déjà informé l'administration, et transmettre l'avoir créerait un doublon de données.",
   },
   {
     q: "Combien de temps ai-je pour corriger une facture ?",
@@ -208,7 +208,7 @@ const SOURCES: Source[] = [
     precision: "récupération de la TVA facturée à tort, sur facture rectificative",
   },
   {
-    libelle: "impots.gouv.fr — Facturation électronique et plateformes agréées",
+    libelle: "impots.gouv.fr, Facturation électronique et plateformes agréées",
     url: "https://www.impots.gouv.fr/facturation-electronique-et-plateformes-agreees",
     precision: "cycle de vie des factures et flux de données réglementaires",
   },
@@ -218,11 +218,11 @@ export default function Page() {
   return (
     <ArticleLong
       slug={SLUG}
-      chapeau="Mauvais montant, mauvais taux de TVA, mauvais client. Le réflexe est de rouvrir le document et de corriger — et c&rsquo;est précisément ce qu&rsquo;il ne faut pas faire. Voici le bon geste, et ce que la facturation électronique y change."
+      chapeau="Mauvais montant, mauvais taux de TVA, mauvais client. Le réflexe est de rouvrir le document et de corriger, et c&rsquo;est précisément ce qu&rsquo;il ne faut pas faire. Voici le bon geste, et ce que la facturation électronique y change."
       enBref={[
         "Une facture émise ne se modifie pas et ne se supprime pas : on émet un <strong>avoir</strong> qui l&rsquo;annule.",
         "L&rsquo;avoir prend un numéro de votre série continue, et <strong>référence la facture annulée</strong> par son numéro et sa date.",
-        "Il doit reprendre le <strong>taux de TVA d&rsquo;origine</strong>, en négatif — sinon la TVA déclarée n&rsquo;est pas récupérable.",
+        "Il doit reprendre le <strong>taux de TVA d&rsquo;origine</strong>, en négatif, sinon la TVA déclarée n&rsquo;est pas récupérable.",
         "Un numéro consommé ne se libère jamais, même après annulation.",
         "Cas particulier : l&rsquo;avoir qui annule une facture <strong>refusée ou rejetée</strong> ne se transmet pas dans le circuit réglementaire.",
       ]}

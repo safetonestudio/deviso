@@ -20,7 +20,7 @@ const SECTIONS: Section[] = [
     ton: "info",
     titre: "Pourquoi ce flou existe",
     texte:
-      "Le mot « honoraires » vient d&rsquo;une tradition où la rémunération d&rsquo;un professionnel libéral n&rsquo;était pas un prix de marché mais une reconnaissance. Il a survécu dans l&rsquo;usage — et dans les intitulés de logiciels — bien après que le droit a cessé de distinguer. Résultat : beaucoup de praticiens pensent être soumis à un régime documentaire particulier, alors que non.",
+      "Le mot « honoraires » vient d&rsquo;une tradition où la rémunération d&rsquo;un professionnel libéral n&rsquo;était pas un prix de marché mais une reconnaissance. Il a survécu dans l&rsquo;usage, et dans les intitulés de logiciels, bien après que le droit a cessé de distinguer. Résultat : beaucoup de praticiens pensent être soumis à un régime documentaire particulier, alors que non.",
   },
   {
     type: "comparaison",
@@ -47,8 +47,8 @@ const SECTIONS: Section[] = [
     titre: "L&rsquo;exonération de TVA des soins : une nuance qui compte",
     paragraphes: [
       "C&rsquo;est le point où la distinction devient concrète, et où beaucoup de praticiens se trompent de mention.",
-      "Si vous êtes <strong>une profession médicale ou paramédicale réglementée</strong> — médecin, infirmier, kinésithérapeute, sage-femme, orthophoniste, pédicure-podologue, et les autres professions dont le titre est protégé — vos actes de soin sont exonérés de TVA au titre de l&rsquo;article 261-4-1° du CGI. La mention à porter est celle de l&rsquo;exonération, pas celle de la franchise en base.",
-      "Si vous exercez une <strong>activité de bien-être non réglementée</strong> — sophrologie, naturopathie, réflexologie, coaching, massage de détente — vous n&rsquo;êtes pas dans ce cas. Votre activité est une prestation de services ordinaire. Tant que vous restez sous le seuil, vous êtes en franchise en base avec la mention de l&rsquo;article 293 B ; au-delà, vous facturez la TVA à 20 %.",
+      "Si vous êtes <strong>une profession médicale ou paramédicale réglementée</strong>, médecin, infirmier, kinésithérapeute, sage-femme, orthophoniste, pédicure-podologue, et les autres professions dont le titre est protégé, vos actes de soin sont exonérés de TVA au titre de l&rsquo;article 261-4-1° du CGI. La mention à porter est celle de l&rsquo;exonération, pas celle de la franchise en base.",
+      "Si vous exercez une <strong>activité de bien-être non réglementée</strong>, sophrologie, naturopathie, réflexologie, coaching, massage de détente, vous n&rsquo;êtes pas dans ce cas. Votre activité est une prestation de services ordinaire. Tant que vous restez sous le seuil, vous êtes en franchise en base avec la mention de l&rsquo;article 293 B ; au-delà, vous facturez la TVA à 20 %.",
       "La différence n&rsquo;est pas cosmétique : l&rsquo;exonération des soins est définitive et indépendante du chiffre d&rsquo;affaires, la franchise en base tombe dès que vous dépassez le seuil. Porter la mauvaise mention, c&rsquo;est soit s&rsquo;exonérer à tort, soit se croire exonéré et découvrir une TVA rétroactive.",
     ],
   },
@@ -85,7 +85,7 @@ const SECTIONS: Section[] = [
       {
         titre: "Les conditions de règlement",
         texte:
-          "Délai, moyens acceptés, et — pour un client professionnel — les pénalités de retard et l&rsquo;indemnité forfaitaire de 40 €, qui sont obligatoires en B2B.",
+          "Délai, moyens acceptés, et, pour un client professionnel, les pénalités de retard et l&rsquo;indemnité forfaitaire de 40 €, qui sont obligatoires en B2B.",
       },
     ],
   },
@@ -94,15 +94,15 @@ const SECTIONS: Section[] = [
     ton: "alerte",
     titre: "Ne faites pas figurer d&rsquo;information de santé",
     texte:
-      "Un diagnostic, un motif de consultation, un nom de pathologie n&rsquo;ont rien à faire sur un document comptable. Il peut être transmis à un comptable, à une mutuelle, à un employeur qui rembourse. Écrivez la nature de l&rsquo;acte, pas son contenu — c&rsquo;est suffisant pour justifier le prix, et c&rsquo;est la seule version respectueuse de votre patient.",
+      "Un diagnostic, un motif de consultation, un nom de pathologie n&rsquo;ont rien à faire sur un document comptable. Il peut être transmis à un comptable, à une mutuelle, à un employeur qui rembourse. Écrivez la nature de l&rsquo;acte, pas son contenu, c&rsquo;est suffisant pour justifier le prix, et c&rsquo;est la seule version respectueuse de votre patient.",
   },
   {
     type: "texte",
     titre: "Et face à la facturation électronique ?",
     paragraphes: [
       "La réforme ne distingue pas les notes d&rsquo;honoraires des factures. Ce qui compte est la <strong>nature du client</strong>, pas l&rsquo;intitulé du document.",
-      "Vos patients particuliers relèvent du B2C : il n&rsquo;y a pas de facture électronique à leur transmettre, mais une obligation d&rsquo;<strong>e-reporting</strong> — la transmission des données de transaction à l&rsquo;administration — qui arrivera pour les micro-entreprises au 1<sup>er</sup> septembre 2027.",
-      "En revanche, si vous facturez une entreprise, une mutuelle, un centre de formation, une collectivité — autrement dit un professionnel — vous êtes dans le B2B, avec les obligations correspondantes. Et l&rsquo;obligation de <strong>pouvoir recevoir</strong> une facture électronique via une plateforme agréée, elle, s&rsquo;applique déjà depuis le 1<sup>er</sup> septembre 2026, à toute entreprise assujettie à la TVA, sans exception de taille ni de régime.",
+      "Vos patients particuliers relèvent du B2C : il n&rsquo;y a pas de facture électronique à leur transmettre, mais une obligation d&rsquo;<strong>e-reporting</strong>, la transmission des données de transaction à l&rsquo;administration, qui arrivera pour les micro-entreprises au 1<sup>er</sup> septembre 2027.",
+      "En revanche, si vous facturez une entreprise, une mutuelle, un centre de formation, une collectivité, autrement dit un professionnel, vous êtes dans le B2B, avec les obligations correspondantes. Et l&rsquo;obligation de <strong>pouvoir recevoir</strong> une facture électronique via une plateforme agréée, elle, s&rsquo;applique déjà depuis le 1<sup>er</sup> septembre 2026, à toute entreprise assujettie à la TVA, sans exception de taille ni de régime.",
     ],
   },
   {
@@ -135,7 +135,7 @@ const FAQ = [
   },
   {
     q: "Quelle mention de TVA porter sur une note d'honoraires ?",
-    a: "Trois cas. Si vous exercez une profession médicale ou paramédicale réglementée, vos actes de soin sont exonérés : « Exonération de TVA, art. 261-4-1° du CGI ». Si votre activité n'est pas réglementée (sophrologie, naturopathie, coaching) et que vous êtes sous le seuil : « TVA non applicable, art. 293 B du CGI ». Si vous êtes assujetti : le taux et le montant de TVA. Dans aucun cas on ne crée une ligne de TVA à 0 % — c'est une erreur fréquente et visible.",
+    a: "Trois cas. Si vous exercez une profession médicale ou paramédicale réglementée, vos actes de soin sont exonérés : « Exonération de TVA, art. 261-4-1° du CGI ». Si votre activité n'est pas réglementée (sophrologie, naturopathie, coaching) et que vous êtes sous le seuil : « TVA non applicable, art. 293 B du CGI ». Si vous êtes assujetti : le taux et le montant de TVA. Dans aucun cas on ne crée une ligne de TVA à 0 %, c'est une erreur fréquente et visible.",
   },
   {
     q: "Un praticien de bien-être est-il exonéré de TVA ?",
@@ -147,7 +147,7 @@ const FAQ = [
   },
   {
     q: "Peut-on mentionner le motif de consultation ?",
-    a: "Techniquement oui, mais ne le faites pas. Une note d'honoraires est un document comptable qui peut circuler : comptable, mutuelle, employeur qui rembourse, conjoint qui règle. Écrivez la nature de l'acte — « consultation », « séance de suivi », « bilan initial » — et pas son contenu clinique. C'est suffisant pour justifier le prix, et c'est la seule version qui respecte votre patient.",
+    a: "Techniquement oui, mais ne le faites pas. Une note d'honoraires est un document comptable qui peut circuler : comptable, mutuelle, employeur qui rembourse, conjoint qui règle. Écrivez la nature de l'acte, « consultation », « séance de suivi », « bilan initial », et pas son contenu clinique. C'est suffisant pour justifier le prix, et c'est la seule version qui respecte votre patient.",
   },
   {
     q: "Les notes d'honoraires sont-elles concernées par la facturation électronique ?",
@@ -196,7 +196,7 @@ export default function Page() {
       cta={{
         titre: "Des notes d&rsquo;honoraires numérotées correctement, sans y penser",
         texte:
-          "Deviso tient une série unique et continue pour toute votre activité, et porte la mention de TVA qui correspond à votre situation — exonération, franchise en base ou assujettissement.",
+          "Deviso tient une série unique et continue pour toute votre activité, et porte la mention de TVA qui correspond à votre situation, exonération, franchise en base ou assujettissement.",
       }}
     />
   );

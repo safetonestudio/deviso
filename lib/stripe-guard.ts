@@ -1,5 +1,5 @@
 /**
- * Garde-fou Stripe — conservé comme point d'entrée historique.
+ * Garde-fou Stripe, conservé comme point d'entrée historique.
  *
  * La règle qu'il énonçait (« tout fichier qui écrit dans Stripe passe par
  * ici ») s'est révélée valable bien au-delà de Stripe : le courriel et les

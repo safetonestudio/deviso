@@ -4,13 +4,13 @@
  * Règle : visible tant que l'utilisateur n'a pas d'abonnement actif, masqué dès
  * Solo ou Pro. C'est exactement celle qu'appliquent déjà les documents
  * (`showBranding = plan === "free"` dans ProposalDocument et sur la page
- * publique). Les emails en étaient la seule exception — un oubli, pas un choix :
+ * publique). Les emails en étaient la seule exception, un oubli, pas un choix :
  * la grille tarifaire vend « Sans branding Deviso sur vos documents », et un
  * client payant qui voit encore la marque dans ses relances a raison de se
  * plaindre.
  *
  * `plan` vaut `'free'` par défaut à l'inscription. Ce n'est plus une offre
- * commerciale, mais c'est l'état de tout compte avant abonnement — donc
+ * commerciale, mais c'est l'état de tout compte avant abonnement, donc
  * précisément la population qui prospecte, et pour laquelle ce pied de page est
  * le seul canal de diffusion gratuit du produit.
  */

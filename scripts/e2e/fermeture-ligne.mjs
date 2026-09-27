@@ -8,7 +8,7 @@
  * tests qui la ferait a chaque passage detruirait l'environnement qu'elle est
  * censee proteger.
  *
- * On eprouve donc ce qui porte le risque — la decision — et on le fait sans
+ * On eprouve donc ce qui porte le risque, la decision, et on le fait sans
  * reseau, sans compte, et sans consequence. C'est la meme raison qui a fait
  * extraire `factureBloquee` dans son propre module.
  */
@@ -65,7 +65,7 @@ for (const etat of ["joignable", "programmee", "en_cours"]) {
 // Leur nomenclature evolue. Le comportement par defaut doit rester previsible :
 // on ne veut ni un refus permanent sur un etat qu'on ne connait pas encore, ni
 // une suppression declenchee par un libelle qu'on n'a jamais vu. Ici, seul
-// `en_erreur` protege — on documente donc que tout autre etat autorise.
+// `en_erreur` protege, on documente donc que tout autre etat autorise.
 verifier(
   "un etat inconnu autorise la fermeture, comme un etat sain",
   decisionFermeture("etat_futur_inconnu").fermer === true,

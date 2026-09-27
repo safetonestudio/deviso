@@ -8,7 +8,7 @@ import type Stripe from "stripe";
 
 /**
  * Les statuts sous lesquels un abonnement existe encore chez Stripe et
- * continue de porter — ou de reprendre — une facturation. En ouvrir un second
+ * continue de porter, ou de reprendre, une facturation. En ouvrir un second
  * pendant que l'un de ceux-là court, c'est facturer deux fois.
  */
 const ABONNEMENT_VIVANT = new Set<Stripe.Subscription.Status>([
@@ -81,7 +81,7 @@ export async function POST(req: NextRequest) {
    *
    * Cette route ouvrait un tunnel de paiement quoi qu'il arrive. Un client
    * Solo qui cliquait « Passer à Pro » se retrouvait donc avec DEUX
-   * abonnements actifs — 18 € + 34 € tous les mois — et le webhook écrasait
+   * abonnements actifs, 18 € + 34 € tous les mois, et le webhook écrasait
    * `stripe_subscription_id` au passage, si bien que Deviso ne savait même
    * plus que le premier existait, ni comment l'annuler.
    *
@@ -133,7 +133,7 @@ export async function POST(req: NextRequest) {
       }
 
       /**
-       * Redescendre en Solo, c'est renoncer à son équipe — il faut le dire
+       * Redescendre en Solo, c'est renoncer à son équipe, il faut le dire
        * avant, pas le découvrir après.
        *
        * Le chemin Pro → Solo n'existait pas avant le 15/09 ; en l'ouvrant, on a
@@ -187,7 +187,7 @@ export async function POST(req: NextRequest) {
         await stripe.subscriptions.update(sub.id, {
           items: [{ id: articlePlan.id, price: priceId }],
           // La proration est calculée et REPORTÉE sur la prochaine facture.
-          // `always_invoice` facturerait sur-le-champ — impossible pendant un
+          // `always_invoice` facturerait sur-le-champ, impossible pendant un
           // essai sans carte, et brutal juste après.
           proration_behavior: "create_prorations",
           metadata: { target_plan: targetPlan, billing },
@@ -203,7 +203,7 @@ export async function POST(req: NextRequest) {
        *
        * `ABONNEMENT_VIVANT` inclut volontairement les impayés : face à un
        * client en retard, on veut MODIFIER son abonnement plutôt que lui en
-       * ouvrir un second — c'est tout l'objet de cette branche. Mais modifier
+       * ouvrir un second, c'est tout l'objet de cette branche. Mais modifier
        * n'est pas payer.
        *
        * La version précédente écrivait `plan: targetPlan` sans condition. Un
@@ -211,7 +211,7 @@ export async function POST(req: NextRequest) {
        * récupérait donc un accès payant d'un seul clic ; et si cette écriture
        * arrivait APRÈS celle du webhook, elle gagnait, sans rien pour la
        * corriger avant le prochain événement Stripe. Trouvé en relecture le
-       * 20/09/2026, pas par le banc — qui ne jouait qu'un abonnement à jour.
+       * 20/09/2026, pas par le banc, qui ne jouait qu'un abonnement à jour.
        *
        * La règle est désormais celle du webhook, mot pour mot : actif ou en
        * essai. Sinon on laisse le plan tel quel et on le dit à l'utilisateur.
@@ -225,7 +225,7 @@ export async function POST(req: NextRequest) {
        * ensuite échoué. Ici, un échec laisse l'équipe en place, ce qui se
        * répare d'un second clic.
        *
-       * `synchroniserSieges` recalcule depuis les membres restants — zéro —
+       * `synchroniserSieges` recalcule depuis les membres restants, zéro -
        * et supprime donc l'article « siège » de lui-même. Aucune quantité n'est
        * écrite à la main.
        */
@@ -239,7 +239,7 @@ export async function POST(req: NextRequest) {
         if (erreurPurge) {
           console.error(
             `[stripe/checkout] passage à Solo de ${user.id} : les ${membresARetirer} ` +
-              `collaborateur(s) n'ont PAS été retirés — ils gardent l'accès et ` +
+              `collaborateur(s) n'ont PAS été retirés, ils gardent l'accès et ` +
               `leurs sièges restent facturés.`,
             erreurPurge
           );
@@ -247,7 +247,7 @@ export async function POST(req: NextRequest) {
           await synchroniserSieges(user.id).catch((err) => {
             console.error(
               `[stripe/checkout] passage à Solo de ${user.id} : équipe retirée mais ` +
-                `sièges NON réalignés — ils continuent d'être facturés.`,
+                `sièges NON réalignés, ils continuent d'être facturés.`,
               err
             );
           });

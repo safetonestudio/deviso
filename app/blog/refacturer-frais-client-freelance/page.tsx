@@ -11,7 +11,7 @@ const SECTIONS: Section[] = [
     titre: "Le problème que personne ne vous explique",
     paragraphes: [
       "Vous prenez un train à 90 €, une nuit d&rsquo;hôtel à 110 €, et votre client a accepté de vous les rembourser. Vous ajoutez donc 200 € sur votre facture. Tout le monde est content.",
-      "Sauf que ces 200 € viennent d&rsquo;entrer dans votre <strong>chiffre d&rsquo;affaires encaissé</strong>. Et en micro-entreprise, le chiffre d&rsquo;affaires encaissé est exactement ce sur quoi l&rsquo;URSSAF calcule vos cotisations. Vous ne gagnez pas un centime sur ce train, mais vous payez des cotisations dessus — autour de 21 % à 25 % selon votre activité. Sur 200 €, cela fait 45 à 51 € qui sortent de votre poche pour un déplacement que vous avez avancé.",
+      "Sauf que ces 200 € viennent d&rsquo;entrer dans votre <strong>chiffre d&rsquo;affaires encaissé</strong>. Et en micro-entreprise, le chiffre d&rsquo;affaires encaissé est exactement ce sur quoi l&rsquo;URSSAF calcule vos cotisations. Vous ne gagnez pas un centime sur ce train, mais vous payez des cotisations dessus, autour de 21 % à 25 % selon votre activité. Sur 200 €, cela fait 45 à 51 € qui sortent de votre poche pour un déplacement que vous avez avancé.",
       "C&rsquo;est la partie que la plupart des pages sur la refacturation de frais passent sous silence : elles expliquent le mécanisme comptable, jamais la facture URSSAF au bout. Et l&rsquo;effet se cumule : les mêmes 200 € comptent aussi dans votre plafond de régime micro et dans votre seuil de TVA.",
     ],
   },
@@ -20,7 +20,7 @@ const SECTIONS: Section[] = [
     ton: "alerte",
     titre: "La règle de base, avant toute subtilité",
     texte:
-      "Tout ce que vous encaissez est du chiffre d&rsquo;affaires. Un frais refacturé n&rsquo;est pas une dépense neutralisée : c&rsquo;est une recette de plus. En micro-entreprise, vous ne déduisez <strong>aucune charge réelle</strong> — l&rsquo;abattement forfaitaire est censé les couvrir, qu&rsquo;elles aient existé ou non. Il n&rsquo;existe qu&rsquo;une seule porte de sortie, le <strong>débours</strong>, et elle est étroite.",
+      "Tout ce que vous encaissez est du chiffre d&rsquo;affaires. Un frais refacturé n&rsquo;est pas une dépense neutralisée : c&rsquo;est une recette de plus. En micro-entreprise, vous ne déduisez <strong>aucune charge réelle</strong>, l&rsquo;abattement forfaitaire est censé les couvrir, qu&rsquo;elles aient existé ou non. Il n&rsquo;existe qu&rsquo;une seule porte de sortie, le <strong>débours</strong>, et elle est étroite.",
   },
   {
     type: "texte",
@@ -40,7 +40,7 @@ const SECTIONS: Section[] = [
       {
         titre: "Un mandat préalable et explicite",
         texte:
-          "La dépense est engagée <strong>au nom du client, pas au vôtre</strong>, en vertu d&rsquo;un mandat donné <em>avant</em> l&rsquo;achat. Un accord oral après coup ne suffit pas : il faut une trace écrite antérieure à la dépense — une clause du devis, un mail d&rsquo;autorisation, une ligne du contrat.",
+          "La dépense est engagée <strong>au nom du client, pas au vôtre</strong>, en vertu d&rsquo;un mandat donné <em>avant</em> l&rsquo;achat. Un accord oral après coup ne suffit pas : il faut une trace écrite antérieure à la dépense, une clause du devis, un mail d&rsquo;autorisation, une ligne du contrat.",
       },
       {
         titre: "Une reddition de compte précise",
@@ -101,7 +101,7 @@ const SECTIONS: Section[] = [
     paragraphes: [
       "En franchise en base, la question est purement sociale : CA ou pas CA, cotisations ou pas cotisations. Dès que vous êtes assujetti à la TVA, une seconde mécanique s&rsquo;ajoute.",
       "Un frais refacturé ordinaire est un élément du prix de votre prestation : il suit <strong>votre</strong> taux de TVA, pas celui de la dépense d&rsquo;origine. Refacturer un billet de train (TVA 10 %) dans une prestation de conseil se fait à 20 %. C&rsquo;est une erreur classique, et elle se voit immédiatement en contrôle.",
-      "Un débours, lui, est exclu de la base d&rsquo;imposition : il ressort sur la facture <strong>hors du calcul de la TVA</strong>, pour son montant exact, TVA d&rsquo;origine comprise. En contrepartie, vous ne récupérez pas cette TVA — elle appartient au client, qui la déduira s&rsquo;il le peut.",
+      "Un débours, lui, est exclu de la base d&rsquo;imposition : il ressort sur la facture <strong>hors du calcul de la TVA</strong>, pour son montant exact, TVA d&rsquo;origine comprise. En contrepartie, vous ne récupérez pas cette TVA, elle appartient au client, qui la déduira s&rsquo;il le peut.",
     ],
   },
   {
@@ -125,12 +125,12 @@ const SECTIONS: Section[] = [
       {
         titre: "Pour un frais refacturé",
         texte:
-          "Une ligne de prestation ordinaire : « Déplacement Lyon — 15 mars 2026 » pour 200 €, dans le total HT, avec votre TVA si vous y êtes assujetti. Rien de particulier à signaler.",
+          "Une ligne de prestation ordinaire : « Déplacement Lyon, 15 mars 2026 » pour 200 €, dans le total HT, avec votre TVA si vous y êtes assujetti. Rien de particulier à signaler.",
       },
       {
         titre: "Pour un débours",
         texte:
-          "Un bloc distinct, <strong>après</strong> le total HT et le calcul de la TVA, intitulé « Débours — dépenses engagées au nom et pour le compte du client », avec une ligne par dépense, sa date et son montant exact. Mention utile : « Sommes exclues de la base d&rsquo;imposition — article 267, II-2° du CGI ». Les justificatifs sont joints.",
+          "Un bloc distinct, <strong>après</strong> le total HT et le calcul de la TVA, intitulé « Débours, dépenses engagées au nom et pour le compte du client », avec une ligne par dépense, sa date et son montant exact. Mention utile : « Sommes exclues de la base d&rsquo;imposition, article 267, II-2° du CGI ». Les justificatifs sont joints.",
       },
       {
         titre: "Dans les deux cas",
@@ -153,7 +153,7 @@ const SECTIONS: Section[] = [
     ton: "succes",
     titre: "Si vous ne retenez qu&rsquo;une chose",
     texte:
-      "Avant d&rsquo;avancer un frais, posez la question : <em>est-ce que quelqu&rsquo;un peut le payer directement à ma place ?</em> Si oui, faites-le payer par le client. Le débours n&rsquo;est utile que quand vous devez vraiment engager la dépense — et dans ce cas, le mandat écrit doit précéder l&rsquo;achat, pas le suivre.",
+      "Avant d&rsquo;avancer un frais, posez la question : <em>est-ce que quelqu&rsquo;un peut le payer directement à ma place ?</em> Si oui, faites-le payer par le client. Le débours n&rsquo;est utile que quand vous devez vraiment engager la dépense, et dans ce cas, le mandat écrit doit précéder l&rsquo;achat, pas le suivre.",
   },
 ];
 
@@ -176,27 +176,27 @@ const FAQ = [
   },
   {
     q: "Quel taux de TVA appliquer à un frais refacturé ?",
-    a: "Le vôtre, celui de votre prestation — pas celui de la dépense d'origine. Un billet de train à 10 % refacturé dans une mission de conseil est soumis à 20 %. Le débours échappe à cette règle puisqu'il sort de la base d'imposition : il est réclamé pour son montant d'origine, TVA comprise, et vous ne déduisez pas cette TVA.",
+    a: "Le vôtre, celui de votre prestation, pas celui de la dépense d'origine. Un billet de train à 10 % refacturé dans une mission de conseil est soumis à 20 %. Le débours échappe à cette règle puisqu'il sort de la base d'imposition : il est réclamé pour son montant d'origine, TVA comprise, et vous ne déduisez pas cette TVA.",
   },
   {
     q: "Faut-il joindre les justificatifs à la facture ?",
-    a: "Pour un débours, oui : la reddition de compte et la justification du montant exact en font partie. Pour un frais refacturé ordinaire, ce n'est pas une obligation fiscale, mais la plupart des clients l'exigent contractuellement — et cela évite les discussions au paiement.",
+    a: "Pour un débours, oui : la reddition de compte et la justification du montant exact en font partie. Pour un frais refacturé ordinaire, ce n'est pas une obligation fiscale, mais la plupart des clients l'exigent contractuellement, et cela évite les discussions au paiement.",
   },
 ];
 
 const SOURCES: Source[] = [
   {
-    libelle: "BOFiP — BOI-TVA-BASE-10-10-30, base d'imposition : sommes exclues",
+    libelle: "BOFiP, BOI-TVA-BASE-10-10-30, base d'imposition : sommes exclues",
     url: "https://bofip.impots.gouv.fr/bofip/488-PGP.html/identifiant=BOI-TVA-BASE-10-10-30-20220511",
     precision: "§ 200 à 230 : les quatre conditions du débours",
   },
   {
-    libelle: "Légifrance — article 267 du Code général des impôts",
+    libelle: "Légifrance, article 267 du Code général des impôts",
     url: "https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000006304615",
     precision: "II-2° : exclusion des sommes remboursées aux intermédiaires",
   },
   {
-    libelle: "URSSAF — déterminer son chiffre d'affaires en micro-entreprise",
+    libelle: "URSSAF, déterminer son chiffre d'affaires en micro-entreprise",
     url: "https://www.autoentrepreneur.urssaf.fr/portail/accueil/une-question/toutes-les-fiches-pratiques/determiner-mon-chiffre-daffaires.html",
     precision: "assiette des cotisations : sommes effectivement encaissées",
   },
@@ -206,7 +206,7 @@ export default function Page() {
   return (
     <ArticleLong
       slug={SLUG}
-      chapeau="Un train à 90 €, un hôtel à 110 €, et votre client vous les rembourse : vous venez d&rsquo;ajouter 200 € à votre chiffre d&rsquo;affaires et de payer des cotisations sur de l&rsquo;argent que vous ne gardez pas. Il existe une sortie — le débours — mais elle a quatre conditions, et elles sont strictes."
+      chapeau="Un train à 90 €, un hôtel à 110 €, et votre client vous les rembourse : vous venez d&rsquo;ajouter 200 € à votre chiffre d&rsquo;affaires et de payer des cotisations sur de l&rsquo;argent que vous ne gardez pas. Il existe une sortie, le débours, mais elle a quatre conditions, et elles sont strictes."
       enBref={[
         "Un frais refacturé est une <strong>recette</strong> : il entre dans le CA, supporte les cotisations, compte dans les plafonds.",
         "Seul le <strong>débours</strong> échappe à cette règle : dépense engagée au nom du client, sur mandat préalable écrit, au montant exact, hors livre des recettes.",

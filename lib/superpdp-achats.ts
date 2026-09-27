@@ -5,7 +5,7 @@ import { resolveVatNumber } from "@/lib/facturx-helpers";
 import { paysFrancais } from "@/lib/superpdp-nature";
 
 /**
- * Achats internationaux — e-reporting des acquisitions auprès de fournisseurs
+ * Achats internationaux, e-reporting des acquisitions auprès de fournisseurs
  * étrangers (endpoint b2bint_invoices, direction "in").
  *
  * Pourquoi ce module existe. La réforme n'impose pas seulement de déclarer nos
@@ -13,7 +13,7 @@ import { paysFrancais } from "@/lib/superpdp-nature";
  * fournisseur établi hors de France doit aussi déclarer cette ACQUISITION
  * (e-reporting des transactions internationales). Nos ventes passent par
  * `/invoices` avec `processing_rule=B2BInt` ; les achats, eux, n'ont pas de
- * document que nous émettons — nous recevons la facture du fournisseur. Le seul
+ * document que nous émettons, nous recevons la facture du fournisseur. Le seul
  * canal pour les déclarer est `POST /b2bint_invoices` avec `direction: "in"`,
  * où le vendeur est le fournisseur étranger et l'acheteur, nous.
  */
@@ -123,7 +123,7 @@ export function validerSaisie(s: Partial<SaisieAchat>): string[] {
  * Notre entreprise telle que la Plateforme Agréée nous connaît, côté acheteur.
  *
  * `number` / `country` viennent de `/companies/me` (ce que la PA a enregistré,
- * pas ce que l'utilisateur a saisi — c'est ce qui fait foi, exactement comme à
+ * pas ce que l'utilisateur a saisi, c'est ce qui fait foi, exactement comme à
  * l'émission d'une vente). Le n° de TVA vient du profil, calculé au besoin.
  */
 export interface NotreIdentite {
@@ -252,7 +252,7 @@ export type ResultatTransmission =
  * Un refus qui vient de la fenêtre de déclaration, pas de notre payload.
  *
  * Constaté en bac à sable (25/09/2026) : `POST /b2bint_invoices` refuse toute
- * date — une date future en 400 « is in the future », une date récente en 500,
+ * date, une date future en 400 « is in the future », une date récente en 500,
  * une date ancienne en 400 « cannot add invoice at date ». Les endpoints
  * frères (b2bint_payments, b2c_*) répondent 200 avec un payload identique dans
  * sa forme. Le payload est donc correct ; c'est une règle de période côté

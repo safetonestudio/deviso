@@ -11,7 +11,7 @@
  *
  * Montage essayé et écarté : faire qu'une entreprise s'adresse une facture à
  * elle-même, pour tenir les deux bouts avec une seule session. La Plateforme
- * Agréée la **rejette** (`fr:213`) — vérifié le 29/08/2026 sur la facture
+ * Agréée la **rejette** (`fr:213`), vérifié le 29/08/2026 sur la facture
  * 375540. Une facture dont l'émetteur est le destinataire n'existe pas pour
  * elle, et c'est cohérent.
  *
@@ -150,7 +150,7 @@ if (!cible) {
   console.log("");
   console.log("   Aucune facture reçue refusable sur ce compte : le refus abouti");
   console.log("   n'est pas éprouvé ici. Lancez ce script depuis un compte qui a");
-  console.log("   reçu au moins une facture — les garde-fous ci-dessus, eux, le sont.");
+  console.log("   reçu au moins une facture, les garde-fous ci-dessus, eux, le sont.");
   console.log("");
   process.exit(bilan() > 0 ? 1 : 0);
 }

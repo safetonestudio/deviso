@@ -3,7 +3,7 @@ import { createAdminClient } from "@/lib/supabase/admin";
 /**
  * Aucun compte de démonstration ne déclenche d'effet dans le monde réel.
  *
- * Pourquoi ce fichier existe. La règle était déjà écrite, et elle était juste —
+ * Pourquoi ce fichier existe. La règle était déjà écrite, et elle était juste -
  * dans `lib/stripe-guard.ts` : « tout fichier qui écrit dans Stripe passe par
  * ici », avec un script qui refuse tout nouveau point d'écriture qui
  * l'oublierait. Elle n'avait simplement jamais été étendue aux DEUX AUTRES
@@ -11,8 +11,8 @@ import { createAdminClient } from "@/lib/supabase/admin";
  * ce que cela coûtait :
  *
  *   - **Courriel.** Aucune des routes d'envoi ne vérifiait le mode
- *     démonstration. Un visiteur ouvrait la démo depuis la page d'accueil —
- *     sans compte, sans adresse vérifiée, en un clic — ouvrait une facture du
+ *     démonstration. Un visiteur ouvrait la démo depuis la page d'accueil -
+ *     sans compte, sans adresse vérifiée, en un clic, ouvrait une facture du
  *     jeu de données fictif, remplaçait l'adresse du client par celle de son
  *     choix, et faisait partir un message depuis `noreply@getdeviso.fr`, avec
  *     pièce jointe, au nom d'une entreprise inventée. Dix par heure et par IP.
@@ -31,7 +31,7 @@ import { createAdminClient } from "@/lib/supabase/admin";
  *
  * Le point commun de ces trois cas : l'effet sort de la base de données et
  * n'est plus rattrapable par la purge des comptes de démonstration au bout de
- * deux heures. C'est le seul critère qui compte ici — pas la gravité supposée,
+ * deux heures. C'est le seul critère qui compte ici, pas la gravité supposée,
  * pas la difficulté d'exploitation.
  */
 export async function estCompteDemo(userId: string): Promise<boolean> {
@@ -56,4 +56,4 @@ export const MESSAGE_DEMO_ENVOI =
 /** Dépôt chez un tiers : Chorus Pro, Plateforme Agréée. */
 export const MESSAGE_DEMO_TIERS =
   "Cette action dépose un document chez un organisme tiers, en production. " +
-  "Elle est désactivée en mode démonstration — créez un compte pour l'utiliser.";
+  "Elle est désactivée en mode démonstration, créez un compte pour l'utiliser.";

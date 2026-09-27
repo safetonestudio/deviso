@@ -6,11 +6,11 @@
  * un champ ajouté au formulaire, absent de la charge utile envoyée à l'API. La
  * saisie vivait dans l'état React, l'utilisateur voyait « Enregistré », et la
  * valeur disparaissait au changement de page. Ni TypeScript ni le build ne
- * peuvent voir ça — les deux compilent parfaitement.
+ * peuvent voir ça, les deux compilent parfaitement.
  *
  * Deux façons de lier un champ coexistent dans le projet, d'où deux modes :
- *   · « objet » — `value={profile.x}` avec `set("x", …)`   (page profil)
- *   · « états » — `value={monEtat}` avec un `useState`      (devis, factures…)
+ *   · « objet », `value={profile.x}` avec `set("x", …)`   (page profil)
+ *   · « états », `value={monEtat}` avec un `useState`      (devis, factures…)
  *
  * Usage : node scripts/check-form-wiring.mjs
  */
@@ -22,14 +22,14 @@ const grab = (re, s) => uniq([...s.matchAll(re)].map((m) => m[1]));
 
 /**
  * Extrait le corps du `JSON.stringify({…})` qui suit un appel à `fetch` vers
- * `route`. Nécessaire parce qu'une page peut contenir plusieurs envois — la
+ * `route`. Nécessaire parce qu'une page peut contenir plusieurs envois, la
  * page devis en a trois, dont deux vers l'IA.
  */
 function chargeUtile(source, marqueur) {
   // Une page contient souvent plusieurs envois vers la même route : lecture
   // initiale, enregistrement du formulaire, sauvegardes annexes. On parcourt
   // donc tous les objets littéraux passés à JSON.stringify et on retient celui
-  // qui contient `marqueur` — un champ que seule la bonne charge utile possède.
+  // qui contient `marqueur`, un champ que seule la bonne charge utile possède.
   const blocs = [];
   const re = /JSON\.stringify\(|const mainFields\s*=\s*/g;
   let m;
@@ -49,7 +49,7 @@ function chargeUtile(source, marqueur) {
 
 const FORMULAIRES = [
   {
-    nom: "Profil — identité et facturation",
+    nom: "Profil, identité et facturation",
     mode: "objet",
     page: "app/(dashboard)/profil/page.tsx",
     api: "app/api/profile/route.ts",
@@ -121,7 +121,7 @@ for (const f of FORMULAIRES) {
   });
 
   // Champs envoyés que plus personne ne pilote : ils réécrivent une valeur
-  // périmée par-dessus la base — un champ réglé par son propre bouton, ailleurs,
+  // périmée par-dessus la base, un champ réglé par son propre bouton, ailleurs,
   // se retrouvait annulé en enregistrant le formulaire principal.
   let orphelins = [];
   if (f.mode === "objet") {
@@ -148,20 +148,20 @@ for (const f of FORMULAIRES) {
   }
 
   if (!manquants.length && !orphelins.length && !refuses.length) {
-    console.log(`✓ ${f.nom} — ${saisissables.length} champs saisissables, tous transmis`);
+    console.log(`✓ ${f.nom}, ${saisissables.length} champs saisissables, tous transmis`);
     continue;
   }
 
   for (const c of manquants) {
-    console.error(`✗ ${f.nom} — « ${c} » est saisissable mais absent de la charge utile : la valeur sera perdue`);
+    console.error(`✗ ${f.nom}, « ${c} » est saisissable mais absent de la charge utile : la valeur sera perdue`);
     echecs++;
   }
   for (const c of refuses) {
-    console.error(`✗ ${f.nom} — « ${c} » est envoyé mais refusé par la route : la valeur sera ignorée`);
+    console.error(`✗ ${f.nom}, « ${c} » est envoyé mais refusé par la route : la valeur sera ignorée`);
     echecs++;
   }
   for (const c of orphelins) {
-    console.error(`✗ ${f.nom} — « ${c} » est envoyé mais n'est plus saisissable : valeur périmée écrasant la base`);
+    console.error(`✗ ${f.nom}, « ${c} » est envoyé mais n'est plus saisissable : valeur périmée écrasant la base`);
     echecs++;
   }
 }

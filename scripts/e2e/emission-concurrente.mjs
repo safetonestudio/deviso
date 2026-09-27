@@ -3,12 +3,12 @@
  *
  * Pourquoi cette traversee existe. La route d'emission se gardait du doublon en
  * LISANT `superpdp_invoice_id`, en le trouvant vide, puis en transmettant.
- * Entre la lecture et l'ecriture il s'ecoule plusieurs secondes — generation du
+ * Entre la lecture et l'ecriture il s'ecoule plusieurs secondes, generation du
  * XML, validation officielle, POST. Deux appels lances dans cet intervalle
  * lisent tous deux une valeur vide et transmettent tous deux.
  *
  * Consequence chez le client : la meme facture deux fois. Il la refuse pour
- * « DOUBLON » — un motif de la nomenclature, donc un cas prevu — et le
+ * « DOUBLON », un motif de la nomenclature, donc un cas prevu, et le
  * fournisseur doit passer un avoir. Le refus etant terminal, la facture
  * d'origine est morte avec.
  *
@@ -142,7 +142,7 @@ console.log("");
 verifier(
   "une seule des deux transmissions aboutit",
   transmises.length === 1,
-  `${transmises.length} transmission(s) aboutie(s) — deux signifierait une facture en double chez le client`,
+  `${transmises.length} transmission(s) aboutie(s), deux signifierait une facture en double chez le client`,
 );
 
 verifier(

@@ -31,7 +31,7 @@ import { useGuidedTour } from "@/hooks/useGuidedTour";
  * sur chaque appareil. À côté d'une barre latérale en lucide (monochrome, trait
  * fin), ça fait deux identités visuelles dans la même page. Quand une entrée
  * correspond à une page du menu, on reprend **la même icône que
- * `lib/navigation.ts`** — l'utilisateur doit reconnaître la page au même dessin
+ * `lib/navigation.ts`**, l'utilisateur doit reconnaître la page au même dessin
  * des deux côtés.
  */
 

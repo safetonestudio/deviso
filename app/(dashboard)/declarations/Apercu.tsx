@@ -6,7 +6,7 @@ import { useState } from "react";
  * L'aperçu de ce qui partira.
  *
  * « This only applies for data that has not yet been sent. » C'est la seule
- * occasion de corriger une erreur avant qu'elle devienne une déclaration —
+ * occasion de corriger une erreur avant qu'elle devienne une déclaration -
  * ce qui vaut infiniment mieux qu'un constat après coup.
  *
  * Aucune période n'est calculée ici : la documentation ne détaille le
@@ -114,7 +114,7 @@ export function Apercu() {
               <p>
                 Période retenue par la Plateforme Agréée :{" "}
                 <span className="text-white font-medium">
-                  {resultat.periode ? `${resultat.periode.debut} — ${resultat.periode.fin}` : "non précisée"}
+                  {resultat.periode ? `${resultat.periode.debut}, ${resultat.periode.fin}` : "non précisée"}
                 </span>
                 {typeof resultat.nombreMontants === "number" && (
                   <span className="text-gray-500"> · {resultat.nombreMontants} montant(s)</span>

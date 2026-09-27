@@ -10,14 +10,14 @@ import { superpdpFetch, SuperPdpNotConnected, SuperPdpSessionPending } from "@/l
  * Découvert en sondant le bac à sable le 30/08/2026 : les transactions
  * d'e-reporting B2C sont **créées automatiquement** par Super PDP à partir des
  * factures transmises, avec un champ `invoice_id` qui pointe la facture
- * d'origine. Deviso n'a donc rien à déclarer pour une vente facturée — mais
+ * d'origine. Deviso n'a donc rien à déclarer pour une vente facturée, mais
  * l'utilisateur n'avait aucun moyen de le savoir, ni de vérifier que ça avait
  * bien eu lieu.
  *
  * C'est exactement le genre d'information qui rassure ou qui alerte : « votre
  * vente du 12 a bien été déclarée au titre du flux 10.1 », ou son absence.
  *
- * Lecture seule, filtrée par `invoice_id` — le paramètre existe précisément
+ * Lecture seule, filtrée par `invoice_id`, le paramètre existe précisément
  * pour ça sur les deux routes.
  */
 export async function GET(_req: NextRequest, ctx: { params: Promise<{ id: string }> }) {
@@ -100,7 +100,7 @@ export async function GET(_req: NextRequest, ctx: { params: Promise<{ id: string
     //
     // `GET /b2c_payments` ne connaît pas de paramètre `invoice_id` : la spec ne
     // lui donne que `invoice_event_id` (et `ppf_ereporting_id`). On lui passait
-    // `invoice_id`, qui était donc **ignoré en silence** — la route renvoyait
+    // `invoice_id`, qui était donc **ignoré en silence**, la route renvoyait
     // les vingt derniers paiements de toute l'entreprise, et cet écran les
     // présentait comme ceux de la facture regardée. Sur une pièce
     // justificative, attribuer à une facture les déclarations d'une autre est
@@ -109,7 +109,7 @@ export async function GET(_req: NextRequest, ctx: { params: Promise<{ id: string
     // Le bon rattachement découle de la documentation : « les données
     // d'e-reporting de paiement sont créées à partir du message de cycle de vie
     // Encaissée (212) ». C'est donc l'identifiant de CET événement qui relie un
-    // paiement à une facture — d'où la lecture en deux temps.
+    // paiement à une facture, d'où la lecture en deux temps.
     const idsEncaissement = lireEvenements
       .filter((e) => e.status_code === "fr:212")
       .map((e) => e.id);

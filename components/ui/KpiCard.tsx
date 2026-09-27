@@ -11,7 +11,7 @@ interface KpiCardProps {
 }
 
 /**
- * Carte d'indicateur — implémentation unique.
+ * Carte d'indicateur, implémentation unique.
  *
  * Il en existait trois pour le même objet : celle-ci (pastille 7x7, icône
  * 14 px en `text-gray-500`), une copie en ligne dans `crm/page.tsx` (pastille
@@ -25,7 +25,7 @@ interface KpiCardProps {
  *
  * Ce qui a disparu au passage : la barre d'accent d'un pixel en haut de la
  * carte et la propriété `color` qui la pilotait. Cette couleur portait une
- * distinction — emerald pour l'encaissé, amber pour le retard — qui ne
+ * distinction, emerald pour l'encaissé, amber pour le retard, qui ne
  * survivait déjà pas d'une page à l'autre, et que rien n'expliquait au
  * lecteur. Une seule couleur d'icône désormais, l'indigo de la barre latérale.
  * Ce qui doit alerter (un retard, un impayé) le fait par le texte de `trend`

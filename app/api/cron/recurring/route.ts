@@ -62,8 +62,8 @@ export async function GET(req: NextRequest) {
     // Cette ligne était `invoiceNumber || \`${année}-REC\``, exactement le
     // motif que `lib/numerotation.ts` documente comme ayant déjà causé un
     // incident et qu'il interdit depuis. L'erreur de la fonction SQL n'était
-    // même pas lue : le jour où l'appel échoue — il a déjà échoué, faute de
-    // droits d'exécution — TOUTES les factures récurrentes de TOUS les comptes
+    // même pas lue : le jour où l'appel échoue, il a déjà échoué, faute de
+    // droits d'exécution, TOUTES les factures récurrentes de TOUS les comptes
     // prennent le numéro « 2026-REC », partent par courriel au client, et
     // violent l'article 242 nonies A du CGI qui impose une numérotation
     // continue et sans doublon. Un numéro inventé pour éviter une erreur
@@ -96,26 +96,26 @@ export async function GET(req: NextRequest) {
      * aucune limite de durée déclarée et rend un PDF par facture (deux à
      * quatre secondes pièce) : au 1er du mois, avec quelques centaines
      * d'abonnements, elle est tuée par Vercel au bout de quinze ou vingt.
-     * Toutes les échéances non avancées repassaient le lendemain — même
+     * Toutes les échéances non avancées repassaient le lendemain, même
      * période, deuxième numéro légal, deuxième facture, deuxième courriel au
      * client. Une facture en double ne s'annule que par un avoir.
      *
      * En réservant d'abord, sous condition que la date n'ait pas bougé, une
      * exécution coupée ne refacture rien : elle a simplement sauté une
      * échéance, ce qui se rattrape. Le `.eq("next_billing_date", …)` rend
-     * l'opération sûre même si deux exécutions du cron se croisent — Vercel
+     * l'opération sûre même si deux exécutions du cron se croisent, Vercel
      * garantit « au moins une fois », pas « exactement une fois ».
      */
     const next_billing_date = computeNextBillingDate(rec.interval, rec.day_of_month, rec.next_billing_date);
     // Garde en dernier ressort : si la date n'a pas avancé (intervalle
-    // inconnu arrivé par un import ou une correction en base — il n'y a pas de
+    // inconnu arrivé par un import ou une correction en base, il n'y a pas de
     // contrainte CHECK ni de route de mise à jour aujourd'hui), la réservation
     // atomique réussirait avec la MÊME date et l'échéance repasserait le
     // lendemain : facture en double, nouveau numéro, courriel au client chaque
     // jour. On saute plutôt que de produire un doublon légal.
     if (new Date(next_billing_date) <= new Date(rec.next_billing_date)) {
       console.error(
-        `[cron/recurring] abonnement ${rec.id} : intervalle « ${rec.interval} » n'avance pas l'échéance (${rec.next_billing_date}) — sauté pour éviter un doublon.`
+        `[cron/recurring] abonnement ${rec.id} : intervalle « ${rec.interval} » n'avance pas l'échéance (${rec.next_billing_date}), sauté pour éviter un doublon.`
       );
       continue;
     }
@@ -166,7 +166,7 @@ export async function GET(req: NextRequest) {
       // L'échéance a déjà avancé (réservation atomique plus haut) : sur échec
       // d'insertion, la facture du mois n'est PAS rattrapée et le numéro tiré
       // est perdu (trou). On ne peut pas l'éviter sans risquer un doublon, mais
-      // on le TRACE — sinon un mois manquant passe totalement inaperçu.
+      // on le TRACE, sinon un mois manquant passe totalement inaperçu.
       console.error(
         `[cron/recurring] facture récurrente NON créée pour ${rec.id} (client ${rec.client_name}) : ` +
           `échéance avancée, numéro perdu, mois sauté.`,
@@ -182,7 +182,7 @@ export async function GET(req: NextRequest) {
         // Coordonnées de paiement : elles n'étaient pas passées, et une facture
         // récurrente partait donc SANS IBAN ni lien de paiement, là où toute
         // facture émise à la main en porte. Le client reçoit une facture et ne
-        // sait pas où payer — sur un abonnement, tous les mois.
+        // sait pas où payer, sur un abonnement, tous les mois.
         const paymentInfo = {
           method: (profile.payment_method || "none") as "none" | "link" | "bank" | "both",
           linkProvider: profile.payment_link_provider,
@@ -220,7 +220,7 @@ export async function GET(req: NextRequest) {
           attachments: [{ filename, content: Buffer.from(pdfBuffer).toString("base64") }],
         });
       } catch (err) {
-        // L'envoi a échoué. La facture, elle, existe — et elle porte le statut
+        // L'envoi a échoué. La facture, elle, existe, et elle porte le statut
         // « envoyée », que la boucle de relance interprète comme « le client
         // l'a reçue ». Sans cette correction, le client recevait trois rappels
         // de paiement pour une facture qu'il n'avait jamais vue, et le

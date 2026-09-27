@@ -21,7 +21,7 @@ export async function POST() {
   } = await supabase.auth.getUser();
 
   // Pas de session : il n'y a rien à supprimer, et surtout rien à révéler.
-  // On répond 200 pour que l'interface puisse rediriger sans cas particulier —
+  // On répond 200 pour que l'interface puisse rediriger sans cas particulier -
   // un double-clic sur le bouton ne doit pas afficher d'erreur.
   if (authError || !user) {
     return NextResponse.json({ ended: true, alreadyGone: true });

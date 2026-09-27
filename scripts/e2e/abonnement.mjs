@@ -1,10 +1,10 @@
 /**
- * Le tunnel d'abonnement, traversé en entier — sans un centime de débit.
+ * Le tunnel d'abonnement, traversé en entier, sans un centime de débit.
  *
  * Pourquoi cette traversée existe. Le compte Stripe est en mode réel : prouver
  * qu'un changement de formule MODIFIE l'abonnement au lieu d'en créer un second
  * supposait un abonnement vivant, donc un vrai prélèvement. Les vérifications
- * s'arrêtaient donc à la porte — et le défaut était derrière : un client Solo
+ * s'arrêtaient donc à la porte, et le défaut était derrière : un client Solo
  * qui cliquait « Passer à Pro » repartait avec DEUX abonnements facturés en
  * parallèle. Constaté dans le compte réel : cus_UrZfhGPUjRshd1 en a porté deux
  * pendant vingt-huit jours, du 11/07 au 08/08/2026.
@@ -17,8 +17,8 @@
  * observée au lieu d'une réponse lue.
  *
  * ⚠️ Ce que ce banc NE prouve PAS : que le vrai Stripe se comporte comme le
- * faux. Il valide NOS décisions — quel appel, avec quels arguments, dans quel
- * ordre — pas la sémantique de Stripe. La proration, la conservation de
+ * faux. Il valide NOS décisions, quel appel, avec quels arguments, dans quel
+ * ordre, pas la sémantique de Stripe. La proration, la conservation de
  * l'essai et le calcul des montants restent à vérifier une fois, en réel.
  *
  * Prérequis :
@@ -255,7 +255,7 @@ try {
   verifier("avec le prix Pro annuel", majA?.params["items[0][price]"] === PRO_A,
     `${majA?.params["items[0][price]"]} attendu ${PRO_A}`);
   verifier("sans créer de second abonnement",
-    !aAppele(appels, "POST", /^\/v1\/checkout\/sessions$/), "—");
+    !aAppele(appels, "POST", /^\/v1\/checkout\/sessions$/), "-");
 
   // ── 5. Pro → Solo ──────────────────────────────────────────────────
   repere = (await journal()).length;
@@ -295,7 +295,7 @@ try {
   // ── 6 bis. Un impayé ne rachète pas son accès d'un clic ────────────
   console.log("");
   console.log("── 6. Client en retard de paiement ───────────────────────────");
-  console.log("   Modifier l'abonnement d'un impayé est voulu — lui en ouvrir");
+  console.log("   Modifier l'abonnement d'un impayé est voulu, lui en ouvrir");
   console.log("   un second serait pire. Mais modifier n'est pas payer : le");
   console.log("   plan en base ne doit pas repasser à Pro.");
 
@@ -329,7 +329,7 @@ try {
    * avait rejoué la requête après une connexion coupée, et le second passage
    * constatait, à juste titre, que le plan était déjà changé. La vérification
    * qui devait attraper la faille passait alors au vert pour une mauvaise
-   * raison — elle n'avait simplement jamais atteint le code fautif.
+   * raison, elle n'avait simplement jamais atteint le code fautif.
    *
    * Le journal du faux Stripe et la base disent, eux, ce qui s'est réellement
    * produit, quel que soit le nombre de passages.
@@ -342,7 +342,7 @@ try {
   const profilImpaye = await admin(`/rest/v1/profiles?id=eq.${UID}&select=plan`).then((r) => r.json());
   verifier("mais son plan en base RESTE gratuit",
     profilImpaye?.[0]?.plan === "free",
-    `plan = ${profilImpaye?.[0]?.plan} — un « pro » ici voudrait dire qu'un ` +
+    `plan = ${profilImpaye?.[0]?.plan}, un « pro » ici voudrait dire qu'un ` +
     `client en impayé retrouve l'accès payant d'un seul clic`);
 
   // Le message n'a de sens que sur la réponse d'un passage qui a modifié ;
@@ -352,7 +352,7 @@ try {
       impaye.body?.aJour === false && /r[èe]glement/i.test(impaye.body?.message ?? ""),
       `aJour=${impaye.body?.aJour} message=${JSON.stringify(impaye.body?.message)}`);
   } else {
-    console.log(`  ·    réponse ${impaye.status} (rejeu du client HTTP) — message non jugé ici`);
+    console.log(`  ·    réponse ${impaye.status} (rejeu du client HTTP), message non jugé ici`);
   }
 
   // On remet un abonnement à jour pour la suite du banc.
@@ -366,7 +366,7 @@ try {
   console.log("── 6. Sièges facturés ────────────────────────────────────────");
   console.log("   Les CGU incluent le titulaire et 2 membres. On installe des");
   console.log("   membres actifs, on retire le dernier, et on regarde la");
-  console.log("   quantité que Deviso POSE chez Stripe — pas celle qu'il croit.");
+  console.log("   quantité que Deviso POSE chez Stripe, pas celle qu'il croit.");
 
   await faux("/_etat", {
     method: "POST",
@@ -506,7 +506,7 @@ try {
     "le contrôle porte sur l'appel observé, pas sur le code lu");
 
   /*
-   * Contre-épreuve réelle, faite à la main le 15/09/2026 — et refaite à
+   * Contre-épreuve réelle, faite à la main le 15/09/2026, et refaite à
    * l'identique si on touche à la route.
    *
    * La branche de modification a été SUPPRIMÉE du fichier (pas déguisée, pas
@@ -514,7 +514,7 @@ try {
    * Le premier disait exactement le défaut d'origine :
    *
    *   ÉCHEC  AUCUNE nouvelle session de paiement n'a été créée
-   *          — c'est le défaut d'origine : GET /v1/customers/cus_banc ·
+   *, c'est le défaut d'origine : GET /v1/customers/cus_banc ·
    *            POST /v1/checkout/sessions
    *
    * La correction a ensuite été remise et le banc est repassé à 26/26.

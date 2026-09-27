@@ -11,7 +11,7 @@ const SECTIONS: Section[] = [
     titre: "Ce n&rsquo;est pas de la méfiance envers vous",
     paragraphes: [
       "Votre client ne vous demande pas ce document parce qu&rsquo;il doute de vous. Il le demande parce qu&rsquo;<strong>il y est obligé</strong>, et que s&rsquo;il ne le fait pas, c&rsquo;est lui qui risque.",
-      "Le mécanisme s&rsquo;appelle la solidarité financière du donneur d&rsquo;ordre. Pour tout contrat d&rsquo;au moins <strong>5 000 € hors taxes</strong>, un client professionnel doit vérifier que son prestataire déclare bien son activité et paie ses cotisations. S&rsquo;il ne le fait pas et que le prestataire se révèle être en situation de travail dissimulé, le client peut être tenu solidairement responsable des cotisations, impôts et pénalités dus — et perdre ses propres exonérations.",
+      "Le mécanisme s&rsquo;appelle la solidarité financière du donneur d&rsquo;ordre. Pour tout contrat d&rsquo;au moins <strong>5 000 € hors taxes</strong>, un client professionnel doit vérifier que son prestataire déclare bien son activité et paie ses cotisations. S&rsquo;il ne le fait pas et que le prestataire se révèle être en situation de travail dissimulé, le client peut être tenu solidairement responsable des cotisations, impôts et pénalités dus, et perdre ses propres exonérations.",
       "Autrement dit : quand votre interlocuteur bloque un paiement en attendant cette attestation, il protège son entreprise. Le comprendre change la conversation, et permet de répondre en trois minutes au lieu de s&rsquo;agacer.",
     ],
   },
@@ -27,7 +27,7 @@ const SECTIONS: Section[] = [
     titre: "Comment l&rsquo;obtenir, concrètement",
     numerotee: true,
     intro:
-      "C&rsquo;est une affaire de quelques minutes, à condition de remplir une condition dont personne ne parle — elle est au point 1.",
+      "C&rsquo;est une affaire de quelques minutes, à condition de remplir une condition dont personne ne parle, elle est au point 1.",
     items: [
       {
         titre: "Avoir fait au moins une déclaration de chiffre d&rsquo;affaires",
@@ -55,8 +55,8 @@ const SECTIONS: Section[] = [
     type: "texte",
     titre: "Sa durée de validité, et le piège du renouvellement",
     paragraphes: [
-      "L&rsquo;attestation est valable <strong>six mois</strong>. Elle porte un code qui permet à votre client de vérifier son authenticité directement auprès de l&rsquo;URSSAF — c&rsquo;est d&rsquo;ailleurs la raison pour laquelle il ne sert à rien de modifier le PDF : la vérification se fait sur le code, pas sur le fichier.",
-      "Le piège est là : sur une mission longue, votre client doit revérifier tous les six mois, et il le fera souvent en bloquant une facture. Si vous anticipez — une attestation fraîche envoyée avec la première facture du semestre — vous vous épargnez un retard de paiement d&rsquo;une ou deux semaines. C&rsquo;est une des rares démarches administratives où cinq minutes d&rsquo;avance évitent vraiment un problème.",
+      "L&rsquo;attestation est valable <strong>six mois</strong>. Elle porte un code qui permet à votre client de vérifier son authenticité directement auprès de l&rsquo;URSSAF, c&rsquo;est d&rsquo;ailleurs la raison pour laquelle il ne sert à rien de modifier le PDF : la vérification se fait sur le code, pas sur le fichier.",
+      "Le piège est là : sur une mission longue, votre client doit revérifier tous les six mois, et il le fera souvent en bloquant une facture. Si vous anticipez, une attestation fraîche envoyée avec la première facture du semestre, vous vous épargnez un retard de paiement d&rsquo;une ou deux semaines. C&rsquo;est une des rares démarches administratives où cinq minutes d&rsquo;avance évitent vraiment un problème.",
     ],
   },
   {
@@ -121,7 +121,7 @@ const SECTIONS: Section[] = [
     type: "texte",
     titre: "Ce que vous pouvez dire à votre client en attendant",
     paragraphes: [
-      "Si le délai est en cause — vous venez de vous inscrire, votre première déclaration n&rsquo;est pas encore due — dites-le franchement, avec la date à laquelle vous pourrez fournir le document. Beaucoup de clients acceptent de démarrer sur cette base, parce que leur obligation porte sur la vérification, pas sur l&rsquo;existence préalable d&rsquo;un papier.",
+      "Si le délai est en cause, vous venez de vous inscrire, votre première déclaration n&rsquo;est pas encore due, dites-le franchement, avec la date à laquelle vous pourrez fournir le document. Beaucoup de clients acceptent de démarrer sur cette base, parce que leur obligation porte sur la vérification, pas sur l&rsquo;existence préalable d&rsquo;un papier.",
       "Et fournissez ce que vous avez déjà : avis de situation SIRENE, attestation de régularité fiscale, assurance responsabilité civile professionnelle si votre métier en exige une. Un dossier complet sur trois points sur quatre rassure beaucoup plus qu&rsquo;un silence en attendant le quatrième.",
     ],
   },
@@ -130,11 +130,11 @@ const SECTIONS: Section[] = [
 const FAQ = [
   {
     q: "À partir de quel montant mon client doit-il me demander une attestation de vigilance ?",
-    a: "À partir de 5 000 € hors taxes de contrat. En dessous, il n'y a pas d'obligation légale — ce qui ne l'empêche pas de la demander par prudence ou par politique interne. Au-delà, la vérification doit être renouvelée tous les six mois jusqu'à la fin de la mission.",
+    a: "À partir de 5 000 € hors taxes de contrat. En dessous, il n'y a pas d'obligation légale, ce qui ne l'empêche pas de la demander par prudence ou par politique interne. Au-delà, la vérification doit être renouvelée tous les six mois jusqu'à la fin de la mission.",
   },
   {
     q: "Un micro-entrepreneur peut-il obtenir une attestation de vigilance ?",
-    a: "Oui, sans difficulté particulière — à une condition que personne ne mentionne : il faut avoir transmis au moins une déclaration de chiffre d'affaires. Tant que vous n'avez rien déclaré, l'URSSAF n'a rien à attester. Et une déclaration à zéro compte : si vous n'avez pas encore facturé, déclarez zéro et le document devient disponible.",
+    a: "Oui, sans difficulté particulière, à une condition que personne ne mentionne : il faut avoir transmis au moins une déclaration de chiffre d'affaires. Tant que vous n'avez rien déclaré, l'URSSAF n'a rien à attester. Et une déclaration à zéro compte : si vous n'avez pas encore facturé, déclarez zéro et le document devient disponible.",
   },
   {
     q: "Où la télécharger ?",
@@ -142,11 +142,11 @@ const FAQ = [
   },
   {
     q: "Combien de temps est-elle valable ?",
-    a: "Six mois. Elle porte un code qui permet à votre client de vérifier son authenticité auprès de l'URSSAF — c'est sur ce code que porte la vérification, pas sur le fichier. Sur une mission longue, anticipez : une attestation fraîche envoyée avec la première facture du semestre évite un blocage de paiement.",
+    a: "Six mois. Elle porte un code qui permet à votre client de vérifier son authenticité auprès de l'URSSAF, c'est sur ce code que porte la vérification, pas sur le fichier. Sur une mission longue, anticipez : une attestation fraîche envoyée avec la première facture du semestre évite un blocage de paiement.",
   },
   {
     q: "Que se passe-t-il si je ne la fournis pas ?",
-    a: "Vous ne risquez rien directement : l'obligation pèse sur votre client, pas sur vous. Mais lui risque beaucoup — la solidarité financière sur vos cotisations et impôts en cas de travail dissimulé, et la remise en cause de ses propres exonérations. En pratique, il bloquera donc le paiement ou ne renouvellera pas la mission. L'enjeu est commercial, pas légal.",
+    a: "Vous ne risquez rien directement : l'obligation pèse sur votre client, pas sur vous. Mais lui risque beaucoup, la solidarité financière sur vos cotisations et impôts en cas de travail dissimulé, et la remise en cause de ses propres exonérations. En pratique, il bloquera donc le paiement ou ne renouvellera pas la mission. L'enjeu est commercial, pas légal.",
   },
   {
     q: "Mon client me demande un Kbis, que faire ?",
@@ -156,7 +156,7 @@ const FAQ = [
 
 const SOURCES: Source[] = [
   {
-    libelle: "URSSAF — Obtenir et vérifier une attestation de vigilance",
+    libelle: "URSSAF, Obtenir et vérifier une attestation de vigilance",
     url: "https://www.urssaf.fr/accueil/attestation-vigilance.html",
     precision: "délivrance, vérification par le donneur d'ordre, durée de validité",
   },
@@ -171,7 +171,7 @@ const SOURCES: Source[] = [
     precision: "solidarité financière du donneur d'ordre en cas de travail dissimulé",
   },
   {
-    libelle: "INSEE — Avis de situation au répertoire SIRENE",
+    libelle: "INSEE, Avis de situation au répertoire SIRENE",
     url: "https://avis-situation-sirene.insee.fr/",
     precision: "l'équivalent du Kbis pour un micro-entrepreneur, gratuit",
   },
@@ -185,7 +185,7 @@ export default function Page() {
       enBref={[
         "Obligation de <strong>votre client</strong>, pas de vous : au-delà de <strong>5 000 € HT</strong> de contrat, il doit vérifier votre situation.",
         "Elle se télécharge dans votre <strong>espace URSSAF</strong>, en quelques clics, et vous seul pouvez l&rsquo;obtenir.",
-        "La condition qui bloque les nouveaux inscrits : avoir fait <strong>au moins une déclaration</strong> de chiffre d&rsquo;affaires — même à zéro.",
+        "La condition qui bloque les nouveaux inscrits : avoir fait <strong>au moins une déclaration</strong> de chiffre d&rsquo;affaires, même à zéro.",
         "Valable <strong>six mois</strong>, à renouveler sur les missions longues.",
         "Si on vous demande un « Kbis », un micro-entrepreneur n&rsquo;en a pas : c&rsquo;est l&rsquo;<strong>avis de situation SIRENE</strong>.",
       ]}

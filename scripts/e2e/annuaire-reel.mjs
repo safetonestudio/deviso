@@ -3,8 +3,8 @@
  *
  * Pourquoi cette traversee est particuliere. Tout le reste de nos tests tourne
  * en bac a sable, ou deux societes fictives partagent un SIREN. Or la
- * resolution d'adresse est la partie la plus risquee de l'integration — c'est
- * elle qui a produit le trou noir du 29/08 puis celui du 30/08 — et c'est
+ * resolution d'adresse est la partie la plus risquee de l'integration, c'est
+ * elle qui a produit le trou noir du 29/08 puis celui du 30/08, et c'est
  * justement celle que le bac a sable represente le plus mal.
  *
  * Sauf que `GET /french_directory/entries` et `/french_directory/companies`
@@ -28,7 +28,7 @@
  *     Le code prenait la premiere en la nommant « adresse principale » : toutes
  *     les factures seraient parties au service bancaire, sans que rien ne leve ;
  *   - TOTALENERGIES SE n'a qu'une entree, `is_active: false`. Le code y
- *     retombait faute de mieux — c'est-a-dire adressait une boite pas encore
+ *     retombait faute de mieux, c'est-a-dire adressait une boite pas encore
  *     posee.
  */
 
@@ -71,7 +71,7 @@ function trancher(entrees) {
   return { adresse: actives[0].identifier, obstacle: null, candidats: [actives[0].identifier] };
 }
 
-console.log("Annuaire francais reel — lecture non authentifiee\n");
+console.log("Annuaire francais reel, lecture non authentifiee\n");
 
 // ── 1. L'annuaire repond-il sans jeton ? ────────────────────────────────────
 
@@ -79,7 +79,7 @@ const sonde = await lire(`${API}/french_directory/entries?number=${SIRENS[0]}`);
 verifier(
   "GET /french_directory/entries repond sans aucune authentification",
   sonde.statut === 200,
-  `HTTP ${sonde.statut} — si 401, la spec ment et toute notre resolution d'adresse tombe`,
+  `HTTP ${sonde.statut}, si 401, la spec ment et toute notre resolution d'adresse tombe`,
 );
 verifier(
   "La reponse porte un tableau `data`",
@@ -133,7 +133,7 @@ for (const o of observees) {
     : o.verdict.obstacle
       ? `${o.verdict.obstacle} → ${o.verdict.candidats.join(", ")}`
       : "aucune entree, repli sur le SIREN nu";
-  console.log(`  · ${o.siren} ${o.nom} : ${o.entrees} entree(s) — ${issue}`);
+  console.log(`  · ${o.siren} ${o.nom} : ${o.entrees} entree(s), ${issue}`);
 }
 console.log("");
 console.log(
@@ -147,7 +147,7 @@ console.log("");
 verifier(
   "Au moins un SIREN reel est connu de l'annuaire",
   connus > 0,
-  `${connus}/${SIRENS.length} — si zero, le repli SIREN n'est pas un repli mais le chemin nominal`,
+  `${connus}/${SIRENS.length}, si zero, le repli SIREN n'est pas un repli mais le chemin nominal`,
 );
 
 verifier(
@@ -160,13 +160,13 @@ verifier(
 //
 // Il l'a ete jusqu'au 31/08/2026, ou TOTALENERGIES et CARREFOUR n'avaient que
 // des entrees inactives. Le 01/09 au matin, jour d'entree en vigueur de la
-// reforme, elles sont toutes passees actives et l'assertion est tombee — sans
+// reforme, elles sont toutes passees actives et l'assertion est tombee, sans
 // qu'aucune ligne de code n'ait bouge. Une traversee qui echoue parce que le
 // monde a change plutot que parce qu'on a casse quelque chose est une
 // traversee qui apprend a etre ignoree. On mesure, on n'exige pas.
 console.log(
   inactifs > 0
-    ? `Observation : ${inactifs} entreprise(s) sans entree en vigueur — le repli SIREN les concerne.`
+    ? `Observation : ${inactifs} entreprise(s) sans entree en vigueur, le repli SIREN les concerne.`
     : "Observation : toutes les entreprises trouvees ont au moins une adresse en vigueur.",
 );
 
@@ -209,7 +209,7 @@ if (parNom.corps?.data?.length) {
 
 // Recherche par SIREN : on interroge un SIREN dont on vient de CONSTATER la
 // presence, plutot qu'un SIREN suppose connu. La premiere version de ce test
-// echouait sur une entreprise simplement absente de l'annuaire — l'assertion
+// echouait sur une entreprise simplement absente de l'annuaire, l'assertion
 // etait fausse, pas le code.
 const presentDansAnnuaire = observees.find((o) => o.entrees > 0)?.siren;
 if (presentDansAnnuaire) {

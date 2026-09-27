@@ -1,11 +1,11 @@
 /**
- * Pourquoi une facture ne porte pas de TVA — la regle, sans reseau.
+ * Pourquoi une facture ne porte pas de TVA, la regle, sans reseau.
  *
  * Pourquoi cette traversee existe. Le PDF, le XML transmis a l'administration
  * et l'ecran tiraient tous les trois la meme conclusion d'une seule donnee :
  * `tva_rate === 0` valait « franchise en base, art. 293 B du CGI ». C'est la
  * mention du micro-entrepreneur non assujetti, et elle s'imprimait sur toute
- * facture a 0 % — y compris la livraison intracommunautaire d'un assujetti,
+ * facture a 0 %, y compris la livraison intracommunautaire d'un assujetti,
  * qui se voyait donc declarer par ecrit un regime fiscal qui n'est pas le sien.
  *
  * Rien ne levait d'erreur : le document est valide, il est simplement faux.

@@ -233,7 +233,7 @@ export default function NewInvoicePage() {
       //
       // C'était un `find` sur une liste triée par date décroissante : seul le
       // plus récent était déduit. Un devis de 10 000 € réglé par deux acomptes
-      // de 3 000 € produisait donc un solde de 7 000 € au lieu de 4 000 € — le
+      // de 3 000 € produisait donc un solde de 7 000 € au lieu de 4 000 €, le
       // client était facturé 3 000 € de trop, et rien ne le signalait.
       const acomptes = (invData.invoices || []).filter(
         (inv: { proposal_id: string | null; invoice_type: string; status?: string }) =>
@@ -254,7 +254,7 @@ export default function NewInvoicePage() {
         // Le pourcentage réellement acquitté, calculé sur la somme des
         // acomptes. Il était laissé à la valeur par défaut de l'URL (30 %) au
         // moment de l'enregistrement : l'écran de détail reconstruisait donc
-        // la prestation totale à partir d'un pourcentage faux — 8 571 € de
+        // la prestation totale à partir d'un pourcentage faux, 8 571 € de
         // « prestation totale » pour un devis à 12 000 € réglé à 50 %.
         const foundPct = fullHt > 0 ? Math.round((totalAcomptesHt / fullHt) * 100) : 0;
         setDepositPct(foundPct);
@@ -510,7 +510,7 @@ export default function NewInvoicePage() {
               onChange={(e) => handleProposalPick(e.target.value)}
               className="w-full bg-ds-elevated border border-ds-border rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-indigo-500"
             >
-              <option value="">— Choisir un devis —</option>
+              <option value="">, Choisir un devis, </option>
               {proposalsList.map((p) => (
                 <option key={p.id} value={p.id}>
                   {p.proposal_number ? `${p.proposal_number} · ` : ""}{p.title}{p.client_name ? ` (${p.client_name})` : ""}, {fmt(p.total_ttc)}
@@ -706,7 +706,7 @@ export default function NewInvoicePage() {
                 )}
               </div>
               {/* Code postal et ville séparés : l'EN 16931 les exige comme
-                  éléments distincts du XML (BT-53, BT-52). Facultatifs — rien
+                  éléments distincts du XML (BT-53, BT-52). Facultatifs, rien
                   ici ne doit empêcher de créer ou d'envoyer la facture. */}
               <div className="col-span-2">
                 <label className="block text-xs font-medium text-gray-400 mb-1">Adresse de facturation</label>
@@ -722,7 +722,7 @@ export default function NewInvoicePage() {
               </div>
               {/* Le pays décide du circuit : national pour un client français,
                   e-reporting des opérations internationales sinon. Il n'existait
-                  pas dans ce formulaire, et l'API forçait « FR » — une facture à
+                  pas dans ce formulaire, et l'API forçait « FR », une facture à
                   un client étranger partait donc dans le mauvais flux. */}
               <div>
                 <label className="block text-xs font-medium text-gray-400 mb-1">Pays</label>
@@ -772,7 +772,7 @@ export default function NewInvoicePage() {
                     {/* Cible tactile de 44 px, et pas 12.
                         Mesuré sur un iPhone (375 px de large) : ce bouton
                         faisait 12 px. C'est intouchable au doigt, et c'est une
-                        action destructrice entourée de champs de saisie — un
+                        action destructrice entourée de champs de saisie, un
                         doigt qui manque la croix tombe sur le prix unitaire de
                         la ligne. Le caractère « × » reste petit ; c'est la zone
                         cliquable qu'on agrandit. Le libellé accessible remplace
@@ -908,7 +908,7 @@ export default function NewInvoicePage() {
                 <input type="checkbox" id="payment_on_debit" checked={paymentOnDebit} onChange={(e) => setPaymentOnDebit(e.target.checked)} className="rounded text-indigo-600" />
                 <label htmlFor="payment_on_debit" className="text-sm text-blue-300">
                   TVA acquittée sur les débits (art. 1693 bis CGI)
-                  <span className="text-blue-400 text-xs ml-1">— par défaut : sur encaissements</span>
+                  <span className="text-blue-400 text-xs ml-1">, par défaut : sur encaissements</span>
                 </label>
               </div>
             )}

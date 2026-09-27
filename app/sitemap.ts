@@ -17,7 +17,7 @@ import { categorie } from "@/lib/blog/categories";
  *   - **`lastModified` valait `new Date()` sur les quarante-trois entrées.** Les
  *     quarante-trois pages affirmaient donc avoir été modifiées à l'instant, à
  *     chaque déploiement, même un déploiement qui n'en touchait aucune. Un
- *     `lastmod` qui bouge toujours est un `lastmod` que Google cesse de lire —
+ *     `lastmod` qui bouge toujours est un `lastmod` que Google cesse de lire -
  *     et ce signal, on en a précisément besoin le jour où on corrige un article
  *     réglementaire et qu'on veut que ça se sache vite.
  *
@@ -27,7 +27,7 @@ import { categorie } from "@/lib/blog/categories";
  * build : pour elles, c'est la vérité.
  *
  * Sur les priorités : Google dit les ignorer, et c'est probablement vrai. Elles
- * sont conservées parce qu'elles servent de documentation — elles disent ce que
+ * sont conservées parce qu'elles servent de documentation, elles disent ce que
  * *nous* considérons comme important, ce qui se vérifie ensuite contre le
  * maillage réel. Le sitemap déclarait `/combien-facturer` en 0.9 pendant que le
  * site ne lui envoyait qu'un lien : l'écart entre les deux était le défaut.

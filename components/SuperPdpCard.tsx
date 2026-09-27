@@ -10,11 +10,11 @@ import { useSearchParams } from "next/navigation";
  * et `/status` étaient écrites depuis un mois sans qu'aucune interface ne les
  * appelle : personne ne pouvait donc se raccorder, et l'échange de jetons
  * n'avait jamais été parcouru. Les deux côtés existaient, ils n'étaient pas
- * reliés — le défaut le plus fréquent de ce projet.
+ * reliés, le défaut le plus fréquent de ce projet.
  *
  * Ce que l'écran doit rendre lisible, dans l'ordre :
  * 1. l'obligation de **réception** des factures électroniques au 1ᵉʳ septembre 2026 ;
- * 2. l'état réel du raccordement, y compris l'état intermédiaire `pending` —
+ * 2. l'état réel du raccordement, y compris l'état intermédiaire `pending` -
  *    Super PDP vérifie le rattachement entreprise en différé, et pendant ce
  *    temps l'API renvoie 403. Masquer cet état ferait passer une attente
  *    normale pour une panne.
@@ -162,7 +162,7 @@ export function SuperPdpCard() {
         body: JSON.stringify({ fermerLigne }),
       });
       const d = await r.json().catch(() => ({}));
-      // La fermeture peut échouer sans que le débranchement échoue — la route
+      // La fermeture peut échouer sans que le débranchement échoue, la route
       // ne retient personne parce que l'annuaire résiste. Le taire laisserait
       // partir quelqu'un convaincu de ne plus rien recevoir, alors qu'on lui
       // adresse encore des factures.
@@ -347,7 +347,7 @@ export function SuperPdpCard() {
       )}
 
       {/* Une ligne en erreur : on informe, on ne pousse à rien.
-          Voir le commentaire de `ligneAOuvrir` — c'est le plus souvent une
+          Voir le commentaire de `ligneAOuvrir`, c'est le plus souvent une
           portabilité en cours, et le seul geste utile est d'attendre. */}
       {verifie && ligne?.etat === "en_erreur" && (
         <div className="mt-4 bg-amber-500/10 border border-amber-500/30 rounded-lg px-4 py-3">
@@ -361,7 +361,7 @@ export function SuperPdpCard() {
             {/* Le point que l'ancien message taisait, et qui change tout :
                 la portabilité commence par un e-mail de confirmation adressé
                 au client. « Attendez » se lit alors comme « ne faites rien »,
-                alors qu'un geste est attendu de sa part — et sans ce geste
+                alors qu'un geste est attendu de sa part, et sans ce geste
                 rien n'avance, jamais. Même défaut que le message d'identité
                 non vérifiée, corrigé pour la même raison. */}
             <strong className="text-amber-300">
@@ -370,7 +370,7 @@ export function SuperPdpCard() {
             </strong>{" "}
             Une fois confirmé, l&apos;ancienne plateforme a cinq jours pour
             répondre. N&apos;ouvrez pas de seconde ligne et ne supprimez pas
-            celle-ci — vous interrompriez le transfert. Si la situation dure
+            celle-ci, vous interrompriez le transfert. Si la situation dure
             au-delà d&apos;une semaine, contactez la Plateforme Agréée.
           </p>
         </div>
@@ -391,7 +391,7 @@ export function SuperPdpCard() {
       )}
 
       {/* Débranchement. Derrière une confirmation, parce que reprendre le
-          tunnel d'autorisation n'est pas anodin — et parce qu'à partir du
+          tunnel d'autorisation n'est pas anodin, et parce qu'à partir du
           1er septembre 2026, se débrancher c'est cesser de pouvoir recevoir. */}
       {(verifie || enAttente) && (
         <div className="mt-4 pt-4 border-t border-ds-border">

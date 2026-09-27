@@ -187,7 +187,7 @@ export default function EReportingFreelancePage() {
                 {
                   date: "1er septembre 2026",
                   qui: "Grandes entreprises et ETI",
-                  obligation: "E-reporting obligatoire — en vigueur",
+                  obligation: "E-reporting obligatoire, en vigueur",
                   urgency: "high",
                 },
                 {

@@ -118,7 +118,7 @@ export function jsonLdArticle(slug: string, faq?: QuestionFaq[]) {
 }
 
 /**
- * Un fil d'Ariane pour une page qui n'est pas un article — les pages tarifs,
+ * Un fil d'Ariane pour une page qui n'est pas un article, les pages tarifs,
  * par exemple, qui ont la même profondeur et le même besoin.
  */
 export function jsonLdFilDAriane(etapes: { nom: string; url?: string }[]) {

@@ -2,7 +2,7 @@
  * Les identifiants de prix désignent-ils encore ce qu'on croit vendre ?
  *
  * Pourquoi cette traversée existe. Le 14/09/2026, `.env.local` référençait pour
- * le plan Pro un prix **inexistant** — et pas seulement périmé : son préfixe de
+ * le plan Pro un prix **inexistant**, et pas seulement périmé : son préfixe de
  * compte n'était même pas celui de Deviso. Pour le plan Solo, il pointait un
  * ancien prix à 15,99 € alors que la grille affiche 18 €. Les trois autres
  * identifiants (annuels et siège) étaient purement absents. Rien ne le disait :
@@ -18,7 +18,7 @@
  *
  * ⚠️ Ce qu'il NE prouve PAS, et c'est capital : il lit `.env.local`, qui n'est
  * PAS la production. Vercel porte ses propres valeurs, illisibles d'ici. Un
- * `.env.local` vert ne dit rien de ce qui tourne sur getdeviso.fr — la leçon
+ * `.env.local` vert ne dit rien de ce qui tourne sur getdeviso.fr, la leçon
  * des clés Resend du 28/08 vaut mot pour mot ici. La seule preuve côté
  * production reste la trace d'usage : un abonnement réellement créé sur le bon
  * prix (voir le tableau de bord Stripe).
@@ -59,7 +59,7 @@ const eur = (c) => (c / 100).toLocaleString("fr-FR", { minimumFractionDigits: 2 
 
 console.log("");
 console.log("── Les prix vendus existent-ils, et au bon montant ? ──────────");
-console.log("   source lue : .env.local — PAS la production. Voir l'en-tête.");
+console.log("   source lue : .env.local, PAS la production. Voir l'en-tête.");
 console.log("");
 
 const compte = await stripe("account");
@@ -76,7 +76,7 @@ for (const { env, libelle, centimes, interval } of GRILLE) {
   try {
     id = secret(env);
   } catch {
-    verifier(`${libelle} — l'identifiant est renseigné`, false, `${env} absent de .env.local`);
+    verifier(`${libelle}, l'identifiant est renseigné`, false, `${env} absent de .env.local`);
     continue;
   }
   referencés.add(id);
@@ -84,7 +84,7 @@ for (const { env, libelle, centimes, interval } of GRILLE) {
   const p = await stripe(`prices/${id}`);
   if (!p.ok) {
     verifier(
-      `${libelle} — le prix existe sur le compte`,
+      `${libelle}, le prix existe sur le compte`,
       false,
       `${id} → HTTP ${p.status} ${p.corps?.error?.message ?? ""}`
     );
@@ -100,7 +100,7 @@ for (const { env, libelle, centimes, interval } of GRILLE) {
     (prix.recurring?.interval_count ?? 1) === 1;
 
   verifier(
-    `${libelle} — ${eur(centimes)} € par ${interval === "year" ? "an" : "mois"}`,
+    `${libelle}, ${eur(centimes)} € par ${interval === "year" ? "an" : "mois"}`,
     conforme,
     `${eur(prix.unit_amount ?? 0)} ${String(prix.currency).toUpperCase()} / ` +
       `${prix.recurring?.interval ?? "ponctuel"} · actif=${prix.active}`
@@ -143,9 +143,9 @@ const actifs = await stripe("prices?limit=100&active=true&expand[]=data.product"
  * nouvel orphelin, lui, fasse échouer la traversée.
  */
 const TOLERES = new Map([
-  ["price_1TnUfmC7DMFvUE5OG7oOuLz3", "Solo 15,99 € — grille abandonnée, aucun abonnement vivant (14/09/2026)"],
-  ["price_1TmtoOC7DMFvUE5ONRi07YgD", "Pro 29 € — grille abandonnée, aucun abonnement vivant (14/09/2026)"],
-  ["price_1TmtlsC7DMFvUE5Oa3dsFvFZ", "Solo 19 € — porté par un abonnement résilié en août (14/09/2026)"],
+  ["price_1TnUfmC7DMFvUE5OG7oOuLz3", "Solo 15,99 €, grille abandonnée, aucun abonnement vivant (14/09/2026)"],
+  ["price_1TmtoOC7DMFvUE5ONRi07YgD", "Pro 29 €, grille abandonnée, aucun abonnement vivant (14/09/2026)"],
+  ["price_1TmtlsC7DMFvUE5Oa3dsFvFZ", "Solo 19 €, porté par un abonnement résilié en août (14/09/2026)"],
 ]);
 
 const orphelins = actifs.ok
@@ -165,7 +165,7 @@ verifier(
     ? orphelins
         .map((p) => `${eur(p.unit_amount)} € ${p.product?.name ?? ""} (${p.id})`)
         .join(" · ") +
-      " — un abonnement sur un prix hors grille renvoie null dans " +
+      ", un abonnement sur un prix hors grille renvoie null dans " +
       "planFromPriceId : le webhook journalise et n'applique AUCUN changement " +
       "de plan. L'archiver dans Stripe, ou l'ajouter à TOLERES avec sa raison."
     : "la grille, plus les anciens prix tolérés nommément"
@@ -192,7 +192,7 @@ console.log("── Non couvert ────────────────
 console.log("  · les valeurs réellement posées sur Vercel : illisibles d'ici.");
 console.log("  · le paiement lui-même : Stripe est en mode réel.");
 console.log("  · l'annuel et le siège supplémentaire n'ont jamais été souscrits");
-console.log("    en production — leur prix est juste, leur tunnel n'est pas prouvé.");
+console.log("    en production, leur prix est juste, leur tunnel n'est pas prouvé.");
 console.log("");
 
 process.exit(bilan() > 0 ? 1 : 0);

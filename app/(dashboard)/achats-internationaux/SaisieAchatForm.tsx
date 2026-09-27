@@ -37,7 +37,7 @@ export function SaisieAchatForm() {
   const [taux, setTaux] = useState("0");
   const [montantTva, setMontantTva] = useState("0");
   // L'utilisateur a-t-il saisi la TVA à la main ? Tant que non, on la calcule
-  // depuis le taux — mais dès qu'il la corrige (cas de l'autoliquidation, où la
+  // depuis le taux, mais dès qu'il la corrige (cas de l'autoliquidation, où la
   // facture du fournisseur porte 0), on cesse d'écraser sa saisie.
   const [tvaManuelle, setTvaManuelle] = useState(false);
 

@@ -1,7 +1,7 @@
 /**
  * Rien de ce qu'un compte de démonstration fait ne doit sortir de la base.
  *
- * Pourquoi ce fichier existe. La règle était déjà écrite, et déjà automatisée —
+ * Pourquoi ce fichier existe. La règle était déjà écrite, et déjà automatisée -
  * mais pour Stripe seulement (`lib/stripe-guard.ts`, `scripts/check-stripe.mjs`).
  * Elle n'avait jamais été étendue aux deux autres familles d'effets qui
  * franchissent la frontière du produit, et l'audit du 08/09/2026 a montré ce
@@ -29,7 +29,7 @@ let echecs = 0;
 
 // Un envoi est gardé s'il passe par `envoyerCourriel` (qui court-circuite les
 // comptes de démonstration) ; un dépôt chez un tiers l'est par `estCompteDemo`,
-// qui refuse franchement — il n'y a rien à simuler chez Chorus Pro.
+// qui refuse franchement, il n'y a rien à simuler chez Chorus Pro.
 const gardeEnvoi = (src) => /envoyerCourriel\s*\(/.test(src) && !/resend\.emails\.send/.test(src);
 const gardeTiers = (src) => /estCompteDemo\s*\(/.test(src);
 
@@ -60,7 +60,7 @@ function controler(titre, fichiers, description, garde) {
   for (const f of fichiers) {
     const chemin = f.replace(/\\/g, "/");
     if (EXEMPTIONS[chemin]) {
-      console.log(`  ·    ${chemin} — exempté : ${EXEMPTIONS[chemin]}`);
+      console.log(`  ·    ${chemin}, exempté : ${EXEMPTIONS[chemin]}`);
       continue;
     }
     const src = readFileSync(f, "utf8");
@@ -68,7 +68,7 @@ function controler(titre, fichiers, description, garde) {
       console.log(`  ok   ${chemin}`);
     } else {
       echecs++;
-      console.error(`✗ ${chemin} — ${description}`);
+      console.error(`✗ ${chemin}, ${description}`);
     }
   }
 }
@@ -129,4 +129,4 @@ if (echecs > 0) {
   console.error(`${echecs} route(s) peuvent produire un effet réel depuis la démonstration.`);
   process.exit(1);
 }
-console.log("check:effets-reels — aucun effet réel possible depuis un compte de démonstration.");
+console.log("check:effets-reels, aucun effet réel possible depuis un compte de démonstration.");

@@ -7,7 +7,7 @@ import { createAdminClient } from "@/lib/supabase/admin";
  * Point unique de vérité, volontairement. Auparavant chaque route reconstruisait
  * l'URL de son côté : la page devis utilisait le sous-domaine, les relances
  * repartaient sur `NEXT_PUBLIC_APP_URL`. Le client recevait donc deux adresses
- * différentes pour le même devis — au moment précis où on lui demande de signer.
+ * différentes pour le même devis, au moment précis où on lui demande de signer.
  */
 
 export const ROOT_DOMAIN = "getdeviso.fr";
@@ -27,7 +27,7 @@ export function publicBaseUrl(owner?: {
 
 /**
  * Variante pour les traitements côté serveur qui n'ont que l'identifiant du
- * propriétaire — les crons, notamment, qui parcourent les documents de tout le
+ * propriétaire, les crons, notamment, qui parcourent les documents de tout le
  * monde. Passe par le client admin : ces routes n'ont pas de session utilisateur.
  */
 export async function publicBaseUrlForUser(userId: string): Promise<string> {

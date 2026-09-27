@@ -1,6 +1,6 @@
 /**
  * Génère le XML CII (Cross Industry Invoice) au profil **EN 16931 (Comfort)**
- * — le profil exigé par la réforme française de la facturation électronique.
+ *, le profil exigé par la réforme française de la facturation électronique.
  *
  * ⚠️ Le profil BASIC utilisé jusqu'au 13/07/2026 n'est PAS couvert par les
  * validateurs de la réforme (« Aucun validateur trouvé pour ce format »).
@@ -117,11 +117,11 @@ function postalAddress(
  *
  * Hors de France, non. Une entreprise belge s'adresse en `0208:` (numéro
  * d'entreprise belge), une allemande autrement. L'ancien code aurait écrit le
- * préfixe étranger *à l'intérieur* de la valeur, sous un schéma français —
+ * préfixe étranger *à l'intérieur* de la valeur, sous un schéma français -
  * un identifiant qui ne désigne personne.
  *
  * Et surtout : sans adresse du tout, il n'écrivait rien. Le validateur
- * officiel l'a signalé le 01/09/2026 sur une facture à un client belge —
+ * officiel l'a signalé le 01/09/2026 sur une facture à un client belge -
  * « BR-FR-12/BT-49 : Le BT-49 est obligatoire. Valeur actuelle : BT-49="" ».
  * Toute facture à un client étranger était donc non conforme, et le chemin
  * B2BInt venait précisément d'être rendu accessible par le sélecteur de pays.
@@ -160,21 +160,21 @@ export function generateFacturXml(
   // uniquement par ce suffixe. Sans cet override, `electronicAddress()`
   // renvoie un SIREN nu identique pour les deux et Super PDP refuse
   // l'émission (« L'entreprise liée à cette session ne correspond pas au
-  // vendeur de la facture ») — vérifié le 29/08/2026. On préfère de toute
+  // vendeur de la facture »), vérifié le 29/08/2026. On préfère de toute
   // façon la valeur que Super PDP nous a lui-même communiquée à sa propre
   // re-dérivation : c'est la source de vérité.
   sellerDirectoryAddress?: string | null,
   // Numéro d'entreprise enregistré par Super PDP pour le vendeur
   // (superpdp_connections.company_number), qui alimente l'identifiant légal
-  // BT-30. **En production ce numéro EST le SIREN** — leur schéma est alors
-  // `fr_siren` — si bien que cet override ne change rien au document émis par
+  // BT-30. **En production ce numéro EST le SIREN**, leur schéma est alors
+  // `fr_siren`, si bien que cet override ne change rien au document émis par
   // un vrai client ; il le rend seulement plus juste, en préférant ce que la
   // Plateforme Agréée connaît de nous à ce que l'utilisateur a saisi dans son
   // profil. C'est en bac à sable que l'écart se voit : le numéro y est fictif
   // (000000002 pour Burger Queen) alors que le SIREN du profil est réel, et
   // leur vérification de session compare précisément ces deux valeurs.
   sellerLegalNumber?: string | null,
-  // Adresse d'acheminement du destinataire, **résolue par l'appelant** —
+  // Adresse d'acheminement du destinataire, **résolue par l'appelant** -
   // idéalement lue dans l'Annuaire (`GET /french_directory/entries`), voir
   // lib/superpdp-annuaire.ts. Absente, on retombe sur le champ saisi puis sur
   // le SIREN nu : ce repli reste correct pour la majorité des entreprises, et
@@ -192,21 +192,21 @@ export function generateFacturXml(
    * Une référence sans date n'est pas comptée du tout : le validateur officiel
    * répondait « Références entête trouvées : 0 » sur un document qui en portait
    * pourtant bien une. En dernier paramètre, et non inséré au milieu, parce que
-   * tous les paramètres voisins sont des `string | null` — un décalage
+   * tous les paramètres voisins sont des `string | null`, un décalage
    * positionnel y passerait la vérification de types sans être vu.
    */
   linkedInvoiceDate?: string | null
 ): string {
   /**
-   * BT-8 — quand la TVA devient exigible.
+   * BT-8, quand la TVA devient exigible.
    *
    * ⚠️ Ce code était **inversé**. Il ne sortait que si `payment_on_debit` était
-   * vrai, et il valait alors `72` — « paid to date », l'exigibilité au
+   * vrai, et il valait alors `72`, « paid to date », l'exigibilité au
    * PAIEMENT. Or `payment_on_debit` veut dire l'exact contraire : « TVA
    * acquittée sur les débits (art. 1693 bis CGI) », c'est-à-dire exigible dès
    * la facture. Le document déclarait donc le régime opposé à celui coché, et
-   * dans le cas courant — les encaissements, valeur par défaut chez les
-   * freelances — il ne déclarait rien du tout.
+   * dans le cas courant, les encaissements, valeur par défaut chez les
+   * freelances, il ne déclarait rien du tout.
    *
    * BT-8 : « The code shall distinguish between the following entries of
    * UNTDID 2005 : Invoice document issue date - Delivery date, actual - Paid to
@@ -232,7 +232,7 @@ export function generateFacturXml(
   // Ils étaient déduits du seul taux : zéro valait « franchise en base,
   // art. 293 B ». Une livraison intracommunautaire partait donc annoncée à
   // l'administration comme une opération de micro-entrepreneur non assujetti.
-  // La règle vit désormais dans lib/exoneration.ts, partagée avec le PDF —
+  // La règle vit désormais dans lib/exoneration.ts, partagée avec le PDF -
   // deux copies auraient divergé, et la divergence portait ici sur une
   // qualification fiscale.
   const exo = motifExoneration(invoice);
@@ -246,13 +246,13 @@ export function generateFacturXml(
   // Identifiant légal du vendeur (BT-30). Le numéro communiqué par Super PDP
   // prime sur le SIREN du profil : c'est celui auquel leur vérification de
   // session compare la facture. En production les deux coïncident (schéma
-  // `fr_siren`), donc `toSiren()` reste le repli naturel — notamment pour les
+  // `fr_siren`), donc `toSiren()` reste le repli naturel, notamment pour les
   // PDF Factur-X générés hors de tout raccordement.
   const sellerLegalId = sellerLegalNumber?.trim() || toSiren(invoice.seller_siren);
   // À distinguer du précédent : le BT-32 ci-dessous est un identifiant
   // **fiscal**, servi en repli du n° de TVA sous le régime de franchise. Il doit
   // rester le vrai SIREN de l'entreprise, jamais le numéro interne attribué par
-  // la Plateforme Agréée — lequel n'a aucune valeur devant l'administration.
+  // la Plateforme Agréée, lequel n'a aucune valeur devant l'administration.
   const sellerSiren = toSiren(invoice.seller_siren);
   const buyerSiren = toSiren(invoice.client_siren);
   const sellerVat = resolveVatNumber(invoice.seller_tva_number, invoice.seller_siren, isFranchise);
@@ -266,7 +266,7 @@ export function generateFacturXml(
   const sellerEas = sellerAdresse.valeur;
   // Côté acheteur, même raisonnement que côté vendeur : si le client a déclaré
   // une adresse d'annuaire composée (SIREN_SIRET pour tel établissement,
-  // SIREN_SUFFIXE pour tel service), c'est elle qui achemine — la dériver de son
+  // SIREN_SUFFIXE pour tel service), c'est elle qui achemine, la dériver de son
   // SIREN enverrait la facture au siège au lieu du service destinataire, quand
   // ça ne la fait pas refuser franchement. Vide, on retombe sur le SIREN nu, ce
   // qui reste correct pour la grande majorité des entreprises (un SIREN, une
@@ -278,7 +278,7 @@ export function generateFacturXml(
   const buyerEas = buyerAdresse.valeur;
 
   // B2C (client particulier, sans SIREN) : le document ne s'achemine à
-  // personne — un particulier n'a pas de Plateforme Agréée — mais Super PDP a
+  // personne, un particulier n'a pas de Plateforme Agréée, mais Super PDP a
   // quand même besoin de le détecter pour en extraire les données d'e-reporting
   // (page "E-reporting" de leur documentation, vérifié le 29/08/2026). Deux
   // méthodes de détection documentées, indépendantes : la note BAR/B2C
@@ -291,7 +291,7 @@ export function generateFacturXml(
   // donc on choisit UNE source, dans l'ordre : adresse d'annuaire/SIREN si on en
   // a une, sinon l'e-mail (schemeID "EM"). Ce repli e-mail vaut aussi pour les
   // ventes internationales (B2BInt) : hors de France, le client n'a pas
-  // d'adresse d'annuaire, et un BT-49 vide fait échouer la validation — alors
+  // d'adresse d'annuaire, et un BT-49 vide fait échouer la validation, alors
   // qu'un BT-49 rempli avec l'e-mail passe (vérifié au validateur le 25/09/2026).
   const emailComm = invoice.client_email
     ? `<ram:URIUniversalCommunication><ram:URIID schemeID="EM">${esc(invoice.client_email)}</ram:URIID></ram:URIUniversalCommunication>`
@@ -350,10 +350,10 @@ export function generateFacturXml(
         }</ram:SpecifiedTradePaymentTerms>`
       : "";
 
-  // Référence au document antérieur (BG-3) — se place APRÈS les totaux en CII.
+  // Référence au document antérieur (BG-3), se place APRÈS les totaux en CII.
   // Deux usages : l'acompte d'une facture de solde, et la facture qu'un avoir
   // annule. La date (BT-26) est ce qui rend la référence opposable pour un
-  // avoir — sans elle, BR-FR-CO-05 la compte pour rien.
+  // avoir, sans elle, BR-FR-CO-05 la compte pour rien.
   const dateDocLie = linkedInvoiceDate?.slice(0, 10).replace(/-/g, "") || null;
   const referencedDoc = linkedInvoiceNumber
     ? `<ram:InvoiceReferencedDocument><ram:IssuerAssignedID>${esc(linkedInvoiceNumber)}</ram:IssuerAssignedID>${

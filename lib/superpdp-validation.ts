@@ -11,7 +11,7 @@ import { SUPERPDP_API } from "@/lib/superpdp";
  * asynchrone des heures plus tard.
  *
  * Deux propriétés rendent cet appel précieux :
- *   1. `"security": []` — **aucune authentification**. On peut donc valider la
+ *   1. `"security": []`, **aucune authentification**. On peut donc valider la
  *      facture d'un utilisateur non raccordé, ce que rien d'autre ne permet.
  *   2. Chaque `message` porte `location`, « location of error in the XML if
  *      available » : on peut désigner l'endroit fautif au lieu de dire « refusé ».
@@ -51,7 +51,7 @@ type ReponseBrute = {
  * Soumet un XML CII à la validation.
  *
  * Ne lève jamais : une validation indisponible ne doit pas empêcher d'émettre.
- * C'est un service de confort en amont, pas un verrou — le vrai verrou reste le
+ * C'est un service de confort en amont, pas un verrou, le vrai verrou reste le
  * pré-contrôle synchrone de la plateforme au moment du POST.
  */
 export async function validerFacture(
@@ -87,7 +87,7 @@ export async function validerFacture(
     // messages : il alarme sans permettre d'agir, et l'utilisateur n'a même pas
     // de quoi poser la question au support.
     //
-    // Le schéma `subreport` porte DEUX tableaux — `failures` et `messages` —
+    // Le schéma `subreport` porte DEUX tableaux, `failures` et `messages` -
     // et nous ne lisions que le premier. On se rabat donc sur le second quand
     // le verdict est négatif mais muet, et à défaut on le dit franchement
     // plutôt que d'afficher un vide.

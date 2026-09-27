@@ -83,7 +83,7 @@ const slugsRegistre = entrees.map((e) => e.slug).sort();
 exige(
   `${slugsRegistre.length} article(s) au registre, ${pagesArticles.length} page(s) sur le disque`,
   slugsRegistre.length > 0 && pagesArticles.length > 0,
-  "le registre ou le dossier app/blog n'a pas pu être lu — le reste de ce contrôle ne veut alors rien dire."
+  "le registre ou le dossier app/blog n'a pas pu être lu, le reste de ce contrôle ne veut alors rien dire."
 );
 
 const orphelinsDisque = pagesArticles.filter((s) => !slugsRegistre.includes(s));
@@ -112,7 +112,7 @@ const idsUtilises = [...new Set(entrees.map((e) => e.categorie))];
 exige(
   `${idsDeclares.length} catégorie(s) déclarée(s) : ${idsDeclares.join(", ")}`,
   idsDeclares.length > 0,
-  "aucune catégorie lue dans categories.ts — le reste de ce contrôle ne veut rien dire."
+  "aucune catégorie lue dans categories.ts, le reste de ce contrôle ne veut rien dire."
 );
 
 const inventees = idsUtilises.filter((c) => !idsDeclares.includes(c));
@@ -127,7 +127,7 @@ const vides = idsDeclares.filter((c) => !idsUtilises.includes(c));
 exige(
   "aucune catégorie déclarée sans article",
   vides.length === 0,
-  `une catégorie vide produit un menu dépliant vide sur /blog — un bug visible par le lecteur.\n` +
+  `une catégorie vide produit un menu dépliant vide sur /blog, un bug visible par le lecteur.\n` +
     `     Déclarez la catégorie au moment d'écrire son premier article, pas avant.\n` +
     `     En cause : ${vides.join(", ")}`
 );
@@ -152,7 +152,7 @@ exige(
     const idx = lire("app/blog/page.tsx");
     return slugsRegistre.every((s) => idx.includes(`"${s}":`));
   })(),
-  "un article sans icône retombe sur une valeur par défaut — ce n'est pas cassé, mais sur un index\n" +
+  "un article sans icône retombe sur une valeur par défaut, ce n'est pas cassé, mais sur un index\n" +
     "     où toutes les lignes en ont une, l'icône générique se voit."
 );
 
@@ -162,7 +162,7 @@ titre("Entités HTML : rendues, jamais affichées telles quelles");
 // Ce contrôle existe à cause d'un bug parti en production le 12/09/2026 : les
 // paragraphes des articles longs étaient rendus en HTML, mais les *titres* de
 // section interpolés en texte brut. Un `&rsquo;` écrit dans un titre s'affichait
-// littéralement — « Ce qu&rsquo;il se passe quand… » — sur une page publique.
+// littéralement, « Ce qu&rsquo;il se passe quand… », sur une page publique.
 const srcGabaritLong = lire("components/blog/ArticleLong.tsx");
 const CHAMPS_RICHES = ["section.titre", "item.titre", "c.titre", "c.sousTitre", "cta.titre", "cta.texte", "section.source", "c"];
 // `t={section.titre}` passe par <Riche />, `key={item.titre}` est une clé React :
@@ -181,7 +181,7 @@ exige(
 );
 
 // L'inverse est tout aussi faux : ce qui est rendu en texte brut *et* recopié
-// dans le JSON-LD — les FAQ, les sources, le registre — ne doit contenir aucune
+// dans le JSON-LD, les FAQ, les sources, le registre, ne doit contenir aucune
 // entité, sinon Google lit « qu&rsquo;il » dans une réponse balisée.
 const ENTITE = /&[a-z]+;|&#\d+;/;
 const champsTexteBrut = [];
@@ -239,7 +239,7 @@ exige(
   `${lies.length} lien(s) « à lire ensuite » vérifié(s)`,
   liesMorts.length === 0,
   `ces slugs ne sont pas au registre : ${liesMorts.join(", ")}.\n` +
-    `     article() lève au build, donc la page ne se rendrait pas — mais autant le savoir ici.`
+    `     article() lève au build, donc la page ne se rendrait pas, mais autant le savoir ici.`
 );
 
 // ── 4. Le sitemap est généré, pas saisi ─────────────────────────────────────
@@ -286,10 +286,10 @@ for (const f of globSync("app/freelance-*/page.tsx").sort()) {
   const attendu = estHt ? ht : ht * 1.2;
 
   exige(
-    `${chemin} — ${estHt ? "HT" : "TTC"} ${affiche} € pour ${ht} € de lignes`,
+    `${chemin}, ${estHt ? "HT" : "TTC"} ${affiche} € pour ${ht} € de lignes`,
     Math.abs(affiche - attendu) < 1,
     `le total affiché ne correspond pas à son libellé. Attendu ${Math.round(attendu)} €.\n` +
-      `     Quatre pages annonçaient « Total TTC (TVA 20 %) » sur un montant hors taxes — sur la\n` +
+      `     Quatre pages annonçaient « Total TTC (TVA 20 %) » sur un montant hors taxes, sur la\n` +
       `     vitrine d'un logiciel de facturation, c'est le détail qui fait douter de tout le reste.`
   );
 }
@@ -298,7 +298,7 @@ exige(
   "le libellé du total est déduit de la valeur, pas écrit à côté",
   /const totalHt = \/\\bHT\\b\/\.test\(mockupTotal\)/.test(lire("components/landing/FreelanceLanding.tsx")),
   "si le libellé est figé dans le composant et la valeur passée par la page, les deux peuvent se\n" +
-    "     contredire — et ils se sont contredits sur quatre pages."
+    "     contredire, et ils se sont contredits sur quatre pages."
 );
 
 // ── 6. Données structurées et canoniques ────────────────────────────────────
@@ -308,10 +308,10 @@ for (const slug of slugsRegistre) {
   const src = lire(`app/blog/${slug}/page.tsx`);
   const viaGabarit = /<(BlogPost|ArticleLong)\b/.test(src);
   exige(
-    `app/blog/${slug} — métadonnées et JSON-LD`,
+    `app/blog/${slug}, métadonnées et JSON-LD`,
     /metadonneesArticle\(/.test(src) && (viaGabarit || /jsonLdArticle\(/.test(src)),
     "les métadonnées et les données structurées doivent venir du registre (`metadonneesArticle`,\n" +
-      "     `jsonLdArticle`), sinon elles sont recopiées — et une copie finit par diverger."
+      "     `jsonLdArticle`), sinon elles sont recopiées, et une copie finit par diverger."
   );
 }
 
@@ -425,7 +425,7 @@ titre("FAQ : ce qui est déclaré à Google est visible sur la page");
 for (const { chemin, src } of contenus) {
   if (!/const FAQ = \[/.test(src)) continue;
   exige(
-    `${chemin} — la liste FAQ est rendue`,
+    `${chemin}, la liste FAQ est rendue`,
     /FAQ\.map\(/.test(src) || /faq=\{FAQ\}/.test(src),
     "un `FAQPage` qui annonce une réponse absente du contenu visible est une déclaration fausse.\n" +
       "     Sept articles déclaraient une FAQ que la page n'affichait pas."
@@ -451,14 +451,14 @@ exige(
   /author: AUTEUR_JSONLD/.test(lire("lib/blog/meta.ts")) &&
     /"@type": "Person"/.test(lire("lib/blog/auteur.ts")),
   "les dix-neuf articles étaient signés par une marque inconnue. Sur des sujets fiscaux, Google\n" +
-    "     attend un auteur identifiable — et le lecteur aussi."
+    "     attend un auteur identifiable, et le lecteur aussi."
 );
 
 for (const slug of slugsRegistre) {
   const src = lire(`app/blog/${slug}/page.tsx`);
   const viaGabarit = /<(BlogPost|ArticleLong)\b/.test(src);
   exige(
-    `app/blog/${slug} — signature affichée`,
+    `app/blog/${slug}, signature affichée`,
     viaGabarit || /<Signature \/>/.test(src),
     "une signature déclarée dans le balisage mais invisible sur la page est le même décalage qu'un\n" +
       "     FAQPage dont les réponses n'apparaissent nulle part."
@@ -538,6 +538,6 @@ if (echecs > 0) {
   process.exit(1);
 }
 console.log(
-  `check:blog — ${slugsRegistre.length} articles, registre et pages cohérents, ` +
+  `check:blog, ${slugsRegistre.length} articles, registre et pages cohérents, ` +
     `sitemap généré, balisage en place, aucun montant périmé.`
 );

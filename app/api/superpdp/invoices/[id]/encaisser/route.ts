@@ -9,7 +9,7 @@ import { envoyerEncaissementPdp } from "@/lib/superpdp-encaissement";
  *
  * Appelée par le bouton « Marquer comme payée » quand la facture a déjà été
  * transmise à Super PDP. Toute la logique vit dans lib/superpdp-encaissement.ts,
- * partagée avec le webhook Stripe — voir ce fichier pour le pourquoi.
+ * partagée avec le webhook Stripe, voir ce fichier pour le pourquoi.
  */
 export async function POST(req: NextRequest, ctx: { params: Promise<{ id: string }> }) {
   const { id } = await ctx.params;
@@ -52,13 +52,13 @@ export async function POST(req: NextRequest, ctx: { params: Promise<{ id: string
       // passée, et la rejouer la ferait partir en double au PPF.
       incertain:
         "L'encaissement a peut-être été déclaré à la Plateforme Agréée : la réponse ne nous est " +
-        "jamais parvenue. Ne recommencez pas — vérifiez le statut de la facture dans un moment.",
+        "jamais parvenue. Ne recommencez pas, vérifiez le statut de la facture dans un moment.",
       // Remplacé plus bas par le message précis de la lib, qui nomme le statut.
       facture_close: "Cette facture est close : aucun encaissement ne peut s'y rattacher.",
     };
     // Le motif de la plateforme, quand elle en donne un. « La Plateforme Agréée
     // a refusé » sans dire pourquoi est le genre de message devant lequel il
-    // n'y a rien à faire — ni pour l'utilisateur, ni pour nous en diagnostic.
+    // n'y a rien à faire, ni pour l'utilisateur, ni pour nous en diagnostic.
     // Les routes `statut` et `emettre` remontent déjà le leur.
     let motifPlateforme = "";
     if (resultat.raison === "refuse" && resultat.detail) {

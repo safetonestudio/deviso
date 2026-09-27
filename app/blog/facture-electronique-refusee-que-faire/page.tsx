@@ -19,11 +19,11 @@ export const metadata = metadonneesArticle(SLUG);
 const FAQ = [
   {
     q: "Quelle est la différence entre une facture refusée et une facture rejetée ?",
-    a: "Un refus (statut 210) vient de votre client : il refuse la facture dans son intégralité, pour un motif commercial ou comptable. Un rejet (statut 213) vient d'une plateforme — celle qui émet ou celle qui reçoit : ses contrôles fonctionnels ont détecté une anomalie sur la facture elle-même. Le premier se règle avec votre client, le second en corrigeant le document. Ce sont les deux seuls statuts d'échec, et ils sont tous deux obligatoires dans le cycle de vie.",
+    a: "Un refus (statut 210) vient de votre client : il refuse la facture dans son intégralité, pour un motif commercial ou comptable. Un rejet (statut 213) vient d'une plateforme, celle qui émet ou celle qui reçoit : ses contrôles fonctionnels ont détecté une anomalie sur la facture elle-même. Le premier se règle avec votre client, le second en corrigeant le document. Ce sont les deux seuls statuts d'échec, et ils sont tous deux obligatoires dans le cycle de vie.",
   },
   {
     q: "Peut-on corriger une facture refusée et la renvoyer ?",
-    a: "Non, pas directement. Un refus est terminal : les spécifications de la DGFiP prévoient que le fournisseur procède à une annulation comptable, c'est-à-dire un avoir, puis émette une nouvelle facture corrigée. On ne modifie pas une facture déjà déposée — c'est tout l'intérêt de la numérotation continue et de l'archivage.",
+    a: "Non, pas directement. Un refus est terminal : les spécifications de la DGFiP prévoient que le fournisseur procède à une annulation comptable, c'est-à-dire un avoir, puis émette une nouvelle facture corrigée. On ne modifie pas une facture déjà déposée, c'est tout l'intérêt de la numérotation continue et de l'archivage.",
   },
   {
     q: "Faut-il transmettre l'avoir qui annule une facture refusée ?",
@@ -31,7 +31,7 @@ const FAQ = [
   },
   {
     q: "Mon client peut-il refuser une facture pour n'importe quel motif ?",
-    a: "Non. Le motif de refus est un code normé, et la liste des codes acceptés pour le statut « Refusée » est fermée. Sur la plateforme agréée à laquelle Deviso est adossé, treize codes seulement sont acceptés pour ce statut — et il n'y a pas de code « Autre ». Un refus doit donc entrer dans l'une de ces treize cases, ce qui est une protection : votre client ne peut pas refuser « parce que ».",
+    a: "Non. Le motif de refus est un code normé, et la liste des codes acceptés pour le statut « Refusée » est fermée. Sur la plateforme agréée à laquelle Deviso est adossé, treize codes seulement sont acceptés pour ce statut, et il n'y a pas de code « Autre ». Un refus doit donc entrer dans l'une de ces treize cases, ce qui est une protection : votre client ne peut pas refuser « parce que ».",
   },
   {
     q: "Que se passe-t-il si mon client demande seulement des justificatifs ?",
@@ -39,14 +39,14 @@ const FAQ = [
   },
   {
     q: "Combien de statuts existe-t-il, et doit-on les connaître tous ?",
-    a: "Non. La liste publiée par la DGFiP va de 200 à 213 et n'est explicitement pas exhaustive — elle renvoie, pour le reste, à une norme AFNOR payante. Mais quatre statuts seulement sont obligatoires pour une facture : Déposée (200), Refusée (210), Encaissée (212) et Rejetée (213). Les autres sont facultatifs, et toutes les plateformes ne les émettent pas.",
+    a: "Non. La liste publiée par la DGFiP va de 200 à 213 et n'est explicitement pas exhaustive, elle renvoie, pour le reste, à une norme AFNOR payante. Mais quatre statuts seulement sont obligatoires pour une facture : Déposée (200), Refusée (210), Encaissée (212) et Rejetée (213). Les autres sont facultatifs, et toutes les plateformes ne les émettent pas.",
   },
 ];
 
 /**
  * Les statuts du cycle de vie d'une facture, d'après le tableau 8 des
  * spécifications externes de la DGFiP. Les définitions sont celles du document,
- * reformulées pour un lecteur qui n'est pas comptable — mais sans en changer le
+ * reformulées pour un lecteur qui n'est pas comptable, mais sans en changer le
  * sens, et sans inventer les codes au-delà de 213, où la table s'arrête.
  */
 const STATUTS = [
@@ -61,7 +61,7 @@ const STATUTS = [
   { code: 208, libelle: "Suspendue", obligatoire: false, quoi: "Il attend des pièces justificatives et met le traitement en pause. Ce n'est pas un refus." },
   { code: 209, libelle: "Complétée", obligatoire: false, quoi: "Vous avez fourni les pièces attendues. Le traitement reprend." },
   { code: 210, libelle: "Refusée", obligatoire: true, quoi: "Votre client refuse la facture dans son intégralité. Terminal : il faudra un avoir." },
-  { code: 211, libelle: "Paiement transmis", obligatoire: false, quoi: "Votre client déclare avoir payé — ou vous, avoir remboursé." },
+  { code: 211, libelle: "Paiement transmis", obligatoire: false, quoi: "Votre client déclare avoir payé, ou vous, avoir remboursé." },
   { code: 212, libelle: "Encaissée", obligatoire: true, quoi: "Vous déclarez avoir perçu un paiement, partiel ou total. C'est une obligation au titre de l'article 290 A du CGI." },
   { code: 213, libelle: "Rejetée", obligatoire: true, quoi: "Une plateforme a détecté une anomalie sur la facture elle-même. Terminal aussi." },
 ];
@@ -74,7 +74,7 @@ const STATUTS = [
  * pas une citation.
  */
 const MOTIFS = [
-  { code: "MONTANTTOTAL_ERR", libelle: "Montant total erroné", pratique: "Un total ne tombe pas juste — souvent le net à payer. Vérifiez d'abord vos arrondis ligne par ligne." },
+  { code: "MONTANTTOTAL_ERR", libelle: "Montant total erroné", pratique: "Un total ne tombe pas juste, souvent le net à payer. Vérifiez d'abord vos arrondis ligne par ligne." },
   { code: "CALCUL_ERR", libelle: "Erreur de calcul de la facture", pratique: "Détectée au contrôle automatique ou après : une ligne, un arrondi non accepté. C'est un problème de chiffres, pas de fond." },
   { code: "TX_TVA_ERR", libelle: "Taux de TVA erroné", pratique: "Le taux appliqué n'est pas celui attendu. Fréquent dans le BTP, où 5,5 %, 10 % et 20 % coexistent selon la nature des travaux." },
   { code: "NON_CONFORME", libelle: "Mention légale manquante", pratique: "Une mention obligatoire est absente. Si vous êtes en franchise de TVA, c'est souvent la mention de l'article 293 B du CGI qui manque." },
@@ -149,7 +149,7 @@ export default function Page() {
             <p className="text-lg text-gray-400 leading-relaxed">
               Une facture électronique ne se contente pas de partir. Elle porte un statut, qui change au fil de
               son traitement, et deux de ces statuts sont des échecs. Ils n&apos;ont ni la même cause, ni le même
-              remède — et dans un cas, la bonne réaction est exactement l&apos;inverse de l&apos;intuition.
+              remède, et dans un cas, la bonne réaction est exactement l&apos;inverse de l&apos;intuition.
             </p>
           </div>
 
@@ -172,14 +172,14 @@ export default function Page() {
                   <span className="text-indigo-400 shrink-0">→</span>
                   <span>
                     <strong className="text-white">Refusée (210)</strong> : votre client refuse. Appelez-le avant
-                    de toucher à quoi que ce soit — le motif vous dit quoi, pas pourquoi.
+                    de toucher à quoi que ce soit, le motif vous dit quoi, pas pourquoi.
                   </span>
                 </li>
                 <li className="flex gap-2">
                   <span className="text-indigo-400 shrink-0">→</span>
                   <span>
                     Dans les deux cas : <strong className="text-white">avoir d&apos;annulation, puis nouvelle
-                    facture</strong>. Et cet avoir ne se transmet pas — voir pourquoi plus bas, c&apos;est le
+                    facture</strong>. Et cet avoir ne se transmet pas, voir pourquoi plus bas, c&apos;est le
                     point le moins intuitif du dispositif.
                   </span>
                 </li>
@@ -247,7 +247,7 @@ export default function Page() {
               <p className="mb-5">
                 Voici la liste publiée par la DGFiP. Deux remarques avant de la lire. D&apos;abord, elle{" "}
                 <strong className="text-white">n&apos;est pas exhaustive</strong> : le document renvoie
-                explicitement, pour la suite, à une norme AFNOR payante — donc un code au-delà de 213 existe
+                explicitement, pour la suite, à une norme AFNOR payante, donc un code au-delà de 213 existe
                 peut-être, et personne d&apos;honnête ne peut vous dire ce qu&apos;il signifie. Ensuite, seuls
                 quatre statuts sont obligatoires ; les autres sont facultatifs, et toutes les plateformes ne les
                 émettent pas. Ne vous inquiétez pas de ne pas voir défiler les quatorze.
@@ -298,13 +298,13 @@ export default function Page() {
                 Les treize motifs de refus possibles
               </h2>
               <p className="mb-3">
-                Un refus porte toujours un motif, et ce motif est un code normé — pas un texte libre. C&apos;est
+                Un refus porte toujours un motif, et ce motif est un code normé, pas un texte libre. C&apos;est
                 une bonne nouvelle pour vous : <strong className="text-white">la liste des codes acceptés pour un
                 refus est fermée</strong>, et il n&apos;y a pas de code « Autre ». Votre client ne peut pas
                 refuser « parce que ». Il doit ranger son refus dans l&apos;une de ces treize cases.
               </p>
               <p className="mb-5 text-gray-400">
-                Le nombre exact peut varier d&apos;une plateforme à l&apos;autre — c&apos;est elle qui décide
+                Le nombre exact peut varier d&apos;une plateforme à l&apos;autre, c&apos;est elle qui décide
                 quels codes elle accepte pour un statut donné. Treize est le nombre sur la plateforme agréée à
                 laquelle Deviso est adossé.
               </p>
@@ -328,7 +328,7 @@ export default function Page() {
                   <p className="text-gray-400">
                     Ce code ne veut <strong className="text-white">pas</strong> dire « double facturation ». Il
                     désigne le doublon des <em>données réglementaires</em> transmises à l&apos;administration. Si
-                    vous avez réellement été facturé deux fois — ou si votre client le croit — le motif est{" "}
+                    vous avez réellement été facturé deux fois, ou si votre client le croit, le motif est{" "}
                     <code className="text-xs text-indigo-300 bg-indigo-500/10 px-1.5 py-0.5 rounded">DOUBLON</code>.
                     C&apos;est exactement le genre d&apos;erreur de lecture qui fait annuler une facture pour la
                     mauvaise raison, et Deviso l&apos;a faite avant de lire la table normative.
@@ -365,13 +365,13 @@ export default function Page() {
               <p className="mb-5">
                 La logique est cohérente quand on y regarde : l&apos;administration a déjà reçu le statut
                 d&apos;échec. Elle sait que cette facture n&apos;a pas abouti. Lui transmettre en plus un avoir
-                reviendrait à déclarer deux fois la même annulation — un doublon de données, exactement ce que le
+                reviendrait à déclarer deux fois la même annulation, un doublon de données, exactement ce que le
                 dispositif cherche à éviter.
               </p>
               <div className="grid sm:grid-cols-2 gap-4">
                 <div className="bg-emerald-500/[0.05] border border-emerald-500/20 rounded-xl p-5">
                   <p className="text-xs font-semibold text-emerald-300 uppercase tracking-wider mb-3">
-                    Avoir interne — ne se transmet pas
+                    Avoir interne, ne se transmet pas
                   </p>
                   <p className="text-gray-300">
                     Quand il annule une facture <strong className="text-white">refusée</strong> ou{" "}
@@ -380,7 +380,7 @@ export default function Page() {
                 </div>
                 <div className="bg-ds-surface border border-ds-border rounded-xl p-5">
                   <p className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-3">
-                    Avoir ordinaire — se transmet
+                    Avoir ordinaire, se transmet
                   </p>
                   <p className="text-gray-400">
                     Quand il annule une facture qui a, elle, <strong className="text-white">abouti</strong> :
@@ -392,7 +392,7 @@ export default function Page() {
               <p className="mt-4 text-gray-400">
                 C&apos;est une distinction qu&apos;un logiciel doit faire à votre place, parce qu&apos;elle dépend
                 du statut de la facture annulée et que personne ne devrait avoir à s&apos;en souvenir. Dans
-                Deviso, elle est codée et couverte par un test automatisé — c&apos;est le genre de règle qui ne se
+                Deviso, elle est codée et couverte par un test automatisé, c&apos;est le genre de règle qui ne se
                 voit pas quand elle est juste, et qui se paie quand elle est fausse.
               </p>
             </section>

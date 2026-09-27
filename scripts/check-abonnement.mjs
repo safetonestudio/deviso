@@ -1,5 +1,5 @@
 /**
- * check:abonnement — deux règles de facturation que le code ne doit plus perdre.
+ * check:abonnement, deux règles de facturation que le code ne doit plus perdre.
  *
  * ── 1. Un abonnement en cours se modifie, il ne se double pas ──────────────
  *
@@ -20,7 +20,7 @@
  * ── 2. Les sièges se calculent, ils ne s'incrémentent pas ─────────────────
  *
  * L'ancien `addSeatToSubscription` faisait `quantity + 1` à chaque invitation
- * acceptée — dès le PREMIER collaborateur, alors que les CGU vendent « 3
+ * acceptée, dès le PREMIER collaborateur, alors que les CGU vendent « 3
  * utilisateurs inclus, le titulaire et 2 membres ». Dix euros par mois facturés
  * en trop, sur la page qui affichait la promesse inverse. Et un compteur dérive :
  * le double clic sur un lien d'invitation avait déjà fait facturer deux sièges
@@ -30,7 +30,7 @@
  * membres actifs. Aucun `quantity: … + 1` ni `- 1` ailleurs.
  *
  * ⚠️ Ce que ce contrôle NE couvre PAS :
- *   · que `MEMBRES_INCLUS` vaut ce que disent les CGU — c'est une lecture
+ *   · que `MEMBRES_INCLUS` vaut ce que disent les CGU, c'est une lecture
  *     humaine, faite le 15/09/2026 : « le titulaire du compte et 2 membres » ;
  *   · que la modification d'abonnement fonctionne réellement chez Stripe :
  *     il faudrait un abonnement vivant, donc un débit réel ;
@@ -165,7 +165,7 @@ const CONTRE_EPREUVES = [
 
 const ratees = CONTRE_EPREUVES.filter((c) => !c.detecte(c.source));
 if (ratees.length > 0) {
-  console.error("check:abonnement — le contrôle ne voit plus ce qu'il surveille :");
+  console.error("check:abonnement, le contrôle ne voit plus ce qu'il surveille :");
   for (const r of ratees) console.error(`  raté : ${r.quoi}\n    ${r.source}`);
   process.exit(1);
 }
@@ -173,13 +173,13 @@ if (ratees.length > 0) {
 if (problemes.length === 0) {
   for (const c of CONTRE_EPREUVES) console.log(`  ·    contre-épreuve : ${c.quoi} bien détecté`);
   console.log(
-    `check:abonnement — ${lus} fichiers. Aucun second abonnement possible, ` +
+    `check:abonnement, ${lus} fichiers. Aucun second abonnement possible, ` +
       `aucune quantité de sièges incrémentée.`
   );
   process.exit(0);
 }
 
-console.error(`check:abonnement — ${problemes.length} problème(s) :\n`);
+console.error(`check:abonnement, ${problemes.length} problème(s) :\n`);
 for (const p of problemes) {
   console.error(`  ${p.fichier}`);
   console.error(`    ${p.quoi}`);

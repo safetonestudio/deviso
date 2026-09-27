@@ -22,7 +22,7 @@ export async function middleware(request: NextRequest) {
   //
   // Il l'était par `supabaseResponse.headers.set("x-pathname", …)`, tout en bas
   // de cette fonction. C'est un en-tête de RÉPONSE : il partait vers le
-  // navigateur — on peut le lire dans l'onglet réseau — et n'atteignait jamais
+  // navigateur, on peut le lire dans l'onglet réseau, et n'atteignait jamais
   // le serveur. `headers().get("x-pathname")` dans `app/(dashboard)/layout.tsx`
   // valait donc TOUJOURS la chaîne vide, et les deux gardes qui en dépendent
   // étaient inertes :

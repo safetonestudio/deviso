@@ -14,8 +14,8 @@ export async function GET() {
   // Ce `.eq("id", user.id)` était un défaut discret et coûteux : sur un plan
   // Pro multi-utilisateurs, un collaborateur agissant sur un document de
   // l'espace lisait SON profil. Selon la route, cela donnait un PDF portant
-  // son IBAN (ou aucun) au lieu de celui de l'entreprise — le client paie
-  // alors sur le mauvais compte — ou un refus « plan insuffisant » sur une
+  // son IBAN (ou aucun) au lieu de celui de l'entreprise, le client paie
+  // alors sur le mauvais compte, ou un refus « plan insuffisant » sur une
   // fonction que l'espace paie pourtant.
   const profile = await getWorkspaceProfile<{ plan: string | null }>(
     await getWorkspaceUserId(user.id),
@@ -59,12 +59,12 @@ export async function GET() {
   }
   // Un avoir se RETRANCHE du chiffre d'affaires.
   //
-  // Ses montants sont positifs — c'est la règle BR-27, le type du document
-  // porte le sens — et ils étaient additionnés partout ici. Une facture de
+  // Ses montants sont positifs, c'est la règle BR-27, le type du document
+  // porte le sens, et ils étaient additionnés partout ici. Une facture de
   // 1 200 € encaissée puis annulée par un avoir de 1 200 € affichait donc
   // 2 400 € de CA au lieu de zéro, sur le graphique, sur le cumul annuel et
   // dans le classement des meilleurs clients. Le tableau de bord appliquait
-  // pourtant déjà la règle sur un de ses indicateurs — pas sur les autres.
+  // pourtant déjà la règle sur un de ses indicateurs, pas sur les autres.
   const signeCa = (inv: { invoice_type?: string | null }) => (inv.invoice_type === "avoir" ? -1 : 1);
 
   /**
@@ -73,7 +73,7 @@ export async function GET() {
    * Ces trois indicateurs sommaient le TTC sous l'étiquette « CA encaissé ».
    * Pour un utilisateur en franchise en base, HT et TTC sont égaux et personne
    * ne voyait rien ; pour un assujetti à 20 %, le chiffre affiché était gonflé
-   * d'un cinquième. Or c'est ce chiffre-là qu'on reporte — sur une déclaration,
+   * d'un cinquième. Or c'est ce chiffre-là qu'on reporte, sur une déclaration,
    * dans un prévisionnel, chez un comptable. La TVA collectée n'appartient pas
    * à l'entreprise : elle ne fait que transiter.
    */

@@ -2,7 +2,7 @@ import { Resend } from "resend";
 import { lazyClient } from "@/lib/lazy-client";
 
 /**
- * Client d'envoi — clé « Sending access », volontairement restreinte.
+ * Client d'envoi, clé « Sending access », volontairement restreinte.
  *
  * Il n'y a plus de client d'administration : la fonctionnalité « domaine d'envoi
  * personnalisé » a été retirée. Elle imposait à l'utilisateur d'éditer sa zone
@@ -17,22 +17,22 @@ import { lazyClient } from "@/lib/lazy-client";
 export const resend = lazyClient(() => new Resend(process.env.RESEND_API_KEY));
 
 /**
- * Envoyer un courriel — sauf depuis un compte de démonstration.
+ * Envoyer un courriel, sauf depuis un compte de démonstration.
  *
  * Pourquoi passer par ici plutôt que d'appeler `resend.emails.send` en direct.
  * Aucune route d'envoi ne vérifiait le mode démonstration. Or la démonstration
  * s'ouvre en un clic depuis la page d'accueil, sans compte et sans adresse
  * vérifiée : un visiteur ouvrait une facture du jeu de données fictif,
  * remplaçait l'adresse du client par celle de sa cible, et faisait partir un
- * message depuis `noreply@getdeviso.fr` — avec pièce jointe PDF, au nom d'une
+ * message depuis `noreply@getdeviso.fr`, avec pièce jointe PDF, au nom d'une
  * entreprise inventée. Dix par heure et par IP. Ce ne sont pas seulement des
  * messages indésirables : ce sont des plaintes qui abîment la réputation
  * d'expédition du domaine, donc la délivrabilité des factures de tous les
  * clients qui paient.
  *
  * On ne REFUSE pas l'appel, on court-circuite le seul geste irréversible :
- * l'envoi lui-même. Toute la route s'exécute — contrôles d'accès, génération du
- * PDF Factur-X, gabarit, transitions de statut — et la réponse est celle d'un
+ * l'envoi lui-même. Toute la route s'exécute, contrôles d'accès, génération du
+ * PDF Factur-X, gabarit, transitions de statut, et la réponse est celle d'un
  * envoi réussi. Deux raisons :
  *
  *   - un refus placé en tête de route court-circuiterait aussi les réponses
@@ -53,7 +53,7 @@ export async function envoyerCourriel(
   const { estCompteDemo } = await import("@/lib/garde-demo");
   if (await estCompteDemo(userId)) {
     const destinataire = Array.isArray(message.to) ? message.to.join(", ") : message.to;
-    console.info(`[demo] courriel NON envoyé à ${destinataire} — « ${message.subject} »`);
+    console.info(`[demo] courriel NON envoyé à ${destinataire}, « ${message.subject} »`);
     return { error: null, simule: true };
   }
   const { error } = await resend.emails.send(message);

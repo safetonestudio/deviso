@@ -24,7 +24,7 @@ const FAQ = [
   },
   {
     q: "Les freelances et micro-entrepreneurs sont-ils concernés par la réforme 2026 ?",
-    a: "Oui, et à deux dates différentes. L'obligation d'ÉMETTRE en électronique arrive le 1er septembre 2027. Mais l'obligation de pouvoir RECEVOIR une facture électronique via une plateforme agréée s'applique DÉJÀ, depuis le 1er septembre 2026 : elle concerne toute entreprise assujettie à la TVA, quelle que soit sa taille. La franchise en base de TVA ne vous en exempte pas — le régime fiscal et l'obligation de facturation électronique sont deux choses indépendantes.",
+    a: "Oui, et à deux dates différentes. L'obligation d'ÉMETTRE en électronique arrive le 1er septembre 2027. Mais l'obligation de pouvoir RECEVOIR une facture électronique via une plateforme agréée s'applique DÉJÀ, depuis le 1er septembre 2026 : elle concerne toute entreprise assujettie à la TVA, quelle que soit sa taille. La franchise en base de TVA ne vous en exempte pas, le régime fiscal et l'obligation de facturation électronique sont deux choses indépendantes.",
   },
   {
     q: "Qu'est-ce que le format Factur-X ?",
@@ -163,7 +163,7 @@ export default function FacturationElectronique2026Page() {
           </p>
           <div className="grid sm:grid-cols-2 gap-4">
             <div className="bg-ds-surface border border-amber-500/20 rounded-xl p-4">
-              <p className="text-xs font-semibold text-amber-300 mb-2">RECEVOIR — déjà obligatoire</p>
+              <p className="text-xs font-semibold text-amber-300 mb-2">RECEVOIR, déjà obligatoire</p>
               <p className="text-sm text-gray-300 leading-relaxed">
                 Depuis le 1<sup>er</sup> septembre 2026, toute entreprise assujettie à la TVA doit
                 être en mesure de recevoir une facture électronique via une plateforme agréée. Sans
@@ -172,7 +172,7 @@ export default function FacturationElectronique2026Page() {
               </p>
             </div>
             <div className="bg-ds-surface border border-ds-border rounded-xl p-4">
-              <p className="text-xs font-semibold text-gray-300 mb-2">ÉMETTRE — selon votre taille</p>
+              <p className="text-xs font-semibold text-gray-300 mb-2">ÉMETTRE, selon votre taille</p>
               <p className="text-sm text-gray-400 leading-relaxed">
                 Grandes entreprises et ETI : depuis le 1<sup>er</sup> septembre 2026. TPE, PME et
                 micro-entrepreneurs : <strong className="text-white">1<sup>er</sup> septembre 2027</strong>,
@@ -288,7 +288,7 @@ export default function FacturationElectronique2026Page() {
               En octobre 2024, la DGFiP a officiellement annoncé l&apos;abandon du Portail Public de Facturation (PPF) qu&apos;elle développait initialement. Ce portail gratuit devait permettre à toutes les entreprises d&apos;émettre et de recevoir des e-factures sans passer par une plateforme privée.
             </p>
             <p className="mt-3">
-              Ce changement a une conséquence que peu de contenus énoncent clairement : <strong className="text-white">il n&apos;existe aucune option gratuite fournie par l&apos;État.</strong> Toute entreprise assujettie passe par une <strong className="text-white">plateforme agréée</strong> privée, immatriculée par la DGFiP — on parlait avant de « plateforme de dématérialisation partenaire » (PDP), les deux termes désignent la même chose.
+              Ce changement a une conséquence que peu de contenus énoncent clairement : <strong className="text-white">il n&apos;existe aucune option gratuite fournie par l&apos;État.</strong> Toute entreprise assujettie passe par une <strong className="text-white">plateforme agréée</strong> privée, immatriculée par la DGFiP, on parlait avant de « plateforme de dématérialisation partenaire » (PDP), les deux termes désignent la même chose.
             </p>
             <div className="mt-4 bg-amber-500/[0.06] border border-amber-500/20 rounded-xl p-4">
               <p className="text-sm text-amber-300">

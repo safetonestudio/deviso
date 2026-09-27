@@ -2,7 +2,7 @@
  * Les sièges facturés correspondent-ils à ce que les CGU promettent ?
  *
  * Le calcul est pur : on peut le juger sans toucher à Stripe. Ce que ce script
- * vérifie, c'est la jointure entre un texte contractuel et une fonction — le
+ * vérifie, c'est la jointure entre un texte contractuel et une fonction, le
  * genre d'écart qui ne se voit ni à la compilation ni à la relecture, et qui
  * s'était installé : l'ancienne version facturait un siège dès le PREMIER
  * collaborateur, quand les CGU en incluent deux.
@@ -48,7 +48,7 @@ for (const [membres, sieges, phrase] of attendu) {
 verifier(
   "un décompte négatif ne produit pas de siège négatif",
   siegesDus(-3) === 0,
-  `${siegesDus(-3)} — un avoir involontaire serait pire qu'une surfacturation`
+  `${siegesDus(-3)}, un avoir involontaire serait pire qu'une surfacturation`
 );
 
 console.log("");

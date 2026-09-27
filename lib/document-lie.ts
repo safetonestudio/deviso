@@ -10,7 +10,7 @@ import type { SupabaseClient } from "@supabase/supabase-js";
  *     comprenne ce qui vient en déduction ;
  *   - un **avoir** renvoie à la facture qu'il annule, et là ce n'est plus du
  *     confort : BR-FR-CO-05 l'exige, avec la date (BT-26). Une référence non
- *     datée n'est pas comptée du tout — le validateur officiel répond
+ *     datée n'est pas comptée du tout, le validateur officiel répond
  *     « Références entête trouvées : 0 » sur un document qui en porte pourtant
  *     bien une.
  *
@@ -21,7 +21,7 @@ import type { SupabaseClient } from "@supabase/supabase-js";
  * récurrente non plus ; seule la route d'émission vers la Plateforme Agréée
  * faisait le travail complet. Résultat, pour un même avoir, le XML transmis à
  * l'administration était conforme et celui embarqué dans le PDF envoyé au
- * client ne l'était pas — et pour une même facture de solde, le PDF téléchargé
+ * client ne l'était pas, et pour une même facture de solde, le PDF téléchargé
  * portait le bandeau « vient en déduction de… » que le PDF envoyé par courriel
  * n'avait pas. Quatre rendus du même document, quatre comportements.
  *

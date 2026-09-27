@@ -34,8 +34,8 @@ export async function POST(req: Request) {
   // deux un membre d'équipe, précisément parce que fermer une ligne rend
   // l'entreprise injoignable pour toute la France. Or `fermerLigne: true` sur
   // cette route-ci appelait `fermerLigneAnnuaire` par la porte de service, et
-  // n'importe quel collaborateur — un stagiaire, un ancien salarié dont le
-  // siège n'a pas été retiré — pouvait à la fois révoquer le raccordement et
+  // n'importe quel collaborateur, un stagiaire, un ancien salarié dont le
+  // siège n'a pas été retiré, pouvait à la fois révoquer le raccordement et
   // fermer la ligne. Rebrancher suppose de refaire tout le tunnel OAuth.
   if (await isTeamMember(user.id)) {
     return NextResponse.json(
@@ -78,14 +78,14 @@ export async function POST(req: Request) {
       // Un échec de fermeture n'annule pas le débranchement : la personne a
       // demandé à partir, on ne la retient pas parce que l'annuaire résiste.
       // Mais on le lui dit, sans quoi elle repartirait en croyant sa ligne
-      // fermée — donc en croyant ne plus rien recevoir alors qu'on lui envoie
+      // fermée, donc en croyant ne plus rien recevoir alors qu'on lui envoie
       // encore des factures.
       //
       // Le cas « migration » est le seul où c'est une bonne nouvelle : sa
       // ligne est intacte, et c'est ce qu'il fallait.
       ligne = { fermee: false, message: r.message };
       if (r.raison !== "absente") {
-        console.error(`[superpdp/disconnect] ${workspaceId} : ligne non fermée — ${r.raison}`);
+        console.error(`[superpdp/disconnect] ${workspaceId} : ligne non fermée, ${r.raison}`);
       }
     }
   }

@@ -8,23 +8,23 @@ import { factureBloquee, depuis } from "@/lib/superpdp-blocage";
  * Pourquoi cette colonne existe. La transmission était un bouton au fond du
  * panneau d'une facture ouverte : pour savoir si ses factures étaient parties,
  * il fallait les ouvrir une par une. Sous la réforme, la transmission n'est pas
- * une option — une facture émise et jamais transmise est une facture qui, pour
+ * une option, une facture émise et jamais transmise est une facture qui, pour
  * l'administration, n'existe pas. Cet état doit se lire d'un coup d'œil sur la
  * liste, comme le statut de paiement.
  *
  * Pourquoi cette fonction est partagée. Elle vivait dans la page de liste, et
  * le panneau d'une facture ouverte jugeait de son côté sur `superpdp_invoice_id`
- * seul : la liste avertissait « Transmise — adresse déduite » en ambre pendant
+ * seul : la liste avertissait « Transmise, adresse déduite » en ambre pendant
  * que le détail de la même facture affichait un « Transmise » vert et rassurant.
- * Deux écrans, deux verdicts, sur la même facture. Une seule règle désormais —
+ * Deux écrans, deux verdicts, sur la même facture. Une seule règle désormais -
  * comme pour `manquesPourEmission`, et pour la même raison : deux copies d'une
  * règle finissent toujours par diverger, et c'est l'utilisateur qui arbitre.
  */
 export function etatPdp(
   inv: Invoice,
   /**
-   * Vrai quand le raccordement est en bac à sable. Fourni par l'appelant —
-   * `/api/superpdp/status` le renvoie — plutôt que lu d'une variable
+   * Vrai quand le raccordement est en bac à sable. Fourni par l'appelant -
+   * `/api/superpdp/status` le renvoie, plutôt que lu d'une variable
    * d'environnement : cette fonction tourne aussi côté navigateur, où les
    * variables serveur n'existent pas, et une valeur absente y aurait
    * silencieusement pris la mauvaise branche.
@@ -79,7 +79,7 @@ export function etatPdp(
     //
     // Le vrai signal n'est pas la manière dont l'adresse a été obtenue, c'est
     // le fait que la facture n'arrive pas. Il est déjà donné, plus haut, par
-    // `factureBloquee` — qui juge sur le silence de la plateforme au bout de
+    // `factureBloquee`, qui juge sur le silence de la plateforme au bout de
     // 24 h, et qui nomme l'adresse déduite comme cause probable quand elle
     // l'est. On ne double pas ce signal par une couleur permanente.
     //
@@ -88,7 +88,7 @@ export function etatPdp(
     // de le voir.
     if (sandbox && inv.superpdp_adresse_source === "siren")
       return {
-        texte: "Transmise — adresse déduite",
+        texte: "Transmise, adresse déduite",
         classe: "bg-amber-500/10 text-amber-400",
         aFaire: false,
         manques: [],

@@ -5,12 +5,12 @@ import { decisionFermeture } from "@/lib/superpdp-fermeture";
 /**
  * La ligne d'annuaire : ce qui rend une entreprise JOIGNABLE.
  *
- * Pourquoi ce fichier existe. Le raccordement affichait « Raccordé — Vous
+ * Pourquoi ce fichier existe. Le raccordement affichait « Raccordé, Vous
  * pouvez recevoir des factures électroniques » dès que la session était
  * vérifiée, sans jamais regarder si une ligne d'annuaire existait. Or c'est la
  * ligne, et elle seule, qui fait qu'un fournisseur peut adresser une facture.
  * Une entreprise pouvait donc se croire en règle au 1ᵉʳ septembre 2026 tout en
- * restant strictement injoignable — et rien dans Deviso ne le lui disait.
+ * restant strictement injoignable, et rien dans Deviso ne le lui disait.
  *
  * Pire : la création de la ligne était confiée à un paramètre d'autorisation
  * (`superpdp_send_and_receive`) qui n'apparaît nulle part dans la
@@ -20,7 +20,7 @@ import { decisionFermeture } from "@/lib/superpdp-fermeture";
  *
  * La spec (`directory_entry`) impose de regarder trois champs, pas un :
  *   - `is_replyto` : adresse technique Peppol, jamais une adresse de réception ;
- *   - `status` : `pending` | `created` | `error` — une ligne en erreur ne reçoit
+ *   - `status` : `pending` | `created` | `error`, une ligne en erreur ne reçoit
  *     rien, et une ligne en attente pas encore ;
  *   - `effective_date` : « the date at which the directory entry will
  *     effectively come into effect ». Une ligne datée du 1ᵉʳ septembre 2026 ne
@@ -61,7 +61,7 @@ function etatDeLaLigne(ligne: LigneBrute): EtatLigne {
 /**
  * Toutes les lignes de réception, pas seulement la meilleure.
  *
- * L'annuaire autorise plusieurs lignes par entreprise — « toutes les entreprises
+ * L'annuaire autorise plusieurs lignes par entreprise, « toutes les entreprises
  * sont libres de créer autant de lignes d'annuaires qu'elles le souhaitent, pour
  * leur organisation interne ». `lireLigneAnnuaire` n'en montre qu'une, et c'est
  * le bon choix pour l'écran : un freelance n'en a qu'une. Mais pour en FERMER
@@ -109,12 +109,12 @@ export async function lireLigneAnnuaire(workspaceId: string): Promise<EtatLigne 
  * Ouvre la ligne de réception.
  *
  * L'identifiant suit le format `SIREN`, `SIREN_SIRET` ou `SIREN_SUFFIXE` pour
- * l'annuaire français — sans préfixe `0225:`, contrairement à Peppol. On envoie
+ * l'annuaire français, sans préfixe `0225:`, contrairement à Peppol. On envoie
  * le SIRET quand on l'a : c'est l'établissement, donc l'adressage le plus
  * précis, et la spec l'admet explicitement.
  *
  * `directory: "ppf"` et non `peppol` : « In production, for french identifiers,
- * it is only possible to create directory entries in the `ppf` directory — we
+ * it is only possible to create directory entries in the `ppf` directory, we
  * handle the creation of the corresponding entries in the Peppol directory ».
  * En bac à sable l'annuaire français n'existe pas, on passe donc par Peppol,
  * avec le préfixe que ce format impose.
@@ -139,7 +139,7 @@ export async function ouvrirLigneAnnuaire(
   // enregistré pour l'entreprise.
   //
   // Constaté le 04/09/2026 sur le compte de test : raccordé, ligne d'annuaire
-  // ouverte par le tunnel, `company_number` renseigné — et pourtant « Ouvrir ma
+  // ouverte par le tunnel, `company_number` renseigné, et pourtant « Ouvrir ma
   // ligne de réception » répondait « Renseignez votre SIRET dans Paramètres ».
   // On réclamait à l'utilisateur une information que nous avions déjà, et sous
   // une forme (le SIRET) dont nous n'utilisons que les neuf premiers chiffres.
@@ -147,7 +147,7 @@ export async function ouvrirLigneAnnuaire(
   //
   // Le repli n'est valable que si le schéma est `fr_siren` : c'est alors, par
   // définition, un SIREN. En bac à sable le numéro est fictif (000000002) et ne
-  // désigne rien dans l'annuaire français — on ne s'en sert donc pas.
+  // désigne rien dans l'annuaire français, on ne s'en sert donc pas.
   const conn = await getConnection(workspaceId);
   const sirenPlateforme =
     conn?.company_number_scheme === "fr_siren" ? toSiren(conn.company_number) : null;
@@ -171,10 +171,10 @@ export async function ouvrirLigneAnnuaire(
   // facturation le numéro SIREN de votre entreprise », et « la plupart des
   // entreprises feront le choix pragmatique de n'avoir qu'une seule adresse ».
   // Les formes composées existent pour l'organisation interne des grandes
-  // structures — un freelance n'en a aucun usage, et une adresse plus longue
+  // structures, un freelance n'en a aucun usage, et une adresse plus longue
   // est une adresse de plus à communiquer sans erreur.
   // En bac à sable, une ligne secondaire doit être préfixée par l'adresse
-  // principale — la plateforme le dit elle-même : « pour des raisons
+  // principale, la plateforme le dit elle-même : « pour des raisons
   // techniques, le Participant Id doit commencer par 315143296_57701_ ». Les
   // deux sociétés de test partageant un SIREN, c'est le suffixe de société qui
   // les sépare, et une ligne dérivée doit rester dans cet espace.
@@ -203,8 +203,8 @@ export async function ouvrirLigneAnnuaire(
     console.error(`[superpdp/ligne] HTTP ${res.status} ${texte.slice(0, 500)}`);
     // Le motif de la plateforme, quand elle en donne un.
     //
-    // « Réessayez dans un moment » sur un refus définitif — identifiant déjà
-    // pris, suffixe invalide, entreprise non vérifiée — envoie l'utilisateur
+    // « Réessayez dans un moment » sur un refus définitif, identifiant déjà
+    // pris, suffixe invalide, entreprise non vérifiée, envoie l'utilisateur
     // recommencer indéfiniment une action qui n'aboutira jamais, et nous prive
     // du seul indice utile. Même défaut que sur l'encaissement, corrigé pour la
     // même raison.
@@ -231,7 +231,7 @@ export async function ouvrirLigneAnnuaire(
 export type EchecFermeture =
   /** Aucune ligne à fermer : ce n'est pas une erreur. */
   | "absente"
-  /** Portabilité en cours — fermer casserait le transfert. */
+  /** Portabilité en cours, fermer casserait le transfert. */
   | "migration"
   /** La plateforme a refusé. */
   | "refuse";
@@ -244,7 +244,7 @@ export type EchecFermeture =
  * restait : l'annuaire continuait d'annoncer qu'il était joignable via
  * Super PDP alors que Deviso ne lisait plus rien. Les factures qu'on lui
  * adressait tombaient dans le vide, sans que personne ne le lui dise. On le
- * prévenait, et on l'envoyait finir la manœuvre sur l'interface de Super PDP —
+ * prévenait, et on l'envoyait finir la manœuvre sur l'interface de Super PDP -
  * une moitié de cycle de vie.
  *
  * ⚠️ Le garde-fou est le cœur de cette fonction, pas la suppression.
@@ -254,14 +254,14 @@ export type EchecFermeture =
  * de la migration, la ligne d'annuaire est en erreur côté SUPER PDP, mais ça
  * n'est pas grave, **il ne faut pas la supprimer** » (documentation Super PDP,
  * article « Annuaire »). L'ancienne plateforme a cinq jours pour rendre la
- * main. Supprimer à cet instant, c'est interrompre son propre transfert — et
+ * main. Supprimer à cet instant, c'est interrompre son propre transfert, et
  * l'utilisateur qui vient de voir un encadré ambre « erreur » est précisément
  * celui qui aura envie d'appuyer sur le bouton.
  *
  * On refuse donc, plutôt que de faire confiance au texte d'avertissement.
  *
- * Les adresses `is_replyto` ne sont de toute façon pas supprimables — « Reply-to
- * addresses are technical addresses and cannot be deleted » — et
+ * Les adresses `is_replyto` ne sont de toute façon pas supprimables, « Reply-to
+ * addresses are technical addresses and cannot be deleted », et
  * `lireLigneAnnuaire` les écarte déjà.
  */
 export async function fermerLigneAnnuaire(
@@ -270,7 +270,7 @@ export async function fermerLigneAnnuaire(
    * Ferme CETTE ligne plutôt que celle que l'écran montre.
    *
    * Sans ce paramètre, la fonction ne sait fermer que la ligne principale, et
-   * l'éprouver revient donc à rendre le compte injoignable puis à le rouvrir —
+   * l'éprouver revient donc à rendre le compte injoignable puis à le rouvrir -
    * ce qui, en bac à sable, ne restitue même pas la même adresse : `ouvrir`
    * reconstruit `0225:SIREN` alors que les sociétés de test se distinguent par
    * un suffixe. Le seul chemin destructeur de l'intégration serait resté le

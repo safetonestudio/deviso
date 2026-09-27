@@ -3,7 +3,7 @@
  *
  * Pourquoi cette traversee existe. La TVA sur les prestations de services est
  * exigible A L'ENCAISSEMENT. Quelqu'un qui pointe le 29 un virement recu le 12
- * declarait, jusqu'ici, une date fausse de dix-sept jours — et pas sur un
+ * declarait, jusqu'ici, une date fausse de dix-sept jours, et pas sur un
  * detail d'affichage : sur la donnee qui determine la periode de declaration.
  *
  * La chaine complete compte cinq maillons, et un seul suffit a la casser :
@@ -81,7 +81,7 @@ console.log("");
  * Attendre que la Plateforme Agreee ait fini d'ingerer la facture.
  *
  * Tant qu'elle n'a pose que `api:uploaded`, elle refuse tout evenement de
- * cycle de vie dessus — « La facture liee est en cours de traitement,
+ * cycle de vie dessus, « La facture liee est en cours de traitement,
  * reessayer plus tard ». Le `fr:212` part alors dans le vide, et ce script
  * echouait en annoncant « l'encaissement n'est pas declare » : un diagnostic
  * faux, puisque le produit rattrape ce refus transitoire a la synchronisation
@@ -173,7 +173,7 @@ const encaisseAt = marquee.body?.invoice?.superpdp_encaisse_at;
 verifier(
   "l'encaissement est déclaré sans avoir à le demander",
   Boolean(encaisseAt),
-  `superpdp_encaisse_at = ${encaisseAt ?? "null"} — un fr:212 refusé laisserait ce champ vide`,
+  `superpdp_encaisse_at = ${encaisseAt ?? "null"}, un fr:212 refusé laisserait ce champ vide`,
 );
 
 verifier(
@@ -212,7 +212,7 @@ verifier(
   `date déclarée = ${men?.date ?? "aucune"} attendu ${PAYEE_LE}`,
 );
 
-// Le montant encaissé net est le TTC, pas le HT — vérifié le 02/09/2026 sur un
+// Le montant encaissé net est le TTC, pas le HT, vérifié le 02/09/2026 sur un
 // bloc que la plateforme avait construit elle-même. On le réaffirme ici, parce
 // que c'est contre-intuitif et que personne ne le redécouvrira à la lecture.
 verifier(

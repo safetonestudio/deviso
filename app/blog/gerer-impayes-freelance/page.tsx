@@ -183,10 +183,10 @@ export default function Page() {
               <div className="bg-ds-surface border border-ds-border rounded-xl p-5">
                 <p className="text-sm font-semibold text-white mb-2">Ce que le juge regardera en premier</p>
                 <ul className="text-gray-400 text-sm space-y-1">
-                  <li>— Le devis : a-t-il été signé ? Ce qui était convenu est-il clairement décrit ?</li>
-                  <li>— La livraison : avez-vous une preuve que la mission a été accomplie ?</li>
-                  <li>— Les échanges : le client a-t-il validé les livrables par email ?</li>
-                  <li>— Les relances : avez-vous mis en demeure avant d&apos;agir ?</li>
+                  <li>, Le devis : a-t-il été signé ? Ce qui était convenu est-il clairement décrit ?</li>
+                  <li>, La livraison : avez-vous une preuve que la mission a été accomplie ?</li>
+                  <li>, Les échanges : le client a-t-il validé les livrables par email ?</li>
+                  <li>, Les relances : avez-vous mis en demeure avant d&apos;agir ?</li>
                 </ul>
               </div>
             </section>

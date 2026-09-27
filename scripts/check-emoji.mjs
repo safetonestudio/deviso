@@ -1,5 +1,5 @@
 /**
- * check:emoji — aucun emoji dans ce que l'utilisateur voit.
+ * check:emoji, aucun emoji dans ce que l'utilisateur voit.
  *
  * Pourquoi ce contrôle existe. Les 133 emoji de l'interface étaient rendus par
  * la police du système : multicolores, et différents sur chaque appareil. À
@@ -10,13 +10,13 @@
  * Ils ont été remplacés le 22/08/2026. Ce script est là pour que la leçon tienne
  * sans être racontée : un emoji qui revient fait échouer `npm run verify`.
  *
- * ⚠️ Ce que ce contrôle NE couvre PAS — à écrire noir sur blanc, c'est la règle :
+ * ⚠️ Ce que ce contrôle NE couvre PAS, à écrire noir sur blanc, c'est la règle :
  *   · il ne dit rien du **choix** de l'icône (une `Bell` là où il fallait une
  *     `Send` passe au vert) ;
  *   · il ne dit rien de la **taille** ni de la **couleur** : une icône lucide
  *     en 32 px pastel au milieu d'une ligne de texte passe au vert ;
  *   · il ne regarde pas les commentaires de code, ni les objets d'email
- *     construits ailleurs qu'ici — l'objet est vérifié par `check:emails` ;
+ *     construits ailleurs qu'ici, l'objet est vérifié par `check:emails` ;
  *   · il ne voit pas les emoji saisis par un utilisateur dans ses propres
  *     données (titre de devis, nom de prestation) : ce sont ses données, pas
  *     notre interface.
@@ -88,11 +88,11 @@ for (const dossier of DOSSIERS) {
 }
 
 if (problemes.length === 0) {
-  console.log(`check:emoji — ${lus} fichiers, aucun emoji dans l'interface.`);
+  console.log(`check:emoji, ${lus} fichiers, aucun emoji dans l'interface.`);
   process.exit(0);
 }
 
-console.error(`check:emoji — ${problemes.length} emoji dans l'interface :\n`);
+console.error(`check:emoji, ${problemes.length} emoji dans l'interface :\n`);
 for (const p of problemes) {
   console.error(`  ${p.fichier}:${p.ligne}  ${p.car}`);
   console.error(`    ${p.extrait}`);

@@ -3,7 +3,7 @@
  *
  * Pourquoi ce fichier existe. Les défauts trouvés dans la nuit du 07 au
  * 08/09/2026 avaient tous le même profil : le code s'exécute, le fichier
- * s'ouvre, le document s'imprime — et le chiffre est faux. Un export CSV dont
+ * s'ouvre, le document s'imprime, et le chiffre est faux. Un export CSV dont
  * chaque ligne est décalée d'une colonne s'ouvre parfaitement dans Excel. Un
  * FEC qui compte les avoirs comme des ventes reste équilibré au débit-crédit,
  * donc le cabinet ne voit rien. Une facture dont les lignes ne sont pas
@@ -12,7 +12,7 @@
  * Rien de tout cela n'est attrapable par une traversée fonctionnelle : il n'y a
  * pas d'échec à observer. On surveille donc la FORME du code, comme le font
  * déjà `check-theme-clair.mjs` et `check-stripe.mjs`, et chaque contrôle porte
- * sa contre-épreuve — un motif fautif fabriqué sur place, dont on vérifie qu'il
+ * sa contre-épreuve, un motif fautif fabriqué sur place, dont on vérifie qu'il
  * serait bien détecté. Sans contre-épreuve, un contrôle qui ne trouve jamais
  * rien est indiscernable d'un contrôle cassé.
  *
@@ -59,7 +59,7 @@ for (const f of [
 ]) {
   const src = lire(f);
   exige(
-    `${f.split("/").at(-2)} — séparateur compatible avec la virgule décimale`,
+    `${f.split("/").at(-2)}, séparateur compatible avec la virgule décimale`,
     !csvVirgule(src) && /const SEP = ";"/.test(src),
     "les montants sont à la française : joints par une virgule, ils cassent chaque ligne",
   );
@@ -68,7 +68,7 @@ for (const f of [
   // règle que là où du texte libre entre dans le fichier.
   if (/function esc\(/.test(src)) {
     exige(
-      `${f.split("/").at(-2)} — l'échappement couvre le point-virgule`,
+      `${f.split("/").at(-2)}, l'échappement couvre le point-virgule`,
       /\/\[;,"/.test(src),
       "un nom de client contenant « ; » casserait la ligne à son tour",
     );
@@ -80,22 +80,22 @@ contreEpreuve("séparateur CSV", csvVirgule, 'const csv = BOM + [h, ...rows.map(
 {
   const src = lire("app/api/export/fec/route.ts");
   exige(
-    "FEC — un avoir s'enregistre en sens inverse",
+    "FEC, un avoir s'enregistre en sens inverse",
     /estAvoir/.test(src) && /estAvoir \? 0 : ttc/.test(src),
     "les montants d'un avoir sont positifs (BR-27) : additionnés, ils doublent le CA et la TVA collectée",
   );
   exige(
-    "FEC — la date de règlement est la date d'encaissement",
+    "FEC, la date de règlement est la date d'encaissement",
     /paid_at \|\| inv\.updated_at/.test(src),
     "`updated_at` bouge à la moindre modification : une facture rouverte en janvier datait l'écriture de banque hors exercice",
   );
   exige(
-    "FEC — le compte auxiliaire est stable d'une facture à l'autre",
+    "FEC, le compte auxiliaire est stable d'une facture à l'autre",
     /clientCode\(clientLib\)/.test(src),
     "dérivé de l'index de ligne, un même client changeait de code à chaque facture et le lettrage devenait inexploitable",
   );
   exige(
-    "FEC — les ventes de biens vont au 707",
+    "FEC, les ventes de biens vont au 707",
     /707000/.test(src),
     "tout était imputé en 706 « prestations de services », y compris les livraisons de biens",
   );
@@ -105,19 +105,19 @@ contreEpreuve("séparateur CSV", csvVirgule, 'const csv = BOM + [h, ...rows.map(
 {
   const src = lire("app/(dashboard)/invoices/new/page.tsx");
   exige(
-    "facture — le total d'une ligne est arrondi au centime",
+    "facture, le total d'une ligne est arrondi au centime",
     /updated\.total = Math\.round\(/.test(src),
     "non arrondi, il rend la somme des lignes différente du total imprimé, et le XML viole BR-CO-10",
   );
   exige(
-    "facture — les totaux le sont aussi",
+    "facture, les totaux le sont aussi",
     /const centimes = \(n: number\) => Math\.round/.test(src),
     "l'écran annonçait 45,00 € de TVA là où le PDF en imprimait 44,99",
   );
 
   const api = lire("app/api/invoices/route.ts");
   exige(
-    "facture — le serveur recalcule les totaux au lieu de croire le navigateur",
+    "facture, le serveur recalcule les totaux au lieu de croire le navigateur",
     /totalHtCalcule/.test(api) && /total_ht: totalHtCalcule/.test(api),
     "`...body` insérait les totaux tels quels : un appel API direct enregistrait une facture de trois lignes à 100 € portant « total HT : 5 € »",
   );
@@ -128,7 +128,7 @@ contreEpreuve("séparateur CSV", csvVirgule, 'const csv = BOM + [h, ...rows.map(
   const repli = (src) => /\|\|\s*`?\$?\{?new Date\(\)\.getFullYear\(\)\}?[^`]*`/.test(src) && /invoice_number|number =/.test(src);
   const src = lire("app/api/cron/recurring/route.ts");
   exige(
-    "factures récurrentes — pas de numéro de repli",
+    "factures récurrentes, pas de numéro de repli",
     !/`\$\{new Date\(\)\.getFullYear\(\)\}-REC`/.test(src) && /numeroDocument/.test(src),
     "toutes les factures récurrentes de tous les comptes auraient pris le numéro « 2026-REC », en doublon et hors norme (art. 242 nonies A du CGI)",
   );
@@ -148,7 +148,7 @@ for (const [f, quoi] of [
 ]) {
   const src = lire(f);
   exige(
-    `${quoi} — un avoir se retranche du chiffre d'affaires`,
+    `${quoi}, un avoir se retranche du chiffre d'affaires`,
     /invoice_type === "avoir" \? -1 : 1/.test(src),
     "ses montants sont positifs : additionnés, une facture annulée affichait le double au lieu de zéro",
   );
@@ -165,7 +165,7 @@ for (const f of [
 ]) {
   const src = lire(f);
   exige(
-    `${f.split("/").at(-2)} — référence au document lié résolue par la règle partagée`,
+    `${f.split("/").at(-2)}, référence au document lié résolue par la règle partagée`,
     /documentLie\(/.test(src) && /lie\.numero, lie\.date/.test(src),
     "sans la date (BT-26), le validateur officiel ne compte pas la référence : l'avoir est non conforme à BR-FR-CO-05",
   );
@@ -173,7 +173,7 @@ for (const f of [
 {
   const src = lire("lib/facturx.ts");
   exige(
-    "Factur-X — la date du document lié atteint le XML embarqué",
+    "Factur-X, la date du document lié atteint le XML embarqué",
     /linkedInvoiceDate\?: string \| null/.test(src) && /undefined, undefined, undefined, linkedInvoiceDate/.test(src),
     "le XML transmis à la Plateforme Agréée la portait, celui embarqué dans le PDF non : deux XML pour un même avoir",
   );
@@ -183,9 +183,9 @@ for (const f of [
 {
   const src = lire("app/api/invoices/[id]/send-email/route.ts");
   exige(
-    "courriel — un avoir ne réclame pas de paiement",
+    "courriel, un avoir ne réclame pas de paiement",
     /const estAvoir/.test(src) && /!estAvoir/.test(src),
-    "l'objet annonçait « Votre facture », le corps « à régler avant le… », avec bouton de paiement et IBAN — sur un document qui crédite le client",
+    "l'objet annonçait « Votre facture », le corps « à régler avant le… », avec bouton de paiement et IBAN, sur un document qui crédite le client",
   );
 }
 
@@ -195,7 +195,7 @@ for (const f of [
   for (const f of ["lib/invoice-xml.ts", "lib/invoice-pdf.tsx"]) {
     const src = lire(f);
     exige(
-      `${f} — le motif d'exonération vient de la règle partagée`,
+      `${f}, le motif d'exonération vient de la règle partagée`,
       /motifExoneration/.test(src) && !franchiseDeduite(src),
       "« taux à zéro » valait « franchise en base, art. 293 B » : une livraison intracommunautaire déclarait par écrit un régime qui n'est pas celui du vendeur",
     );
@@ -222,9 +222,9 @@ console.log("");
   ]) {
     const src = lire(f);
     exige(
-      `${f.split("/").at(-2)} — contrôle par cronAutorise`,
+      `${f.split("/").at(-2)}, contrôle par cronAutorise`,
       /cronAutorise\(req\)/.test(src) && !enDur(src),
-      "sans la variable d'environnement, le gabarit produisait « Bearer undefined » — devinable, donc ouvert",
+      "sans la variable d'environnement, le gabarit produisait « Bearer undefined », devinable, donc ouvert",
     );
   }
   contreEpreuve("comparaison de secret en dur", enDur, "if (auth !== `Bearer ${process.env.CRON_SECRET}`) return;");
@@ -241,7 +241,7 @@ for (const f of [
 ]) {
   const src = lire(f);
   exige(
-    `${f.replace("app/api/", "")} — profil lu sur l'espace, pas sur la personne`,
+    `${f.replace("app/api/", "")}, profil lu sur l'espace, pas sur la personne`,
     /getWorkspaceProfile/.test(src) && !/from\("profiles"\)[\s\S]{0,200}?eq\("id", user\.id\)/.test(src),
     "un collaborateur générait le PDF avec SON IBAN : le client payait sur le mauvais compte",
   );
@@ -251,7 +251,7 @@ for (const f of [
 {
   const src = lire("app/(dashboard)/dashboard/page.tsx");
   exige(
-    "tableau de bord — filtre d'espace explicite en plus de la RLS",
+    "tableau de bord, filtre d'espace explicite en plus de la RLS",
     (src.match(/\.eq\("user_id", workspaceId\)/g) ?? []).length >= 2,
     "les deux requêtes s'en remettaient à une policy qui vit ailleurs, et que `supabase/schema.sql` peut réintroduire trop large",
   );
@@ -261,7 +261,7 @@ for (const f of [
 {
   const src = lire("app/api/proposals/[id]/route.ts");
   exige(
-    "devis — PATCH filtré par liste blanche",
+    "devis, PATCH filtré par liste blanche",
     /MODIFIABLES/.test(src) && !/\.update\(body\)/.test(src),
     "`approval_status`, `signed_at`, `signer_ip` et `signature_hash` étaient réinscriptibles : la piste d'audit d'une signature ne prouvait plus rien",
   );
@@ -271,13 +271,13 @@ for (const f of [
 {
   const signup = lire("app/api/team/invite-signup/route.ts");
   exige(
-    "invitation — l'adresse créée est celle qui a été invitée",
+    "invitation, l'adresse créée est celle qui a été invitée",
     /EMAIL_MISMATCH/.test(signup),
     "`email_confirm: true` marquait comme vérifiée une adresse qu'on ne possède pas",
   );
   const accept = lire("app/api/team/accept/[token]/route.ts");
   exige(
-    "invitation — l'acceptation vérifie l'adresse côté serveur",
+    "invitation, l'acceptation vérifie l'adresse côté serveur",
     /user\.email[\s\S]{0,120}invite\.email/.test(accept),
     "le contrôle n'existait que dans le navigateur : le jeton seul ouvrait l'espace",
   );
@@ -287,7 +287,7 @@ for (const f of [
 {
   const src = lire("app/api/superpdp/disconnect/route.ts");
   exige(
-    "Plateforme Agréée — seul le propriétaire peut débrancher",
+    "Plateforme Agréée, seul le propriétaire peut débrancher",
     /isTeamMember\(user\.id\)/.test(src),
     "`fermerLigne: true` contournait la garde de `ligne-annuaire` : un collaborateur rendait l'entreprise injoignable dans toute la France",
   );
@@ -297,12 +297,12 @@ for (const f of [
 {
   const src = lire("app/api/proposals/[id]/send-email/route.ts");
   exige(
-    "courriel de devis — le lien est reconstruit côté serveur",
+    "courriel de devis, le lien est reconstruit côté serveur",
     /proposalShareUrl\(publicBaseUrl/.test(src) && !/const \{ to, shareUrl/.test(src),
     "un `shareUrl` fourni par l'appelant faisait de la route un relais d'hameçonnage signé SPF/DKIM par getdeviso.fr",
   );
   exige(
-    "courriel de devis — les valeurs interpolées sont échappées",
+    "courriel de devis, les valeurs interpolées sont échappées",
     /echapperHtml/.test(src) && /echapperUrl/.test(src),
     "un nom d'entreprise contenant du HTML entrait tel quel dans le message",
   );
@@ -316,22 +316,22 @@ console.log("");
 {
   const src = lire("app/api/public/proposals/[token]/route.ts");
   exige(
-    "signature de devis — notification en base, pas seulement un courriel",
+    "signature de devis, notification en base, pas seulement un courriel",
     /notifierProprietaire\([\s\S]{0,200}proposal_signed/.test(src),
     "le seul signal était un courriel dans un `catch` vide : un refus de Resend, et le vendeur n'apprenait jamais qu'il avait décroché la mission",
   );
   exige(
-    "refus de devis — idem",
+    "refus de devis, idem",
     /notifierProprietaire\([\s\S]{0,200}proposal_declined/.test(src),
     "`NotificationBell` affiche `proposal_declined` depuis toujours ; rien n'insérait la ligne",
   );
   exige(
-    "signature de devis — le nom du signataire est échappé dans le courriel",
+    "signature de devis, le nom du signataire est échappé dans le courriel",
     /echapperHtml\(signerName/.test(src),
     "il vient du formulaire public : interpolé tel quel, il entre comme du HTML dans un message signé par notre domaine",
   );
   exige(
-    "signature de devis — l'échec d'envoi est journalisé",
+    "signature de devis, l'échec d'envoi est journalisé",
     !/\} catch \{ \/\* non-blocking \*\/ \}/.test(src),
     "un `catch` vide transforme une panne en absence, et une absence ne se diagnostique pas",
   );
@@ -341,14 +341,14 @@ console.log("");
 {
   const src = lire("app/api/webhooks/stripe/route.ts");
   exige(
-    "webhook — plus de branche morte prétendant rapprocher un paiement par lien",
+    "webhook, plus de branche morte prétendant rapprocher un paiement par lien",
     !/metadata\?\.invoice_id/.test(src),
     "`payment-link` ne crée plus aucune session Stripe : l'argent va directement chez l'utilisateur, ce webhook ne peut par construction rien en voir. Le code laissait croire l'inverse.",
   );
 
   const ui = lire("app/(dashboard)/invoices/[id]/page.tsx");
   exige(
-    "lien de paiement — l'interface dit que le suivi est manuel",
+    "lien de paiement, l'interface dit que le suivi est manuel",
     /Deviso ne voit pas/.test(ui) && /marquer la facture/.test(ui),
     "l'utilisateur copie un lien depuis son logiciel de facturation et suppose que celui-ci suivra le paiement. Le silence coûtait la déclaration d'encaissement (fr:212).",
   );
@@ -358,19 +358,19 @@ console.log("");
 {
   const src = lire("app/(dashboard)/dashboard/page.tsx");
   exige(
-    "tableau de bord — le récapitulatif de CA est monté",
+    "tableau de bord, le récapitulatif de CA est monté",
     /<CaUrssafWidget/.test(src),
-    "le composant existait, complet, et n'était monté nulle part — alors que le tour du produit le promet explicitement",
+    "le composant existait, complet, et n'était monté nulle part, alors que le tour du produit le promet explicitement",
   );
   exige(
-    "récapitulatif — daté de l'encaissement, pas de l'émission",
+    "récapitulatif, daté de l'encaissement, pas de l'émission",
     /f\.paid_at \|\| f\.issue_date/.test(src),
     "on déclare ce qu'on a perçu sur la période : une facture émise en mars et réglée en avril appartient à avril",
   );
 
   const widget = lire("components/CaUrssafWidget.tsx");
   exige(
-    "récapitulatif — les échéances URSSAF ne s'affichent que si elles s'appliquent",
+    "récapitulatif, les échéances URSSAF ne s'affichent que si elles s'appliquent",
     /echeancesUrssaf/.test(widget),
     "« 30 avril », « 31 juillet » sont les dates du micro-entrepreneur : les montrer à une société serait une information fausse imprimée par l'outil",
   );
@@ -381,4 +381,4 @@ if (echecs > 0) {
   console.error(`${echecs} contrôle(s) en échec.`);
   process.exit(1);
 }
-console.log("check:comptable — toutes les régressions surveillées sont absentes.");
+console.log("check:comptable, toutes les régressions surveillées sont absentes.");

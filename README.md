@@ -1,4 +1,4 @@
-# Deviso — Générateur de devis IA pour freelances
+# Deviso, Générateur de devis IA pour freelances
 
 > Devis professionnel en 30 secondes grâce à l'IA. Conçu pour les freelances et indépendants français.
 
@@ -6,11 +6,11 @@
 
 ## Stack technique
 
-- **Next.js 15** (App Router) — fullstack React
-- **Supabase** — base de données PostgreSQL + auth + temps réel
-- **OpenAI GPT-4o** — génération des devis en langage naturel
-- **Tailwind CSS** — styles
-- **TypeScript** — typage fort
+- **Next.js 15** (App Router), fullstack React
+- **Supabase**, base de données PostgreSQL + auth + temps réel
+- **OpenAI GPT-4o**, génération des devis en langage naturel
+- **Tailwind CSS**, styles
+- **TypeScript**, typage fort
 
 ---
 

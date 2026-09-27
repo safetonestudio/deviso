@@ -12,15 +12,15 @@ export { siegesDus, MEMBRES_INCLUS };
  * l'acceptation d'une invitation et `quantity - 1` au retrait d'un membre :
  *
  * 1. **Elle facturait dès le premier collaborateur.** Les CGU vendent pourtant
- *    « 3 utilisateurs inclus — le titulaire du compte et 2 membres — , +5 €/mois
+ *    « 3 utilisateurs inclus, le titulaire du compte et 2 membres, +5 €/mois
  *    par utilisateur supplémentaire ». Un client Pro qui invitait deux personnes
  *    payait donc 10 €/mois qui ne lui étaient pas dus, et la page de facturation
  *    lui affichait en même temps la promesse inverse.
  *
  * 2. **Un compteur dérive, un calcul non.** Le double clic sur un lien
  *    d'invitation avait déjà fait facturer deux sièges pour un collaborateur ;
- *    l'acceptation a été rendue atomique pour ça. Mais toute autre divergence —
- *    un membre supprimé en base, un appel perdu, une reprise manuelle — laissait
+ *    l'acceptation a été rendue atomique pour ça. Mais toute autre divergence -
+ *    un membre supprimé en base, un appel perdu, une reprise manuelle, laissait
  *    la quantité Stripe et la réalité s'écarter sans que rien ne les rapproche.
  *
  * On lit donc le nombre de membres actifs, on en déduit les sièges dus, et on

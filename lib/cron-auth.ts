@@ -10,7 +10,7 @@ import { timingSafeEqual } from "node:crypto";
  *
  * Elle a un défaut qui ne se voit pas à la lecture : quand `CRON_SECRET`
  * n'existe pas dans l'environnement, le gabarit produit la chaîne
- * `"Bearer undefined"`. La comparaison ne devient pas fausse — elle devient
+ * `"Bearer undefined"`. La comparaison ne devient pas fausse, elle devient
  * **devinable**. N'importe qui envoyant cet en-tête déclenche alors l'envoi de
  * toutes les relances clients, la génération de toutes les factures
  * récurrentes, ou la purge des comptes de démonstration. Une variable

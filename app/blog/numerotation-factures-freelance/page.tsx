@@ -11,7 +11,7 @@ const SECTIONS: Section[] = [
     titre: "Ce que la loi demande, en une phrase",
     paragraphes: [
       "L&rsquo;article 242 nonies A de l&rsquo;annexe II au Code général des impôts impose que chaque facture porte <strong>un numéro unique, fondé sur une séquence chronologique et continue</strong>. Trois mots, trois contraintes : unique, chronologique, continue.",
-      "<strong>Unique</strong> : deux factures ne portent jamais le même numéro. <strong>Chronologique</strong> : les numéros suivent l&rsquo;ordre d&rsquo;émission, une facture du 3 mars ne peut pas avoir un numéro postérieur à une facture du 12 mars. <strong>Continue</strong> : aucun trou dans la série — et c&rsquo;est celle qu&rsquo;on casse sans le vouloir.",
+      "<strong>Unique</strong> : deux factures ne portent jamais le même numéro. <strong>Chronologique</strong> : les numéros suivent l&rsquo;ordre d&rsquo;émission, une facture du 3 mars ne peut pas avoir un numéro postérieur à une facture du 12 mars. <strong>Continue</strong> : aucun trou dans la série, et c&rsquo;est celle qu&rsquo;on casse sans le vouloir.",
       "Le format, lui, est libre. La loi ne vous impose ni préfixe, ni année, ni longueur. Elle impose la propriété de la suite, pas son apparence.",
     ],
   },
@@ -20,7 +20,7 @@ const SECTIONS: Section[] = [
     ton: "info",
     titre: "Pourquoi l&rsquo;administration y tient autant",
     texte:
-      "Une séquence continue est une <strong>preuve d&rsquo;exhaustivité</strong>. Si les factures vont de 1 à 150 sans trou, toutes les recettes sont là. Un trou devient une question : qu&rsquo;y avait-il à cet endroit ? C&rsquo;est pour cela qu&rsquo;un numéro manquant n&rsquo;est pas une coquille administrative mais un indice de recette dissimulée — la charge de la preuve se retourne contre vous.",
+      "Une séquence continue est une <strong>preuve d&rsquo;exhaustivité</strong>. Si les factures vont de 1 à 150 sans trou, toutes les recettes sont là. Un trou devient une question : qu&rsquo;y avait-il à cet endroit ? C&rsquo;est pour cela qu&rsquo;un numéro manquant n&rsquo;est pas une coquille administrative mais un indice de recette dissimulée, la charge de la preuve se retourne contre vous.",
   },
   {
     type: "texte",
@@ -63,7 +63,7 @@ const SECTIONS: Section[] = [
     type: "texte",
     titre: "Les séries distinctes : autorisées, mais à condition",
     paragraphes: [
-      "La doctrine fiscale admet plusieurs séries de numérotation en parallèle, lorsque les conditions d&rsquo;exercice de l&rsquo;activité le justifient. Les exemples qu&rsquo;elle retient : plusieurs sites de facturation, plusieurs catégories de clients soumis à des règles différentes, ou plusieurs modalités d&rsquo;émission — papier, électronique, autofacturation.",
+      "La doctrine fiscale admet plusieurs séries de numérotation en parallèle, lorsque les conditions d&rsquo;exercice de l&rsquo;activité le justifient. Les exemples qu&rsquo;elle retient : plusieurs sites de facturation, plusieurs catégories de clients soumis à des règles différentes, ou plusieurs modalités d&rsquo;émission, papier, électronique, autofacturation.",
       "Dans ce cas, chaque série doit recevoir un <strong>préfixe distinct</strong> écartant toute confusion, chaque série reste chronologique et continue pour elle-même, et deux factures de la même année ne peuvent pas porter le même numéro, toutes séries confondues.",
       "Ce que la doctrine <strong>refuse</strong> explicitement : créer une série par client ou par État membre au seul motif que vos clients sont dans plusieurs pays. Ce n&rsquo;est pas une condition d&rsquo;exercice, c&rsquo;est une commodité de classement.",
       "Pour un freelance seul, la réponse est presque toujours la même : <strong>une seule série</strong>. Le besoin de séries multiples apparaît avec plusieurs établissements, pas avec plusieurs types de missions.",
@@ -74,7 +74,7 @@ const SECTIONS: Section[] = [
     ton: "alerte",
     titre: "Les devis ne sont pas des factures",
     texte:
-      "Un devis n&rsquo;entre pas dans la séquence des factures et n&rsquo;est soumis à aucune obligation de numérotation fiscale. Mais numérotez-les quand même, dans une suite <em>séparée</em> — <code>DEV-2026-001</code> —, pour pouvoir y faire référence sur la facture correspondante. Mélanger devis et factures dans une même suite crée des trous le jour où un devis n&rsquo;est pas signé.",
+      "Un devis n&rsquo;entre pas dans la séquence des factures et n&rsquo;est soumis à aucune obligation de numérotation fiscale. Mais numérotez-les quand même, dans une suite <em>séparée</em>, <code>DEV-2026-001</code>, pour pouvoir y faire référence sur la facture correspondante. Mélanger devis et factures dans une même suite crée des trous le jour où un devis n&rsquo;est pas signé.",
   },
   {
     type: "liste",
@@ -112,7 +112,7 @@ const SECTIONS: Section[] = [
     type: "texte",
     titre: "Réparer une série déjà cassée",
     paragraphes: [
-      "Voici la partie que les pages sur le sujet escamotent, parce qu&rsquo;elle n&rsquo;a pas de réponse réglementaire nette : la doctrine décrit l&rsquo;obligation, pas le rattrapage. Il ne faut donc pas chercher une procédure officielle — elle n&rsquo;existe pas — mais adopter la conduite la plus défendable.",
+      "Voici la partie que les pages sur le sujet escamotent, parce qu&rsquo;elle n&rsquo;a pas de réponse réglementaire nette : la doctrine décrit l&rsquo;obligation, pas le rattrapage. Il ne faut donc pas chercher une procédure officielle, elle n&rsquo;existe pas, mais adopter la conduite la plus défendable.",
       "Et le premier réflexe est de résister à la tentation de renuméroter. <strong>On ne renumérote jamais des factures déjà envoyées.</strong> Elles sont chez vos clients, dans leur comptabilité, parfois déjà payées et rapprochées d&rsquo;un relevé bancaire. Les changer crée deux versions d&rsquo;un même document : un problème bien plus grave que le trou d&rsquo;origine.",
     ],
   },
@@ -124,7 +124,7 @@ const SECTIONS: Section[] = [
       {
         titre: "Arrêter l&rsquo;hémorragie",
         texte:
-          "Identifiez la cause — deux outils, un brouillon numéroté, une suppression — et corrigez-la avant tout. Réparer une série qui continue de se casser ne sert à rien.",
+          "Identifiez la cause, deux outils, un brouillon numéroté, une suppression, et corrigez-la avant tout. Réparer une série qui continue de se casser ne sert à rien.",
       },
       {
         titre: "Lister les numéros manquants",
@@ -134,7 +134,7 @@ const SECTIONS: Section[] = [
       {
         titre: "Écrire une note explicative, datée, et la conserver",
         texte:
-          "Un simple document : « Les numéros 2026-017 et 2026-023 n&rsquo;ont jamais été attribués à une facture. Cause : brouillons numérotés puis abandonnés avant émission. Aucune recette ne correspond à ces numéros. » Daté, signé, archivé avec les factures de l&rsquo;exercice. Cette note est votre réponse préparée à l&rsquo;avance — et elle vaut infiniment mieux qu&rsquo;une explication improvisée deux ans plus tard.",
+          "Un simple document : « Les numéros 2026-017 et 2026-023 n&rsquo;ont jamais été attribués à une facture. Cause : brouillons numérotés puis abandonnés avant émission. Aucune recette ne correspond à ces numéros. » Daté, signé, archivé avec les factures de l&rsquo;exercice. Cette note est votre réponse préparée à l&rsquo;avance, et elle vaut infiniment mieux qu&rsquo;une explication improvisée deux ans plus tard.",
       },
       {
         titre: "Reprendre la suite là où elle est",
@@ -153,7 +153,7 @@ const SECTIONS: Section[] = [
     titre: "Ce que la facturation électronique change",
     paragraphes: [
       "À partir du moment où vos factures transitent par une plateforme agréée, le numéro cesse d&rsquo;être une information interne : il devient une <strong>donnée structurée transmise à l&rsquo;administration</strong>, au même titre que le montant ou le SIREN du client. C&rsquo;est la différence majeure avec le PDF d&rsquo;hier.",
-      "Et ce numéro est la clé qui relie tout le reste : c&rsquo;est par lui que le cycle de vie de la facture est suivi — déposée, refusée, encaissée, rejetée —, et c&rsquo;est lui que vous citerez dans un avoir ou une facture rectificative. Un numéro en doublon devient un conflit d&rsquo;identification, pas seulement une maladresse.",
+      "Et ce numéro est la clé qui relie tout le reste : c&rsquo;est par lui que le cycle de vie de la facture est suivi, déposée, refusée, encaissée, rejetée, et c&rsquo;est lui que vous citerez dans un avoir ou une facture rectificative. Un numéro en doublon devient un conflit d&rsquo;identification, pas seulement une maladresse.",
       "La conséquence concrète : la numérotation à la main, dans un tableur, n&rsquo;a plus vraiment de place après septembre 2027. Le numéro doit être généré par l&rsquo;outil qui émet, au moment où il émet, et une seule fois.",
     ],
   },
@@ -162,14 +162,14 @@ const SECTIONS: Section[] = [
     ton: "succes",
     titre: "La règle qui règle tout",
     texte:
-      "<strong>Un seul outil attribue les numéros, et il les attribue à l&rsquo;émission.</strong> Si cette phrase est vraie chez vous, vous ne casserez plus jamais votre série — et vous n&rsquo;aurez plus à vous demander quel était le dernier numéro utilisé.",
+      "<strong>Un seul outil attribue les numéros, et il les attribue à l&rsquo;émission.</strong> Si cette phrase est vraie chez vous, vous ne casserez plus jamais votre série, et vous n&rsquo;aurez plus à vous demander quel était le dernier numéro utilisé.",
   },
 ];
 
 const FAQ = [
   {
     q: "Quel format de numéro de facture choisir ?",
-    a: "Le format est libre : la loi n'impose que l'unicité, la chronologie et la continuité de la suite. Le format AAAA-NNN (2026-001) est le meilleur choix par défaut — il se trie correctement, il supporte une remise à zéro annuelle sans créer de doublon, et il reste lisible.",
+    a: "Le format est libre : la loi n'impose que l'unicité, la chronologie et la continuité de la suite. Le format AAAA-NNN (2026-001) est le meilleur choix par défaut, il se trie correctement, il supporte une remise à zéro annuelle sans créer de doublon, et il reste lisible.",
   },
   {
     q: "Puis-je recommencer ma numérotation à 1 chaque année ?",
@@ -185,7 +185,7 @@ const FAQ = [
   },
   {
     q: "Puis-je utiliser plusieurs séries de numérotation en même temps ?",
-    a: "Oui lorsque les conditions d'exercice de l'activité le justifient — plusieurs sites de facturation, plusieurs catégories de clients aux règles différentes, plusieurs modalités d'émission — avec un préfixe distinct par série et aucune collision de numéro sur l'année. En revanche, avoir des clients dans plusieurs pays ne justifie pas, à lui seul, une série par client ou par État.",
+    a: "Oui lorsque les conditions d'exercice de l'activité le justifient, plusieurs sites de facturation, plusieurs catégories de clients aux règles différentes, plusieurs modalités d'émission, avec un préfixe distinct par série et aucune collision de numéro sur l'année. En revanche, avoir des clients dans plusieurs pays ne justifie pas, à lui seul, une série par client ou par État.",
   },
   {
     q: "Les devis doivent-ils suivre la même numérotation que les factures ?",
@@ -199,12 +199,12 @@ const FAQ = [
 
 const SOURCES: Source[] = [
   {
-    libelle: "Légifrance — article 242 nonies A de l'annexe II au CGI",
+    libelle: "Légifrance, article 242 nonies A de l'annexe II au CGI",
     url: "https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000050811276",
     precision: "mentions obligatoires, dont le numéro unique fondé sur une séquence chronologique continue",
   },
   {
-    libelle: "BOFiP — BOI-TVA-DECLA-30-20-20-10, mentions obligatoires générales",
+    libelle: "BOFiP, BOI-TVA-DECLA-30-20-20-10, mentions obligatoires générales",
     url: "https://bofip.impots.gouv.fr/bofip/140-PGP.html/identifiant=BOI-TVA-DECLA-30-20-20-10-20131018",
     precision: "§ 70 à 130 : numérotation, séries distinctes et cas admis",
   },
@@ -214,11 +214,11 @@ export default function Page() {
   return (
     <ArticleLong
       slug={SLUG}
-      chapeau="Unique, chronologique, continue : trois mots du Code général des impôts qui font toute la règle. Le format, lui, est libre. Voici ceux qui tiennent dans le temps, les cinq façons de casser une série sans le vouloir — et la conduite à tenir quand c&rsquo;est déjà fait."
+      chapeau="Unique, chronologique, continue : trois mots du Code général des impôts qui font toute la règle. Le format, lui, est libre. Voici ceux qui tiennent dans le temps, les cinq façons de casser une série sans le vouloir, et la conduite à tenir quand c&rsquo;est déjà fait."
       enBref={[
         "La loi exige un <strong>numéro unique fondé sur une séquence chronologique et continue</strong>. Le format est libre.",
         "Le format <code>AAAA-NNN</code> est le meilleur choix par défaut ; la remise à zéro annuelle est permise si l&rsquo;année figure dans le numéro.",
-        "Les <strong>séries multiples</strong> sont admises quand l&rsquo;activité le justifie — mais avoir des clients dans plusieurs pays ne le justifie pas.",
+        "Les <strong>séries multiples</strong> sont admises quand l&rsquo;activité le justifie, mais avoir des clients dans plusieurs pays ne le justifie pas.",
         "Première cause de trou : <strong>supprimer une facture</strong>. On la corrige par un avoir, on ne l&rsquo;efface jamais.",
         "Série déjà cassée : on ne renumérote pas. On corrige la cause et on <strong>documente les trous par une note datée</strong>.",
       ]}

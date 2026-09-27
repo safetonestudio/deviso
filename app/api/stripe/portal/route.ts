@@ -43,7 +43,7 @@ export async function POST() {
     // On ne crée plus de client Stripe ici. Le portail sert à gérer un
     // abonnement existant : sans abonnement, il n'y a rien à gérer, et créer un
     // client à la volée remplissait le compte Stripe de production de fiches
-    // orphelines — notamment depuis les comptes de démonstration, purgés de la
+    // orphelines, notamment depuis les comptes de démonstration, purgés de la
     // base au bout de deux heures mais jamais de Stripe.
     if (!customerId) {
       return NextResponse.json(

@@ -12,12 +12,12 @@ export const metadata = metadonneesArticle(SLUG);
  *
  * Relevé du 20/09/2026, avant mise en ligne. En six jours, la liste des
  * opérateurs EN ATTENTE est passée de 16 à 14 ; les immatriculés sont restés
- * 149. C'est précisément ce que l'article affirme — et la raison pour laquelle
+ * 149. C'est précisément ce que l'article affirme, et la raison pour laquelle
  * la date de relevé est écrite en haut de la page plutôt que sous-entendue.
  *
  * ⚠️ Ce sont des chiffres qui bougent : la liste a gagné 90 opérateurs en huit
  * mois. Les revérifier à chaque mise à jour de l'article, et avancer
- * `misAJourLe` — c'est tout l'argument de la page.
+ * `misAJourLe`, c'est tout l'argument de la page.
  */
 const RELEVE = "20 septembre 2026";
 const IMMATRICULES = 149;
@@ -54,20 +54,20 @@ const SECTIONS: Section[] = [
   {
     type: "encadre",
     ton: "alerte",
-    titre: "Piège nº 1 — le nom du fichier dit le contraire de son contenu",
+    titre: "Piège nº 1, le nom du fichier dit le contraire de son contenu",
     texte:
-      "Le fichier des opérateurs <strong>immatriculés</strong> s’appelle <code>liste_pa_attente_rapport_audit</code>. L’« attente » dont parle ce nom est celle du rapport d’audit que chaque plateforme doit remettre <em>après</em> son immatriculation — pas celle de l’immatriculation. Celui des dossiers en attente s’appelle <code>liste_pa_attente_test_interop</code>. Télécharger les deux et se fier au nom de fichier conduit donc à inverser exactement les deux listes. C’est, à notre avis, l’origine d’une partie des chiffres contradictoires qui circulent.",
+      "Le fichier des opérateurs <strong>immatriculés</strong> s’appelle <code>liste_pa_attente_rapport_audit</code>. L’« attente » dont parle ce nom est celle du rapport d’audit que chaque plateforme doit remettre <em>après</em> son immatriculation, pas celle de l’immatriculation. Celui des dossiers en attente s’appelle <code>liste_pa_attente_test_interop</code>. Télécharger les deux et se fier au nom de fichier conduit donc à inverser exactement les deux listes. C’est, à notre avis, l’origine d’une partie des chiffres contradictoires qui circulent.",
   },
   {
     type: "tableau",
     titre: "Ce que la liste publie réellement",
     intro:
-      "Sept colonnes pour le fichier des immatriculés, six pour l’autre — qui n’a pas de date, puisqu’il n’y a pas encore de numéro.",
+      "Sept colonnes pour le fichier des immatriculés, six pour l’autre, qui n’a pas de date, puisqu’il n’y a pas encore de numéro.",
     colonnes: ["Colonne", "Contenu", "Présente dans"],
     lignes: [
       ["Nom commercial", "Le nom sous lequel l’opérateur se vend, pas sa raison sociale", "les deux fichiers"],
       ["Adresse", "Voie, code postal, commune (et pays pour les opérateurs étrangers)", "les deux fichiers"],
-      ["Site internet", "L’URL officielle — utile pour lever une homonymie", "les deux fichiers"],
+      ["Site internet", "L’URL officielle, utile pour lever une homonymie", "les deux fichiers"],
       ["Courriel de contact", "L’adresse déclarée à l’administration", "les deux fichiers"],
       ["Date de délivrance du numéro d’immatriculation", "Le jour où l’immatriculation a été accordée", "le fichier 1 seulement"],
     ],
@@ -76,7 +76,7 @@ const SECTIONS: Section[] = [
   {
     type: "encadre",
     ton: "info",
-    titre: "Piège nº 2 — un opérateur n’est pas une entreprise",
+    titre: "Piège nº 2, un opérateur n’est pas une entreprise",
     texte:
       "Plusieurs groupes figurent sous deux entrées distinctes, parce que ce sont deux offres distinctes. Compter les lignes donne un nombre d’opérateurs immatriculés, pas un nombre de sociétés. Les deux sont des chiffres justes ; ils ne répondent pas à la même question, et personne ne précise jamais laquelle il a posée.",
   },
@@ -158,7 +158,7 @@ const FAQ = [
   },
   {
     q: "Pourquoi les comparateurs ne donnent-ils pas tous le même nombre ?",
-    a: "Trois raisons : ils ne relèvent pas à la même date, ils ne comptent pas toujours le même fichier, et les noms de fichiers de la DGFiP prêtent à confusion — celui des immatriculés contient le mot « attente », qui désigne le rapport d’audit postérieur et non l’immatriculation.",
+    a: "Trois raisons : ils ne relèvent pas à la même date, ils ne comptent pas toujours le même fichier, et les noms de fichiers de la DGFiP prêtent à confusion, celui des immatriculés contient le mot « attente », qui désigne le rapport d’audit postérieur et non l’immatriculation.",
   },
   {
     q: "La liste indique-t-elle le numéro d’immatriculation d’une plateforme ?",
@@ -168,7 +168,7 @@ const FAQ = [
 
 const SOURCES: Source[] = [
   {
-    libelle: "DGFiP — Je consulte la liste des plateformes agréées",
+    libelle: "DGFiP, Je consulte la liste des plateformes agréées",
     url: "https://www.impots.gouv.fr/je-consulte-la-liste-des-plateformes-agreees",
     precision: `Page publiée le 30 juillet 2024, dernière modification le 10 septembre 2026. Relevé effectué le ${RELEVE} sur les classeurs XLSX des deux fichiers.`,
   },
@@ -188,12 +188,12 @@ export default function Page() {
   return (
     <ArticleLong
       slug={SLUG}
-      chapeau={`La liste officielle des plateformes agréées est publique et gratuite. Elle tient en deux fichiers dont les noms disent à peu près le contraire de leur contenu — ce qui explique une bonne part des chiffres contradictoires qu’on lit partout. Voici ce qu’ils contiennent, relevé le ${RELEVE}.`}
+      chapeau={`La liste officielle des plateformes agréées est publique et gratuite. Elle tient en deux fichiers dont les noms disent à peu près le contraire de leur contenu, ce qui explique une bonne part des chiffres contradictoires qu’on lit partout. Voici ce qu’ils contiennent, relevé le ${RELEVE}.`}
       enBref={[
         `${IMMATRICULES} opérateurs immatriculés et ${EN_ATTENTE} en attente des tests d’interopérabilité, au ${RELEVE}.`,
         "La liste est en deux fichiers distincts, publiés par la DGFiP sur impots.gouv.fr.",
         "Le fichier des immatriculés porte le mot « attente » dans son nom : il désigne le rapport d’audit postérieur, pas l’immatriculation.",
-        "Ni SIREN ni numéro d’immatriculation n’y figurent — seulement la date de délivrance.",
+        "Ni SIREN ni numéro d’immatriculation n’y figurent, seulement la date de délivrance.",
         "Votre logiciel de facturation n’a pas à y figurer : il doit pouvoir vous dire par quelle plateforme il passe.",
       ]}
       sections={SECTIONS}

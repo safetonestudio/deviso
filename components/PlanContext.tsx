@@ -60,7 +60,7 @@ export function usePlan(): string {
 
 /**
  * Retourne true si l'utilisateur courant est un membre invité (pas l'owner).
- * Les membres ne voient jamais de CTA d'upgrade — ils utilisent les features de l'owner.
+ * Les membres ne voient jamais de CTA d'upgrade, ils utilisent les features de l'owner.
  */
 export function useIsMember(): boolean {
   return useContext(PlanContext).isMember;
@@ -76,7 +76,7 @@ export function useDroits(): Droits {
  *
  * Sert à AFFICHER ou MASQUER une fonction sur l'interface : par défaut un
  * collaborateur n'a rien, et son écran reste épuré ; une fonction n'apparaît
- * que si le gérant l'a cochée. Le serveur reste seul juge à l'exécution — cette
+ * que si le gérant l'a cochée. Le serveur reste seul juge à l'exécution, cette
  * vérité côté client ne fait que décider de ce qu'on montre.
  */
 export function usePermission(acte: keyof Droits): boolean {

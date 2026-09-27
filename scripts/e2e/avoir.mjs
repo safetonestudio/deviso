@@ -117,7 +117,7 @@ if (!idFacture) process.exit(bilan());
 await appel(`/api/invoices/${idFacture}`, { method: "PATCH", body: JSON.stringify({ status: "sent" }) });
 const emise = await appel(`/api/superpdp/invoices/${idFacture}/emettre`, { method: "POST" });
 verifier(
-  "elle est transmise — donc elle n'est plus modifiable",
+  "elle est transmise, donc elle n'est plus modifiable",
   emise.status === 200 && Boolean(emise.body?.superpdpId),
   `HTTP ${emise.status} ${JSON.stringify(emise.body).slice(0, 200)}`,
 );
@@ -152,9 +152,9 @@ verifier(
 
 // Le point le plus contre-intuitif de tout ce fichier.
 verifier(
-  "ses montants sont POSITIFS — le sens vient du type 381, pas du signe",
+  "ses montants sont POSITIFS, le sens vient du type 381, pas du signe",
   Number(avoir.total_ht) === 820 && Number(avoir.total_ttc) === 984,
-  `${avoir.total_ht} HT / ${avoir.total_ttc} TTC — BR-27 interdit un prix unitaire négatif`,
+  `${avoir.total_ht} HT / ${avoir.total_ttc} TTC, BR-27 interdit un prix unitaire négatif`,
 );
 verifier(
   "et ses lignes aussi",
@@ -166,7 +166,7 @@ verifier(
   "rien de l'histoire de la facture d'origine n'est recopié",
   !avoir.superpdp_invoice_id && !avoir.superpdp_encaisse_at && !avoir.paid_at,
   `superpdp_invoice_id = ${avoir.superpdp_invoice_id}, encaissé = ${avoir.superpdp_encaisse_at}` +
-    " — un identifiant recopié ferait croire l'avoir déjà émis, et il ne partirait jamais",
+    ", un identifiant recopié ferait croire l'avoir déjà émis, et il ne partirait jamais",
 );
 
 // ── Le juge : le validateur officiel, pas notre panneau maison ─────────────
@@ -199,7 +199,7 @@ const second = await appel(`/api/invoices/${idFacture}/avoir`, { method: "POST" 
 verifier(
   "une facture ne s'annule pas deux fois",
   second.status === 409,
-  `HTTP ${second.status} ${JSON.stringify(second.body).slice(0, 200)} — deux avoirs créditeraient le double`,
+  `HTTP ${second.status} ${JSON.stringify(second.body).slice(0, 200)}, deux avoirs créditeraient le double`,
 );
 
 const avoirDAvoir = await appel(`/api/invoices/${avoir.id}/avoir`, { method: "POST" });
@@ -242,7 +242,7 @@ if (idBrouillon) {
   verifier(
     "un brouillon se corrige, il ne s'annule pas",
     refus.status === 400,
-    `HTTP ${refus.status} ${JSON.stringify(refus.body).slice(0, 200)} — sinon deux documents là où une modification suffit`,
+    `HTTP ${refus.status} ${JSON.stringify(refus.body).slice(0, 200)}, sinon deux documents là où une modification suffit`,
   );
   await appel(`/api/invoices/${idBrouillon}`, { method: "DELETE" });
 }
@@ -251,7 +251,7 @@ if (idBrouillon) {
 //
 // C'est un montant qu'on REND. Le pire message que ce produit puisse envoyer,
 // c'est une relance automatique demandant a un client de payer l'argent qu'on
-// lui doit — et elle partirait la nuit, toute seule. L'avoir porte une échéance
+// lui doit, et elle partirait la nuit, toute seule. L'avoir porte une échéance
 // au jour de son émission : sans exclusion, il serait « en retard » dès le
 // lendemain.
 const relance = await appel(`/api/invoices/${avoir.id}/send-reminder`, { method: "POST" });

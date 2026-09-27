@@ -49,7 +49,7 @@ export default function ResetPasswordPage() {
         <div className="bg-ds-surface rounded-2xl border border-ds-border p-8">
           <h1 className="text-2xl font-semibold text-white mb-1">Nouveau mot de passe</h1>
           <p className="text-gray-400 text-sm mb-6">
-            Choisis un mot de passe robuste — toutes les cases doivent être vertes.
+            Choisis un mot de passe robuste, toutes les cases doivent être vertes.
           </p>
 
           {error && (

@@ -3,7 +3,7 @@
 import { CODES_UE, estFrance } from "./territoires.ts";
 
 /**
- * Pourquoi cette facture ne porte pas de TVA — et ce qu'il faut écrire dessus.
+ * Pourquoi cette facture ne porte pas de TVA, et ce qu'il faut écrire dessus.
  *
  * Pourquoi ce fichier existe. Le PDF, le XML transmis à l'administration et
  * l'écran tiraient tous les trois la même conclusion d'une seule donnée :
@@ -11,20 +11,20 @@ import { CODES_UE, estFrance } from "./territoires.ts";
  *   const isFranchise = invoice.tva_rate === 0;
  *
  * Un taux nul devenait donc, partout, « franchise en base, article 293 B du
- * CGI » — la mention du micro-entrepreneur non assujetti. Or un zéro de TVA a
+ * CGI », la mention du micro-entrepreneur non assujetti. Or un zéro de TVA a
  * au moins quatre causes, et 293 B n'en est qu'une :
  *
  *   | Cause                          | Catégorie EN 16931 | Mention légale                        |
  *   |--------------------------------|--------------------|---------------------------------------|
  *   | Franchise en base              | E                  | art. 293 B du CGI                     |
- *   | Livraison intracommunautaire   | K                  | Autoliquidation — art. 262 ter I CGI  |
- *   | Exportation hors UE            | G                  | Exonération — art. 262 I du CGI       |
- *   | Autoliquidation (sous-traitance)| AE                | Autoliquidation — art. 283-2 CGI      |
+ *   | Livraison intracommunautaire   | K                  | Autoliquidation, art. 262 ter I CGI  |
+ *   | Exportation hors UE            | G                  | Exonération, art. 262 I du CGI       |
+ *   | Autoliquidation (sous-traitance)| AE                | Autoliquidation, art. 283-2 CGI      |
  *
  * Conséquence concrète : un développeur assujetti facturant 5 000 € à une
  * société belge et mettant le taux à 0 voyait s'imprimer sur son PDF « TVA non
- * applicable, art. 293 B du CGI » — c'est-à-dire une déclaration écrite qu'il
- * est micro-entrepreneur en franchise, ce qu'il n'est pas — et le XML partait
+ * applicable, art. 293 B du CGI », c'est-à-dire une déclaration écrite qu'il
+ * est micro-entrepreneur en franchise, ce qu'il n'est pas, et le XML partait
  * vers l'administration avec la catégorie E alors que l'opération est une
  * livraison intracommunautaire. Le routage, lui, était correct : seule la
  * qualification fiscale était fausse.
@@ -32,8 +32,8 @@ import { CODES_UE, estFrance } from "./territoires.ts";
  * ── Ce que cette fonction refuse de faire ────────────────────────────────────
  *
  * Elle ne devine pas. Quand les données ne permettent pas de justifier une
- * exonération précise, elle renvoie une mention neutre — « TVA non applicable »
- * — plutôt qu'une citation d'article. Écrire un mauvais article sur une facture
+ * exonération précise, elle renvoie une mention neutre, « TVA non applicable »
+ *, plutôt qu'une citation d'article. Écrire un mauvais article sur une facture
  * est pire que de n'en écrire aucun : c'est une affirmation fiscale fausse,
  * opposable, imprimée par l'outil et non par l'utilisateur. Le champ `certaine`
  * dit lequel des deux cas on est, pour que l'interface puisse demander la
@@ -43,8 +43,8 @@ import { CODES_UE, estFrance } from "./territoires.ts";
  *
  * Par la présence d'un numéro de TVA intracommunautaire sur la facture
  * (`seller_tva_number`). C'est un indice, pas une preuve, mais c'en est un bon :
- * une entreprise en franchise en base n'en a pas — c'est la définition même du
- * régime — et le profil Deviso ne le renseigne que pour les assujettis. À
+ * une entreprise en franchise en base n'en a pas, c'est la définition même du
+ * régime, et le profil Deviso ne le renseigne que pour les assujettis. À
  * défaut d'un champ « régime » porté par la facture, c'est la donnée la plus
  * fiable disponible sans changer le schéma.
  */
@@ -97,7 +97,7 @@ export function motifExoneration(facture: {
       if (clientIntracom) {
         return {
           categorie: "K",
-          mention: "Autoliquidation par le preneur — art. 262 ter I du CGI",
+          mention: "Autoliquidation par le preneur, art. 262 ter I du CGI",
           certaine: true,
         };
       }
@@ -117,15 +117,15 @@ export function motifExoneration(facture: {
     // Hors Union : exportation.
     return {
       categorie: "G",
-      mention: "Exonération de TVA — art. 262 I du CGI (exportation)",
+      mention: "Exonération de TVA, art. 262 I du CGI (exportation)",
       certaine: true,
     };
   }
 
   // ── Vendeur assujetti, opération française, taux à zéro ───────────────────
   //
-  // Ce cas est réel — autoliquidation dans le bâtiment (art. 283-2 nonies),
-  // certaines opérations exonérées — mais rien sur la facture ne dit lequel.
+  // Ce cas est réel, autoliquidation dans le bâtiment (art. 283-2 nonies),
+  // certaines opérations exonérées, mais rien sur la facture ne dit lequel.
   // On refuse d'inventer une référence d'article : on écrit une mention
   // neutre, et on signale ce qui manque.
   return {

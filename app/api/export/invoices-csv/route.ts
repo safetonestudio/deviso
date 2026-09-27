@@ -14,8 +14,8 @@ export async function GET(req: NextRequest) {
   // Ce `.eq("id", user.id)` était un défaut discret et coûteux : sur un plan
   // Pro multi-utilisateurs, un collaborateur agissant sur un document de
   // l'espace lisait SON profil. Selon la route, cela donnait un PDF portant
-  // son IBAN (ou aucun) au lieu de celui de l'entreprise — le client paie
-  // alors sur le mauvais compte — ou un refus « plan insuffisant » sur une
+  // son IBAN (ou aucun) au lieu de celui de l'entreprise, le client paie
+  // alors sur le mauvais compte, ou un refus « plan insuffisant » sur une
   // fonction que l'espace paie pourtant.
   const profile = await getWorkspaceProfile<{ plan: string | null }>(
     await getWorkspaceUserId(user.id),
@@ -101,11 +101,11 @@ export async function GET(req: NextRequest) {
   const BOM = "﻿";
   // Séparateur point-virgule, et ce n'est pas une préférence.
   //
-  // Les montants sont formatés à la française — « 1234,56 » — et étaient
+  // Les montants sont formatés à la française, « 1234,56 », et étaient
   // joints par une virgule. Chaque colonne numérique éclatait donc en deux
   // champs : une ligne à douze colonnes en produisait seize, et Excel lisait
   // « Montant HT = 1234 », « TVA % = 56 ». TOUTES les lignes étaient fausses,
-  // ligne de totaux comprise, et rien ne le signalait — le fichier s'ouvre
+  // ligne de totaux comprise, et rien ne le signalait, le fichier s'ouvre
   // sans erreur, il est juste décalé.
   //
   // Le point-virgule est la convention qui va avec la virgule décimale : c'est

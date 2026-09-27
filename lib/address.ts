@@ -8,8 +8,8 @@
  *    les PDF et les emails.
  *
  * La chaîne est **dérivée**, jamais saisie : c'est ce qui rend le découpage
- * déterministe. Auparavant on faisait l'inverse — deviner le code postal dans du
- * texte libre — et une adresse mal formée produisait une facture non conforme
+ * déterministe. Auparavant on faisait l'inverse, deviner le code postal dans du
+ * texte libre, et une adresse mal formée produisait une facture non conforme
  * sans qu'aucun contrôle ne le signale.
  *
  * Rien ici n'est bloquant : un document doit pouvoir être créé et envoyé avec
@@ -37,7 +37,7 @@ export function composeAddress(parts: AddressParts): string | null {
  * avant l'introduction des champs séparés. On n'extrait que ce dont on est
  * certain : le premier groupe de cinq chiffres est le code postal, ce qui suit
  * est la ville. Sinon on rend la chaîne entière comme rue et on laisse le reste
- * vide — un champ vide se voit et se corrige, une valeur devinée se propage.
+ * vide, un champ vide se voit et se corrige, une valeur devinée se propage.
  */
 export function splitAddress(raw?: string | null): Required<AddressParts> {
   const value = clean(raw);

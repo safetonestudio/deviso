@@ -1,5 +1,5 @@
 /**
- * Motifs de refus d'une facture reçue — statut 210 « Refusée ».
+ * Motifs de refus d'une facture reçue, statut 210 « Refusée ».
  *
  * D'où vient cette liste. Deux sources, et il a fallu les deux.
  *
@@ -12,7 +12,7 @@
  *      TRANSAC_INC, EMMET_INC, CONTRAT_TERM, DOUBLE_FACT, CMD_ERR, ADR_ERR,
  *      REF_CT_ABSENT.
  *
- *    Treize codes, et treize seulement — il n'existe **pas** de motif « Autre »
+ *    Treize codes, et treize seulement, il n'existe **pas** de motif « Autre »
  *    pour ce statut, alors que la nomenclature complète en contient un. Un
  *    refus doit donc entrer dans l'une de ces treize cases.
  *
@@ -21,7 +21,7 @@
  *    dossier de spécifications externes de la DGFiP v3.2, lu le 07/09/2026.
  *    Quarante codes, avec libellé et description. C'est la source normative,
  *    et elle règle le point qui restait ouvert : la spécification Super PDP
- *    renvoie pour MDT-113 à « AFNOR XP Z12-012 », norme payante — mais la
+ *    renvoie pour MDT-113 à « AFNOR XP Z12-012 », norme payante, mais la
  *    DGFiP en publie la table dans son propre paquet.
  *
  * Deux libellés qui étaient faux, et pourquoi c'était grave. Un refus est
@@ -29,12 +29,12 @@
  * motif, ce n'est pas une imprécision de vocabulaire, c'est annuler une
  * facture pour une raison qui n'est pas la vraie.
  *
- *   - `CMD_ERR` : libellé longtemps **déduit** du code — « Facture non conforme
+ *   - `CMD_ERR` : libellé longtemps **déduit** du code, « Facture non conforme
  *     à la commande ». Faux : c'est « N° de commande incorrect ou manquant »,
  *     un problème de référence, pas de contenu. Corrigé le 01/09/2026.
  *   - `DOUBLE_FACT` : libellé « Double facturation », lui aussi déduit du code.
  *     Faux, et trompeur au point d'être le seul choix évident pour un
- *     utilisateur facturé deux fois — qui aurait alors employé un motif
+ *     utilisateur facturé deux fois, qui aurait alors employé un motif
  *     réservé au flux de données réglementaires F1. La nomenclature dit
  *     « Données réglementaires F1 en doublon ». Le motif d'une facture reçue
  *     deux fois est `DOUBLON`, et lui seul. Corrigé le 07/09/2026.
@@ -48,7 +48,7 @@
  * refus. La nomenclature les rattache aussi aux statuts **206** (approuvée
  * partiellement), **207** (en litige) et **208** (suspendue). Contester ou
  * suspendre peut donc porter un motif structuré, là où Deviso n'envoie qu'un
- * texte libre. Décision ouverte — la liste des codes autorisés pour ces trois
+ * texte libre. Décision ouverte, la liste des codes autorisés pour ces trois
  * statuts n'a pas été obtenue, et l'API ne la donne qu'en refusant un envoi.
  */
 

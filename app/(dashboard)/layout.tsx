@@ -52,7 +52,7 @@ export default async function DashboardLayout({ children }: { children: React.Re
 
   // NOTE : "free" n'est plus un plan commercialisé (supprimé le 30/06/2026).
   // C'est l'état transitoire d'un compte sans abonnement (avant souscription,
-  // ou après expiration) — les gates Solo/Pro s'appliquent alors partout.
+  // ou après expiration), les gates Solo/Pro s'appliquent alors partout.
   const plan = workspacePlan?.plan ?? "free";
 
   // Redirect new owners to onboarding if they haven't set their company name yet
@@ -73,7 +73,7 @@ export default async function DashboardLayout({ children }: { children: React.Re
    * Ce contrôle est un filet, pas le mécanisme principal. Quand un
    * propriétaire redescend en Solo, la route de changement de formule retire
    * elle-même les collaborateurs, après confirmation explicite. Mais cette
-   * purge peut échouer — et elle n'est pas la seule façon pour un espace de
+   * purge peut échouer, et elle n'est pas la seule façon pour un espace de
    * cesser d'être Pro : un impayé suffit. Sans ce contrôle, l'espace garderait
    * son équipe entière sans que personne ne la paie, et le seul écran capable
    * de la gérer serait devenu inaccessible au propriétaire.
@@ -91,7 +91,7 @@ export default async function DashboardLayout({ children }: { children: React.Re
           <p className="text-gray-400 text-sm leading-relaxed">
             L&apos;espace de travail auquel vous étiez rattaché n&apos;est plus sur la formule
             Pro, qui est celle qui permet de travailler à plusieurs. Votre accès est suspendu
-            le temps que son propriétaire la rétablisse — rien n&apos;a été supprimé.
+            le temps que son propriétaire la rétablisse, rien n&apos;a été supprimé.
           </p>
           <p className="text-gray-500 text-xs mt-6">
             Une question ? Écrivez-nous à support@getdeviso.fr
@@ -178,7 +178,7 @@ export default async function DashboardLayout({ children }: { children: React.Re
         {/* `pt-14` compensait exactement la barre fixe du haut, qui fait `h-14` :
             le premier élément de chaque page commençait donc pile à sa limite
             basse, collé, sans un pixel d'écart. Visible sur l'encadré de la
-            visite guidée, mais le défaut valait pour tous les écrans — c'est
+            visite guidée, mais le défaut valait pour tous les écrans, c'est
             simplement le premier élément qui le révèle.
             On garde la compensation et on ajoute une vraie respiration. */}
         <main className="flex-1 lg:ml-64 p-4 lg:p-8 min-w-0 pt-[4.5rem] lg:pt-8">

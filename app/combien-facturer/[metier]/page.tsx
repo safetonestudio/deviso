@@ -83,7 +83,7 @@ export default async function MetierTarifsPage({ params }: Props) {
   const defaultTjm = Math.round((data.tjm.confirme.min + data.tjm.confirme.max) / 2);
 
   // Le taux et le net se déduisent de TAUX_COTISATIONS_BNC. Un pourcentage écrit
-  // en dur ici a affiché 22 % à côté d'un simulateur qui calculait à 25,6 % —
+  // en dur ici a affiché 22 % à côté d'un simulateur qui calculait à 25,6 % -
   // deux chiffres contradictoires sur le même écran. Voir check:taux.
   const pctCotisations = (TAUX_COTISATIONS_BNC * 100).toLocaleString("fr-FR", {
     maximumFractionDigits: 1,

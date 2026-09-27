@@ -19,7 +19,7 @@ export async function GET(_req: NextRequest, { params }: Params) {
   // Cette route n'avait aucune garde : un appel anonyme filtrait sur
   // `user?.id` valant undefined et repartait avec un 404 « facture
   // introuvable » au lieu d'un 401. Pas de fuite, mais mon audit affirmait
-  // « 46 routes toutes protégées » — c'était faux.
+  // « 46 routes toutes protégées », c'était faux.
   if (!user) return NextResponse.json({ error: "Non autorisé" }, { status: 401 });
 
   const workspaceId = await getWorkspaceUserId(user.id);
@@ -180,7 +180,7 @@ export async function PATCH(req: NextRequest, { params }: Params) {
   // cet espace. C'est un 404, pas un 500.
   //
   // Avec `.single()`, l'absence de ligne était une ERREUR Postgres, et la route
-  // répondait « 500 » — un incident serveur — là où il ne s'était rien passé
+  // répondait « 500 », un incident serveur, là où il ne s'était rien passé
   // d'anormal. Le message renvoyé exposait au passage le détail de la requête,
   // et l'appelant ne pouvait pas distinguer « je n'ai pas le droit » de « votre
   // serveur est cassé ».
@@ -197,7 +197,7 @@ export async function PATCH(req: NextRequest, { params }: Params) {
   //
   // Il était jusqu'ici envoyé par ses appelants : le composant React de la page
   // de détail, et le webhook Stripe. Les deux chemins réels étaient donc
-  // couverts — mais parce que quelqu'un avait pensé à câbler chacun d'eux. La
+  // couverts, mais parce que quelqu'un avait pensé à câbler chacun d'eux. La
   // route qui voit *vraiment* passer le changement d'état, elle, n'en tirait
   // qu'une notification. Le jour où un rapprochement bancaire, un import de
   // relevé ou une action en masse marque une facture payée, la déclaration ne
@@ -212,7 +212,7 @@ export async function PATCH(req: NextRequest, { params }: Params) {
   if (body.status === "paid" && current?.status !== "paid") {
     if (facture?.superpdp_invoice_id && !facture.superpdp_encaisse_at) {
       // La date de paiement, si on la connaît. Sans elle, la plateforme date
-      // l'encaissement du jour de l'appel — ce qui est faux dès qu'on pointe un
+      // l'encaissement du jour de l'appel, ce qui est faux dès qu'on pointe un
       // virement avec quelques jours de retard, et faux précisément sur la
       // donnée qui fixe la période d'exigibilité de la TVA. On lit la colonne
       // relue plutôt que le corps de la requête : une facture déjà datée par un
@@ -280,7 +280,7 @@ export async function DELETE(_req: NextRequest, { params }: Params) {
 
   // `.select()` pour SAVOIR si une ligne a été supprimée. Sans lui, une
   // suppression qui ne touche aucune ligne (id inconnu, mauvais espace)
-  // répondait « success » — l'écran redirigeait, l'utilisateur croyait la
+  // répondait « success », l'écran redirigeait, l'utilisateur croyait la
   // facture partie.
   const { data: supprimee, error } = await supabase
     .from("invoices")

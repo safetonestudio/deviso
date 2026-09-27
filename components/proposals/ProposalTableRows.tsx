@@ -32,7 +32,7 @@ export function ProposalTableRows({ proposals }: { proposals: Proposal[] }) {
               <div className="font-medium text-white text-sm">{proposal.title}</div>
             </td>
             <td className="px-5 py-4 text-sm text-gray-400">
-              {proposal.client_name || "—"}
+              {proposal.client_name || "-"}
             </td>
             <td className="px-5 py-4 text-sm font-semibold text-white">
               {fmt(proposal.total_ttc)}

@@ -12,7 +12,7 @@ import { superpdpFetch, SuperPdpNotConnected, SuperPdpSessionPending } from "@/l
  * dicté par le régime de TVA de l'entreprise, et dépose.
  *
  * Conséquence : jusqu'ici, un utilisateur qui facturait des particuliers avait
- * des déclarations qui partaient **sans qu'il en voie jamais rien** — ni le
+ * des déclarations qui partaient **sans qu'il en voie jamais rien**, ni le
  * contenu, ni l'accusé, ni le rejet. Or `events[].status_code` est le SEUL
  * endroit où l'on apprend qu'une déclaration a été refusée par
  * l'administration (`ppf:ereporting-rejected`, `-ack-error`).
@@ -70,7 +70,7 @@ export async function GET(req: NextRequest) {
     };
 
     const declarations = (corps.data ?? []).map((d) => {
-      // Le dernier événement fait foi ici — contrairement aux statuts de
+      // Le dernier événement fait foi ici, contrairement aux statuts de
       // facture, cette énumération est une seule séquence linéaire.
       const dernier = d.events?.[d.events.length - 1];
       const etat = dernier ? ETATS[dernier.status_code] : undefined;
@@ -80,7 +80,7 @@ export async function GET(req: NextRequest) {
         role: d.role_code === "BY" ? "Achats" : "Ventes",
         debut: d.start_period,
         fin: d.end_period,
-        statut: etat?.texte ?? dernier?.status_code ?? "—",
+        statut: etat?.texte ?? dernier?.status_code ?? "-",
         ton: etat?.ton ?? "neutre",
         le: dernier?.created_at ?? null,
         // Une déclaration rejetée demande une action : c'est l'information

@@ -163,12 +163,12 @@ Le pied de page listera le nouveau métier sans qu'on y touche.
 C'est la moitié du travail éditorial, et celle qu'on oublie. Trois règles.
 
 **Modifier le contenu, puis avancer `misAJourLe`.** Dans cet ordre. Toucher la date sans rien changer
-est une manipulation que Google détecte et finit par ignorer — et `check:blog` refuse une date
+est une manipulation que Google détecte et finit par ignorer, et `check:blog` refuse une date
 postérieure à demain.
 
 **La date s'affiche.** Quand `misAJourLe` diffère de `publieLe`, le gabarit affiche « Mis à jour le … »
 au lieu de la date de publication, et le sitemap envoie un `lastmod` exact. C'est le signal qui dit
-à Google qu'une page réglementaire est vivante — il ne sert qu'à condition de ne pas être bruité,
+à Google qu'une page réglementaire est vivante, il ne sert qu'à condition de ne pas être bruité,
 d'où la règle précédente.
 
 **Trois déclencheurs passent devant le calendrier** : un texte publié au Journal officiel qui touche
@@ -182,7 +182,7 @@ se raconter qu'on a mis à jour.
 
 ## Les règles que `check:blog` fait respecter
 
-Le contrôle tourne dans `npm run verify`, et il porte ses contre-épreuves — un contrôle qui ne
+Le contrôle tourne dans `npm run verify`, et il porte ses contre-épreuves, un contrôle qui ne
 trouve jamais rien est indiscernable d'un contrôle cassé.
 
 1. **Parité registre ↔ pages.** Une page sans entrée au registre est invisible ; une entrée sans page

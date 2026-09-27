@@ -426,7 +426,7 @@ export default function StatsPage() {
                     <div key={i} className="flex-1 flex flex-col items-center gap-2">
                       <div className="text-lg font-bold text-white">{v}</div>
                       <div className="w-full h-2 rounded-full bg-indigo-600" style={{ opacity: v / 100 }} />
-                      <div className="text-[10px] text-gray-500">—</div>
+                      <div className="text-[10px] text-gray-500">-</div>
                     </div>
                   ))}
                 </div>

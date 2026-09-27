@@ -18,8 +18,8 @@ export async function POST(req: NextRequest, { params }: Params) {
 
   const { to } = await req.json();
 
-  // Le destinataire reste au choix de l'utilisateur — envoyer le devis au
-  // comptable plutôt qu'au contact commercial est un usage légitime — mais on
+  // Le destinataire reste au choix de l'utilisateur, envoyer le devis au
+  // comptable plutôt qu'au contact commercial est un usage légitime, mais on
   // exige une adresse qui ressemble à une adresse.
   if (typeof to !== "string" || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(to.trim())) {
     return NextResponse.json({ error: "Adresse email invalide" }, { status: 400 });
@@ -49,15 +49,15 @@ export async function POST(req: NextRequest, { params }: Params) {
   //
   // Ils en venaient, et c'était un relais de courriel ouvert : `shareUrl`
   // était inséré tel quel dans le bouton « Consulter et signer le devis ».
-  // N'importe quel compte — y compris un compte de démonstration obtenu en dix
-  // secondes — pouvait donc faire partir, depuis `noreply@getdeviso.fr` et
+  // N'importe quel compte, y compris un compte de démonstration obtenu en dix
+  // secondes, pouvait donc faire partir, depuis `noreply@getdeviso.fr` et
   // avec la signature SPF/DKIM du domaine, un message vers l'adresse de son
   // choix dont le bouton pointait vers son propre site. Le devis n'était qu'un
   // prétexte : rien de son contenu n'était utilisé.
   //
   // Reconstruire le lien côté serveur ferme le vecteur sans rien retirer à
   // l'usage réel, et garantit au passage la même adresse qu'à la relance
-  // (`proposals/[id]/remind`) — deux liens différents pour un même devis
+  // (`proposals/[id]/remind`), deux liens différents pour un même devis
   // sèment le doute juste avant la signature.
   const shareUrl = proposalShareUrl(publicBaseUrl(profileData), proposal.share_token);
   const proposalTitle = proposal.title;
@@ -115,7 +115,7 @@ export async function POST(req: NextRequest, { params }: Params) {
     // perd. C'est la boîte du freelance qui doit recevoir « ok pour le devis ».
     ...(profileData?.email ? { replyTo: profileData.email } : {}),
     to,
-    subject: `Devis de ${displayName} — ${proposalTitle || "nouvelle proposition"}`,
+    subject: `Devis de ${displayName}, ${proposalTitle || "nouvelle proposition"}`,
     html,
   });
 

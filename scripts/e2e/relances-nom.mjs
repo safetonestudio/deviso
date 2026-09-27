@@ -1,7 +1,7 @@
 /**
  * Traversée ciblée : le nom de l'expéditeur sur les relances.
  *
- * Le défaut corrigé ne se voit pas dans un code HTTP — les relances partaient
+ * Le défaut corrigé ne se voit pas dans un code HTTP, les relances partaient
  * déjà en 200 quand elles s'affichaient « Deviso ». La seule preuve est dans la
  * boîte de réception. Ce script renvoie donc une relance de devis et une de
  * facture, pour comparaison directe avec les captures d'avant correction.

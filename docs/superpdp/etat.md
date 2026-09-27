@@ -1,20 +1,20 @@
-> **Seconde passe d'audit, nuit du 01 au 02/09/2026** — voir
+> **Seconde passe d'audit, nuit du 01 au 02/09/2026**, voir
 > `audit-2026-09-02.md`. Sept défauts de concurrence et d'ordonnancement, tous
 > silencieux : encaissement déclarable deux fois au fisc, date d'encaissement qui
 > empêchait le `fr:212` de partir, raccordement sain se déclarant mort, et
 > surtout **11 factures émises affichant « Reçue par la plateforme » alors
-> qu'elles étaient encaissées** — lignes réparées.
+> qu'elles étaient encaissées**, lignes réparées.
 >
 > Puis les deux décisions qui restaient : la **date d'encaissement** est
 > désormais celle du paiement réel et non celle du pointage, et Deviso sait
-> **établir un avoir** — le seul moyen de corriger une facture transmise, et la
+> **établir un avoir**, le seul moyen de corriger une facture transmise, et la
 > seule réponse possible à un refus, qui est terminal.
 >
 > Le 3 septembre, le cycle de vie du raccordement se referme : Deviso sait
 > **fermer une ligne d'annuaire**, et refuse de le faire pendant une
 > portabilité. Suite complète : 383 vérifications, 0 échec.
 >
-> **Audit complet du 01/09/2026** — voir `audit-2026-09-01.md`.
+> **Audit complet du 01/09/2026**, voir `audit-2026-09-01.md`.
 > Six défauts corrigés (dont BT-49, qui rendait non conforme toute facture à un
 > client étranger), cinq lacunes fonctionnelles documentées comme décisions, et
 > un banc de conformité qui soumet quatorze situations au validateur officiel à
@@ -43,7 +43,7 @@ Rappel du 29/08 : `vat_regime` avait été **deviné** en sondant l'API, et
 
 ## 2. Ce qui est prouvé par une traversée en production
 
-`npm run test:superpdp` — **31 vérifications**, contre `getdeviso.fr`, sur des
+`npm run test:superpdp`, **31 vérifications**, contre `getdeviso.fr`, sur des
 comptes réels du bac à sable, avec de vraies factures.
 
 - Émission B2B, B2C, et refus argumenté d'une facture mixte biens+services
@@ -53,20 +53,20 @@ comptes réels du bac à sable, avec de vraies factures.
 - Pré-contrôle : le refus nomme ce qui manque et désigne le client par son nom
 - Non-réémission d'une facture déjà transmise
 - Encaissement `fr:212` déclaré une seule fois (art. 290 A CGI)
-- **Le statut suit la plateforme** après synchronisation — assertion ajoutée le
+- **Le statut suit la plateforme** après synchronisation, assertion ajoutée le
   29/08 en réponse au défaut décrit au §4
 - Synchronisation réellement exécutée, pas seulement répondue
 - Périodicité de TVA propagée ; la franchise devient `vat_exemption` seule
 - Téléchargement Factur-X : on lit les octets, pas l'en-tête
 
-`npm run verify` complet : **237 vérifications, 0 échec** — dont 48 sur
+`npm run verify` complet : **237 vérifications, 0 échec**, dont 48 sur
 Super PDP et 4 sur le refus. Parmi elles, la plus structurante : « le XML
 produit par Deviso est jugé conforme » par les validateurs officiels de la
 plateforme, et non par nos propres règles.
 
 ## 3. Ce qui n'est pas couvert, et pourquoi
 
-- **Le refus abouti d'une facture reçue (`fr:210`)** — partiellement couvert.
+- **Le refus abouti d'une facture reçue (`fr:210`)**, partiellement couvert.
   `npm run test:superpdp-refus` éprouve les garde-fous en production : motif
   hors nomenclature rejeté avant tout appel, refus impossible sur une facture
   qu'on a soi-même émise, facture d'un autre espace renvoyée introuvable et non
@@ -79,13 +79,13 @@ plateforme, et non par nos propres règles.
   vérifié sur la facture 375540. Une facture dont l'émetteur est le destinataire
   n'existe pas pour elle.
 - ~~**Le tunnel de raccordement**~~ : **validé le 30/08/2026**, rejoué de bout en
-  bout dans un navigateur. Refresh token rotaté — preuve que l'échange
+  bout dans un navigateur. Refresh token rotaté, preuve que l'échange
   code → token a réellement eu lieu et qu'il ne s'agit pas du raccordement
   précédent ayant survécu. Deux défauts corrigés à cette occasion, voir
   `chantier.md`.
 - **L'émission depuis une entreprise réelle** : le bac à sable et la production
   partagent l'hôte d'API ; émettre pour de vrai engage le réseau national.
-- **Le rendu des écrans** : les traversées interrogent l'API. Leçon du 29/08 —
+- **Le rendu des écrans** : les traversées interrogent l'API. Leçon du 29/08 -
   la base peut être juste pendant que l'écran ne montre rien.
 - **B2G.** Une facture au secteur public est déclarée `B2B` par la route
   d'émission ; le circuit public passe par Chorus Pro, séparément. Une facture
@@ -103,7 +103,7 @@ plateforme, et non par nos propres règles.
    miroir, jamais le champ porté par la facture.
 2. **Adresse déduite du SIREN.** Une facture adressée à un SIREN nu est
    acceptée puis jamais remise, sans aucun signal. `superpdp_adresse_source`
-   conserve l'origine, la liste affiche « Transmise — adresse déduite ».
+   conserve l'origine, la liste affiche « Transmise, adresse déduite ».
 3. **Page muette.** « Aucune facture reçue » s'affichait aussi quand la lecture
    échouait, et la page ne nommait pas le compte affiché.
 
@@ -113,5 +113,5 @@ plateforme, et non par nos propres règles.
   `last_error`. Un compte de test l'est actuellement, volontairement.
 - **Jeton de rafraîchissement** : rotation OAuth 2.1. Aucun script ne doit
   parler à Super PDP autrement que par les routes de l'application.
-- `GET /invoices` accepte `expand[]` — la synchronisation fait aujourd'hui un
+- `GET /invoices` accepte `expand[]`, la synchronisation fait aujourd'hui un
   appel de détail par facture. Correct, mais améliorable.

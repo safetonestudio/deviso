@@ -24,16 +24,16 @@ import {
  * chacun leur propre liste, tenues à la main. Elles avaient silencieusement
  * divergé :
  *
- *   · « Paiements clients » — sous *Gestion* sur ordinateur, sous *Facturation*
+ *   · « Paiements clients », sous *Gestion* sur ordinateur, sous *Facturation*
  *     sur mobile ;
- *   · « Activité » — sous *Gestion* sur ordinateur, sous *Clients* sur mobile ;
- *   · « Nouveau devis » — raccourci hors section sur ordinateur, rangé dans
+ *   · « Activité », sous *Gestion* sur ordinateur, sous *Clients* sur mobile ;
+ *   · « Nouveau devis », raccourci hors section sur ordinateur, rangé dans
  *     *Facturation* sur mobile ;
  *   · la section *Gestion* n'existait pas du tout sur mobile ;
  *   · « Factures reçues » manquait purement et simplement sur mobile.
  *
  * Aucune de ces divergences n'était voulue. Elles se sont installées parce que
- * chaque ajout demandait de penser à deux endroits — et que rien ne le
+ * chaque ajout demandait de penser à deux endroits, et que rien ne le
  * rappelait. Un utilisateur qui passe du téléphone à l'ordinateur ne retrouve
  * pas ses repères, sans qu'on puisse lui dire pourquoi.
  *

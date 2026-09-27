@@ -30,7 +30,7 @@ const facture = await s.call("/api/invoices", {
 
 const envoi = await s.call(`/api/invoices/${facture.body?.invoice?.id}/send-email`, { method: "POST" });
 
-console.log(`HTTP ${envoi.status} — ${doc(envoi.body).slice(0, 200)}`);
+console.log(`HTTP ${envoi.status}, ${doc(envoi.body).slice(0, 200)}`);
 console.log("");
 if (envoi.status === 200) {
   console.log("PROBLEME : la route repond 200 alors que l'adresse est invalide.");

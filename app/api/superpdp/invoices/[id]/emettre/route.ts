@@ -19,11 +19,11 @@ import type { Invoice } from "@/types";
  * Émet une facture Deviso vers la Plateforme Agréée.
  *
  * C'est l'étape qui débloque le reste : tant qu'une facture n'existe pas chez
- * Super PDP, aucun statut de cycle de vie ne peut s'y accrocher — « Encaissée »
+ * Super PDP, aucun statut de cycle de vie ne peut s'y accrocher, « Encaissée »
  * (212), pourtant obligatoire, n'a rien à quoi se rattacher.
  *
  * On envoie le **XML CII** et non le PDF Factur-X : la plateforme n'a besoin que
- * des données structurées, et c'est ce que leur route accepte en multipart —
+ * des données structurées, et c'est ce que leur route accepte en multipart -
  * vérifié le 12/08/2026 en envoyant une facture entre deux entreprises du bac à
  * sable.
  *
@@ -103,8 +103,8 @@ export async function POST(req: NextRequest, ctx: { params: Promise<{ id: string
   // Verrou d'émission : la garde anti-doublon ci-dessus ne suffit pas.
   //
   // Elle lit `superpdp_invoice_id`, le trouve vide, puis transmet. Entre les
-  // deux il s'écoule plusieurs secondes — génération du XML, validation
-  // officielle, POST — pendant lesquelles un second appel lit la même valeur
+  // deux il s'écoule plusieurs secondes, génération du XML, validation
+  // officielle, POST, pendant lesquelles un second appel lit la même valeur
   // vide et transmet lui aussi. La facture arrive en double chez le client,
   // qui la refuse pour « DOUBLON », et il faut passer un avoir. Le bouton est
   // désactivé pendant l'envoi, mais un second onglet, un réessai réseau ou un
@@ -146,7 +146,7 @@ export async function POST(req: NextRequest, ctx: { params: Promise<{ id: string
    * Rend le verrou. À appeler sur CHAQUE sortie qui n'a pas transmis.
    *
    * Le laisser posé après un échec bloquerait la facture dix minutes sans
-   * raison — l'utilisateur corrige son adresse et se voit répondre « déjà en
+   * raison, l'utilisateur corrige son adresse et se voit répondre « déjà en
    * cours » alors que rien ne l'est.
    */
   const rendreVerrou = () =>
@@ -159,7 +159,7 @@ export async function POST(req: NextRequest, ctx: { params: Promise<{ id: string
 
   try {
     // Adresse électronique et numéro d'entreprise réellement enregistrés par
-    // Super PDP pour NOUS (le vendeur) — voir generateFacturXml pour le
+    // Super PDP pour NOUS (le vendeur), voir generateFacturXml pour le
     // pourquoi. Les deux viennent du raccordement plutôt que du profil : c'est
     // ce que la Plateforme Agréée connaît de nous qui fait foi à l'émission,
     // pas ce que l'utilisateur a saisi.
@@ -177,7 +177,7 @@ export async function POST(req: NextRequest, ctx: { params: Promise<{ id: string
     //
     // On refuse plutôt que de tirer au sort. Une facture envoyée au mauvais
     // service d'une grande entreprise n'est pas rejetée : elle est acceptée,
-    // rangée ailleurs, et jamais payée — le pire des trois résultats possibles,
+    // rangée ailleurs, et jamais payée, le pire des trois résultats possibles,
     // parce qu'il ne lève rien. Mieux vaut demander une fois à l'utilisateur.
     if (!isB2C && resolution.obstacle === "ambigu") {
       const liste = (resolution.candidats ?? []).join(", ");
@@ -302,7 +302,7 @@ export async function POST(req: NextRequest, ctx: { params: Promise<{ id: string
     // Validation en amont, telle que la spec la recommande.
     //
     // « Most of errors like that can be avoided by calling the
-    // /validation_reports endpoint first » — description du statut
+    // /validation_reports endpoint first », description du statut
     // `api:invalid`. Sans cet appel, une facture syntaxiquement acceptée mais
     // sémantiquement fausse repart en `api:invalid` de façon ASYNCHRONE : le
     // POST répond 200, l'utilisateur croit sa facture partie, et elle ne l'est
@@ -381,7 +381,7 @@ export async function POST(req: NextRequest, ctx: { params: Promise<{ id: string
         {
           error: panne ? "Plateforme indisponible" : "Facture refusée",
           message: panne
-            ? "La Plateforme Agréée rencontre un incident. Votre facture n'a rien d'incorrect — réessayez dans quelques minutes."
+            ? "La Plateforme Agréée rencontre un incident. Votre facture n'a rien d'incorrect, réessayez dans quelques minutes."
             : messagePdp
               ? `La Plateforme Agréée a refusé la facture : ${messagePdp}`
               : "La Plateforme Agréée a refusé la facture. Le détail est enregistré sur la facture.",
@@ -401,13 +401,13 @@ export async function POST(req: NextRequest, ctx: { params: Promise<{ id: string
     // La facture EXISTE désormais chez la Plateforme Agréée. Tout ce qui suit
     // doit donc s'attacher à ne pas perdre son identifiant : sans lui, le
     // garde-fou anti-doublon plus haut ne joue plus, et le prochain clic
-    // renvoie la même facture — le refus « DOUBLON » qu'on veut éviter.
+    // renvoie la même facture, le refus « DOUBLON » qu'on veut éviter.
     let reponse: { id?: number; events?: { status_code?: string }[]; processing_rule?: string } = {};
     try {
       reponse = JSON.parse(texte);
     } catch {
       // Réponse 200 non JSON : l'émission a réussi mais on ne sait pas sous
-      // quel identifiant. Le dire est la seule attitude honnête — et le texte
+      // quel identifiant. Le dire est la seule attitude honnête, et le texte
       // brut est conservé pour pouvoir retrouver la facture à la main.
       console.error(`[superpdp/emettre] ${id} : réponse 200 illisible ${texte.slice(0, 300)}`);
       await admin
@@ -431,7 +431,7 @@ export async function POST(req: NextRequest, ctx: { params: Promise<{ id: string
 
     // `processing_rule` renvoyé est la règle QUE SUPER PDP A CALCULÉE, pas
     // celle qu'on a déclarée. Un écart entre les deux est le seul signal
-    // objectif que notre classification B2B/B2C/B2BInt s'est trompée — notre
+    // objectif que notre classification B2B/B2C/B2BInt s'est trompée, notre
     // détection du B2C reposant sur l'absence de raison sociale, elle peut se
     // tromper en silence.
     if (reponse.processing_rule && reponse.processing_rule !== nature) {
@@ -469,7 +469,7 @@ export async function POST(req: NextRequest, ctx: { params: Promise<{ id: string
       // Répondre « emise: true » ici serait le pire des deux mondes : la
       // facture est partie, mais rien ne le note, donc le prochain clic la
       // renverra. On préfère un message explicite qui interdit le second envoi.
-      console.error(`[superpdp/emettre] ${id} : identifiant non enregistré — ${erreurEnregistrement.message}`);
+      console.error(`[superpdp/emettre] ${id} : identifiant non enregistré, ${erreurEnregistrement.message}`);
       return NextResponse.json(
         {
           error: "Transmission non enregistrée",
@@ -490,8 +490,8 @@ export async function POST(req: NextRequest, ctx: { params: Promise<{ id: string
     // (212)" […] **Pour les factures déjà encaissées à l'émission, il faut
     // envoyer ce message de cycle de vie juste après sa création.** »
     //
-    // Sans ça, une facture encaissée avant d'être transmise — le cas d'un
-    // paiement comptant, ou d'une facture régularisée après coup — ne produit
+    // Sans ça, une facture encaissée avant d'être transmise, le cas d'un
+    // paiement comptant, ou d'une facture régularisée après coup, ne produit
     // JAMAIS son flux 10.2 : le bouton « Marquer comme payée » a déjà été
     // cliqué, et il ne le sera pas une seconde fois. La déclaration manque, en
     // silence.
@@ -501,19 +501,19 @@ export async function POST(req: NextRequest, ctx: { params: Promise<{ id: string
     // message de cycle de vie "Encaissée (212)" n'aura aucun effet. »
     if (facture.status === "paid" && !facture.superpdp_encaisse_at) {
       // Avec sa vraie date quand on l'a. Une facture déjà payée au moment où on
-      // la transmet a souvent été encaissée bien avant — c'est même la
-      // définition du cas — donc dater l'encaissement du jour de la
+      // la transmet a souvent été encaissée bien avant, c'est même la
+      // définition du cas, donc dater l'encaissement du jour de la
       // transmission serait faux de plusieurs jours sur la donnée qui fixe
       // l'exigibilité. `paid_at` absente, la plateforme date elle-même : on
       // n'invente rien.
       const encaissement = await envoyerEncaissementPdp(workspaceId, id, facture.paid_at ?? null);
       if (!encaissement.ok) {
-        console.error(`[superpdp/emettre] ${id} : encaissement immédiat non déclaré — ${encaissement.raison}`);
+        console.error(`[superpdp/emettre] ${id} : encaissement immédiat non déclaré, ${encaissement.raison}`);
       }
     }
 
     // `sourceAdresse` remonte à l'appelant : c'est ce qui permet à l'interface
-    // — et aux tests — de distinguer une adresse lue dans l'Annuaire d'un repli
+    //, et aux tests, de distinguer une adresse lue dans l'Annuaire d'un repli
     // sur le SIREN nu, sans avoir à relire le XML.
     return NextResponse.json({ emise: true, superpdpId: reponse.id, sourceAdresse });
   } catch (err) {
@@ -541,7 +541,7 @@ export async function POST(req: NextRequest, ctx: { params: Promise<{ id: string
     }
     // Exception inconnue : on garde le verrou, délibérément.
     //
-    // On ne sait pas si le POST a eu lieu — une coupure pendant la lecture de
+    // On ne sait pas si le POST a eu lieu, une coupure pendant la lecture de
     // la réponse laisse une facture transmise dont nous ignorons tout. Le
     // verrou se périmera seul dans dix minutes. Faire patienter quelqu'un dix
     // minutes est un désagrément ; lui faire envoyer une facture en double est

@@ -72,7 +72,7 @@ export const TARIFS_DATA: TarifsMetier[] = [
       },
       {
         q: "Comment calculer mon TJM en tant que graphiste freelance ?",
-        a: "Multipliez votre TJM par vos jours réellement facturables (environ 14 par mois, une fois déduits l'administratif, la prospection et les congés). Déduisez ensuite vos cotisations : en micro-BNC au régime général, c'est 25,6 % du chiffre d'affaires, ou 23,2 % si vous êtes affilié à la Cipav. Le reste est votre bénéfice avant impôt sur le revenu — et avant vos charges propres (matériel, logiciels, assurance, mutuelle).",
+        a: "Multipliez votre TJM par vos jours réellement facturables (environ 14 par mois, une fois déduits l'administratif, la prospection et les congés). Déduisez ensuite vos cotisations : en micro-BNC au régime général, c'est 25,6 % du chiffre d'affaires, ou 23,2 % si vous êtes affilié à la Cipav. Le reste est votre bénéfice avant impôt sur le revenu, et avant vos charges propres (matériel, logiciels, assurance, mutuelle).",
       },
       {
         q: "Faut-il facturer les droits de cession en plus du devis de création ?",
@@ -563,7 +563,7 @@ export const ALL_METIER_SLUGS = TARIFS_DATA.map((m) => m.slug);
  * Il était fixé à 22 % dans ce fichier, avec un commentaire qui disait lui-même
  * « taux 2024 ». C'était donc faux de 3,6 points depuis, et le simulateur
  * surestimait d'autant le revenu net affiché sur les onze pages de
- * `/combien-facturer` — c'est-à-dire précisément là où un indépendant décide de
+ * `/combien-facturer`, c'est-à-dire précisément là où un indépendant décide de
  * son tarif. Un outil qui se trompe dans le sens rassurant est pire qu'un outil
  * absent.
  *
@@ -575,8 +575,8 @@ export const ALL_METIER_SLUGS = TARIFS_DATA.map((m) => m.slug);
  *   - prestations de services libérales affiliées au régime général (SSI) : 25,6 %
  *
  * Le simulateur retient **25,6 %**, parce que les métiers de `/combien-facturer`
- * — graphiste, développeur, consultant, rédacteur, traducteur, coach, community
- * manager — relèvent du régime général depuis la fermeture de la Cipav aux
+ *, graphiste, développeur, consultant, rédacteur, traducteur, coach, community
+ * manager, relèvent du régime général depuis la fermeture de la Cipav aux
  * nouvelles affiliations en 2018, et non de la Cipav, dont la liste est limitée
  * (architectes, ostéopathes, psychologues, experts…). Un affilié Cipav paiera
  * 2,4 points de moins : c'est dit sur la page plutôt que caché dans un calcul.

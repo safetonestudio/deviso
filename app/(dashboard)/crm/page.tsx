@@ -164,7 +164,7 @@ export default function CRMPage() {
       const c = map.get(key)!;
       c.invoices.push(inv);
       c.nb_invoices++;
-      // CA hors taxes, avoirs retranchés — même règle que l'écran Activité et
+      // CA hors taxes, avoirs retranchés, même règle que l'écran Activité et
       // que les statistiques d'équipe.
       const signe = inv.invoice_type === "avoir" ? -1 : 1;
       const ht = signe * (inv.total_ht ?? inv.total_ttc ?? 0);
@@ -239,7 +239,7 @@ export default function CRMPage() {
       {/* `grid-cols-3` était figé : sur un téléphone la troisième tuile sortait
           de l'écran et « CA encaissé » se coupait en plein milieu du montant.
           Deux colonnes en dessous de 640 px, et le chiffre d'affaires prend
-          toute la largeur — c'est le plus long des trois, et le seul dont on
+          toute la largeur, c'est le plus long des trois, et le seul dont on
           lit la valeur exacte plutôt que l'ordre de grandeur. */}
       <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 sm:gap-4">
         {[
@@ -283,7 +283,7 @@ export default function CRMPage() {
 
             Les quatre indicateurs passent en grille de deux : sur un téléphone,
             quatre colonnes de chiffres ne se lisent pas. Le chiffre d'affaires
-            reste seul en évidence — c'est la valeur qu'on cherche en ouvrant
+            reste seul en évidence, c'est la valeur qu'on cherche en ouvrant
             cet écran. */}
         <div className="lg:hidden space-y-3">
           {filtered.map((c) => (

@@ -4,7 +4,7 @@
  *
  * Le thème clair (`.light` sur `<html>`) corrige les couleurs pastel via une
  * **liste blanche de noms de classes exacts** dans `app/globals.css`. Piège non
- * évident : `text-amber-200` y figure, `text-amber-200/80` non — Tailwind génère
+ * évident : `text-amber-200` y figure, `text-amber-200/80` non, Tailwind génère
  * deux classes distinctes. Une variante absente de la liste reste en pastel et
  * devient illisible sur fond clair, sans que ni TypeScript ni le build ne le
  * voient.
@@ -66,7 +66,7 @@ for (const f of fichiers) {
       inspectees++;
       if (couvertes.has(classe)) continue;
       console.error(
-        `✗ ${chemin}:${i + 1} — « ${classe} » n'a pas de surcharge thème clair : illisible sur fond blanc`
+        `✗ ${chemin}:${i + 1}, « ${classe} » n'a pas de surcharge thème clair : illisible sur fond blanc`
       );
       echecs++;
     }
@@ -74,6 +74,6 @@ for (const f of fichiers) {
 }
 
 if (echecs === 0) {
-  console.log(`✓ Thème clair — ${inspectees} usages de couleurs claires, tous couverts par une surcharge`);
+  console.log(`✓ Thème clair, ${inspectees} usages de couleurs claires, tous couverts par une surcharge`);
 }
 process.exit(echecs > 0 ? 1 : 0);

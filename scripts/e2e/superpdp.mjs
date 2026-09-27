@@ -5,7 +5,7 @@
  * un compte de démonstration jetable, jamais raccordé à Super PDP) mais les
  * comptes de test dédiés déjà raccordés au bac à sable : Burger Queen (vendeur,
  * numéro d'entreprise 000000002) et Tricatel (destinataire, 000000001). Ces
- * comptes ne sont PAS des démos — pas de purge automatique.
+ * comptes ne sont PAS des démos, pas de purge automatique.
  *
  * ⚠️ Ce script émet de vraies factures dans le bac à sable Super PDP. C'est
  * voulu : une intégration de facturation électronique ne se prouve pas
@@ -118,7 +118,7 @@ console.log("── Émission B2B vers un destinataire raccordé ─────
 
 // Volontairement SANS `client_directory_address` : on veut éprouver la
 // résolution par l'Annuaire, pas la saisie manuelle. Le SIREN nu ne distingue
-// pas Tricatel de Burger Queen — les deux le partagent — donc si l'émission
+// pas Tricatel de Burger Queen, les deux le partagent, donc si l'émission
 // aboutit, c'est que l'adresse a bien été lue dans l'annuaire et non fabriquée.
 const b2b = await creerFacture({
   client_name: "Tricatel",
@@ -142,13 +142,13 @@ verifier(
 );
 const idPdp = emission.body?.superpdpId;
 
-// Les sociétés du bac à sable ne figurent pas à l'Annuaire national — il ne
+// Les sociétés du bac à sable ne figurent pas à l'Annuaire national, il ne
 // contient que de vraies entreprises. Le repli sur le SIREN est donc le
 // comportement **attendu** ici, et on l'exige explicitement plutôt que de
 // tolérer n'importe quelle valeur : c'est ce qui distingue un repli maîtrisé
 // d'une résolution qui aurait silencieusement échoué.
 verifier(
-  "hors annuaire, l'émission retombe sur le SIREN — et le dit",
+  "hors annuaire, l'émission retombe sur le SIREN, et le dit",
   emission.body?.sourceAdresse === "siren",
   `source = ${emission.body?.sourceAdresse}`
 );
@@ -169,14 +169,14 @@ console.log("");
 console.log("── Encaissement (fr:212), obligatoire art. 290 A CGI ─────────");
 
 // ⚠️ PAS sur `idB2b`. Cette facture-là est émise volontairement sans adresse
-// d'annuaire, pour éprouver le repli sur le SIREN nu — or dans le bac à sable
+// d'annuaire, pour éprouver le repli sur le SIREN nu, or dans le bac à sable
 // le SIREN 315143296 est partagé par les deux sociétés de test, donc la
 // plateforme finit par la REJETER (`fr:213`), de façon asynchrone.
 //
 // L'encaisser revenait à courir contre cette arrivée : tant que le rejet
 // n'était pas là, le `fr:212` passait et le test était vert ; le jour où il
 // arrivait en premier, la plateforme répondait « la facture possède déjà un
-// statut final ». Deux passages identiques, deux résultats — c'est-à-dire un
+// statut final ». Deux passages identiques, deux résultats, c'est-à-dire un
 // test qui ne prouve rien. Constaté le 03/09/2026.
 //
 // On encaisse donc une facture réellement remise, et le repli SIREN reste
@@ -202,8 +202,8 @@ verifier("la facture est marquée payée", payee.body?.invoice?.status === "paid
 // Le passage à « payée » déclare l'encaissement, mais la plateforme peut le
 // faire attendre : « La facture liée est en cours de traitement. Réessayer plus
 // tard. » C'est un refus transitoire, et le produit le rattrape désormais à
-// chaque synchronisation. Le test doit donc éprouver le RÉSULTAT — la facture
-// finit encaissée — et non la réussite du premier appel, qui dépend d'une
+// chaque synchronisation. Le test doit donc éprouver le RÉSULTAT, la facture
+// finit encaissée, et non la réussite du premier appel, qui dépend d'une
 // course qu'on ne maîtrise pas. Une assertion qui dépend du hasard ne prouve
 // rien : c'est la leçon du 03/09 sur cette même facture.
 let encaissement = { status: 0, body: null };
@@ -232,7 +232,7 @@ console.log("");
 console.log("── Régime de TVA propagé à la Plateforme Agréée ──────────────");
 
 // Ce réglage n'existe que par l'API : ni l'interface de Super PDP ni la nôtre
-// ne le montrent. Tant qu'il est vide chez eux, toute facture B2C est refusée —
+// ne le montrent. Tant qu'il est vide chez eux, toute facture B2C est refusée -
 // c'est le blocage qui a coûté une demi-journée le 29/08. On vérifie donc qu'un
 // changement de profil arrive bien jusqu'à eux, et pas seulement dans notre base.
 const avant = await bq.call("/api/superpdp/status");
@@ -284,8 +284,8 @@ console.log("── Résolution de l'adresse par l'Annuaire national ───�
 // SIREN réel, choisi parce que son entrée d'annuaire est **composée**
 // (`0225:491210290_49121029000012`, forme SIREN_SIRET) : c'est exactement ce
 // que l'ancienne fabrication `0225:<SIREN>` ne pouvait pas produire, et donc ce
-// qu'elle adressait de travers. On n'attend pas que l'émission aboutisse — ce
-// n'est pas un destinataire de test — seulement que l'adresse ait bien été lue.
+// qu'elle adressait de travers. On n'attend pas que l'émission aboutisse, ce
+// n'est pas un destinataire de test, seulement que l'adresse ait bien été lue.
 const SIREN_REEL_ANNUAIRE = "491210290";
 
 const factureAnnuaire = await creerFacture({
@@ -343,18 +343,18 @@ if (idB2c) await bq.call(`/api/invoices/${idB2c}`, { method: "PATCH", body: doc(
 const emissionB2c = idB2c
   ? await bq.call(`/api/superpdp/invoices/${idB2c}/emettre`, { method: "POST" })
   : { status: 0, body: null };
-// Blocage documenté, et cette fois étayé — la leçon du 29/08 étant qu'un
+// Blocage documenté, et cette fois étayé, la leçon du 29/08 étant qu'un
 // « c'est le bac à sable » commode avait déjà masqué deux vrais défauts, on
 // n'accepte celui-ci qu'avec des preuves :
 //   1. le même code émet sans peine la facture B2B ci-dessus ;
 //   2. le XML B2C a été validé conforme par le validateur de Super PDP
 //      lui-même (/validation_reports : is_valid true, 0 échec sur 137
-//      contrôles) — le document n'est donc pas en cause.
+//      contrôles), le document n'est donc pas en cause.
 //
 // La cause était le régime de TVA de l'entreprise émettrice, vide sur les deux
 // sociétés du bac à sable. Leur documentation le dit noir sur blanc : « Pour
 // faire fonctionner l'e-reporting, il faut paramétrer le régime de TVA au
-// niveau de son entreprise. » Il se règle par `PATCH /v1.beta/companies` —
+// niveau de son entreprise. » Il se règle par `PATCH /v1.beta/companies` -
 // **sans** `/me`, ce qui avait d'abord fait conclure à tort à un
 // enregistrement en lecture seule. Valeurs admises, obtenues en sondant l'API :
 // `monthly` (réel normal mensuel), `quarterly` (réel normal trimestriel),
@@ -401,7 +401,7 @@ verifier(
 // (lib/superpdp-precontrole.ts). Elle a besoin pour cela que le refus arrive
 // sous forme de liste exploitable, pas seulement d'une phrase. Sans cette
 // assertion, un refus qui perdrait `manques` laisserait l'interface proposer un
-// bouton qui échoue — exactement le piège qu'on vient de retirer.
+// bouton qui échoue, exactement le piège qu'on vient de retirer.
 verifier(
   "le refus nomme ce qui manque, sous une forme exploitable par l'interface",
   Array.isArray(emissionMixte.body?.manques) && emissionMixte.body.manques.length > 0,
@@ -446,7 +446,7 @@ verifier(
   `HTTP ${emissionBrouillon.status} ${doc(emissionBrouillon.body).slice(0, 200)}`
 );
 
-// Une facture à un client étranger relève du B2BInt, pas du circuit national —
+// Une facture à un client étranger relève du B2BInt, pas du circuit national -
 // et le pré-contrôle ne doit plus lui réclamer un SIREN français, qu'elle n'a
 // pas. C'était un blocage total pour un freelance à clientèle internationale.
 const etrangere = await creerFacture({
@@ -489,7 +489,7 @@ console.log("── Synchronisation avec la Plateforme Agréée ─────�
 
 // `explicite: true` : la route plafonne les appels automatiques à un toutes les
 // trois minutes. Sans ce drapeau elle répond 200 avec « trop_recent » sans rien
-// faire — et une assertion qui se contente du code HTTP validerait ce
+// faire, et une assertion qui se contente du code HTTP validerait ce
 // non-événement. On exige donc `synchronise: true`, et on retente une fois si
 // le plancher de dix secondes du clic explicite n'est pas encore écoulé.
 let sync = await bq.call("/api/superpdp/sync", { method: "POST", body: doc({ explicite: true }) });
@@ -526,7 +526,7 @@ verifier(
 // une seule fois, à l'émission, avec `api:uploaded`, et plus jamais mis à jour.
 // 42 factures transmises, 42 figées, pendant que la plateforme était passée à
 // `fr:202`. Une facture REFUSÉE par le client (fr:210) s'affichait donc
-// « Transmise » en vert — et un refus oblige le fournisseur à passer un avoir.
+// « Transmise » en vert, et un refus oblige le fournisseur à passer un avoir.
 // Aucun test ne regardait ce champ : ils vérifiaient tous la table miroir.
 // On attend, plutôt que de constater trop tôt.
 //
@@ -535,7 +535,7 @@ verifier(
 // statut `fr:*`. La plateforme met de quelques secondes à une minute à faire
 // passer une facture par ses propres contrôles avant d'émettre `fr:200`. Selon
 // sa charge, la même suite passait ou échouait sans qu'une ligne de code ait
-// bougé — et un test qui échoue au hasard finit par être ignoré, ce qui est
+// bougé, et un test qui échoue au hasard finit par être ignoré, ce qui est
 // pire que pas de test.
 //
 // On boucle donc jusqu'à une minute, en resynchronisant à chaque tour (le
@@ -543,8 +543,8 @@ verifier(
 // signifie alors vraiment que le statut ne redescend pas.
 //
 // On observe `idSaisie`, et non `idB2b`. Ce n'est pas un contournement : dans
-// le bac à sable, une facture dont l'adresse a été DÉDUITE du SIREN — le cas
-// d'`idB2b` — n'est jamais acheminée, parce que les sociétés de test y
+// le bac à sable, une facture dont l'adresse a été DÉDUITE du SIREN, le cas
+// d'`idB2b`, n'est jamais acheminée, parce que les sociétés de test y
 // partagent le même SIREN `315143296`. Elle reste à `api:uploaded` pour
 // toujours, normalement, et c'est même ce que `factureBloquee` et `etatPdp`
 // documentent et affichent. Trois exécutions du 07/09/2026 le montrent sans
@@ -572,7 +572,7 @@ console.log("");
 console.log("── Validation officielle avant transmission ──────────────────");
 
 // `POST /validation_reports` fait tourner les validateurs réels (XSD CII,
-// Factur-X EN16931, Schematron BR-FR) — 189 contrôles sur la facture de
+// Factur-X EN16931, Schematron BR-FR), 189 contrôles sur la facture de
 // référence du dépôt. La spec le recommande explicitement : « Most of errors
 // like that can be avoided by calling the /validation_reports endpoint first ».
 // Sans lui, une facture sémantiquement fausse repart en `api:invalid` de façon
@@ -633,7 +633,7 @@ console.log("");
 console.log("── Exigibilité de la TVA : débits contre encaissements ───────");
 
 // `DueDateTypeCode` était inversé : il ne sortait que pour les débits, et
-// valait 72 — « paid to date », l'exigibilité au PAIEMENT. Une facture cochée
+// valait 72, « paid to date », l'exigibilité au PAIEMENT. Une facture cochée
 // « TVA sur les débits » déclarait donc le régime opposé, et le cas courant
 // (encaissements) ne déclarait rien. C'est cette donnée qui commande le
 // calendrier d'e-reporting des paiements.
@@ -677,7 +677,7 @@ verifier(
 );
 
 // SIREN réel et stable : la Banque de France. On vérifie qu'on retrouve bien
-// une entreprise et que le SIREN remonte — c'est ce qui évite à l'utilisateur
+// une entreprise et que le SIREN remonte, c'est ce qui évite à l'utilisateur
 // de le recopier à la main, et une faute de frappe se solde par un rejet.
 const parSiren = await bq.call("/api/annuaire/entreprises?siren=572104790");
 verifier(
@@ -794,7 +794,7 @@ if (idPdp) {
 // ── Ce que ce script ne prouve pas ───────────────────────────────────────────
 aVerifierAutrement(
   "Le refus abouti d'une facture reçue (fr:210)",
-  "exige une session sur le compte destinataire, et l'acte est définitif — il oblige le fournisseur à une annulation comptable. Tous ses garde-fous sont couverts ci-dessus ; le succès se constate à la main sur une facture reçue."
+  "exige une session sur le compte destinataire, et l'acte est définitif, il oblige le fournisseur à une annulation comptable. Tous ses garde-fous sont couverts ci-dessus ; le succès se constate à la main sur une facture reçue."
 );
 aVerifierAutrement(
   "Le tunnel de raccordement (connect → callback → déconnexion)",
@@ -814,7 +814,7 @@ console.log("── Non couvert par ce script ───────────�
 for (const n of nonCouvert) console.log(`  ? ${n.quoi}\n      ${n.pourquoi}`);
 console.log("");
 console.log("── Comptes de test ───────────────────────────────────────────");
-console.log("  superpdp-test@getdeviso.fr (Burger Queen) — pas une démo, purge manuelle par Selim");
+console.log("  superpdp-test@getdeviso.fr (Burger Queen), pas une démo, purge manuelle par Selim");
 console.log(`  facture B2B émise : Deviso ${idB2b ?? "?"} → Super PDP ${idPdp ?? "?"}`);
 console.log(`  facture B2C : ${idB2c ?? "?"} · facture mixte (jamais transmise) : ${idMixte ?? "?"}`);
 console.log("");

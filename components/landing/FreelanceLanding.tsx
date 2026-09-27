@@ -110,7 +110,7 @@ export function FreelanceLanding({
   // Le libellé du total est déduit de la valeur, jamais écrit à côté d'elle.
   //
   // Pourquoi. Le libellé était figé à « Total TTC (TVA 20%) » dans ce composant,
-  // pendant que quatre pages — artisan, coach, community manager, traducteur —
+  // pendant que quatre pages, artisan, coach, community manager, traducteur -
   // passaient un total exprimé « … € HT ». Résultat : une maquette de devis qui
   // annonçait 20 % de TVA sur un montant qui n'en contenait pas, affichée en
   // vitrine d'un logiciel de facturation. Le genre de détail qu'un prospect
@@ -118,7 +118,7 @@ export function FreelanceLanding({
   //
   // Déduire le libellé de la valeur rend la contradiction impossible : il n'y a
   // plus deux endroits à tenir d'accord. `scripts/check-blog.mjs` vérifie en
-  // plus que le montant correspond bien à la somme des lignes — au HT près, ou
+  // plus que le montant correspond bien à la somme des lignes, au HT près, ou
   // à 1,20 × le HT selon le cas.
   const totalHt = /\bHT\b/.test(mockupTotal);
 
@@ -128,7 +128,7 @@ export function FreelanceLanding({
   // sémantique : cette landing, l'article de blog, et la page tarifs. L'audit du
   // 11/09/2026 a mesuré le maillage réel entre elles : deux arêtes sur six, et
   // les deux pointant vers la landing. Autrement dit, la landing recevait des
-  // liens et n'en renvoyait aucun à ses deux sœurs — qui en avaient besoin, la
+  // liens et n'en renvoyait aucun à ses deux sœurs, qui en avaient besoin, la
   // page tarifs étant presque orpheline.
   //
   // Rien n'est écrit en dur ici : la correspondance vient du registre, donc un
