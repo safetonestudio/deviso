@@ -426,7 +426,7 @@ export default function CRMPage() {
 
             {/* Même correctif : trois montants côte à côte ne tiennent pas sur un
                 téléphone. Le nombre de devis, court, reste seul sur sa ligne. */}
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 px-4 sm:px-6 py-4 bg-ds-elevated/50 border-b border-ds-border">
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 px-4 sm:px-6 py-4 bg-ds-elevated border-b border-ds-border">
               <div className="flex justify-between sm:block sm:text-center">
                 <div className="text-xs text-gray-500 sm:order-2">Devis</div>
                 <div className="text-xl font-semibold text-white sm:order-1">{selected.nb_proposals}</div>

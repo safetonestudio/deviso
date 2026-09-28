@@ -181,7 +181,7 @@ export default function ConformitePage() {
                 restent à passer. Ce sont les intitulés exacts employés par la DGFiP, c&apos;est sous ces
                 mots que vous les retrouverez.
               </p>
-              <div className="bg-indigo-500/[0.07] border border-indigo-500/30 rounded-xl p-5 mb-4">
+              <div className="bg-[#191830] border border-indigo-500/30 rounded-xl p-5 mb-4">
                 <a
                   href="https://www.impots.gouv.fr/je-consulte-la-liste-des-plateformes-agreees"
                   target="_blank"
@@ -198,7 +198,7 @@ export default function ConformitePage() {
                   compte.
                 </p>
               </div>
-              <div className="flex gap-3 bg-amber-500/[0.06] border border-amber-500/25 rounded-xl p-5">
+              <div className="flex gap-3 bg-[#241d11] border border-amber-500/25 rounded-xl p-5">
                 <TriangleAlert size={18} className="shrink-0 mt-0.5 text-amber-400" />
                 <div>
                   <p className="font-semibold text-white mb-1">Méfiez-vous des comparateurs</p>
@@ -218,7 +218,7 @@ export default function ConformitePage() {
                 Ce que Deviso fait déjà, et ce qu&apos;il ne fait pas
               </h2>
               <div className="grid sm:grid-cols-2 gap-4">
-                <div className="bg-emerald-500/[0.05] border border-emerald-500/20 rounded-xl p-5">
+                <div className="bg-[#14211a] border border-emerald-500/20 rounded-xl p-5">
                   <p className="text-xs font-semibold text-emerald-300 uppercase tracking-wider mb-3">
                     Fait
                   </p>
@@ -252,7 +252,7 @@ export default function ConformitePage() {
                 le sujet.
               </p>
               <div className="space-y-3">
-                <div className="bg-amber-500/[0.06] border border-amber-500/25 rounded-xl p-5">
+                <div className="bg-[#241d11] border border-amber-500/25 rounded-xl p-5">
                   <div className="flex flex-wrap items-center justify-between gap-2 mb-1">
                     <span className="text-sm font-semibold text-amber-300">Recevoir</span>
                     <span className="text-[10px] font-semibold bg-amber-500/20 text-amber-400 rounded-full px-2 py-0.5">

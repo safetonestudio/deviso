@@ -131,7 +131,7 @@ export function FacturesRecuesListe({
                 </svg>
               </summary>
 
-              <div className="px-4 pb-4 pt-1 bg-ds-bg/40">
+              <div className="px-4 pb-4 pt-1 bg-ds-bg">
                 <dl className="grid grid-cols-2 sm:grid-cols-4 gap-x-4 gap-y-2 text-sm mb-4">
                   <div>
                     <dt className="text-xs text-gray-400">Numéro</dt>

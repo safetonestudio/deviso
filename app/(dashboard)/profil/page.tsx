@@ -515,7 +515,7 @@ Les présentes CGV sont soumises au droit français. Tout litige relève de la c
               </label>
             ))}
           </div>
-          <div className="bg-ds-elevated/50 rounded-lg p-3 border border-ds-border">
+          <div className="bg-ds-elevated rounded-lg p-3 border border-ds-border">
             <div className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1">Mention affichée sur tes documents</div>
             {selectedRegime.value === "franchise"
               ? <p className="text-xs text-gray-400 italic">TVA non applicable, art. 293 B du CGI</p>
@@ -626,7 +626,7 @@ Les présentes CGV sont soumises au droit français. Tout litige relève de la c
             </div>
           </section>
         ) : (
-          <section className="bg-ds-elevated/50 border border-ds-border rounded-xl p-5">
+          <section className="bg-ds-elevated border border-ds-border rounded-xl p-5">
             <div className="flex items-center justify-between gap-4">
               <div>
                 <h2 className="font-semibold text-gray-300">Apparence des documents</h2>
@@ -699,7 +699,7 @@ Les présentes CGV sont soumises au droit français. Tout litige relève de la c
           </p>
         </section>
       ) : (
-        <section className="bg-ds-elevated/50 border border-ds-border rounded-xl p-5 mt-6">
+        <section className="bg-ds-elevated border border-ds-border rounded-xl p-5 mt-6">
           <div className="flex items-center justify-between gap-4">
             <div>
               <h2 className="font-semibold text-gray-300">Sous-domaine personnalisé</h2>
@@ -787,7 +787,7 @@ Les présentes CGV sont soumises au droit français. Tout litige relève de la c
             {remindersSaved && <span className="text-xs text-emerald-400">✓ Relances enregistrées !</span>}
           </div>
 
-          <div className="bg-ds-elevated/50 border border-ds-border rounded-lg px-4 py-3">
+          <div className="bg-ds-elevated border border-ds-border rounded-lg px-4 py-3">
             <p className="text-xs text-gray-500 leading-relaxed">
               <strong className="text-gray-400">Exemple :</strong> avec J+2, J+7, J+30 : le client reçoit une relance 2 jours, 7 jours, puis 30 jours après l&apos;envoi du devis.
               Les relances s&apos;arrêtent automatiquement dès que le devis est signé ou refusé.
@@ -795,7 +795,7 @@ Les présentes CGV sont soumises au droit français. Tout litige relève de la c
           </div>
         </section>
       ) : (
-        <section className="bg-ds-elevated/50 border border-ds-border rounded-xl p-5 mt-6">
+        <section className="bg-ds-elevated border border-ds-border rounded-xl p-5 mt-6">
           <div className="flex items-center justify-between gap-4">
             <div>
               <h2 className="font-semibold text-gray-300">Relances automatiques personnalisées</h2>

@@ -800,7 +800,7 @@ export default function InvoiceDetailPage() {
           <div className="bg-ds-surface rounded-xl border border-ds-border overflow-hidden mb-6">
             <table className="w-full text-sm">
               <thead>
-                <tr className="bg-ds-elevated/50 border-b border-ds-border text-gray-400 text-xs uppercase tracking-wide">
+                <tr className="bg-ds-elevated border-b border-ds-border text-gray-400 text-xs uppercase tracking-wide">
                   <th className="text-left px-5 py-3">Prestation</th>
                   <th className="text-center px-4 py-3">Qté</th>
                   <th className="text-right px-4 py-3">P.U. HT</th>

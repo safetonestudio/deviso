@@ -381,7 +381,7 @@ export function SuperPdpCard() {
           communique à ses clients. Sélectionnable d'un coup, pour éviter les
           erreurs de recopie sur une chaîne de ce genre. */}
       {verifie && etat?.directoryAddress && (
-        <div className="mt-4 bg-ds-elevated/50 border border-ds-border rounded-lg px-4 py-3">
+        <div className="mt-4 bg-ds-elevated border border-ds-border rounded-lg px-4 py-3">
           <p className="text-xs text-gray-400 mb-1">Votre adresse de facturation électronique</p>
           <p className="text-sm text-white font-mono break-all select-all">{etat.directoryAddress}</p>
           <p className="text-xs text-gray-600 mt-1.5">

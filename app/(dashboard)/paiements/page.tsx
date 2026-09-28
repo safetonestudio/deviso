@@ -264,7 +264,7 @@ export default function PaiementsPage() {
           </div>
 
           {/* Description du provider */}
-          <div className="bg-ds-elevated/50 border border-ds-border rounded-lg px-4 py-3 mb-4">
+          <div className="bg-ds-elevated border border-ds-border rounded-lg px-4 py-3 mb-4">
             <p className="text-sm text-gray-300 font-medium mb-1">{selectedProvider.description}</p>
             <p className="text-xs text-gray-500">{selectedProvider.hint}</p>
             {selectedProvider.docsUrl && (
@@ -359,7 +359,7 @@ export default function PaiementsPage() {
           </div>
 
           {/* RIB reminder */}
-          <div className="bg-ds-elevated/50 border border-ds-border rounded-lg px-4 py-3 mt-4">
+          <div className="bg-ds-elevated border border-ds-border rounded-lg px-4 py-3 mt-4">
             <p className="text-xs text-gray-400 leading-relaxed">
               <Lightbulb size={16} className="inline-block align-text-bottom mr-1 text-indigo-400" /><strong className="text-gray-300">Où trouver ces informations ?</strong> Sur votre RIB (Relevé d'Identité Bancaire) disponible dans votre application bancaire sous "Mes comptes" → "Voir le RIB".
             </p>
@@ -371,7 +371,7 @@ export default function PaiementsPage() {
       {method !== "none" && (
         <section className="bg-ds-surface border border-ds-border rounded-xl p-5 mb-5">
           <h2 className="font-semibold text-white mb-3 text-sm">Aperçu sur vos factures</h2>
-          <div className="bg-ds-elevated/50 border border-ds-border rounded-lg p-4 text-xs text-gray-400 space-y-2">
+          <div className="bg-ds-elevated border border-ds-border rounded-lg p-4 text-xs text-gray-400 space-y-2">
             <p className="font-semibold text-gray-300 text-xs uppercase tracking-wide">Modalités de paiement</p>
             {needsBank && (
               <div className="space-y-0.5">

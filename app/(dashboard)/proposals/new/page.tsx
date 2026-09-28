@@ -392,7 +392,7 @@ export default function NewProposalPage() {
             <p className="text-gray-400 text-sm mb-4">
               Parle normalement. L&apos;IA comprend le contexte et génère un devis complet.
             </p>
-            <div className="bg-ds-elevated/50 rounded-xl p-4 mb-4 text-sm text-gray-400 border border-ds-border">
+            <div className="bg-ds-elevated rounded-xl p-4 mb-4 text-sm text-gray-400 border border-ds-border">
               <div className="font-semibold text-gray-300 mb-2 flex items-center gap-2"><Lightbulb size={17} className="shrink-0 text-indigo-400" />Exemples de briefs</div>
               <ul className="space-y-1.5">
                 <li>« Refonte site vitrine cabinet d&apos;avocats à Lyon, responsive, 5 pages, budget 4 500€, délai 3 semaines »</li>
@@ -717,7 +717,7 @@ export default function NewProposalPage() {
             </div>
           </div>
 
-          <div className="bg-ds-elevated/50 rounded-xl p-4 border border-ds-border text-sm">
+          <div className="bg-ds-elevated rounded-xl p-4 border border-ds-border text-sm">
             <div className="font-semibold text-gray-300 mb-2">Récapitulatif</div>
             <div className="text-gray-400 space-y-1">
               <div>{generated.title}</div>

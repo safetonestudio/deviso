@@ -55,7 +55,7 @@ function TjmBadge({
     <div
       className={`rounded-2xl p-5 border ${
         highlight
-          ? "border-indigo-500/40 bg-indigo-500/[0.07]"
+          ? "border-indigo-500/40 bg-[#191830]"
           : "border-ds-border bg-ds-surface"
       }`}
     >
@@ -274,7 +274,7 @@ export default async function MetierTarifsPage({ params }: Props) {
         </section>
 
         {/* Deviso CTA */}
-        <section className="rounded-2xl border border-indigo-500/20 bg-indigo-500/[0.04] p-6 sm:p-8 flex flex-col sm:flex-row gap-6 items-center">
+        <section className="rounded-2xl border border-indigo-500/20 bg-[#191830] p-6 sm:p-8 flex flex-col sm:flex-row gap-6 items-center">
           <div className="flex-1">
             <h2 className="text-lg font-bold text-white mb-2">
               Creez vos devis de {data.label} en 30 secondes

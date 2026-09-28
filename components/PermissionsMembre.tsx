@@ -111,7 +111,7 @@ export function GrillePermissions({
   }
 
   return (
-    <div className="rounded-xl border border-ds-border bg-ds-elevated/40 divide-y divide-ds-border">
+    <div className="rounded-xl border border-ds-border bg-ds-elevated divide-y divide-ds-border">
       {ACTES.map(({ cle, titre, explication }) => {
         const actif = perms[cle];
         const estOuvert = ouvert === cle;

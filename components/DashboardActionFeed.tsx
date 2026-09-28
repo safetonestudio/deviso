@@ -16,9 +16,13 @@ export type ActionItem = {
   actionHref?: string; // navigate → facturer
 };
 
+// Fonds pleins : une teinte translucide (4%) laissait passer le fond a relief
+// derriere le contenu du dashboard et cassait la lisibilite (retour 28/09).
+// On garde la couleur d'urgence en version opaque (teinte sombre composee) plus
+// la bordure gauche coloree comme signal.
 const URGENCY_STYLE = {
-  high:   "border-l-red-500/60   bg-red-500/[0.04]",
-  medium: "border-l-amber-500/60 bg-amber-500/[0.04]",
+  high:   "border-l-red-500/60   bg-[#241717]",
+  medium: "border-l-amber-500/60 bg-[#241d11]",
   low:    "border-l-ds-border    bg-ds-surface",
 };
 
@@ -38,7 +42,7 @@ export function DashboardActionFeed({ items }: { items: ActionItem[] }) {
   // Un fil qui s'efface se lit comme une page vide, pas comme une confirmation.
   if (visible.length === 0) {
     return (
-      <div className="flex items-center gap-3 border border-ds-border rounded-xl px-4 py-3.5 bg-emerald-500/[0.04]">
+      <div className="flex items-center gap-3 border border-ds-border rounded-xl px-4 py-3.5 bg-[#14211a]">
         <CircleCheck size={16} className="text-emerald-400 shrink-0" />
         <div>
           <p className="text-sm font-medium text-white leading-snug">Tout est à jour</p>

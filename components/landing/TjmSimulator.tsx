@@ -44,7 +44,7 @@ export function TjmSimulator({ defaultTjm = 350, defaultJours = 15 }: TjmSimulat
   }, []);
 
   return (
-    <div className="rounded-2xl border border-indigo-500/20 bg-indigo-500/[0.04] p-6 space-y-6">
+    <div className="rounded-2xl border border-indigo-500/20 bg-[#191830] p-6 space-y-6">
       {/* Header */}
       <div>
         <h3 className="text-base font-semibold text-white mb-1">Simulateur de revenus</h3>
