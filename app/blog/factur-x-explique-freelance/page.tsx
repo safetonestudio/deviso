@@ -106,7 +106,7 @@ export default function Page() {
           <div className="space-y-10 text-sm text-gray-300 leading-relaxed">
 
             {/* La reponse tout de suite */}
-            <section className="bg-indigo-500/[0.07] border border-indigo-500/30 rounded-2xl p-6">
+            <section className="bg-[#191830] border border-indigo-500/30 rounded-2xl p-6">
               <p className="text-xs font-semibold text-indigo-400 uppercase tracking-wider mb-3">
                 La réponse en trois lignes
               </p>

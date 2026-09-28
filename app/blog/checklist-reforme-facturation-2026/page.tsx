@@ -201,9 +201,9 @@ export default function ChecklistReforme2026Page() {
               <div
                 className={`px-5 py-4 flex items-start gap-4 ${
                   item.urgency === "high"
-                    ? "bg-red-500/[0.04]"
+                    ? "bg-[#241717]"
                     : item.urgency === "medium"
-                    ? "bg-amber-500/[0.03]"
+                    ? "bg-[#241d11]"
                     : "bg-ds-surface"
                 }`}
               >
@@ -280,7 +280,7 @@ export default function ChecklistReforme2026Page() {
           </div>
         </div>
 
-        <div className="rounded-2xl bg-indigo-500/[0.06] border border-indigo-500/20 p-8 text-center mb-14">
+        <div className="rounded-2xl bg-[#191830] border border-indigo-500/20 p-8 text-center mb-14">
           <h2 className="text-xl font-bold text-white mb-3">Préparez-vous sans stress avec Deviso</h2>
           <p className="text-sm text-gray-400 mb-6 max-w-lg mx-auto">
             Deviso génère déjà des factures Factur-X au profil EN 16931. L&apos;intégration PDP arrive avant septembre 2027. Essayez gratuitement pendant 14 jours, sans carte bancaire.

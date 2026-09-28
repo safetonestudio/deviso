@@ -89,7 +89,7 @@ export default function EReportingFreelancePage() {
           <section>
             <h2 className="text-xl font-bold text-white mb-4">E-invoicing vs e-reporting : quelle différence ?</h2>
             <div className="grid sm:grid-cols-2 gap-4">
-              <div className="bg-indigo-500/[0.05] border border-indigo-500/20 rounded-xl p-5">
+              <div className="bg-[#191830] border border-indigo-500/20 rounded-xl p-5">
                 <p className="text-sm font-bold text-indigo-300 mb-3">E-invoicing (facturation électronique)</p>
                 <ul className="space-y-2 text-sm">
                   <li className="flex gap-2"><span className="text-indigo-400 shrink-0">→</span> <span>Transactions <strong className="text-white">B2B</strong> entre entreprises françaises assujetties à la TVA</span></li>
@@ -98,7 +98,7 @@ export default function EReportingFreelancePage() {
                   <li className="flex gap-2"><span className="text-indigo-400 shrink-0">→</span> <span>Obligation à partir de sept. 2026 (grandes entreprises) → sept. 2027 (tous)</span></li>
                 </ul>
               </div>
-              <div className="bg-amber-500/[0.05] border border-amber-500/20 rounded-xl p-5">
+              <div className="bg-[#241d11] border border-amber-500/20 rounded-xl p-5">
                 <p className="text-sm font-bold text-amber-300 mb-3">E-reporting (déclaration de données)</p>
                 <ul className="space-y-2 text-sm">
                   <li className="flex gap-2"><span className="text-amber-400 shrink-0">→</span> <span>Transactions <strong className="text-white">B2C</strong> (clients particuliers) + ventes à l&apos;étranger</span></li>
@@ -201,9 +201,9 @@ export default function EReportingFreelancePage() {
                   key={date}
                   className={`flex gap-4 rounded-xl p-4 border ${
                     urgency === "high"
-                      ? "border-red-500/30 bg-red-500/[0.04]"
+                      ? "border-red-500/30 bg-[#241717]"
                       : urgency === "medium"
-                      ? "border-amber-500/30 bg-amber-500/[0.04]"
+                      ? "border-amber-500/30 bg-[#241d11]"
                       : "border-ds-border bg-ds-surface"
                   }`}
                 >
@@ -222,7 +222,7 @@ export default function EReportingFreelancePage() {
           <section>
             <h2 className="text-xl font-bold text-white mb-4">Risques en cas de non-conformité</h2>
             <div className="grid sm:grid-cols-2 gap-4">
-              <div className="bg-red-500/[0.05] border border-red-500/20 rounded-xl p-5">
+              <div className="bg-[#241717] border border-red-500/20 rounded-xl p-5">
                 <p className="text-sm font-bold text-red-400 mb-3">Amende e-reporting</p>
                 <p className="text-sm text-gray-300">
                   <strong>500 € par transmission</strong> manquante ou insuffisante, plafonnée à{" "}
@@ -234,7 +234,7 @@ export default function EReportingFreelancePage() {
                   suivant une demande de l&apos;administration.
                 </p>
               </div>
-              <div className="bg-red-500/[0.05] border border-red-500/20 rounded-xl p-5">
+              <div className="bg-[#241717] border border-red-500/20 rounded-xl p-5">
                 <p className="text-sm font-bold text-red-400 mb-3">Amende de réception</p>
                 <p className="text-sm text-gray-300">
                   Celle-ci s&apos;applique <strong>déjà</strong>, à tout le monde : si vous n&apos;êtes
@@ -247,7 +247,7 @@ export default function EReportingFreelancePage() {
                   fait que vous facturiez des particuliers.
                 </p>
               </div>
-              <div className="bg-amber-500/[0.05] border border-amber-500/20 rounded-xl p-5">
+              <div className="bg-[#241d11] border border-amber-500/20 rounded-xl p-5">
                 <p className="text-sm font-bold text-amber-400 mb-3">Contrôle fiscal facilité</p>
                 <p className="text-sm text-gray-300">
                   La DGFiP aura accès en temps réel aux données de transactions. L&apos;incohérence entre l&apos;e-reporting et votre déclaration de TVA sera détectée automatiquement.
@@ -336,7 +336,7 @@ export default function EReportingFreelancePage() {
           </div>
         </div>
 
-        <div className="rounded-2xl bg-indigo-500/[0.06] border border-indigo-500/20 p-8 text-center mb-14">
+        <div className="rounded-2xl bg-[#191830] border border-indigo-500/20 p-8 text-center mb-14">
           <h2 className="text-xl font-bold text-white mb-3">E-reporting intégré, rien à faire</h2>
           <p className="text-sm text-gray-400 mb-6 max-w-lg mx-auto">
             Deviso gérera automatiquement l&apos;e-reporting B2C et l&apos;e-invoicing B2B. Vous créez vos factures comme aujourd&apos;hui, la conformité 2026-2027 est prise en charge.

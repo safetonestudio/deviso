@@ -107,7 +107,7 @@ export default function ChoisirPlateformeAgreeePage() {
               <strong className="text-white">Probablement non.</strong> Il existe deux scénarios :
             </p>
             <div className="mt-4 space-y-4">
-              <div className="bg-emerald-500/[0.05] border border-emerald-500/20 rounded-xl p-5">
+              <div className="bg-[#14211a] border border-emerald-500/20 rounded-xl p-5">
                 <p className="text-sm font-bold text-emerald-400 mb-2">Scénario 1 (le plus fréquent), Votre logiciel intègre une PDP</p>
                 <p className="text-sm text-gray-300">
                   Vous utilisez un logiciel de facturation (Deviso, Pennylane, Abby...) qui a conclu un partenariat avec une ou plusieurs PDP. La transmission est transparente : vous créez votre facture comme d&apos;habitude, et le logiciel gère la transmission à la DGFiP automatiquement. C&apos;est le chemin le plus simple.
@@ -256,7 +256,7 @@ export default function ChoisirPlateformeAgreeePage() {
           </div>
         </div>
 
-        <div className="rounded-2xl bg-indigo-500/[0.06] border border-indigo-500/20 p-8 text-center mb-14">
+        <div className="rounded-2xl bg-[#191830] border border-indigo-500/20 p-8 text-center mb-14">
           <h2 className="text-xl font-bold text-white mb-3">Factur-X prêt, PDP en route</h2>
           <p className="text-sm text-gray-400 mb-6 max-w-lg mx-auto">
             Deviso génère déjà des factures au format Factur-X. L&apos;intégration PDP sera disponible bien avant l&apos;obligation de septembre 2027.

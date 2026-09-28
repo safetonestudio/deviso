@@ -151,7 +151,7 @@ export default function FacturationElectronique2026Page() {
             première obligation est entrée en application. La distinction recevoir /
             émettre est la seule information dont un indépendant a besoin pour savoir
             s'il est en retard ou non. ── */}
-        <div className="bg-amber-500/[0.06] border border-amber-500/30 rounded-2xl p-6 mb-6">
+        <div className="bg-[#241d11] border border-amber-500/30 rounded-2xl p-6 mb-6">
           <p className="text-xs font-semibold text-amber-400 uppercase tracking-wider mb-3">
             Où on en est aujourd&apos;hui
           </p>
@@ -183,7 +183,7 @@ export default function FacturationElectronique2026Page() {
         </div>
 
         {/* Encadré synthèse */}
-        <div className="bg-indigo-500/[0.07] border border-indigo-500/30 rounded-2xl p-6 mb-10">
+        <div className="bg-[#191830] border border-indigo-500/30 rounded-2xl p-6 mb-10">
           <p className="text-xs font-semibold text-indigo-400 uppercase tracking-wider mb-3">L&apos;essentiel en 30 secondes</p>
           <ul className="space-y-2 text-sm text-gray-300">
             <li className="flex gap-2"><span className="text-indigo-400 shrink-0">→</span> <span>Une facture électronique au sens de la réforme n&apos;est <strong className="text-white">pas un PDF envoyé par email</strong> : c&apos;est un format structuré qui transite par une plateforme agréée</span></li>
@@ -227,7 +227,7 @@ export default function FacturationElectronique2026Page() {
                     key={`${row.iso}-${row.entreprises}`}
                     className={`rounded-xl border p-4 ${
                       enVigueur
-                        ? "border-amber-500/40 bg-amber-500/[0.05]"
+                        ? "border-amber-500/40 bg-[#241d11]"
                         : "border-ds-border bg-ds-surface"
                     }`}
                   >
@@ -252,7 +252,7 @@ export default function FacturationElectronique2026Page() {
               })}
             </div>
 
-            <div className="mt-6 bg-emerald-500/[0.06] border border-emerald-500/20 rounded-xl p-4">
+            <div className="mt-6 bg-[#14211a] border border-emerald-500/20 rounded-xl p-4">
               <p className="text-sm text-emerald-300">
                 <strong>Ce que ça signifie pour vous aujourd&apos;hui</strong> : même si votre obligation d&apos;émettre ne commence qu&apos;en septembre 2027, l&apos;obligation de pouvoir <strong>recevoir</strong> une facture électronique via une plateforme agréée s&apos;applique <strong>depuis le 1<sup>er</sup> septembre 2026</strong>, à toute entreprise assujettie à la TVA. Ce n&apos;est pas une échéance à préparer, c&apos;est une obligation en cours.
               </p>
@@ -290,7 +290,7 @@ export default function FacturationElectronique2026Page() {
             <p className="mt-3">
               Ce changement a une conséquence que peu de contenus énoncent clairement : <strong className="text-white">il n&apos;existe aucune option gratuite fournie par l&apos;État.</strong> Toute entreprise assujettie passe par une <strong className="text-white">plateforme agréée</strong> privée, immatriculée par la DGFiP, on parlait avant de « plateforme de dématérialisation partenaire » (PDP), les deux termes désignent la même chose.
             </p>
-            <div className="mt-4 bg-amber-500/[0.06] border border-amber-500/20 rounded-xl p-4">
+            <div className="mt-4 bg-[#241d11] border border-amber-500/20 rounded-xl p-4">
               <p className="text-sm text-amber-300">
                 <strong>Conséquence pratique</strong>, Les logiciels de facturation (comme Deviso) doivent soit devenir eux-mêmes une PDP, soit s&apos;interfacer avec une PDP certifiée. Deviso est en cours de partenariat avec des PDP pour septembre 2027. En attendant, vos factures Factur-X sont déjà dans le bon format.
               </p>
@@ -420,7 +420,7 @@ export default function FacturationElectronique2026Page() {
         </div>
 
         {/* CTA */}
-        <div className="rounded-2xl bg-indigo-500/[0.06] border border-indigo-500/20 p-8 text-center mb-14">
+        <div className="rounded-2xl bg-[#191830] border border-indigo-500/20 p-8 text-center mb-14">
           <h2 className="text-xl font-bold text-white mb-3">Vos factures sont déjà conformes Factur-X</h2>
           <p className="text-sm text-gray-400 mb-6 max-w-lg mx-auto">
             Deviso génère automatiquement des factures Factur-X EN 16931, le format requis par la réforme. Aucune action de votre part, la conformité est intégrée.

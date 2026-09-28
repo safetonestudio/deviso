@@ -77,13 +77,13 @@ export interface ArticleLongProps {
 
 const TONS = {
   info: { cadre: "bg-ds-surface border-ds-border", titre: "text-white", Icone: Info, couleur: "text-indigo-400" },
-  alerte: { cadre: "bg-amber-500/[0.06] border-amber-500/25", titre: "text-white", Icone: TriangleAlert, couleur: "text-amber-400" },
-  succes: { cadre: "bg-emerald-500/[0.05] border-emerald-500/20", titre: "text-white", Icone: CircleCheck, couleur: "text-emerald-400" },
+  alerte: { cadre: "bg-[#241d11] border-amber-500/25", titre: "text-white", Icone: TriangleAlert, couleur: "text-amber-400" },
+  succes: { cadre: "bg-[#14211a] border-emerald-500/20", titre: "text-white", Icone: CircleCheck, couleur: "text-emerald-400" },
 } as const;
 
 const TONS_COLONNE = {
-  positif: "bg-emerald-500/[0.05] border-emerald-500/20",
-  negatif: "bg-rose-950/20 border-rose-500/20",
+  positif: "bg-[#14211a] border-emerald-500/20",
+  negatif: "bg-[#241417] border-rose-500/20",
   neutre: "bg-ds-surface border-ds-border",
 } as const;
 
@@ -328,7 +328,7 @@ export function ArticleLong({ slug, chapeau, enBref, sections, faq, sources, cta
           <div className="space-y-10 text-sm text-gray-300 leading-relaxed">
 
             {enBref && enBref.length > 0 && (
-              <section className="bg-indigo-500/[0.07] border border-indigo-500/30 rounded-2xl p-6">
+              <section className="bg-[#191830] border border-indigo-500/30 rounded-2xl p-6">
                 <p className="text-xs font-semibold text-indigo-400 uppercase tracking-wider mb-3">
                   L&apos;essentiel
                 </p>

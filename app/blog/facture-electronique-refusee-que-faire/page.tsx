@@ -156,7 +156,7 @@ export default function Page() {
           <div className="space-y-10 text-sm text-gray-300 leading-relaxed">
 
             {/* ── La réponse immédiate ── */}
-            <section className="bg-indigo-500/[0.07] border border-indigo-500/30 rounded-2xl p-6">
+            <section className="bg-[#191830] border border-indigo-500/30 rounded-2xl p-6">
               <p className="text-xs font-semibold text-indigo-400 uppercase tracking-wider mb-3">
                 Si vous êtes pressé
               </p>
@@ -198,7 +198,7 @@ export default function Page() {
                 client contestait la livraison.
               </p>
               <div className="grid sm:grid-cols-2 gap-4">
-                <div className="bg-rose-950/20 border border-rose-500/20 rounded-xl p-5">
+                <div className="bg-[#241417] border border-rose-500/20 rounded-xl p-5">
                   <p className="text-xs font-semibold text-rose-300 uppercase tracking-wider mb-2">
                     Refusée · statut 210
                   </p>
@@ -213,7 +213,7 @@ export default function Page() {
                     comprenez, et vous parlez à votre client. Le motif est un code, pas une explication.
                   </p>
                 </div>
-                <div className="bg-amber-500/[0.06] border border-amber-500/25 rounded-xl p-5">
+                <div className="bg-[#241d11] border border-amber-500/25 rounded-xl p-5">
                   <p className="text-xs font-semibold text-amber-300 uppercase tracking-wider mb-2">
                     Rejetée · statut 213
                   </p>
@@ -321,7 +321,7 @@ export default function Page() {
                   </div>
                 ))}
               </div>
-              <div className="flex gap-3 bg-amber-500/[0.06] border border-amber-500/25 rounded-xl p-5 mt-4">
+              <div className="flex gap-3 bg-[#241d11] border border-amber-500/25 rounded-xl p-5 mt-4">
                 <TriangleAlert size={18} className="shrink-0 mt-0.5 text-amber-400" />
                 <div>
                   <p className="font-semibold text-white mb-1">Le piège de DOUBLE_FACT</p>
@@ -369,7 +369,7 @@ export default function Page() {
                 dispositif cherche à éviter.
               </p>
               <div className="grid sm:grid-cols-2 gap-4">
-                <div className="bg-emerald-500/[0.05] border border-emerald-500/20 rounded-xl p-5">
+                <div className="bg-[#14211a] border border-emerald-500/20 rounded-xl p-5">
                   <p className="text-xs font-semibold text-emerald-300 uppercase tracking-wider mb-3">
                     Avoir interne, ne se transmet pas
                   </p>

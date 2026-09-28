@@ -218,7 +218,7 @@ export function BlogPost({
             </h2>
             <div className="bg-ds-surface rounded-xl border border-ds-border overflow-hidden">
               {/* Table header */}
-              <div className="px-5 py-4 border-b border-ds-border bg-ds-elevated/50">
+              <div className="px-5 py-4 border-b border-ds-border bg-ds-elevated">
                 <p className="text-xs text-gray-500 font-medium uppercase tracking-wider">Client</p>
                 <p className="text-white font-medium mt-0.5">{exampleClient}</p>
               </div>
@@ -233,7 +233,7 @@ export function BlogPost({
                   </div>
                 ))}
               </div>
-              <div className="px-5 py-4 bg-ds-elevated/50 flex items-center justify-between">
+              <div className="px-5 py-4 bg-ds-elevated flex items-center justify-between">
                 <p className="text-gray-400 text-sm font-medium">Total HT</p>
                 <p className="text-indigo-400 font-semibold text-lg">{exampleTotal}</p>
               </div>

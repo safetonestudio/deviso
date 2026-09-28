@@ -95,11 +95,11 @@ export default function ReformeFacturationMicroEntrepreneurPage() {
 
           {/* Mythe 1 */}
           <section>
-            <div className="bg-red-500/[0.06] border border-red-500/20 rounded-2xl p-6 mb-6">
+            <div className="bg-[#241717] border border-red-500/20 rounded-2xl p-6 mb-6">
               <p className="text-sm font-bold text-red-400 mb-2 flex items-center gap-2"><CircleX size={17} className="shrink-0" />Le mythe le plus répandu</p>
               <p className="text-sm text-gray-300">&quot;Je suis en franchise de TVA, donc la facturation électronique ne me concerne pas.&quot;</p>
             </div>
-            <div className="bg-emerald-500/[0.06] border border-emerald-500/20 rounded-2xl p-6">
+            <div className="bg-[#14211a] border border-emerald-500/20 rounded-2xl p-6">
               <p className="text-sm font-bold text-emerald-400 mb-2">✓ La réalité</p>
               <p className="text-sm text-gray-300">
                 La franchise en base de TVA est un <strong className="text-white">régime fiscal</strong>. La réforme de facturation électronique est une <strong className="text-white">obligation administrative et fiscale</strong> distincte. Les deux ne sont pas liés. Un micro-entrepreneur en franchise de TVA devra quand même émettre ses factures B2B au format électronique structuré à partir du 1er septembre 2027.
@@ -165,9 +165,9 @@ export default function ReformeFacturationMicroEntrepreneurPage() {
                 },
               ].map(({ date, action, detail, status }) => (
                 <div key={date} className={`rounded-xl border p-4 ${
-                  status === "now" ? "border-emerald-500/30 bg-emerald-500/[0.04]" :
-                  status === "soon" ? "border-amber-500/30 bg-amber-500/[0.04]" :
-                  status === "deadline" ? "border-red-500/20 bg-red-500/[0.03]" :
+                  status === "now" ? "border-emerald-500/30 bg-[#14211a]" :
+                  status === "soon" ? "border-amber-500/30 bg-[#241d11]" :
+                  status === "deadline" ? "border-red-500/20 bg-[#241717]" :
                   "border-ds-border bg-ds-surface"
                 }`}>
                   <p className={`text-xs font-semibold mb-1 ${
@@ -235,7 +235,7 @@ export default function ReformeFacturationMicroEntrepreneurPage() {
           </div>
         </div>
 
-        <div className="rounded-2xl bg-indigo-500/[0.06] border border-indigo-500/20 p-8 text-center mb-14">
+        <div className="rounded-2xl bg-[#191830] border border-indigo-500/20 p-8 text-center mb-14">
           <h2 className="text-xl font-bold text-white mb-3">Factur-X inclus dans Deviso</h2>
           <p className="text-sm text-gray-400 mb-6 max-w-lg mx-auto">
             Toutes vos factures Deviso sont déjà au format Factur-X EN 16931, le format requis par la réforme. La mention &ldquo;franchise TVA&rdquo; est gérée automatiquement selon votre régime.
