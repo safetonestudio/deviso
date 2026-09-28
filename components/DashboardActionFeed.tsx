@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { AlertCircle, Clock, Receipt, ArrowRight } from "lucide-react";
+import { AlertCircle, Clock, Receipt, ArrowRight, CircleCheck } from "lucide-react";
 
 export type ActionItem = {
   type: "overdue_invoice" | "remind_proposal" | "to_invoice" | "remind_invoice";
@@ -32,10 +32,21 @@ export function DashboardActionFeed({ items }: { items: ActionItem[] }) {
   const [done, setDone] = useState<Set<string>>(new Set());
   const [loading, setLoading] = useState<Set<string>>(new Set());
 
-  if (items.length === 0) return null;
-
   const visible = items.filter((it) => !done.has(it.id));
-  if (visible.length === 0) return null;
+
+  // Rien en attente : on rassure explicitement au lieu de disparaître.
+  // Un fil qui s'efface se lit comme une page vide, pas comme une confirmation.
+  if (visible.length === 0) {
+    return (
+      <div className="flex items-center gap-3 border border-ds-border rounded-xl px-4 py-3.5 bg-emerald-500/[0.04]">
+        <CircleCheck size={16} className="text-emerald-400 shrink-0" />
+        <div>
+          <p className="text-sm font-medium text-white leading-snug">Tout est à jour</p>
+          <p className="text-xs text-gray-500 mt-0.5">Rien ne réclame ton attention pour l&apos;instant.</p>
+        </div>
+      </div>
+    );
+  }
 
   async function handleAction(item: ActionItem) {
     if (item.actionApi) {

@@ -300,7 +300,7 @@ export default async function DashboardPage() {
       </div>
 
       {/* ── Action feed ── */}
-      {!isMember && actionItems.length > 0 && (
+      {!isMember && (
         <DashboardActionFeed items={actionItems} />
       )}
 
