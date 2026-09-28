@@ -6,6 +6,7 @@ import { exigerTitulaire } from "@/lib/droits";
 import {
   validerSaisie,
   transmettreAchat,
+  patchStatut,
   type SaisieAchat,
   type AchatInternational,
 } from "@/lib/superpdp-achats";
@@ -113,19 +114,7 @@ export async function POST(req: NextRequest) {
   // en attente (réessai automatique ultérieur), ou échec (refus réel).
   const resultat = await transmettreAchat(workspaceId, achat as AchatInternational);
 
-  const patch = resultat.ok
-    ? {
-        transmission_status: "transmis" as const,
-        superpdp_id: resultat.superpdpId,
-        transmission_error: null,
-        transmitted_at: new Date().toISOString(),
-        updated_at: new Date().toISOString(),
-      }
-    : {
-        transmission_status: resultat.reessayable ? ("en_attente" as const) : ("echec" as const),
-        transmission_error: resultat.detail.slice(0, 1000),
-        updated_at: new Date().toISOString(),
-      };
+  const patch = patchStatut(resultat);
 
   await admin.from("superpdp_achats_int").update(patch).eq("id", achat.id).eq("user_id", workspaceId);
 

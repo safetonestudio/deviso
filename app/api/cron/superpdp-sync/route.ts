@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { synchroniserFactures } from "@/lib/superpdp-sync";
 import { factureBloquee } from "@/lib/superpdp-blocage";
+import { retenterAchatsEnAttente } from "@/lib/superpdp-achats";
 import { cronAutorise } from "@/lib/cron-auth";
 
 /**
@@ -92,11 +93,27 @@ export async function GET(req: Request) {
     console.error("[superpdp-blocage] recensement impossible :", err instanceof Error ? err.message : err);
   }
 
+  // Réessai des déclarations d'achat international restées « en attente ».
+  //
+  // Contrairement aux factures sortantes ci-dessus, qu'on n'ose pas réémettre
+  // (leur sort est inconnu, un doublon serait pire que le retard), un achat
+  // « en attente » n'a jamais reçu de 200 : il n'est PAS déclaré. Le réessai
+  // vérifie en plus qu'aucune déclaration du même numéro n'existe déjà avant
+  // d'envoyer. Le retenter est donc sûr, et évite au client de revenir cliquer
+  // « Retransmettre » lui-même, ce qui est tout l'objet de cette page.
+  let achats = { examines: 0, transmis: 0, encore: 0, echecs: 0 };
+  try {
+    achats = await retenterAchatsEnAttente(admin);
+  } catch (err) {
+    console.error("[superpdp-achats-retry] échec :", err instanceof Error ? err.message : err);
+  }
+
   console.log(
     `[superpdp-sync] ${comptes} compte(s), ${factures} facture(s) dont ${entrantes} entrante(s)` +
       (echecs ? `, ${echecs} échec(s)` : "") +
-      (bloquees ? `, ${bloquees} facture(s) bloquée(s)` : "")
+      (bloquees ? `, ${bloquees} facture(s) bloquée(s)` : "") +
+      (achats.examines ? `, achats en attente ${achats.examines} -> ${achats.transmis} transmis` : "")
   );
 
-  return NextResponse.json({ comptes, factures, entrantes, echecs, bloquees });
+  return NextResponse.json({ comptes, factures, entrantes, echecs, bloquees, achats });
 }

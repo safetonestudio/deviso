@@ -3,6 +3,7 @@ import { lireEntreprise } from "@/lib/superpdp-entreprise";
 import { getWorkspaceProfile } from "@/lib/workspace";
 import { resolveVatNumber } from "@/lib/facturx-helpers";
 import { paysFrancais } from "@/lib/superpdp-nature";
+import type { SupabaseClient } from "@supabase/supabase-js";
 
 /**
  * Achats internationaux, e-reporting des acquisitions auprès de fournisseurs
@@ -62,6 +63,15 @@ export interface SaisieAchat {
 /** Montant à deux décimales, format attendu par l'API (chaîne « 1000.00 »). */
 export function montantStr(n: number): string {
   return (Math.round(n * 100) / 100).toFixed(2);
+}
+
+/**
+ * Le numéro que porte la déclaration : celui de la facture du fournisseur, ou à
+ * défaut notre propre référence. Défini une seule fois pour que la construction
+ * du payload et le contrôle d'idempotence (réessai) parlent du même numéro.
+ */
+export function numeroDeclaration(achat: { numero: string | null; id: string }): string {
+  return achat.numero?.trim() || `ACHAT-${achat.id.slice(0, 8)}`;
 }
 
 /**
@@ -293,7 +303,7 @@ export function construirePayloadB2bint(
         direction: "in",
         // Numéro de la facture du fournisseur ; à défaut, notre propre
         // référence, pour que la déclaration soit toujours identifiable.
-        number: achat.numero?.trim() || `ACHAT-${achat.id.slice(0, 8)}`,
+        number: numeroDeclaration(achat),
         issue_date: achat.date_facture,
         currency_code: achat.devise,
         // Code type de document (BT-3, UNTDID 1001), requis par l'API depuis le
@@ -456,4 +466,107 @@ export async function transmettreAchat(
       detail: detail.slice(0, 900),
     };
   }
+}
+
+// ─────────────────────── Réessai automatique (cron) ───────────────────────
+
+/**
+ * Le patch de statut à partir d'un verdict de transmission. Une seule règle,
+ * partagée par la route de saisie et le réessai, pour qu'ils ne divergent pas.
+ */
+export function patchStatut(resultat: ResultatTransmission) {
+  return resultat.ok
+    ? {
+        transmission_status: "transmis" as const,
+        superpdp_id: resultat.superpdpId,
+        transmission_error: null,
+        transmitted_at: new Date().toISOString(),
+        updated_at: new Date().toISOString(),
+      }
+    : {
+        transmission_status: (resultat.reessayable ? "en_attente" : "echec") as "en_attente" | "echec",
+        transmission_error: resultat.detail.slice(0, 1000),
+        updated_at: new Date().toISOString(),
+      };
+}
+
+/**
+ * Numéros de déclaration d'achat déjà présents chez la Plateforme Agréée pour
+ * ce compte (direction "in"), avec leur identifiant.
+ *
+ * Sert de garde d'idempotence au réessai : si une coupure réseau est survenue
+ * APRÈS un 200, l'achat est resté « en attente » chez nous alors que la
+ * déclaration existe déjà chez eux. Retransmettre en aveugle créerait un
+ * doublon de déclaration fiscale. On regarde donc d'abord ce qui existe.
+ */
+async function numerosDejaDeclares(workspaceId: string): Promise<Map<string, number>> {
+  const map = new Map<string, number>();
+  try {
+    const res = await superpdpFetch(workspaceId, "/b2bint_invoices?limit=1000");
+    if (!res.ok) return map;
+    const body = JSON.parse(await res.text()) as {
+      data?: { id?: number; number?: string; direction?: string }[];
+    };
+    for (const it of body.data ?? []) {
+      if (it.number && typeof it.id === "number" && (it.direction ?? "in") === "in" && !map.has(it.number)) {
+        map.set(it.number, it.id);
+      }
+    }
+  } catch {
+    // Compte injoignable ou réponse illisible : carte vide, le réessai suivra
+    // son cours normal (au pire un « en attente » de plus, jamais un doublon).
+  }
+  return map;
+}
+
+/**
+ * Réessaie toutes les déclarations d'achat restées « en attente ».
+ *
+ * Appelée par le cron horaire : l'utilisateur n'a pas à revenir cliquer
+ * « Retransmettre ». Sûr contre les doublons : un achat « en attente » n'a
+ * jamais reçu de 200 (un 200 le marque « transmis »), et avant toute
+ * retransmission on vérifie que son numéro n'est pas déjà déclaré. On ne touche
+ * jamais aux « transmis » ni aux « echec » (refus réel, qui demande une
+ * correction de saisie, pas un énième essai identique).
+ */
+export async function retenterAchatsEnAttente(
+  admin: SupabaseClient,
+  limite = 200
+): Promise<{ examines: number; transmis: number; encore: number; echecs: number }> {
+  const { data: achats } = await admin
+    .from("superpdp_achats_int")
+    .select("*")
+    .eq("transmission_status", "en_attente")
+    .order("updated_at", { ascending: true })
+    .limit(limite);
+
+  let transmis = 0;
+  let encore = 0;
+  let echecs = 0;
+  const cacheNumeros = new Map<string, Map<string, number>>();
+
+  for (const brut of achats ?? []) {
+    const achat = brut as AchatInternational;
+    const ws = achat.user_id;
+
+    if (!cacheNumeros.has(ws)) cacheNumeros.set(ws, await numerosDejaDeclares(ws));
+    const dejaMap = cacheNumeros.get(ws)!;
+    const num = numeroDeclaration(achat);
+
+    let resultat: ResultatTransmission;
+    if (dejaMap.has(num)) {
+      // Déjà déclaré (200 perdu en route) : on ne recrée pas, on réconcilie.
+      resultat = { ok: true, superpdpId: dejaMap.get(num) ?? null };
+    } else {
+      resultat = await transmettreAchat(ws, achat);
+    }
+
+    await admin.from("superpdp_achats_int").update(patchStatut(resultat)).eq("id", achat.id).eq("user_id", ws);
+
+    if (resultat.ok) transmis++;
+    else if (resultat.reessayable) encore++;
+    else echecs++;
+  }
+
+  return { examines: (achats ?? []).length, transmis, encore, echecs };
 }
