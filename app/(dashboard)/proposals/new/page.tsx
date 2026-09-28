@@ -6,6 +6,7 @@ import { v4 as uuidv4 } from "uuid";
 import { UpgradeButton } from "@/components/UpgradeButton";
 import { LayoutTemplate, ChevronDown, ChevronUp, Clock, Package, Lightbulb, Zap, RotateCcw, Save } from "lucide-react";
 import { GuidedTourBanner } from "@/components/GuidedTourBanner";
+import { RechercheEntreprise } from "@/components/RechercheEntreprise";
 
 type Step = "brief" | "review" | "client";
 
@@ -637,6 +638,16 @@ export default function NewProposalPage() {
             <p className="text-gray-400 text-sm">Optionnel, tu pourras compléter après</p>
           </div>
           <div className="grid sm:grid-cols-2 gap-4">
+            <RechercheEntreprise
+              onChoisir={(e) => {
+                setClientCompany(e.nom);
+                setClientSiren(e.siren);
+                setClientStreet(e.rue);
+                setClientPostcode(e.code_postal);
+                setClientCity(e.ville);
+                if (!clientName.trim()) setClientName(e.nom);
+              }}
+            />
             <div>
               <label className="block text-sm font-medium text-gray-300 mb-1.5">Nom du client</label>
               <input aria-label="Nom du client" className={inputCls} placeholder="Jean Martin" value={clientName} onChange={(e) => setClientName(e.target.value)} />
