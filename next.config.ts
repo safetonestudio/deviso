@@ -10,8 +10,12 @@ const securityHeaders = [
   { key: "Strict-Transport-Security", value: "max-age=31536000; includeSubDomains; preload" },
   // Referrer limité aux origines identiques
   { key: "Referrer-Policy", value: "strict-origin-when-cross-origin" },
-  // Désactive les fonctionnalités navigateur non nécessaires
-  { key: "Permissions-Policy", value: "camera=(), microphone=(), geolocation=(), interest-cohort=()" },
+  // Désactive les fonctionnalités navigateur non nécessaires. Le micro est
+  // autorisé pour NOTRE propre origine (self), car la dictée vocale du brief de
+  // devis en a besoin ; il reste interdit aux iframes tierces. Sans ce `self`,
+  // `microphone=()` bloquait getUserMedia sur tout le site (refus immédiat, sans
+  // fenêtre d'autorisation, sur tous les navigateurs).
+  { key: "Permissions-Policy", value: "camera=(), microphone=(self), geolocation=(), interest-cohort=()" },
   // CSP : 'unsafe-inline' requis pour Tailwind + Next.js inline styles
   // 'unsafe-eval' requis pour @react-pdf/renderer
   {
