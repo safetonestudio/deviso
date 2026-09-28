@@ -17,6 +17,39 @@ const TVA_REGIMES: { value: TvaRegime; label: string; rate: number; description:
   { value: "super_reduit", label: "TVA 2,1% : Taux super réduit",                            rate: 2.1,  description: "Médicaments remboursés, presse, spectacles vivants" },
 ];
 
+// Accordeon natif pour les sections reglees une fois : le contenu reste monte
+// (l'etat des formulaires est preserve), seule la hauteur est repliee. Reduit la
+// densite de la page sans rien retirer (retour UX 28/09).
+function SectionRepliable({
+  titre,
+  sousTitre,
+  droite,
+  children,
+}: {
+  titre: string;
+  sousTitre?: React.ReactNode;
+  droite?: React.ReactNode;
+  children: React.ReactNode;
+}) {
+  return (
+    <details className="group bg-ds-surface border border-ds-border rounded-xl mt-6 overflow-hidden [&_summary::-webkit-details-marker]:hidden">
+      <summary className="flex items-center justify-between gap-3 px-5 py-4 cursor-pointer list-none select-none hover:bg-ds-elevated/40 transition-colors">
+        <div className="min-w-0">
+          <h2 className="font-semibold text-white">{titre}</h2>
+          {sousTitre && <div className="text-xs text-gray-500 mt-0.5">{sousTitre}</div>}
+        </div>
+        <div className="flex items-center gap-3 shrink-0">
+          {droite}
+          <svg className="w-4 h-4 shrink-0 text-gray-400 transition-transform group-open:rotate-180" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+            <path strokeLinecap="round" strokeLinejoin="round" d="m19.5 8.25-7.5 7.5-7.5-7.5" />
+          </svg>
+        </div>
+      </summary>
+      <div className="px-5 pb-5 space-y-4">{children}</div>
+    </details>
+  );
+}
+
 export default function ProfilPage() {
   const [profile, setProfile] = useState<Partial<Profile>>({});
   const [loading, setLoading] = useState(true);
@@ -382,23 +415,25 @@ Les présentes CGV sont soumises au droit français. Tout litige relève de la c
       </div>
 
       {/* Abonnement */}
-      <section className="bg-ds-surface border border-ds-border rounded-xl p-5 mb-6">
+      <SectionRepliable
+        titre="Abonnement"
+        droite={
+          <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold ${
+            profile.plan === "pro" ? "bg-indigo-500/20 text-indigo-300" :
+            profile.plan === "solo" ? "bg-indigo-500/20 text-indigo-300" :
+            "bg-ds-elevated text-gray-400"
+          }`}>
+            {profile.plan === "pro" ? "Pro" : profile.plan === "solo" ? "Solo" : "Gratuit"}
+          </span>
+        }
+      >
         <div className="flex items-center justify-between flex-wrap gap-3">
-          <div>
-            <h2 className="font-semibold text-white">Abonnement</h2>
-            <div className="flex items-center gap-2 mt-1.5">
-              <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold ${
-                profile.plan === "pro" ? "bg-indigo-500/20 text-indigo-300" :
-                profile.plan === "solo" ? "bg-indigo-500/20 text-indigo-300" :
-                "bg-ds-elevated text-gray-400"
-              }`}>
-                {profile.plan === "pro" ? "Pro" : profile.plan === "solo" ? "Solo" : "Gratuit"}
-              </span>
-              {profile.subscription_status === "active" && <span className="text-xs text-emerald-400 font-medium">· Actif</span>}
-              {profile.subscription_status && profile.subscription_status !== "active" && (
-                <span className="text-xs text-gray-500">· {profile.subscription_status}</span>
-              )}
-            </div>
+          <div className="flex items-center gap-2 text-xs">
+            {profile.subscription_status === "active"
+              ? <span className="text-emerald-400 font-medium">Abonnement actif</span>
+              : profile.subscription_status
+              ? <span className="text-gray-500">Statut : {profile.subscription_status}</span>
+              : <span className="text-gray-500">Aucun abonnement payant en cours</span>}
           </div>
           <div className="flex gap-2">
             {profile.plan === "free" ? (
@@ -420,7 +455,7 @@ Les présentes CGV sont soumises au droit français. Tout litige relève de la c
             )}
           </div>
         </div>
-      </section>
+      </SectionRepliable>
 
       <form onSubmit={handleSubmit} className="space-y-6">
         {/* Logo */}
@@ -577,11 +612,7 @@ Les présentes CGV sont soumises au droit français. Tout litige relève de la c
 
         {/* Apparence (Pro) */}
         {profile.plan === "pro" ? (
-          <section className="bg-ds-surface border border-ds-border rounded-xl p-5 space-y-5">
-            <div>
-              <h2 className="font-semibold text-white">Apparence des documents</h2>
-              <p className="text-xs text-gray-500 mt-0.5">Choisissez le style de vos devis et factures envoyés aux clients.</p>
-            </div>
+          <SectionRepliable titre="Apparence des documents" sousTitre="Choisissez le style de vos devis et factures envoyés aux clients.">
             <div>
               <label className="block text-xs font-medium text-gray-400 mb-2">Mise en page</label>
               <div className="grid grid-cols-3 gap-3">
@@ -624,7 +655,7 @@ Les présentes CGV sont soumises au droit français. Tout litige relève de la c
                 </div>
               </div>
             </div>
-          </section>
+          </SectionRepliable>
         ) : (
           <section className="bg-ds-elevated border border-ds-border rounded-xl p-5">
             <div className="flex items-center justify-between gap-4">
@@ -646,11 +677,7 @@ Les présentes CGV sont soumises au droit français. Tout litige relève de la c
 
       {/* ── Sous-domaine (Pro) ── */}
       {profile.plan === "pro" ? (
-        <section className="bg-ds-surface border border-ds-border rounded-xl p-5 mt-6 space-y-4">
-          <div>
-            <h2 className="font-semibold text-white">Sous-domaine personnalisé</h2>
-            <p className="text-xs text-gray-500 mt-0.5">Vos devis seront accessibles via <span className="text-indigo-400 font-mono">votre-nom.getdeviso.fr</span>.</p>
-          </div>
+        <SectionRepliable titre="Sous-domaine personnalisé" sousTitre={<>Vos devis seront accessibles via <span className="text-indigo-400 font-mono">votre-nom.getdeviso.fr</span>.</>}>
           {profile.subdomain && (
             <div className="flex items-center gap-2 bg-emerald-500/10 border border-emerald-500/20 rounded-lg px-3 py-2">
               <span className="text-emerald-400 text-sm">✓</span>
@@ -697,7 +724,7 @@ Les présentes CGV sont soumises au droit français. Tout litige relève de la c
           <p className="text-xs text-gray-500 border-t border-ds-border pt-3">
             Le lien de partage de vos devis utilisera automatiquement ce sous-domaine.
           </p>
-        </section>
+        </SectionRepliable>
       ) : (
         <section className="bg-ds-elevated border border-ds-border rounded-xl p-5 mt-6">
           <div className="flex items-center justify-between gap-4">
@@ -713,13 +740,7 @@ Les présentes CGV sont soumises au droit français. Tout litige relève de la c
 
       {/* ── Relances programmables (Pro) ── */}
       {profile.plan === "pro" ? (
-        <section className="bg-ds-surface border border-ds-border rounded-xl p-5 mt-6 space-y-5">
-          <div>
-            <h2 className="font-semibold text-white">Relances automatiques</h2>
-            <p className="text-xs text-gray-500 mt-0.5">
-              Définissez vos propres délais de relance (en jours après envoi) et un message personnalisé inclus dans chaque email.
-            </p>
-          </div>
+        <SectionRepliable titre="Relances automatiques" sousTitre="Définissez vos propres délais de relance (en jours après envoi) et un message personnalisé inclus dans chaque email.">
 
           {/* Intervalles */}
           <div>
@@ -793,7 +814,7 @@ Les présentes CGV sont soumises au droit français. Tout litige relève de la c
               Les relances s&apos;arrêtent automatiquement dès que le devis est signé ou refusé.
             </p>
           </div>
-        </section>
+        </SectionRepliable>
       ) : (
         <section className="bg-ds-elevated border border-ds-border rounded-xl p-5 mt-6">
           <div className="flex items-center justify-between gap-4">
@@ -810,17 +831,11 @@ Les présentes CGV sont soumises au droit français. Tout litige relève de la c
       )}
 
       {/* ── Chorus Pro (B2G, Réforme 2026) ── */}
-      <section className="bg-ds-surface border border-ds-border rounded-xl p-5 mt-6 space-y-5">
-        <div>
-          <div className="flex items-center gap-2 mb-0.5">
-            <h2 className="font-semibold text-white">Chorus Pro</h2>
-            <span className="text-xs font-semibold bg-blue-500/15 text-blue-300 border border-blue-500/20 px-2 py-0.5 rounded-full">Réforme 2026 · B2G</span>
-          </div>
-          <p className="text-xs text-gray-500">
-            Pour déposer vos factures auprès du service public (collectivités, ministères, hôpitaux) en un clic.
-            Laissez vide si vous ne facturez pas le secteur public.
-          </p>
-        </div>
+      <SectionRepliable
+        titre="Chorus Pro"
+        droite={<span className="text-xs font-semibold bg-blue-500/15 text-blue-300 border border-blue-500/20 px-2 py-0.5 rounded-full">Réforme 2026 · B2G</span>}
+        sousTitre="Pour déposer vos factures auprès du service public (collectivités, ministères, hôpitaux) en un clic. Laissez vide si vous ne facturez pas le secteur public."
+      >
 
         <div className="bg-blue-500/5 border border-blue-500/15 rounded-lg px-4 py-3">
           <p className="text-xs text-blue-300 leading-relaxed">
@@ -906,27 +921,24 @@ Les présentes CGV sont soumises au droit français. Tout litige relève de la c
           </button>
           {chorusSaved && <span className="text-xs text-emerald-400">✓ Connexion Chorus Pro enregistrée !</span>}
         </div>
-      </section>
+      </SectionRepliable>
 
       {/* ── CGV ── */}
-      <section className="bg-ds-surface border border-ds-border rounded-xl p-5 mb-6 mt-6">
-        <div className="flex items-start justify-between mb-1">
-          <div>
-            <h2 className="font-semibold text-white">Conditions Générales de Vente</h2>
-            <p className="text-xs text-gray-500 mt-1">
-              Rédigées une fois, annexées automatiquement à chaque devis PDF. Le client voit la mention &quot;Acceptation de ce devis vaut acceptation des CGV ci-jointes&quot;.
-            </p>
-          </div>
-          {!cgvText && (
+      <SectionRepliable
+        titre="Conditions Générales de Vente"
+        sousTitre="Rédigées une fois, annexées automatiquement à chaque devis PDF. Le client voit la mention « Acceptation de ce devis vaut acceptation des CGV ci-jointes »."
+      >
+        {!cgvText && (
+          <div className="flex justify-end">
             <button
               type="button"
               onClick={() => setCgvText(DEFAULT_CGV)}
-              className="text-xs text-indigo-400 hover:text-indigo-300 border border-indigo-500/30 px-3 py-1.5 rounded-lg transition-colors whitespace-nowrap ml-4 flex-shrink-0"
+              className="text-xs text-indigo-400 hover:text-indigo-300 border border-indigo-500/30 px-3 py-1.5 rounded-lg transition-colors whitespace-nowrap"
             >
               Utiliser le modèle
             </button>
-          )}
-        </div>
+          </div>
+        )}
         <textarea
           value={cgvText}
           onChange={(e) => setCgvText(e.target.value)}
@@ -954,7 +966,7 @@ Les présentes CGV sont soumises au droit français. Tout litige relève de la c
           )}
           {cgvSaved && <span className="text-xs text-emerald-400">✓ CGV enregistrées !</span>}
         </div>
-      </section>
+      </SectionRepliable>
 
       {/* Raccordement a la Plateforme Agreee. Place en fin de page : reglage
           rare, mais l'echeance du 1er septembre 2026 le rend reperable par son
