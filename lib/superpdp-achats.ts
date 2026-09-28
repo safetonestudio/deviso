@@ -136,6 +136,64 @@ export interface NotreIdentite {
 /** ICD 0002 = SIRENE (répertoire des entreprises françaises), schéma du SIREN. */
 const SCHEME_SIREN = "0002";
 
+/**
+ * Schéma d'identification d'un vendeur étranger par son numéro de TVA.
+ *
+ * `POST /b2bint_invoices` exige, pour le vendeur, un `company_id` ET son
+ * `company_id_scheme_id` (constaté en bac à sable le 28/09/2026 : sans eux,
+ * 400 « missing seller company_id[_scheme_id] for b2bint invoice »). Le seul
+ * identifiant stable dont nous disposons pour un fournisseur étranger est son
+ * numéro de TVA intracommunautaire ; le schéma correspondant est le code EAS
+ * Peppol du pays (« Electronic Address Scheme », liste officielle
+ * docs.peppol.eu et liste EAS de l'UE).
+ *
+ * On n'inscrit ici que des codes explicitement libellés « <pays> VAT number »
+ * (ou l'équivalent national reconnu). Un pays absent de cette table n'est pas
+ * transmis : l'achat reste en attente plutôt que de partir avec un schéma faux,
+ * qui serait rejeté par la Plateforme Agréée. DK, FI et le hors-UE ne sont pas
+ * encore couverts (schéma non confirmé), volontairement.
+ *
+ * Les 16 codes ci-dessous ont été vérifiés le 28/09/2026 sur la liste EAS
+ * Peppol (croisement de deux sources). Deux pièges évités :
+ *  - Italie : 0211 = Partita IVA (n° de TVA). NE PAS « corriger » en 0210, qui
+ *    est le Codice Fiscale (code fiscal), un identifiant différent.
+ *  - Espagne, Autriche : identifiés par le schéma fiscal national (Agencia
+ *    Tributaria / USt-IdNr.), il n'existe pas de code EAS « Spain/Austria VAT
+ *    number » distinct.
+ * Reste à confirmer à la bascule prod, quand PPF validera vraiment le schéma :
+ * la forme exacte de l'identifiant (n° de TVA avec ou sans préfixe pays) par
+ * schéma. Le bac à sable a accepté la forme préfixée (« DE811569869 »).
+ */
+const EAS_TVA_PAR_PAYS: Record<string, string> = {
+  AT: "9914", // Autriche (USt-IdNr.)
+  BE: "9925", // Belgique (VAT number)
+  CZ: "9929", // Tchéquie (VAT number)
+  DE: "9930", // Allemagne (VAT number)
+  ES: "9920", // Espagne (Agencia Tributaria, identifiant fiscal)
+  FR: "9957", // France (VAT number)
+  GR: "9933", // Grèce (VAT number)
+  HU: "9910", // Hongrie (VAT number)
+  IE: "9935", // Irlande (VAT number)
+  IT: "0211", // Italie : Partita IVA (VAT). PAS 0210 = Codice Fiscale.
+  LU: "9938", // Luxembourg (VAT number)
+  NL: "9944", // Pays-Bas (VAT number)
+  PL: "9945", // Pologne (VAT number)
+  PT: "9946", // Portugal (VAT number)
+  RO: "9947", // Roumanie (VAT number)
+  SE: "9955", // Suède (VAT number)
+};
+
+/** Code EAS du schéma « n° de TVA » pour un pays (ISO 2 lettres), ou null. */
+export function schemaTvaPays(pays: string | null | undefined): string | null {
+  const p = (pays ?? "").trim().toUpperCase();
+  return EAS_TVA_PAR_PAYS[p] ?? null;
+}
+
+/** Normalise un n° de TVA pour servir d'identifiant (majuscules, sans espaces). */
+function normaliserTva(tva: string | null | undefined): string {
+  return (tva ?? "").replace(/\s+/g, "").toUpperCase();
+}
+
 export async function lireNotreIdentite(workspaceId: string): Promise<NotreIdentite | null> {
   const entreprise = await lireEntreprise(workspaceId);
   if (!entreprise) return null;
@@ -186,15 +244,27 @@ export function construirePayloadB2bint(
     | "taux_tva"
     | "id"
   >,
-  nous: NotreIdentite
+  nous: NotreIdentite,
+  // Code EAS du schéma de TVA du fournisseur (voir EAS_TVA_PAR_PAYS). Résolu et
+  // garanti non vide par l'appelant (transmettreAchat), qui garde l'achat en
+  // attente si le pays n'est pas couvert plutôt que d'envoyer un schéma faux.
+  schemaVendeur: string
 ) {
   const ht = montantStr(achat.montant_ht);
   const tva = montantStr(achat.montant_tva);
   const autoliquidation = achat.montant_tva <= 0;
 
-  const seller: Record<string, unknown> = { country: achat.fournisseur_pays };
-  if (achat.fournisseur_tva?.trim()) {
-    seller.tax_registration_id = achat.fournisseur_tva.trim().toUpperCase();
+  // Le vendeur (fournisseur étranger) doit porter un `company_id` et son
+  // `company_id_scheme_id`, tous deux exigés par l'API. Faute d'autre
+  // identifiant, on l'identifie par son n° de TVA sous le schéma EAS du pays.
+  const tvaVendeur = normaliserTva(achat.fournisseur_tva);
+  const seller: Record<string, unknown> = {
+    country: achat.fournisseur_pays,
+    company_id: tvaVendeur,
+    company_id_scheme_id: schemaVendeur,
+  };
+  if (tvaVendeur) {
+    seller.tax_registration_id = tvaVendeur;
     seller.tax_registration_id_qualifying_id = "VA";
   }
 
@@ -226,6 +296,11 @@ export function construirePayloadB2bint(
         number: achat.numero?.trim() || `ACHAT-${achat.id.slice(0, 8)}`,
         issue_date: achat.date_facture,
         currency_code: achat.devise,
+        // Code type de document (BT-3, UNTDID 1001), requis par l'API depuis le
+        // 28/09/2026. Un achat déclaré est toujours la facture commerciale reçue
+        // du fournisseur : 380. (Son absence renvoyait un 500, désormais un 400
+        // « missing type_code for b2bint invoice ».)
+        type_code: "380",
         business_process: { id: "B1", type_id: "urn:cen.eu:en16931:2017" },
         seller,
         buyer,
@@ -249,17 +324,17 @@ export type ResultatTransmission =
   | { ok: false; reessayable: boolean; message: string; detail: string };
 
 /**
- * Un refus qui vient de la fenêtre de déclaration, pas de notre payload.
+ * Un refus qui ne vient pas de notre payload, mais d'une règle de période ou
+ * d'un incident serveur : on garde alors l'achat en attente et on retentera.
  *
- * Constaté en bac à sable (25/09/2026) : `POST /b2bint_invoices` refuse toute
- * date, une date future en 400 « is in the future », une date récente en 500,
- * une date ancienne en 400 « cannot add invoice at date ». Les endpoints
- * frères (b2bint_payments, b2c_*) répondent 200 avec un payload identique dans
- * sa forme. Le payload est donc correct ; c'est une règle de période côté
- * plateforme (doublée d'un incident 500 sur les dates récentes), très
- * probablement un artefact du bac à sable. On garde l'achat en attente et on
- * retentera : on ne marque JAMAIS « échec » un achat dont la déclaration est
- * refusée pour cette raison, ce serait accuser une saisie correcte.
+ * Historique : jusqu'au 28/09/2026, `POST /b2bint_invoices` répondait 500 sur
+ * les dates récentes, ce qu'on avait pris pour une règle de fenêtre du bac à
+ * sable. La cause réelle était un champ requis manquant, `type_code` : Super
+ * PDP a corrigé l'endpoint (500 -> 400 « missing type_code ») et nous l'avons
+ * ajouté au payload (voir construirePayloadB2bint). Restent des refus
+ * légitimes de période (« is in the future », « cannot add invoice at date »)
+ * et d'éventuels 5xx transitoires : dans ces cas on n'accuse JAMAIS « échec »
+ * une saisie correcte, on retente.
  */
 function refusDeFenetre(status: number, message: string): boolean {
   if (status >= 500) return true;
@@ -299,7 +374,35 @@ export async function transmettreAchat(
     };
   }
 
-  const payload = construirePayloadB2bint(achat, nous);
+  // L'API exige un `company_id` + `company_id_scheme_id` pour le vendeur. On
+  // identifie le fournisseur étranger par son n° de TVA sous le schéma EAS de
+  // son pays. Sans TVA, ou pour un pays dont le schéma n'est pas encore
+  // vérifié, on ne transmet pas : l'achat reste en attente avec un message
+  // clair, plutôt que de partir avec une identité fausse. Best-effort, jamais
+  // « échec » : une saisie à compléter n'est pas une saisie fautive.
+  if (!normaliserTva(achat.fournisseur_tva)) {
+    return {
+      ok: false,
+      reessayable: true,
+      message:
+        "Le numéro de TVA du fournisseur est nécessaire pour déclarer cet achat. " +
+        "Ajoutez-le : la déclaration repartira automatiquement.",
+      detail: "tva_fournisseur_absente",
+    };
+  }
+  const schemaVendeur = schemaTvaPays(achat.fournisseur_pays);
+  if (!schemaVendeur) {
+    return {
+      ok: false,
+      reessayable: true,
+      message:
+        "La déclaration des achats auprès de ce pays n'est pas encore prise en " +
+        "charge. L'achat est conservé et sera déclaré dès que ce sera possible.",
+      detail: `pays_non_pris_en_charge:${(achat.fournisseur_pays ?? "").toUpperCase()}`,
+    };
+  }
+
+  const payload = construirePayloadB2bint(achat, nous, schemaVendeur);
 
   try {
     const res = await superpdpFetch(workspaceId, "/b2bint_invoices", {
