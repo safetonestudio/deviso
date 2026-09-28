@@ -302,7 +302,7 @@ export function FreelanceLanding({
             {painPoints.map((p) => (
               <div
                 key={p.title}
-                className="bg-ds-surface/50 border border-ds-border rounded-2xl p-6 hover:border-indigo-500/30 hover:bg-ds-surface transition-all duration-200"
+                className="bg-ds-surface/90 border border-ds-border rounded-2xl p-6 hover:border-indigo-500/30 hover:bg-ds-surface transition-all duration-200"
               >
                 <div className="bg-indigo-500/10 rounded-lg p-2 mb-4 w-fit text-indigo-400"><p.icon size={22} /></div>
                 <h3 className="text-lg font-semibold text-white mb-2">{p.title}</h3>
@@ -348,7 +348,7 @@ export function FreelanceLanding({
             {features.map((f) => (
               <div
                 key={f.title}
-                className="bg-ds-surface/50 border border-ds-border rounded-2xl p-6 hover:border-indigo-500/30 hover:bg-ds-surface transition-all duration-200"
+                className="bg-ds-surface/90 border border-ds-border rounded-2xl p-6 hover:border-indigo-500/30 hover:bg-ds-surface transition-all duration-200"
               >
                 <div className="bg-indigo-500/10 rounded-lg p-2 mb-4 w-fit text-indigo-400"><f.icon size={20} /></div>
                 <h3 className="text-lg font-semibold text-white mb-2">{f.title}</h3>
@@ -371,7 +371,7 @@ export function FreelanceLanding({
             ].map((p) => (
               <div
                 key={p.name}
-                className={`rounded-2xl p-6 border ${p.highlight ? "bg-indigo-950/50 border-indigo-500/40 ring-1 ring-indigo-500/20" : "bg-ds-surface/50 border-ds-border"}`}
+                className={`rounded-2xl p-6 border ${p.highlight ? "bg-indigo-950/85 border-indigo-500/40 ring-1 ring-indigo-500/20" : "bg-ds-surface/90 border-ds-border"}`}
               >
                 <div className="text-lg font-semibold text-white mb-1">{p.name}</div>
                 <div className="text-2xl font-semibold text-white mb-3">{p.price}</div>

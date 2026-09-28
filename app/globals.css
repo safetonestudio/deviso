@@ -93,22 +93,24 @@
 }
 
 /* === Cartes des pages publiques : verre depoli ===
-   Translucides par defaut pour laisser transparaitre le fond a relief,
-   opaques au survol. C'est l'etat prefere de Selim (retabli le 27/09/2026).
+   Un soupcon de verre (le relief transparait a peine), mais assez opaque pour
+   que le texte reste lisible : le relief bleu-gris derriere du texte le rendait
+   difficile a lire (retour utilisateur 28/09/2026). On passe donc de 0.3 a 0.85
+   en sombre et de 0.6 a 0.92 en clair, et la carte devient pleine au survol.
    A n'appliquer qu'aux cartes posees sur .bg-site. */
 .carte-site {
-  background-color: rgba(20, 20, 20, 0.3);
-  border: 1px solid rgba(255, 255, 255, 0.07);
+  background-color: rgba(20, 20, 20, 0.85);
+  border: 1px solid rgba(255, 255, 255, 0.09);
   transition: background-color 0.2s ease, border-color 0.2s ease;
 }
 .carte-site:hover {
   background-color: var(--ds-surface);
-  border-color: rgba(255, 255, 255, 0.14);
+  border-color: rgba(255, 255, 255, 0.16);
 }
 /* Mode clair (au cas ou une page publique l'active un jour) */
 .light .carte-site {
-  background-color: rgba(255, 255, 255, 0.6);
-  border-color: rgba(0, 0, 0, 0.08);
+  background-color: rgba(255, 255, 255, 0.92);
+  border-color: rgba(0, 0, 0, 0.10);
 }
 .light .carte-site:hover {
   background-color: var(--ds-surface);
