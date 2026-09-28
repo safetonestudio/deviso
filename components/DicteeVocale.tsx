@@ -1,53 +1,33 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { Mic, Square } from "lucide-react";
+import { Mic, Square, Loader2 } from "lucide-react";
 
 /**
- * Dictée vocale : on parle, le texte s'écrit dans le champ visé.
+ * Dictée vocale : on parle, l'audio est transcrit en texte dans le champ visé.
  *
- * S'appuie sur la reconnaissance vocale native du navigateur (Web Speech API),
- * donc sans coût ni serveur. Le composant est volontairement discret et sûr :
- *  - il ne s'affiche que si le navigateur sait le faire (Firefox ne le sait
- *    pas, Safari est capricieux) : ailleurs il rend `null`, la saisie clavier
- *    reste évidemment intacte ;
- *  - il ne fait qu'AJOUTER du texte via `onTexteFinal`, il ne remplace ni
- *    n'efface jamais ce que l'utilisateur a tapé ;
- *  - toute erreur (micro refusé, réseau) est affichée en clair, jamais avalée.
+ * Enregistre le micro avec le mécanisme standard du navigateur (getUserMedia +
+ * MediaRecorder), puis envoie l'audio à `/api/transcription` (Whisper). Ce choix
+ * plutôt que la reconnaissance native (Web Speech API) parce que celle-ci ne
+ * marche pas partout : Brave la désactive, Firefox ne la gère pas. getUserMedia,
+ * lui, est supporté partout et demande l'autorisation micro normalement.
  *
- * Les types Web Speech ne sont pas dans la lib DOM standard : on déclare le
- * minimum nécessaire ici plutôt que d'élargir la configuration TypeScript.
+ * Sûr et discret :
+ *  - ne s'affiche que si le navigateur sait enregistrer (null sinon) ;
+ *  - n'AJOUTE que du texte via `onTexteFinal`, n'efface jamais la saisie ;
+ *  - coupe le micro dès l'arrêt (aucun flux qui traîne) ;
+ *  - affiche en clair les erreurs (micro refusé, transcription impossible).
  */
 
-interface ResultatReco {
-  0: { transcript: string };
-  isFinal: boolean;
-}
-interface EvenementReco {
-  resultIndex: number;
-  results: { length: number; [i: number]: ResultatReco };
-}
-interface InstanceReco {
-  lang: string;
-  continuous: boolean;
-  interimResults: boolean;
-  start(): void;
-  stop(): void;
-  abort(): void;
-  onresult: ((e: EvenementReco) => void) | null;
-  onerror: ((e: { error: string }) => void) | null;
-  onend: (() => void) | null;
-}
-type ConstructeurReco = new () => InstanceReco;
+const MIMES = ["audio/webm;codecs=opus", "audio/webm", "audio/mp4", "audio/ogg;codecs=opus"];
 
-function lireConstructeur(): ConstructeurReco | null {
-  if (typeof window === "undefined") return null;
-  const w = window as unknown as {
-    SpeechRecognition?: ConstructeurReco;
-    webkitSpeechRecognition?: ConstructeurReco;
-  };
-  return w.SpeechRecognition ?? w.webkitSpeechRecognition ?? null;
+function extensionPour(mime: string): string {
+  if (mime.includes("mp4")) return "mp4";
+  if (mime.includes("ogg")) return "ogg";
+  return "webm";
 }
+
+type Etat = "idle" | "enregistrement" | "transcription";
 
 export function DicteeVocale({
   onTexteFinal,
@@ -57,117 +37,157 @@ export function DicteeVocale({
   titre?: string;
 }) {
   const [supporte, setSupporte] = useState(false);
-  const [ecoute, setEcoute] = useState(false);
-  const [interim, setInterim] = useState("");
+  const [etat, setEtat] = useState<Etat>("idle");
   const [erreur, setErreur] = useState<string | null>(null);
-  const recoRef = useRef<InstanceReco | null>(null);
+
+  const recRef = useRef<MediaRecorder | null>(null);
+  const streamRef = useRef<MediaStream | null>(null);
+  const morceauxRef = useRef<Blob[]>([]);
+
+  const couperFlux = () => {
+    streamRef.current?.getTracks().forEach((t) => t.stop());
+    streamRef.current = null;
+  };
 
   useEffect(() => {
-    setSupporte(lireConstructeur() !== null);
-    // Arrêt propre si le composant est démonté pendant l'écoute.
+    setSupporte(
+      typeof window !== "undefined" &&
+        typeof navigator !== "undefined" &&
+        !!navigator.mediaDevices?.getUserMedia &&
+        typeof window.MediaRecorder !== "undefined"
+    );
     return () => {
       try {
-        recoRef.current?.abort();
+        recRef.current?.stop();
       } catch {
-        /* rien : le nettoyage ne doit jamais lever */
+        /* le nettoyage ne doit jamais lever */
       }
+      couperFlux();
     };
   }, []);
 
-  const demarrer = () => {
-    const Constructeur = lireConstructeur();
-    if (!Constructeur) return;
+  const demarrer = async () => {
     setErreur(null);
-    setInterim("");
-
-    const reco = new Constructeur();
-    reco.lang = "fr-FR";
-    reco.continuous = true;
-    reco.interimResults = true;
-
-    reco.onresult = (e) => {
-      let definitif = "";
-      let provisoire = "";
-      for (let i = e.resultIndex; i < e.results.length; i++) {
-        const r = e.results[i];
-        if (r.isFinal) definitif += r[0].transcript;
-        else provisoire += r[0].transcript;
-      }
-      if (definitif.trim()) onTexteFinal(definitif.trim());
-      setInterim(provisoire);
-    };
-
-    reco.onerror = (e) => {
-      // « no-speech » et « aborted » sont bénins (silence, arrêt volontaire).
-      if (e.error === "no-speech" || e.error === "aborted") return;
-      if (e.error === "not-allowed" || e.error === "service-not-allowed") {
+    let stream: MediaStream;
+    try {
+      // Déclenche la demande d'autorisation micro du navigateur (Brave compris).
+      stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+    } catch (e) {
+      const nom = (e as { name?: string })?.name;
+      if (nom === "NotAllowedError" || nom === "SecurityError") {
         setErreur("Micro refusé. Autorisez le microphone pour ce site, puis réessayez.");
-      } else if (e.error === "network") {
-        setErreur("La reconnaissance vocale n'a pas pu joindre le réseau. Réessayez.");
+      } else if (nom === "NotFoundError" || nom === "OverconstrainedError") {
+        setErreur("Aucun micro détecté sur cet appareil.");
       } else {
-        setErreur("La dictée s'est interrompue. Réessayez, ou tapez le texte.");
+        setErreur("Impossible d'accéder au micro. Réessayez.");
       }
-      setEcoute(false);
-    };
+      return;
+    }
 
-    reco.onend = () => {
-      setEcoute(false);
-      setInterim("");
+    streamRef.current = stream;
+    const mime = MIMES.find((m) => MediaRecorder.isTypeSupported(m)) ?? "";
+    let rec: MediaRecorder;
+    try {
+      rec = new MediaRecorder(stream, mime ? { mimeType: mime } : undefined);
+    } catch {
+      couperFlux();
+      setErreur("Ce navigateur ne sait pas enregistrer l'audio. Tapez le texte.");
+      return;
+    }
+
+    morceauxRef.current = [];
+    rec.ondataavailable = (e) => {
+      if (e.data.size > 0) morceauxRef.current.push(e.data);
+    };
+    rec.onstop = async () => {
+      couperFlux();
+      const type = rec.mimeType || mime || "audio/webm";
+      const blob = new Blob(morceauxRef.current, { type });
+      if (blob.size < 1000) {
+        setEtat("idle");
+        setErreur("Aucune parole détectée. Réessayez.");
+        return;
+      }
+      setEtat("transcription");
+      try {
+        const fd = new FormData();
+        fd.append("audio", blob, `dictee.${extensionPour(type)}`);
+        const r = await fetch("/api/transcription", { method: "POST", body: fd });
+        const d = await r.json().catch(() => ({}));
+        if (!r.ok) {
+          setErreur(d.message ?? d.error ?? "La transcription a échoué.");
+        } else if (typeof d.texte === "string" && d.texte.trim()) {
+          onTexteFinal(d.texte.trim());
+        } else {
+          setErreur("Rien n'a été compris. Réessayez, ou tapez le texte.");
+        }
+      } catch {
+        setErreur("Envoi interrompu. Réessayez.");
+      } finally {
+        setEtat("idle");
+      }
     };
 
     try {
-      reco.start();
-      recoRef.current = reco;
-      setEcoute(true);
+      rec.start();
+      recRef.current = rec;
+      setEtat("enregistrement");
     } catch {
-      setErreur("Impossible de démarrer la dictée. Réessayez.");
+      couperFlux();
+      setErreur("Impossible de démarrer l'enregistrement. Réessayez.");
     }
   };
 
   const arreter = () => {
     try {
-      recoRef.current?.stop();
+      recRef.current?.stop();
     } catch {
-      /* onend fera le ménage */
+      couperFlux();
+      setEtat("idle");
     }
-    setEcoute(false);
-    setInterim("");
   };
 
   if (!supporte) return null;
 
   return (
     <div className="flex flex-col items-end gap-1">
-      <button
-        type="button"
-        onClick={ecoute ? arreter : demarrer}
-        aria-pressed={ecoute}
-        className={
-          ecoute
-            ? "inline-flex items-center gap-2 px-3 py-1.5 rounded-lg text-sm font-semibold bg-red-500/15 text-red-300 border border-red-500/40 hover:bg-red-500/25 transition-colors"
-            : "inline-flex items-center gap-2 px-3 py-1.5 rounded-lg text-sm font-medium border border-ds-border text-gray-300 hover:bg-ds-elevated transition-colors"
-        }
-      >
-        {ecoute ? (
-          <>
-            <span className="relative flex h-2.5 w-2.5">
-              <span className="absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75 animate-ping" />
-              <span className="relative inline-flex h-2.5 w-2.5 rounded-full bg-red-500" />
-            </span>
-            <Square size={13} className="shrink-0" />
-            Arrêter la dictée
-          </>
-        ) : (
-          <>
-            <Mic size={15} className="shrink-0" />
-            {titre}
-          </>
-        )}
-      </button>
+      {etat === "transcription" ? (
+        <span className="inline-flex items-center gap-2 px-3 py-1.5 rounded-lg text-sm font-medium border border-ds-border text-gray-400">
+          <Loader2 size={15} className="shrink-0 animate-spin" />
+          Transcription…
+        </span>
+      ) : (
+        <button
+          type="button"
+          onClick={etat === "enregistrement" ? arreter : demarrer}
+          aria-pressed={etat === "enregistrement"}
+          className={
+            etat === "enregistrement"
+              ? "inline-flex items-center gap-2 px-3 py-1.5 rounded-lg text-sm font-semibold bg-red-500/15 text-red-300 border border-red-500/40 hover:bg-red-500/25 transition-colors"
+              : "inline-flex items-center gap-2 px-3 py-1.5 rounded-lg text-sm font-medium border border-ds-border text-gray-300 hover:bg-ds-elevated transition-colors"
+          }
+        >
+          {etat === "enregistrement" ? (
+            <>
+              <span className="relative flex h-2.5 w-2.5">
+                <span className="absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75 animate-ping" />
+                <span className="relative inline-flex h-2.5 w-2.5 rounded-full bg-red-500" />
+              </span>
+              <Square size={13} className="shrink-0" />
+              Arrêter et transcrire
+            </>
+          ) : (
+            <>
+              <Mic size={15} className="shrink-0" />
+              {titre}
+            </>
+          )}
+        </button>
+      )}
 
-      {ecoute && (
+      {etat === "enregistrement" && (
         <span className="text-xs text-gray-500 max-w-xs text-right">
-          {interim ? `« ${interim} »` : "Parlez, le texte s'écrit tout seul…"}
+          Parlez, puis cliquez pour transcrire.
         </span>
       )}
       {erreur && <span className="text-xs text-red-400 max-w-xs text-right">{erreur}</span>}
