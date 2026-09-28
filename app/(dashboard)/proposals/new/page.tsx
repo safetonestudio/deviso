@@ -7,6 +7,7 @@ import { UpgradeButton } from "@/components/UpgradeButton";
 import { LayoutTemplate, ChevronDown, ChevronUp, Clock, Package, Lightbulb, Zap, RotateCcw, Save } from "lucide-react";
 import { GuidedTourBanner } from "@/components/GuidedTourBanner";
 import { RechercheEntreprise } from "@/components/RechercheEntreprise";
+import { DicteeVocale } from "@/components/DicteeVocale";
 
 type Step = "brief" | "review" | "client";
 
@@ -398,6 +399,12 @@ export default function NewProposalPage() {
                 <li>« Identité visuelle complète pour une startup fintech : logo, charte graphique, business card »</li>
                 <li>« Mission SEO 3 mois pour e-commerce mode, audit + rédaction 10 articles + suivi positions »</li>
               </ul>
+            </div>
+            <div className="flex items-center justify-between gap-3 mb-2">
+              <span className="text-xs text-gray-500">Tapez, ou dictez à la voix.</span>
+              <DicteeVocale
+                onTexteFinal={(t) => setBrief((b) => (b.trim() ? b.trimEnd() + " " : "") + t)}
+              />
             </div>
             <textarea
               value={brief}
