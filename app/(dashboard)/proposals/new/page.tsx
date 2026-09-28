@@ -175,6 +175,23 @@ export default function NewProposalPage() {
     }
   };
 
+  // Devis vierge : ouvrir la review avec un devis vide, sans passer par l'IA.
+  // Meme forme d'objet que applyTemplate (devis type), une ligne vide de depart.
+  const createBlank = () => {
+    setError(null);
+    setGenerated({
+      title: "Nouveau devis",
+      items: [{ description: "", quantity: 1, unit: "forfait", unit_price: 0, total: 0 }],
+      total_ht: 0,
+      tva_rate: defaultTvaRate,
+      total_ttc: 0,
+      valid_days: 30,
+      payment_terms: "",
+      notes: "",
+    });
+    setStep("review");
+  };
+
   const updateItem = (idx: number, field: keyof ProposalItem, value: string | number) => {
     if (!generated) return;
     const items = [...generated.items];
@@ -404,6 +421,12 @@ export default function NewProposalPage() {
                 <><span className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full spinner" />Génération en cours...</>
               ) : (<><Zap size={18} className="shrink-0" />Générer le devis avec l&apos;IA</>)}
             </button>
+            <button
+              onClick={createBlank}
+              className="w-full mt-2 text-sm font-medium text-gray-400 hover:text-white py-2.5 rounded-xl border border-ds-border hover:bg-ds-elevated/60 transition-colors"
+            >
+              Ou partir d&apos;un devis vierge, sans l&apos;IA
+            </button>
           </div>
         </div>
       )}
@@ -413,9 +436,15 @@ export default function NewProposalPage() {
         <div className="space-y-4">
           <div className="bg-ds-surface rounded-xl border border-ds-border p-6">
             <div className="flex items-start justify-between mb-4">
-              <div>
-                <h2 className="font-semibold text-white text-lg">{generated.title}</h2>
-                <p className="text-gray-500 text-sm mt-0.5">Modifie les lignes si nécessaire</p>
+              <div className="flex-1 min-w-0 mr-3">
+                <input
+                  aria-label="Titre du devis"
+                  value={generated.title}
+                  onChange={(e) => setGenerated({ ...generated, title: e.target.value })}
+                  placeholder="Titre du devis"
+                  className="font-semibold text-white text-lg bg-transparent border-b border-transparent hover:border-ds-border focus:border-indigo-500 focus:outline-none w-full placeholder:text-gray-600"
+                />
+                <p className="text-gray-500 text-sm mt-0.5">Modifie le titre et les lignes si nécessaire</p>
               </div>
               <button onClick={() => { setStep("brief"); setGenerated(null); }} className="text-sm text-gray-500 hover:text-gray-400 transition-colors">
                 <span className="inline-flex items-center gap-1.5"><RotateCcw size={15} className="shrink-0" />Recommencer</span>
