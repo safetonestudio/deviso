@@ -5,14 +5,12 @@ import Link from "next/link";
 import {
   Send,
   Bell,
-  Link2,
   Download,
   FileText,
   Coins,
   CircleCheck,
   ChevronUp,
   ChevronDown,
-  Check,
 } from "lucide-react";
 import type { Proposal } from "@/types";
 import { usePermission } from "@/components/PlanContext";
@@ -146,17 +144,10 @@ export default function ProposalActions({
             </button>
           )}
 
-          {/* ── Groupe 4 : Lien + impression ── */}
+          {/* ── Groupe 4 : impression ── */}
+          {/* Copie du lien retiree ici : elle vit deja dans ShareSection, couplee
+              a l'envoi par email. Deux boutons identiques semaient le doute. */}
           <div className="h-px bg-ds-border my-3" />
-          {peutEnvoyer && (
-          <button
-            onClick={copyLink}
-            className="w-full text-sm font-medium px-4 py-2.5 rounded-lg border border-ds-border hover:bg-ds-elevated/60 text-gray-400 transition-colors text-left flex items-center gap-2"
-          >
-            <Link2 size={17} className="shrink-0" />
-            <span className="flex items-center gap-1.5">{copied && <Check size={16} className="shrink-0" />}{copied ? "Lien copié !" : "Copier le lien client"}</span>
-          </button>
-          )}
           <button
             onClick={handlePrint}
             className="w-full no-print text-sm font-medium px-4 py-2.5 rounded-lg border border-ds-border hover:bg-ds-elevated/60 text-gray-400 transition-colors text-left flex items-center gap-2"
