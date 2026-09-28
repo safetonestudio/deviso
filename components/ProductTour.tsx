@@ -11,64 +11,64 @@ const STEPS_OWNER = [
   {
     target: "dashboard",
     title: "Ton tableau de bord",
-    body: "Ta page de départ chaque matin. Tu vois en un coup d'œil ton CA encaissé ce mois, les devis en attente de réponse, ton taux de conversion, et toutes les alertes actives : factures impayées, relances en retard, approbations en attente. Le récapitulatif de chiffre d'affaires te donne ton CA encaissé par trimestre et par mois, et, si tu es en franchise en base, les échéances URSSAF qui vont avec.",
+    body: "L'essentiel du mois d'un coup d'œil, et les alertes qui demandent une action.",
   },
   {
     target: "proposals",
-    title: "Devis professionnels générés par IA",
-    body: "Décris ta mission en quelques mots, l'IA génère un devis structuré en quelques secondes. Ton client reçoit un lien sécurisé et signe directement depuis son téléphone, sans compte, sans friction. Tu peux aussi partir d'un modèle sauvegardé pour tes prestations récurrentes. En Solo+, les relances automatiques relancent les clients sans réponse. En Pro : validation manager avant envoi, signature électronique avancée certifiée, et zéro branding Deviso sur les documents.",
+    title: "Devis générés par IA",
+    body: "Décris ta mission, l'IA génère le devis. Ton client signe depuis un lien, sans compte.",
   },
   {
     target: "invoices",
     title: "Factures Factur-X conformes 2026",
-    body: "Convertis un devis signé en facture en un clic. Deviso génère un PDF/A-3 Factur-X au profil EN 16931, la norme obligatoire en France à partir de 2026. Tu peux créer des factures d'acompte (ex. 30 % à la commande) et de solde liées entre elles, avec numérotation automatique. En Pro, programme des factures récurrentes pour tes abonnements et contrats mensuels. Pour les marchés publics, dépose ta facture directement sur Chorus Pro en un clic depuis la facture.",
+    body: "Convertis un devis signé en facture conforme, en un clic.",
   },
   {
     target: "factures-recues",
     title: "Factures reçues",
-    body: "L'autre bout de la réforme : les factures que tes fournisseurs t'adressent par voie électronique arrivent ici, via la Plateforme Agréée, dès que ton entreprise y est raccordée. Recevoir une facture et être d'accord ne demande aucune action de ta part. En cas de problème, une seule porte : signaler, mettre en attente, contester, ou refuser avec un motif conforme.",
+    body: "Les factures de tes fournisseurs arrivent ici via la Plateforme Agréée. Tu n'agis qu'en cas de problème.",
   },
   {
     target: "declarations",
     title: "Déclarations au fisc",
-    body: "Ce que la Plateforme Agréée déclare à l'administration en ton nom (e-reporting), une fois raccordé. Pour tout ce que tu factures, tu n'as rien à envoyer : transmettre la facture suffit. Cet écran te montre l'état de chaque déclaration, et surtout les refus, la seule chose qui demande une action.",
+    body: "L'état de tes déclarations. Seuls les refus demandent une action de ta part.",
   },
   {
     target: "achats-internationaux",
     title: "Achats à l'étranger",
-    body: "Quand tu achètes un bien ou un service à un fournisseur établi hors de France, tu dois déclarer cette acquisition toi-même (article 290-II du CGI) : sa facture ne passe pas par la Plateforme Agréée. Saisis-la ici pour la conserver et préparer sa déclaration.",
+    body: "Un achat auprès d'un fournisseur hors de France se déclare ici : sa facture ne passe pas par la Plateforme.",
   },
   {
     target: "paiements",
     title: "Paiements clients · à configurer en priorité",
-    body: "Indique ici comment tes clients te paient. Choisis un lien de paiement en ligne (Stripe, PayPal, Wise, SumUp, Lydia…) ou ton IBAN/BIC pour les virements, ou les deux. Ces informations s'affichent automatiquement sur chaque facture PDF et dans les emails envoyés à tes clients. Sans configuration, la création de facture est bloquée. Deviso ne prend aucune commission et ne touche jamais l'argent de tes clients.",
+    body: "Comment tes clients te paient (lien ou IBAN). Sans ça, la facturation est bloquée.",
   },
   {
     target: "crm",
     title: "Tes clients & leur historique",
-    body: "Tous tes clients en un seul endroit : devis envoyés, factures émises, montant total facturé, coordonnées complètes. Suis ton chiffre d'affaires mois par mois, identifie tes clients les plus actifs, et retrouve en quelques secondes n'importe quelle transaction passée. Plus besoin de jongler entre un tableur et ta boîte mail.",
+    body: "Tous tes clients, avec leurs devis, factures et coordonnées, au même endroit.",
   },
   {
     target: "stats",
     title: "Activité & exports comptables",
-    body: "Visualise l'évolution de ton CA, ton taux de conversion devis → facture signé, et tes périodes les plus productives. Tu peux exporter un fichier FEC (Fichier des Écritures Comptables) conforme pour ton expert-comptable, un CSV complet de toutes tes factures, ou un récapitulatif mensuel. En Pro, accède aux analytics détaillées par client et par période.",
+    body: "Ton activité en graphiques, et les exports pour ton comptable (FEC, CSV).",
   },
   {
     target: "catalogue",
-    title: "✦ Pro : Catalogue & IA, le duo gagnant",
-    body: "Plus ton catalogue est complet, plus la génération IA est précise. Quand tu décris une mission, l'IA pioche dans tes propres prestations, tes tarifs exacts, tes formulations, ta cohérence. Sans catalogue, elle improvise. Deux types : forfaits à prix fixe et taux horaires au quart d'heure. Un clic dans l'éditeur de devis ou de facture insère la prestation avec sa description et son prix. Les durées s'affichent lisiblement sur les PDFs (« 2h15 »).",
+    title: "✦ Pro : Catalogue & IA",
+    body: "Enregistre tes prestations : l'IA s'appuie dessus pour des devis plus justes.",
     pro: true,
   },
   {
     target: "team",
     title: "✦ Pro : Équipe & collaboration",
-    body: "Invite jusqu'à 3 collaborateurs inclus, puis 5 €/mois par utilisateur supplémentaire. Chaque membre a son propre profil qui apparaît sur ses devis. Sauvegarde des modèles de devis partagés avec toute l'équipe. Active la validation obligatoire : aucun devis ne part au client sans l'approbation du manager. Un pipeline de suivi donne une vue d'ensemble sur l'activité de l'équipe.",
+    body: "Invite ton équipe, partage des modèles, et valide les devis avant envoi.",
     pro: true,
   },
   {
     target: "profil",
     title: "Paramètres & personnalisation",
-    body: "Configure tout ce qui apparaît sur tes documents : logo, nom commercial, adresse, SIRET, numéro de TVA et régime fiscal. En Pro, choisis une couleur d'accent qui s'applique à tous tes devis et factures PDF, et un sous-domaine pour que tes liens de devis pointent vers tonentreprise.getdeviso.fr. Pour la facturation des marchés publics, renseigne tes identifiants Chorus Pro ici.",
+    body: "Tes informations pro (logo, SIRET, TVA) sur tous tes documents.",
   },
 ];
 
@@ -77,28 +77,28 @@ const STEPS_MEMBER = [
   {
     target: "dashboard",
     title: "Ton tableau de bord",
-    body: "Ta page de départ. Tu vois en un coup d'œil tes devis en attente de réponse, tes factures récentes, et ton taux de conversion personnel. Toutes les données affichées ici sont les tiennes, tes devis, tes factures.",
+    body: "Tes devis en attente, tes factures récentes et ton taux de conversion. Tout ce qui s'affiche ici est à toi.",
   },
   {
     target: "proposals",
     title: "Devis générés par IA",
-    body: "Décris ta mission en quelques mots, l'IA génère un devis structuré en quelques secondes. Ton client reçoit un lien sécurisé et signe depuis son téléphone. Si la validation manager est activée, ton devis est soumis pour approbation avant d'être envoyé au client. Tu peux aussi partir d'un modèle partagé par l'équipe.",
+    body: "Décris ta mission, l'IA génère le devis. Ton client signe depuis un lien. Selon les réglages, un manager valide avant envoi.",
   },
   {
     target: "invoices",
     title: "Factures Factur-X conformes 2026",
-    body: "Convertis un devis signé en facture en un clic. Deviso génère un PDF/A-3 Factur-X au profil EN 16931, la norme obligatoire en France à partir de 2026. Tu peux créer des factures d'acompte et de solde liées entre elles, avec numérotation automatique.",
+    body: "Convertis un devis signé en facture conforme, en un clic.",
   },
   {
     target: "catalogue",
-    title: "✦ Catalogue partagé & suivi du temps",
-    body: "Retrouve ici les prestations de l'équipe : forfaits à prix fixe et taux horaires. Lors de la création d'un devis ou d'une facture, pioche dans le catalogue en un clic, description, tarif et durée pré-remplis. Les heures s'affichent lisiblement sur les PDFs (« 2h15 »).",
+    title: "✦ Catalogue partagé",
+    body: "Les prestations de l'équipe, à insérer en un clic dans un devis ou une facture.",
     pro: true,
   },
   {
     target: "team",
     title: "✦ Vue équipe",
-    body: "Consulte les membres de l'équipe, les modèles de devis partagés, et le pipeline de suivi de l'activité collective. Tu peux aussi mettre à jour ton profil personnel (nom, email, téléphone), ces informations apparaissent sur les devis que tu crées.",
+    body: "Les membres, les modèles partagés, et le suivi de l'activité collective.",
     pro: true,
   },
 ];
