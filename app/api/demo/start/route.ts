@@ -774,19 +774,36 @@ async function seedDemoData(userId: string) {
       owner_id: userId,
       email: "thomas.petit@studiocreatimd.fr",
       role: "member",
-      status: "accepted",
+      status: "active",
       invited_at: tsAgo(45),
       accepted_at: tsAgo(43),
       invite_token: crypto.randomUUID(),
+      // Défaut le plus restrictif : tous les actes fermés (le gérant ouvre au besoin).
+      permissions: {
+        envoyer_devis: false,
+        envoyer_facture: false,
+        transmettre_pa: false,
+        deposer_chorus: false,
+        refuser_facture_recue: false,
+      },
     },
     {
       owner_id: userId,
       email: "emma.bernard@studiocreatimd.fr",
       role: "member",
-      status: "accepted",
+      status: "active",
       invited_at: tsAgo(20),
       accepted_at: tsAgo(19),
       invite_token: crypto.randomUUID(),
+      // Permissions différenciées pour rendre la fonctionnalité visible :
+      // Emma peut envoyer devis et factures, Thomas garde le défaut (tout fermé).
+      permissions: {
+        envoyer_devis: true,
+        envoyer_facture: true,
+        transmettre_pa: false,
+        deposer_chorus: false,
+        refuser_facture_recue: false,
+      },
     },
   ]);
 
