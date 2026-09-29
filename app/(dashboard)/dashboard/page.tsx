@@ -150,6 +150,17 @@ export default async function DashboardPage() {
   // champ « forme juridique ». Le récapitulatif, lui, s'affiche pour tous :
   // savoir ce qu'on a encaissé par trimestre n'a pas de régime.
   const echeancesUrssaf = profilEspace?.tva_regime === "franchise";
+
+  // Résumé porté par la barre fermée du récap CA/URSSAF (accordéon) : total HT
+  // du trimestre en cours, et l'échéance de dépôt quand elle s'applique.
+  // Calculé côté serveur pour rester lisible sans ouvrir l'accordéon.
+  const currentQuarter = Math.floor(now.getMonth() / 3);
+  const caTrimestreHt =
+    caMensuelHt[currentQuarter * 3] +
+    caMensuelHt[currentQuarter * 3 + 1] +
+    caMensuelHt[currentQuarter * 3 + 2];
+  const URSSAF_DEADLINES = ["30 avril", "31 juillet", "31 octobre", "31 janvier"];
+  const echeanceDepot = echeancesUrssaf ? URSSAF_DEADLINES[currentQuarter] : null;
   const caThisMonth      = inv
     .filter((i) => i.status === "paid" && i.created_at >= monthStart)
     .reduce((s, i) => s + signeCa(i) * i.total_ttc, 0);
@@ -205,7 +216,7 @@ export default async function DashboardPage() {
   ].slice(0, 6);
 
   // ── Listes récentes ───────────────────────────────────────────────────────
-  const recentProposals = proposals.slice(0, 8);
+  const recentProposals = proposals.slice(0, 5);
   const recentInvoices  = inv.slice(0, 5);
 
   return (
@@ -258,66 +269,58 @@ export default async function DashboardPage() {
         </div>
       )}
 
-      {/* ── KPI cards, cash-first ── */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-        {/* 1. Encours à encaisser */}
-        <KpiCard
-          label="Encours à encaisser"
-          value={fmt(caToCollect)}
-          icon={TrendingUp}
-          trend={overdueAmount > 0 ? `dont ${fmt(overdueAmount)} en retard` : sentInvoices.length > 0 ? `${sentInvoices.length} facture${sentInvoices.length > 1 ? "s" : ""} envoyée${sentInvoices.length > 1 ? "s" : ""}` : "Aucune en attente"}
-        />
-
-        {/* 2. Devis en attente de réponse */}
-        <KpiCard
-          label="Devis en attente"
-          value={pendingProposals.length > 0 ? fmt(totalDevisEnAttente) : "0"}
-          icon={Send}
-          trend={pendingProposals.length > 0
-            ? `${pendingProposals.length} devis · plus ancien ${oldestDevisAge}j`
-            : "Aucun devis en cours"}
-        />
-
-        {/* 3. Encaissé ce mois */}
-        <KpiCard
-          label="Encaissé ce mois"
-          value={fmt(caThisMonth)}
-          icon={Euro}
-          trend={facturéThisMonth > caThisMonth
-            ? `Facturé : ${fmt(facturéThisMonth)}`
-            : facturéThisMonth > 0 ? "Tout encaissé ✓" : "Aucune facture ce mois"}
-        />
-
-        {/* 4. Signés à facturer */}
-        <KpiCard
-          label="Signés à facturer"
-          value={toInvoice.length > 0 ? fmt(toInvoiceAmount) : "0€"}
-          icon={Clock}
-          trend={toInvoice.length > 0
-            ? `${toInvoice.length} devis en attente`
-            : "Tout est facturé ✓"}
-        />
-      </div>
-
-      {/* ── Action feed ── */}
+      {/* ── Zone À FAIRE : ce qui réclame une action, tout en haut ── */}
       {!isMember && (
         <DashboardActionFeed items={actionItems} />
       )}
 
-      {/* ── Récap du CA encaissé ── */}
-      {/* Réservé au propriétaire : un collaborateur ne voit que ses propres
-          documents, la somme n'aurait aucun sens comme récapitulatif de
-          l'entreprise. */}
-      {!isMember && (
-        <CaUrssafWidget
-          monthlyHT={caMensuelHt}
-          currentMonth={now.getMonth()}
-          currentYear={anneeCourante}
-          echeancesUrssaf={echeancesUrssaf}
-        />
-      )}
+      {/* ── Pouls d'activité : les chiffres à lire d'un coup d'oeil ── */}
+      <div>
+        <h2 className="text-xs font-semibold text-gray-500 uppercase tracking-widest mb-3">
+          En un coup d&apos;oeil
+        </h2>
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+          {/* 1. Encours à encaisser */}
+          <KpiCard
+            label="Encours à encaisser"
+            value={fmt(caToCollect)}
+            icon={TrendingUp}
+            trend={overdueAmount > 0 ? `dont ${fmt(overdueAmount)} en retard` : sentInvoices.length > 0 ? `${sentInvoices.length} facture${sentInvoices.length > 1 ? "s" : ""} envoyée${sentInvoices.length > 1 ? "s" : ""}` : "Aucune en attente"}
+          />
 
-      {/* ── Grille devis + factures ── */}
+          {/* 2. Devis en attente de réponse */}
+          <KpiCard
+            label="Devis en attente"
+            value={pendingProposals.length > 0 ? fmt(totalDevisEnAttente) : "0"}
+            icon={Send}
+            trend={pendingProposals.length > 0
+              ? `${pendingProposals.length} devis · plus ancien ${oldestDevisAge}j`
+              : "Aucun devis en cours"}
+          />
+
+          {/* 3. Encaissé ce mois */}
+          <KpiCard
+            label="Encaissé ce mois"
+            value={fmt(caThisMonth)}
+            icon={Euro}
+            trend={facturéThisMonth > caThisMonth
+              ? `Facturé : ${fmt(facturéThisMonth)}`
+              : facturéThisMonth > 0 ? "Tout encaissé ✓" : "Aucune facture ce mois"}
+          />
+
+          {/* 4. Signés à facturer */}
+          <KpiCard
+            label="Signés à facturer"
+            value={toInvoice.length > 0 ? fmt(toInvoiceAmount) : "0€"}
+            icon={Clock}
+            trend={toInvoice.length > 0
+              ? `${toInvoice.length} devis en attente`
+              : "Tout est facturé ✓"}
+          />
+        </div>
+      </div>
+
+      {/* ── Activité récente : devis + factures ── */}
       <div className={`grid gap-6 ${isPaid ? "lg:grid-cols-2" : ""}`}>
 
         {/* Devis récents */}
@@ -441,6 +444,45 @@ export default async function DashboardPage() {
           </div>
         )}
       </div>
+
+      {/* ── Récap du CA encaissé, replié par défaut ── */}
+      {/* Réservé au propriétaire : un collaborateur ne voit que ses propres
+          documents, la somme n'aurait aucun sens comme récapitulatif de
+          l'entreprise. Le total du trimestre et l'échéance restent lisibles
+          sur la barre fermée ; le détail mois par mois s'ouvre au clic. */}
+      {!isMember && (
+        <details className="group bg-ds-surface border border-ds-border rounded-xl overflow-hidden [&_summary::-webkit-details-marker]:hidden">
+          <summary className="flex items-center justify-between gap-3 px-5 py-4 cursor-pointer list-none select-none hover:bg-ds-elevated/40 transition-colors">
+            <div className="min-w-0">
+              <h2 className="text-sm font-semibold text-white">
+                {echeancesUrssaf ? "Récap CA, URSSAF" : "Récap chiffre d'affaires"}
+              </h2>
+              <p className="text-xs text-gray-500 mt-0.5">
+                T{currentQuarter + 1} en cours : <span className="text-gray-300 font-medium">{fmt(caTrimestreHt)} HT</span>
+              </p>
+            </div>
+            <div className="flex items-center gap-3 shrink-0">
+              {echeanceDepot && (
+                <span className="text-xs text-amber-400 bg-amber-500/10 border border-amber-500/20 px-2 py-0.5 rounded-full font-medium">
+                  Dépôt {echeanceDepot}
+                </span>
+              )}
+              <svg className="w-4 h-4 shrink-0 text-gray-400 transition-transform group-open:rotate-180" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="m19.5 8.25-7.5 7.5-7.5-7.5" />
+              </svg>
+            </div>
+          </summary>
+          <div className="border-t border-ds-border">
+            <CaUrssafWidget
+              monthlyHT={caMensuelHt}
+              currentMonth={now.getMonth()}
+              currentYear={anneeCourante}
+              echeancesUrssaf={echeancesUrssaf}
+              bare
+            />
+          </div>
+        </details>
+      )}
     </div>
 
     <ProductTour isMember={isMember} />

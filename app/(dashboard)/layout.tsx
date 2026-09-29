@@ -15,6 +15,7 @@ import { Sparkles } from "lucide-react";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { SupportButton } from "@/components/SupportButton";
 import { PlanProvider } from "@/components/PlanContext";
+import Script from "next/script";
 
 // Pages inaccessibles aux membres invités
 const MEMBER_RESTRICTED_PATHS = ["/billing", "/paiements", "/stats", "/crm"];
@@ -196,9 +197,12 @@ export default async function DashboardLayout({ children }: { children: React.Re
 
     </PlanProvider>
       {/* Crisp Chat Widget */}
-      <script
-        dangerouslySetInnerHTML={{
-          __html: `
+      {/* next/script (et non un <script> brut) : un <script> rendu dans l'arbre
+          d'un Server Component désynchronise l'hydratation et casse le premier
+          composant client rendu en dessous. Script injecte le code hors de
+          l'arbre React, après l'interactivité. */}
+      <Script id="crisp-widget" strategy="afterInteractive">
+        {`
             window.$crisp=[];
             window.CRISP_WEBSITE_ID="3eb0e10f-5c5d-4119-b8c3-90edacbdfb61";
             (function(){
@@ -208,9 +212,8 @@ export default async function DashboardLayout({ children }: { children: React.Re
               s.async=1;
               d.getElementsByTagName("head")[0].appendChild(s);
             })();
-          `,
-        }}
-      />
+          `}
+      </Script>
     </DashboardThemeProvider>
   );
 }

@@ -54,3 +54,6 @@ scripts/tmp*
 .fuse_hidden*  
 build.log 
 _scratch/
+
+# Graphify (graphe de code local, ne pas committer)
+graphify-out/
