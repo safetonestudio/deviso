@@ -39,9 +39,10 @@ export interface AchatInternational {
   taux_tva: number;
   montant_tva: number;
   superpdp_id: number | null;
-  transmission_status: "en_attente" | "transmis" | "echec";
+  transmission_status: "en_attente" | "transmis" | "echec" | "action_requise";
   transmission_error: string | null;
   transmitted_at: string | null;
+  retry_count: number;
 }
 
 /** Ce que le formulaire fournit pour créer un achat (avant stockage). */
@@ -329,9 +330,33 @@ export function construirePayloadB2bint(
 
 // ─────────────────────────── Transmission ───────────────────────────
 
+/**
+ * Suite a donner a un echec de transmission :
+ *  - "reessayer" : incident transitoire (raccordement, reseau, 5xx, TVA a
+ *    ajouter). L'achat reste en_attente, le cron retentera.
+ *  - "action_requise" : rien qu'un reessai automatique ne changera (date hors
+ *    delai de declaration, pays non pris en charge). Etat terminal, l'humain agit.
+ *  - "refuse" : refus de contenu par la Plateforme Agreee, saisie a corriger.
+ */
+export type SuiteEchec = "reessayer" | "action_requise" | "refuse";
 export type ResultatTransmission =
   | { ok: true; superpdpId: number | null }
-  | { ok: false; reessayable: boolean; message: string; detail: string };
+  | { ok: false; suite: SuiteEchec; message: string; detail: string };
+
+/** Statut de base stocke pour chaque suite d'echec. */
+const STATUT_PAR_SUITE: Record<SuiteEchec, "en_attente" | "action_requise" | "echec"> = {
+  reessayer: "en_attente",
+  action_requise: "action_requise",
+  refuse: "echec",
+};
+
+/**
+ * Au-dela de ce nombre de tentatives automatiques, un achat reste "en attente"
+ * ne se debloquera pas seul (raccordement jamais fait, TVA jamais ajoutee, cas
+ * futile inconnu) : le cron le bascule en action_requise pour qu'il cesse de
+ * boucler en silence et apparaisse a l'utilisateur. Cron horaire => ~7 jours.
+ */
+const SEUIL_ABANDON = 168;
 
 /**
  * Un refus qui ne vient pas de notre payload, mais d'une règle de période ou
@@ -346,9 +371,21 @@ export type ResultatTransmission =
  * et d'éventuels 5xx transitoires : dans ces cas on n'accuse JAMAIS « échec »
  * une saisie correcte, on retente.
  */
-function refusDeFenetre(status: number, message: string): boolean {
-  if (status >= 500) return true;
-  return /future|cannot add invoice at date|period|période|fenêtre|date/i.test(message);
+function classerRefus(status: number, message: string, dateFacture: string): SuiteEchec {
+  if (status >= 500) return "reessayer"; // incident serveur transitoire
+  const m = message.toLowerCase();
+  const erreurDeFenetre =
+    /cannot add invoice at date|is in the future|dans le futur|future|period|période|fenêtre|hors délai|too old|closed/.test(
+      m
+    );
+  if (erreurDeFenetre) {
+    // Le discriminant n'est PAS le texte (fragile, non contractuel) mais la
+    // position de la date : une date future entrera dans la fenetre (on
+    // retente), une date passee hors fenetre n'y reviendra jamais (action requise).
+    const aujourdhui = new Date().toISOString().slice(0, 10);
+    return dateFacture > aujourdhui ? "reessayer" : "action_requise";
+  }
+  return "refuse";
 }
 
 /**
@@ -367,10 +404,10 @@ export async function transmettreAchat(
     nous = await lireNotreIdentite(workspaceId);
   } catch (err) {
     if (err instanceof SuperPdpNotConnected) {
-      return { ok: false, reessayable: true, message: "Compte non raccordé à la Plateforme Agréée.", detail: "non_raccorde" };
+      return { ok: false, suite: "reessayer", message: "Compte non raccordé à la Plateforme Agréée.", detail: "non_raccorde" };
     }
     if (err instanceof SuperPdpSessionPending) {
-      return { ok: false, reessayable: true, message: "Vérification du raccordement en cours.", detail: "session_pending" };
+      return { ok: false, suite: "reessayer", message: "Vérification du raccordement en cours.", detail: "session_pending" };
     }
     throw err;
   }
@@ -378,7 +415,7 @@ export async function transmettreAchat(
   if (!nous) {
     return {
       ok: false,
-      reessayable: true,
+      suite: "reessayer",
       message: "Impossible de lire votre fiche entreprise chez la Plateforme Agréée.",
       detail: "identite_illisible",
     };
@@ -393,7 +430,7 @@ export async function transmettreAchat(
   if (!normaliserTva(achat.fournisseur_tva)) {
     return {
       ok: false,
-      reessayable: true,
+      suite: "reessayer",
       message:
         "Le numéro de TVA du fournisseur est nécessaire pour déclarer cet achat. " +
         "Ajoutez-le : la déclaration repartira automatiquement.",
@@ -404,10 +441,10 @@ export async function transmettreAchat(
   if (!schemaVendeur) {
     return {
       ok: false,
-      reessayable: true,
+      suite: "action_requise",
       message:
-        "La déclaration des achats auprès de ce pays n'est pas encore prise en " +
-        "charge. L'achat est conservé et sera déclaré dès que ce sera possible.",
+        "La déclaration des achats auprès de ce pays n'est pas prise en charge. " +
+        "Contactez le support pour l'ajouter : un réessai automatique n'y changera rien.",
       detail: `pays_non_pris_en_charge:${(achat.fournisseur_pays ?? "").toUpperCase()}`,
     };
   }
@@ -442,26 +479,31 @@ export async function transmettreAchat(
       /* réponse non JSON : on garde le texte brut */
     }
 
-    const reessayable = refusDeFenetre(res.status, message);
+    const suite = classerRefus(res.status, message, achat.date_facture);
+    const messages: Record<SuiteEchec, string> = {
+      reessayer:
+        "La Plateforme Agréée n'accepte pas encore cette déclaration (fenêtre de déclaration). L'achat est conservé et sera retransmis automatiquement.",
+      action_requise:
+        "Cette facture est hors du délai de déclaration accepté par la Plateforme Agréée. À régulariser avec votre comptable : un réessai automatique ne la fera pas passer.",
+      refuse: `La Plateforme Agréée a refusé la déclaration : ${message}`,
+    };
     return {
       ok: false,
-      reessayable,
-      message: reessayable
-        ? "La Plateforme Agréée n'accepte pas encore cette déclaration (fenêtre de déclaration). L'achat est conservé et sera retransmis automatiquement."
-        : `La Plateforme Agréée a refusé la déclaration : ${message}`,
+      suite,
+      message: messages[suite],
       detail: `[${res.status}] ${message}`.slice(0, 900),
     };
   } catch (err) {
     if (err instanceof SuperPdpNotConnected) {
-      return { ok: false, reessayable: true, message: "Compte non raccordé à la Plateforme Agréée.", detail: "non_raccorde" };
+      return { ok: false, suite: "reessayer", message: "Compte non raccordé à la Plateforme Agréée.", detail: "non_raccorde" };
     }
     if (err instanceof SuperPdpSessionPending) {
-      return { ok: false, reessayable: true, message: "Vérification du raccordement en cours.", detail: "session_pending" };
+      return { ok: false, suite: "reessayer", message: "Vérification du raccordement en cours.", detail: "session_pending" };
     }
     const detail = err instanceof Error ? err.message : String(err);
     return {
       ok: false,
-      reessayable: true,
+      suite: "reessayer",
       message: "La transmission a échoué pour une raison technique. L'achat est conservé et sera retransmis.",
       detail: detail.slice(0, 900),
     };
@@ -484,8 +526,10 @@ export function patchStatut(resultat: ResultatTransmission) {
         updated_at: new Date().toISOString(),
       }
     : {
-        transmission_status: (resultat.reessayable ? "en_attente" : "echec") as "en_attente" | "echec",
-        transmission_error: resultat.detail.slice(0, 1000),
+        transmission_status: STATUT_PAR_SUITE[resultat.suite],
+        // On persiste le message lisible (affiché sous le badge), pas le detail
+        // technique : l'utilisateur doit savoir quoi faire, pas lire un code HTTP.
+        transmission_error: resultat.message.slice(0, 1000),
         updated_at: new Date().toISOString(),
       };
 }
@@ -532,7 +576,7 @@ async function numerosDejaDeclares(workspaceId: string): Promise<Map<string, num
 export async function retenterAchatsEnAttente(
   admin: SupabaseClient,
   limite = 200
-): Promise<{ examines: number; transmis: number; encore: number; echecs: number }> {
+): Promise<{ examines: number; transmis: number; encore: number; echecs: number; abandonnes: number }> {
   const { data: achats } = await admin
     .from("superpdp_achats_int")
     .select("*")
@@ -543,6 +587,7 @@ export async function retenterAchatsEnAttente(
   let transmis = 0;
   let encore = 0;
   let echecs = 0;
+  let abandonnes = 0;
   const cacheNumeros = new Map<string, Map<string, number>>();
 
   for (const brut of achats ?? []) {
@@ -561,12 +606,34 @@ export async function retenterAchatsEnAttente(
       resultat = await transmettreAchat(ws, achat);
     }
 
-    await admin.from("superpdp_achats_int").update(patchStatut(resultat)).eq("id", achat.id).eq("user_id", ws);
+    let patch: Record<string, unknown> = patchStatut(resultat);
+    if (resultat.ok) {
+      transmis++;
+    } else if (resultat.suite === "reessayer") {
+      // Garde d'abandon : au-dela de SEUIL_ABANDON tentatives, on cesse de
+      // boucler et on bascule en action_requise (attrape toute la classe des
+      // "en_attente" qui ne se resoudront jamais seuls, pas un cas nomme).
+      const tentatives = (achat.retry_count ?? 0) + 1;
+      if (tentatives >= SEUIL_ABANDON) {
+        patch = {
+          transmission_status: "action_requise",
+          transmission_error: `Non déclaré automatiquement après ${tentatives} tentatives. ${resultat.message}`.slice(0, 1000),
+          retry_count: tentatives,
+          updated_at: new Date().toISOString(),
+        };
+        abandonnes++;
+      } else {
+        patch = { ...patch, retry_count: tentatives };
+        encore++;
+      }
+    } else if (resultat.suite === "action_requise") {
+      abandonnes++;
+    } else {
+      echecs++;
+    }
 
-    if (resultat.ok) transmis++;
-    else if (resultat.reessayable) encore++;
-    else echecs++;
+    await admin.from("superpdp_achats_int").update(patch).eq("id", achat.id).eq("user_id", ws);
   }
 
-  return { examines: (achats ?? []).length, transmis, encore, echecs };
+  return { examines: (achats ?? []).length, transmis, encore, echecs, abandonnes };
 }

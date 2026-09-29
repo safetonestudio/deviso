@@ -13,7 +13,7 @@
  *
  * Deux cadres, et deux seulement :
  *
- *   · pages de **liste**       → `max-w-5xl mx-auto`
+ *   · pages de **liste**       → `max-w-7xl mx-auto`  (élargies le 27/09/2026)
  *   · pages de **formulaire**  → `max-w-2xl mx-auto`
  *
  * La distinction n'est pas cosmétique. Une liste gagne à occuper la largeur
@@ -28,7 +28,7 @@
 
 import { readFileSync } from "node:fs";
 
-const LISTE = "max-w-5xl mx-auto";
+const LISTE = "max-w-7xl mx-auto";
 const FORMULAIRE = "max-w-2xl mx-auto";
 
 /** Chaque page et le cadre qu'elle doit porter. */

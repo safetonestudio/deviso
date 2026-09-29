@@ -72,20 +72,17 @@ export function CaUrssafWidget({ monthlyHT, currentMonth, currentYear, echeances
             <p className="text-xs text-gray-500 mt-0.5">CA HT encaissé · {currentYear}</p>
           </div>
         )}
-        <div className="flex rounded-lg border border-ds-border overflow-hidden text-xs font-medium shrink-0">
-          <button
-            onClick={() => setMode("trimestre")}
-            className={`px-3 py-1.5 transition-colors ${mode === "trimestre" ? "bg-indigo-600 text-white" : "text-gray-400 hover:text-white hover:bg-ds-elevated"}`}
-          >
-            Trimestre
-          </button>
-          <button
-            onClick={() => setMode("mensuel")}
-            className={`px-3 py-1.5 transition-colors ${mode === "mensuel" ? "bg-indigo-600 text-white" : "text-gray-400 hover:text-white hover:bg-ds-elevated"}`}
-          >
-            Mois
-          </button>
-        </div>
+        {/* Sélecteur de période en menu déroulant : meilleure visibilité sur la page
+            (décision Selim, 29/09/2026), et plus compact que deux boutons. */}
+        <select
+          value={mode}
+          onChange={(e) => setMode(e.target.value as "trimestre" | "mensuel")}
+          aria-label="Période du récapitulatif"
+          className="shrink-0 rounded-lg border border-ds-border bg-ds-elevated text-gray-300 text-xs font-medium px-3 py-1.5 cursor-pointer focus:outline-none focus:ring-2 focus:ring-indigo-500/40"
+        >
+          <option value="trimestre">Trimestriel</option>
+          <option value="mensuel">Mensuel</option>
+        </select>
       </div>
 
       <div className={bare ? "px-5 pb-5" : ""}>

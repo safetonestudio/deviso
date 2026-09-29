@@ -17,6 +17,7 @@ const montant = (n: number, devise: string) =>
 const STATUT: Record<AchatInternational["transmission_status"], { texte: string; ton: string }> = {
   transmis: { texte: "Déclaré", ton: "bg-emerald-500/15 text-emerald-400" },
   en_attente: { texte: "En attente", ton: "bg-amber-500/15 text-amber-400" },
+  action_requise: { texte: "Action requise", ton: "bg-orange-500/15 text-orange-400" },
   echec: { texte: "En échec", ton: "bg-red-500/15 text-red-400" },
 };
 

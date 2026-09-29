@@ -3,7 +3,7 @@ import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { getWorkspaceUserId } from "@/lib/workspace";
 import { exigerTitulaire } from "@/lib/droits";
-import { transmettreAchat, type AchatInternational } from "@/lib/superpdp-achats";
+import { transmettreAchat, patchStatut, type AchatInternational } from "@/lib/superpdp-achats";
 
 /**
  * Retente la transmission d'un achat international resté en attente ou en échec.
@@ -50,19 +50,9 @@ export async function POST(_req: NextRequest, ctx: { params: Promise<{ id: strin
 
   const resultat = await transmettreAchat(workspaceId, achat as AchatInternational);
 
-  const patch = resultat.ok
-    ? {
-        transmission_status: "transmis" as const,
-        superpdp_id: resultat.superpdpId,
-        transmission_error: null,
-        transmitted_at: new Date().toISOString(),
-        updated_at: new Date().toISOString(),
-      }
-    : {
-        transmission_status: resultat.reessayable ? ("en_attente" as const) : ("echec" as const),
-        transmission_error: resultat.detail.slice(0, 1000),
-        updated_at: new Date().toISOString(),
-      };
+  // Retransmission manuelle : on repart d'un compteur neuf, l'utilisateur
+  // demande explicitement une nouvelle chance (il a pu corriger la saisie).
+  const patch = { ...patchStatut(resultat), retry_count: 0 };
 
   await admin.from("superpdp_achats_int").update(patch).eq("id", achat.id).eq("user_id", workspaceId);
 

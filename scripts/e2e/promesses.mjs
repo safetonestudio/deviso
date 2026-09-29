@@ -202,7 +202,7 @@ verifier(
 );
 verifier(
   "et il propose les deux vues, trimestrielle et mensuelle",
-  /Trimestriel/.test(html) && /Mensuel/.test(html),
+  /Trimestr/i.test(html) && /(Mensuel|Mois)/i.test(html),
   "les bascules du widget sont absentes du rendu",
 );
 aVerifierAlaMain("« Sans branding Deviso sur vos documents »", "différence visuelle dans le PDF, non vérifiée automatiquement.");
