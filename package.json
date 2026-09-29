@@ -56,7 +56,9 @@
     "test:abonnement": "node scripts/e2e/abonnement.mjs",
     "test:webhook": "node scripts/e2e/webhook.mjs",
     "check:rendu": "node scripts/check-rendu.mjs",
-    "verify:rendu": "npm run build && node scripts/check-rendu.mjs"
+    "verify:rendu": "npm run build && node scripts/check-rendu.mjs",
+    "build:quiet": "node scripts/build-quiet.mjs",
+    "verify:rendu:quiet": "node scripts/build-quiet.mjs && node scripts/check-rendu.mjs"
   },
   "dependencies": {
     "@react-pdf/renderer": "^4.3.0",
