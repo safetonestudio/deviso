@@ -3,6 +3,7 @@ import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { getWorkspaceUserId, getWorkspaceProfile } from "@/lib/workspace";
 import { exigerActe } from "@/lib/droits";
+import { estCompteDemo, MESSAGE_DEMO_TIERS } from "@/lib/garde-demo";
 import { superpdpFetch, getConnection, SuperPdpNotConnected, SuperPdpSessionPending } from "@/lib/superpdp";
 import { generateFacturXml } from "@/lib/invoice-xml";
 import { isB2CInvoice } from "@/lib/facturx-helpers";
@@ -47,6 +48,9 @@ export async function POST(req: NextRequest, ctx: { params: Promise<{ id: string
   const workspaceId = await getWorkspaceUserId(user.id);
   const refusActe = await exigerActe(user.id, workspaceId, "transmettre_pa");
   if (refusActe) return refusActe;
+  if (await estCompteDemo(workspaceId)) {
+    return NextResponse.json({ error: "Démonstration", message: MESSAGE_DEMO_TIERS }, { status: 403 });
+  }
   const admin = createAdminClient();
 
   const { data: facture } = await admin

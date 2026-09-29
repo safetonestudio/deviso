@@ -3,6 +3,7 @@ import { lireEntreprise } from "@/lib/superpdp-entreprise";
 import { getWorkspaceProfile } from "@/lib/workspace";
 import { resolveVatNumber } from "@/lib/facturx-helpers";
 import { paysFrancais } from "@/lib/superpdp-nature";
+import { estCompteDemo } from "@/lib/garde-demo";
 import type { SupabaseClient } from "@supabase/supabase-js";
 
 /**
@@ -399,6 +400,11 @@ export async function transmettreAchat(
   workspaceId: string,
   achat: AchatInternational
 ): Promise<ResultatTransmission> {
+  // Compte de démonstration : la transmission est simulée, jamais envoyée à la
+  // vraie Plateforme Agréée. L'achat reste "en attente" côté écran.
+  if (await estCompteDemo(workspaceId)) {
+    return { ok: false, suite: "reessayer", message: "Transmission à la Plateforme Agréée simulée en mode démonstration.", detail: "demo" };
+  }
   let nous: NotreIdentite | null;
   try {
     nous = await lireNotreIdentite(workspaceId);

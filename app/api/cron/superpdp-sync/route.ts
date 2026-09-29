@@ -4,6 +4,7 @@ import { synchroniserFactures } from "@/lib/superpdp-sync";
 import { factureBloquee } from "@/lib/superpdp-blocage";
 import { retenterAchatsEnAttente } from "@/lib/superpdp-achats";
 import { cronAutorise } from "@/lib/cron-auth";
+import { estCompteDemo } from "@/lib/garde-demo";
 
 /**
  * Filet horaire pour la réception des factures électroniques.
@@ -45,6 +46,9 @@ export async function GET(req: Request) {
   let echecs = 0;
 
   for (const { user_id } of raccordements ?? []) {
+    // Un compte de démonstration ne touche jamais la vraie Plateforme Agréée :
+    // son raccordement est fictif, le synchroniser ne ferait que churner en 401.
+    if (await estCompteDemo(user_id)) continue;
     // Une entreprise dont la synchronisation échoue ne doit pas empêcher les
     // suivantes : chaque compte est indépendant.
     try {

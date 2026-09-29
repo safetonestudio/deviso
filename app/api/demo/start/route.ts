@@ -858,6 +858,103 @@ async function seedDemoData(userId: string) {
       notes: "Engagement minimum 3 mois. Sessions en visio ou présentiel Paris.",
     },
   ]);
+
+  // 8. Plateforme Agréée (Super PDP) : raccordement FICTIF + données pour peupler
+  //    les écrans de la réforme 2026 (Factures reçues, Déclarations, Achats à
+  //    l'étranger). Rien n'est jamais envoyé à la vraie Plateforme Agréée : le
+  //    jeton est fictif et tous les chemins d'appel sont gardés par estCompteDemo.
+  await admin.from("superpdp_connections").insert({
+    user_id: userId,
+    refresh_token: "demo-fictif-jamais-utilise",
+    session_status: "verified",
+    company_number: "821347561",
+    company_number_scheme: "fr_siren",
+    company_id: "DEMO-000000009",
+    directory_id: "demo-annuaire",
+    directory_address: "0225:821347561_000000009",
+    connected_at: tsAgo(28),
+    last_sync_at: new Date().toISOString(),
+    updated_at: new Date().toISOString(),
+  });
+
+  // Identifiants PA fictifs, larges et aléatoires : l'id est clé primaire sans
+  // valeur par défaut, deux démos ne doivent jamais entrer en collision.
+  const paId = () => 700_000_000_000 + Math.floor(Math.random() * 90_000_000_000);
+
+  // Factures REÇUES (direction "in") → écran « Factures reçues ».
+  await admin.from("superpdp_invoices").insert([
+    {
+      id: paId(), user_id: userId, direction: "in", processing_rule: "B2B",
+      number: "IMP-2026-0453", issue_date: daysAgo(6), payment_due_date: daysFromNow(24),
+      currency_code: "EUR", seller_name: "Imprimerie Gutenberg", buyer_name: "Studio Créatif MD",
+      total_without_vat: 480, total_vat: 96, total_with_vat: 576, amount_due: 576,
+      last_status_code: "fr:200", received_at: tsAgo(6),
+    },
+    {
+      id: paId(), user_id: userId, direction: "in", processing_rule: "B2B",
+      number: "CLD-2026-99821", issue_date: daysAgo(2), payment_due_date: daysFromNow(28),
+      currency_code: "EUR", seller_name: "Hébergement Cloud FR", buyer_name: "Studio Créatif MD",
+      total_without_vat: 89, total_vat: 17.8, total_with_vat: 106.8, amount_due: 106.8,
+      last_status_code: "fr:200", received_at: tsAgo(2),
+    },
+    {
+      id: paId(), user_id: userId, direction: "in", processing_rule: "B2B",
+      number: "FL-2026-0071", issue_date: daysAgo(24), payment_due_date: daysAgo(5),
+      currency_code: "EUR", seller_name: "Fournitures Léon", buyer_name: "Studio Créatif MD",
+      total_without_vat: 1240, total_vat: 248, total_with_vat: 1488, amount_due: 1488,
+      last_status_code: "fr:210", received_at: tsAgo(24),
+    },
+  ]);
+
+  // Deux factures de la démo déjà transmises à la Plateforme Agréée (badge
+  // « Transmise » sur la liste des factures), avec leur ligne miroir "out".
+  const { data: dejaEmises } = await admin
+    .from("invoices")
+    .select("id, invoice_number, total_ttc, client_company")
+    .eq("user_id", userId)
+    .in("status", ["sent", "paid"])
+    .limit(2);
+  for (const [i, fac] of (dejaEmises ?? []).entries()) {
+    const mirId = paId();
+    const statut = i === 0 ? "fr:212" : "fr:202"; // encaissée / reçue par la plateforme
+    await admin
+      .from("invoices")
+      .update({ superpdp_invoice_id: mirId, superpdp_status: statut })
+      .eq("id", fac.id);
+    await admin.from("superpdp_invoices").insert({
+      id: mirId, user_id: userId, direction: "out", processing_rule: "B2B",
+      number: fac.invoice_number, issue_date: daysAgo(14 + i),
+      currency_code: "EUR", seller_name: "Studio Créatif MD",
+      buyer_name: fac.client_company ?? "Client",
+      total_with_vat: fac.total_ttc ?? null, amount_due: fac.total_ttc ?? null,
+      last_status_code: statut, synced_at: new Date().toISOString(),
+    });
+  }
+
+  // Achats internationaux → écran « Achats à l'étranger », avec les trois états,
+  // dont le nouvel « action_requise » (facture hors délai de déclaration).
+  await admin.from("superpdp_achats_int").insert([
+    {
+      user_id: userId, fournisseur_nom: "Kreativ Software GmbH", fournisseur_pays: "DE",
+      fournisseur_tva: "DE811569869", numero: "RE-2026-2043", date_facture: daysAgo(12),
+      categorie: "services", devise: "EUR", montant_ht: 2400, taux_tva: 0, montant_tva: 0,
+      superpdp_id: paId(), transmission_status: "transmis", transmitted_at: tsAgo(11), retry_count: 0,
+    },
+    {
+      user_id: userId, fournisseur_nom: "Studio Milano SRL", fournisseur_pays: "IT",
+      fournisseur_tva: "IT12345678903", numero: "FT-2026-118", date_facture: daysAgo(3),
+      categorie: "biens", devise: "EUR", montant_ht: 1800, taux_tva: 0, montant_tva: 0,
+      transmission_status: "en_attente", retry_count: 1,
+      transmission_error: "La Plateforme Agréée n'accepte pas encore cette déclaration (fenêtre de déclaration). L'achat est conservé et sera retransmis automatiquement.",
+    },
+    {
+      user_id: userId, fournisseur_nom: "Meble Kowalski Sp. z o.o.", fournisseur_pays: "PL",
+      fournisseur_tva: "PL1234567890", numero: "FV/2026/07/00512", date_facture: daysAgo(78),
+      categorie: "biens", devise: "EUR", montant_ht: 3200, taux_tva: 0, montant_tva: 0,
+      transmission_status: "action_requise", retry_count: 168,
+      transmission_error: "Cette facture est hors du délai de déclaration accepté par la Plateforme Agréée. À régulariser avec votre comptable : un réessai automatique ne la fera pas passer.",
+    },
+  ]);
 }
 
 // ─── Handler ──────────────────────────────────────────────────────────────────

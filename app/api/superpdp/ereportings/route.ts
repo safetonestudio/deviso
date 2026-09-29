@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 import { getWorkspaceUserId } from "@/lib/workspace";
+import { estCompteDemo } from "@/lib/garde-demo";
 import { superpdpFetch, SuperPdpNotConnected, SuperPdpSessionPending } from "@/lib/superpdp";
 
 /**
@@ -40,6 +41,11 @@ export async function GET(req: NextRequest) {
   }
 
   const workspaceId = await getWorkspaceUserId(user.id);
+
+  // En démonstration, aucune déclaration réelle n'existe côté Plateforme Agréée.
+  if (await estCompteDemo(workspaceId)) {
+    return NextResponse.json({ declarations: [], total: 0 });
+  }
 
   const role = req.nextUrl.searchParams.get("role_code");
 

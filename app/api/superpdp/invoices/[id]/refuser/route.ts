@@ -5,6 +5,7 @@ import { getWorkspaceUserId } from "@/lib/workspace";
 import { exigerActe } from "@/lib/droits";
 import { superpdpFetch, SuperPdpNotConnected, SuperPdpSessionPending } from "@/lib/superpdp";
 import { estMotifValide } from "@/lib/superpdp-motifs";
+import { estCompteDemo, MESSAGE_DEMO_TIERS } from "@/lib/garde-demo";
 
 /**
  * Refuse une facture reçue, statut 210 « Refusée ».
@@ -56,6 +57,9 @@ export async function POST(req: NextRequest, ctx: { params: Promise<{ id: string
   const workspaceId = await getWorkspaceUserId(user.id);
   const refusActe = await exigerActe(user.id, workspaceId, "refuser_facture_recue");
   if (refusActe) return refusActe;
+  if (await estCompteDemo(workspaceId)) {
+    return NextResponse.json({ error: "Démonstration", message: MESSAGE_DEMO_TIERS }, { status: 403 });
+  }
 
   // On valide contre la liste que l'API nous a elle-même donnée, plutôt que de
   // relayer n'importe quelle chaîne.

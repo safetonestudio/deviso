@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 import { getWorkspaceUserId } from "@/lib/workspace";
 import { exigerTitulaire } from "@/lib/droits";
+import { estCompteDemo, MESSAGE_DEMO_TIERS } from "@/lib/garde-demo";
 import { envoyerEncaissementPdp } from "@/lib/superpdp-encaissement";
 
 /**
@@ -32,6 +33,9 @@ export async function POST(req: NextRequest, ctx: { params: Promise<{ id: string
   const workspaceId = await getWorkspaceUserId(user.id);
   const refusT = exigerTitulaire(user.id, workspaceId);
   if (refusT) return refusT;
+  if (await estCompteDemo(workspaceId)) {
+    return NextResponse.json({ error: "Démonstration", message: MESSAGE_DEMO_TIERS }, { status: 403 });
+  }
   const resultat = await envoyerEncaissementPdp(workspaceId, id, dateEncaissement);
 
   if (!resultat.ok) {
