@@ -10,6 +10,7 @@ import {
   createState,
   superpdpConfig,
 } from "@/lib/superpdp";
+import { construireParamsAutorisation } from "@/lib/superpdp-authorize";
 import { estCompteDemo, MESSAGE_DEMO_TIERS } from "@/lib/garde-demo";
 
 /**
@@ -65,78 +66,29 @@ export async function GET() {
   const state = createState();
   const { verifier, challenge } = createPkcePair();
 
-  const params = new URLSearchParams({
-    response_type: "code",
-    client_id: cfg.clientId,
-    redirect_uri: cfg.redirectUri,
+  // Tous les paramètres de l'URL d'autorisation sont construits par une
+  // fonction pure (lib/superpdp-authorize.ts), source UNIQUE testée par
+  // check:superpdp-connect. Elle tient par construction l'invariant appris en
+  // prod le 07/10 : superpdp_directory_entry_identifier ne part jamais sans
+  // superpdp_company_number, sinon Super PDP refuse tout le tunnel.
+  //
+  // Le pré-remplissage de l'entreprise reste désactivé par défaut : envoyer un
+  // numéro que Super PDP ne connaît pas encore (tout nouvel inscrit) interrompt
+  // le tunnel (« No company found... ») au lieu de l'ignorer. Mieux vaut que
+  // l'utilisateur saisisse son SIREN dans le tunnel. Activable par
+  // SUPERPDP_PREFILL_COMPANY=true une fois ce chemin confirmé en réel. Noms de
+  // paramètres (préfixe superpdp_) et superpdp_send_and_receive=receive vérifiés
+  // dans la documentation « Authentification » (12/08 et 30/08/2026).
+  const params = construireParamsAutorisation({
+    clientId: cfg.clientId,
+    redirectUri: cfg.redirectUri,
     state,
-    code_challenge: challenge,
-    code_challenge_method: "S256",
+    challenge,
+    siren,
+    scheme: companyNumberScheme(),
+    prefillCompany: process.env.SUPERPDP_PREFILL_COMPANY === "true",
+    email: profile?.email ?? null,
   });
-
-  // Pré-remplissage du tunnel d'inscription.
-  //
-  // ⚠️ Les noms de ces paramètres sont préfixés `superpdp_`. La première version
-  // envoyait `company_number` / `company_number_scheme` / `company_name` : des
-  // paramètres inexistants, donc ignorés en silence. Rien n'aurait signalé
-  // l'erreur, le tunnel se serait simplement affiché vide, ce qu'on aurait mis
-  // sur le compte du produit et non du code. Noms vérifiés dans la
-  // documentation « Authentification » le 12/08/2026.
-  //
-  // ⚠️ Le pré-remplissage de l'entreprise est **désactivé par défaut**, et ce
-  // n'est pas de la prudence de principe. Testé le 12/08/2026 : envoyer un
-  // numéro qui ne correspond à aucune entreprise connue de Super PDP ne se
-  // contente pas d'ignorer le paramètre, cela **interrompt tout le tunnel** -
-  // « No company found with these superpdp_company_number_scheme and
-  // superpdp_company_number ». En bac à sable c'est systématique, puisque les
-  // entreprises y sont fictives et ne portent pas de vrai SIREN.
-  //
-  // En production le risque reste entier pour toute entreprise que Super PDP ne
-  // connaît pas encore, c'est-à-dire tout nouvel utilisateur. Or le principe
-  // retenu sur ce projet est qu'aucun élément ne doit bloquer : mieux vaut que
-  // l'utilisateur saisisse son SIREN dans le tunnel que de le voir buter sur un
-  // message d'erreur en anglais. Le confort d'un champ pré-rempli ne vaut pas
-  // ce risque.
-  //
-  // Activable par `SUPERPDP_PREFILL_COMPANY=true` pour tester ce chemin une fois
-  // qu'on aura confirmé son comportement en réel auprès de Super PDP.
-  if (siren && process.env.SUPERPDP_PREFILL_COMPANY === "true") {
-    params.set("superpdp_company_number", siren);
-    params.set("superpdp_company_number_scheme", companyNumberScheme());
-    // Super PDP REFUSE superpdp_directory_entry_identifier s'il n'est pas
-    // accompagné de superpdp_company_number (« superpdp_company_number is
-    // required with superpdp_directory_entry_identifier »). Les deux ne partent
-    // donc qu'ensemble, sous le même drapeau de pré-remplissage.
-    if (companyNumberScheme() === "fr_siren") {
-      params.set("superpdp_directory_entry_identifier", siren);
-    }
-  }
-
-  // L'adresse de réception pré-identifiée (superpdp_directory_entry_identifier,
-  // le SIREN nu que lireLigneAnnuaire attend) est posée dans le bloc de
-  // pré-remplissage ci-dessus, et seulement là. Elle était envoyée seule
-  // auparavant, en croyant la documentation « Authentification » qui la décrit
-  // indépendante ; en prod réelle c'est faux : sans superpdp_company_number,
-  // Super PDP repart aussitôt en erreur « superpdp_company_number is required
-  // with superpdp_directory_entry_identifier » et aucun raccordement n'aboutit.
-  // Invisible en bac à sable, où le scheme n'est jamais fr_siren.
-
-  // `login_hint` ne pré-remplit qu'un champ texte : aucun risque de blocage.
-  if (profile?.email) params.set("login_hint", profile.email);
-
-  // Le point décisif pour nous. Sans ce paramètre l'interface laisse le choix
-  // d'ouvrir ou non une ligne d'annuaire, or « pour recevoir une facture, il
-  // faut avoir ouvert une ligne d'annuaire ». Un utilisateur qui passe outre
-  // croirait être raccordé tout en restant incapable de recevoir, c'est-à-dire
-  // hors de l'obligation du 1ᵉʳ septembre 2026. On force donc la réception,
-  // puisque c'est l'objet même du raccordement proposé dans Deviso.
-  //
-  // Paramètre **documenté**, section « Authentification » : `any` (défaut)
-  // laisse le choix, `send` masque la réception, `receive` « force
-  // l'utilisateur à accepter l'enregistrement d'une ligne dans l'annuaire ».
-  // Un audit l'avait signalé comme absent de la référence OpenAPI, il l'est,
-  // mais il figure bien dans la documentation. Vérifié le 30/08/2026.
-  params.set("superpdp_send_and_receive", "receive");
 
   const res = NextResponse.redirect(`${SUPERPDP_HOST}/oauth2/authorize?${params}`);
 
