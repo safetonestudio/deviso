@@ -44,9 +44,9 @@ for (const scheme of ["fr_siren", "sandbox"]) {
       for (const email of ["a@b.fr", null]) {
         const p = construireParamsAutorisation({ ...base, scheme, prefillCompany, siren, email });
         const cle = `scheme=${scheme} prefill=${prefillCompany} siren=${siren ? "oui" : "non"} email=${email ? "oui" : "non"}`;
-        verifier(`invariant tenu — ${cle}`, !violeInvariantAnnuaire(p));
+        verifier(`invariant tenu, ${cle}`, !violeInvariantAnnuaire(p));
         // superpdp_send_and_receive=receive, toujours (objet du raccordement).
-        verifier(`réception forcée — ${cle}`, p.get("superpdp_send_and_receive") === "receive");
+        verifier(`réception forcée, ${cle}`, p.get("superpdp_send_and_receive") === "receive");
       }
     }
   }
