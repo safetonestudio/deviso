@@ -141,12 +141,12 @@ const actifs = await stripe("prices?limit=100&active=true&expand[]=data.product"
  * Anciens prix laissés actifs sciemment, avec leur raison. Chacun doit finir
  * archivé dans Stripe ; en attendant, ils sont tolérés NOMMÉMENT pour qu'un
  * nouvel orphelin, lui, fasse échouer la traversée.
+ *
+ * Vidé le 07/10/2026 : les 3 anciens prix (Solo 15,99, Pro 29, Solo 19) sont
+ * archivés dans Stripe (leurs produits legacy ont été désactivés). La liste
+ * reste en place, vide, prête à accueillir un futur prix à tolérer.
  */
-const TOLERES = new Map([
-  ["price_1TnUfmC7DMFvUE5OG7oOuLz3", "Solo 15,99 €, grille abandonnée, aucun abonnement vivant (14/09/2026)"],
-  ["price_1TmtoOC7DMFvUE5ONRi07YgD", "Pro 29 €, grille abandonnée, aucun abonnement vivant (14/09/2026)"],
-  ["price_1TmtlsC7DMFvUE5Oa3dsFvFZ", "Solo 19 €, porté par un abonnement résilié en août (14/09/2026)"],
-]);
+const TOLERES = new Map([]);
 
 const orphelins = actifs.ok
   ? actifs.corps.data.filter((p) => !referencés.has(p.id) && p.recurring && !TOLERES.has(p.id))

@@ -103,21 +103,23 @@ export async function GET() {
   if (siren && process.env.SUPERPDP_PREFILL_COMPANY === "true") {
     params.set("superpdp_company_number", siren);
     params.set("superpdp_company_number_scheme", companyNumberScheme());
+    // Super PDP REFUSE superpdp_directory_entry_identifier s'il n'est pas
+    // accompagné de superpdp_company_number (« superpdp_company_number is
+    // required with superpdp_directory_entry_identifier »). Les deux ne partent
+    // donc qu'ensemble, sous le même drapeau de pré-remplissage.
+    if (companyNumberScheme() === "fr_siren") {
+      params.set("superpdp_directory_entry_identifier", siren);
+    }
   }
 
-  // L'adresse qui sera créée si l'utilisateur active la réception.
-  //
-  // Envoyé indépendamment du pré-remplissage de l'entreprise : la
-  // documentation « Authentification » le décrit seul, « pour les entreprises
-  // fr_siren il est possible de configurer l'adresse de facturation
-  // électronique qui sera créée dans le cas où l'utilisateur active la
-  // réception des factures ». Il ne porte donc pas le risque de blocage du
-  // couple `superpdp_company_number` / `_scheme`, et il rend prévisible
-  // l'adresse ouverte : le SIREN nu, celui que `lireLigneAnnuaire` attend et
-  // que la documentation « Annuaire » conseille à tout le monde.
-  if (siren && companyNumberScheme() === "fr_siren") {
-    params.set("superpdp_directory_entry_identifier", siren);
-  }
+  // L'adresse de réception pré-identifiée (superpdp_directory_entry_identifier,
+  // le SIREN nu que lireLigneAnnuaire attend) est posée dans le bloc de
+  // pré-remplissage ci-dessus, et seulement là. Elle était envoyée seule
+  // auparavant, en croyant la documentation « Authentification » qui la décrit
+  // indépendante ; en prod réelle c'est faux : sans superpdp_company_number,
+  // Super PDP repart aussitôt en erreur « superpdp_company_number is required
+  // with superpdp_directory_entry_identifier » et aucun raccordement n'aboutit.
+  // Invisible en bac à sable, où le scheme n'est jamais fr_siren.
 
   // `login_hint` ne pré-remplit qu'un champ texte : aucun risque de blocage.
   if (profile?.email) params.set("login_hint", profile.email);
