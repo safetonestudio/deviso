@@ -29,7 +29,7 @@ export default function MentionsLegalesPage() {
           <p className="text-gray-400 leading-relaxed">
             Le site <strong>getdeviso.fr</strong> est édité par :<br /><br />
             <strong>SafeTone Studio</strong><br />
-            Auto-entrepreneur<br />
+            Nom commercial de Selim Berrabah, entrepreneur individuel (auto-entrepreneur)<br />
             SIREN : 103 340 857<br />
             Adresse : 24 avenue de Gradignan, 33850 Léognan, France<br />
             Téléphone : +33 7 63 08 04 34<br />
@@ -40,7 +40,7 @@ export default function MentionsLegalesPage() {
         <section className="mb-8">
           <h2 className="text-xl font-semibold text-white mb-3">Directeur de la publication</h2>
           <p className="text-gray-400 leading-relaxed">
-            Le directeur de la publication est le fondateur de SafeTone Studio.
+            Le directeur de la publication est Selim Berrabah, fondateur de SafeTone Studio.
           </p>
         </section>
 

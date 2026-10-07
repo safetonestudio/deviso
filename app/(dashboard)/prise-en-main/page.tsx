@@ -168,7 +168,7 @@ const STORAGE_KEY = "deviso_guides_read";
  * ils restent masqués de la liste tant que ce drapeau est false. Passer à true
  * le jour où Super PDP est activé en production.
  */
-const REFORME_PUBLIEE = false;
+const REFORME_PUBLIEE = true;
 
 const PAGES: { icon: LucideIcon; label: string; desc: string }[] = [
   { icon: LayoutDashboard, label: "Tableau de bord", desc: "KPIs, alertes et vue d'ensemble de votre activité" },

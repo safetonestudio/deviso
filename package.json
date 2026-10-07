@@ -31,7 +31,7 @@
     "semis:recues": "node scripts/e2e/factures-recues-semis.mjs",
     "test:marque": "node scripts/e2e/marque.mjs",
     "test:relances": "node scripts/e2e/relances-nom.mjs",
-    "verify": "npm run check:forms && npm run check:emails && npm run check:theme && npm run check:stripe && npm run check:droits && npm run check:nav && npm run check:cadres && npm run check:emoji && npm run check:tirets && npm run check:blog && npm run check:taux && npm run check:abonnement && npm run check:comptable && npm run check:effets-reels && npm run test:exoneration && npm run test:roles && npm run test:permissions && npm run test:promises && npm run test:devis && npm run test:equipe && npm run test:catalogue && npm run test:envois && npm run test:crons && npm run test:pdf && npm run test:stripe && npm run test:stripe-prix && npm run test:sieges && npm run test:superpdp && npm run test:superpdp-refus && npm run test:achats && npm run test:blocages && npm run test:annuaire-reel && npm run test:conformite && npm run test:concurrence && npm run test:encaissement-concurrent && npm run test:date-encaissement && npm run test:avoir && npm run test:avoir-interne && npm run test:fermeture-ligne && npm run test:ligne-reelle && npm run test:demo",
+    "verify": "npm run check:claude-md && npm run check:forms && npm run check:emails && npm run check:theme && npm run check:stripe && npm run check:droits && npm run check:nav && npm run check:cadres && npm run check:emoji && npm run check:tirets && npm run check:blog && npm run check:taux && npm run check:abonnement && npm run check:comptable && npm run check:effets-reels && npm run test:exoneration && npm run test:roles && npm run test:permissions && npm run test:promises && npm run test:devis && npm run test:equipe && npm run test:catalogue && npm run test:envois && npm run test:crons && npm run test:pdf && npm run test:stripe && npm run test:stripe-prix && npm run test:sieges && npm run test:superpdp && npm run test:superpdp-refus && npm run test:achats && npm run test:blocages && npm run test:annuaire-reel && npm run test:conformite && npm run test:concurrence && npm run test:encaissement-concurrent && npm run test:date-encaissement && npm run test:avoir && npm run test:avoir-interne && npm run test:fermeture-ligne && npm run test:ligne-reelle && npm run test:demo",
     "check:emails": "node scripts/check-emails.mjs",
     "test:emails": "node scripts/e2e/emails.mjs",
     "test:crons": "node scripts/e2e/crons.mjs",
@@ -59,7 +59,8 @@
     "check:rendu": "node scripts/check-rendu.mjs",
     "verify:rendu": "npm run build && node scripts/check-rendu.mjs",
     "build:quiet": "node scripts/build-quiet.mjs",
-    "verify:rendu:quiet": "node scripts/build-quiet.mjs && node scripts/check-rendu.mjs"
+    "verify:rendu:quiet": "node scripts/build-quiet.mjs && node scripts/check-rendu.mjs",
+    "check:claude-md": "node scripts/check-claude-md.mjs"
   },
   "dependencies": {
     "@react-pdf/renderer": "^4.3.0",
