@@ -4,6 +4,7 @@ import { synchroniserFactures } from "@/lib/superpdp-sync";
 import { factureBloquee } from "@/lib/superpdp-blocage";
 import { retenterAchatsEnAttente } from "@/lib/superpdp-achats";
 import { cronAutorise } from "@/lib/cron-auth";
+import { isSandbox, estConnexionDeCetEnv } from "@/lib/superpdp";
 import { estCompteDemo } from "@/lib/garde-demo";
 
 /**
@@ -32,7 +33,7 @@ export async function GET(req: Request) {
   // Super PDP répond 403 et on ne ferait qu'ajouter du bruit dans les journaux.
   const { data: raccordements, error } = await admin
     .from("superpdp_connections")
-    .select("user_id")
+    .select("user_id, company_number_scheme")
     .eq("session_status", "verified");
 
   if (error) {
@@ -45,7 +46,15 @@ export async function GET(req: Request) {
   let entrantes = 0;
   let echecs = 0;
 
-  for (const { user_id } of raccordements ?? []) {
+  const sandbox = isSandbox();
+  for (const { user_id, company_number_scheme } of raccordements ?? []) {
+    // Chaque déploiement ne synchronise QUE les connexions de son environnement.
+    // En prod (app OAuth prod), un token d'entreprise « bac à sable » ne peut pas
+    // être rafraîchi : le synchroniser ne ferait que le churner en invalid_grant
+    // et laisserait ce compte de test mort. Réciproquement en bac à sable. Sans
+    // ce filtre, re-raccorder un compte de test serait futile, la prod le
+    // retuerait à la synchro suivante.
+    if (!estConnexionDeCetEnv(company_number_scheme, sandbox)) continue;
     // Un compte de démonstration ne touche jamais la vraie Plateforme Agréée :
     // son raccordement est fictif, le synchroniser ne ferait que churner en 401.
     if (await estCompteDemo(user_id)) continue;

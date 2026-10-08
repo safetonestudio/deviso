@@ -17,6 +17,19 @@ export const isSandbox = () => process.env.SUPERPDP_SANDBOX === "true";
 /** `sandbox` en bac à sable, `fr_siren` en réel. */
 export const companyNumberScheme = () => (isSandbox() ? "sandbox" : "fr_siren");
 
+/**
+ * Une connexion appartient-elle à NOTRE environnement ?
+ *
+ * Le `company_number_scheme` porte l'environnement : « sandbox » d'un côté,
+ * fr_siren / be_numero_entreprise (la production) de l'autre. Un déploiement
+ * prod (app OAuth prod) ne peut pas rafraîchir le jeton d'une entreprise bac à
+ * sable, et réciproquement : tenter de le faire ne fait que le churner en
+ * `invalid_grant`. Toute opération automatique côté serveur (cron de synchro
+ * en tête) doit donc ignorer les connexions de l'AUTRE environnement.
+ */
+export const estConnexionDeCetEnv = (scheme: string | null, sandbox: boolean) =>
+  (scheme === "sandbox") === sandbox;
+
 export function superpdpConfig() {
   const clientId = process.env.SUPERPDP_CLIENT_ID;
   const clientSecret = process.env.SUPERPDP_CLIENT_SECRET;
