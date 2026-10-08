@@ -2,6 +2,8 @@ import { NextRequest, NextResponse } from "next/server";
 import { stripe } from "@/lib/stripe";
 import { createAdminClient } from "@/lib/supabase/admin";
 import type Stripe from "stripe";
+import { envoyerCourriel } from "@/lib/resend";
+import { trialEndingEmailHtml } from "@/lib/emails/trial-ending";
 
 // Correspondance price_id → plan (mensuel ET annuel)
 function planFromPriceId(priceId: string): "solo" | "pro" | null {
@@ -218,6 +220,46 @@ export async function POST(req: NextRequest) {
 
       if (error) throw error;
       verifierPortee("customer.subscription.deleted", touchees, customerId);
+      break;
+    }
+
+    // Essai bientot termine : relance si aucune carte enregistree (J-3).
+    case "customer.subscription.trial_will_end": {
+      const sub = event.data.object as Stripe.Subscription;
+      const customerId = sub.customer as string;
+
+      // Deja une carte ? Alors il sera preleve normalement : pas de relance.
+      let aUneCarte = Boolean(sub.default_payment_method);
+      if (!aUneCarte) {
+        const cust = await stripe.customers.retrieve(customerId);
+        if (!(cust as Stripe.DeletedCustomer).deleted) {
+          aUneCarte = Boolean(
+            (cust as Stripe.Customer).invoice_settings?.default_payment_method
+          );
+        }
+      }
+      if (aUneCarte) break;
+
+      const plan = planDeAbonnement(sub);
+      const { data: prof } = await supabase
+        .from("profiles")
+        .select("email, full_name, is_demo")
+        .eq("stripe_customer_id", customerId)
+        .maybeSingle();
+
+      if (!prof?.email || prof.is_demo) break;
+
+      const appUrl = process.env.NEXT_PUBLIC_APP_URL ?? "https://getdeviso.fr";
+      await envoyerCourriel(prof.email, {
+        from: "Deviso <noreply@getdeviso.fr>",
+        to: prof.email,
+        subject:
+          "Ton essai Deviso se termine dans 3 jours \u00b7 ajoute une carte pour continuer",
+        html: trialEndingEmailHtml(prof.full_name ?? "", {
+          url: `${appUrl}/billing`,
+          planLabel: plan === "pro" ? "Pro" : "Solo",
+        }),
+      });
       break;
     }
 
