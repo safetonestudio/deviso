@@ -78,7 +78,6 @@
     "pdf-lib": "^1.17.1",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
-    "react-to-print": "^3.0.6",
     "resend": "^6.16.0",
     "stripe": "^17.7.0",
     "tailwind-merge": "^3.3.0",

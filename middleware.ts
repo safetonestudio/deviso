@@ -37,6 +37,36 @@ export async function middleware(request: NextRequest) {
   const enTetes = new Headers(request.headers);
   enTetes.set("x-pathname", request.nextUrl.pathname);
 
+  // Pages PUBLIQUES (marketing, blog, SEO, legal) : aucun utilisateur connecte
+  // n'a besoin d'y etre rafraichi, et aucune redirection d'auth ne s'y applique.
+  // On evite donc l'appel reseau `supabase.auth.getUser()` (gain de TTFB, qui
+  // compte pour le referencement de ces pages). On continue malgre tout a poser
+  // `x-pathname` sur la requete.
+  //
+  // Choix "fail-safe" VOLONTAIRE : on ENUMERE les pages publiques a sauter, on
+  // ne devine PAS l'inverse. Toute route non listee (donc toute route app,
+  // connue ou AJOUTEE plus tard) continue de passer par getUser, et garde ainsi
+  // le rafraichissement de session et le gating. Oublier d'ajouter une page
+  // publique ne coute qu'un peu de latence, jamais la securite d'une page app.
+  const chemin = request.nextUrl.pathname;
+  const prefixesPublics = [
+    "/blog",
+    "/combien-facturer",
+    "/freelance-",
+    "/a-propos",
+    "/conformite",
+    "/cgu",
+    "/confidentialite",
+    "/mentions-legales",
+    "/forgot-password",
+    "/reset-password",
+  ];
+  const estPagePublique =
+    chemin === "/" || prefixesPublics.some((p) => chemin.startsWith(p));
+  if (estPagePublique) {
+    return NextResponse.next({ request: { headers: enTetes } });
+  }
+
   let supabaseResponse = NextResponse.next({ request: { headers: enTetes } });
 
   const supabase = createServerClient(
