@@ -108,20 +108,7 @@ export default function StatsPage() {
   }
 
   if (loading || !stats) {
-    return (
-      <div className="space-y-6 max-w-7xl mx-auto animate-pulse">
-        <div>
-          <div className="h-6 w-32 bg-ds-elevated rounded mb-2" />
-          <div className="h-4 w-48 bg-ds-elevated rounded" />
-        </div>
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-          {[...Array(4)].map((_, i) => (
-            <div key={i} className="bg-ds-surface border border-ds-border rounded-xl p-5 h-28" />
-          ))}
-        </div>
-        <div className="bg-ds-surface border border-ds-border rounded-xl h-64" />
-      </div>
-    );
+    return <div className="text-center py-16 text-gray-500">Chargement…</div>;
   }
 
   const maxCa = Math.max(...stats.monthly_ca.map((m) => m.ca), 1);

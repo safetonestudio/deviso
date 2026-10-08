@@ -4,7 +4,6 @@ import { useEffect, useState } from "react";
 import { Clock, Package, Tag, Timer, type LucideIcon } from "lucide-react";
 import { UpgradeButton } from "@/components/UpgradeButton";
 import { GuidedTourBanner } from "@/components/GuidedTourBanner";
-import { PageSkeleton } from "@/components/Skeleton";
 import { usePlan, useIsMember } from "@/components/PlanContext";
 
 interface CatalogItem {
@@ -101,7 +100,7 @@ export default function CataloguePage() {
     setItems((prev) => prev.filter((i) => i.id !== id));
   }
 
-  if (loading) return <PageSkeleton cards={0} rows={6} />;
+  if (loading) return <div className="text-center py-16 text-gray-500">Chargement…</div>;
 
   // Gate Pro, jamais affiché aux membres (ils utilisent les features de l'owner)
   if (!isMember && plan !== "pro") {

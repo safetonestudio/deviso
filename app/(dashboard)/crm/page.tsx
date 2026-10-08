@@ -203,20 +203,7 @@ export default function CRMPage() {
   }
 
   if (loading) {
-    return (
-      <div className="animate-pulse space-y-4">
-        <div className="h-8 w-48 bg-ds-elevated rounded" />
-        <div className="bg-ds-surface border border-ds-border rounded-xl overflow-hidden">
-          {[...Array(5)].map((_, i) => (
-            <div key={i} className="px-5 py-4 border-b border-ds-border flex gap-4">
-              <div className="h-4 flex-1 bg-ds-elevated rounded" />
-              <div className="h-4 w-24 bg-ds-elevated rounded" />
-              <div className="h-4 w-16 bg-ds-elevated rounded" />
-            </div>
-          ))}
-        </div>
-      </div>
-    );
+    return <div className="text-center py-16 text-gray-500">Chargement…</div>;
   }
 
   const totalCA = clients.reduce((s, c) => s + c.ca_total, 0);

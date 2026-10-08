@@ -3,7 +3,6 @@
 import { useEffect, useState } from "react";
 import { Wallet, Link2, Building2, CheckCircle2, AlertTriangle, ExternalLink, Landmark, Minus, Sparkles, Lightbulb, type LucideIcon } from "lucide-react";
 import { GuidedTourBanner } from "@/components/GuidedTourBanner";
-import { PageSkeleton } from "@/components/Skeleton";
 import type { Profile } from "@/types";
 
 // ── Providers supportés ────────────────────────────────────────────────────────
@@ -178,7 +177,7 @@ export default function PaiementsPage() {
 
   const inputCls = "w-full bg-ds-bg border border-ds-border text-white placeholder:text-gray-600 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500/30";
 
-  if (loading) return <div className="max-w-2xl mx-auto"><PageSkeleton cards={0} rows={5} /></div>;
+  if (loading) return <div className="text-center py-16 text-gray-500">Chargement…</div>;
 
   return (
     <div className="max-w-2xl mx-auto">

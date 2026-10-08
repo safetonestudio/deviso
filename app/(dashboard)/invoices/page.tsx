@@ -7,7 +7,6 @@ import type { Invoice } from "@/types";
 import { UpgradeBanner } from "@/components/UpgradeBanner";
 import { RefreshCw, Trash2, Plus, X, ChevronDown, Download, Coins, CircleCheck, TriangleAlert, Lock } from "lucide-react";
 import { GuidedTourBanner } from "@/components/GuidedTourBanner";
-import { RowsSkeleton } from "@/components/Skeleton";
 import { usePlan, useIsMember, usePermission } from "@/components/PlanContext";
 import { phraseManques } from "@/lib/superpdp-precontrole";
 import { etatPdp } from "@/lib/superpdp-etat-facture";
@@ -435,7 +434,7 @@ export default function InvoicesPage() {
           )}
 
           {loading ? (
-            <RowsSkeleton />
+            <div className="text-center py-16 text-gray-500">Chargement…</div>
           ) : isFree ? (
             <div className="text-center py-16 border border-dashed border-ds-border rounded-xl bg-ds-surface">
               <Lock size={32} className="mx-auto mb-3 text-gray-600" />
@@ -770,7 +769,7 @@ export default function InvoicesPage() {
               )}
 
               {recurringLoading ? (
-                <RowsSkeleton rows={3} />
+                <div className="text-center py-16 text-gray-500">Chargement…</div>
               ) : recurring.length === 0 ? (
                 <div className="text-center py-16 border border-dashed border-ds-border rounded-xl bg-ds-surface">
                   <RefreshCw size={32} className="mx-auto text-gray-600 mb-3" />
