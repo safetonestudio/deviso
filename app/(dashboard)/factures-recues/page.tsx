@@ -105,7 +105,7 @@ export default async function FacturesRecues() {
         <section className="bg-ds-surface border border-ds-border rounded-xl p-6 mt-6 text-center">
           <p className="text-white font-medium mb-1">Vous n&apos;êtes pas encore raccordé</p>
           <p className="text-sm text-gray-400 mb-4 max-w-md mx-auto">
-            À partir du 1ᵉʳ septembre 2026, toutes les entreprises doivent pouvoir recevoir des
+            Depuis le 1ᵉʳ septembre 2026, toutes les entreprises doivent pouvoir recevoir des
             factures électroniques. Le raccordement se fait depuis vos paramètres.
           </p>
           <a

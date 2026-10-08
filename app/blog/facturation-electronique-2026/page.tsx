@@ -292,7 +292,7 @@ export default function FacturationElectronique2026Page() {
             </p>
             <div className="mt-4 bg-[#241d11] border border-amber-500/20 rounded-xl p-4">
               <p className="text-sm text-amber-300">
-                <strong>Conséquence pratique</strong>, Les logiciels de facturation (comme Deviso) doivent soit devenir eux-mêmes une PDP, soit s&apos;interfacer avec une PDP certifiée. Deviso est en cours de partenariat avec des PDP pour septembre 2027. En attendant, vos factures Factur-X sont déjà dans le bon format.
+                <strong>Conséquence pratique</strong>, Les logiciels de facturation (comme Deviso) doivent soit devenir eux-mêmes une PDP, soit s&apos;interfacer avec une PDP certifiée. Deviso est raccordé à une Plateforme Agréée (Super PDP) et émet et reçoit déjà vos factures électroniques, en conformité avec la réforme. Vos factures Factur-X sont dans le bon format.
               </p>
             </div>
           </section>
@@ -335,15 +335,15 @@ export default function FacturationElectronique2026Page() {
               <div className="flex gap-4">
                 <div className="shrink-0 w-8 h-8 rounded-full bg-amber-500/20 border border-amber-500/30 flex items-center justify-center text-amber-400 font-bold text-sm">→</div>
                 <div>
-                  <p className="text-sm font-semibold text-white">Septembre 2026, Préparez-vous à recevoir des e-factures</p>
-                  <p className="text-sm mt-1">Si vous avez des clients grandes entreprises, ils commenceront à vous envoyer des e-factures (pour leur achats chez vous). Assurez-vous que votre outil peut les recevoir et les traiter.</p>
+                  <p className="text-sm font-semibold text-white">Depuis septembre 2026, vous recevez des e-factures</p>
+                  <p className="text-sm mt-1">Si vous avez des clients grandes entreprises, ils vous envoient déjà des e-factures (pour leurs achats chez vous). Deviso les reçoit et les traite automatiquement.</p>
                 </div>
               </div>
               <div className="flex gap-4">
                 <div className="shrink-0 w-8 h-8 rounded-full bg-indigo-500/20 border border-indigo-500/30 flex items-center justify-center text-indigo-400 font-bold text-sm">→</div>
                 <div>
                   <p className="text-sm font-semibold text-white">Début 2027, Choisissez votre PDP</p>
-                  <p className="text-sm mt-1">Identifiez la plateforme agréée par laquelle vous transmettrez vos factures. Certains logiciels de facturation intégreront directement une PDP. Deviso sera connecté à une PDP avant l&apos;échéance de septembre 2027.</p>
+                  <p className="text-sm mt-1">Identifiez la plateforme agréée par laquelle vous transmettrez vos factures. Certains logiciels de facturation intégreront directement une PDP. Deviso est déjà raccordé à une Plateforme Agréée (Super PDP) et émet et reçoit déjà vos factures électroniques.</p>
                 </div>
               </div>
               <div className="flex gap-4">
@@ -370,8 +370,8 @@ export default function FacturationElectronique2026Page() {
                   a: "La non-émission d'une facture électronique lorsqu'elle est obligatoire peut entraîner une amende de 50 € par facture, plafonnée à 15 000 € par an. La réglementation prévoit également des dispositions de tolérance pendant la période de démarrage.",
                 },
                 {
-                  q: "Deviso sera-t-il conforme en septembre 2027 ?",
-                  a: "Deviso génère déjà des factures au format Factur-X (la donnée est prête). L'interface avec une PDP certifiée est en cours de développement et sera disponible avant l'échéance de septembre 2027. Vous n'aurez rien à changer de votre côté.",
+                  q: "Deviso est-il conforme à la réforme de facturation électronique ?",
+                  a: "Oui. Deviso génère des factures au format Factur-X (la donnée est prête) et est raccordé à une Plateforme Agréée (Super PDP) qui émet et reçoit vos factures électroniques. Deviso est conforme à la réforme, vous n'avez rien à changer de votre côté.",
                 },
                 {
                   q: "Qu'arrive-t-il à mes factures pour les clients étrangers ?",

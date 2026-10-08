@@ -22,7 +22,7 @@ const FAQ = [
   },
   {
     q: "Un freelance doit-il choisir sa propre PDP ?",
-    a: "Pas nécessairement. Si votre logiciel de facturation est lui-même une PDP ou est connecté à une PDP, c'est transparent pour vous. Vous utilisez votre logiciel comme d'habitude, et la transmission à la DGFiP se fait automatiquement. Deviso sera connecté à une PDP avant l'échéance de septembre 2027.",
+    a: "Pas nécessairement. Si votre logiciel de facturation est lui-même une PDP ou est connecté à une PDP, c'est transparent pour vous. Vous utilisez votre logiciel comme d'habitude, et la transmission à la DGFiP se fait automatiquement. Deviso est raccordé à une Plateforme Agréée (Super PDP) et émet et reçoit déjà vos factures électroniques, en conformité avec la réforme.",
   },
   {
     q: "Combien coûte une PDP pour un freelance ?",
@@ -38,7 +38,7 @@ export default function ChoisirPlateformeAgreeePage() {
       <div className="fixed top-0 left-0 right-0 bg-indigo-950/95 backdrop-blur-sm border-b border-indigo-500/20 py-2 px-4 text-center text-sm" style={{ zIndex: 60 }}>
         <span className="text-indigo-300 font-semibold">Réforme 2026&nbsp;:</span>
         <span className="text-gray-300 ml-1.5">PPF abandonné · Seules les PDP privées subsistent.&nbsp;</span>
-        <span className="text-indigo-400 font-medium">Deviso intégrera une PDP avant septembre 2027.</span>
+        <span className="text-indigo-400 font-medium">Deviso est raccordé à une Plateforme Agréée (Super PDP) et émet et reçoit déjà vos factures électroniques.</span>
       </div>
 
       <nav className="fixed top-9 left-0 right-0 z-50 bg-ds-bg/80 backdrop-blur-xl border-b border-white/[0.06]">
@@ -186,13 +186,13 @@ export default function ChoisirPlateformeAgreeePage() {
           <section>
             <h2 className="text-xl font-bold text-white mb-4">Et Deviso dans tout ça ?</h2>
             <p>
-              Deviso est en cours d&apos;intégration avec des PDP certifiées. L&apos;objectif est que vous n&apos;ayez <strong className="text-white">rien à faire</strong> : vous créez votre facture dans Deviso comme aujourd&apos;hui, et la transmission à la DGFiP via PDP se fait automatiquement.
+              Deviso est raccordé à une Plateforme Agréée (Super PDP). Vous n&apos;avez <strong className="text-white">rien à faire</strong> : vous créez votre facture dans Deviso comme aujourd&apos;hui, et la transmission à la DGFiP via la Plateforme Agréée se fait automatiquement.
             </p>
             <p className="mt-3">
-              En attendant, vos factures Deviso sont déjà au format Factur-X EN 16931, le format que la PDP recevra et transmettra. Pas de travail de conversion, pas de reformatage. La donnée structurée est déjà là.
+              Vos factures Deviso sont au format Factur-X EN 16931, le format que la Plateforme Agréée reçoit et transmet. Pas de travail de conversion, pas de reformatage. La donnée structurée est déjà là.
             </p>
             <p className="mt-3">
-              Le calendrier Deviso : intégration PDP opérationnelle au <strong className="text-white">1er trimestre 2027</strong>, avant l&apos;obligation de septembre 2027.
+              Concrètement : Deviso émet et reçoit déjà vos factures électroniques via la Plateforme Agréée, en conformité avec la réforme, bien avant l&apos;obligation universelle du 1er septembre 2027.
             </p>
           </section>
 
@@ -257,9 +257,9 @@ export default function ChoisirPlateformeAgreeePage() {
         </div>
 
         <div className="rounded-2xl bg-[#191830] border border-indigo-500/20 p-8 text-center mb-14">
-          <h2 className="text-xl font-bold text-white mb-3">Factur-X prêt, PDP en route</h2>
+          <h2 className="text-xl font-bold text-white mb-3">Factur-X prêt, Plateforme Agréée raccordée</h2>
           <p className="text-sm text-gray-400 mb-6 max-w-lg mx-auto">
-            Deviso génère déjà des factures au format Factur-X. L&apos;intégration PDP sera disponible bien avant l&apos;obligation de septembre 2027.
+            Deviso génère déjà des factures au format Factur-X et, raccordé à une Plateforme Agréée (Super PDP), émet et reçoit déjà vos factures électroniques en conformité avec la réforme.
           </p>
           <WaitlistButton plan="free" label="Essayer Deviso 14 jours →" className="inline-flex items-center gap-2 bg-indigo-600 hover:bg-indigo-500 text-white font-semibold px-6 py-3 rounded-xl transition-colors text-sm" />
           <Signature />

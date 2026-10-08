@@ -164,9 +164,9 @@ const STORAGE_KEY = "deviso_guides_read";
 
 /**
  * Bascule de publication des guides « réforme / Plateforme Agréée ».
- * Ces guides décrivent des flux pas encore actifs en prod pour les clients :
- * ils restent masqués de la liste tant que ce drapeau est false. Passer à true
- * le jour où Super PDP est activé en production.
+ * Ces guides décrivent des flux désormais actifs en production pour les clients :
+ * Super PDP est activé, Deviso émet et reçoit déjà les factures électroniques.
+ * Le drapeau reste disponible pour masquer la liste au besoin.
  */
 const REFORME_PUBLIEE = true;
 

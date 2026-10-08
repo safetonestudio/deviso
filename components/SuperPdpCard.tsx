@@ -215,7 +215,7 @@ export function SuperPdpCard() {
       </div>
 
       <p className="text-xs text-gray-500 leading-relaxed mb-4">
-        À partir du <strong className="text-gray-400">1ᵉʳ septembre 2026</strong>, toutes les entreprises
+        Depuis le <strong className="text-gray-400">1ᵉʳ septembre 2026</strong>, toutes les entreprises
         doivent pouvoir <strong className="text-gray-400">recevoir</strong> des factures électroniques.
         Le raccordement à une Plateforme Agréée est le moyen de le faire.
       </p>

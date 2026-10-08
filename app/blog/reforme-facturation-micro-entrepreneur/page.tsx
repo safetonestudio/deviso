@@ -27,7 +27,7 @@ const FAQ = [
   },
   {
     q: "Combien va coûter la PDP ?",
-    a: "Le prix des PDP varie selon les prestataires. Certains logiciels de facturation incluront l'accès à une PDP dans leur abonnement. Deviso intégrera une PDP sans coût supplémentaire pour les utilisateurs Solo et Pro.",
+    a: "Le prix des PDP varie selon les prestataires. Certains logiciels de facturation incluent l'accès à une PDP dans leur abonnement. Deviso inclut déjà l'accès à une Plateforme Agréée, sans coût supplémentaire pour les utilisateurs Solo et Pro.",
   },
   {
     q: "Est-ce que ça change quelque chose à mes déclarations URSSAF ?",
@@ -140,15 +140,15 @@ export default function ReformeFacturationMicroEntrepreneurPage() {
             <div className="space-y-4">
               {[
                 {
-                  date: "Maintenant (juillet 2026)",
+                  date: "Aujourd'hui",
                   action: "Vérifier que ton logiciel génère du Factur-X",
                   detail: "Si tu utilises Deviso, c'est déjà le cas. Si tu utilises Word, Excel ou un autre outil, c'est le moment de changer.",
                   status: "now",
                 },
                 {
-                  date: "Septembre 2026",
-                  action: "Être prêt à recevoir des e-factures de tes fournisseurs",
-                  detail: "Tes fournisseurs grandes entreprises (opérateur télécom, expert-comptable corporate...) vont commencer à t'envoyer des e-factures. Assure-toi que tu peux les ouvrir.",
+                  date: "Depuis septembre 2026",
+                  action: "Recevoir les e-factures de tes fournisseurs",
+                  detail: "Tes fournisseurs grandes entreprises (opérateur télécom, expert-comptable corporate...) t'envoient déjà des e-factures. Avec Deviso, tu les reçois et tu peux les ouvrir.",
                   status: "soon",
                 },
                 {

@@ -259,7 +259,7 @@ export default function EReportingFreelancePage() {
           <section>
             <h2 className="text-xl font-bold text-white mb-4">Ce que Deviso fait pour vous</h2>
             <p>
-              Deviso intégrera l&apos;e-reporting de manière transparente. Concrètement :
+              Deviso transmet vos factures à une Plateforme Agréée, qui réalise l&apos;e-reporting automatiquement. Concrètement :
             </p>
             <ul className="mt-3 space-y-3">
               {[

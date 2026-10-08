@@ -55,6 +55,7 @@ const CHECKLIST: ChecklistItem[] = [
     details: [
       "Si votre éditeur dit « on passera par le PPF » → c'est faux, le PPF est abandonné depuis oct. 2024",
       "Vérifier que la PDP partenaire est bien immatriculée sur la liste DGFiP",
+      "Deviso est déjà raccordé à une Plateforme Agréée (Super PDP) et émet et reçoit déjà vos factures électroniques.",
     ],
   },
   {
@@ -283,10 +284,10 @@ export default function ChecklistReforme2026Page() {
         <div className="rounded-2xl bg-[#191830] border border-indigo-500/20 p-8 text-center mb-14">
           <h2 className="text-xl font-bold text-white mb-3">Préparez-vous sans stress avec Deviso</h2>
           <p className="text-sm text-gray-400 mb-6 max-w-lg mx-auto">
-            Deviso génère déjà des factures Factur-X au profil EN 16931. L&apos;intégration PDP arrive avant septembre 2027. Essayez gratuitement pendant 14 jours, sans carte bancaire.
+            Deviso génère déjà des factures Factur-X au profil EN 16931 et, raccordé à une Plateforme Agréée (Super PDP), émet et reçoit déjà vos factures électroniques en conformité avec la réforme. Essayez gratuitement pendant 14 jours, sans carte bancaire.
           </p>
           <WaitlistButton plan="free" label="Essayer Deviso gratuitement →" className="inline-flex items-center gap-2 bg-indigo-600 hover:bg-indigo-500 text-white font-semibold px-6 py-3 rounded-xl transition-colors text-sm" />
-          <p className="text-xs text-gray-400 mt-3">Factur-X inclus · PDP avant sept. 2027 · E-reporting géré automatiquement</p>
+          <p className="text-xs text-gray-400 mt-3">Factur-X inclus · Plateforme Agréée raccordée · E-reporting géré automatiquement</p>
           <Signature />
         </div>
 
