@@ -7,7 +7,7 @@ import type { Profile, TvaRegime } from "@/types";
 import { UpgradeBanner } from "@/components/UpgradeBanner";
 import { GuidedTourBanner } from "@/components/GuidedTourBanner";
 import { SuperPdpCard } from "@/components/SuperPdpCard";
-import { PERIODICITES_TVA } from "@/lib/superpdp-entreprise";
+import { PERIODICITES_TVA } from "@/lib/superpdp-constantes";
 
 const TVA_REGIMES: { value: TvaRegime; label: string; rate: number; description: string }[] = [
   { value: "franchise",    label: "Franchise en base : TVA non applicable (art. 293 B CGI)", rate: 0,    description: "Micro-entrepreneur ou CA sous le seuil (36 800 €/an services)" },

@@ -24,14 +24,13 @@ import { superpdpFetch, SuperPdpNotConnected, SuperPdpSessionPending } from "@/l
  * l'utilisateur (`profiles.tva_periodicite`), et rien n'est déduit à sa place.
  */
 
-/** Les quatre valeurs admises par `PATCH /v1.beta/companies`. */
-export type VatRegime = "monthly" | "quarterly" | "simplified" | "vat_exemption";
-
-export const PERIODICITES_TVA = [
-  { value: "monthly", label: "Mensuelle, régime réel normal" },
-  { value: "quarterly", label: "Trimestrielle, régime réel normal" },
-  { value: "simplified", label: "Annuelle, régime simplifié (RSI)" },
-] as const;
+// VatRegime et PERIODICITES_TVA vivent dans `superpdp-constantes.ts` (module
+// pur, sans crypto ni supabase) pour pouvoir etre importes cote client sans
+// embarquer ce graphe serveur. On les re-exporte ici pour ne rien casser des
+// importateurs serveur existants.
+import type { VatRegime } from "./superpdp-constantes";
+export type { VatRegime } from "./superpdp-constantes";
+export { PERIODICITES_TVA } from "./superpdp-constantes";
 
 /**
  * Traduit le profil Deviso en régime Super PDP.

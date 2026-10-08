@@ -81,8 +81,20 @@ export function NotificationBell({ placement = "sidebar" }: Props) {
 
   useEffect(() => {
     fetchNotifications();
-    const interval = setInterval(fetchNotifications, 30_000);
-    return () => clearInterval(interval);
+    // On ne sonde que lorsque l'onglet est visible : inutile de rafraichir en
+    // arriere-plan (trafic + re-render pour rien). Au retour sur l'onglet, on
+    // refait un fetch immediat pour afficher l'etat a jour.
+    const interval = setInterval(() => {
+      if (!document.hidden) fetchNotifications();
+    }, 60_000);
+    const onVisible = () => {
+      if (!document.hidden) fetchNotifications();
+    };
+    document.addEventListener("visibilitychange", onVisible);
+    return () => {
+      clearInterval(interval);
+      document.removeEventListener("visibilitychange", onVisible);
+    };
   }, [fetchNotifications]);
 
   useEffect(() => {
