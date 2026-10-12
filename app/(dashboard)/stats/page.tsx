@@ -1,6 +1,8 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import useSWR from "swr";
+import { fetcher } from "@/lib/fetcher";
 import { UpgradeButton } from "@/components/UpgradeButton";
 import { KpiCard } from "@/components/ui/KpiCard";
 import { GuidedTourBanner } from "@/components/GuidedTourBanner";
@@ -85,14 +87,14 @@ export default function StatsPage() {
     finally { setExportingRecap(false); }
   }
 
+  // Cache SWR : retour instantane au revisit, revalidation en fond.
+  const { data: statsData } = useSWR("/api/stats", fetcher);
   useEffect(() => {
-    fetch("/api/stats")
-      .then((r) => {
-        if (r.status === 403) { setIsPro(false); setLoading(false); return null; }
-        return r.json();
-      })
-      .then((d) => { if (d) setStats(d); setLoading(false); });
-  }, []);
+    if (statsData === undefined) return;
+    if (statsData === null) { setIsPro(false); setLoading(false); return; }
+    setStats(statsData);
+    setLoading(false);
+  }, [statsData]);
 
   if (!isPro) {
     return (

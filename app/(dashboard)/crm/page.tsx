@@ -1,6 +1,8 @@
 "use client";
 
 import { useEffect, useState, useMemo } from "react";
+import useSWR from "swr";
+import { fetcher } from "@/lib/fetcher";
 import Link from "next/link";
 import { Phone, Pencil, Check, X, Users, CircleCheck, Euro, type LucideIcon } from "lucide-react";
 import { UpgradeButton } from "@/components/UpgradeButton";
@@ -89,20 +91,16 @@ export default function CRMPage() {
   const [phoneInput, setPhoneInput] = useState("");
   const [savingPhone, setSavingPhone] = useState(false);
 
+  // Cache SWR : retour instantane au revisit, revalidation en fond.
+  const { data: crmData } = useSWR("/api/crm", fetcher);
   useEffect(() => {
-    fetch("/api/crm")
-      .then((r) => {
-        if (r.status === 403) { setIsPro(false); setLoading(false); return null; }
-        return r.json();
-      })
-      .then((data) => {
-        if (!data) return;
-        setProposals(data.proposals ?? []);
-        setInvoices(data.invoices ?? []);
-        setContactsMap(data.contacts ?? {});
-        setLoading(false);
-      });
-  }, []);
+    if (crmData === undefined) return;
+    if (crmData === null) { setIsPro(false); setLoading(false); return; }
+    setProposals(crmData.proposals ?? []);
+    setInvoices(crmData.invoices ?? []);
+    setContactsMap(crmData.contacts ?? {});
+    setLoading(false);
+  }, [crmData]);
 
   async function savePhone(email: string) {
     setSavingPhone(true);
