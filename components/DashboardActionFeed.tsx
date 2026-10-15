@@ -21,8 +21,8 @@ export type ActionItem = {
 // On garde la couleur d'urgence en version opaque (teinte sombre composee) plus
 // la bordure gauche coloree comme signal.
 const URGENCY_STYLE = {
-  high:   "border-l-red-500/60   bg-[#241717]",
-  medium: "border-l-amber-500/60 bg-[#241d11]",
+  high:   "border-l-red-500/60   bg-[var(--urgency-high-bg)]",
+  medium: "border-l-amber-500/60 bg-[var(--urgency-medium-bg)]",
   low:    "border-l-ds-border    bg-ds-surface",
 };
 
@@ -42,7 +42,7 @@ export function DashboardActionFeed({ items }: { items: ActionItem[] }) {
   // Un fil qui s'efface se lit comme une page vide, pas comme une confirmation.
   if (visible.length === 0) {
     return (
-      <div className="flex items-center gap-3 border border-ds-border rounded-xl px-4 py-3.5 bg-[#14211a]">
+      <div className="flex items-center gap-3 border border-ds-border rounded-xl px-4 py-3.5 bg-[var(--urgency-ok-bg)]">
         <CircleCheck size={16} className="text-emerald-400 shrink-0" />
         <div>
           <p className="text-sm font-medium text-white leading-snug">Tout est à jour</p>

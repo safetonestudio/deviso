@@ -15,6 +15,14 @@
     --ds-elevated: #1E1E1E;
     --ds-border:   rgba(255, 255, 255, 0.08);
 
+    /* Fonds des cartes Actions requises : pilotes par le theme.
+       Valeurs sombres par defaut ; surchargees en clair plus bas.
+       (sans token, un bg hex en dur ne suit pas .light et le texte
+       text-white, lui, bascule en noir : contraste casse en clair) */
+    --urgency-high-bg:   #241717;
+    --urgency-medium-bg: #241d11;
+    --urgency-ok-bg:     #14211a;
+
     /* Shadows en dark : ring ultra-subtil */
     --ds-shadow-sm:   none;
     --ds-shadow-card: none;
@@ -139,6 +147,11 @@
   --ds-surface:  #FFFFFF;
   --ds-elevated: #EBEBEE;
   --ds-border:   #E2E2E8;
+
+  /* Cartes Actions requises en clair : teintes pastel, texte fonce lisible */
+  --urgency-high-bg:   #FBE9E7;
+  --urgency-medium-bg: #FAF0D7;
+  --urgency-ok-bg:     #E6F4EC;
 
   /* Shadows : subtiles en light pour donner de la profondeur */
   --ds-shadow-sm:   0 1px 2px rgba(0,0,0,0.05), 0 1px 1px rgba(0,0,0,0.03);

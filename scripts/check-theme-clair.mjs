@@ -73,7 +73,62 @@ for (const f of fichiers) {
   });
 }
 
+/* ─────────────────────────────────────────────────────────────────
+ * Second controle : fonds hex SOMBRES codes en dur (bg-[#xxxxxx]).
+ *
+ * Deuxieme bug de la serie (Actions requises du tableau de bord) : les
+ * cartes high/medium avaient un fond `bg-[#241717]` / `bg-[#241d11]` fige.
+ * Un hex litteral ne suit pas la classe `.light` ; le texte pose dessus,
+ * lui, est `text-white` et bascule en `#111116` (noir) en clair. Resultat :
+ * texte noir sur fond sombre, illisible, sans que tsc ni le build ne le
+ * voient. La regle : dans les zones qui passent en clair, un fond sombre
+ * doit venir d un token de theme (var(--...)), jamais d un hex fige.
+ * ───────────────────────────────────────────────────────────────── */
+
+// Zones marketing : jamais rendues sous .light (toujours sombre), donc un
+// fond hex sombre y est volontaire et legitime.
+const SOMBRE_ASSUME = ["components/landing/", "components/blog/"];
+// Fichiers a palette autonome ou navbar volontairement sombre dans les deux
+// themes. A revoir si l un doit un jour suivre le theme clair.
+const FONDS_SOMBRES_TOLERES = [
+  "components/ProposalDocument.tsx",
+  "components/NavbarMobile.tsx",
+];
+
+const RE_BG_HEX = /bg-\[#([0-9a-fA-F]{6})\]/g;
+// Luminance percue (0..255). En dessous du seuil, le fond est sombre : son
+// texte lisible est clair, donc il casse en theme clair s il ne suit pas .light.
+const estSombre = (hex) => {
+  const r = parseInt(hex.slice(0, 2), 16);
+  const g = parseInt(hex.slice(2, 4), 16);
+  const b = parseInt(hex.slice(4, 6), 16);
+  return 0.299 * r + 0.587 * g + 0.114 * b < 128;
+};
+
+let fonds = 0;
+for (const f of fichiers) {
+  const chemin = f.replace(/\\/g, "/");
+  if (SOMBRE_ASSUME.some((p) => chemin.includes(p))) continue;
+  if (FONDS_SOMBRES_TOLERES.some((p) => chemin.endsWith(p))) continue;
+
+  const src = readFileSync(f, "utf8");
+  src.split("\n").forEach((ligneBrute, i) => {
+    const t = ligneBrute.trim();
+    if (t.startsWith("//") || t.startsWith("*") || t.startsWith("/*")) return;
+    if (ligneBrute.includes("theme-ok")) return; // echappatoire documentee
+    const ligne = ligneBrute.split("//")[0];
+    for (const m of ligne.matchAll(RE_BG_HEX)) {
+      if (!estSombre(m[1])) continue;
+      console.error(
+        `✗ ${chemin}:${i + 1}, « bg-[#${m[1]}] » est un fond sombre fige : il ne suit pas le theme clair alors que le texte, lui, bascule en noir. Utiliser un token var(--...).`
+      );
+      echecs++;
+      fonds++;
+    }
+  });
+}
+
 if (echecs === 0) {
-  console.log(`✓ Thème clair, ${inspectees} usages de couleurs claires, tous couverts par une surcharge`);
+  console.log(`✓ Thème clair, ${inspectees} usages de couleurs claires et ${fonds === 0 ? "aucun" : fonds} fond hex sombre fige, tout est couvert`);
 }
 process.exit(echecs > 0 ? 1 : 0);
