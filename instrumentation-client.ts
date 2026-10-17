@@ -22,3 +22,6 @@ Sentry.init({
     /^Load failed/,
   ],
 });
+
+// Suit les transitions de navigation App Router pour le tracing cote client.
+export const onRouterTransitionStart = Sentry.captureRouterTransitionStart;
