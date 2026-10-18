@@ -175,6 +175,11 @@
 .light .text-gray-600 { color: #5E5E6B !important; }
 .light .text-gray-700 { color: #C0C0C8 !important; }
 
+/* ── Cartes de plans (page abonnement) : teintes 950/50 sombres en clair ──
+   Sans surcharge, le texte gris y tombait a ~1,9:1. Teintes pastel equivalentes. */
+.light .bg-indigo-950\/50 { background-color: #EEF0FF; }
+.light .bg-violet-950\/50 { background-color: #F4EFFF; }
+
 /* ── Hover text ── */
 .light .hover\:text-white:hover    { color: #111116 !important; }
 .light .hover\:text-gray-300:hover { color: #3D3D48 !important; }

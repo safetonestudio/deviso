@@ -128,7 +128,35 @@ for (const f of fichiers) {
   });
 }
 
+/* ─────────────────────────────────────────────────────────────────
+ * Troisieme controle : fonds sombres en classes Tailwind (bg-indigo-950/50...).
+ *
+ * Meme defaut que le hex fige, vu le 18/10/2026 sur les cartes de plans de la
+ * page d abonnement : la classe ne change pas en clair, le texte si (gris fonce
+ * sur gris-violet moyen, contraste ~1,9:1). Couvert seulement si globals.css
+ * porte une surcharge .light pour cette classe exacte (opacite comprise).
+ * ───────────────────────────────────────────────────────────────── */
+const RE_BG_SOMBRE = new RegExp(`^bg-(?:slate|gray|zinc|neutral|stone|red|orange|amber|yellow|lime|green|emerald|teal|cyan|sky|blue|indigo|violet|purple|fuchsia|pink|rose)-(?:800|900|950)(?:/\\d+)?$`);
+const surchargeBg = (c) => css.includes(".light ." + c.replace("/", "\\/"));
+let tailwindSombres = 0;
+for (const f of fichiers) {
+  const chemin = f.replace(/\\/g, "/");
+  if (SOMBRE_ASSUME.some((p) => chemin.includes(p))) continue;
+  if (FONDS_SOMBRES_TOLERES.some((p) => chemin.endsWith(p))) continue;
+  readFileSync(f, "utf8").split("\n").forEach((ligneBrute, i) => {
+    const t = ligneBrute.trim();
+    if (t.startsWith("//") || t.startsWith("*") || t.startsWith("/*")) return;
+    if (ligneBrute.includes("theme-ok")) return;
+    for (const tok of ligneBrute.split(/[\s"'`{}()]+/)) {
+      if (!RE_BG_SOMBRE.test(tok) || surchargeBg(tok)) continue;
+      console.error(`✗ ${chemin}:${i + 1}, « ${tok} » est un fond sombre sans surcharge .light : texte illisible en clair`);
+      echecs++;
+      tailwindSombres++;
+    }
+  });
+}
+
 if (echecs === 0) {
-  console.log(`✓ Thème clair, ${inspectees} usages de couleurs claires et ${fonds === 0 ? "aucun" : fonds} fond hex sombre fige, tout est couvert`);
+  console.log(`✓ Thème clair, ${inspectees} usages de couleurs claires et ${fonds === 0 ? "aucun" : fonds} fond hex sombre fige, ${tailwindSombres} fond Tailwind sombre non couvert, tout est couvert`);
 }
 process.exit(echecs > 0 ? 1 : 0);
