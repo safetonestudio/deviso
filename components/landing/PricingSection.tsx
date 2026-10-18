@@ -2,28 +2,15 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import { planFeatures, proOnlyFeatures } from "@/lib/plans";
 
-const SOLO_FEATURES = [
-  "Devis IA illimités en 30 secondes",
-  "Signature électronique client",
-  "Factures Factur-X conformes réforme 2026",
-  "Factures récurrentes, acompte et solde",
-  "Dépôt Chorus Pro B2G (marchés publics)",
-  "Widget CA URSSAF mensuel / trimestriel",
-  "Export comptable FEC",
-  "Sans branding Deviso sur vos documents",
-  "Historique et exports illimités",
-];
+// Listes dérivées de la source unique (lib/plans.ts). Ne plus taper à la main :
+// ajouter une ligne ici sans l'ajouter à la matrice casse le build.
+const SOLO_FEATURES = planFeatures("solo");
 
 const PRO_FEATURES = [
   "Tout Solo inclus",
-  "Relances automatiques programmables",
-  "Exports CSV et récap mensuel pour le comptable",
-  "CRM Clients & Revenus + Analytics",
-  "Gestion d'équipe, rôles et validation devis",
-  "Catalogue prestations : forfaits & suivi du temps",
-  "Sous-domaine de partage (votremarque.getdeviso.fr)",
-  "Couleur d'accent sur vos PDF",
+  ...proOnlyFeatures(),
   "3 utilisateurs inclus · +5€/utilisateur supp.",
 ];
 

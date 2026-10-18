@@ -327,7 +327,7 @@ const ARTICLES: Record<string, Article> = {
     content: (
       <>
         <Note>
-          Les factures récurrentes sont disponibles sur le plan <B>Pro</B>.
+          Les factures récurrentes sont disponibles dès le plan <B>Solo</B>.
           Elles se gèrent dans <B>Factures</B>, onglet <em>Récurrentes</em>.
         </Note>
 

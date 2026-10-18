@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import { PartyPopper, TriangleAlert, Hourglass, Gift } from "lucide-react";
+import { planFeatures, proOnlyFeatures } from "@/lib/plans";
 
 type Profile = {
   plan: "free" | "solo" | "pro";
@@ -19,12 +20,13 @@ const PLAN_INFO = {
   solo: {
     label: "Solo",
     color: "bg-indigo-500/20 text-indigo-300",
-    description: "1 utilisateur · IA génération devis, factures Factur-X, acompte/solde, factures récurrentes, Chorus Pro B2G, export FEC",
+    // Dérivé de la source unique (lib/plans.ts), même vocabulaire que la landing.
+    description: `1 utilisateur · ${planFeatures("solo").join(" · ")}`,
   },
   pro: {
     label: "Pro",
     color: "bg-violet-500/20 text-violet-300",
-    description: "3 utilisateurs inclus · Tout Solo + relances auto, exports CSV et récap, CRM, Analytics, catalogue, sous-domaine de partage · +5€/utilisateur supplémentaire",
+    description: `3 utilisateurs inclus · Tout Solo + ${proOnlyFeatures().join(" · ")} · +5€/utilisateur supplémentaire`,
   },
 };
 

@@ -1,27 +1,30 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
+import { can } from "@/lib/plans";
+import { getPlan, type Plan } from "@/lib/stripe";
 
 /**
  * Résout l'owner effectif : si l'utilisateur est un collaborateur d'une équipe Pro,
  * retourne l'owner_id. Sinon retourne user.id directement.
  * Le plan Pro est vérifié sur le profil de l'owner.
  */
-async function resolveOwner(userId: string): Promise<{ ownerId: string; isPro: boolean }> {
+async function resolveOwner(userId: string): Promise<{ ownerId: string; plan: Plan }> {
   const admin = createAdminClient();
 
-  // Cas 1 : l'utilisateur est lui-même Pro
+  // Cas 1 : l'utilisateur a lui-même une offre payante (Solo ou Pro)
   const { data: ownProfile } = await admin
     .from("profiles")
     .select("plan")
     .eq("id", userId)
     .single();
 
-  if (ownProfile?.plan === "pro") {
-    return { ownerId: userId, isPro: true };
+  const ownPlan = getPlan(ownProfile?.plan);
+  if (ownPlan !== "free") {
+    return { ownerId: userId, plan: ownPlan };
   }
 
-  // Cas 2 : l'utilisateur est collaborateur d'un workspace Pro
+  // Cas 2 : l'utilisateur est collaborateur d'un workspace (équipe Pro)
   const { data: membership } = await admin
     .from("team_members")
     .select("owner_id, profiles!team_members_owner_id_fkey(plan)")
@@ -31,10 +34,10 @@ async function resolveOwner(userId: string): Promise<{ ownerId: string; isPro: b
 
   if (membership?.owner_id) {
     const ownerPlan = (membership as unknown as { profiles?: { plan: string } | null }).profiles?.plan;
-    return { ownerId: membership.owner_id, isPro: ownerPlan === "pro" };
+    return { ownerId: membership.owner_id, plan: getPlan(ownerPlan) };
   }
 
-  return { ownerId: userId, isPro: false };
+  return { ownerId: userId, plan: ownPlan };
 }
 
 // GET /api/recurring, liste les factures récurrentes de l'utilisateur
@@ -43,8 +46,8 @@ export async function GET() {
   const { data: { user }, error: authError } = await supabase.auth.getUser();
   if (authError || !user) return NextResponse.json({ error: "Non autorisé" }, { status: 401 });
 
-  const { ownerId, isPro } = await resolveOwner(user.id);
-  if (!isPro) {
+  const { ownerId, plan } = await resolveOwner(user.id);
+  if (!can(plan, "recurring")) {
     return NextResponse.json({ error: "PRO_REQUIRED" }, { status: 403 });
   }
 
@@ -65,8 +68,8 @@ export async function POST(req: NextRequest) {
   const { data: { user }, error: authError } = await supabase.auth.getUser();
   if (authError || !user) return NextResponse.json({ error: "Non autorisé" }, { status: 401 });
 
-  const { ownerId, isPro } = await resolveOwner(user.id);
-  if (!isPro) {
+  const { ownerId, plan } = await resolveOwner(user.id);
+  if (!can(plan, "recurring")) {
     return NextResponse.json({ error: "PRO_REQUIRED" }, { status: 403 });
   }
 
@@ -117,8 +120,8 @@ export async function DELETE(req: NextRequest) {
   const id = req.nextUrl.searchParams.get("id");
   if (!id) return NextResponse.json({ error: "ID manquant" }, { status: 400 });
 
-  const { ownerId, isPro } = await resolveOwner(user.id);
-  if (!isPro) return NextResponse.json({ error: "PRO_REQUIRED" }, { status: 403 });
+  const { ownerId, plan } = await resolveOwner(user.id);
+  if (!can(plan, "recurring")) return NextResponse.json({ error: "PRO_REQUIRED" }, { status: 403 });
 
   const admin = createAdminClient();
   const { error } = await admin
@@ -140,8 +143,8 @@ export async function PATCH(req: NextRequest) {
   const id = req.nextUrl.searchParams.get("id");
   if (!id) return NextResponse.json({ error: "ID manquant" }, { status: 400 });
 
-  const { ownerId, isPro } = await resolveOwner(user.id);
-  if (!isPro) return NextResponse.json({ error: "PRO_REQUIRED" }, { status: 403 });
+  const { ownerId, plan } = await resolveOwner(user.id);
+  if (!can(plan, "recurring")) return NextResponse.json({ error: "PRO_REQUIRED" }, { status: 403 });
 
   const body = await req.json();
   const admin = createAdminClient();

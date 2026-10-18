@@ -8,6 +8,7 @@ import { UpgradeBanner } from "@/components/UpgradeBanner";
 import { RefreshCw, Trash2, Plus, X, ChevronDown, Download, Coins, CircleCheck, TriangleAlert, Lock } from "lucide-react";
 import { GuidedTourBanner } from "@/components/GuidedTourBanner";
 import { usePlan, useIsMember, usePermission } from "@/components/PlanContext";
+import { canName } from "@/lib/plans";
 import { phraseManques } from "@/lib/superpdp-precontrole";
 import { etatPdp } from "@/lib/superpdp-etat-facture";
 
@@ -123,7 +124,7 @@ export default function InvoicesPage() {
   }, []);
 
   useEffect(() => {
-    if (tab === "recurring" && plan === "pro") {
+    if (tab === "recurring" && canRecurring) {
       loadRecurring();
     }
   }, [tab, plan]);
@@ -269,6 +270,7 @@ export default function InvoicesPage() {
 
   const isFree = plan === "free";
   const isPro = plan === "pro";
+  const canRecurring = canName(plan, "recurring");
 
   const inputCls = "w-full bg-ds-elevated border border-ds-border rounded-lg px-3 py-2 text-sm text-white placeholder-gray-500 focus:outline-none focus:border-indigo-500";
 
@@ -353,7 +355,7 @@ export default function InvoicesPage() {
             )
           )}
 
-          {tab === "recurring" && isPro && (
+          {tab === "recurring" && canRecurring && (
             <button
               onClick={() => setShowRecurringForm(true)}
               className="bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-medium px-4 py-2 rounded-lg transition-colors flex items-center gap-1.5"
@@ -378,7 +380,7 @@ export default function InvoicesPage() {
         >
           <RefreshCw size={13} />
           Récurrentes
-          {!isPro && <span className="text-[10px] font-bold px-1.5 py-0.5 rounded-md bg-indigo-500/20 text-indigo-400 border border-indigo-500/30">PRO</span>}
+          {!canRecurring && <span className="text-[10px] font-bold px-1.5 py-0.5 rounded-md bg-indigo-500/20 text-indigo-400 border border-indigo-500/30">PRO</span>}
         </button>
       </div>
 
@@ -630,15 +632,15 @@ export default function InvoicesPage() {
       {/* ── TAB RÉCURRENTES ── */}
       {tab === "recurring" && (
         <>
-          {!isPro ? (
+          {!canRecurring ? (
             <div className="text-center py-16 border border-dashed border-ds-border rounded-xl bg-ds-surface">
               <Lock size={32} className="mx-auto mb-3 text-gray-600" />
-              <p className="text-white font-semibold">Factures récurrentes, Pro exclusif</p>
+              <p className="text-white font-semibold">Factures récurrentes, offre payante</p>
               <p className="text-gray-500 text-sm mt-1 max-w-sm mx-auto">
                 Automatisez vos abonnements et contrats. Deviso génère et envoie les factures à la bonne date, chaque mois.
               </p>
               <Link href="/billing" className="mt-4 inline-block bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-medium px-4 py-2 rounded-lg transition-colors">
-                Passer Pro
+                Passer en Solo
               </Link>
             </div>
           ) : (
