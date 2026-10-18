@@ -19,12 +19,12 @@ const PLAN_INFO = {
   solo: {
     label: "Solo",
     color: "bg-indigo-500/20 text-indigo-300",
-    description: "1 utilisateur · IA génération devis, factures Factur-X, acompte/solde, factures récurrentes, Chorus Pro B2G",
+    description: "1 utilisateur · IA génération devis, factures Factur-X, acompte/solde, factures récurrentes, Chorus Pro B2G, export FEC",
   },
   pro: {
     label: "Pro",
     color: "bg-violet-500/20 text-violet-300",
-    description: "3 utilisateurs inclus · Tout Solo + relances auto, FEC, CRM, Analytics, catalogue, sous-domaine de partage · +5€/utilisateur supplémentaire",
+    description: "3 utilisateurs inclus · Tout Solo + relances auto, exports CSV et récap, CRM, Analytics, catalogue, sous-domaine de partage · +5€/utilisateur supplémentaire",
   },
 };
 

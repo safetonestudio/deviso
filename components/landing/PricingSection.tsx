@@ -10,6 +10,7 @@ const SOLO_FEATURES = [
   "Factures récurrentes, acompte et solde",
   "Dépôt Chorus Pro B2G (marchés publics)",
   "Widget CA URSSAF mensuel / trimestriel",
+  "Export comptable FEC",
   "Sans branding Deviso sur vos documents",
   "Historique et exports illimités",
 ];
@@ -17,7 +18,7 @@ const SOLO_FEATURES = [
 const PRO_FEATURES = [
   "Tout Solo inclus",
   "Relances automatiques programmables",
-  "Exports comptables FEC, CSV, récap mensuel",
+  "Exports CSV et récap mensuel pour le comptable",
   "CRM Clients & Revenus + Analytics",
   "Gestion d'équipe, rôles et validation devis",
   "Catalogue prestations : forfaits & suivi du temps",
