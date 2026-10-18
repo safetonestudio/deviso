@@ -1,4 +1,4 @@
-import { superpdpFetch, isSandbox, getConnection } from "@/lib/superpdp";
+import { superpdpFetch, isSandbox, getConnection, JETON_DEMO } from "@/lib/superpdp";
 import { toSiren } from "@/lib/facturx-helpers";
 import { decisionFermeture } from "@/lib/superpdp-fermeture";
 
@@ -78,6 +78,14 @@ export async function lireLignesAnnuaire(workspaceId: string): Promise<EtatLigne
 
 /** Lit l'état réel de la ligne de réception de l'espace de travail. */
 export async function lireLigneAnnuaire(workspaceId: string): Promise<EtatLigne | null> {
+  // Demonstration : raccordement fictif, ligne fictive en service. Sans ce cas,
+  // l appel (bloque a juste titre pour une demo) laissait « Raccorde, mais pas
+  // encore joignable » sur le profil (18/10/2026).
+  const conn = await getConnection(workspaceId);
+  if (conn?.refresh_token === JETON_DEMO) {
+    return conn.directory_address ? { etat: "joignable", adresse: conn.directory_address, id: null } : { etat: "absente" };
+  }
+
   const res = await superpdpFetch(workspaceId, "/directory_entries");
   if (!res.ok) return null;
 

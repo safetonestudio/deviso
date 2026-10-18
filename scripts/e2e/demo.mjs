@@ -88,6 +88,11 @@ verifier(
   st.lastError === null,
   `lastError=${JSON.stringify(st.lastError)}`
 );
+verifier(
+  "la demo est joignable (ligne d annuaire fictive en service)",
+  st.ligne?.etat === "joignable",
+  `ligne=${JSON.stringify(st.ligne)}, sinon le profil affiche « Raccorde, mais pas encore joignable »`
+);
 
 console.log("");
 console.log("── La sortie explicite supprime vraiment le compte ──────────");
