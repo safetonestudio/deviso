@@ -1,3 +1,4 @@
+import { readFileSync } from "node:fs";
 /**
  * Cycle de vie d'une session de démonstration.
  *
@@ -92,6 +93,18 @@ console.log("");
 console.log("── La sortie explicite supprime vraiment le compte ──────────");
 
 const sortante = await openSession("demo-sortante");
+
+// Fraicheur des donnees : /api/demo/start passe ses factures dans la verification
+// avant transmission de l app et renvoie les ecarts. « demo-sortante » est recreee
+// a chaque execution (le test la supprime), donc ces ecarts sont ceux du code en
+// ligne. 18/10/2026 : adresses en une ligne, 16 « Transmission impossible ».
+const cacheSessions = JSON.parse(readFileSync(new URL("./.sessions.json", import.meta.url), "utf8"));
+const ecarts = cacheSessions["demo-sortante"]?.ecartsDemo;
+verifier(
+  "les donnees de la demo respectent les regles de transmission actuelles",
+  Array.isArray(ecarts) && ecarts.length === 0,
+  Array.isArray(ecarts) ? ecarts.slice(0, 3).join(" | ") : "ecartsDemo absent de la reponse (route pas a jour ?)"
+);
 const avant = await sortante.call("/api/profile");
 verifier("la démo est bien vivante avant la sortie", avant.status === 200, `HTTP ${avant.status}`);
 

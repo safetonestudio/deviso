@@ -2,6 +2,27 @@ import { NextRequest, NextResponse } from "next/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { purgeExpiredDemoAccounts } from "@/lib/demo-cleanup";
 import { JETON_DEMO } from "@/lib/superpdp";
+import { resolveAddress } from "@/lib/address";
+import { manquesPourEmission } from "@/lib/superpdp-precontrole";
+import * as Sentry from "@sentry/nextjs";
+
+/**
+ * Adresses structurees (rue, code postal, ville, pays), derivees par la MEME
+ * fonction que la creation d une vraie facture. Le 18/10/2026, la demo ne
+ * portait que l adresse en une ligne : depuis la mise en production de la
+ * Plateforme Agreee, ses 16 factures affichaient « Transmission impossible ».
+ */
+function avecAdressesStructurees<T extends { seller_address?: string | null; client_address?: string | null }>(factures: T[]) {
+  return factures.map((f) => {
+    const v = resolveAddress({}, f.seller_address);
+    const c = resolveAddress({}, f.client_address);
+    return {
+      ...f,
+      seller_street: v.street, seller_postcode: v.postcode, seller_city: v.city, seller_country: v.country,
+      client_street: c.street, client_postcode: c.postcode, client_city: c.city, client_country: c.country,
+    };
+  });
+}
 
 // ─── Helpers date ─────────────────────────────────────────────────────────────
 const now = new Date();
@@ -13,7 +34,7 @@ const tsAgo = (d: number) =>
   new Date(now.getTime() - d * 86400000).toISOString();
 
 // ─── Seed data ────────────────────────────────────────────────────────────────
-async function seedDemoData(userId: string) {
+async function seedDemoData(userId: string): Promise<string[]> {
   const admin = createAdminClient();
 
   // 1. Profile, Marie Durand, graphiste UX/UI, Studio Créatif MD, Pro
@@ -27,6 +48,7 @@ async function seedDemoData(userId: string) {
       company_name: "Studio Créatif MD",
       siret: "82134756100018",
       address: "12 rue de la Paix, 75001 Paris",
+      ...(() => { const a = resolveAddress({}, "12 rue de la Paix, 75001 Paris"); return { address_street: a.street, address_postcode: a.postcode, address_city: a.city, address_country: a.country }; })(),
       email: "marie@studiocreatimd.fr",
       phone: "06 12 34 56 78",
       plan: "pro",
@@ -302,7 +324,7 @@ async function seedDemoData(userId: string) {
   // 4. Factures, 12 mois (juillet 2025 → juin 2026)
   //    Saisonnalité réaliste : été calme, rentrée forte, hiver modéré, printemps soutenu
   //    CA total ~34 000 € HT sur 12 mois (solo graphiste/UX Pro)
-  await admin.from("invoices").insert([
+  const facturesDemo = avecAdressesStructurees([
     // ═══ H2 2025 ════════════════════════════════════════════════════════════
 
     // ── Juillet 2025, 1 800 € HT ─────────────────────────────────────────
@@ -750,6 +772,19 @@ async function seedDemoData(userId: string) {
       created_at: new Date().toISOString(), updated_at: new Date().toISOString(),
     },
   ]);
+  const { error: erreurFactures } = await admin.from("invoices").insert(facturesDemo);
+  if (erreurFactures) throw erreurFactures;
+
+  // Garde de fraicheur : la demo passe ses propres factures dans la verification
+  // avant transmission de l app. Une regle nouvelle qui la ferait decrocher est
+  // signalee a Sentry (et renvoyee a test:demo), au lieu d etre decouverte a l oeil.
+  const ecartsDemo = facturesDemo.flatMap((fac) => {
+    const m = manquesPourEmission(fac);
+    return m.length ? [`${fac.invoice_number} : ${m.join(", ")}`] : [];
+  });
+  if (ecartsDemo.length) {
+    Sentry.captureMessage("Demo desynchronisee des regles de transmission", { level: "warning", extra: { ecartsDemo } });
+  }
 
   // 4 bis. Remettre les compteurs de numérotation au niveau de ce qui vient
   // d'être semé. Les factures de démonstration portent des numéros écrits en
@@ -973,6 +1008,8 @@ async function seedDemoData(userId: string) {
       transmission_error: "Cette facture est hors du délai de déclaration accepté par la Plateforme Agréée. À régulariser avec votre comptable : un réessai automatique ne la fera pas passer.",
     },
   ]);
+
+  return ecartsDemo;
 }
 
 // ─── Handler ──────────────────────────────────────────────────────────────────
@@ -1059,10 +1096,15 @@ export async function POST(req: NextRequest) {
   const userId = newUser.user.id;
 
   // Seed les données
+  // Un remplissage en echec donnait une demo a moitie vide, visible seulement
+  // dans les journaux du serveur. Il remonte desormais a Sentry et a test:demo.
+  let ecartsDemo: string[] = [];
   try {
-    await seedDemoData(userId);
+    ecartsDemo = await seedDemoData(userId);
   } catch (e: any) {
     console.error("[demo/start] seedDemoData:", e);
+    Sentry.captureException(e);
+    ecartsDemo = ["remplissage de la demo en echec : " + (e?.message ?? String(e))];
   }
 
   // Sign-in via REST API pour obtenir les tokens JWT
@@ -1088,5 +1130,5 @@ export async function POST(req: NextRequest) {
 
   const { access_token, refresh_token } = await signInRes.json();
 
-  return NextResponse.json({ access_token, refresh_token });
+  return NextResponse.json({ access_token, refresh_token, ecartsDemo });
 }
