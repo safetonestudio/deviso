@@ -6,10 +6,16 @@
  * classait ce refus comme reessayable. Le cron la retentait chaque heure sans
  * qu'elle puisse jamais passer. Meme piege pour un pays absent de la table EAS.
  *
- * Ce que ce script verrouille, contre le VRAI bac a sable :
- *  - une date passee hors fenetre -> action_requise (terminal), PAS en_attente ;
- *  - un pays non couvert          -> action_requise, PAS en_attente ;
- *  - une date courante couverte   -> transmis ;
+ * Ce que ce script verrouille :
+ *  - classerRefus (unitaire) : refus de fenetre sur date passee -> action_requise,
+ *    sur date future -> reessayer, 5xx -> reessayer, autre refus -> refuse.
+ *    Le 18/10/2026, le bac a sable a cesse de refuser une date du 05/06 : la
+ *    regle de fenetre appartient a Super PDP et peut bouger. On ne verifie donc
+ *    plus NOTRE classement a travers LEUR regle, mais directement ;
+ *  - contre le VRAI bac a sable : une date courante -> transmis, un pays non
+ *    couvert -> action_requise ;
+ *  - la synchro PPF ne marque pas « declare » un achat que la Plateforme
+ *    Agreee n'a pas encore envoye a l'administration (ppf_ereporting_id absent) ;
  *  - la garde d'abandon du cron : au-dela du seuil, un "en_attente" bascule en
  *    action_requise au lieu de boucler indefiniment.
  *
@@ -34,7 +40,7 @@ if (existsSync(".env.local")) {
 const SANDBOX_USER = process.env.E2E_SANDBOX_USER || "ac3abc18-d1ee-4b21-b0ec-bf6f17767e31";
 
 async function main() {
-  const { transmettreAchat, retenterAchatsEnAttente } = await import("@/lib/superpdp-achats");
+  const { transmettreAchat, retenterAchatsEnAttente, classerRefus, synchroniserDeclarationsPpf } = await import("@/lib/superpdp-achats");
   const { createAdminClient } = await import("@/lib/supabase/admin");
   const admin = createAdminClient();
   const today = new Date().toISOString().slice(0, 10);
@@ -57,16 +63,41 @@ async function main() {
   verifier("un achat PL date du jour est transmis", couvert.ok === true,
     JSON.stringify(couvert));
 
-  const vieux = await transmettreAchat(SANDBOX_USER, base({
-    fournisseur_pays: "PL", fournisseur_tva: "PL1234567890",
-    numero: `E2E-VIEUX-${Date.now()}`, date_facture: "2026-06-05",
-  }) as never);
-  verifier("une facture datee hors fenetre passe en action_requise, pas en_attente",
-    vieux.ok === false && vieux.suite === "action_requise",
-    JSON.stringify(vieux));
-  verifier("et son detail garde la cause technique (cannot add invoice at date)",
-    vieux.ok === false && /cannot add invoice at date/.test(vieux.detail),
-    vieux.ok === false ? vieux.detail : "ok inattendu");
+  const demain = new Date(Date.now() + 86_400_000).toISOString().slice(0, 10);
+  verifier("refus de fenetre sur date passee -> action_requise (terminal)",
+    classerRefus(400, "cannot add invoice at date 2026-06-05", "2026-06-05") === "action_requise");
+  verifier("refus de fenetre sur date future -> reessayer",
+    classerRefus(400, "issue date is in the future", demain) === "reessayer");
+  verifier("incident serveur 5xx -> reessayer, jamais echec",
+    classerRefus(503, "service unavailable", today) === "reessayer");
+  verifier("refus de contenu -> refuse (saisie a corriger)",
+    classerRefus(400, "seller.tax_registration_id is invalid", today) === "refuse");
+
+  // Synchro PPF : l'achat qu'on vient de transmettre est stocke chez Super PDP
+  // mais pas encore envoye a l'administration. La synchro ne doit PAS le
+  // declarer. (Dans le bac a sable, l'envoi au PPF n'a jamais lieu.)
+  if (couvert.ok && couvert.superpdpId !== null) {
+    const ligne = base({
+      fournisseur_pays: "PL", fournisseur_tva: "PL1234567890", numero: `E2E-PPF-${Date.now()}`,
+      date_facture: today, transmission_status: "transmis", superpdp_id: couvert.superpdpId,
+      transmitted_at: new Date().toISOString(),
+    });
+    const ins = await admin.from("superpdp_achats_int").insert(ligne).select("id").single();
+    if (ins.error) {
+      verifier("la ligne de synchro PPF est semee", false, ins.error.message);
+    } else {
+      const r = await synchroniserDeclarationsPpf(admin);
+      const { data: relu } = await admin.from("superpdp_achats_int")
+        .select("transmission_status,ppf_ereporting_id,declared_at").eq("id", ins.data.id).single();
+      verifier("la synchro PPF lit le compte sans erreur", r.comptesIllisibles === 0, JSON.stringify(r));
+      verifier("un achat stocke mais pas envoye au PPF reste « enregistre », pas « declare »",
+        relu?.transmission_status === "transmis" && relu?.ppf_ereporting_id === null && relu?.declared_at === null,
+        JSON.stringify(relu));
+      await admin.from("superpdp_achats_int").delete().eq("id", ins.data.id);
+    }
+  } else {
+    verifier("la synchro PPF a un achat transmis a relire", false, JSON.stringify(couvert));
+  }
 
   const paysHorsTable = await transmettreAchat(SANDBOX_USER, base({
     fournisseur_pays: "DK", fournisseur_tva: "DK12345678",

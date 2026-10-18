@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { synchroniserFactures } from "@/lib/superpdp-sync";
 import { factureBloquee } from "@/lib/superpdp-blocage";
-import { retenterAchatsEnAttente } from "@/lib/superpdp-achats";
+import { retenterAchatsEnAttente, synchroniserDeclarationsPpf } from "@/lib/superpdp-achats";
 import { cronAutorise } from "@/lib/cron-auth";
 import { isSandbox, estConnexionDeCetEnv } from "@/lib/superpdp";
 import { estCompteDemo } from "@/lib/garde-demo";
@@ -121,12 +121,22 @@ export async function GET(req: Request) {
     console.error("[superpdp-achats-retry] échec :", err instanceof Error ? err.message : err);
   }
 
+  // Puis : passer en « Déclaré » les achats que la Plateforme Agréée a
+  // réellement envoyés à l'administration (ppf_ereporting_id renseigné).
+  let ppf = { examines: 0, declares: 0, comptesIllisibles: 0 };
+  try {
+    ppf = await synchroniserDeclarationsPpf(admin);
+  } catch (err) {
+    console.error("[superpdp-achats-ppf] échec :", err instanceof Error ? err.message : err);
+  }
+
   console.log(
     `[superpdp-sync] ${comptes} compte(s), ${factures} facture(s) dont ${entrantes} entrante(s)` +
       (echecs ? `, ${echecs} échec(s)` : "") +
       (bloquees ? `, ${bloquees} facture(s) bloquée(s)` : "") +
-      (achats.examines ? `, achats en attente ${achats.examines} -> ${achats.transmis} transmis` : "")
+      (achats.examines ? `, achats en attente ${achats.examines} -> ${achats.transmis} transmis` : "") +
+      (ppf.declares ? `, ${ppf.declares} achat(s) déclaré(s) au PPF` : "")
   );
 
-  return NextResponse.json({ comptes, factures, entrantes, echecs, bloquees, achats });
+  return NextResponse.json({ comptes, factures, entrantes, echecs, bloquees, achats, ppf });
 }

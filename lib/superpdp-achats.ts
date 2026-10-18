@@ -44,6 +44,13 @@ export interface AchatInternational {
   transmission_error: string | null;
   transmitted_at: string | null;
   retry_count: number;
+  /**
+   * Identifiant de l'e-reporting envoye au PPF. Null tant que la Plateforme
+   * Agreee n'a pas reellement envoye la declaration a l'administration : un
+   * achat « transmis » sans cet identifiant est ENREGISTRE, pas DECLARE.
+   */
+  ppf_ereporting_id: number | null;
+  declared_at: string | null;
 }
 
 /** Ce que le formulaire fournit pour créer un achat (avant stockage). */
@@ -372,7 +379,7 @@ const SEUIL_ABANDON = 168;
  * et d'éventuels 5xx transitoires : dans ces cas on n'accuse JAMAIS « échec »
  * une saisie correcte, on retente.
  */
-function classerRefus(status: number, message: string, dateFacture: string): SuiteEchec {
+export function classerRefus(status: number, message: string, dateFacture: string): SuiteEchec {
   if (status >= 500) return "reessayer"; // incident serveur transitoire
   const m = message.toLowerCase();
   const erreurDeFenetre =
@@ -549,24 +556,111 @@ export function patchStatut(resultat: ResultatTransmission) {
  * déclaration existe déjà chez eux. Retransmettre en aveugle créerait un
  * doublon de déclaration fiscale. On regarde donc d'abord ce qui existe.
  */
+type LigneB2bint = { id?: number; number?: string; direction?: string; ppf_ereporting_id?: number | null };
+
+/**
+ * Toutes les declarations B2BInt du compte chez la Plateforme Agreee, page par
+ * page (1 000 au plus par appel, curseur starting_after_id, spec v1.37).
+ *
+ * Avant le 18/10/2026, on ne lisait que la premiere page de 1 000 : au-dela, la
+ * garde d'idempotence ne voyait plus les declarations anciennes et un reessai
+ * pouvait recreer une declaration fiscale existante. Renvoie null si la liste
+ * n'a pas pu etre lue EN ENTIER : un appelant ne conclut jamais « absent »
+ * d'une liste tronquee.
+ */
+async function listerDeclarationsB2bint(workspaceId: string): Promise<LigneB2bint[] | null> {
+  const toutes: LigneB2bint[] = [];
+  let apres: number | null = null;
+  for (let page = 0; page < 50; page++) {
+    const q = `/b2bint_invoices?limit=1000&order=asc${apres !== null ? `&starting_after_id=${apres}` : ""}`;
+    let lot: LigneB2bint[];
+    let encore: boolean;
+    try {
+      const res = await superpdpFetch(workspaceId, q);
+      if (!res.ok) return null;
+      const body = JSON.parse(await res.text()) as { data?: LigneB2bint[]; has_more?: boolean };
+      lot = body.data ?? [];
+      encore = body.has_more === true;
+    } catch {
+      return null;
+    }
+    toutes.push(...lot);
+    if (!encore || lot.length === 0) return toutes;
+    const dernier = lot[lot.length - 1]?.id;
+    if (typeof dernier !== "number") return null;
+    apres = dernier;
+  }
+  return null; // au-dela de 50 000 lignes, on ne conclut rien
+}
+
 async function numerosDejaDeclares(workspaceId: string): Promise<Map<string, number>> {
   const map = new Map<string, number>();
-  try {
-    const res = await superpdpFetch(workspaceId, "/b2bint_invoices?limit=1000");
-    if (!res.ok) return map;
-    const body = JSON.parse(await res.text()) as {
-      data?: { id?: number; number?: string; direction?: string }[];
-    };
-    for (const it of body.data ?? []) {
-      if (it.number && typeof it.id === "number" && (it.direction ?? "in") === "in" && !map.has(it.number)) {
-        map.set(it.number, it.id);
-      }
+  // Compte injoignable ou liste illisible : carte vide, le reessai suit son
+  // cours normal (comportement inchange).
+  for (const it of (await listerDeclarationsB2bint(workspaceId)) ?? []) {
+    if (it.number && typeof it.id === "number" && (it.direction ?? "in") === "in" && !map.has(it.number)) {
+      map.set(it.number, it.id);
     }
-  } catch {
-    // Compte injoignable ou réponse illisible : carte vide, le réessai suivra
-    // son cours normal (au pire un « en attente » de plus, jamais un doublon).
   }
   return map;
+}
+
+/**
+ * Fait passer un achat de « enregistre » a « declare » quand il l'est vraiment.
+ *
+ * Un 200 sur POST /b2bint_invoices veut dire que la Plateforme Agreee a STOCKE
+ * la declaration. Elle l'envoie ensuite a l'administration selon le calendrier
+ * du regime de TVA (doc de l'API). Le seul signal d'envoi effectif est
+ * ppf_ereporting_id, en lecture seule. Jusqu'au 18/10/2026, l'ecran affichait
+ * « Declare » des le 200 : il annoncait une declaration fiscale pas encore
+ * partie. Appelee par le cron horaire, lecture seule cote Plateforme Agreee.
+ */
+export async function synchroniserDeclarationsPpf(
+  admin: SupabaseClient,
+  limite = 500
+): Promise<{ examines: number; declares: number; comptesIllisibles: number }> {
+  const { data } = await admin
+    .from("superpdp_achats_int")
+    .select("*")
+    .eq("transmission_status", "transmis")
+    .is("ppf_ereporting_id", null)
+    .order("transmitted_at", { ascending: true })
+    .limit(limite);
+
+  const parCompte = new Map<string, AchatInternational[]>();
+  for (const brut of data ?? []) {
+    const a = brut as AchatInternational;
+    parCompte.set(a.user_id, [...(parCompte.get(a.user_id) ?? []), a]);
+  }
+
+  let declares = 0;
+  let comptesIllisibles = 0;
+  for (const [ws, achats] of parCompte) {
+    const lignes = await listerDeclarationsB2bint(ws);
+    if (!lignes) {
+      comptesIllisibles++;
+      continue;
+    }
+    const parId = new Map<number, number>();
+    const parNumero = new Map<string, number>();
+    for (const it of lignes) {
+      if (typeof it.ppf_ereporting_id !== "number") continue;
+      if (typeof it.id === "number") parId.set(it.id, it.ppf_ereporting_id);
+      if (it.number && (it.direction ?? "in") === "in") parNumero.set(it.number, it.ppf_ereporting_id);
+    }
+    for (const a of achats) {
+      const ppf = (a.superpdp_id !== null ? parId.get(a.superpdp_id) : undefined) ?? parNumero.get(numeroDeclaration(a));
+      if (ppf === undefined) continue;
+      const maintenant = new Date().toISOString();
+      const { error } = await admin
+        .from("superpdp_achats_int")
+        .update({ ppf_ereporting_id: ppf, declared_at: maintenant, updated_at: maintenant })
+        .eq("id", a.id)
+        .is("ppf_ereporting_id", null);
+      if (!error) declares++;
+    }
+  }
+  return { examines: data?.length ?? 0, declares, comptesIllisibles };
 }
 
 /**

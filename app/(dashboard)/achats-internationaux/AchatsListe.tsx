@@ -14,8 +14,12 @@ const jour = (v: string | null) =>
 const montant = (n: number, devise: string) =>
   new Intl.NumberFormat("fr-FR", { style: "currency", currency: devise || "EUR" }).format(n);
 
+const DECLARE = { texte: "Déclaré", ton: "bg-emerald-500/15 text-emerald-400" };
+
 const STATUT: Record<AchatInternational["transmission_status"], { texte: string; ton: string }> = {
-  transmis: { texte: "Déclaré", ton: "bg-emerald-500/15 text-emerald-400" },
+  // « transmis » = stocké par la Plateforme Agréée, envoi à l'administration
+  // encore à venir. « Déclaré » n'est affiché qu'avec ppf_ereporting_id.
+  transmis: { texte: "Enregistré", ton: "bg-sky-500/15 text-sky-400" },
   en_attente: { texte: "En attente", ton: "bg-amber-500/15 text-amber-400" },
   action_requise: { texte: "Action requise", ton: "bg-orange-500/15 text-orange-400" },
   echec: { texte: "En échec", ton: "bg-red-500/15 text-red-400" },
@@ -75,7 +79,8 @@ export function AchatsListe({ achats }: { achats: AchatInternational[] }) {
           </thead>
           <tbody>
             {achats.map((a) => {
-              const s = STATUT[a.transmission_status];
+              const declare = a.transmission_status === "transmis" && a.ppf_ereporting_id !== null;
+              const s = declare ? DECLARE : STATUT[a.transmission_status];
               return (
                 <tr key={a.id} className="border-b border-ds-border last:border-0 align-top">
                   <td className="px-4 py-3 text-white">
@@ -89,6 +94,14 @@ export function AchatsListe({ achats }: { achats: AchatInternational[] }) {
                   <td className="px-4 py-3 text-gray-300 text-right whitespace-nowrap">{montant(a.montant_tva, a.devise)}</td>
                   <td className="px-4 py-3">
                     <span className={`text-xs px-2 py-0.5 rounded-full whitespace-nowrap ${s.ton}`}>{s.texte}</span>
+                    {a.transmission_status === "transmis" && !declare && (
+                      <span className="block text-xs text-gray-500 mt-1 max-w-[16rem]">
+                        Envoi à l&apos;administration programmé par la Plateforme Agréée.
+                      </span>
+                    )}
+                    {declare && a.declared_at && (
+                      <span className="block text-xs text-gray-500 mt-1">le {jour(a.declared_at)}</span>
+                    )}
                     {a.transmission_status !== "transmis" && a.transmission_error && (
                       <span className="block text-xs text-gray-500 mt-1 max-w-[16rem]">{a.transmission_error}</span>
                     )}
