@@ -155,15 +155,15 @@ export default function LandingPage() {
           </div>
 
           <h1 className="text-4xl sm:text-5xl md:text-6xl font-semibold text-white leading-tight tracking-tight mb-5">
-            Devis et facturation<br className="hidden sm:block" />{" "}
+            Décris ta mission,{" "}
             <span className="bg-gradient-to-r from-indigo-400 to-violet-400 bg-clip-text text-transparent">
-              pour freelances français.
+              ton devis complet est rédigé en 30 secondes.
             </span>
           </h1>
 
           <p className="text-lg text-gray-400 max-w-xl mx-auto mb-10 leading-relaxed">
-            Devis IA en 30 secondes, signature électronique, facturation Factur-X, relances automatiques, suivi CA URSSAF.{" "}
-            <span className="text-gray-300">Tu travailles, Deviso gère le reste.</span>
+            Tu écris ton projet en quelques mots, l&apos;IA rédige un devis complet, chiffré et personnalisé, prêt à envoyer.{" "}
+            <span className="text-gray-300">Signature, Factur-X, relances et suivi URSSAF suivent, conformes à la réforme 2026.</span>
           </p>
 
           <div className="flex flex-col sm:flex-row items-center justify-center gap-3 mb-5">
