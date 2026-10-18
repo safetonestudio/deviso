@@ -805,10 +805,34 @@ async function seedDemoData(userId: string): Promise<string[]> {
   );
 
   // 5. Membres d'équipe
-  await admin.from("team_members").insert([
+  // Membres d equipe : vrais comptes de demonstration (sans mot de passe connu ni
+  // session), pour que la vue pipeline, qui agrege par compte, les affiche. Le
+  // 18/10/2026, ils n existaient que comme invitations acceptees : la vue pipeline
+  // ne montrait que la proprietaire. Leur cycle de vie suit le sien (purge et
+  // sortie de demo, voir lib/demo-cleanup.ts).
+  const creerMembre = async (nom: string) => {
+    const { data, error } = await admin.auth.admin.createUser({
+      email: `demo_${crypto.randomUUID().replace(/-/g, "").slice(0, 12)}_membre@deviso.internal`,
+      password: crypto.randomUUID(),
+      email_confirm: true,
+      user_metadata: { is_demo: true, full_name: nom },
+    });
+    if (error || !data.user) throw error ?? new Error("membre de demo non cree");
+    const { error: errProfil } = await admin.from("profiles").upsert({
+      id: data.user.id, full_name: nom, company_name: "Studio Créatif MD", is_demo: true,
+      demo_last_seen_at: new Date().toISOString(),
+    });
+    if (errProfil) throw errProfil;
+    return data.user.id;
+  };
+  const thomasId = await creerMembre("Thomas Petit");
+  const emmaId = await creerMembre("Emma Bernard");
+
+  const { error: erreurEquipe } = await admin.from("team_members").insert([
     {
       owner_id: userId,
       email: "thomas.petit@studiocreatimd.fr",
+      member_id: thomasId,
       role: "member",
       status: "active",
       invited_at: tsAgo(45),
@@ -826,6 +850,7 @@ async function seedDemoData(userId: string): Promise<string[]> {
     {
       owner_id: userId,
       email: "emma.bernard@studiocreatimd.fr",
+      member_id: emmaId,
       role: "member",
       status: "active",
       invited_at: tsAgo(20),
@@ -842,6 +867,21 @@ async function seedDemoData(userId: string): Promise<string[]> {
       },
     },
   ]);
+  if (erreurEquipe) throw erreurEquipe;
+
+  // Devis attribues aux membres, coherents avec leurs droits : Emma (droit d envoi)
+  // porte les devis envoye et vu, Thomas (sans droit d envoi) le brouillon.
+  for (const [numeros, auteur] of [
+    [["DEV-2026-003", "DEV-2026-004"], emmaId],
+    [["DEV-2026-005"], thomasId],
+  ] as const) {
+    const { error: errAuteur } = await admin
+      .from("proposals")
+      .update({ created_by: auteur })
+      .eq("user_id", userId)
+      .in("proposal_number", [...numeros]);
+    if (errAuteur) throw errAuteur;
+  }
 
   // 6. Facture récurrente (maintenance StartupX)
   await admin.from("recurring_invoices").insert([

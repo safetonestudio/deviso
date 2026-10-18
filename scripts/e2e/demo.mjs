@@ -95,6 +95,29 @@ verifier(
 );
 
 console.log("");
+console.log("── L equipe de demonstration est visible dans la vue pipeline ──");
+
+// 18/10/2026 : les membres n existaient que comme invitations acceptees, sans
+// compte. La vue pipeline agrege par compte (member_id) : elle ne montrait que
+// la proprietaire. Si la session « demo-vivante » a plus de dix minutes, ce
+// controle prouve aussi que la purge epargne les membres d une demo vivante.
+const pipe = await vivante.call("/api/team/pipeline");
+const equipe = jsonDe(pipe).team ?? [];
+const noms = equipe.map((m) => m.name);
+verifier(
+  "la vue pipeline montre la proprietaire et ses deux membres",
+  pipe.status === 200 && equipe.length >= 3 && ["Thomas Petit", "Emma Bernard"].every((n) => noms.includes(n)),
+  `HTTP ${pipe.status} noms=${JSON.stringify(noms)}`
+);
+const emma = equipe.find((m) => m.name === "Emma Bernard");
+const thomas = equipe.find((m) => m.name === "Thomas Petit");
+verifier(
+  "les membres portent leurs devis (Emma : 2 envoyes, Thomas : 1 brouillon)",
+  emma?.stats?.proposals_sent === 2 && thomas?.stats?.proposals_draft === 1,
+  `Emma=${JSON.stringify(emma?.stats)} Thomas=${JSON.stringify(thomas?.stats)}`
+);
+
+console.log("");
 console.log("── La sortie explicite supprime vraiment le compte ──────────");
 
 const sortante = await openSession("demo-sortante");
@@ -118,6 +141,11 @@ verifier(
   "/api/demo/end confirme la suppression",
   fin.status === 200 && jsonDe(fin).ended === true,
   `HTTP ${fin.status} ${JSON.stringify(fin.body).slice(0, 140)}`
+);
+verifier(
+  "la sortie supprime aussi les deux comptes membres de la demo",
+  jsonDe(fin).membres === 2,
+  `membres=${jsonDe(fin).membres}, des comptes orphelins resteraient sinon`
 );
 
 // Le point qui compte : le compte doit avoir disparu côté serveur, pas

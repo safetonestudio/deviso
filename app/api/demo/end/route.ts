@@ -44,5 +44,5 @@ export async function POST() {
   // base jusqu'au cron du lendemain.
   const purge = await purgeExpiredDemoAccounts(admin, { maxDeletions: 10 });
 
-  return NextResponse.json({ ended: true, purge });
+  return NextResponse.json({ ended: true, purge, membres: result.membres ?? 0 });
 }

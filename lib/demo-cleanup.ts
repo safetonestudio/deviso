@@ -63,6 +63,17 @@ export async function purgeExpiredDemoAccounts(
   }
   const idsVivants = new Set((vivants ?? []).map((p) => p.id as string));
 
+  // Les membres d equipe d une demo n envoient pas de battement de coeur : ils
+  // vivent tant que leur proprietaire vit. Sans cela, la purge les supprimait au
+  // bout de dix minutes, en pleine demonstration.
+  if (idsVivants.size) {
+    const { data: equipes } = await admin
+      .from("team_members")
+      .select("member_id")
+      .in("owner_id", [...idsVivants]);
+    for (const e of equipes ?? []) if (e.member_id) idsVivants.add(e.member_id as string);
+  }
+
   const { data, error } = await admin.auth.admin.listUsers({ perPage: 1000 });
   if (error) {
     console.error("[demo-cleanup] listUsers:", error.message);
@@ -110,7 +121,7 @@ export async function purgeExpiredDemoAccounts(
 export async function deleteDemoAccount(
   admin: SupabaseClient,
   userId: string
-): Promise<{ deleted: boolean; reason?: string }> {
+): Promise<{ deleted: boolean; reason?: string; membres?: number }> {
   const { data: profile, error } = await admin
     .from("profiles")
     .select("is_demo")
@@ -121,11 +132,25 @@ export async function deleteDemoAccount(
   if (!profile) return { deleted: false, reason: "compte introuvable" };
   if (!profile.is_demo) return { deleted: false, reason: "ce compte n'est pas un compte de démonstration" };
 
+  // Les membres de demonstration rattaches a ce compte partent avec lui (un vrai
+  // compte ne peut pas etre membre d une demo, mais on filtre sur is_demo).
+  const { data: equipe } = await admin.from("team_members").select("member_id").eq("owner_id", userId);
+  const idsEquipe = (equipe ?? []).map((e) => e.member_id).filter(Boolean) as string[];
+  let membres = 0;
+  if (idsEquipe.length) {
+    const { data: demos } = await admin.from("profiles").select("id").in("id", idsEquipe).eq("is_demo", true);
+    for (const m of demos ?? []) {
+      await admin.from("team_members").delete().eq("member_id", m.id);
+      const { error: errMembre } = await admin.auth.admin.deleteUser(m.id as string);
+      if (!errMembre) membres++;
+    }
+  }
+
   await admin.from("team_members").delete().eq("owner_id", userId);
   await admin.from("team_members").delete().eq("member_id", userId);
 
   const { error: delErr } = await admin.auth.admin.deleteUser(userId);
   if (delErr) return { deleted: false, reason: delErr.message };
 
-  return { deleted: true };
+  return { deleted: true, membres };
 }
