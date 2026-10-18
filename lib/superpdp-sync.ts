@@ -1,4 +1,5 @@
 import { createAdminClient } from "@/lib/supabase/admin";
+import { estCompteDemo } from "@/lib/garde-demo";
 import {
   getConnection,
   saveConnection,
@@ -140,6 +141,9 @@ const date = (v: unknown): string | null =>
 export async function synchroniserFactures(userId: string): Promise<ResultatSync> {
   const conn = await getConnection(userId);
   if (!conn) return { recuperees: 0, entrantes: 0, jusquA: null, raison: "non_raccorde" };
+  // Compte de demonstration : donnees fictives, aucune plateforme a interroger.
+  // On repond « a jour » sans rien ecrire (un echec ecrirait last_error en base).
+  if (await estCompteDemo(userId)) return { recuperees: 0, entrantes: 0, jusquA: null };
 
   const admin = createAdminClient();
   let curseur = conn.last_invoice_id ?? null;

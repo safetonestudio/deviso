@@ -63,6 +63,32 @@ verifier(
 );
 
 console.log("");
+console.log("── Le raccordement Super PDP fictif reste intact ─────────────");
+
+// 18/10/2026 : la route de statut (carte du profil) et d autres routes sans
+// garde appelaient la plateforme de PRODUCTION avec le jeton fictif de la demo.
+// invalid_grant ecrivait session_status = "error" : la demo affichait
+// « Non raccorde » et « Transmission impossible ». On rejoue une visite.
+const sync = await vivante.call("/api/superpdp/sync", { method: "POST", body: JSON.stringify({ explicite: true }) });
+verifier(
+  "la synchronisation d une demo repond sans erreur",
+  sync.status === 200 && [undefined, "trop_recent"].includes(jsonDe(sync).raison),
+  `HTTP ${sync.status} ${JSON.stringify(sync.body).slice(0, 160)}`
+);
+const statutPdp = await vivante.call("/api/superpdp/status");
+const st = jsonDe(statutPdp);
+verifier(
+  "le raccordement fictif reste verifie apres statut et synchronisation",
+  statutPdp.status === 200 && st.connected === true && st.status === "verified",
+  `HTTP ${statutPdp.status} connected=${st.connected} status=${st.status}`
+);
+verifier(
+  "aucune erreur de plateforme n est inscrite sur la demo",
+  st.lastError === null,
+  `lastError=${JSON.stringify(st.lastError)}`
+);
+
+console.log("");
 console.log("── La sortie explicite supprime vraiment le compte ──────────");
 
 const sortante = await openSession("demo-sortante");

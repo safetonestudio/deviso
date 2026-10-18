@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { purgeExpiredDemoAccounts } from "@/lib/demo-cleanup";
+import { JETON_DEMO } from "@/lib/superpdp";
 
 // ─── Helpers date ─────────────────────────────────────────────────────────────
 const now = new Date();
@@ -882,7 +883,7 @@ async function seedDemoData(userId: string) {
   //    jeton est fictif et tous les chemins d'appel sont gardés par estCompteDemo.
   await admin.from("superpdp_connections").insert({
     user_id: userId,
-    refresh_token: "demo-fictif-jamais-utilise",
+    refresh_token: JETON_DEMO,
     session_status: "verified",
     company_number: "821347561",
     company_number_scheme: "fr_siren",

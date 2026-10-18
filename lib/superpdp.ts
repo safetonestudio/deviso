@@ -1,5 +1,6 @@
 import { createHash, randomBytes } from "crypto";
 import { createAdminClient } from "@/lib/supabase/admin";
+import { estCompteDemo, MESSAGE_DEMO_TIERS } from "@/lib/garde-demo";
 
 /**
  * Client Super PDP, notre Plateforme Agréée pour la facturation électronique.
@@ -11,6 +12,12 @@ import { createAdminClient } from "@/lib/supabase/admin";
  */
 export const SUPERPDP_HOST = "https://api.superpdp.tech";
 export const SUPERPDP_API = `${SUPERPDP_HOST}/v1.beta`;
+
+/** Jeton fictif du raccordement de demonstration : ne doit jamais atteindre la plateforme. */
+export const JETON_DEMO = "demo-fictif-jamais-utilise";
+
+/** Levee quand un compte de demonstration tenterait d appeler la vraie plateforme. */
+export class SuperPdpDemo extends Error {}
 
 export const isSandbox = () => process.env.SUPERPDP_SANDBOX === "true";
 
@@ -165,6 +172,7 @@ export interface SuperPdpConnection {
 
 /** Révoque un jeton (RFC 7009). Utilisé au débranchement. */
 export async function revokeToken(token: string): Promise<void> {
+  if (token === JETON_DEMO) return; // demonstration : rien a revoquer chez le tiers
   const cfg = superpdpConfig();
   if (!cfg) return;
   const basic = Buffer.from(`${cfg.clientId}:${cfg.clientSecret}`).toString("base64");
@@ -352,6 +360,15 @@ async function accessTokenValide(
    */
   peutReessayer = true
 ): Promise<string> {
+  // Garde demonstration, au seul point par lequel passe tout appel fait au nom
+  // d un utilisateur. Le 18/10/2026, la demo affichait « Non raccorde » : des
+  // routes sans garde appelaient la plateforme de PRODUCTION avec le jeton
+  // fictif, recevaient invalid_grant et ecrivaient session_status = "error".
+  // Ici, aucun appel ne part et rien n est ecrit.
+  if (conn.refresh_token === JETON_DEMO || (await estCompteDemo(conn.user_id))) {
+    throw new SuperPdpDemo(MESSAGE_DEMO_TIERS);
+  }
+
   const expiration = conn.access_token_expires_at
     ? new Date(conn.access_token_expires_at).getTime()
     : 0;
