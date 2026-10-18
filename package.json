@@ -41,6 +41,7 @@
     "check:theme": "node scripts/check-theme-clair.mjs",
   "check:sentry": "node scripts/check-sentry.mjs",
   "check:vitrine-exports": "node scripts/check-vitrine-exports.mjs",
+  "check:prod": "node scripts/check-prod-a-jour.mjs --attendre",
     "test:pdf": "node scripts/e2e/pdf.mjs",
     "test:stripe": "node scripts/e2e/stripe.mjs",
     "test:stripe-prix": "node scripts/e2e/stripe-prix.mjs",

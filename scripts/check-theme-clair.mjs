@@ -28,7 +28,7 @@ const couvertes = new Set(
 );
 
 /** Nuances claires : illisibles sur fond blanc si elles ne sont pas corrigées. */
-const NUANCES_CLAIRES = new Set(["100", "200", "300", "400"]);
+const NUANCES_CLAIRES = new Set(["100", "200", "300", "400", "500"]);
 
 /**
  * `ProposalDocument` gère sa propre palette clair/sombre : le document est une
@@ -156,7 +156,30 @@ for (const f of fichiers) {
   });
 }
 
+/* ─────────────────────────────────────────────────────────────────
+ * Quatrieme controle : les surcharges .light de texte colore doivent etre
+ * LISIBLES, pas seulement presentes.
+ *
+ * Mesure du 18/10/2026 sur le compte de demonstration en theme clair : les
+ * nuances 400 etaient remplacees par la 600 (vert « Payee », rouge « Relancer »),
+ * ce qui passe sur blanc mais tombe entre 2,4 et 4,1 sur les pastilles teintees
+ * ou ces textes sont poses. Chaque surcharge est donc evaluee dans le pire cas
+ * plausible : sur une pastille de sa propre teinte (500 a 20 %) sur le fond de
+ * page. Seuil 4,5 (texte courant).
+ * ───────────────────────────────────────────────────────────────── */
+const { PALETTE, contrastePire } = await import("./palette-clair.mjs");
+let surchargesFaibles = 0;
+for (const m of css.matchAll(/^\.light\s+\.text-([a-z]+)-(\d+)(\\\/\d+)?\s*\{\s*color:\s*([^;!]+?)\s*!important;\s*\}/gm)) {
+  const [, teinte, nuance, opacite, couleur] = m;
+  if (!PALETTE[teinte]) continue;
+  const c = contrastePire(teinte, couleur.trim());
+  if (c >= 4.5) continue;
+  console.error(`✗ globals.css, « .light .text-${teinte}-${nuance}${opacite ? opacite.replace("\\", "") : ""} » vaut ${couleur.trim()} : ${c.toFixed(1)}:1 sur pastille ${teinte}, illisible (min 4,5)`);
+  echecs++;
+  surchargesFaibles++;
+}
+
 if (echecs === 0) {
-  console.log(`✓ Thème clair, ${inspectees} usages de couleurs claires et ${fonds === 0 ? "aucun" : fonds} fond hex sombre fige, ${tailwindSombres} fond Tailwind sombre non couvert, tout est couvert`);
+  console.log(`✓ Thème clair, ${inspectees} usages de couleurs claires et ${fonds === 0 ? "aucun" : fonds} fond hex sombre fige, ${tailwindSombres} fond Tailwind sombre non couvert, surcharges colorees lisibles, tout est couvert`);
 }
 process.exit(echecs > 0 ? 1 : 0);
