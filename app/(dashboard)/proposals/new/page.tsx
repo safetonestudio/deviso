@@ -422,7 +422,7 @@ export default function NewProposalPage() {
             <button
               onClick={handleGenerate}
               disabled={generating || brief.trim().length < 10}
-              className="w-full mt-4 bg-indigo-600 text-white font-semibold py-3.5 rounded-xl hover:bg-indigo-500 disabled:opacity-60 disabled:cursor-not-allowed transition-all flex items-center justify-center gap-2"
+              className="w-full mt-4 bg-indigo-600 text-white font-semibold py-3.5 rounded-xl hover:bg-indigo-700 disabled:opacity-60 disabled:cursor-not-allowed transition-all flex items-center justify-center gap-2"
             >
               {generating ? (
                 <><span className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full spinner" />Génération en cours...</>
@@ -635,7 +635,7 @@ export default function NewProposalPage() {
               <button
                 onClick={handleRefine}
                 disabled={refining || refineInput.trim().length < 3}
-                className="px-4 py-2.5 bg-indigo-600 text-white rounded-xl text-sm font-semibold hover:bg-indigo-500 disabled:opacity-50 disabled:cursor-not-allowed transition-all flex items-center gap-2 shrink-0"
+                className="px-4 py-2.5 bg-indigo-600 text-white rounded-xl text-sm font-semibold hover:bg-indigo-700 disabled:opacity-50 disabled:cursor-not-allowed transition-all flex items-center gap-2 shrink-0"
               >
                 {refining ? (
                   <>
@@ -660,7 +660,7 @@ export default function NewProposalPage() {
             </div>
           </div>
 
-          <button onClick={() => setStep("client")} className="w-full bg-indigo-600 text-white font-semibold py-3.5 rounded-xl hover:bg-indigo-500 transition-all">
+          <button onClick={() => setStep("client")} className="w-full bg-indigo-600 text-white font-semibold py-3.5 rounded-xl hover:bg-indigo-700 transition-all">
             Continuer → Informations client
           </button>
         </div>
@@ -728,7 +728,7 @@ export default function NewProposalPage() {
 
           <div className="flex gap-3">
             <button onClick={() => setStep("review")} className="flex-1 border border-ds-border text-gray-300 font-semibold py-3 rounded-xl hover:bg-ds-elevated transition-all">← Retour</button>
-            <button onClick={handleSave} disabled={saving} className="flex-grow bg-indigo-600 text-white font-semibold py-3 rounded-xl hover:bg-indigo-500 disabled:opacity-60 transition-all flex items-center justify-center gap-2">
+            <button onClick={handleSave} disabled={saving} className="flex-grow bg-indigo-600 text-white font-semibold py-3 rounded-xl hover:bg-indigo-700 disabled:opacity-60 transition-all flex items-center justify-center gap-2">
               {saving ? <><span className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full spinner" />Sauvegarde...</> : (<><Save size={18} className="shrink-0" />Enregistrer le devis</>)}
             </button>
           </div>
@@ -800,7 +800,7 @@ export default function NewProposalPage() {
               <button
                 onClick={confirmDuration}
                 disabled={durationHours === 0 && durationMinutes === 0}
-                className="flex-1 px-4 py-2 text-sm font-semibold bg-violet-600 text-white rounded-lg hover:bg-violet-500 disabled:opacity-50 transition-colors"
+                className="flex-1 px-4 py-2 text-sm font-semibold bg-violet-600 text-white rounded-lg hover:bg-violet-700 disabled:opacity-50 transition-colors"
               >
                 Ajouter
               </button>

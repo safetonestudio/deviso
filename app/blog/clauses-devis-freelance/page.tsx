@@ -370,7 +370,7 @@ export default function Page() {
             <WaitlistButton
               plan="free"
               label="Générer mon premier devis, gratuit"
-              className="inline-block bg-indigo-600 hover:bg-indigo-500 text-white font-semibold px-8 py-3 rounded-xl transition-all shadow-lg shadow-indigo-900/50"
+              className="inline-block bg-indigo-600 hover:bg-indigo-700 text-white font-semibold px-8 py-3 rounded-xl transition-all shadow-lg shadow-indigo-900/50"
             />
           </div>
 

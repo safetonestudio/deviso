@@ -201,6 +201,12 @@
 .light [class~="bg-blue-600"].text-white,
 .light [class~="bg-blue-500"].text-white,
 .light [class~="bg-teal-600"].text-white,
+.light [class~="bg-emerald-700"].text-white,
+.light [class~="bg-green-700"].text-white,
+.light [class~="bg-amber-700"].text-white,
+.light [class~="bg-red-700"].text-white,
+.light [class~="bg-violet-700"].text-white,
+.light [class~="bg-indigo-700"].text-white,
 .light [class~="bg-green-600"].text-white { color: #ffffff !important; }
 
 /* ── Texte blanc dans les conteneurs dégradés (ex: logo "D") ── */

@@ -216,7 +216,7 @@ export function FreelanceLanding({
             {heroSubtitle}
           </p>
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-6">
-            <DemoButton className="w-full sm:w-auto bg-indigo-600 hover:bg-indigo-500 text-white font-semibold px-8 py-4 rounded-xl text-lg transition-all shadow-lg shadow-indigo-900/50" />
+            <DemoButton className="w-full sm:w-auto bg-indigo-600 hover:bg-indigo-700 text-white font-semibold px-8 py-4 rounded-xl text-lg transition-all shadow-lg shadow-indigo-900/50" />
             <WaitlistButton
               plan="free"
               label="Créer un compte gratuit"

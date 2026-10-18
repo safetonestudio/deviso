@@ -271,7 +271,7 @@ export function BlogPost({
               <WaitlistButton
                 plan="free"
                 label="Essayer gratuitement"
-                className="w-full sm:w-auto bg-indigo-600 hover:bg-indigo-500 text-white font-semibold px-8 py-3 rounded-xl transition-all shadow-lg shadow-indigo-900/50"
+                className="w-full sm:w-auto bg-indigo-600 hover:bg-indigo-700 text-white font-semibold px-8 py-3 rounded-xl transition-all shadow-lg shadow-indigo-900/50"
               />
               <Link
                 href={landingHref}

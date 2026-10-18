@@ -135,7 +135,7 @@ function SignupForm() {
             <button
               type="submit"
               disabled={loading}
-              className="w-full bg-indigo-600 text-white font-bold py-3 rounded-xl hover:bg-indigo-500 disabled:opacity-60 disabled:cursor-not-allowed transition-all mt-2"
+              className="w-full bg-indigo-600 text-white font-bold py-3 rounded-xl hover:bg-indigo-700 disabled:opacity-60 disabled:cursor-not-allowed transition-all mt-2"
             >
               {loading ? "Création du compte..." : "Créer mon compte →"}
             </button>

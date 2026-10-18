@@ -116,7 +116,7 @@ export default async function Declarations() {
           </p>
           <a
             href="/profil"
-            className="inline-block px-4 py-2 rounded-lg bg-indigo-600 text-white text-sm font-semibold hover:bg-indigo-500 transition-colors"
+            className="inline-block px-4 py-2 rounded-lg bg-indigo-600 text-white text-sm font-semibold hover:bg-indigo-700 transition-colors"
           >
             Aller aux paramètres
           </a>
@@ -183,7 +183,7 @@ export default async function Declarations() {
               </div>
               <a
                 href="/achats-internationaux"
-                className="inline-block px-4 py-2 rounded-lg bg-indigo-600 text-white text-sm font-semibold hover:bg-indigo-500 transition-colors whitespace-nowrap"
+                className="inline-block px-4 py-2 rounded-lg bg-indigo-600 text-white text-sm font-semibold hover:bg-indigo-700 transition-colors whitespace-nowrap"
               >
                 {achatsTotal > 0 ? "Gérer mes achats" : "Saisir un achat"}
               </a>

@@ -123,7 +123,7 @@ export function NotificationBell({ placement = "sidebar" }: Props) {
       >
         <Bell size={16} />
         {unread > 0 && (
-          <span className="absolute -top-0.5 -right-0.5 min-w-[16px] h-4 bg-red-500 text-white text-[9px] font-bold rounded-full flex items-center justify-center px-0.5">
+          <span className="absolute -top-0.5 -right-0.5 min-w-[16px] h-4 bg-red-600 text-white text-[9px] font-bold rounded-full flex items-center justify-center px-0.5">
             {unread > 9 ? "9+" : unread}
           </span>
         )}

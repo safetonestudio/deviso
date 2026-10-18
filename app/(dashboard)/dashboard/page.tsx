@@ -238,7 +238,7 @@ export default async function DashboardPage() {
         <div className="flex gap-2">
           <Link
             href="/proposals/new"
-            className="flex items-center gap-2 bg-indigo-600 hover:bg-indigo-500 text-white font-medium px-4 py-2 rounded-lg transition-colors text-sm"
+            className="flex items-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white font-medium px-4 py-2 rounded-lg transition-colors text-sm"
           >
             <Sparkles size={14} /> Nouveau devis
           </Link>
@@ -341,7 +341,7 @@ export default async function DashboardPage() {
                 action={
                   <Link
                     href="/proposals/new"
-                    className="bg-indigo-600 hover:bg-indigo-500 text-white font-medium px-4 py-2 rounded-lg transition-colors text-sm inline-block"
+                    className="bg-indigo-600 hover:bg-indigo-700 text-white font-medium px-4 py-2 rounded-lg transition-colors text-sm inline-block"
                   >
                     Créer un devis
                   </Link>

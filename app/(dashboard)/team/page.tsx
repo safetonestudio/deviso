@@ -162,7 +162,7 @@ export default function TeamPage() {
         <p className="text-gray-500">La gestion d&apos;équipe multi-utilisateurs est réservée au plan Pro.</p>
         <a
           href="/billing"
-          className="inline-flex items-center gap-2 px-5 py-2.5 bg-indigo-600 hover:bg-indigo-500 text-white text-sm font-semibold rounded-xl transition-colors"
+          className="inline-flex items-center gap-2 px-5 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-semibold rounded-xl transition-colors"
         >
           Passer Pro
         </a>
@@ -216,11 +216,7 @@ export default function TeamPage() {
           <button
             key={tab}
             onClick={() => setActiveTab(tab)}
-            className={`px-4 py-1.5 rounded-lg text-sm font-medium transition-all ${
-              activeTab === tab
-                ? "bg-ds-surface text-white shadow-sm"
-                : "text-gray-500 hover:text-gray-300"
-            }`}
+            className={`px-4 py-1.5 rounded-lg text-sm font-medium transition-all ${ activeTab === tab ? "bg-ds-surface text-white shadow-sm" : "text-gray-500 hover:text-gray-300" }`}
           >
             {tab === "pipeline" ? "Vue pipeline" : "Membres"}
           </button>
@@ -334,7 +330,7 @@ export default function TeamPage() {
                 <button
                   type="submit"
                   disabled={inviting}
-                  className="px-4 py-2 bg-indigo-600 text-white text-sm font-semibold rounded-lg hover:bg-indigo-500 disabled:opacity-50 transition-colors shrink-0"
+                  className="px-4 py-2 bg-indigo-600 text-white text-sm font-semibold rounded-lg hover:bg-indigo-700 disabled:opacity-50 transition-colors shrink-0"
                 >
                   {inviting ? "Envoi…" : "Inviter"}
                 </button>

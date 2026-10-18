@@ -320,7 +320,7 @@ export default function BillingPage() {
                 <button
                   onClick={() => handleUpgrade("solo")}
                   disabled={acting}
-                  className="bg-indigo-600 text-white text-sm font-semibold px-5 py-2.5 rounded-xl hover:bg-indigo-500 transition-colors shrink-0 disabled:opacity-50"
+                  className="bg-indigo-600 text-white text-sm font-semibold px-5 py-2.5 rounded-xl hover:bg-indigo-700 transition-colors shrink-0 disabled:opacity-50"
                 >
                   {acting
                     ? "Un instant…"
@@ -349,7 +349,7 @@ export default function BillingPage() {
               <button
                 onClick={() => handleUpgrade("pro")}
                 disabled={acting}
-                className="bg-violet-600 text-white text-sm font-semibold px-5 py-2.5 rounded-xl hover:bg-violet-500 transition-colors shrink-0 disabled:opacity-50"
+                className="bg-violet-600 text-white text-sm font-semibold px-5 py-2.5 rounded-xl hover:bg-violet-700 transition-colors shrink-0 disabled:opacity-50"
               >
                 {acting
                   ? "Un instant…"

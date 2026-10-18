@@ -341,7 +341,7 @@ export default function EReportingFreelancePage() {
           <p className="text-sm text-gray-400 mb-6 max-w-lg mx-auto">
             Deviso gérera automatiquement l&apos;e-reporting B2C et l&apos;e-invoicing B2B. Vous créez vos factures comme aujourd&apos;hui, la conformité 2026-2027 est prise en charge.
           </p>
-          <WaitlistButton plan="free" label="Essayer Deviso 14 jours →" className="inline-flex items-center gap-2 bg-indigo-600 hover:bg-indigo-500 text-white font-semibold px-6 py-3 rounded-xl transition-colors text-sm" />
+          <WaitlistButton plan="free" label="Essayer Deviso 14 jours →" className="inline-flex items-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold px-6 py-3 rounded-xl transition-colors text-sm" />
           <Signature />
         </div>
 

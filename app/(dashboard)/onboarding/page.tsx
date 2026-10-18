@@ -131,7 +131,7 @@ export default function OnboardingPage() {
         <button
           type="submit"
           disabled={saving}
-          className="w-full bg-indigo-600 hover:bg-indigo-500 disabled:opacity-50 text-white font-semibold py-3 rounded-xl text-sm transition-colors"
+          className="w-full bg-indigo-600 hover:bg-indigo-700 disabled:opacity-50 text-white font-semibold py-3 rounded-xl text-sm transition-colors"
         >
           {saving ? "Enregistrement…" : "Accéder au dashboard →"}
         </button>

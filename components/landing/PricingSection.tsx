@@ -48,21 +48,13 @@ export function PricingSection() {
           <div className="inline-flex items-center gap-1 bg-ds-surface border border-ds-border rounded-xl p-1">
             <button
               onClick={() => setBilling("monthly")}
-              className={`text-sm font-medium px-4 py-2 rounded-lg transition-all ${
-                billing === "monthly"
-                  ? "bg-ds-elevated text-white shadow-sm"
-                  : "text-gray-500 hover:text-gray-300"
-              }`}
+              className={`text-sm font-medium px-4 py-2 rounded-lg transition-all ${ billing === "monthly" ? "bg-ds-elevated text-white shadow-sm" : "text-gray-500 hover:text-gray-300" }`}
             >
               Mensuel
             </button>
             <button
               onClick={() => setBilling("annual")}
-              className={`text-sm font-medium px-4 py-2 rounded-lg transition-all flex items-center gap-2 ${
-                billing === "annual"
-                  ? "bg-ds-elevated text-white shadow-sm"
-                  : "text-gray-500 hover:text-gray-300"
-              }`}
+              className={`text-sm font-medium px-4 py-2 rounded-lg transition-all flex items-center gap-2 ${ billing === "annual" ? "bg-ds-elevated text-white shadow-sm" : "text-gray-500 hover:text-gray-300" }`}
             >
               Annuel
               <span className="text-[11px] font-semibold px-1.5 py-0.5 rounded-md bg-emerald-500/20 text-emerald-400 border border-emerald-500/20">
@@ -103,7 +95,7 @@ export function PricingSection() {
 
             <Link
               href="/signup?plan=solo"
-              className="w-full text-center bg-indigo-600 hover:bg-indigo-500 text-white font-semibold py-3 px-5 rounded-xl transition-all text-sm"
+              className="w-full text-center bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-3 px-5 rounded-xl transition-all text-sm"
             >
               Essayer gratuitement 14 jours →
             </Link>

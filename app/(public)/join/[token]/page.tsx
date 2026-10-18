@@ -80,7 +80,7 @@ export default function JoinPage() {
           <p className="text-gray-400 text-sm mb-6">Tu fais déjà partie de cette équipe.</p>
           <Link
             href="/dashboard"
-            className="inline-flex items-center gap-2 px-5 py-2.5 bg-indigo-600 hover:bg-indigo-500 text-white rounded-lg font-semibold text-sm transition-colors"
+            className="inline-flex items-center gap-2 px-5 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg font-semibold text-sm transition-colors"
           >
             Accéder au dashboard <ArrowRight size={15} />
           </Link>
@@ -133,7 +133,7 @@ export default function JoinPage() {
                 await supabase.auth.signOut();
                 window.location.reload();
               }}
-              className="flex items-center justify-center gap-2 w-full py-3 bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl font-semibold text-sm transition-colors"
+              className="flex items-center justify-center gap-2 w-full py-3 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl font-semibold text-sm transition-colors"
             >
               Se déconnecter et rejoindre avec {state.inviteeEmail.split("@")[0]}
             </button>
@@ -183,7 +183,7 @@ export default function JoinPage() {
         <div className="flex flex-col gap-3">
           <Link
             href={signupUrl}
-            className="flex items-center justify-center gap-2 w-full py-3 bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl font-semibold text-sm transition-colors"
+            className="flex items-center justify-center gap-2 w-full py-3 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl font-semibold text-sm transition-colors"
           >
             Créer mon compte et rejoindre <ArrowRight size={15} />
           </Link>

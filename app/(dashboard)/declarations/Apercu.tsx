@@ -95,7 +95,7 @@ export function Apercu() {
             <button
               onClick={consulter}
               disabled={chargement}
-              className="self-end px-3 py-1.5 rounded-lg bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-semibold disabled:opacity-50 transition-colors"
+              className="self-end px-3 py-1.5 rounded-lg bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-semibold disabled:opacity-50 transition-colors"
             >
               {chargement ? "Lecture…" : "Consulter"}
             </button>

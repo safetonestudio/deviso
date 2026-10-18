@@ -389,7 +389,7 @@ function ActionPanel({ invoice, id, router, hasChorusPro }: {
           <button
             onClick={handleSendEmail}
             disabled={sendingEmail}
-            className="w-full bg-indigo-600 hover:bg-indigo-500 disabled:opacity-50 text-white text-sm font-semibold px-4 py-2.5 rounded-lg transition-colors text-left flex items-center gap-2"
+            className="w-full bg-indigo-600 hover:bg-indigo-700 disabled:opacity-50 text-white text-sm font-semibold px-4 py-2.5 rounded-lg transition-colors text-left flex items-center gap-2"
           >
             <Send size={17} className="shrink-0" />
             <span className="flex items-center gap-1.5">{emailSent && <Check size={16} className="shrink-0" />}{emailSent ? "Envoyée !" : sendingEmail ? "Envoi en cours…" : "Envoyer au client"}</span>

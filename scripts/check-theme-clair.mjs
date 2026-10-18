@@ -167,7 +167,7 @@ for (const f of fichiers) {
  * plausible : sur une pastille de sa propre teinte (500 a 20 %) sur le fond de
  * page. Seuil 4,5 (texte courant).
  * ───────────────────────────────────────────────────────────────── */
-const { PALETTE, contrastePire } = await import("./palette-clair.mjs");
+const { PALETTE, contrastePire, contraste } = await import("./palette-clair.mjs");
 let surchargesFaibles = 0;
 for (const m of css.matchAll(/^\.light\s+\.text-([a-z]+)-(\d+)(\\\/\d+)?\s*\{\s*color:\s*([^;!]+?)\s*!important;\s*\}/gm)) {
   const [, teinte, nuance, opacite, couleur] = m;
@@ -179,7 +179,48 @@ for (const m of css.matchAll(/^\.light\s+\.text-([a-z]+)-(\d+)(\\\/\d+)?\s*\{\s*
   surchargesFaibles++;
 }
 
+/* ─────────────────────────────────────────────────────────────────
+ * Cinquieme controle : texte blanc sur fond colore plein (boutons, badges).
+ *
+ * Mesure du 18/10/2026 : « Enregistrer les parametres » (blanc sur vert 600)
+ * a 3,8:1, ambre 500 a 2,1:1, survol indigo 500 a 4,47:1, et ce dans les deux
+ * themes. Deux regles, au repos comme au survol :
+ *   1. contraste blanc / fond >= 4,5 ;
+ *   2. en theme clair, le fond doit figurer dans les exceptions
+ *      [class~="bg-..."].text-white de globals.css, sinon le texte blanc
+ *      bascule en noir sur un fond fonce.
+ * ───────────────────────────────────────────────────────────────── */
+const hexRgb = (h) => [1, 3, 5].map((i) => parseInt(h.slice(i, i + 2), 16));
+const NU = [500, 600, 700, 800, 900];
+const blancPreserve = new Set([...css.matchAll(/\[class~="(bg-[a-z]+-\d+)"\]\.text-white/g)].map((m) => m[1]));
+let boutonsFaibles = 0;
+const tousFichiers = [...globSync("app/**/*.tsx"), ...globSync("components/**/*.tsx")];
+for (const f of tousFichiers) {
+  const chemin = f.replace(/\\/g, "/");
+  if (PALETTE_AUTONOME.some((p) => chemin.endsWith(p))) continue;
+  const sombreSeul = SOMBRE_ASSUME.some((p) => chemin.includes(p)) || !/app\/\(dashboard\)|components\//.test(chemin);
+  readFileSync(f, "utf8").split("\n").forEach((ligne, i) => {
+    for (const m of ligne.matchAll(/className=(?:"([^"]*)"|\{`([^`]*)`\})/g)) {
+      const cls = (m[1] ?? m[2]).split(/\s+/);
+      if (!cls.includes("text-white")) continue;
+      for (const c of cls) {
+        const mm = c.match(/^(hover:)?bg-([a-z]+)-(\d00)$/);
+        if (!mm || !PALETTE[mm[2]] || !NU.includes(+mm[3])) continue;
+        const r = contraste([255, 255, 255], hexRgb(PALETTE[mm[2]][NU.indexOf(+mm[3])]));
+        if (r < 4.5) {
+          console.error(`✗ ${chemin}:${i + 1}, texte blanc sur « ${c} » : ${r.toFixed(2)}:1 (min 4,5)`);
+          echecs++; boutonsFaibles++;
+        }
+        if (!mm[1] && !sombreSeul && !blancPreserve.has(c)) {
+          console.error(`✗ ${chemin}:${i + 1}, « ${c} text-white » absent des exceptions .light : texte noir sur fond fonce en theme clair`);
+          echecs++; boutonsFaibles++;
+        }
+      }
+    }
+  });
+}
+
 if (echecs === 0) {
-  console.log(`✓ Thème clair, ${inspectees} usages de couleurs claires et ${fonds === 0 ? "aucun" : fonds} fond hex sombre fige, ${tailwindSombres} fond Tailwind sombre non couvert, surcharges colorees lisibles, tout est couvert`);
+  console.log(`✓ Thème clair, ${inspectees} usages de couleurs claires et ${fonds === 0 ? "aucun" : fonds} fond hex sombre fige, ${tailwindSombres} fond Tailwind sombre non couvert, surcharges colorees lisibles, boutons blancs a 4,5 mini, tout est couvert`);
 }
 process.exit(echecs > 0 ? 1 : 0);

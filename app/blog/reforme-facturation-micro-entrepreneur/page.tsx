@@ -240,7 +240,7 @@ export default function ReformeFacturationMicroEntrepreneurPage() {
           <p className="text-sm text-gray-400 mb-6 max-w-lg mx-auto">
             Toutes vos factures Deviso sont déjà au format Factur-X EN 16931, le format requis par la réforme. La mention &ldquo;franchise TVA&rdquo; est gérée automatiquement selon votre régime.
           </p>
-          <WaitlistButton plan="free" label="Essayer Deviso 14 jours →" className="inline-flex items-center gap-2 bg-indigo-600 hover:bg-indigo-500 text-white font-semibold px-6 py-3 rounded-xl transition-colors text-sm" />
+          <WaitlistButton plan="free" label="Essayer Deviso 14 jours →" className="inline-flex items-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold px-6 py-3 rounded-xl transition-colors text-sm" />
           <Signature />
         </div>
 

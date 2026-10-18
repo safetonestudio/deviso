@@ -224,7 +224,7 @@ export default function Page() {
             <p className="text-gray-400 mb-6 max-w-lg mx-auto text-sm leading-relaxed">
               Deviso envoie automatiquement des relances aux clients en retard, aux intervalles que vous choisissez. Moins de stress, plus de trésorerie.
             </p>
-            <WaitlistButton plan="free" label="Essayer Deviso gratuitement" className="inline-block bg-indigo-600 hover:bg-indigo-500 text-white font-semibold px-8 py-3 rounded-xl transition-all" />
+            <WaitlistButton plan="free" label="Essayer Deviso gratuitement" className="inline-block bg-indigo-600 hover:bg-indigo-700 text-white font-semibold px-8 py-3 rounded-xl transition-all" />
           </div>
 
           <div className="mt-14 pt-8">

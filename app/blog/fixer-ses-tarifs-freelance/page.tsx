@@ -226,7 +226,7 @@ export default function Page() {
             <p className="text-gray-400 mb-6 max-w-lg mx-auto text-sm leading-relaxed">
               Avec Deviso, vos devis sont générés en 30 secondes, signés électroniquement et relancés automatiquement. Professionnalisme et sérénité, dès le premier contact.
             </p>
-            <WaitlistButton plan="free" label="Générer mon premier devis, gratuit" className="inline-block bg-indigo-600 hover:bg-indigo-500 text-white font-semibold px-8 py-3 rounded-xl transition-all" />
+            <WaitlistButton plan="free" label="Générer mon premier devis, gratuit" className="inline-block bg-indigo-600 hover:bg-indigo-700 text-white font-semibold px-8 py-3 rounded-xl transition-all" />
           </div>
 
           <div className="mt-14 pt-8">

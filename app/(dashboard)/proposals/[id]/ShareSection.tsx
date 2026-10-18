@@ -64,7 +64,7 @@ export default function ShareSection({ proposal, shareUrl, profile }: Props) {
         </div>
         <button
           onClick={copyLink}
-          className="shrink-0 text-sm bg-indigo-600 text-white font-semibold px-4 py-2 rounded-lg hover:bg-indigo-500 transition-colors"
+          className="shrink-0 text-sm bg-indigo-600 text-white font-semibold px-4 py-2 rounded-lg hover:bg-indigo-700 transition-colors"
         >
           {copied ? "Copie !" : "Copier le lien"}
         </button>
@@ -105,7 +105,7 @@ export default function ShareSection({ proposal, shareUrl, profile }: Props) {
             <button
               onClick={sendEmail}
               disabled={sending || !emailTo}
-              className="shrink-0 text-sm bg-indigo-600 text-white font-semibold px-4 py-2 rounded-lg hover:bg-indigo-500 disabled:opacity-50 transition-colors"
+              className="shrink-0 text-sm bg-indigo-600 text-white font-semibold px-4 py-2 rounded-lg hover:bg-indigo-700 disabled:opacity-50 transition-colors"
             >
               {sending ? "Envoi..." : "Envoyer"}
             </button>

@@ -51,7 +51,7 @@ export default async function ProposalsPage() {
         action={
           <Link
             href="/proposals/new"
-            className="bg-indigo-600 hover:bg-indigo-500 text-white font-semibold px-4 py-2 sm:px-5 sm:py-2.5 rounded-lg transition-colors text-sm flex items-center gap-2"
+            className="bg-indigo-600 hover:bg-indigo-700 text-white font-semibold px-4 py-2 sm:px-5 sm:py-2.5 rounded-lg transition-colors text-sm flex items-center gap-2"
           >
             <Sparkles size={16} />Nouveau devis
           </Link>
@@ -67,7 +67,7 @@ export default async function ProposalsPage() {
           action={
             <Link
               href="/proposals/new"
-              className="bg-indigo-600 hover:bg-indigo-500 text-white font-semibold px-5 py-2.5 rounded-lg transition-colors text-sm inline-block"
+              className="bg-indigo-600 hover:bg-indigo-700 text-white font-semibold px-5 py-2.5 rounded-lg transition-colors text-sm inline-block"
             >
               Créer mon premier devis
             </Link>

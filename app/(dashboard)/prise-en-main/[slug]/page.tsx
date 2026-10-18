@@ -1390,7 +1390,7 @@ export default async function GuideArticlePage({
           <p className="text-sm text-indigo-300 font-medium">Prêt à essayer ?</p>
           <Link
             href={article.cta.href}
-            className="px-4 py-2 bg-indigo-600 hover:bg-indigo-500 text-white text-sm font-semibold rounded-lg transition-colors shrink-0"
+            className="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-semibold rounded-lg transition-colors shrink-0"
           >
             {article.cta.label}
           </Link>

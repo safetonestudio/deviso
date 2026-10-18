@@ -280,11 +280,7 @@ export function SuperPdpCard() {
 
           <a
             href="/api/superpdp/connect"
-            className={`px-4 py-2 rounded-lg text-sm font-semibold transition-colors shrink-0 ${
-              verifie
-                ? "border border-ds-border text-gray-400 hover:text-white hover:bg-ds-elevated"
-                : "bg-indigo-600 text-white hover:bg-indigo-500"
-            }`}
+            className={`px-4 py-2 rounded-lg text-sm font-semibold transition-colors shrink-0 ${ verifie ? "border border-ds-border text-gray-400 hover:text-white hover:bg-ds-elevated" : "bg-indigo-600 text-white hover:bg-indigo-500" }`}
           >
             {verifie ? "Reconnecter" : enAttente ? "Relancer" : "Raccorder mon entreprise"}
           </a>
@@ -338,7 +334,7 @@ export function SuperPdpCard() {
           <button
             onClick={ouvrirLigne}
             disabled={ouverture}
-            className="px-3 py-1.5 rounded-lg bg-amber-600 hover:bg-amber-500 text-white text-xs font-semibold transition-colors disabled:opacity-50"
+            className="px-3 py-1.5 rounded-lg bg-amber-700 hover:bg-amber-800 text-white text-xs font-semibold transition-colors disabled:opacity-50"
           >
             {ouverture ? "Ouverture…" : "Ouvrir ma ligne de réception"}
           </button>

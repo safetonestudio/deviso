@@ -400,7 +400,7 @@ export default function PaiementsPage() {
       <button
         onClick={handleSave}
         disabled={saving || !canSave}
-        className="w-full bg-emerald-600 hover:bg-emerald-500 disabled:opacity-50 disabled:cursor-not-allowed text-white rounded-xl py-3 text-sm font-semibold transition-colors"
+        className="w-full bg-emerald-700 hover:bg-emerald-800 disabled:opacity-50 disabled:cursor-not-allowed text-white rounded-xl py-3 text-sm font-semibold transition-colors"
       >
         {saving ? "Enregistrement…" : saved ? "✓ Enregistré !" : "Enregistrer les paramètres de paiement"}
       </button>

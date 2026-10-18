@@ -354,7 +354,7 @@ export function ArticleLong({ slug, chapeau, enBref, sections, faq, sources, cta
                 <WaitlistButton
                   plan="free"
                   label="Essayer gratuitement"
-                  className="bg-indigo-600 hover:bg-indigo-500 text-white font-semibold px-8 py-3 rounded-xl transition-all shadow-lg shadow-indigo-900/50"
+                  className="bg-indigo-600 hover:bg-indigo-700 text-white font-semibold px-8 py-3 rounded-xl transition-all shadow-lg shadow-indigo-900/50"
                 />
               </section>
             )}

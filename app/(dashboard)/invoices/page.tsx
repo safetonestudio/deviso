@@ -317,7 +317,7 @@ export default function InvoicesPage() {
               <div className="relative" ref={dropdownRef}>
                 <button
                   onClick={() => setNewDropdownOpen((v) => !v)}
-                  className="bg-indigo-600 hover:bg-indigo-500 text-white text-sm font-medium px-4 py-2 rounded-lg transition-colors flex items-center gap-1.5"
+                  className="bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-medium px-4 py-2 rounded-lg transition-colors flex items-center gap-1.5"
                 >
                   + Nouvelle facture
                   <ChevronDown size={14} className={`transition-transform ${newDropdownOpen ? "rotate-180" : ""}`} />
@@ -356,7 +356,7 @@ export default function InvoicesPage() {
           {tab === "recurring" && isPro && (
             <button
               onClick={() => setShowRecurringForm(true)}
-              className="bg-indigo-600 hover:bg-indigo-500 text-white text-sm font-medium px-4 py-2 rounded-lg transition-colors flex items-center gap-1.5"
+              className="bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-medium px-4 py-2 rounded-lg transition-colors flex items-center gap-1.5"
             >
               <Plus size={14} /> Nouvelle récurrente
             </button>
@@ -389,7 +389,7 @@ export default function InvoicesPage() {
           <div className="flex-1">
             <p className="font-semibold text-amber-300 text-sm">Vos clients ne savent pas comment vous payer</p>
             <p className="text-xs text-amber-400/80 mt-0.5 mb-3">Configurez votre moyen de paiement pour débloquer la création de factures.</p>
-            <Link href="/paiements" className="inline-flex items-center gap-1.5 bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-semibold px-3 py-1.5 rounded-lg transition-colors">
+            <Link href="/paiements" className="inline-flex items-center gap-1.5 bg-emerald-700 hover:bg-emerald-800 text-white text-xs font-semibold px-3 py-1.5 rounded-lg transition-colors">
               Configurer mes paiements →
             </Link>
           </div>
@@ -445,7 +445,7 @@ export default function InvoicesPage() {
             <div className="text-center py-16 border border-dashed border-ds-border rounded-xl bg-ds-surface">
               <p className="text-gray-400 font-medium">Aucune facture pour l&apos;instant</p>
               <p className="text-gray-500 text-sm mt-1">Créez votre première facture depuis un devis signé ou manuellement.</p>
-              <Link href="/invoices/new" className="mt-4 inline-block bg-indigo-600 hover:bg-indigo-500 text-white text-sm font-medium px-4 py-2 rounded-lg transition-colors">
+              <Link href="/invoices/new" className="mt-4 inline-block bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-medium px-4 py-2 rounded-lg transition-colors">
                 Créer une facture
               </Link>
             </div>
@@ -637,7 +637,7 @@ export default function InvoicesPage() {
               <p className="text-gray-500 text-sm mt-1 max-w-sm mx-auto">
                 Automatisez vos abonnements et contrats. Deviso génère et envoie les factures à la bonne date, chaque mois.
               </p>
-              <Link href="/billing" className="mt-4 inline-block bg-indigo-600 hover:bg-indigo-500 text-white text-sm font-medium px-4 py-2 rounded-lg transition-colors">
+              <Link href="/billing" className="mt-4 inline-block bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-medium px-4 py-2 rounded-lg transition-colors">
                 Passer Pro
               </Link>
             </div>
@@ -759,7 +759,7 @@ export default function InvoicesPage() {
                       <button
                         onClick={handleSaveRecurring}
                         disabled={savingRecurring}
-                        className="bg-indigo-600 hover:bg-indigo-500 disabled:opacity-50 text-white text-sm font-medium px-4 py-2 rounded-lg"
+                        className="bg-indigo-600 hover:bg-indigo-700 disabled:opacity-50 text-white text-sm font-medium px-4 py-2 rounded-lg"
                       >
                         {savingRecurring ? "Création…" : "Créer"}
                       </button>
@@ -777,7 +777,7 @@ export default function InvoicesPage() {
                   <p className="text-gray-500 text-sm mt-1">Automatisez vos abonnements et contrats mensuels.</p>
                   <button
                     onClick={() => setShowRecurringForm(true)}
-                    className="mt-4 inline-flex items-center gap-2 bg-indigo-600 hover:bg-indigo-500 text-white text-sm font-medium px-4 py-2 rounded-lg transition-colors"
+                    className="mt-4 inline-flex items-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-medium px-4 py-2 rounded-lg transition-colors"
                   >
                     <Plus size={14} /> Créer ma première récurrente
                   </button>

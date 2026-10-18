@@ -105,7 +105,7 @@ export default function ProposalActions({
     return (
       <button
         onClick={copyLink}
-        className="whitespace-nowrap text-sm font-medium px-3 py-1.5 rounded-lg bg-indigo-600 text-white hover:bg-indigo-500 transition-colors"
+        className="whitespace-nowrap text-sm font-medium px-3 py-1.5 rounded-lg bg-indigo-600 text-white hover:bg-indigo-700 transition-colors"
       >
         {copied ? "Copié !" : "Copier le lien"}
       </button>
@@ -126,7 +126,7 @@ export default function ProposalActions({
             <button
               onClick={markAsSent}
               disabled={sending}
-              className="w-full bg-indigo-600 hover:bg-indigo-500 disabled:opacity-50 text-white text-sm font-semibold px-4 py-2.5 rounded-lg transition-colors text-left flex items-center gap-2"
+              className="w-full bg-indigo-600 hover:bg-indigo-700 disabled:opacity-50 text-white text-sm font-semibold px-4 py-2.5 rounded-lg transition-colors text-left flex items-center gap-2"
             >
               <Send size={17} className="shrink-0" />
               <span>{sending ? "…" : "Marquer envoyé"}</span>
@@ -244,7 +244,7 @@ export default function ProposalActions({
                           </button>
                           <Link
                             href={`/invoices/new?from_proposal=${proposal.id}&type=acompte&pct=${acomptePct}`}
-                            className="flex-1 py-1.5 rounded-lg bg-green-600 text-white text-xs font-medium text-center hover:bg-green-700 transition-colors"
+                            className="flex-1 py-1.5 rounded-lg bg-green-700 text-white text-xs font-medium text-center hover:bg-green-800 transition-colors"
                             onClick={() => setConvertOpen(false)}
                           >
                             Créer {acomptePct}%
@@ -307,7 +307,7 @@ export default function ProposalActions({
         <button onClick={markAsSent} disabled={sending} className={BTN_PRIMARY}>{sending ? "…" : "Marquer envoyé"}</button>
       )}
       {canRemind && (
-        <button onClick={handleRemind} disabled={reminding} className="whitespace-nowrap text-sm font-medium px-3 py-1.5 rounded-lg bg-amber-500 hover:bg-amber-600 disabled:opacity-50 text-white transition-colors">
+        <button onClick={handleRemind} disabled={reminding} className="whitespace-nowrap text-sm font-medium px-3 py-1.5 rounded-lg bg-amber-700 hover:bg-amber-800 disabled:opacity-50 text-white transition-colors">
           {reminding ? "Envoi…" : reminderCount > 0 ? `Relancer (${reminderCount}/3)` : "Relancer le client"}
         </button>
       )}
@@ -343,7 +343,7 @@ export default function ProposalActions({
                   </div>
                   <div className="flex gap-2">
                     <button onClick={() => setAcompteMode(false)} className="flex-1 py-1.5 rounded-lg border border-ds-border text-xs text-gray-400 hover:bg-ds-elevated">← Retour</button>
-                    <Link href={`/invoices/new?from_proposal=${proposal.id}&type=acompte&pct=${acomptePct}`} className="flex-1 py-1.5 rounded-lg bg-green-600 text-white text-xs font-medium text-center hover:bg-green-700 transition-colors" onClick={() => setConvertOpen(false)}>Créer {acomptePct}%</Link>
+                    <Link href={`/invoices/new?from_proposal=${proposal.id}&type=acompte&pct=${acomptePct}`} className="flex-1 py-1.5 rounded-lg bg-green-700 text-white text-xs font-medium text-center hover:bg-green-800 transition-colors" onClick={() => setConvertOpen(false)}>Créer {acomptePct}%</Link>
                   </div>
                 </div>
               )}

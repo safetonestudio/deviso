@@ -140,7 +140,7 @@ export default async function MetierTarifsPage({ params }: Props) {
             <Link href="/login" className="text-gray-400 hover:text-white transition-colors">Connexion</Link>
             <Link
               href="/login"
-              className="bg-indigo-600 hover:bg-indigo-500 text-white text-sm font-semibold px-4 py-2 rounded-lg transition-colors"
+              className="bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-semibold px-4 py-2 rounded-lg transition-colors"
             >
               Essai gratuit
             </Link>
@@ -288,7 +288,7 @@ export default async function MetierTarifsPage({ params }: Props) {
           <div className="shrink-0">
             <Link
               href="/login"
-              className="inline-flex items-center gap-2 bg-indigo-600 hover:bg-indigo-500 text-white font-semibold px-5 py-3 rounded-xl transition-colors text-sm whitespace-nowrap"
+              className="inline-flex items-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold px-5 py-3 rounded-xl transition-colors text-sm whitespace-nowrap"
             >
               Essai gratuit 14 jours
             </Link>

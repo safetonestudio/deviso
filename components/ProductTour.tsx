@@ -253,7 +253,7 @@ export function ProductTour({ isMember = false }: { isMember?: boolean }) {
               )}
               <button
                 onClick={next}
-                className="text-xs font-semibold bg-indigo-600 hover:bg-indigo-500 text-white px-3 py-1.5 rounded-lg transition-colors"
+                className="text-xs font-semibold bg-indigo-600 hover:bg-indigo-700 text-white px-3 py-1.5 rounded-lg transition-colors"
               >
                 {isLast ? "C'est tout vu ✓" : "Suivant →"}
               </button>

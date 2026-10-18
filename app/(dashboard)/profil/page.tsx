@@ -391,7 +391,7 @@ Les présentes CGV sont soumises au droit français. Tout litige relève de la c
               setSaving(false);
             }}
             disabled={saving}
-            className="w-full bg-indigo-600 hover:bg-indigo-500 text-white font-semibold py-2 rounded-lg text-sm disabled:opacity-60 transition-colors"
+            className="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-2 rounded-lg text-sm disabled:opacity-60 transition-colors"
           >
             {saving ? "Enregistrement…" : saved ? "✓ Enregistré" : "Enregistrer"}
           </button>
@@ -439,11 +439,11 @@ Les présentes CGV sont soumises au droit français. Tout litige relève de la c
             {profile.plan === "free" ? (
               <>
                 <button type="button" onClick={() => handleUpgrade("solo")}
-                  className="text-sm px-3 py-1.5 bg-indigo-600 text-white rounded-lg hover:bg-indigo-500 font-medium transition-colors">
+                  className="text-sm px-3 py-1.5 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 font-medium transition-colors">
                   Passer Solo à 18€/mois
                 </button>
                 <button type="button" onClick={() => handleUpgrade("pro")}
-                  className="text-sm px-3 py-1.5 bg-violet-600 text-white rounded-lg hover:bg-violet-500 font-medium transition-colors">
+                  className="text-sm px-3 py-1.5 bg-violet-600 text-white rounded-lg hover:bg-violet-700 font-medium transition-colors">
                   Passer Pro à 34€/mois
                 </button>
               </>
@@ -670,7 +670,7 @@ Les présentes CGV sont soumises au droit français. Tout litige relève de la c
 
         {error && <p className="text-red-400 text-sm">{error}</p>}
         <button type="submit" disabled={saving}
-          className="w-full bg-indigo-600 hover:bg-indigo-500 disabled:opacity-50 text-white rounded-lg py-2.5 text-sm font-semibold transition-colors">
+          className="w-full bg-indigo-600 hover:bg-indigo-700 disabled:opacity-50 text-white rounded-lg py-2.5 text-sm font-semibold transition-colors">
           {saving ? "Enregistrement…" : saved ? "✓ Enregistré !" : "Enregistrer le profil"}
         </button>
       </form>
@@ -691,11 +691,7 @@ Les présentes CGV sont soumises au droit français. Tout litige relève de la c
               <div className="relative flex-1">
                 <input type="text" value={subdomainInput} onChange={(e) => handleSubdomainChange(e.target.value)}
                   placeholder="mon-agence" maxLength={30}
-                  className={`w-full bg-ds-bg border rounded-l-lg px-3 py-2.5 text-sm text-white placeholder:text-gray-600 focus:outline-none focus:ring-1 transition-colors ${
-                    subdomainStatus === "available" ? "border-emerald-500 focus:ring-emerald-500/30" :
-                    subdomainStatus === "taken" || subdomainStatus === "invalid" ? "border-red-500 focus:ring-red-500/30" :
-                    "border-ds-border focus:border-indigo-500 focus:ring-indigo-500/30"
-                  }`} />
+                  className={`w-full bg-ds-bg border rounded-l-lg px-3 py-2.5 text-sm text-white placeholder:text-gray-600 focus:outline-none focus:ring-1 transition-colors ${ subdomainStatus === "available" ? "border-emerald-500 focus:ring-emerald-500/30" : subdomainStatus === "taken" || subdomainStatus === "invalid" ? "border-red-500 focus:ring-red-500/30" : "border-ds-border focus:border-indigo-500 focus:ring-indigo-500/30" }`} />
                 {subdomainStatus === "checking" && (
                   <div className="absolute right-3 top-1/2 -translate-y-1/2">
                     <div className="w-3.5 h-3.5 border-2 border-indigo-400 border-t-transparent rounded-full animate-spin" />
@@ -711,7 +707,7 @@ Les présentes CGV sont soumises au droit français. Tout litige relève de la c
           </div>
           <div className="flex gap-3">
             <button type="button" onClick={handleSaveSubdomain} disabled={savingSubdomain || !canSaveSubdomain}
-              className="px-4 py-2 bg-indigo-600 text-white text-sm font-semibold rounded-lg hover:bg-indigo-500 disabled:opacity-40 disabled:cursor-not-allowed transition-colors">
+              className="px-4 py-2 bg-indigo-600 text-white text-sm font-semibold rounded-lg hover:bg-indigo-700 disabled:opacity-40 disabled:cursor-not-allowed transition-colors">
               {savingSubdomain ? "Enregistrement…" : "Enregistrer"}
             </button>
             {profile.subdomain && (
@@ -802,7 +798,7 @@ Les présentes CGV sont soumises au droit français. Tout litige relève de la c
 
           <div className="flex items-center gap-3 pt-1">
             <button type="button" onClick={handleSaveReminders} disabled={savingReminders}
-              className="px-4 py-2 bg-indigo-600 text-white text-sm font-semibold rounded-lg hover:bg-indigo-500 disabled:opacity-50 transition-colors">
+              className="px-4 py-2 bg-indigo-600 text-white text-sm font-semibold rounded-lg hover:bg-indigo-700 disabled:opacity-50 transition-colors">
               {savingReminders ? "Enregistrement…" : "Enregistrer"}
             </button>
             {remindersSaved && <span className="text-xs text-emerald-400">✓ Relances enregistrées !</span>}
@@ -916,7 +912,7 @@ Les présentes CGV sont soumises au droit français. Tout litige relève de la c
 
         <div className="flex items-center gap-3 pt-1">
           <button type="button" onClick={handleSaveChorus} disabled={savingChorus}
-            className="px-4 py-2 bg-indigo-600 text-white text-sm font-semibold rounded-lg hover:bg-indigo-500 disabled:opacity-50 transition-colors">
+            className="px-4 py-2 bg-indigo-600 text-white text-sm font-semibold rounded-lg hover:bg-indigo-700 disabled:opacity-50 transition-colors">
             {savingChorus ? "Enregistrement…" : "Enregistrer"}
           </button>
           {chorusSaved && <span className="text-xs text-emerald-400">✓ Connexion Chorus Pro enregistrée !</span>}
@@ -951,7 +947,7 @@ Les présentes CGV sont soumises au droit français. Tout litige relève de la c
             type="button"
             onClick={handleSaveCgv}
             disabled={savingCgv}
-            className="px-4 py-2 bg-indigo-600 text-white text-sm font-semibold rounded-lg hover:bg-indigo-500 disabled:opacity-50 transition-colors"
+            className="px-4 py-2 bg-indigo-600 text-white text-sm font-semibold rounded-lg hover:bg-indigo-700 disabled:opacity-50 transition-colors"
           >
             {savingCgv ? "Enregistrement…" : "Enregistrer"}
           </button>

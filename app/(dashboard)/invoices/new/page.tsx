@@ -609,7 +609,7 @@ export default function NewInvoicePage() {
               </p>
               <Link
                 href="/paiements"
-                className="inline-flex items-center gap-2 bg-emerald-600 hover:bg-emerald-500 text-white text-sm font-semibold px-4 py-2 rounded-lg transition-colors"
+                className="inline-flex items-center gap-2 bg-emerald-700 hover:bg-emerald-800 text-white text-sm font-semibold px-4 py-2 rounded-lg transition-colors"
               >
                 Configurer mes paiements →
               </Link>
@@ -941,7 +941,7 @@ export default function NewInvoicePage() {
               type="submit"
               disabled={loading || paymentConfigured === false}
               title={paymentConfigured === false ? "Configurez d'abord vos paiements" : undefined}
-              className="flex-1 bg-indigo-600 hover:bg-indigo-500 disabled:opacity-40 disabled:cursor-not-allowed text-white rounded-lg py-2.5 text-sm font-semibold transition-colors"
+              className="flex-1 bg-indigo-600 hover:bg-indigo-700 disabled:opacity-40 disabled:cursor-not-allowed text-white rounded-lg py-2.5 text-sm font-semibold transition-colors"
             >
               {loading ? "Création…" : invoiceType === "acompte" ? `Créer l'acompte ${depositPct}%` : invoiceType === "solde" ? "Créer la facture de solde" : "Créer la facture"}
             </button>
@@ -1003,7 +1003,7 @@ export default function NewInvoicePage() {
                 Annuler
               </button>
               <button type="button" onClick={confirmDuration} disabled={durationHours === 0 && durationMinutes === 0}
-                className="flex-1 px-4 py-2 text-sm font-semibold bg-violet-600 text-white rounded-lg hover:bg-violet-500 disabled:opacity-50 transition-colors">
+                className="flex-1 px-4 py-2 text-sm font-semibold bg-violet-600 text-white rounded-lg hover:bg-violet-700 disabled:opacity-50 transition-colors">
                 Ajouter
               </button>
             </div>

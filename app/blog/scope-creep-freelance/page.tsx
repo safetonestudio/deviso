@@ -219,7 +219,7 @@ export default function Page() {
             <p className="text-gray-400 mb-6 max-w-lg mx-auto text-sm leading-relaxed">
               Deviso génère votre devis avec une clause de périmètre et de révisions adaptées à votre mission. Votre client signe électroniquement, vous êtes couvert.
             </p>
-            <WaitlistButton plan="free" label="Générer mon devis, gratuit" className="inline-block bg-indigo-600 hover:bg-indigo-500 text-white font-semibold px-8 py-3 rounded-xl transition-all" />
+            <WaitlistButton plan="free" label="Générer mon devis, gratuit" className="inline-block bg-indigo-600 hover:bg-indigo-700 text-white font-semibold px-8 py-3 rounded-xl transition-all" />
           </div>
 
           {/* Métiers */}

@@ -286,7 +286,7 @@ export default function ChecklistReforme2026Page() {
           <p className="text-sm text-gray-400 mb-6 max-w-lg mx-auto">
             Deviso génère déjà des factures Factur-X au profil EN 16931 et, raccordé à une Plateforme Agréée (Super PDP), émet et reçoit déjà vos factures électroniques en conformité avec la réforme. Essayez gratuitement pendant 14 jours, sans carte bancaire.
           </p>
-          <WaitlistButton plan="free" label="Essayer Deviso gratuitement →" className="inline-flex items-center gap-2 bg-indigo-600 hover:bg-indigo-500 text-white font-semibold px-6 py-3 rounded-xl transition-colors text-sm" />
+          <WaitlistButton plan="free" label="Essayer Deviso gratuitement →" className="inline-flex items-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold px-6 py-3 rounded-xl transition-colors text-sm" />
           <p className="text-xs text-gray-400 mt-3">Factur-X inclus · Plateforme Agréée raccordée · E-reporting géré automatiquement</p>
           <Signature />
         </div>
