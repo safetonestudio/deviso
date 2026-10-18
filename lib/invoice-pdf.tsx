@@ -322,8 +322,8 @@ function fmt(n: number) {
     .replace(/[\u202F\u00A0]/g, " ");
 }
 
-function fmtDate(d: string) {
-  return new Date(d).toLocaleDateString("fr-FR", {
+function fmtDate(d: string, locale: string = "fr-FR") {
+  return new Date(d).toLocaleDateString(locale, {
     day: "2-digit",
     month: "long",
     year: "numeric",
@@ -344,6 +344,47 @@ export function fmtQty(quantity: number, unit: string): string {
   }
   return Number.isInteger(quantity) ? String(quantity) : String(quantity);
 }
+
+type PdfLang = "fr" | "en";
+
+/**
+ * Habillage du PDF par langue. Les mentions legales (art. L441-10, 293 B CGI,
+ * nature de l'operation, regime TVA) restent TOUJOURS en francais : elles sont
+ * imposees par le droit francais, leur traduction fragiliserait leur valeur.
+ */
+const LABELS: Record<PdfLang, {
+  titleFacture: string; titleAcompte: string; titleSolde: string; titleAvoir: string;
+  numberPrefix: string; issuedOn: string; dueOn: string;
+  from: string; billTo: string; vatNo: string;
+  colDesc: string; colQty: string; colUnit: string; colPrice: string; colTotal: string;
+  subtotal: string; vatNotApplicable: string; vatRate: string;
+  totalInclVat: string; totalCredit: string;
+  paymentDetails: string; bankTransfer: string; accountHolder: string; onlinePayment: string;
+  termsNotes: string; paymentPrefix: string; legalHeading: string; footerBadge: string;
+}> = {
+  fr: {
+    titleFacture: "FACTURE", titleAcompte: "FACTURE D'ACOMPTE", titleSolde: "FACTURE DE SOLDE", titleAvoir: "AVOIR",
+    numberPrefix: "N\u00b0", issuedOn: "\u00c9mise le", dueOn: "\u00c9ch\u00e9ance le",
+    from: "\u00c9metteur", billTo: "Destinataire", vatNo: "N\u00b0 TVA",
+    colDesc: "Prestation", colQty: "Qt\u00e9", colUnit: "Unit\u00e9", colPrice: "P.U. HT", colTotal: "Total HT",
+    subtotal: "Total HT", vatNotApplicable: "TVA non applicable", vatRate: "TVA",
+    totalInclVat: "Total TTC", totalCredit: "Total TTC \u00e0 votre cr\u00e9dit",
+    paymentDetails: "Modalit\u00e9s de paiement", bankTransfer: "Virement bancaire", accountHolder: "Titulaire", onlinePayment: "Paiement en ligne s\u00e9curis\u00e9",
+    termsNotes: "Conditions & notes", paymentPrefix: "Paiement :", legalHeading: "Mentions l\u00e9gales",
+    footerBadge: "Factur-X EN 16931, Conforme r\u00e9forme 2026",
+  },
+  en: {
+    titleFacture: "INVOICE", titleAcompte: "DEPOSIT INVOICE", titleSolde: "BALANCE INVOICE", titleAvoir: "CREDIT NOTE",
+    numberPrefix: "No.", issuedOn: "Issued on", dueOn: "Due on",
+    from: "From", billTo: "Bill to", vatNo: "VAT No.",
+    colDesc: "Description", colQty: "Qty", colUnit: "Unit", colPrice: "Unit price", colTotal: "Amount",
+    subtotal: "Subtotal", vatNotApplicable: "VAT not applicable", vatRate: "VAT",
+    totalInclVat: "Total", totalCredit: "Total credited to you",
+    paymentDetails: "Payment details", bankTransfer: "Bank transfer", accountHolder: "Account holder", onlinePayment: "Secure online payment",
+    termsNotes: "Terms & notes", paymentPrefix: "Payment:", legalHeading: "Legal notices",
+    footerBadge: "Factur-X EN 16931, 2026 e-invoicing compliant",
+  },
+};
 
 interface Props {
   invoice: Invoice;
@@ -366,6 +407,9 @@ export function InvoicePDF({ invoice, accentColor, paymentInfo, linkedInvoiceNum
   const isAcompte = invoice.invoice_type === "acompte";
   const isSolde = invoice.invoice_type === "solde";
   const isAvoir = invoice.invoice_type === "avoir";
+  const lang: PdfLang = invoice.language === "en" ? "en" : "fr";
+  const t = LABELS[lang];
+  const dateLocale = lang === "en" ? "en-GB" : "fr-FR";
   const linkedNumber = linkedInvoiceNumber ?? invoice.linked_invoice_number ?? null;
   // Même n° de TVA que celui injecté dans le XML : le PDF lisible et les données
   // structurées doivent dire strictement la même chose.
@@ -389,12 +433,12 @@ export function InvoicePDF({ invoice, accentColor, paymentInfo, linkedInvoiceNum
   // « FACTURE » sur un document qui rend de l'argent, c'est provoquer une
   // écriture à l'envers.
   const title = isAvoir
-    ? "AVOIR"
+    ? t.titleAvoir
     : isAcompte
-    ? "FACTURE D'ACOMPTE"
+    ? t.titleAcompte
     : isSolde
-    ? "FACTURE DE SOLDE"
-    : "FACTURE";
+    ? t.titleSolde
+    : t.titleFacture;
 
   /**
    * Les textes multi-lignes sont assemblés ici plutôt qu'en JSX.
@@ -404,14 +448,14 @@ export function InvoicePDF({ invoice, accentColor, paymentInfo, linkedInvoiceNum
    * à invalider la conformité PDF/A. Un enfant unique de type chaîne l'évite.
    */
   const bankText = [
-    `Virement bancaire${paymentInfo?.bankAccountName ? `, Titulaire : ${paymentInfo.bankAccountName}` : ""}`,
+    `${t.bankTransfer}${paymentInfo?.bankAccountName ? `, ${t.accountHolder} : ${paymentInfo.bankAccountName}` : ""}`,
     `IBAN : ${paymentInfo?.bankIban ?? ""}`,
     paymentInfo?.bankBic ? `BIC : ${paymentInfo.bankBic}` : "",
   ]
     .filter(Boolean)
     .join("\n");
 
-  const linkText = `Paiement en ligne sécurisé${
+  const linkText = `${t.onlinePayment}${
     paymentInfo?.linkProvider ? ` (${paymentInfo.linkProvider})` : ""
   } : ${paymentInfo?.linkUrl ?? ""}`;
 
@@ -458,13 +502,13 @@ export function InvoicePDF({ invoice, accentColor, paymentInfo, linkedInvoiceNum
             </Text>
           </View>
           <View>
-            <Text style={styles.invoiceLabel}>N° {invoice.invoice_number}</Text>
+            <Text style={styles.invoiceLabel}>{t.numberPrefix} {invoice.invoice_number}</Text>
             <Text style={styles.invoiceMeta}>
-              Émise le {fmtDate(invoice.issue_date)}
+              {t.issuedOn} {fmtDate(invoice.issue_date, dateLocale)}
             </Text>
             {invoice.due_date && (
               <Text style={styles.invoiceMeta}>
-                Échéance le {fmtDate(invoice.due_date)}
+                {t.dueOn} {fmtDate(invoice.due_date, dateLocale)}
               </Text>
             )}
           </View>
@@ -499,7 +543,7 @@ export function InvoicePDF({ invoice, accentColor, paymentInfo, linkedInvoiceNum
         {/* ── Parties ── */}
         <View style={styles.partiesRow}>
           <View style={styles.partyBox}>
-            <Text style={styles.partyLabel}>Émetteur</Text>
+            <Text style={styles.partyLabel}>{t.from}</Text>
             <Text style={styles.partyName}>
               {invoice.seller_company || invoice.seller_name || ""}
             </Text>
@@ -510,13 +554,13 @@ export function InvoicePDF({ invoice, accentColor, paymentInfo, linkedInvoiceNum
               <Text style={styles.partyDetail}>{idLabel(invoice.seller_siren)}</Text>
             )}
             {sellerVatDisplay && (
-              <Text style={styles.partyDetail}>N° TVA : {sellerVatDisplay}</Text>
+              <Text style={styles.partyDetail}>{t.vatNo} : {sellerVatDisplay}</Text>
             )}
           </View>
 
           <View style={styles.partyBox}>
             <Text style={[styles.partyLabel, { textAlign: "right" }]}>
-              Destinataire
+              {t.billTo}
             </Text>
             <Text style={[styles.partyName, { textAlign: "right" }]}>
               {invoice.client_company || invoice.client_name || ""}
@@ -536,7 +580,7 @@ export function InvoicePDF({ invoice, accentColor, paymentInfo, linkedInvoiceNum
             )}
             {invoice.client_vat_number && (
               <Text style={[styles.partyDetail, { textAlign: "right" }]}>
-                N° TVA : {invoice.client_vat_number}
+                {t.vatNo} : {invoice.client_vat_number}
               </Text>
             )}
           </View>
@@ -546,15 +590,15 @@ export function InvoicePDF({ invoice, accentColor, paymentInfo, linkedInvoiceNum
         <View style={styles.table}>
           <View style={[styles.tableHeader, { backgroundColor: accent }]}>
             <Text style={[styles.tableHeaderText, styles.colDesc]}>
-              Prestation
+              {t.colDesc}
             </Text>
-            <Text style={[styles.tableHeaderText, styles.colQty]}>Qté</Text>
-            <Text style={[styles.tableHeaderText, styles.colUnit]}>Unité</Text>
+            <Text style={[styles.tableHeaderText, styles.colQty]}>{t.colQty}</Text>
+            <Text style={[styles.tableHeaderText, styles.colUnit]}>{t.colUnit}</Text>
             <Text style={[styles.tableHeaderText, styles.colPrice]}>
-              P.U. HT
+              {t.colPrice}
             </Text>
             <Text style={[styles.tableHeaderText, styles.colTotal]}>
-              Total HT
+              {t.colTotal}
             </Text>
           </View>
 
@@ -584,12 +628,12 @@ export function InvoicePDF({ invoice, accentColor, paymentInfo, linkedInvoiceNum
         <View style={styles.totalsContainer}>
           <View style={styles.totalsBox}>
             <View style={styles.totalRow}>
-              <Text style={styles.totalLabel}>Total HT</Text>
+              <Text style={styles.totalLabel}>{t.subtotal}</Text>
               <Text style={styles.totalValue}>{fmt(invoice.total_ht)}</Text>
             </View>
             <View style={styles.totalRow}>
               <Text style={styles.totalLabel}>
-                {exonere ? "TVA non applicable" : `TVA ${invoice.tva_rate}%`}
+                {exonere ? t.vatNotApplicable : `${t.vatRate} ${invoice.tva_rate}%`}
               </Text>
               <Text style={styles.totalValue}>
                 {fmt(invoice.total_ttc - invoice.total_ht)}
@@ -597,7 +641,7 @@ export function InvoicePDF({ invoice, accentColor, paymentInfo, linkedInvoiceNum
             </View>
             <View style={[styles.totalRowFinal, { backgroundColor: accent }]}>
               <Text style={styles.totalLabelFinal}>
-                {isAvoir ? "Total TTC à votre crédit" : "Total TTC"}
+                {isAvoir ? t.totalCredit : t.totalInclVat}
               </Text>
               <Text style={styles.totalValueFinal}>
                 {fmt(invoice.total_ttc)}
@@ -612,7 +656,7 @@ export function InvoicePDF({ invoice, accentColor, paymentInfo, linkedInvoiceNum
             document qui le crédite. */}
         {!isAvoir && (showBank || showLink) && (
           <View style={styles.notesBox}>
-            <Text style={styles.notesLabel}>Modalités de paiement</Text>
+            <Text style={styles.notesLabel}>{t.paymentDetails}</Text>
             {showBank && <Text style={styles.notesText}>{bankText}</Text>}
             {showLink && <Text style={styles.notesText}>{linkText}</Text>}
           </View>
@@ -621,9 +665,9 @@ export function InvoicePDF({ invoice, accentColor, paymentInfo, linkedInvoiceNum
         {/* ── Notes / Conditions ── */}
         {(invoice.payment_terms || invoice.notes) && (
           <View style={styles.notesBox}>
-            <Text style={styles.notesLabel}>Conditions & notes</Text>
+            <Text style={styles.notesLabel}>{t.termsNotes}</Text>
             {invoice.payment_terms && (
-              <Text style={styles.notesText}>{`Paiement : ${invoice.payment_terms}`}</Text>
+              <Text style={styles.notesText}>{`${t.paymentPrefix} ${invoice.payment_terms}`}</Text>
             )}
             {invoice.notes && (
               <Text style={styles.notesText}>{invoice.notes}</Text>
@@ -633,7 +677,7 @@ export function InvoicePDF({ invoice, accentColor, paymentInfo, linkedInvoiceNum
 
         {/* ── Mentions légales 2026 ── */}
         <View style={styles.notesBox}>
-          <Text style={styles.notesLabel}>Mentions légales</Text>
+          <Text style={styles.notesLabel}>{t.legalHeading}</Text>
           <Text style={styles.notesText}>{legalText}</Text>
         </View>
 
@@ -641,7 +685,7 @@ export function InvoicePDF({ invoice, accentColor, paymentInfo, linkedInvoiceNum
         <View style={styles.footer} fixed>
           <Text style={styles.footerText}>{footerText}</Text>
           <Text style={[styles.facturxBadge, { color: accent }]}>
-            Factur-X EN 16931, Conforme réforme 2026
+            {t.footerBadge}
           </Text>
         </View>
       </Page>

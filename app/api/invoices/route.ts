@@ -79,6 +79,7 @@ export async function POST(req: NextRequest) {
     "seller_name", "seller_company", "seller_siren", "seller_tva_number", "seller_address",
     "seller_street", "seller_postcode", "seller_city", "seller_country",
     "items", "tva_rate", "issue_date", "due_date", "payment_terms",
+    "language",
     "invoice_type", "deposit_percentage", "linked_invoice_id", "operation_category",
     "payment_on_debit", "type_code",
   ]);

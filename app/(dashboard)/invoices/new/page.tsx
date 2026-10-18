@@ -99,6 +99,7 @@ export default function NewInvoicePage() {
   // facture relève du circuit national (B2B) ou de l'e-reporting des
   // opérations internationales (B2BInt).
   const [clientCountry, setClientCountry] = useState("FR");
+  const [language, setLanguage] = useState<"fr" | "en">("fr");
 
   // Catalogue
   const [catalog, setCatalog] = useState<CatalogItem[]>([]);
@@ -400,6 +401,7 @@ export default function NewInvoicePage() {
         client_postcode: clientPostcode || null,
         client_city: clientCity || null,
         client_country: clientCountry || null,
+        language,
         seller_company: sellerCompany,
         seller_siren: sellerSiren || null,
         seller_street: sellerStreet || null,
@@ -728,7 +730,7 @@ export default function NewInvoicePage() {
                 <label className="block text-xs font-medium text-gray-400 mb-1">Pays</label>
                 <select aria-label="Pays"
                   value={clientCountry}
-                  onChange={(e) => setClientCountry(e.target.value)}
+                  onChange={(e) => { setClientCountry(e.target.value); setLanguage(e.target.value && e.target.value !== "FR" ? "en" : "fr"); }}
                   className={inputCls}
                 >
                   {PAYS_FACTURATION.map((p) => (
@@ -741,6 +743,22 @@ export default function NewInvoicePage() {
                   <p className="text-[11px] text-gray-500 mt-1">
                     Opération internationale : déclarée à l&apos;administration, non acheminée par le
                     réseau national.
+                  </p>
+                )}
+              </div>
+              <div>
+                <label className="block text-xs font-medium text-gray-400 mb-1">Langue du document</label>
+                <select aria-label="Langue du document"
+                  value={language}
+                  onChange={(e) => setLanguage(e.target.value as "fr" | "en")}
+                  className={inputCls}
+                >
+                  <option value="fr">Français</option>
+                  <option value="en">English</option>
+                </select>
+                {language === "en" && (
+                  <p className="text-[11px] text-gray-500 mt-1">
+                    Habillage du PDF en anglais. Les mentions légales restent en français.
                   </p>
                 )}
               </div>

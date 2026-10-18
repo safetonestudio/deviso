@@ -197,6 +197,8 @@ export interface Invoice {
   due_date: string | null;
   payment_terms: string | null;
   notes: string | null;
+  /** Langue d'edition du PDF (habillage seulement ; mentions legales toujours en FR). */
+  language: "fr" | "en";
 
   status: InvoiceStatus;
   payment_link_url: string | null;
