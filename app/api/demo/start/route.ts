@@ -772,6 +772,14 @@ async function seedDemoData(userId: string): Promise<string[]> {
       created_at: new Date().toISOString(), updated_at: new Date().toISOString(),
     },
   ]);
+  // Livre des recettes : une facture payée porte une date et un mode
+  // d'encaissement, comme dans la vraie vie, sinon la démo affiche un livre
+  // rempli de dates « estimées ».
+  for (const [i, f] of (facturesDemo as unknown as Record<string, unknown>[]).entries()) {
+    if (f.status !== "paid") continue;
+    if (!f.paid_at) f.paid_at = String(f.updated_at ?? f.issue_date).slice(0, 10);
+    if (!f.payment_mode) f.payment_mode = i % 3 === 0 ? "carte" : "virement";
+  }
   const { error: erreurFactures } = await admin.from("invoices").insert(facturesDemo);
   if (erreurFactures) throw erreurFactures;
 

@@ -199,6 +199,8 @@ export interface Invoice {
   notes: string | null;
   /** Langue d'edition du PDF (habillage seulement ; mentions legales toujours en FR). */
   language: "fr" | "en";
+  /** Mode de reglement saisi a l'encaissement (livre des recettes). */
+  payment_mode: "virement" | "carte" | "cheque" | "especes" | "prelevement" | "autre" | null;
 
   status: InvoiceStatus;
   payment_link_url: string | null;

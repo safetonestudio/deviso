@@ -21,6 +21,7 @@ import {
 import { libelleStatut } from "@/lib/superpdp-statuts";
 import { etatPdp } from "@/lib/superpdp-etat-facture";
 import type { Invoice } from "@/types";
+import { MODES_REGLEMENT, type ModeReglement } from "@/lib/recettes";
 
 const STATUS_LABEL: Record<string, string> = {
   draft: "Brouillon",
@@ -122,9 +123,12 @@ function ActionPanel({ invoice, id, router, hasChorusPro }: {
   // et c'est ce qui justifie de demander avant plutôt que de proposer de
   // modifier après.
   //
-  // On ne la demande que dans ce cas. Sur une facture non transmise, il n'y a
-  // rien à déclarer : le bouton reste à un clic, comme avant.
+  // Depuis le 24/10/2026, la date ET le mode de reglement sont demandes a
+  // chaque encaissement, transmis ou non : ce sont deux mentions obligatoires
+  // du livre des recettes. Seul l'avertissement « ne pourra plus etre
+  // corrigee » reste reserve aux factures transmises.
   const [demandeDatePaiement, setDemandeDatePaiement] = useState(false);
+  const [modeReglement, setModeReglement] = useState<ModeReglement>("virement");
   const [datePaiement, setDatePaiement] = useState(() => new Date().toISOString().slice(0, 10));
   const dateEncaissementRequise = Boolean(inv.superpdp_invoice_id) && !inv.superpdp_encaisse_at;
 
@@ -143,16 +147,16 @@ function ActionPanel({ invoice, id, router, hasChorusPro }: {
     setDownloading(false);
   }
 
-  async function handleMarkPaid(dateEncaissement?: string) {
+  async function handleMarkPaid(dateEncaissement: string, mode: ModeReglement) {
     setMarkingPaid(true);
     const res = await fetch(`/api/invoices/${id}`, {
       method: "PATCH",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
         status: "paid",
-        // Envoyée seulement si l'écran l'a demandée. Sur une facture non
-        // transmise, il n'y a rien à déclarer et rien à saisir.
-        ...(dateEncaissement ? { paid_at: dateEncaissement } : {}),
+        // Date et mode d'encaissement : mentions du livre des recettes.
+        paid_at: dateEncaissement,
+        payment_mode: mode,
       }),
     });
     const data = await res.json();
@@ -422,9 +426,7 @@ function ActionPanel({ invoice, id, router, hasChorusPro }: {
             )}
             {canMarkPaid && !demandeDatePaiement && (
               <button
-                onClick={() =>
-                  dateEncaissementRequise ? setDemandeDatePaiement(true) : handleMarkPaid()
-                }
+                onClick={() => setDemandeDatePaiement(true)}
                 disabled={markingPaid}
                 className="w-full text-sm font-medium px-4 py-2.5 rounded-lg border border-emerald-500/30 hover:bg-emerald-500/10 text-emerald-400 disabled:opacity-50 transition-colors text-left flex items-center gap-2"
               >
@@ -446,16 +448,28 @@ function ActionPanel({ invoice, id, router, hasChorusPro }: {
                   onChange={(e) => setDatePaiement(e.target.value)}
                   className="w-full text-sm px-3 py-2 rounded-lg bg-ds-elevated border border-ds-border text-gray-200 focus:outline-none focus:border-emerald-500/50"
                 />
-                {/* Pourquoi on demande, en une phrase. Un champ de date qui
-                    apparaît sans raison ressemble à une complication ; celui-ci
-                    en a une, et elle est définitive. */}
+                <label htmlFor="mode-reglement" className="block text-sm font-medium text-emerald-300">
+                  Réglée par
+                </label>
+                <select aria-label="Réglée par"
+                  id="mode-reglement"
+                  value={modeReglement}
+                  onChange={(e) => setModeReglement(e.target.value as ModeReglement)}
+                  className="w-full text-sm px-3 py-2 rounded-lg bg-ds-elevated border border-ds-border text-gray-200 focus:outline-none focus:border-emerald-500/50"
+                >
+                  {(Object.keys(MODES_REGLEMENT) as ModeReglement[]).map((m) => (
+                    <option key={m} value={m}>{MODES_REGLEMENT[m]}</option>
+                  ))}
+                </select>
+                {/* Pourquoi on demande, en une phrase. */}
                 <p className="text-xs text-gray-400 leading-relaxed">
-                  Cette date part à l&apos;administration avec la déclaration
-                  d&apos;encaissement. Elle ne pourra plus être corrigée ensuite.
+                  {dateEncaissementRequise
+                    ? "Cette date part à l'administration avec la déclaration d'encaissement. Elle ne pourra plus être corrigée ensuite."
+                    : "Ces informations alimentent votre livre des recettes."}
                 </p>
                 <div className="flex gap-2">
                   <button
-                    onClick={() => handleMarkPaid(datePaiement)}
+                    onClick={() => handleMarkPaid(datePaiement, modeReglement)}
                     disabled={markingPaid || !datePaiement}
                     className="flex-1 text-sm font-medium px-3 py-2 rounded-lg bg-emerald-500/15 border border-emerald-500/40 hover:bg-emerald-500/25 text-emerald-300 disabled:opacity-50 transition-colors"
                   >

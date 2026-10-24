@@ -9,6 +9,7 @@ import { ProductTour } from "@/components/ProductTour";
 import { GuidedTourBanner } from "@/components/GuidedTourBanner";
 import { DashboardActionFeed, type ActionItem } from "@/components/DashboardActionFeed";
 import { CaUrssafWidget } from "@/components/CaUrssafWidget";
+import { caMensuelHt as calculerCaMensuelHt, encaisseTtcDuMois, type FactureRecette } from "@/lib/recettes";
 import {
   Sparkles, Receipt, FileText, Send,
   Euro, TrendingUp, ArrowRight, Clock,
@@ -134,15 +135,8 @@ export default async function DashboardPage() {
   //     l'audit du 08/09 : c'est ce chiffre-là qu'on reporte sur une
   //     déclaration, et la TVA collectée n'appartient pas à l'entreprise.
   const anneeCourante = now.getFullYear();
-  const caMensuelHt = Array(12).fill(0) as number[];
-  for (const f of inv) {
-    if (f.status !== "paid") continue;
-    const quand = f.paid_at || f.issue_date;
-    if (!quand || Number(String(quand).slice(0, 4)) !== anneeCourante) continue;
-    const mois = Number(String(quand).slice(5, 7)) - 1;
-    if (mois < 0 || mois > 11) continue;
-    caMensuelHt[mois] += signeCa(f) * (f.total_ht ?? 0);
-  }
+  // Calcul partagé avec le livre des recettes (lib/recettes.ts).
+  const caMensuelHt = calculerCaMensuelHt(inv as unknown as FactureRecette[], anneeCourante);
 
   // Les échéances URSSAF affichées par le widget sont celles du
   // micro-entrepreneur. On ne les montre que lorsqu'on peut l'affirmer, la
@@ -161,9 +155,12 @@ export default async function DashboardPage() {
     caMensuelHt[currentQuarter * 3 + 2];
   const URSSAF_DEADLINES = ["30 avril", "31 juillet", "31 octobre", "31 janvier"];
   const echeanceDepot = echeancesUrssaf ? URSSAF_DEADLINES[currentQuarter] : null;
-  const caThisMonth      = inv
-    .filter((i) => i.status === "paid" && i.created_at >= monthStart)
-    .reduce((s, i) => s + signeCa(i) * i.total_ttc, 0);
+  // Encaissé ce mois : date d'ENCAISSEMENT (paid_at), pas date de création de
+  // la facture comme jusqu'au 24/10/2026. Même source que le livre des recettes.
+  const caThisMonth = encaisseTtcDuMois(
+    inv as unknown as FactureRecette[],
+    `${anneeCourante}-${String(now.getMonth() + 1).padStart(2, "0")}`
+  );
   const facturéThisMonth = inv
     .filter((i) => i.status !== "cancelled" && i.status !== "draft" && i.created_at >= monthStart)
     .reduce((s, i) => s + signeCa(i) * i.total_ttc, 0);

@@ -42,6 +42,7 @@ export const FEATURES: Feature[] = [
   { id: "fecExport",      label: "Export comptable FEC",                           plans: ["solo", "pro"], show: true },
   { id: "noBranding",     label: "Sans branding Deviso sur vos documents",         plans: ["solo", "pro"], show: true },
   { id: "historyUnlimited", label: "Historique et exports illimités",              plans: ["solo", "pro"], show: true },
+  { id: "livreRecettes",   label: "Livre des recettes tenu automatiquement",      plans: ["solo", "pro"], show: true },
 
   // Réservé Pro, vendu sur la carte Pro.
   { id: "remindersCustom", label: "Relances automatiques programmables",                      plans: ["pro"], show: true },

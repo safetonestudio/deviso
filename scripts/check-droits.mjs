@@ -55,6 +55,7 @@ const TITULAIRE = [
   "export/fec/route.ts",
   "export/invoices-csv/route.ts",
   "export/monthly-recap/route.ts",
+  "export/livre-recettes/route.ts",
   "crm/route.ts",
   "stats/route.ts",
   "superpdp/invoices/[id]/encaisser/route.ts",

@@ -68,6 +68,7 @@ const ROUTE_RULES = [
   { id: "invoices",  routes: ["app/api/invoices/route.ts"] },
   { id: "logo",      routes: ["app/api/profile/logo/route.ts"] },
   { id: "recurring", routes: ["app/api/recurring/route.ts"] },
+  { id: "livreRecettes", routes: ["app/api/export/livre-recettes/route.ts"] },
 ];
 
 let croisees = 0;

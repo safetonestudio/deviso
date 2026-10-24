@@ -4,6 +4,7 @@ import { createClient as createAdminClient } from "@supabase/supabase-js";
 import { getWorkspaceUserId } from "@/lib/workspace";
 import { exigerTitulaire, exigerActe } from "@/lib/droits";
 import { envoyerEncaissementPdp } from "@/lib/superpdp-encaissement";
+import { estModeReglement } from "@/lib/recettes";
 
 type Params = { params: Promise<{ id: string }> };
 
@@ -64,7 +65,7 @@ export async function PATCH(req: NextRequest, { params }: Params) {
   // d'encaissement (fr:212) : réservé au titulaire du compte (décision du
   // 21/09, voir CLAUDE.md). Un membre édite la facture, il ne pointe pas les
   // paiements ni ne déclare la TVA.
-  if (body.status === "paid" || body.paid_at !== undefined) {
+  if (body.status === "paid" || body.paid_at !== undefined || body.payment_mode !== undefined) {
     const refusT = exigerTitulaire(user.id, workspaceId);
     if (refusT) return refusT;
   }
@@ -101,10 +102,16 @@ export async function PATCH(req: NextRequest, { params }: Params) {
     // elle qui détermine la période d'exigibilité déclarée, et elle n'est plus
     // corrigeable une fois le `fr:212` parti.
     "paid_at",
+    // Mode de reglement, mention obligatoire du livre des recettes.
+    "payment_mode",
   ] as const;
   const safeUpdate = Object.fromEntries(
     Object.entries(body).filter(([k]) => ALLOWED.includes(k as typeof ALLOWED[number]))
   );
+
+  if ("payment_mode" in safeUpdate && safeUpdate.payment_mode !== null && !estModeReglement(safeUpdate.payment_mode)) {
+    return NextResponse.json({ error: "MODE_REGLEMENT_INVALIDE" }, { status: 400 });
+  }
 
   // Charger la facture actuelle : statut (changement d'état) et items+taux
   // (recalcul des totaux).
