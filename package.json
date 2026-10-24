@@ -21,6 +21,7 @@
     "check:superpdp-env": "node scripts/check-superpdp-env.mjs",
     "check:client-pur": "node scripts/check-client-pur.mjs",
     "test:achats": "npx -y tsx scripts/e2e/achats.ts",
+    "test:urssaf-tdae": "npx -y tsx scripts/e2e/urssaf-tdae.ts",
     "test:blocages": "node --experimental-strip-types --no-warnings scripts/e2e/blocages.mjs",
     "test:annuaire-reel": "node scripts/e2e/annuaire-reel.mjs",
     "test:conformite": "node scripts/e2e/conformite-xml.mjs",

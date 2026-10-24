@@ -4,8 +4,9 @@ Note de cadrage. Objectif : permettre a un micro-entrepreneur utilisateur de
 Deviso de déclarer son chiffre d'affaires a l'URSSAF (et le cas échéant de
 payer) directement depuis Deviso, sans ressaisie sur autoentrepreneur.urssaf.fr.
 
-Statut au 29/09/2026 : NON commencé. Note de faisabilité, pas d'engagement de
-planning. Rien n'est codé.
+Statut au 24/10/2026 : client, règles, base et route codés et testés contre la
+documentation ; écrans en attente de la charte URSSAF ; accès bac à sable en
+cours (DataPass D99994).
 
 ## Ne pas confondre avec Super PDP
 
@@ -48,14 +49,66 @@ Sources :
 - https://www.data.gouv.fr/dataservices/api-tierce-declaration-auto-entrepreneur
 - https://www.autoentrepreneur.urssaf.fr/portail/accueil/informations-tierce-declaration.html
 
-## Ce qui reste a établir (NON vérifié, a confirmer aupres de l'URSSAF)
+## Contrat technique (vérifié le 24/10/2026)
 
-- Forme exacte et pieces de la demande d'habilitation éditeur, et délai.
-- Format d'échange précis (OpenAPI, authentification, format du mandat).
-- Périmetre du mandat : un mandat par utilisateur, révocable, sa forme légale.
-- Contraintes de sécurité (mTLS, certificat, IP, secret) côté tiers déclarant.
-- Responsabilité en cas d'erreur de déclaration transmise par Deviso.
-- Le paiement SEPA : le proposer ou s'arreter a la déclaration (moins de risque).
+Sources : documentation ACOSS-Documentation-API-TDAEV1 v1.5.0 (PDF du portail
+API URSSAF, fiche « API Tierce Declaration auto-entrepreneur ») et contrat
+Swagger 2.0 de production 1.5.1 (sandbox annoncée en 1.5.0).
+
+- Hôte de production : https://api.urssaf.fr, chemin /tiersdecl/v1/ae.
+- Authentification : OAuth2 Client Credentials, jeton sur
+  https://api.urssaf.fr/api/oauth/v1/token, scope `tiersdecl.ae`.
+- Quota : 300 requêtes par minute, HTTP 429 au-delà.
+- Identifiant : SIRET seul (le NIR est déprécié).
+- 020 GET /comptes : mandatPresent, periodicite (M ou T), date_etat
+  (début d'activité, JJ/MM/AAAA), exoAccrePresent.
+- 030 POST /mandats?siret&dateNaissance : la date de naissance doit être celle
+  connue de l'URSSAF ; mail automatique à l'AE ; un seul tiers déclarant par
+  SIRET (SIRET_DEJA_MANDATE).
+- 031 DELETE /mandats : annulation, mail automatique.
+- 040 POST /estimer, corps { ca } : estimation (la date n'est plus utilisée).
+- 050 POST /declarer, corps { ca, periode } : montants entiers arrondis à la
+  règle DGFiP ; la période doit être ouverte (APPEL_INCONNU) et couverte par
+  le mandat (MDT_HORS_PERIODE) ; une redéclaration sur la même période ouverte
+  annule et remplace (certificat stable, idDeclaration nouveau). Cotisations
+  dues = montantTotal + montantRegulAcre + montantDeduction.
+- Le contrat 1.5.1 ajoute des montants « VL » (versement libératoire) absents
+  du PDF : pris en compte dans les types.
+- Paiement SEPA (060 à 075) : hors périmètre de départ.
+- Adresses du bac à sable : non publiées, fournies avec l'accès.
+
+## Ce qui est codé (24/10/2026)
+
+- `lib/urssaf-periodes.ts` : périodes, échéances (dont le tableau des
+  premières échéances en début d'activité), arrondi, CA de la période depuis
+  le livre des recettes.
+- `lib/urssaf-tdae.ts` : client (jeton en cache, un seul renouvellement sur
+  401, contrôles avant envoi), traduction de chaque code d'erreur en message
+  clair, simulateur fidèle aux erreurs documentées.
+- Tables `urssaf_tdae_comptes` (mandat) et `urssaf_tdae_declarations`
+  (journal en ajout seul, preuve de ce qui a été envoyé).
+- Route `app/api/urssaf/tdae` (titulaire seul, formules Solo et Pro) :
+  état, mandat, révocation, estimation, déclaration. Le montant envoyé est
+  recalculé côté serveur et doit être celui confirmé par l'utilisateur.
+- Test : `npm run test:urssaf-tdae` (règles, forme exacte des requêtes,
+  erreurs).
+
+Activation par variables d'environnement Vercel :
+`URSSAF_TDAE_MODE` = simulation | sandbox | production ; en sandbox
+`URSSAF_TDAE_API_URL`, `URSSAF_TDAE_TOKEN_URL`, `URSSAF_TDAE_CLIENT_ID`,
+`URSSAF_TDAE_CLIENT_SECRET` ; en production, en plus,
+`URSSAF_TDAE_PRODUCTION_AUTORISEE=oui`. Sans `URSSAF_TDAE_MODE`, la route
+répond 404.
+
+## Reste à faire
+
+- Écrans (mandat, déclaration, historique) : attendent la charte
+  « Autoentrepreneur Connect » demandée à l'URSSAF, dont les maquettes
+  doivent être validées avant la production.
+- Brancher le bac à sable dès réception des identifiants, rejouer le
+  parcours complet, puis demander la production.
+- Répartition du CA entre plusieurs catégories (activité mixte) : une seule
+  catégorie par compte pour l'instant.
 
 ## Démarche a la charge de Selim (ne peut pas etre faite par Claude)
 

@@ -61,6 +61,7 @@ function regleRoute(src) {
 
 const ROUTE_RULES = [
   { id: "fecExport", routes: ["app/api/export/fec/route.ts"] },
+  { id: "teledeclarationUrssaf", routes: ["app/api/urssaf/tdae/route.ts"] },
   { id: "csvRecap",  routes: ["app/api/export/invoices-csv/route.ts", "app/api/export/monthly-recap/route.ts"] },
   { id: "crm",       routes: ["app/api/crm/route.ts"] },
   { id: "catalog",   routes: ["app/api/catalog/route.ts"] },

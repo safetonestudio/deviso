@@ -42,6 +42,8 @@ export const FEATURES: Feature[] = [
   { id: "fecExport",      label: "Export comptable FEC",                           plans: ["solo", "pro"], show: true },
   { id: "noBranding",     label: "Sans branding Deviso sur vos documents",         plans: ["solo", "pro"], show: true },
   { id: "historyUnlimited", label: "Historique et exports illimités",              plans: ["solo", "pro"], show: true },
+  // Masquée tant que l'habilitation URSSAF n'est pas obtenue (route en 404).
+  { id: "teledeclarationUrssaf", label: "Déclaration de CA à l'URSSAF depuis Deviso", plans: ["solo", "pro"], show: false },
   { id: "livreRecettes",   label: "Livre des recettes tenu automatiquement",      plans: ["solo", "pro"], show: true },
 
   // Réservé Pro, vendu sur la carte Pro.
