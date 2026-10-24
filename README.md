@@ -1,142 +1,65 @@
-# Deviso, Générateur de devis IA pour freelances
+# Deviso
 
-> Devis professionnel en 30 secondes grâce à l'IA. Conçu pour les freelances et indépendants français.
+Devis et factures pour freelances et micro-entrepreneurs français : un brief en
+langage naturel donne un devis complet en 30 secondes, signé en ligne, facturé
+au format Factur-X et transmis via une Plateforme Agréée (réforme de la
+facturation électronique 2026).
 
----
-
-## Stack technique
-
-- **Next.js 15** (App Router), fullstack React
-- **Supabase**, base de données PostgreSQL + auth + temps réel
-- **OpenAI GPT-4o**, génération des devis en langage naturel
-- **Tailwind CSS**, styles
-- **TypeScript**, typage fort
+Production : https://getdeviso.fr
 
 ---
 
-## Setup en 5 minutes
+## Fonctions
 
-### 1. Installer les dépendances
+La liste des fonctions par formule a une source unique, `lib/plans.ts`
+(matrice `FEATURES`, fonction `can()`). La page d'accueil, la grille des
+formules et `/billing` en sont dérivées ; `npm run check:vitrine-exports`
+vérifie que les routes appliquent bien ce que la vitrine promet.
+
+En bref :
+
+- **Devis** : rédaction par IA depuis un brief, éditeur de lignes, catalogue,
+  partage par lien, signature électronique, relances.
+- **Factures** : Factur-X EN 16931, acompte et solde, factures récurrentes,
+  avoirs, factures en anglais pour les clients étrangers (mentions légales
+  françaises conservées), dépôt Chorus Pro.
+- **Plateforme Agréée (Super PDP)** : émission, réception, statuts, déclaration
+  des encaissements, e-reporting des ventes et achats internationaux.
+- **Gestion** : paiements clients, livre des recettes tenu automatiquement
+  (date et mode d'encaissement, export CSV), suivi du CA et des échéances
+  URSSAF, export FEC, CRM, équipe et rôles.
+- **URSSAF (en préparation)** : télédéclaration du CA via l'API Tierce
+  Déclaration auto-entrepreneur. Codée et testée, inactive tant que
+  l'habilitation n'est pas obtenue. Voir `docs/urssaf/tdae.md`.
+
+## Stack
+
+Next.js (App Router), React, TypeScript, Tailwind CSS · Supabase (Postgres,
+Auth, RLS) · OpenAI · Stripe (abonnements Solo et Pro, sièges) · Resend ·
+@react-pdf/renderer · Sentry · SWR. Hébergement Vercel, déploiement à chaque
+push sur `main`.
+
+## Démarrer en local
 
 ```bash
 npm install
-```
-
-### 2. Créer un projet Supabase
-
-1. Va sur [app.supabase.com](https://app.supabase.com) et crée un projet
-2. Dans **SQL Editor**, colle et exécute le contenu de `supabase/schema.sql`
-3. Dans **Settings → API**, récupère :
-   - `NEXT_PUBLIC_SUPABASE_URL`
-   - `NEXT_PUBLIC_SUPABASE_ANON_KEY`
-   - `SUPABASE_SERVICE_ROLE_KEY`
-
-### 3. Créer une clé OpenAI
-
-1. Va sur [platform.openai.com/api-keys](https://platform.openai.com/api-keys)
-2. Crée une nouvelle clé et copie-la
-
-### 4. Configurer les variables d'environnement
-
-```bash
-cp .env.example .env.local
-```
-
-Puis remplis le fichier `.env.local` avec tes clés.
-
-### 5. Lancer le serveur de développement
-
-```bash
+cp .env.example .env.local   # puis renseigner les valeurs
 npm run dev
 ```
 
-Ouvre [http://localhost:3000](http://localhost:3000) 🚀
+Les variables nécessaires sont celles du projet Vercel. Aucune valeur de
+secret n'est versionnée dans ce dépôt.
 
----
+## Qualité
 
-## Structure du projet
+- `npm run verify` : toutes les gardes statiques (droits, navigation, thème,
+  vitrine, emails, typographie...) et les tests de bout en bout.
+- `npm run check:prod` : attend que la production serve le commit local
+  (`/api/version` renvoie le SHA déployé).
 
-```
-deviso/
-├── app/
-│   ├── page.tsx                    # Landing page
-│   ├── layout.tsx                  # Root layout
-│   ├── globals.css                 # Styles globaux
-│   ├── (auth)/
-│   │   ├── login/page.tsx          # Connexion
-│   │   └── signup/page.tsx         # Inscription
-│   ├── (dashboard)/
-│   │   ├── layout.tsx              # Sidebar + auth guard
-│   │   ├── dashboard/page.tsx      # Tableau de bord
-│   │   └── proposals/
-│   │       ├── page.tsx            # Liste des devis
-│   │       ├── new/page.tsx        # Création (flow 3 étapes)
-│   │       └── [id]/page.tsx       # Détail + partage
-│   ├── api/
-│   │   └── proposals/
-│   │       ├── route.ts            # GET liste / POST créer
-│   │       ├── [id]/route.ts       # GET / PATCH / DELETE
-│   │       └── generate/route.ts   # POST génération IA
-│   └── auth/callback/route.ts      # OAuth callback Supabase
-├── lib/
-│   ├── supabase/
-│   │   ├── client.ts               # Client navigateur
-│   │   └── server.ts               # Client serveur
-│   └── openai.ts                   # Prompt + génération
-├── types/index.ts                  # Types TypeScript
-├── middleware.ts                   # Auth guard sur les routes
-└── supabase/schema.sql             # Schéma DB à exécuter
-```
+## Documentation
 
----
-
-## Features MVP
-
-- ✅ Landing page avec pricing
-- ✅ Auth email/password (Supabase)
-- ✅ Génération de devis par IA (brief naturel → JSON structuré)
-- ✅ Éditeur de lignes de devis
-- ✅ Calcul automatique HT/TVA/TTC
-- ✅ Sauvegarde en base de données
-- ✅ Lien de partage unique par devis
-- ✅ Suivi statut (brouillon, envoyé, consulté, signé)
-- ✅ Dashboard avec stats
-- ✅ Impression / PDF natif navigateur
-
-## Prochaines features
-
-- [ ] Signature électronique client (DocuSeal)
-- [ ] Relances automatiques par email (Resend)
-- [ ] Upload logo + personnalisation couleurs
-- [ ] Stripe billing (plan Pro)
-- [ ] Page publique client `/p/[token]`
-- [ ] Templates de devis par secteur
-- [ ] Export PDF serveur (Puppeteer)
-
----
-
-## Déploiement
-
-```bash
-# Vercel (recommandé)
-npx vercel --prod
-
-# Variables d'env à ajouter dans le dashboard Vercel :
-# NEXT_PUBLIC_SUPABASE_URL
-# NEXT_PUBLIC_SUPABASE_ANON_KEY
-# SUPABASE_SERVICE_ROLE_KEY
-# OPENAI_API_KEY
-# NEXT_PUBLIC_APP_URL (ton domaine de prod)
-```
-
----
-
-## Changer le nom "Deviso"
-
-Cherche et remplace `Deviso` dans :
-- `app/layout.tsx` (metadata)
-- `app/page.tsx` (landing)
-- `app/(dashboard)/layout.tsx` (sidebar)
-- `app/(auth)/login/page.tsx`
-- `app/(auth)/signup/page.tsx`
-- `.env.local` → `NEXT_PUBLIC_APP_NAME`
+- `docs/superpdp/` : intégration Plateforme Agréée (état, chantier, audits).
+- `docs/urssaf/tdae.md` : télédéclaration URSSAF.
+- `docs/facturx/` : écarts Factur-X Basic / EN 16931.
+- `docs/seo/` : plan éditorial et netlinking.

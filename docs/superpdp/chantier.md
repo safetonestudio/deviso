@@ -88,11 +88,15 @@ serait exactement l'erreur de `vat_exemption`.
 
 Ce ne sont pas des tâches en attente. Ce sont des choix, et ils sont clos.
 
-**Achats internationaux (`b2bint_invoices`, `direction: in`), hors produit.**
-Deviso ne gère pas les factures fournisseur : ni saisie, ni stockage, ni
-comptabilité d'achat. Déclarer un achat international suppose de connaître cet
-achat, ce que Deviso ne fait pas et n'a pas vocation à faire. L'obligation pèse
-sur l'entreprise et son comptable, pas sur un logiciel de devis et facturation.
+**Achats internationaux (`b2bint_invoices`, `direction: in`) : décision
+REVUE le 25/09/2026, désormais dans le produit.** Le choix initial (hors
+produit, l'obligation pesant sur l'entreprise et son comptable) a été
+abandonné : page `/achats-internationaux` (saisie de l'achat, transmission,
+suivi), table `superpdp_achats_int`, `lib/superpdp-achats.ts`. Le statut
+« Déclaré » n'apparaît qu'après envoi réel au PPF (synchronisation par le cron
+`superpdp-sync`). Réserve : le CREATE `b2bint_invoices` renvoyait 500 côté
+Super PDP en bac à sable (25/09) ; transmission réelle à ne pas considérer
+comme prouvée avant un 200 reproduit.
 
 **Recettes au comptant (`POST /b2c_transactions`), hors cible.**
 Leur documentation décrit le cas : « les salons de coiffure font leurs ventes

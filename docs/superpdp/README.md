@@ -33,9 +33,9 @@ avec ce qu'elles apporteraient :
 | `GET /french_directory/companies` | Rechercher une entreprise par SIREN, nom ou code postal | Ignorée |
 | `GET /oauth2_sessions/me` | Statut réel de vérification (`company_verification_status`, `user_identity_verification_status`) | **Ignorée.** On déduit l'état d'un 403 |
 | `PATCH /v1.beta/companies` | Régime de TVA (`monthly`, `quarterly`, `simplified`, `vat_exemption`) et `has_vat_on_debits` | **Ignorée.** Sans lui, les factures B2C sont refusées |
-| `POST /invoices?processing_rule=…` | Déclarer la nature (B2B, B2C, B2BInt, B2G…) et laisser Super PDP contredire si son calcul diffère | Ignorée |
+| `POST /invoices?processing_rule=…` | Déclarer la nature (B2B, B2C, B2BInt, B2G…) et laisser Super PDP contredire si son calcul diffère | **Utilisée depuis** pour les ventes internationales (`B2BInt`) |
 | `POST /invoices?external_id=…` | Rattacher la facture Super PDP à son identifiant Deviso | Ignorée |
 | `GET /ereportings`, `/ereportings/preview` | Voir ce qui est réellement déclaré à l'administration, avant et après envoi | Ignorée |
 | `POST` / `DELETE /directory_entries` | Gérer ses propres adresses de réception | Lecture seule côté Deviso |
-| `POST /b2bint_invoices`, `/b2bint_payments` | E-reporting des factures internationales | Ignorée |
+| `POST /b2bint_invoices`, `/b2bint_payments` | E-reporting des factures internationales | **Implémentée depuis (25/09)** pour les achats, voir `chantier.md` |
 | `POST /companies` | Enrôler une entreprise | **Hors de portée** : réservé aux experts-comptables, refusé par défaut |
