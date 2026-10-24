@@ -80,7 +80,6 @@ export const NAVIGATION: NavItem[] = [
   // qu'émises. D'où la position immédiatement après.
   { href: "/factures-recues", label: "Factures reçues", icon: Inbox, ownerOnly: true },
   { href: "/declarations", label: "Déclarations", icon: Landmark, ownerOnly: true },
-  { href: "/livre-recettes", label: "Livre des recettes", icon: BookMarked, ownerOnly: true },
   // Achats auprès de fournisseurs étrangers : l'obligation d'e-reporting
   // d'acquisition, que la Plateforme Agréée n'alimente pas d'elle-même. Rangé
   // ici, juste après les déclarations, parce que c'en est une.
@@ -95,6 +94,7 @@ export const NAVIGATION: NavItem[] = [
 
   { section: "Gestion", ownerOnly: true },
   { href: "/paiements", label: "Paiements clients", icon: Wallet, ownerOnly: true },
+  { href: "/livre-recettes", label: "Livre des recettes", icon: BookMarked, ownerOnly: true },
   { href: "/stats", label: "Activité", icon: BarChart3, ownerOnly: true },
 
   { section: "Compte" },
