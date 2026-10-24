@@ -19,7 +19,7 @@ const DECLARE = { texte: "Déclaré", ton: "bg-emerald-500/15 text-emerald-400" 
 const STATUT: Record<AchatInternational["transmission_status"], { texte: string; ton: string }> = {
   // « transmis » = stocké par la Plateforme Agréée, envoi à l'administration
   // encore à venir. « Déclaré » n'est affiché qu'avec ppf_ereporting_id.
-  transmis: { texte: "Enregistré", ton: "bg-sky-500/15 text-sky-400" },
+  transmis: { texte: "Enregistré", ton: "bg-indigo-500/15 text-indigo-400" },
   en_attente: { texte: "En attente", ton: "bg-amber-500/15 text-amber-400" },
   action_requise: { texte: "Action requise", ton: "bg-orange-500/15 text-orange-400" },
   echec: { texte: "En échec", ton: "bg-red-500/15 text-red-400" },
