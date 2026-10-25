@@ -7,6 +7,7 @@ import type { Profile, TvaRegime } from "@/types";
 import { UpgradeBanner } from "@/components/UpgradeBanner";
 import { GuidedTourBanner } from "@/components/GuidedTourBanner";
 import { SuperPdpCard } from "@/components/SuperPdpCard";
+import { ComptableAcces } from "@/components/ComptableAcces";
 import { PERIODICITES_TVA } from "@/lib/superpdp-constantes";
 
 const TVA_REGIMES: { value: TvaRegime; label: string; rate: number; description: string }[] = [
@@ -968,6 +969,13 @@ Les présentes CGV sont soumises au droit français. Tout litige relève de la c
           rare, mais l'echeance du 1er septembre 2026 le rend reperable par son
           libelle plutot que par sa position. */}
       <SuperPdpCard />
+
+      <SectionRepliable
+        titre="Expert-comptable"
+        sousTitre="Donnez un acces gratuit en lecture seule a votre comptable (devis, factures, exports FEC). Il n'occupe aucun siege."
+      >
+        <ComptableAcces />
+      </SectionRepliable>
     </div>
   );
 }

@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { getWorkspaceUserId } from "@/lib/workspace";
-import { exigerTitulaire } from "@/lib/droits";
+import { exigerTitulaire, ROLE_COMPTABLE } from "@/lib/droits";
 import { envoyerCourriel } from "@/lib/resend";
 import { inviteEmailHtml } from "@/lib/emails/invite";
 
@@ -30,6 +30,9 @@ export async function GET() {
     .from("team_members")
     .select("id, email, role, status, invited_at, accepted_at, member_id, permissions")
     .eq("owner_id", workspaceOwnerId)
+    // Le comptable a sa propre section (acces dedie), il ne figure pas dans
+    // la liste des membres d'equipe ni dans les sieges.
+    .neq("role", ROLE_COMPTABLE)
     .order("invited_at", { ascending: false });
 
   return NextResponse.json({ members: members ?? [] });
@@ -76,7 +79,8 @@ export async function POST(req: NextRequest) {
     const { count: seatCount } = await admin
       .from("team_members")
       .select("*", { count: "exact", head: true })
-      .eq("owner_id", user.id);
+      .eq("owner_id", user.id)
+      .neq("role", ROLE_COMPTABLE);
 
     if ((seatCount ?? 0) >= 10) {
       return NextResponse.json({ error: "SEAT_LIMIT_REACHED" }, { status: 403 });

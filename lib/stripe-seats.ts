@@ -2,6 +2,7 @@ import { stripe } from "@/lib/stripe";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { estCompteDemo } from "@/lib/stripe-guard";
 import { siegesDus, MEMBRES_INCLUS } from "@/lib/sieges";
+import { ROLE_COMPTABLE } from "@/lib/droits";
 
 export { siegesDus, MEMBRES_INCLUS };
 
@@ -60,7 +61,9 @@ export async function synchroniserSieges(ownerId: string): Promise<void> {
     .from("team_members")
     .select("*", { count: "exact", head: true })
     .eq("owner_id", ownerId)
-    .eq("status", "active");
+    .eq("status", "active")
+    // Un expert-comptable est gratuit et n'occupe aucun siege facture.
+    .neq("role", ROLE_COMPTABLE);
 
   const voulue = siegesDus(count ?? 0);
 

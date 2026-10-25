@@ -27,6 +27,13 @@ export const ACTES = [
 export type Acte = (typeof ACTES)[number];
 export type Permissions = Record<Acte, boolean>;
 
+/**
+ * Role d'une ligne team_members reservee a l'expert-comptable.
+ * Un comptable a un acces en LECTURE SEULE par construction, gratuit et hors
+ * siege facture. Voir droitsDe (court-circuit) et lib/stripe-seats.
+ */
+export const ROLE_COMPTABLE = "comptable";
+
 /** Défaut à l'invitation : rien. Le gérant ouvre les droits délibérément. */
 export const PERMISSIONS_AUCUNE: Permissions = {
   envoyer_devis: false,
@@ -81,7 +88,7 @@ export async function droitsDe(
   }
   const { data, error } = await admin
     .from("team_members")
-    .select("permissions")
+    .select("permissions, role")
     .eq("owner_id", workspaceId)
     .eq("member_id", userId)
     .eq("status", "active")
@@ -91,6 +98,11 @@ export async function droitsDe(
     console.error(`[droits] lecture des permissions impossible (${workspaceId}/${userId}) : ${error.message}`);
     return { ...PERMISSIONS_AUCUNE };
   }
+  // Un expert-comptable est en lecture seule par construction : quelles que
+  // soient les permissions stockees sur sa ligne, il ne peut executer aucun
+  // acte. On court-circuite ici pour que cet invariant ne depende jamais du
+  // contenu du jsonb, ni d'un reglage accidentel.
+  if (data?.role === ROLE_COMPTABLE) return { ...PERMISSIONS_AUCUNE };
   return normaliserPermissions(data?.permissions);
 }
 

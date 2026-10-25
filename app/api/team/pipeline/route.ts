@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { getWorkspaceUserId, getWorkspaceProfile } from "@/lib/workspace";
+import { ROLE_COMPTABLE } from "@/lib/droits";
 
 // GET /api/team/pipeline, vue manager : pipeline de l'équipe par membre (Pro only)
 //
@@ -35,7 +36,8 @@ export async function GET() {
     .from("team_members")
     .select("id, email, role, member_id, accepted_at")
     .eq("owner_id", workspaceId)
-    .eq("status", "active");
+    .eq("status", "active")
+    .neq("role", ROLE_COMPTABLE);
 
   // Récupère tous les profils des membres pour leurs noms
   const memberIds = (members ?? [])
