@@ -6,7 +6,7 @@ import { usePathname, useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 import { terminerDemo } from "@/components/DemoSession";
 import { Menu, X } from "lucide-react";
-import { NAVIGATION, estSection, lienActif } from "@/lib/navigation";
+import { NAVIGATION, estSection, lienActif, lienVisible, sectionVisible } from "@/lib/navigation";
 import { NotificationBell } from "@/components/NotificationBell";
 
 
@@ -15,10 +15,11 @@ interface MobileNavProps {
   userName: string;
   userEmail: string;
   isMember?: boolean;
+  isComptable?: boolean;
   isDemo?: boolean;
 }
 
-export function MobileNav({ initials, userName, userEmail, isMember = false, isDemo = false }: MobileNavProps) {
+export function MobileNav({ initials, userName, userEmail, isMember = false, isComptable = false, isDemo = false }: MobileNavProps) {
   const [open, setOpen] = useState(false);
   const pathname = usePathname();
   const router = useRouter();
@@ -95,16 +96,16 @@ export function MobileNav({ initials, userName, userEmail, isMember = false, isD
 
         <nav className="flex-1 p-4 space-y-0.5 overflow-y-auto">
           {NAVIGATION.map((item, i) => {
-            // Cacher les éléments réservés au propriétaire si c'est un membre
-            if (isMember && item.ownerOnly) return null;
-
             if (estSection(item)) {
+              if (!sectionVisible(i, NAVIGATION, isMember, isComptable)) return null;
               return (
                 <div key={i} className="pt-4 pb-1">
                   <p className="px-3 text-[10px] font-semibold text-gray-600 uppercase tracking-widest">{item.section}</p>
                 </div>
               );
             }
+            if (!lienVisible(item, isMember, isComptable)) return null;
+
             const Icon = item.icon;
             return (
               <Link

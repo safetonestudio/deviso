@@ -2,7 +2,8 @@ import { redirect } from "next/navigation";
 import { headers } from "next/headers";
 import { createClient } from "@/lib/supabase/server";
 import { getWorkspaceUserId } from "@/lib/workspace";
-import { droitsDe } from "@/lib/droits";
+import { droitsDe, ROLE_COMPTABLE, PLANS_ACCES_COMPTABLE } from "@/lib/droits";
+import { PAGES_COMPTABLE } from "@/lib/navigation";
 import { DashboardThemeProvider, ThemeToggle } from "@/components/DashboardTheme";
 import { MobileNav } from "@/components/MobileNav";
 import { SidebarNav } from "@/components/SidebarNav";
@@ -35,7 +36,12 @@ export default async function DashboardLayout({ children }: { children: React.Re
 
   const [{ data: profile }, { data: workspacePlan }, { data: raccordement }] = await Promise.all([
     supabase.from("profiles").select("full_name, company_name, is_demo").eq("id", user.id).single(),
-    supabase.from("profiles").select("plan").eq("id", workspaceUserId).single(),
+    // Le plan est lu sur la ligne du PROPRIÉTAIRE de l'espace. profiles est en
+    // RLS « auth.uid() = id » : un invité ne peut pas lire cette ligne avec son
+    // propre client, la lecture reviendrait vide et le plan retomberait sur
+    // "free", suspendant à tort tout membre d'un espace pourtant payant. On passe
+    // donc par le client d'administration, comme getWorkspaceProfile.
+    createAdminClient().from("profiles").select("plan").eq("id", workspaceUserId).maybeSingle(),
     // Le raccordement à la Plateforme Agréée vit dans une table sans politique
     // RLS (elle contient un jeton d'un an) : lecture par la clé de service.
     // On ne lit que le statut, jamais le jeton.
@@ -56,14 +62,34 @@ export default async function DashboardLayout({ children }: { children: React.Re
   // ou après expiration), les gates Solo/Pro s'appliquent alors partout.
   const plan = workspacePlan?.plan ?? "free";
 
+  // Role de l'invite : un expert-comptable (lecture seule) a un perimetre
+  // d'acces distinct d'un membre d'equipe, et reste ouvert des Solo. Le
+  // titulaire n'est jamais un invite, on n'interroge donc que pour un membre.
+  let isComptable = false;
+  if (isMember) {
+    const { data: membre } = await createAdminClient()
+      .from("team_members")
+      .select("role")
+      .eq("owner_id", workspaceUserId)
+      .eq("member_id", user.id)
+      .eq("status", "active")
+      .maybeSingle();
+    isComptable = membre?.role === ROLE_COMPTABLE;
+  }
+
   // Redirect new owners to onboarding if they haven't set their company name yet
   // Team members (collaborators) are exempt, they use the owner's company profile
   if (!profile?.company_name && !pathname.startsWith("/onboarding") && !isMember) {
     redirect("/onboarding");
   }
 
-  // Membres : bloquer l'accès aux pages sensibles
-  if (isMember && MEMBER_RESTRICTED_PATHS.some((p) => pathname.startsWith(p))) {
+  // Membres : bloquer l'accès aux pages sensibles. Le comptable récupère en
+  // lecture seule les pages dont il a besoin (déclarées dans PAGES_COMPTABLE),
+  // mais jamais Abonnement ni Paiements, qui restent du ressort du titulaire.
+  const cheminsRestreints = isComptable
+    ? MEMBER_RESTRICTED_PATHS.filter((p) => !PAGES_COMPTABLE.has(p))
+    : MEMBER_RESTRICTED_PATHS;
+  if (isMember && cheminsRestreints.some((p) => pathname.startsWith(p))) {
     redirect("/dashboard");
   }
 
@@ -82,7 +108,14 @@ export default async function DashboardLayout({ children }: { children: React.Re
    * On ne supprime rien ici : si l'espace redevient Pro, les collaborateurs
    * retrouvent leur accès tel quel.
    */
-  if (isMember && plan !== "pro") {
+  // Le multi-utilisateurs (membres d'équipe) est une fonction Pro. L'accès
+  // expert-comptable, lui, est ouvert dès Solo : PLANS_ACCES_COMPTABLE est la
+  // source partagée avec la route d'invitation, pour qu'inviter un comptable en
+  // Solo et le suspendre à l'entrée ne puissent plus se contredire.
+  const planAutorise = isComptable
+    ? (PLANS_ACCES_COMPTABLE as readonly string[]).includes(plan)
+    : plan === "pro";
+  if (isMember && !planAutorise) {
     return (
       <div className="min-h-screen bg-ds-bg flex items-center justify-center px-4">
         <div className="max-w-md text-center">
@@ -90,9 +123,21 @@ export default async function DashboardLayout({ children }: { children: React.Re
             Cet espace n&apos;est plus partagé
           </h1>
           <p className="text-gray-400 text-sm leading-relaxed">
-            L&apos;espace de travail auquel vous étiez rattaché n&apos;est plus sur la formule
-            Pro, qui est celle qui permet de travailler à plusieurs. Votre accès est suspendu
-            le temps que son propriétaire la rétablisse, rien n&apos;a été supprimé.
+            {isComptable ? (
+              <>
+                L&apos;espace de travail auquel vous étiez rattaché n&apos;est plus sur une
+                formule payante. L&apos;accès expert-comptable est disponible dès l&apos;offre
+                Solo. Votre accès est suspendu le temps que son propriétaire la rétablisse,
+                rien n&apos;a été supprimé.
+              </>
+            ) : (
+              <>
+                L&apos;espace de travail auquel vous étiez rattaché n&apos;est plus sur la
+                formule Pro, qui est celle qui permet de travailler à plusieurs. Votre accès
+                est suspendu le temps que son propriétaire la rétablisse, rien n&apos;a été
+                supprimé.
+              </>
+            )}
           </p>
           <p className="text-gray-500 text-xs mt-6">
             Une question ? Écrivez-nous à support@getdeviso.fr
@@ -120,6 +165,7 @@ export default async function DashboardLayout({ children }: { children: React.Re
           userName={profile?.full_name || ""}
           userEmail={user.email || ""}
           isMember={isMember}
+          isComptable={isComptable}
           isDemo={isDemo}
         />
 
@@ -138,7 +184,7 @@ export default async function DashboardLayout({ children }: { children: React.Re
             </a>
           </div>
 
-          <SidebarNav isMember={isMember} />
+          <SidebarNav isMember={isMember} isComptable={isComptable} />
 
           <div className="p-4 border-t border-ds-border">
             {isDemo && (

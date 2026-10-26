@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { getWorkspaceUserId } from "@/lib/workspace";
-import { exigerTitulaire, ROLE_COMPTABLE } from "@/lib/droits";
+import { exigerTitulaire, ROLE_COMPTABLE, PLANS_ACCES_COMPTABLE } from "@/lib/droits";
 import { envoyerCourriel } from "@/lib/resend";
 import { inviteEmailHtml } from "@/lib/emails/invite";
 
@@ -20,7 +20,7 @@ import { inviteEmailHtml } from "@/lib/emails/invite";
  * lib/stripe-seats et le quota de sieges (neq role comptable).
  */
 
-const PLANS_AUTORISES = new Set(["solo", "pro"]);
+const PLANS_AUTORISES = new Set<string>(PLANS_ACCES_COMPTABLE);
 
 function refusPlan(): NextResponse {
   return NextResponse.json(

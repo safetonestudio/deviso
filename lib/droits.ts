@@ -34,6 +34,14 @@ export type Permissions = Record<Acte, boolean>;
  */
 export const ROLE_COMPTABLE = "comptable";
 
+/**
+ * Plans ou l'acces expert-comptable est ouvert. Source unique partagee par la
+ * route d'invitation (/api/team/comptable) ET la garde d'acces du layout, pour
+ * qu'elles ne puissent plus diverger : inviter un comptable en Solo puis le
+ * suspendre a l'entree faute d'etre Pro, c'est le defaut evite ici.
+ */
+export const PLANS_ACCES_COMPTABLE = ["solo", "pro"] as const;
+
 /** Défaut à l'invitation : rien. Le gérant ouvre les droits délibérément. */
 export const PERMISSIONS_AUCUNE: Permissions = {
   envoyer_devis: false,

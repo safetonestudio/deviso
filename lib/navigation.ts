@@ -134,3 +134,38 @@ export function lienActif(href: string, pathname: string): boolean {
   if (href === "/proposals") return pathname === "/proposals" || pathname.startsWith("/proposals/");
   return pathname === href || pathname.startsWith(href + "/");
 }
+
+/**
+ * Pages reservees au titulaire (ownerOnly) auxquelles un expert-comptable a
+ * tout de meme acces, en lecture seule. On s'en tient aux pages qui savent
+ * deja s'afficher pour un invite : factures recues, declarations, et l'activite
+ * (exports FEC/CSV, le livrable meme du comptable). « Livre des recettes » et
+ * « Achats a l'etranger » se verrouillent au titulaire dans leur propre page,
+ * les ouvrir ici ne suffirait pas.
+ */
+export const PAGES_COMPTABLE = new Set<string>([
+  "/factures-recues",
+  "/declarations",
+  "/stats",
+]);
+
+/** Un lien de navigation est-il visible pour cet utilisateur ? */
+export function lienVisible(item: NavLink, isMember: boolean, isComptable: boolean): boolean {
+  if (!isMember) return true;
+  if (!item.ownerOnly) return true;
+  return isComptable && PAGES_COMPTABLE.has(item.href);
+}
+
+/**
+ * Un en-tete de section est-il visible ? Oui seulement si au moins un lien
+ * visible le suit avant la section suivante. Evite les titres de section vides
+ * quand tous leurs liens sont masques (membre, comptable).
+ */
+export function sectionVisible(index: number, items: NavItem[], isMember: boolean, isComptable: boolean): boolean {
+  for (let i = index + 1; i < items.length; i++) {
+    const it = items[i];
+    if (estSection(it)) break;
+    if (lienVisible(it, isMember, isComptable)) return true;
+  }
+  return false;
+}

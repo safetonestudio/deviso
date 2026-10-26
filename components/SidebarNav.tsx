@@ -1,18 +1,16 @@
 "use client";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { NAVIGATION, TOUR_TARGETS, estSection, lienActif } from "@/lib/navigation";
+import { NAVIGATION, TOUR_TARGETS, estSection, lienActif, lienVisible, sectionVisible } from "@/lib/navigation";
 
-export function SidebarNav({ isMember = false }: { isMember?: boolean }) {
+export function SidebarNav({ isMember = false, isComptable = false }: { isMember?: boolean; isComptable?: boolean }) {
   const pathname = usePathname();
 
   return (
     <nav className="flex-1 p-4 space-y-0.5 overflow-y-auto">
       {NAVIGATION.map((item, i) => {
-        // Cacher les éléments réservés au propriétaire si c'est un membre
-        if (isMember && item.ownerOnly) return null;
-
         if (estSection(item)) {
+          if (!sectionVisible(i, NAVIGATION, isMember, isComptable)) return null;
           return (
             <div key={i} className="pt-4 pb-1">
               <p className="px-3 text-[10px] font-semibold text-gray-600 uppercase tracking-widest">
@@ -21,6 +19,8 @@ export function SidebarNav({ isMember = false }: { isMember?: boolean }) {
             </div>
           );
         }
+
+        if (!lienVisible(item, isMember, isComptable)) return null;
 
         const active = lienActif(item.href, pathname);
         const Icon = item.icon;
