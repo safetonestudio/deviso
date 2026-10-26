@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
+import { GuidedTourBanner } from "@/components/GuidedTourBanner";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { getWorkspaceUserId, getWorkspaceProfile } from "@/lib/workspace";
 import { Apercu } from "./Apercu";
@@ -96,6 +97,7 @@ export default async function Declarations() {
 
   return (
     <div className="max-w-7xl mx-auto">
+      <GuidedTourBanner pageKey="declarations" />
       <div>
         <h1 className="text-2xl font-semibold text-white">Déclarations au fisc</h1>
         <p className="text-sm text-gray-400 mt-1">

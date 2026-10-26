@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import { PartyPopper, TriangleAlert, Hourglass, Gift } from "lucide-react";
 import { planFeatures, proOnlyFeatures } from "@/lib/plans";
+import { GuidedTourBanner } from "@/components/GuidedTourBanner";
 
 type Profile = {
   plan: "free" | "solo" | "pro";
@@ -152,6 +153,7 @@ export default function BillingPage() {
 
   return (
     <div className="max-w-2xl mx-auto">
+      <GuidedTourBanner pageKey="billing" />
       <h1 className="text-3xl font-semibold text-white tracking-tight mb-1">Abonnement</h1>
       <p className="text-gray-500 text-sm mb-8">Gérez votre plan et votre facturation.</p>
 

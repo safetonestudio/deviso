@@ -54,6 +54,11 @@ const STEPS_OWNER = [
     body: "Ton activité en graphiques, et les exports pour ton comptable (FEC, CSV).",
   },
   {
+    target: "livre-recettes",
+    title: "Livre des recettes",
+    body: "Ton registre obligatoire de micro-entrepreneur, tenu tout seul à partir de tes factures payées.",
+  },
+  {
     target: "catalogue",
     title: "✦ Pro : Catalogue & IA",
     body: "Enregistre tes prestations : l'IA s'appuie dessus pour des devis plus justes.",

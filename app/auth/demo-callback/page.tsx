@@ -34,10 +34,11 @@ export default function DemoCallbackPage() {
         try {
           localStorage.setItem("deviso_is_demo", "1");
           sessionStorage.setItem("deviso_is_demo", "1");
-          // Réinitialise le tour guidé pour que la démo le montre toujours
-          localStorage.removeItem("deviso_tour_v5");
         } catch {}
-        router.replace("/dashboard");
+        // Rejouer le tour guidé à chaque démo. On délègue l'effacement à
+        // ProductTour via tour_reset=1 : lui seul connaît la clé de version
+        // courante, on évite de la coder en dur ici (elle avait fini par diverger).
+        router.replace("/dashboard?tour_reset=1");
       });
   }, [router]);
 

@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
+import { GuidedTourBanner } from "@/components/GuidedTourBanner";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { getWorkspaceUserId } from "@/lib/workspace";
 import { estTitulaire } from "@/lib/droits";
@@ -51,6 +52,7 @@ export default async function AchatsInternationaux() {
 
   return (
     <div className="max-w-7xl mx-auto">
+      <GuidedTourBanner pageKey="achats-internationaux" />
       <div className="mb-6">
         <h1 className="text-2xl font-semibold text-white">Achats à l&apos;étranger</h1>
         <p className="text-sm text-gray-400 mt-1 max-w-2xl">

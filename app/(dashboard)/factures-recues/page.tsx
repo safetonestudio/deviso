@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
+import { GuidedTourBanner } from "@/components/GuidedTourBanner";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { getWorkspaceUserId, getWorkspaceProfile } from "@/lib/workspace";
 import { SyncButton } from "./SyncButton";
@@ -63,6 +64,7 @@ export default async function FacturesRecues() {
 
   return (
     <div className="max-w-7xl mx-auto">
+      <GuidedTourBanner pageKey="factures-recues" />
       <div className="flex flex-wrap items-start justify-between gap-4 mb-2">
         <div>
           <h1 className="text-2xl font-semibold text-white">Factures reçues</h1>

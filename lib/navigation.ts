@@ -114,6 +114,7 @@ export const TOUR_TARGETS: Record<string, string> = {
   "/paiements": "paiements",
   "/crm": "crm",
   "/stats": "stats",
+  "/livre-recettes": "livre-recettes",
   "/catalogue": "catalogue",
   "/team": "team",
   "/profil": "profil",

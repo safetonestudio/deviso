@@ -3,6 +3,7 @@ import { Fragment } from "react";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
+import { GuidedTourBanner } from "@/components/GuidedTourBanner";
 import { getWorkspaceUserId, getWorkspaceProfile } from "@/lib/workspace";
 import { estTitulaire } from "@/lib/droits";
 import { can } from "@/lib/plans";
@@ -72,6 +73,7 @@ export default async function LivreRecettes({ searchParams }: { searchParams: Pr
 
   return (
     <div className="max-w-7xl mx-auto">
+      <GuidedTourBanner pageKey="livre-recettes" />
       <div className="flex flex-wrap items-start justify-between gap-3 mb-6">
         <div>
           <h1 className="text-2xl font-semibold text-white">Livre des recettes</h1>

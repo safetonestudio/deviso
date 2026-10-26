@@ -17,7 +17,12 @@ type PageKey =
   | "stats"
   | "catalogue"
   | "team"
-  | "profil";
+  | "profil"
+  | "factures-recues"
+  | "declarations"
+  | "achats-internationaux"
+  | "livre-recettes"
+  | "billing";
 
 const CONTENT: Record<PageKey, { title: string; body: string }> = {
   dashboard: {
@@ -71,6 +76,26 @@ const CONTENT: Record<PageKey, { title: string; body: string }> = {
   profil: {
     title: "Paramètres",
     body: "Ton identité pro (logo, SIRET, TVA) qui apparaît sur tous tes documents.",
+  },
+  "factures-recues": {
+    title: "Factures reçues",
+    body: "Les factures de tes fournisseurs arrivent ici via la Plateforme Agréée. Tu n'agis qu'en cas de problème : un rejet à justifier ou un litige à signaler.",
+  },
+  declarations: {
+    title: "Déclarations au fisc",
+    body: "L'état de ce que la Plateforme Agréée déclare pour toi (e-reporting). Seuls les refus de l'administration demandent une action de ta part.",
+  },
+  "achats-internationaux": {
+    title: "Achats à l'étranger",
+    body: "Un achat auprès d'un fournisseur hors de France se déclare ici : sa facture ne passe pas par la Plateforme, tu la saisis et Deviso la déclare.",
+  },
+  "livre-recettes": {
+    title: "Livre des recettes",
+    body: "Ton livre des recettes obligatoire, tenu tout seul à partir de tes factures payées, dans l'ordre des encaissements. Rien à saisir à la main.",
+  },
+  billing: {
+    title: "Abonnement",
+    body: "Ton plan et ta facturation Deviso : change de formule, gère le nombre d'utilisateurs et retrouve tes justificatifs de paiement.",
   },
 };
 
