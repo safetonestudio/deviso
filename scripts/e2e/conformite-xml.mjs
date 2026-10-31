@@ -159,6 +159,13 @@ const CAS = [
 
   facture("B2B, TVA super-réduite 5,5 %", { tva_rate: 5.5 }),
 
+  facture("B2B France, deux taux de TVA par ligne (20 % et 10 %)", {
+    items: [
+      { description: "Prestation de conseil", quantity: 1, unit: "unité", unit_price: 1000, total: 1000, tva_rate: 20 },
+      { description: "Documentation imprimée", quantity: 1, unit: "unité", unit_price: 300, total: 300, tva_rate: 10 },
+    ],
+  }),
+
   facture("B2B, plusieurs lignes et centimes", {
     items: [
       ligne("Audit technique", 1187.33),
