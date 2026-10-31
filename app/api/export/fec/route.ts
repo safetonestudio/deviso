@@ -1,3 +1,4 @@
+import { ventilationTva } from "@/lib/tva";
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 import { getWorkspaceUserId, getWorkspaceProfile } from "@/lib/workspace";
@@ -112,7 +113,7 @@ export async function GET(req: NextRequest) {
     const cCode = clientCode(clientLib);
     const ht = +(inv.total_ht ?? 0).toFixed(2);
     const ttc = +(inv.total_ttc ?? 0).toFixed(2);
-    const tva = +(ttc - ht).toFixed(2);
+    const ventFec = ventilationTva(inv.items, inv.tva_rate);
 
     // 706 « prestations de services » ou 707 « ventes de marchandises » : le
     // plan comptable les distingue, et l'information existe déjà sur la
@@ -136,11 +137,13 @@ export async function GET(req: NextRequest) {
       "Ventes",
       ...row(compteVente, libelleVente, "", "", estAvoir ? ht : 0, estAvoir ? 0 : ht),
     ]);
-    if (tva > 0) {
+    for (const g of ventFec.groupes) {
+      if (g.montant_tva <= 0) continue;
+      const tvaG = +g.montant_tva.toFixed(2);
       rows.push([
         "VT",
         "Ventes",
-        ...row("445710", `TVA collectee ${inv.tva_rate}%`, "", "", estAvoir ? tva : 0, estAvoir ? 0 : tva),
+        ...row("445710", `TVA collectee ${g.taux}%`, "", "", estAvoir ? tvaG : 0, estAvoir ? 0 : tvaG),
       ]);
     }
 

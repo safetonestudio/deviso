@@ -22,6 +22,7 @@ export interface ProposalItem {
   unit: string;
   unit_price: number;
   total: number;
+  tva_rate?: number;
 }
 
 export interface Proposal {

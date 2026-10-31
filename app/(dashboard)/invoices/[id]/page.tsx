@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { ventilationTva } from "@/lib/tva";
 import { useParams, useRouter } from "next/navigation";
 import Link from "next/link";
 import { GuidedTourBanner } from "@/components/GuidedTourBanner";
@@ -857,10 +858,19 @@ export default function InvoiceDetailPage() {
               <div className="flex justify-between text-gray-400">
                 <span>Total HT</span><span>{fmt(invoice.total_ht)}</span>
               </div>
-              <div className="flex justify-between text-gray-400">
-                <span>TVA {invoice.tva_rate}%</span>
-                <span>{fmt(invoice.total_ttc - invoice.total_ht)}</span>
-              </div>
+              {ventilationTva(invoice.items, invoice.tva_rate).multiTaux ? (
+                ventilationTva(invoice.items, invoice.tva_rate).groupes.map((g, gi) => (
+                  <div className="flex justify-between text-gray-400" key={gi}>
+                    <span>TVA {g.taux}%</span>
+                    <span>{fmt(g.montant_tva)}</span>
+                  </div>
+                ))
+              ) : (
+                <div className="flex justify-between text-gray-400">
+                  <span>TVA {invoice.tva_rate}%</span>
+                  <span>{fmt(invoice.total_ttc - invoice.total_ht)}</span>
+                </div>
+              )}
               <div className="flex justify-between font-semibold text-white text-base border-t border-ds-border pt-2">
                 <span>{invoice.invoice_type === "solde" ? "Solde à payer" : invoice.invoice_type === "acompte" ? "Acompte à payer" : "Total TTC"}</span>
                 <span>{fmt(invoice.total_ttc)}</span>

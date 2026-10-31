@@ -1,3 +1,4 @@
+import { ventilationTva, tauxLigne } from "@/lib/tva";
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
@@ -240,19 +241,18 @@ export async function POST(
     lignePosteNumero: idx + 1,
     lignePosteQuantite: item.quantity,
     lignePosteReference: `ligne-${idx + 1}`,
-    lignePosteTauxTvaManuel: invoice.tva_rate,
+    lignePosteTauxTvaManuel: tauxLigne(item, invoice.tva_rate),
     lignePosteUnite: item.unit || "forfait",
   }));
 
   const montantHt = invoice.total_ht;
   const montantTva = invoice.total_ttc - invoice.total_ht;
-  const ligneTva = [
-    {
-      ligneTvaMontantBaseHtParTaux: montantHt,
-      ligneTvaMontantTvaParTaux: montantTva,
-      ligneTvaTauxManuel: invoice.tva_rate,
-    },
-  ];
+  const ventCpp = ventilationTva(items, invoice.tva_rate);
+  const ligneTva = ventCpp.groupes.map((g) => ({
+    ligneTvaMontantBaseHtParTaux: g.base_ht,
+    ligneTvaMontantTvaParTaux: g.montant_tva,
+    ligneTvaTauxManuel: g.taux,
+  }));
 
   const montantTotal = {
     montantAPayer: invoice.total_ttc,

@@ -1,3 +1,4 @@
+import { ventilationTva } from "@/lib/tva";
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 import { v4 as uuidv4 } from "uuid";
@@ -81,8 +82,9 @@ export async function POST(req: NextRequest) {
     return { ...item, id: item.id || uuidv4(), total: centimes(ligne) };
   });
   const tauxDevis = Number(tva_rate) || 0;
-  const totalHtDevis = centimes(itemsWithIds.reduce((sum, it) => sum + centimes(it.total), 0));
-  const totalTtcDevis = centimes(totalHtDevis * (1 + tauxDevis / 100));
+  const vDevis = ventilationTva(itemsWithIds, tauxDevis);
+  const totalHtDevis = vDevis.total_ht;
+  const totalTtcDevis = vDevis.total_ttc;
 
   const { data, error } = await supabase
     .from("proposals")

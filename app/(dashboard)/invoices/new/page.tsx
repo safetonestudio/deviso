@@ -7,6 +7,7 @@ import type { Proposal, ProposalItem } from "@/types";
 import { PAYS_FACTURATION } from "@/lib/superpdp-nature";
 import { RechercheEntreprise } from "@/components/RechercheEntreprise";
 import { v4 as uuidv4 } from "uuid";
+import { ventilationTva } from "@/lib/tva";
 import { Clock, Package, FileText, Coins, CircleCheck, TriangleAlert, type LucideIcon } from "lucide-react";
 import { GuidedTourBanner } from "@/components/GuidedTourBanner";
 import { splitAddress } from "@/lib/address";
@@ -136,7 +137,8 @@ export default function NewInvoicePage() {
   // rend la facture rejetable par l'administration.
   const centimes = (n: number) => Math.round(n * 100) / 100;
   const totalHt = centimes(items.reduce((sum, item) => sum + centimes(item.total), 0));
-  const totalTtc = centimes(totalHt * (1 + tvaRate / 100));
+  const vent = ventilationTva(items, tvaRate);
+  const totalTtc = vent.total_ttc;
 
   const inputCls = "w-full border border-ds-border rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-indigo-500/30 focus:border-indigo-500 bg-ds-elevated text-white placeholder:text-gray-600";
 
@@ -324,7 +326,7 @@ export default function NewInvoicePage() {
     }
   }
 
-  function updateItem(id: string, field: keyof ProposalItem, value: string | number) {
+  function updateItem(id: string, field: keyof ProposalItem, value: string | number | undefined) {
     setItems((prev) =>
       prev.map((item) => {
         if (item.id !== id) return item;
@@ -771,7 +773,7 @@ export default function NewInvoicePage() {
             <div className="space-y-3">
               {items.map((item) => (
                 <div key={item.id} className="grid grid-cols-12 gap-2 items-start">
-                  <div className="col-span-5">
+                  <div className="col-span-3">
                     <input value={item.description} onChange={(e) => updateItem(item.id, "description", e.target.value)}
                       placeholder="Description de la prestation" required className={inputCls} />
                   </div>
@@ -784,6 +786,21 @@ export default function NewInvoicePage() {
                     <input type="number" min="0" step="0.01" value={item.unit_price}
                       onChange={(e) => updateItem(item.id, "unit_price", parseFloat(e.target.value) || 0)}
                       placeholder="Prix HT" className={inputCls} />
+                  </div>
+                  <div className="col-span-2">
+                    <select
+                      value={item.tva_rate ?? ""}
+                      onChange={(e) => updateItem(item.id, "tva_rate", e.target.value === "" ? undefined : parseFloat(e.target.value))}
+                      className={inputCls}
+                      aria-label="Taux de TVA de la ligne"
+                    >
+                      <option value="">Taux du compte ({tvaRate}%)</option>
+                      <option value="20">20%</option>
+                      <option value="10">10%</option>
+                      <option value="5.5">5,5%</option>
+                      <option value="2.1">2,1%</option>
+                      <option value="0">0%</option>
+                    </select>
                   </div>
                   <div className="col-span-2 py-2 text-sm font-semibold text-gray-300 text-right">{fmt(item.total)}</div>
                   <div className="col-span-1 flex justify-end">
@@ -896,7 +913,11 @@ export default function NewInvoicePage() {
               <div className="flex justify-end">
                 <div className="text-right space-y-1 text-sm">
                   <div className="text-gray-400">Total HT : <span className="font-medium text-gray-200">{fmt(totalHt)}</span></div>
-                  {tvaRate > 0 ? (
+                  {vent.multiTaux ? (
+                    vent.groupes.map((g, gi) => (
+                      <div className="text-gray-400" key={gi}>TVA {g.taux}% : <span className="font-medium text-gray-200">{fmt(g.montant_tva)}</span></div>
+                    ))
+                  ) : tvaRate > 0 ? (
                     <div className="text-gray-400">TVA {tvaRate}% : <span className="font-medium text-gray-200">{fmt(totalTtc - totalHt)}</span></div>
                   ) : (
                     <div className="text-gray-500 text-xs italic">TVA non applicable (art. 293 B CGI)</div>

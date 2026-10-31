@@ -5,6 +5,7 @@ import type { ProposalItem } from "@/types";
 import { getWorkspaceUserId, getWorkspaceProfile } from "@/lib/workspace";
 import { resolveAddress } from "@/lib/address";
 import { numeroDocument } from "@/lib/numerotation";
+import { ventilationTva } from "@/lib/tva";
 
 // GET /api/invoices
 export async function GET() {
@@ -162,8 +163,9 @@ export async function POST(req: NextRequest) {
   });
 
   const tvaRate = Number(body.tva_rate) || 0;
-  const totalHtCalcule = centimes(itemsWithIds.reduce((s, it) => s + centimes(it.total), 0));
-  const totalTtcCalcule = centimes(totalHtCalcule * (1 + tvaRate / 100));
+  const ventilation = ventilationTva(itemsWithIds, tvaRate);
+  const totalHtCalcule = ventilation.total_ht;
+  const totalTtcCalcule = ventilation.total_ttc;
 
   const { data, error } = await supabase
     .from("invoices")

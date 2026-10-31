@@ -1,3 +1,4 @@
+import { ventilationTva } from "@/lib/tva";
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 import { createClient as createAdminClient } from "@supabase/supabase-js";
@@ -167,10 +168,10 @@ export async function PATCH(req: NextRequest, { params }: Params) {
       const ligne = Number.isFinite(q) && Number.isFinite(pu) ? q * pu : Number(it.total);
       return { ...it, total: centimes(ligne) };
     });
-    const totalHt = centimes(lignes.reduce((sum, it) => sum + centimes(it.total), 0));
+    const v = ventilationTva(lignes, taux);
     safeUpdate.items = lignes;
-    safeUpdate.total_ht = totalHt;
-    safeUpdate.total_ttc = centimes(totalHt * (1 + taux / 100));
+    safeUpdate.total_ht = v.total_ht;
+    safeUpdate.total_ttc = v.total_ttc;
   }
 
   const { data, error } = await supabase

@@ -1,3 +1,4 @@
+import { ventilationTva, tauxLigne } from "./tva";
 /**
  * Génère le XML CII (Cross Industry Invoice) au profil **EN 16931 (Comfort)**
  *, le profil exigé par la réforme française de la facturation électronique.
@@ -226,6 +227,7 @@ export function generateFacturXml(
   const issueDate = xmlDate(invoice.issue_date);
   const dueDate = invoice.due_date ? xmlDate(invoice.due_date) : null;
   const tvaAmount = xmlAmount(invoice.total_ttc - invoice.total_ht);
+  const ventil = ventilationTva(invoice.items, invoice.tva_rate);
 
   // Catégorie TVA (BT-118) et motif d'exonération (BT-120).
   //
@@ -311,7 +313,7 @@ export function generateFacturXml(
       <ram:SpecifiedLineTradeAgreement><ram:NetPriceProductTradePrice><ram:ChargeAmount>${xmlAmount(item.unit_price)}</ram:ChargeAmount></ram:NetPriceProductTradePrice></ram:SpecifiedLineTradeAgreement>
       <ram:SpecifiedLineTradeDelivery><ram:BilledQuantity unitCode="${unitCode(item.unit)}">${item.quantity}</ram:BilledQuantity></ram:SpecifiedLineTradeDelivery>
       <ram:SpecifiedLineTradeSettlement>
-        <ram:ApplicableTradeTax><ram:TypeCode>VAT</ram:TypeCode>${exemptionReason}<ram:CategoryCode>${taxCategory}</ram:CategoryCode><ram:RateApplicablePercent>${invoice.tva_rate}</ram:RateApplicablePercent></ram:ApplicableTradeTax>
+        <ram:ApplicableTradeTax><ram:TypeCode>VAT</ram:TypeCode>${ventil.multiTaux ? "" : exemptionReason}<ram:CategoryCode>${ventil.multiTaux ? "S" : taxCategory}</ram:CategoryCode><ram:RateApplicablePercent>${ventil.multiTaux ? tauxLigne(item, invoice.tva_rate) : invoice.tva_rate}</ram:RateApplicablePercent></ram:ApplicableTradeTax>
         <ram:SpecifiedTradeSettlementLineMonetarySummation><ram:LineTotalAmount>${xmlAmount(item.total)}</ram:LineTotalAmount></ram:SpecifiedTradeSettlementLineMonetarySummation>
       </ram:SpecifiedLineTradeSettlement>
     </ram:IncludedSupplyChainTradeLineItem>`
@@ -410,7 +412,7 @@ export function generateFacturXml(
     <ram:ApplicableHeaderTradeSettlement>
       <ram:InvoiceCurrencyCode>EUR</ram:InvoiceCurrencyCode>
       ${paymentMeans}
-      <ram:ApplicableTradeTax><ram:CalculatedAmount>${tvaAmount}</ram:CalculatedAmount><ram:TypeCode>VAT</ram:TypeCode>${exemptionReason}<ram:BasisAmount>${xmlAmount(invoice.total_ht)}</ram:BasisAmount><ram:CategoryCode>${taxCategory}</ram:CategoryCode><ram:DueDateTypeCode>${dueDateTypeCode}</ram:DueDateTypeCode><ram:RateApplicablePercent>${invoice.tva_rate}</ram:RateApplicablePercent></ram:ApplicableTradeTax>
+      ${ventil.multiTaux ? ventil.groupes.map((g) => `<ram:ApplicableTradeTax><ram:CalculatedAmount>${xmlAmount(g.montant_tva)}</ram:CalculatedAmount><ram:TypeCode>VAT</ram:TypeCode><ram:BasisAmount>${xmlAmount(g.base_ht)}</ram:BasisAmount><ram:CategoryCode>S</ram:CategoryCode><ram:DueDateTypeCode>${dueDateTypeCode}</ram:DueDateTypeCode><ram:RateApplicablePercent>${g.taux}</ram:RateApplicablePercent></ram:ApplicableTradeTax>`).join("") : `<ram:ApplicableTradeTax><ram:CalculatedAmount>${tvaAmount}</ram:CalculatedAmount><ram:TypeCode>VAT</ram:TypeCode>${exemptionReason}<ram:BasisAmount>${xmlAmount(invoice.total_ht)}</ram:BasisAmount><ram:CategoryCode>${taxCategory}</ram:CategoryCode><ram:DueDateTypeCode>${dueDateTypeCode}</ram:DueDateTypeCode><ram:RateApplicablePercent>${invoice.tva_rate}</ram:RateApplicablePercent></ram:ApplicableTradeTax>`}
       ${paymentTerms}
       <ram:SpecifiedTradeSettlementHeaderMonetarySummation><ram:LineTotalAmount>${xmlAmount(invoice.total_ht)}</ram:LineTotalAmount><ram:TaxBasisTotalAmount>${xmlAmount(invoice.total_ht)}</ram:TaxBasisTotalAmount><ram:TaxTotalAmount currencyID="EUR">${tvaAmount}</ram:TaxTotalAmount><ram:GrandTotalAmount>${xmlAmount(invoice.total_ttc)}</ram:GrandTotalAmount><ram:DuePayableAmount>${xmlAmount(invoice.total_ttc)}</ram:DuePayableAmount></ram:SpecifiedTradeSettlementHeaderMonetarySummation>
       ${referencedDoc}

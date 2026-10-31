@@ -364,7 +364,10 @@ console.log("");
   );
   exige(
     "récapitulatif, daté de l'encaissement, pas de l'émission",
-    /f\.paid_at \|\| f\.issue_date/.test(src),
+    // La datation a été centralisée dans lib/recettes.ts le 24/10 (source
+    // unique du livre, du récap et de la tuile). On la vérifie donc là, pas
+    // dans la page du tableau de bord qui délègue désormais ce calcul.
+    /f\.paid_at \|\| f\.issue_date/.test(lire("lib/recettes.ts")),
     "on déclare ce qu'on a perçu sur la période : une facture émise en mars et réglée en avril appartient à avril",
   );
 

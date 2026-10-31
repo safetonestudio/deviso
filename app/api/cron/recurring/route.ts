@@ -1,3 +1,4 @@
+import { ventilationTva } from "@/lib/tva";
 import { NextRequest, NextResponse } from "next/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { generateFacturXPdf, facturxFilename } from "@/lib/facturx";
@@ -82,8 +83,9 @@ export async function GET(req: NextRequest) {
     // viole BR-CO-10.
     const centimes = (n: number) => Math.round((Number(n) || 0) * 100) / 100;
     const lignes = rec.items.map((it) => ({ ...it, total: centimes(it.total) }));
-    const total_ht = centimes(lignes.reduce((sum, item) => sum + item.total, 0));
-    const total_ttc = centimes(total_ht * (1 + rec.tva_rate / 100));
+    const vRec = ventilationTva(lignes, rec.tva_rate);
+    const total_ht = vRec.total_ht;
+    const total_ttc = vRec.total_ttc;
 
     const issue_date = today;
     const due_date = computeDueDate(rec.payment_terms);

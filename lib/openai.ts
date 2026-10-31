@@ -1,3 +1,4 @@
+import { ventilationTva } from "@/lib/tva";
 import OpenAI from "openai";
 import type { GeneratedProposal } from "@/types";
 import { lazyClient } from "@/lib/lazy-client";
@@ -247,8 +248,9 @@ function recalcTotals(proposal: GeneratedProposal): GeneratedProposal {
     ...item,
     total: Math.round(item.quantity * item.unit_price * 100) / 100,
   }));
-  const total_ht = Math.round(items.reduce((s, i) => s + i.total, 0) * 100) / 100;
-  const total_ttc = Math.round(total_ht * (1 + (proposal.tva_rate ?? 0) / 100) * 100) / 100;
+  const vGen = ventilationTva(items, proposal.tva_rate ?? 0);
+  const total_ht = vGen.total_ht;
+  const total_ttc = vGen.total_ttc;
   return { ...proposal, items, total_ht, total_ttc };
 }
 

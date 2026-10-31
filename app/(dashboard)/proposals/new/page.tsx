@@ -3,6 +3,7 @@ import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import type { GeneratedProposal, ProposalItem } from "@/types";
 import { v4 as uuidv4 } from "uuid";
+import { ventilationTva } from "@/lib/tva";
 import { UpgradeButton } from "@/components/UpgradeButton";
 import { LayoutTemplate, ChevronDown, ChevronUp, Clock, Package, Lightbulb, Zap, RotateCcw, Save } from "lucide-react";
 import { GuidedTourBanner } from "@/components/GuidedTourBanner";
@@ -105,7 +106,7 @@ export default function NewProposalPage() {
     const items = tpl.items.map((i) => ({ ...i, id: uuidv4() }));
     const total_ht = Math.round(items.reduce((s, i) => s + i.total, 0) * 100) / 100;
     const tva = tpl.tva_rate;
-    const total_ttc = Math.round(total_ht * (1 + tva / 100) * 100) / 100;
+    const total_ttc = ventilationTva(items, tva).total_ttc;
     setGenerated({
       title: tpl.name,
       items,
@@ -138,7 +139,7 @@ export default function NewProposalPage() {
       const proposal = data.proposal as GeneratedProposal;
       // Préserve le tva_rate choisi par l'utilisateur
       const tva = generated.tva_rate;
-      const total_ttc = Math.round(proposal.total_ht * (1 + tva / 100) * 100) / 100;
+      const total_ttc = ventilationTva(proposal.items, tva).total_ttc;
       setGenerated({ ...proposal, tva_rate: tva, total_ttc });
       setRefineInput("");
     } catch (e: unknown) {
@@ -166,7 +167,7 @@ export default function NewProposalPage() {
       if (!res.ok) throw new Error(data.error);
       const proposal = data.proposal as GeneratedProposal;
       const tva = defaultTvaRate;
-      const total_ttc = Math.round(proposal.total_ht * (1 + tva / 100) * 100) / 100;
+      const total_ttc = ventilationTva(proposal.items, tva).total_ttc;
       setGenerated({ ...proposal, tva_rate: tva, total_ttc });
       setStep("review");
     } catch (e: unknown) {
@@ -193,7 +194,7 @@ export default function NewProposalPage() {
     setStep("review");
   };
 
-  const updateItem = (idx: number, field: keyof ProposalItem, value: string | number) => {
+  const updateItem = (idx: number, field: keyof ProposalItem, value: string | number | undefined) => {
     if (!generated) return;
     const items = [...generated.items];
     const item = { ...items[idx], [field]: value };
@@ -202,13 +203,13 @@ export default function NewProposalPage() {
     }
     items[idx] = item;
     const total_ht = Math.round(items.reduce((s, i) => s + i.total, 0) * 100) / 100;
-    const total_ttc = Math.round(total_ht * (1 + generated.tva_rate / 100) * 100) / 100;
+    const total_ttc = ventilationTva(items, generated.tva_rate).total_ttc;
     setGenerated({ ...generated, items, total_ht, total_ttc });
   };
 
   const updateTvaRate = (rate: number) => {
     if (!generated) return;
-    const total_ttc = Math.round(generated.total_ht * (1 + rate / 100) * 100) / 100;
+    const total_ttc = ventilationTva(generated.items, rate).total_ttc;
     setGenerated({ ...generated, tva_rate: rate, total_ttc });
   };
 
@@ -245,7 +246,7 @@ export default function NewProposalPage() {
     };
     const items = [...generated.items, newItem];
     const total_ht = Math.round(items.reduce((s, i) => s + i.total, 0) * 100) / 100;
-    const total_ttc = Math.round(total_ht * (1 + generated.tva_rate / 100) * 100) / 100;
+    const total_ttc = ventilationTva(items, generated.tva_rate).total_ttc;
     setGenerated({ ...generated, items, total_ht, total_ttc });
   };
 
@@ -260,7 +261,7 @@ export default function NewProposalPage() {
     if (!generated) return;
     const items = generated.items.filter((_, i) => i !== idx);
     const total_ht = Math.round(items.reduce((s, i) => s + i.total, 0) * 100) / 100;
-    const total_ttc = Math.round(total_ht * (1 + generated.tva_rate / 100) * 100) / 100;
+    const total_ttc = ventilationTva(items, generated.tva_rate).total_ttc;
     setGenerated({ ...generated, items, total_ht, total_ttc });
   };
 
@@ -460,20 +461,34 @@ export default function NewProposalPage() {
 
             <div className="space-y-2 mb-4">
               <div className="grid grid-cols-12 gap-2 text-xs font-semibold text-gray-500 uppercase tracking-wide px-1">
-                <span className="col-span-5">Description</span>
+                <span className="col-span-3">Description</span>
                 <span className="col-span-2 text-center">Qté</span>
                 <span className="col-span-2 text-center">Unité</span>
                 <span className="col-span-2 text-right">Prix HT</span>
+                <span className="col-span-2 text-center">TVA</span>
                 <span className="col-span-1" />
               </div>
               {generated.items.map((item, idx) => (
                 <div key={idx} className="grid grid-cols-12 gap-2 items-center">
-                  <input className={`col-span-5 ${inputCls}`} value={item.description} onChange={(e) => updateItem(idx, "description", e.target.value)} />
+                  <input className={`col-span-3 ${inputCls}`} value={item.description} onChange={(e) => updateItem(idx, "description", e.target.value)} />
                   <input type="number" className={`col-span-2 ${inputCls} text-center`} value={item.quantity} onChange={(e) => updateItem(idx, "quantity", parseFloat(e.target.value))} min={0} />
                   <input className={`col-span-2 ${inputCls} text-center`} value={item.unit} onChange={(e) => updateItem(idx, "unit", e.target.value)} />
                   <div className="col-span-2 text-right">
                     <input type="number" className={`w-full ${inputCls} text-right`} value={item.unit_price} onChange={(e) => updateItem(idx, "unit_price", parseFloat(e.target.value))} min={0} />
                   </div>
+                  <select
+                    value={item.tva_rate ?? ""}
+                    onChange={(e) => updateItem(idx, "tva_rate", e.target.value === "" ? undefined : parseFloat(e.target.value))}
+                    className={`col-span-2 ${inputCls} text-center`}
+                    aria-label="Taux de TVA de la ligne"
+                  >
+                    <option value="">Compte ({generated.tva_rate}%)</option>
+                    <option value="20">20%</option>
+                    <option value="10">10%</option>
+                    <option value="5.5">5,5%</option>
+                    <option value="2.1">2,1%</option>
+                    <option value="0">0%</option>
+                  </select>
                   {/* Même correction que sur la facture : une croix de 12 px
                       n'est pas une cible tactile, et supprimer une ligne est
                       irréversible. */}
@@ -575,7 +590,14 @@ export default function NewProposalPage() {
                 <div className="flex justify-between text-gray-400">
                   <span>Total HT</span><span className="font-medium text-gray-200">{fmt(generated.total_ht)}</span>
                 </div>
-                {generated.tva_rate > 0 ? (
+                {ventilationTva(generated.items, generated.tva_rate).multiTaux ? (
+                  ventilationTva(generated.items, generated.tva_rate).groupes.map((g, gi) => (
+                    <div className="flex justify-between text-gray-400" key={gi}>
+                      <span>TVA {g.taux}%</span>
+                      <span className="font-medium text-gray-200">{fmt(g.montant_tva)}</span>
+                    </div>
+                  ))
+                ) : generated.tva_rate > 0 ? (
                   <div className="flex justify-between text-gray-400">
                     <span>TVA {generated.tva_rate}%</span>
                     <span className="font-medium text-gray-200">{fmt(generated.total_ttc - generated.total_ht)}</span>

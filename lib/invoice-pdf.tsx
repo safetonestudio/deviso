@@ -1,3 +1,4 @@
+import { ventilationTva } from "./tva";
 ﻿/**
  * Génère le PDF visuel d'une facture avec @react-pdf/renderer
  * Ce PDF sera ensuite enrichi avec le XML CII pour produire un Factur-X
@@ -631,14 +632,23 @@ export function InvoicePDF({ invoice, accentColor, paymentInfo, linkedInvoiceNum
               <Text style={styles.totalLabel}>{t.subtotal}</Text>
               <Text style={styles.totalValue}>{fmt(invoice.total_ht)}</Text>
             </View>
-            <View style={styles.totalRow}>
-              <Text style={styles.totalLabel}>
-                {exonere ? t.vatNotApplicable : `${t.vatRate} ${invoice.tva_rate}%`}
-              </Text>
-              <Text style={styles.totalValue}>
-                {fmt(invoice.total_ttc - invoice.total_ht)}
-              </Text>
-            </View>
+            {ventilationTva(invoice.items, invoice.tva_rate).multiTaux && !exonere ? (
+              ventilationTva(invoice.items, invoice.tva_rate).groupes.map((g, gi) => (
+                <View style={styles.totalRow} key={gi}>
+                  <Text style={styles.totalLabel}>{`${t.vatRate} ${g.taux}%`}</Text>
+                  <Text style={styles.totalValue}>{fmt(g.montant_tva)}</Text>
+                </View>
+              ))
+            ) : (
+              <View style={styles.totalRow}>
+                <Text style={styles.totalLabel}>
+                  {exonere ? t.vatNotApplicable : `${t.vatRate} ${invoice.tva_rate}%`}
+                </Text>
+                <Text style={styles.totalValue}>
+                  {fmt(invoice.total_ttc - invoice.total_ht)}
+                </Text>
+              </View>
+            )}
             <View style={[styles.totalRowFinal, { backgroundColor: accent }]}>
               <Text style={styles.totalLabelFinal}>
                 {isAvoir ? t.totalCredit : t.totalInclVat}

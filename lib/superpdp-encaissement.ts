@@ -1,3 +1,4 @@
+import { ventilationTva, type LigneMontant } from "@/lib/tva";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { superpdpFetch, SuperPdpNotConnected, SuperPdpSessionPending } from "@/lib/superpdp";
 import { estCloture, libelleStatut } from "@/lib/superpdp-statuts";
@@ -76,7 +77,7 @@ export async function envoyerEncaissementPdp(
 
   const { data: facture } = await admin
     .from("invoices")
-    .select("id, superpdp_invoice_id, superpdp_encaisse_at, total_ttc, tva_rate, superpdp_status")
+    .select("id, superpdp_invoice_id, superpdp_encaisse_at, total_ttc, tva_rate, superpdp_status, items")
     .eq("id", invoiceId)
     .eq("user_id", workspaceId)
     .maybeSingle();
@@ -165,21 +166,25 @@ export async function envoyerEncaissementPdp(
   const taux = Number(facture.tva_rate);
   const chiffresSurs = Number.isFinite(ttc) && ttc > 0 && Number.isFinite(taux) && taux >= 0;
 
-  const blocMen =
+  // Une facture peut porter plusieurs taux: on envoie un bloc MEN par taux
+  // (reported_data accepte un tableau), chacun avec le TTC de son groupe. Tout
+  // ou rien, un details partiel desactive le calcul de la plateforme.
+  const vEnc = ventilationTva((facture.items ?? []) as LigneMontant[], taux);
+  const blocsMen =
     dateValide && chiffresSurs
-      ? {
+      ? vEnc.groupes.map((g) => ({
           type_code: "MEN",
-          amount: ttc.toFixed(2),
+          amount: (g.base_ht + g.montant_tva).toFixed(2),
           currency_code: "EUR",
-          value_percent: taux.toFixed(2),
+          value_percent: g.taux.toFixed(2),
           date: dateValide,
-        }
-      : null;
+        }))
+      : [];
 
   // La date qu'on note chez nous doit être celle qui part réellement. Sans le
   // bloc, c'est la plateforme qui date l'événement, donc aujourd'hui. Noter la
   // date fournie ferait croire à une déclaration qu'on n'a pas faite.
-  const horodatage = blocMen
+  const horodatage = blocsMen.length
     ? new Date(`${dateValide}T12:00:00Z`).toISOString()
     : new Date().toISOString();
 
@@ -271,7 +276,7 @@ export async function envoyerEncaissementPdp(
         // ne pose `details` que pour porter la date d'encaissement, et
         // seulement avec un bloc MEN complet, un bloc partiel désactive son
         // calcul sans satisfaire BR-FR-CDV-14.
-        ...(blocMen ? { details: [{ reported_data: [blocMen] }] } : {}),
+        ...(blocsMen.length ? { details: [{ reported_data: blocsMen }] } : {}),
       }),
     });
 
