@@ -47,8 +47,15 @@ verifier("team/route exclut le comptable de la liste et du quota (>=2)", exclutC
 
 // 4. endpoint dedie present, garde de plan des Solo, role pose a l'insertion
 const ep = lire("app/api/team/comptable/route.ts");
+// La liste des plans vit dans lib/droits.ts (PLANS_ACCES_COMPTABLE), partagee
+// avec le rattachement par code cabinet. On verifie que la route s'y appuie, et
+// que la constante ouvre l'acces des Solo sans jamais l'ouvrir au plan gratuit.
+const constantePlans = (droits.match(/PLANS_ACCES_COMPTABLE\s*=\s*\[([^\]]*)\]/) ?? [])[1] ?? "";
 verifier("endpoint comptable : garde de plan (PLAN_REQUIRED des Solo)",
-  /PLANS_AUTORISES/.test(ep) && /"solo"/.test(ep) && /refusPlan\(\)/.test(ep));
+  /new Set<string>\(PLANS_ACCES_COMPTABLE\)/.test(ep) && /PLANS_AUTORISES\.has\(/.test(ep) && /refusPlan\(\)/.test(ep) &&
+  /"solo"/.test(constantePlans) && !/"free"/.test(constantePlans));
+verifier("rattachement par code cabinet : meme garde de plan",
+  /PLANS_ACCES_COMPTABLE/.test(lire("app/api/cabinet/rejoindre/route.ts")) && /PLAN_REQUIRED/.test(lire("app/api/cabinet/rejoindre/route.ts")));
 verifier("endpoint comptable : insertion avec role comptable",
   /role: ROLE_COMPTABLE/.test(ep));
 verifier("contre-epreuve (garde de plan absente est detectee)",

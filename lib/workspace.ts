@@ -9,10 +9,9 @@ export async function getWorkspaceUserId(userId: string): Promise<string> {
   const supabase = createAdminClient();
   const { data, error } = await supabase
     .from("team_members")
-    .select("owner_id")
+    .select("owner_id, role")
     .eq("member_id", userId)
-    .eq("status", "active")
-    .maybeSingle();
+    .eq("status", "active");
   // Une ERREUR de lecture n'est pas « aucune appartenance ». Retomber en silence
   // sur `userId` ferait créer les documents d'un membre sous SON propre espace -
   // numéro tiré d'une autre séquence, doublon de numérotation, facture invisible
@@ -20,7 +19,12 @@ export async function getWorkspaceUserId(userId: string): Promise<string> {
   if (error) {
     throw new Error(`Résolution de l'espace de travail impossible : ${error.message}`);
   }
-  return data?.owner_id ?? userId;
+  // Un comptable peut être rattaché à plusieurs clients, et ses lignes ne
+  // résolvent JAMAIS vers un dossier client : il travaille depuis son cockpit
+  // cabinet, pas en se connectant dans le compte de chaque client. Seule une
+  // vraie appartenance d'équipe (role != comptable) résout vers le propriétaire.
+  const membreEquipe = (data ?? []).find((m) => m.role !== "comptable");
+  return membreEquipe?.owner_id ?? userId;
 }
 
 /**

@@ -14,6 +14,7 @@ import { DemoBanner } from "@/components/DemoSession";
 import { SuperPdpSync } from "@/components/SuperPdpSync";
 import { Sparkles } from "lucide-react";
 import { createAdminClient } from "@/lib/supabase/admin";
+import { estCabinet } from "@/lib/cabinet-acces";
 import { SupportButton } from "@/components/SupportButton";
 import { PlanProvider } from "@/components/PlanContext";
 import Script from "next/script";
@@ -77,20 +78,39 @@ export default async function DashboardLayout({ children }: { children: React.Re
     isComptable = membre?.role === ROLE_COMPTABLE;
   }
 
+  // Un compte qui agit comme cabinet (dossiers suivis ou codes en attente) et
+  // ne facture pas lui-meme arrive sur son espace cabinet : ni l'interface du
+  // micro-entrepreneur, ni son onboarding de facturation. Un comptable qui
+  // facture aussi via Deviso garde son tableau de bord.
+  if (!isMember && (pathname === "/dashboard" || pathname.startsWith("/onboarding"))) {
+    const adminCabinet = createAdminClient();
+    if (await estCabinet(adminCabinet, user.id)) {
+      const { count } = await adminCabinet
+        .from("invoices")
+        .select("id", { count: "exact", head: true })
+        .eq("user_id", user.id);
+      if (!count) redirect("/cabinet");
+    }
+  }
+
   // Redirect new owners to onboarding if they haven't set their company name yet
   // Team members (collaborators) are exempt, they use the owner's company profile
   if (!profile?.company_name && !pathname.startsWith("/onboarding") && !isMember) {
     redirect("/onboarding");
   }
 
-  // Membres : bloquer l'accès aux pages sensibles. Le comptable récupère en
-  // lecture seule les pages dont il a besoin (déclarées dans PAGES_COMPTABLE),
-  // mais jamais Abonnement ni Paiements, qui restent du ressort du titulaire.
-  const cheminsRestreints = isComptable
-    ? MEMBER_RESTRICTED_PATHS.filter((p) => !PAGES_COMPTABLE.has(p))
-    : MEMBER_RESTRICTED_PATHS;
-  if (isMember && cheminsRestreints.some((p) => pathname.startsWith(p))) {
-    redirect("/dashboard");
+  // Périmètre d'accès des invités.
+  if (isMember) {
+    if (isComptable) {
+      // Le comptable n'accède qu'à sa liste blanche (PAGES_COMPTABLE), en
+      // lecture seule. Tout autre chemin le ramène au tableau de bord.
+      const autorise = [...PAGES_COMPTABLE].some(
+        (p) => pathname === p || pathname.startsWith(p + "/"),
+      );
+      if (pathname && !autorise) redirect("/dashboard");
+    } else if (MEMBER_RESTRICTED_PATHS.some((p) => pathname.startsWith(p))) {
+      redirect("/dashboard");
+    }
   }
 
   /**

@@ -5,7 +5,7 @@ import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { GuidedTourBanner } from "@/components/GuidedTourBanner";
 import { getWorkspaceUserId, getWorkspaceProfile } from "@/lib/workspace";
-import { estTitulaire } from "@/lib/droits";
+import { estTitulaire, estComptable } from "@/lib/droits";
 import { can } from "@/lib/plans";
 import { getPlan } from "@/lib/stripe";
 import { lireFacturesPayees, lignesRecettes, MODES_REGLEMENT, type LigneRecette } from "@/lib/recettes";
@@ -40,7 +40,11 @@ export default async function LivreRecettes({ searchParams }: { searchParams: Pr
   if (!user) redirect("/login");
 
   const workspaceId = await getWorkspaceUserId(user.id);
-  if (!estTitulaire(user.id, workspaceId)) redirect("/dashboard");
+  // Page verrouillée au titulaire, mais ouverte à l'expert-comptable en
+  // lecture seule : le livre des recettes est un livrable comptable.
+  if (!estTitulaire(user.id, workspaceId) && !(await estComptable(user.id, workspaceId))) {
+    redirect("/dashboard");
+  }
 
   const profil = await getWorkspaceProfile<{ plan: string | null }>(workspaceId, "plan");
   const plan = getPlan(profil?.plan);

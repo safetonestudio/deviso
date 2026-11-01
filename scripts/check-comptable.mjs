@@ -53,13 +53,17 @@ console.log("");
 // seize, et toutes les lignes étaient décalées.
 const csvVirgule = (src) => /rows\.map\(\(r\) => r\.join\(","\)\)/.test(src);
 
+// Le CSV des factures est fabriqué par lib/exports-comptables.ts (source
+// partagée entre l'espace client et le cockpit cabinet) : c'est là que la
+// règle se vérifie, la route ne fait que déléguer.
+const nomCsv = (f) => (f.includes("exports-comptables") ? "CSV des factures" : f.split("/").at(-2));
 for (const f of [
-  "app/api/export/invoices-csv/route.ts",
+  "lib/exports-comptables.ts",
   "app/api/export/monthly-recap/route.ts",
 ]) {
   const src = lire(f);
   exige(
-    `${f.split("/").at(-2)}, séparateur compatible avec la virgule décimale`,
+    `${nomCsv(f)}, séparateur compatible avec la virgule décimale`,
     !csvVirgule(src) && /const SEP = ";"/.test(src),
     "les montants sont à la française : joints par une virgule, ils cassent chaque ligne",
   );
@@ -68,7 +72,7 @@ for (const f of [
   // règle que là où du texte libre entre dans le fichier.
   if (/function esc\(/.test(src)) {
     exige(
-      `${f.split("/").at(-2)}, l'échappement couvre le point-virgule`,
+      `${nomCsv(f)}, l'échappement couvre le point-virgule`,
       /\/\[;,"/.test(src),
       "un nom de client contenant « ; » casserait la ligne à son tour",
     );
@@ -78,10 +82,21 @@ contreEpreuve("séparateur CSV", csvVirgule, 'const csv = BOM + [h, ...rows.map(
 
 // ── 2. FEC : sens des écritures d'avoir ─────────────────────────────────────
 {
-  const src = lire("app/api/export/fec/route.ts");
+  // Les règles d'écriture vivent dans lib/exports-comptables.ts, partagé par
+  // l'export du client et celui du cockpit cabinet. Les deux routes doivent y
+  // déléguer : une route qui refabriquerait son propre FEC échapperait à ces
+  // contrôles.
+  exige(
+    "FEC et CSV, les routes délèguent à la source partagée",
+    /genererFec\(/.test(lire("app/api/export/fec/route.ts")) &&
+      /genererCsvFactures\(/.test(lire("app/api/export/invoices-csv/route.ts")) &&
+      /genererFec\(/.test(lire("app/api/cabinet/export/route.ts")),
+    "un export refabriqué à part divergerait silencieusement de celui que le comptable importe",
+  );
+  const src = lire("lib/exports-comptables.ts");
   exige(
     "FEC, un avoir s'enregistre en sens inverse",
-    /estAvoir/.test(src) && /estAvoir \? 0 : ttc/.test(src),
+    /const avoir = estAvoir\(inv\)/.test(src) && /avoir \? 0 : ttc/.test(src),
     "les montants d'un avoir sont positifs (BR-27) : additionnés, ils doublent le CA et la TVA collectée",
   );
   exige(

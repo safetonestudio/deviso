@@ -136,24 +136,28 @@ export function lienActif(href: string, pathname: string): boolean {
 }
 
 /**
- * Pages reservees au titulaire (ownerOnly) auxquelles un expert-comptable a
- * tout de meme acces, en lecture seule. On s'en tient aux pages qui savent
+ * Liste blanche COMPLETE des pages d'un expert-comptable, en lecture seule. Le
+ * comptable n'herite PAS de la vue d'un membre d'equipe : il ne voit que ces
+ * pages, rien d'autre. On s'en tient aux pages qui savent
  * deja s'afficher pour un invite : factures recues, declarations, et l'activite
  * (exports FEC/CSV, le livrable meme du comptable). « Livre des recettes » et
  * « Achats a l'etranger » se verrouillent au titulaire dans leur propre page,
  * les ouvrir ici ne suffirait pas.
  */
 export const PAGES_COMPTABLE = new Set<string>([
+  "/dashboard",
+  "/invoices",
   "/factures-recues",
   "/declarations",
+  "/livre-recettes",
   "/stats",
 ]);
 
 /** Un lien de navigation est-il visible pour cet utilisateur ? */
 export function lienVisible(item: NavLink, isMember: boolean, isComptable: boolean): boolean {
-  if (!isMember) return true;
-  if (!item.ownerOnly) return true;
-  return isComptable && PAGES_COMPTABLE.has(item.href);
+  if (!isMember) return true;                 // titulaire : tout
+  if (isComptable) return PAGES_COMPTABLE.has(item.href); // comptable : liste blanche stricte
+  return !item.ownerOnly;                      // membre d'equipe : tout sauf ownerOnly
 }
 
 /**

@@ -114,6 +114,27 @@ export async function droitsDe(
   return normaliserPermissions(data?.permissions);
 }
 
+/**
+ * L'utilisateur est-il l'expert-comptable (lecture seule) de cet espace ?
+ * Sert aux pages verrouillees au titulaire qui doivent s'ouvrir au comptable
+ * (livre des recettes, par exemple).
+ */
+export async function estComptable(
+  userId: string,
+  workspaceId: string,
+  admin: SupabaseClient = createAdminClient()
+): Promise<boolean> {
+  if (estTitulaire(userId, workspaceId)) return false;
+  const { data } = await admin
+    .from("team_members")
+    .select("role")
+    .eq("owner_id", workspaceId)
+    .eq("member_id", userId)
+    .eq("status", "active")
+    .maybeSingle();
+  return data?.role === ROLE_COMPTABLE;
+}
+
 /** `true` si l'utilisateur a le droit de faire cet acte dans cet espace. */
 export async function peutFaire(
   userId: string,
