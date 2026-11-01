@@ -37,5 +37,5 @@ avec ce qu'elles apporteraient :
 | `POST /invoices?external_id=…` | Rattacher la facture Super PDP à son identifiant Deviso | Ignorée |
 | `GET /ereportings`, `/ereportings/preview` | Voir ce qui est réellement déclaré à l'administration, avant et après envoi | Ignorée |
 | `POST` / `DELETE /directory_entries` | Gérer ses propres adresses de réception | Lecture seule côté Deviso |
-| `POST /b2bint_invoices`, `/b2bint_payments` | E-reporting des factures internationales | **Implémentée depuis (25/09)** pour les achats, voir `chantier.md` |
+| `POST /b2bint_invoices`, `/b2bint_payments` | E-reporting des factures internationales | **Utilisée pour les achats.** Blocage 500 levé (champ `type_code` manquant) ; 11/11 bac à sable le 18/10, voir `chantier.md` |
 | `POST /companies` | Enrôler une entreprise | **Hors de portée** : réservé aux experts-comptables, refusé par défaut |

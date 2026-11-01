@@ -84,19 +84,35 @@ Aucune période n'est calculée côté Deviso : la spec ne documente le découpa
 que pour le régime mensuel, et **par décades**. Deviner pour le trimestriel
 serait exactement l'erreur de `vat_exemption`.
 
+### Achats internationaux : livré, blocage 500 levé
+
+La décision initiale (hors produit, l'obligation pesant sur l'entreprise et son
+comptable) a été revue le 25/09/2026. L'e-reporting d'acquisition est désormais
+dans le produit : page `/achats-internationaux` (saisie, transmission, suivi),
+table `superpdp_achats_int`, `lib/superpdp-achats.ts`.
+
+Le blocage du 25/09 est résolu. Le `POST /b2bint_invoices` renvoyait un 500
+systématique en bac à sable ; la cause n'était pas une panne de Super PDP mais un
+champ obligatoire manquant, `type_code`. Super PDP a rendu l'erreur explicite
+(500 devenu 400 « missing type_code »), et le payload envoie maintenant
+`type_code: "380"` avec l'identité complète du vendeur (28/09, voir
+`construirePayloadB2bint`).
+
+Affinage du 18/10/2026 : un 200 veut dire que la Plateforme Agréée a stocké la
+déclaration, pas qu'elle est partie à l'administration (envoi différé selon le
+régime de TVA). L'achat reste « Enregistré » tant que `ppf_ereporting_id`
+(lecture seule, spec v1.37) est absent, et passe « Déclaré » quand le cron
+horaire `superpdp-sync` le voit apparaître. La lecture de `GET /b2bint_invoices`
+est paginée (`starting_after_id`) pour que la garde anti-doublon voie au-delà des
+1 000 premières déclarations. Suite `npm run test:achats` : 11/11 contre le bac à
+sable le 18/10.
+
+Reste, comme pour toute déclaration réelle, la première transmission en
+production, qu'aucun test automatique ne remplace.
+
 ### Décisions prises, ces points ne seront pas traités
 
 Ce ne sont pas des tâches en attente. Ce sont des choix, et ils sont clos.
-
-**Achats internationaux (`b2bint_invoices`, `direction: in`) : décision
-REVUE le 25/09/2026, désormais dans le produit.** Le choix initial (hors
-produit, l'obligation pesant sur l'entreprise et son comptable) a été
-abandonné : page `/achats-internationaux` (saisie de l'achat, transmission,
-suivi), table `superpdp_achats_int`, `lib/superpdp-achats.ts`. Le statut
-« Déclaré » n'apparaît qu'après envoi réel au PPF (synchronisation par le cron
-`superpdp-sync`). Réserve : le CREATE `b2bint_invoices` renvoyait 500 côté
-Super PDP en bac à sable (25/09) ; transmission réelle à ne pas considérer
-comme prouvée avant un 200 reproduit.
 
 **Recettes au comptant (`POST /b2c_transactions`), hors cible.**
 Leur documentation décrit le cas : « les salons de coiffure font leurs ventes
