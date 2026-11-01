@@ -81,6 +81,22 @@ const dateIso = (n) => jour(n).toISOString().slice(0, 10);
 const tsIso = (n) => jour(n).toISOString();
 const r2 = (n) => Math.round(n * 100) / 100;
 
+/**
+ * Mot de passe aleatoire conforme a la politique Supabase du projet (au moins
+ * une minuscule, une majuscule et un chiffre, sinon 422 weak_password).
+ */
+function motDePasseFort(longueur = 16) {
+  const MIN = "abcdefghjkmnpqrstuvwxyz", MAJ = "ABCDEFGHJKMNPQRSTUVWXYZ", CHI = "23456789";
+  const tous = MIN + MAJ + CHI;
+  const car = [MIN, MAJ, CHI].map((a) => a[randomInt(a.length)]);
+  while (car.length < longueur) car.push(tous[randomInt(tous.length)]);
+  for (let i = car.length - 1; i > 0; i--) {
+    const j = randomInt(i + 1);
+    [car[i], car[j]] = [car[j], car[i]];
+  }
+  return car.join("");
+}
+
 // -- Comptes ------------------------------------------------------------------
 async function trouverUtilisateur(email) {
   for (let page = 1; page < 50; page++) {
@@ -107,7 +123,7 @@ async function compte(fiche, motDePasse) {
   } else {
     const { data, error } = await admin.auth.admin.createUser({
       email: fiche.email,
-      password: motDePasse ?? randomUUID(),
+      password: motDePasse ?? motDePasseFort(),
       email_confirm: true,
       user_metadata: { full_name: fiche.full_name },
     });
@@ -313,8 +329,7 @@ let motDePasse = process.env.CABINET_DEMO_PASSWORD;
 try { motDePasse = motDePasse ?? secret("CABINET_DEMO_PASSWORD"); } catch { /* premiere execution */ }
 let nouveau = false;
 if (!motDePasse) {
-  const A = "ABCDEFGHJKMNPQRSTUVWXYZabcdefghjkmnpqrstuvwxyz23456789";
-  motDePasse = Array.from({ length: 16 }, () => A[randomInt(A.length)]).join("");
+  motDePasse = motDePasseFort();
   nouveau = true;
 }
 
