@@ -1,6 +1,6 @@
 "use client";
 
-import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { useState } from "react";
 
 // Forme locale (et non un import de lib/cabinet-dossiers) : ce composant est
@@ -35,6 +35,7 @@ const eur = (n: number) =>
  * avec selection et export (un client, plusieurs, ou tout le portefeuille).
  */
 export function CabinetPortefeuille({ dossiers, annee }: { dossiers: DossierVue[]; annee: number }) {
+  const router = useRouter();
   const [selection, setSelection] = useState<Set<string>>(new Set());
   const [format, setFormat] = useState<"fec" | "csv">("fec");
   const [an, setAn] = useState(annee);
@@ -100,12 +101,19 @@ export function CabinetPortefeuille({ dossiers, annee }: { dossiers: DossierVue[
 
       <ul className="divide-y divide-ds-border">
         {dossiers.map((d) => (
-          <li key={d.id} className="p-4 flex flex-wrap items-center gap-x-5 gap-y-3">
+          <li
+            key={d.id}
+            onClick={() => router.push(`/cabinet/${d.id}`)}
+            className="p-4 flex flex-wrap items-center gap-x-5 gap-y-3 cursor-pointer hover:bg-ds-elevated/50 transition-colors"
+          >
+            {/* La case reste independante : la cocher pour un export ne doit pas
+                ouvrir le dossier. Le reste de la ligne mene au dossier. */}
             <input
               type="checkbox"
               checked={selection.has(d.id)}
               onChange={() => basculer(d.id)}
-              className="accent-indigo-500"
+              onClick={(e) => e.stopPropagation()}
+              className="accent-indigo-500 cursor-pointer"
               aria-label={`Sélectionner ${d.nom}`}
             />
             <span className={`w-2.5 h-2.5 rounded-full shrink-0 ${PASTILLE[d.niveau]}`} title={LIBELLE[d.niveau]} />
@@ -131,12 +139,9 @@ export function CabinetPortefeuille({ dossiers, annee }: { dossiers: DossierVue[
                 <div className="text-gray-500 text-xs">CA HT {annee}</div>
                 <div className="text-gray-200 font-semibold">{eur(d.caHtAnnee)}</div>
               </div>
-              <Link
-                href={`/cabinet/${d.id}`}
-                className="shrink-0 text-sm px-3 py-1.5 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 font-medium transition-colors"
-              >
-                Ouvrir
-              </Link>
+              <svg className="w-4 h-4 text-gray-600 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2} aria-hidden="true">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
+              </svg>
             </div>
           </li>
         ))}
