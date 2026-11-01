@@ -40,12 +40,13 @@ export async function GET(req: NextRequest) {
     return NextResponse.json({ error: e instanceof Error ? e.message : "Lecture impossible" }, { status: 500 });
   }
 
-  const entete = ["Date d'encaissement", "N° de facture", "Client", "Nature de la prestation", "Montant HT", "Montant encaissé TTC", "Mode de règlement", "Date estimée (émission)"];
+  const entete = ["Date d'encaissement", "N° de facture", "Client", "Catégorie", "Nature de la prestation", "Montant HT", "Montant encaissé TTC", "Mode de règlement", "Date estimée (émission)"];
   const corps = lignes.map((l) =>
     [
       l.date.split("-").reverse().join("/"),
       l.numero,
       l.client,
+      l.categorie === "biens" ? "Vente de biens" : "Prestation de services",
       l.nature,
       montant(l.ht),
       montant(l.ttc),

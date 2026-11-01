@@ -45,6 +45,7 @@ export type FactureRecette = {
   paid_at: string | null;
   issue_date: string | null;
   payment_mode?: string | null;
+  operation_category?: string | null;
   items?: { description?: string | null }[] | null;
 };
 
@@ -58,9 +59,13 @@ export type LigneRecette = {
   ht: number;
   ttc: number;
   mode: ModeReglement | null;
+  // Ventes de biens ou prestations de services : abattements et seuils micro
+  // differents (71 %/188 700 EUR vs 50 %/77 700 EUR), la declaration se fait
+  // par categorie. Lu de invoices.operation_category (meme source que le FEC).
+  categorie: "biens" | "services";
 };
 
-const CHAMPS = "id, invoice_number, client_name, client_company, status, invoice_type, total_ht, total_ttc, paid_at, issue_date, payment_mode, items";
+const CHAMPS = "id, invoice_number, client_name, client_company, status, invoice_type, total_ht, total_ttc, paid_at, issue_date, payment_mode, operation_category, items";
 
 /** Une facture payee devient une ligne de recette ; sinon null. */
 export function ligneRecette(f: FactureRecette): LigneRecette | null {
@@ -83,7 +88,29 @@ export function ligneRecette(f: FactureRecette): LigneRecette | null {
     ht: signe * Number(f.total_ht ?? 0),
     ttc: signe * Number(f.total_ttc ?? f.total_ht ?? 0),
     mode: estModeReglement(f.payment_mode) ? f.payment_mode : null,
+    categorie: f.operation_category === "goods" ? "biens" : "services",
   };
+}
+
+export type TotalCategorie = { ht: number; ttc: number; nb: number };
+
+/**
+ * Totaux par categorie (ventes de biens / prestations de services), pour la
+ * declaration micro : les deux relevent d'abattements et de seuils distincts.
+ */
+export function totauxParCategorie(lignes: LigneRecette[]): { biens: TotalCategorie; services: TotalCategorie } {
+  const vide = (): TotalCategorie => ({ ht: 0, ttc: 0, nb: 0 });
+  const acc = { biens: vide(), services: vide() };
+  for (const l of lignes) {
+    const t = acc[l.categorie];
+    t.ht += l.ht;
+    t.ttc += l.ttc;
+    t.nb += 1;
+  }
+  const r2 = (n: number) => Math.round(n * 100) / 100;
+  acc.biens.ht = r2(acc.biens.ht); acc.biens.ttc = r2(acc.biens.ttc);
+  acc.services.ht = r2(acc.services.ht); acc.services.ttc = r2(acc.services.ttc);
+  return acc;
 }
 
 /** Lignes de recette triees par date d'encaissement, puis par numero. */

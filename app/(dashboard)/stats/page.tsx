@@ -6,7 +6,7 @@ import { fetcher } from "@/lib/fetcher";
 import { UpgradeButton } from "@/components/UpgradeButton";
 import { KpiCard } from "@/components/ui/KpiCard";
 import { GuidedTourBanner } from "@/components/GuidedTourBanner";
-import { TrendingUp, Target, Percent, FileText, BarChart3, Download, Info, Lock, Clock, Zap, Table2 } from "lucide-react";
+import { TrendingUp, Target, Percent, FileText, BarChart3, Lock, Clock, Zap } from "lucide-react";
 
 interface MonthlyCa { month: string; ca: number; }
 interface TopClient { name: string; ca: number; }
@@ -38,54 +38,11 @@ function monthLabel(ym: string) {
   return new Date(Number(y), Number(m) - 1).toLocaleDateString("fr-FR", { month: "short", year: "2-digit" });
 }
 
-const CURRENT_YEAR = new Date().getFullYear();
-const AVAILABLE_YEARS = [CURRENT_YEAR, CURRENT_YEAR - 1, CURRENT_YEAR - 2];
-
 export default function StatsPage() {
   const [stats, setStats] = useState<Stats | null>(null);
   const [isPro, setIsPro] = useState(true);
   const [loading, setLoading] = useState(true);
-  const [exportYear, setExportYear] = useState(CURRENT_YEAR);
-  const [exporting, setExporting] = useState(false);
-  const [exportingCsv, setExportingCsv] = useState(false);
-  const [exportingRecap, setExportingRecap] = useState(false);
   const [hoveredBar, setHoveredBar] = useState<number | null>(null);
-
-  async function downloadFile(url: string, fallbackName: string) {
-    const res = await fetch(url);
-    if (!res.ok) throw new Error("Erreur export");
-    const blob = await res.blob();
-    const disposition = res.headers.get("Content-Disposition") || "";
-    const match = disposition.match(/filename="(.+?)"/);
-    const filename = match ? match[1] : fallbackName;
-    const objectUrl = URL.createObjectURL(blob);
-    const a = document.createElement("a");
-    a.href = objectUrl;
-    a.download = filename;
-    a.click();
-    URL.revokeObjectURL(objectUrl);
-  }
-
-  async function handleExportFEC() {
-    setExporting(true);
-    try { await downloadFile(`/api/export/fec?year=${exportYear}`, `FEC_${exportYear}.txt`); }
-    catch { alert("Erreur lors de la génération du FEC."); }
-    finally { setExporting(false); }
-  }
-
-  async function handleExportCsv() {
-    setExportingCsv(true);
-    try { await downloadFile(`/api/export/invoices-csv?year=${exportYear}`, `Factures_${exportYear}.csv`); }
-    catch { alert("Erreur lors de l'export CSV."); }
-    finally { setExportingCsv(false); }
-  }
-
-  async function handleExportRecap() {
-    setExportingRecap(true);
-    try { await downloadFile(`/api/export/monthly-recap?year=${exportYear}`, `Recap_CA_${exportYear}.csv`); }
-    catch { alert("Erreur lors du récapitulatif."); }
-    finally { setExportingRecap(false); }
-  }
 
   // Cache SWR : retour instantane au revisit, revalidation en fond.
   const { data: statsData } = useSWR("/api/stats", fetcher);
@@ -103,7 +60,7 @@ export default function StatsPage() {
           <BarChart3 size={24} className="text-gray-500" />
         </div>
         <h1 className="text-2xl font-semibold text-white">Activité</h1>
-        <p className="text-gray-400">Taux de conversion, CA prévisionnel et export comptable FEC, inclus dans les plans Solo et Pro.</p>
+        <p className="text-gray-400">Taux de conversion, CA prévisionnel et analyses d&apos;activité, inclus dans les plans Solo et Pro.</p>
         <UpgradeButton plan="solo" label="Passer Solo" />
       </div>
     );
@@ -449,132 +406,6 @@ export default function StatsPage() {
           </div>
         </div>
       )}
-
-      {/* ── Exports comptables ── */}
-      <div className="space-y-4">
-        <div className="flex items-center justify-between">
-          <h2 className="text-sm font-semibold text-gray-400 uppercase tracking-wide">Exports comptables</h2>
-          <select
-            value={exportYear}
-            onChange={(e) => setExportYear(Number(e.target.value))}
-            className="bg-ds-elevated border border-ds-border text-white text-sm rounded-lg px-3 py-1.5 focus:outline-none focus:ring-2 focus:ring-indigo-500"
-          >
-            {AVAILABLE_YEARS.map((y) => (
-              <option key={y} value={y}>{y}</option>
-            ))}
-          </select>
-        </div>
-
-        {/* FEC, Solo+ */}
-        <div className="bg-ds-surface border border-ds-border rounded-xl p-5">
-          <div className="flex items-start justify-between gap-4 flex-wrap">
-            <div className="flex items-start gap-3">
-              <div className="w-9 h-9 rounded-lg bg-indigo-500/15 border border-indigo-500/20 flex items-center justify-center shrink-0 mt-0.5">
-                <Download size={15} className="text-indigo-400" />
-              </div>
-              <div>
-                <div className="flex items-center gap-2">
-                  <h3 className="text-sm font-semibold text-white">Export FEC</h3>
-                  <span className="text-[10px] font-bold px-1.5 py-0.5 rounded-full bg-ds-elevated text-gray-400 border border-ds-border">Solo+</span>
-                </div>
-                <p className="text-xs text-gray-500 mt-0.5">
-                  Fichier des Écritures Comptables, format DGFiP, à remettre à votre comptable ou en cas de contrôle fiscal.
-                </p>
-              </div>
-            </div>
-            <button onClick={handleExportFEC} disabled={exporting}
-              className="flex items-center gap-2 bg-ds-elevated border border-ds-border hover:bg-zinc-700 disabled:opacity-50 text-white text-sm font-medium px-4 py-2 rounded-lg transition-colors shrink-0">
-              <Download size={14} />
-              {exporting ? "Génération…" : "Télécharger .txt"}
-            </button>
-          </div>
-          <div className="mt-3 flex items-start gap-2 text-xs text-gray-600 pt-3 border-t border-ds-border">
-            <Info size={12} className="shrink-0 mt-0.5" />
-            <span>Journaux VT (Ventes) et BQ (Banque) · Comptes 411, 706, 445710 · Format tabulé UTF-8</span>
-          </div>
-        </div>
-
-        {/* Exports Pro */}
-        {stats.is_pro ? (
-          <div className="grid sm:grid-cols-2 gap-4">
-            {/* CSV Factures */}
-            <div className="bg-ds-surface border border-ds-border rounded-xl p-5">
-              <div className="flex items-start gap-3 mb-4">
-                <div className="w-9 h-9 rounded-lg bg-emerald-500/15 border border-emerald-500/20 flex items-center justify-center shrink-0">
-                  <Table2 size={15} className="text-emerald-400" />
-                </div>
-                <div>
-                  <div className="flex items-center gap-2">
-                    <h3 className="text-sm font-semibold text-white">Export CSV Factures</h3>
-                    <span className="text-[10px] font-bold px-1.5 py-0.5 rounded-full bg-indigo-500/20 text-indigo-400 border border-indigo-500/30">PRO</span>
-                  </div>
-                  <p className="text-xs text-gray-500 mt-0.5">
-                    Toutes les factures de l&apos;année dans un tableur, client, montants HT/TVA/TTC, statut.
-                  </p>
-                </div>
-              </div>
-              <button onClick={handleExportCsv} disabled={exportingCsv}
-                className="w-full flex items-center justify-center gap-2 bg-emerald-600/20 border border-emerald-500/30 hover:bg-emerald-600/30 disabled:opacity-50 text-emerald-300 text-sm font-medium px-4 py-2.5 rounded-lg transition-colors">
-                <Download size={14} />
-                {exportingCsv ? "Génération…" : `Télécharger CSV ${exportYear}`}
-              </button>
-            </div>
-
-            {/* Récapitulatif mensuel */}
-            <div className="bg-ds-surface border border-ds-border rounded-xl p-5">
-              <div className="flex items-start gap-3 mb-4">
-                <div className="w-9 h-9 rounded-lg bg-violet-500/15 border border-violet-500/20 flex items-center justify-center shrink-0">
-                  <TrendingUp size={15} className="text-violet-400" />
-                </div>
-                <div>
-                  <div className="flex items-center gap-2">
-                    <h3 className="text-sm font-semibold text-white">Récapitulatif mensuel CA</h3>
-                    <span className="text-[10px] font-bold px-1.5 py-0.5 rounded-full bg-indigo-500/20 text-indigo-400 border border-indigo-500/30">PRO</span>
-                  </div>
-                  <p className="text-xs text-gray-500 mt-0.5">
-                    CA mois par mois, HT, TVA, TTC, encaissé et en attente. Idéal pour votre comptable.
-                  </p>
-                </div>
-              </div>
-              <button onClick={handleExportRecap} disabled={exportingRecap}
-                className="w-full flex items-center justify-center gap-2 bg-violet-600/20 border border-violet-500/30 hover:bg-violet-600/30 disabled:opacity-50 text-violet-300 text-sm font-medium px-4 py-2.5 rounded-lg transition-colors">
-                <Download size={14} />
-                {exportingRecap ? "Génération…" : `Télécharger récap ${exportYear}`}
-              </button>
-            </div>
-          </div>
-        ) : (
-          /* Solo, aperçu verrouillé des exports Pro */
-          <div className="relative rounded-xl overflow-hidden">
-            <div className="grid sm:grid-cols-2 gap-4 filter blur-sm pointer-events-none select-none" aria-hidden>
-              {[
-                { icon: Table2, color: "text-emerald-400", bg: "bg-emerald-500/15 border-emerald-500/20", label: "Export CSV Factures", desc: "Toutes les factures dans un tableur" },
-                { icon: TrendingUp, color: "text-violet-400", bg: "bg-violet-500/15 border-violet-500/20", label: "Récapitulatif mensuel CA", desc: "CA mois par mois pour votre comptable" },
-              ].map(({ icon: Icon, color, bg, label, desc }) => (
-                <div key={label} className="bg-ds-surface border border-ds-border rounded-xl p-5">
-                  <div className="flex items-start gap-3 mb-4">
-                    <div className={`w-9 h-9 rounded-lg border flex items-center justify-center shrink-0 ${bg}`}>
-                      <Icon size={15} className={color} />
-                    </div>
-                    <div>
-                      <h3 className="text-sm font-semibold text-white">{label}</h3>
-                      <p className="text-xs text-gray-500 mt-0.5">{desc}</p>
-                    </div>
-                  </div>
-                  <div className="w-full h-9 bg-ds-elevated rounded-lg" />
-                </div>
-              ))}
-            </div>
-            <div className="absolute inset-0 bg-ds-bg/60 backdrop-blur-[2px] flex items-center justify-center rounded-xl">
-              <div className="text-center px-4">
-                <p className="text-white font-semibold text-sm mb-1">Exports avancés</p>
-                <p className="text-gray-400 text-xs mb-3">CSV factures et récapitulatif mensuel pour votre comptable.</p>
-                <UpgradeButton plan="solo" label="Passer Solo" />
-              </div>
-            </div>
-          </div>
-        )}
-      </div>
     </div>
   );
 }

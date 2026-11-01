@@ -66,7 +66,7 @@ async function main() {
 
   // --- CA de la période depuis le livre des recettes ------------------------
   const l = (date: string, ht: number, dateEstimee = false) =>
-    ({ id: date + ht, date, dateEstimee, numero: "F", client: "C", nature: "N", ht, ttc: ht, mode: null });
+    ({ id: date + ht, date, dateEstimee, numero: "F", client: "C", nature: "N", ht, ttc: ht, mode: null, categorie: "services" as const });
   const lignes = [l("2026-06-30", 999), l("2026-07-01", 1000.25), l("2026-08-15", 500.25, true), l("2026-09-30", -200), l("2026-10-01", 777)];
   const ca = P.caDeLaPeriode(lignes, { annee: 2026, trimestre: 3 });
   verifier("CA T3 : bornes incluses, avoir déduit, hors période exclus", ca.encaisseHt === 1300.5 && ca.nombre === 3, JSON.stringify(ca));
