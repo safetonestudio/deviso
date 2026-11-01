@@ -76,6 +76,7 @@ export default async function FicheClient({
   const emises = factures.filter(estEmise);
 
   const caHt = Math.round(emises.reduce((s, f) => s + signe(f) * Number(f.total_ht ?? 0), 0) * 100) / 100;
+  const nbAvoirs = emises.filter((f) => estAvoir(f)).length;
   const tvaAn = tvaParTaux(factures);
   const tvaTotale = Math.round(tvaAn.reduce((s, t) => s + t.tva, 0) * 100) / 100;
 
@@ -99,7 +100,10 @@ export default async function FicheClient({
   const tuiles = [
     { label: `CA HT ${annee}`, valeur: eur(caHt) },
     { label: `TVA collectée ${annee}`, valeur: eur(tvaTotale) },
-    { label: `Factures émises ${annee}`, valeur: String(emises.length) },
+    {
+      label: `Factures émises ${annee}`,
+      valeur: String(emises.filter((f) => !estAvoir(f)).length) + (nbAvoirs ? ` + ${nbAvoirs} avoir${nbAvoirs > 1 ? "s" : ""}` : ""),
+    },
     {
       label: "Impayés échus",
       valeur: synthese.impayes.nb ? `${synthese.impayes.nb} · ${eur(synthese.impayes.montant)}` : "Aucun",

@@ -38,10 +38,10 @@ export default async function CabinetLayout({ children }: { children: ReactNode 
               <span className="hidden sm:block text-sm text-gray-400 truncate max-w-[220px]">
                 {profile?.company_name || profile?.full_name || user.email}
               </span>
-              <div className="w-36">
+              <div className="shrink-0 whitespace-nowrap">
                 <ThemeToggle />
               </div>
-              <div className="w-40">
+              <div className="shrink-0 whitespace-nowrap">
                 <SignOutButton />
               </div>
             </div>

@@ -192,8 +192,9 @@ export async function syntheseDossiers(
       nom: p?.company_name || p?.full_name || "Client sans nom",
       siret: p?.siret ?? null,
       raccorde,
-      nbFacturesAnnee: annee_.length,
-      nbFacturesMois: mois.length,
+      // Un avoir est deduit du CA et de la TVA, mais ce n'est pas une facture.
+      nbFacturesAnnee: annee_.filter((f) => !estAvoir(f)).length,
+      nbFacturesMois: mois.filter((f) => !estAvoir(f)).length,
       caHtMois: ht(mois),
       caHtAnnee: ht(annee_),
       tvaAnnee,
