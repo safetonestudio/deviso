@@ -104,7 +104,7 @@ export function CabinetPortefeuille({ dossiers, annee }: { dossiers: DossierVue[
           <li
             key={d.id}
             onClick={() => router.push(`/cabinet/${d.id}`)}
-            className="p-4 flex flex-wrap items-center gap-x-5 gap-y-3 cursor-pointer hover:bg-ds-elevated/50 transition-colors"
+            className="p-4 flex flex-wrap items-center gap-x-5 gap-y-3 cursor-pointer hover:bg-ds-elevated transition-colors"
           >
             {/* La case reste independante : la cocher pour un export ne doit pas
                 ouvrir le dossier. Le reste de la ligne mene au dossier. */}
