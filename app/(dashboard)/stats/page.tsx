@@ -77,7 +77,7 @@ export default function StatsPage() {
       <GuidedTourBanner pageKey="stats" />
       <div>
         <h1 className="text-3xl font-semibold text-white tracking-tight">Activité</h1>
-        <p className="text-sm text-gray-500 mt-1">CA, conversion et exports comptables</p>
+        <p className="text-sm text-gray-500 mt-1">CA, conversion et performance des devis</p>
       </div>
 
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
