@@ -103,7 +103,7 @@ export default function CataloguePage() {
   if (loading) return <div className="text-center py-16 text-gray-500">Chargement…</div>;
 
   // Gate Pro, jamais affiché aux membres (ils utilisent les features de l'owner)
-  if (!isMember && plan !== "pro") {
+  if (!isMember && !["solo", "pro"].includes(plan ?? "")) {
     return (
       <div className="max-w-2xl mx-auto">
         <GuidedTourBanner pageKey="catalogue" />
@@ -113,11 +113,11 @@ export default function CataloguePage() {
         </div>
         <div className="bg-ds-surface border border-ds-border rounded-xl p-10 text-center">
           <Package size={32} className="mx-auto mb-3 text-gray-600" />
-          <p className="text-white font-semibold mb-1">Fonctionnalité Pro</p>
+          <p className="text-white font-semibold mb-1">Catalogue de prestations</p>
           <p className="text-gray-500 text-sm mb-6">
             Créez votre catalogue de prestations et insérez-les en un clic dans vos devis.
           </p>
-          <UpgradeButton plan="pro" label="Passer Pro" />
+          <UpgradeButton plan="solo" label="Passer Solo" />
         </div>
       </div>
     );

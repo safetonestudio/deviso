@@ -59,8 +59,8 @@ export default function CguPage() {
           <p className="text-gray-400 leading-relaxed">
             Deviso propose deux formules :<br /><br />
             Deviso ne propose pas de plan gratuit permanent. Tout abonnement inclut un <strong>essai gratuit de 14 jours</strong> sans carte bancaire requise.<br /><br />
-            <strong>Plan Solo</strong> : 18 €/mois HT (ou 172,80 €/an, soit 14,40 €/mois). Inclut : factures Factur-X, logo personnalisé, signature électronique, relances auto, exports comptables.<br /><br />
-            <strong>Plan Pro</strong> : 34 €/mois HT (ou 326,40 €/an, soit 27,20 €/mois). Inclut tout Solo + multi-utilisateurs (3 utilisateurs inclus, le titulaire du compte et 2 membres, +5 €/mois/utilisateur supplémentaire), catalogue partagé, sous-domaine de partage personnalisé, accès Chorus Pro B2G.<br /><br />
+            <strong>Plan Solo</strong> : 18 €/mois HT (ou 172,80 €/an, soit 14,40 €/mois). Inclut toutes les fonctions de Deviso pour un utilisateur : devis IA, factures Factur-X multi-taux, raccordement à une plateforme agréée et e-reporting, ventes et achats internationaux, factures en anglais, signature électronique, relances automatiques programmables, catalogue de prestations, CRM et analytics, sous-domaine de partage, couleur d&apos;accent, Chorus Pro B2G, exports comptables (FEC et CSV) et livre des recettes.<br /><br />
+            <strong>Plan Pro</strong> : 34 €/mois HT (ou 326,40 €/an, soit 27,20 €/mois). Inclut tout le plan Solo, plus la gestion d&apos;équipe multi-utilisateurs : 3 utilisateurs inclus (le titulaire du compte et 2 membres), +5 €/mois par utilisateur supplémentaire, avec rôles et validation des devis.<br /><br />
             Les tarifs annuels représentent une remise de 20 % par rapport au tarif mensuel.
             Le paiement s&apos;effectue par carte bancaire via la plateforme sécurisée Stripe, à l&apos;issue de la période d&apos;essai.
             L&apos;abonnement est résiliable à tout moment depuis le compte utilisateur, avec effet à la fin de la période en cours.

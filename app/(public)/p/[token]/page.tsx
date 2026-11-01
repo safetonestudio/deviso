@@ -49,7 +49,7 @@ export default function PublicProposalPage() {
     setSignError(null);
 
     // Validation côté client pour signature Pro
-    if (action === "sign" && ownerPlan === "pro") {
+    if (action === "sign" && ["solo", "pro"].includes(ownerPlan ?? "")) {
       if (!signerName.trim()) {
         setSignError("Veuillez saisir votre nom complet pour signer.");
         return;
@@ -66,7 +66,7 @@ export default function PublicProposalPage() {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
         action,
-        signer_name: action === "sign" && ownerPlan === "pro" ? signerName.trim() : undefined,
+        signer_name: action === "sign" && ["solo", "pro"].includes(ownerPlan ?? "") ? signerName.trim() : undefined,
       }),
     });
     const data = await res.json();
@@ -100,7 +100,7 @@ export default function PublicProposalPage() {
   }
 
   const showBranding = ownerPlan === "free"; // Solo+ : pas de branding
-  const isAdvancedSign = ownerPlan === "pro";
+  const isAdvancedSign = ["solo", "pro"].includes(ownerPlan ?? "");
   const canSign = !isAdvancedSign || (signerName.trim().length > 0 && confirmed);
 
   return (

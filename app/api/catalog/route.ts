@@ -33,8 +33,8 @@ export async function POST(req: NextRequest) {
     "plan"
   );
 
-  if (profile?.plan !== "pro") {
-    return NextResponse.json({ error: "PLAN_REQUIRED", message: "Le catalogue nécessite le plan Pro." }, { status: 403 });
+  if (!["solo", "pro"].includes(profile?.plan ?? "")) {
+    return NextResponse.json({ error: "PLAN_REQUIRED", message: "Le catalogue nécessite un plan payant (Solo ou Pro)." }, { status: 403 });
   }
 
   const { name, description, unit, unit_price, type } = await req.json();

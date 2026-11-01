@@ -24,7 +24,7 @@ type OwnerProfile = {
 };
 
 function getIntervals(profile: OwnerProfile): number[] {
-  if (profile.plan === "pro" && profile.reminder_intervals && profile.reminder_intervals.length > 0) {
+  if (profile.plan !== "free" && profile.reminder_intervals && profile.reminder_intervals.length > 0) {
     return [...profile.reminder_intervals].sort((a, b) => a - b);
   }
   return SOLO_INTERVALS;
@@ -97,7 +97,7 @@ export async function GET(req: NextRequest) {
       clientName, senderName, invoiceNumber: invoice.invoice_number,
       amount, daysOverdue, paymentLinkUrl: invoice.payment_link_url,
       reminderNum, urgency,
-      customMessage: profile.plan === "pro" ? profile.reminder_message : null,
+      customMessage: profile.plan !== "free" ? profile.reminder_message : null,
       plan: profile.plan,
     });
 
@@ -175,7 +175,7 @@ export async function GET(req: NextRequest) {
       clientName, senderName, proposalTitle: proposal.title,
       amount, validUntil: proposal.valid_until, signUrl,
       reminderNum, urgency, borderColor,
-      customMessage: profile.plan === "pro" ? profile.reminder_message : null,
+      customMessage: profile.plan !== "free" ? profile.reminder_message : null,
       plan: profile.plan,
     });
 

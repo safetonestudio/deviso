@@ -269,7 +269,7 @@ export default function InvoicesPage() {
   }
 
   const isFree = plan === "free";
-  const isPro = plan === "pro";
+  const isPro = canName(plan, "csvRecap");
   const canRecurring = canName(plan, "recurring");
 
   const inputCls = "w-full bg-ds-elevated border border-ds-border rounded-lg px-3 py-2 text-sm text-white placeholder-gray-500 focus:outline-none focus:border-indigo-500";

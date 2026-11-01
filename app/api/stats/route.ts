@@ -30,7 +30,7 @@ export async function GET() {
     return NextResponse.json({ error: "PLAN_REQUIRED" }, { status: 403 });
   }
 
-  const isPro = profile?.plan === "pro";
+  const isPro = ["solo", "pro"].includes(profile?.plan ?? "");
 
   const now = new Date();
   const startOfYear = `${now.getFullYear()}-01-01`;

@@ -9,6 +9,7 @@ import { GuidedTourBanner } from "@/components/GuidedTourBanner";
 import { SuperPdpCard } from "@/components/SuperPdpCard";
 import { ComptableAcces } from "@/components/ComptableAcces";
 import { PERIODICITES_TVA } from "@/lib/superpdp-constantes";
+import { canName } from "@/lib/plans";
 
 const TVA_REGIMES: { value: TvaRegime; label: string; rate: number; description: string }[] = [
   { value: "franchise",    label: "Franchise en base : TVA non applicable (art. 293 B CGI)", rate: 0,    description: "Micro-entrepreneur ou CA sous le seuil (36 800 €/an services)" },
@@ -611,8 +612,8 @@ Les présentes CGV sont soumises au droit français. Tout litige relève de la c
           </div>
         </section>
 
-        {/* Apparence (Pro) */}
-        {profile.plan === "pro" ? (
+        {/* Apparence */}
+        {canName(profile.plan, "accentColor") ? (
           <SectionRepliable titre="Apparence des documents" sousTitre="Choisissez le style de vos devis et factures envoyés aux clients.">
             <div>
               <label className="block text-xs font-medium text-gray-400 mb-2">Mise en page</label>
@@ -662,9 +663,9 @@ Les présentes CGV sont soumises au droit français. Tout litige relève de la c
             <div className="flex items-center justify-between gap-4">
               <div>
                 <h2 className="font-semibold text-gray-300">Apparence des documents</h2>
-                <p className="text-xs text-gray-500 mt-0.5">Templates personnalisés, couleur d&apos;accent : réservé au plan Pro.</p>
+                <p className="text-xs text-gray-500 mt-0.5">Templates personnalisés, couleur d&apos;accent : disponible dès le plan Solo.</p>
               </div>
-              <span className="shrink-0 text-xs font-semibold bg-indigo-500/20 text-indigo-300 px-2.5 py-1 rounded-full">Pro</span>
+              <span className="shrink-0 text-xs font-semibold bg-indigo-500/20 text-indigo-300 px-2.5 py-1 rounded-full">Solo</span>
             </div>
           </section>
         )}
@@ -676,8 +677,8 @@ Les présentes CGV sont soumises au droit français. Tout litige relève de la c
         </button>
       </form>
 
-      {/* ── Sous-domaine (Pro) ── */}
-      {profile.plan === "pro" ? (
+      {/* ── Sous-domaine ── */}
+      {canName(profile.plan, "subdomain") ? (
         <SectionRepliable titre="Sous-domaine personnalisé" sousTitre={<>Vos devis seront accessibles via <span className="text-indigo-400 font-mono">votre-nom.getdeviso.fr</span>.</>}>
           {profile.subdomain && (
             <div className="flex items-center gap-2 bg-emerald-500/10 border border-emerald-500/20 rounded-lg px-3 py-2">
@@ -727,16 +728,16 @@ Les présentes CGV sont soumises au droit français. Tout litige relève de la c
           <div className="flex items-center justify-between gap-4">
             <div>
               <h2 className="font-semibold text-gray-300">Sous-domaine personnalisé</h2>
-              <p className="text-xs text-gray-500 mt-0.5">Partagez vos devis via <span className="font-mono">votre-nom.getdeviso.fr</span> : réservé au plan Pro.</p>
+              <p className="text-xs text-gray-500 mt-0.5">Partagez vos devis via <span className="font-mono">votre-nom.getdeviso.fr</span> : disponible dès le plan Solo.</p>
             </div>
-            <span className="shrink-0 text-xs font-semibold bg-indigo-500/20 text-indigo-300 px-2.5 py-1 rounded-full">Pro</span>
+            <span className="shrink-0 text-xs font-semibold bg-indigo-500/20 text-indigo-300 px-2.5 py-1 rounded-full">Solo</span>
           </div>
         </section>
       )}
 
 
-      {/* ── Relances programmables (Pro) ── */}
-      {profile.plan === "pro" ? (
+      {/* ── Relances programmables ── */}
+      {canName(profile.plan, "remindersCustom") ? (
         <SectionRepliable titre="Relances automatiques" sousTitre="Définissez vos propres délais de relance (en jours après envoi) et un message personnalisé inclus dans chaque email.">
 
           {/* Intervalles */}
@@ -818,11 +819,10 @@ Les présentes CGV sont soumises au droit français. Tout litige relève de la c
             <div>
               <h2 className="font-semibold text-gray-300">Relances automatiques personnalisées</h2>
               <p className="text-xs text-gray-500 mt-0.5">
-                Choisissez vos délais (J+2, J+10…) et un message sur-mesure : réservé au plan Pro.
-                {profile.plan === "solo" && <span className="ml-1 text-gray-600">· Solo : relances fixes à J+3 et J+7.</span>}
+                Choisissez vos délais (J+2, J+10…) et un message sur-mesure : disponible dès le plan Solo.
               </p>
             </div>
-            <span className="shrink-0 text-xs font-semibold bg-indigo-500/20 text-indigo-300 px-2.5 py-1 rounded-full">Pro</span>
+            <span className="shrink-0 text-xs font-semibold bg-indigo-500/20 text-indigo-300 px-2.5 py-1 rounded-full">Solo</span>
           </div>
         </section>
       )}

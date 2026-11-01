@@ -176,7 +176,7 @@ const ARTICLES: Record<string, Article> = {
               <Tip>
                 <B>Gain de temps :</B> si ton <B>catalogue de prestations</B> est configuré,
                 clique sur <B>Depuis le catalogue</B> pour insérer une prestation en un clic, prix inclus.
-                Le catalogue se configure via le menu <B>Catalogue</B> (plan Pro).
+                Le catalogue se configure via le menu <B>Catalogue</B>.
               </Tip>
             </Step>
             <Step n={5} title="Vérifie la TVA et les totaux">
@@ -763,7 +763,7 @@ const ARTICLES: Record<string, Article> = {
 
         <Section title="Couleur d'accent personnalisée (Pro)">
           <p>
-            Sur le plan Pro, tu peux choisir une couleur qui s&apos;applique sur tes devis et
+            Dès le plan Solo, tu peux choisir une couleur qui s&apos;applique sur tes devis et
             factures PDF, en-têtes, séparateurs, boutons dans les emails.
           </p>
           <Tip>
@@ -974,7 +974,7 @@ const ARTICLES: Record<string, Article> = {
       <>
         <Note>
           L&apos;<B>export FEC</B> est inclus dès le plan <B>Solo</B>. Les exports{" "}
-          <B>CSV factures</B> et <B>récapitulatif mensuel</B> sont réservés au plan <B>Pro</B>.
+          <B>CSV factures</B> et <B>récapitulatif mensuel</B> sont aussi disponibles dès le plan <B>Solo</B>.
         </Note>
 
         <Section title="Les trois exports disponibles">

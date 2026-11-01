@@ -22,7 +22,7 @@ export async function GET() {
     "plan"
   );
 
-  if (profile?.plan !== "pro") {
+  if (!["solo", "pro"].includes(profile?.plan ?? "")) {
     return NextResponse.json({ error: "PLAN_REQUIRED" }, { status: 403 });
   }
 

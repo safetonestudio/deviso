@@ -79,7 +79,7 @@ export async function PATCH(req: NextRequest) {
     const { data: profile } = await supabaseAdmin
       .from("profiles").select("plan").eq("id", user.id).single();
 
-    if (profile?.plan !== "pro") {
+    if (!["solo", "pro"].includes(profile?.plan ?? "")) {
       return NextResponse.json({ error: "Le sous-domaine est réservé au plan Pro." }, { status: 403 });
     }
 
@@ -106,7 +106,7 @@ export async function PATCH(req: NextRequest) {
     const { data: profile } = await supabaseAdmin
       .from("profiles").select("plan").eq("id", user.id).single();
 
-    if (profile?.plan !== "pro") {
+    if (!["solo", "pro"].includes(profile?.plan ?? "")) {
       return NextResponse.json({ error: "Les relances personnalisées sont réservées au plan Pro." }, { status: 403 });
     }
 

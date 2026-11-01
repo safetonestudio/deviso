@@ -35,7 +35,10 @@ export const FEATURES: Feature[] = [
   // Socle vendu sur la carte Solo (et inclus dans Pro).
   { id: "aiQuotes",       label: "Devis IA illimités en 30 secondes",              plans: ["solo", "pro"], show: true },
   { id: "signature",      label: "Signature électronique client",                  plans: ["solo", "pro"], show: true },
-  { id: "facturX",        label: "Factures Factur-X conformes réforme 2026",       plans: ["solo", "pro"], show: true },
+  { id: "facturX",        label: "Factures Factur-X multi-taux, conformes réforme 2026", plans: ["solo", "pro"], show: true },
+  { id: "plateformeAgreee", label: "Raccordement à une plateforme agréée et e-reporting", plans: ["solo", "pro"], show: true },
+  { id: "international",   label: "Ventes et achats internationaux conformes",       plans: ["solo", "pro"], show: true },
+  { id: "facturesAnglais", label: "Factures en anglais pour vos clients étrangers",  plans: ["solo", "pro"], show: true },
   { id: "recurring",      label: "Factures récurrentes, acompte et solde",         plans: ["solo", "pro"], show: true },
   { id: "chorusPro",      label: "Dépôt Chorus Pro B2G (marchés publics)",         plans: ["solo", "pro"], show: true },
   { id: "urssafWidget",   label: "Widget CA URSSAF mensuel / trimestriel",         plans: ["solo", "pro"], show: true },
@@ -46,20 +49,20 @@ export const FEATURES: Feature[] = [
   { id: "teledeclarationUrssaf", label: "Déclaration de CA à l'URSSAF depuis Deviso", plans: ["solo", "pro"], show: false },
   { id: "livreRecettes",   label: "Livre des recettes tenu automatiquement",      plans: ["solo", "pro"], show: true },
 
-  // Réservé Pro, vendu sur la carte Pro.
-  { id: "remindersCustom", label: "Relances automatiques programmables",                      plans: ["pro"], show: true },
-  { id: "csvRecap",        label: "Exports CSV et récap mensuel pour le comptable",           plans: ["pro"], show: true },
-  { id: "crm",             label: "CRM Clients & Revenus + Analytics",                        plans: ["pro"], show: true },
+  // Uniquement Pro : la gestion d'equipe. Tout le reste est inclus des Solo.
+  { id: "remindersCustom", label: "Relances automatiques programmables",                      plans: ["solo", "pro"], show: true },
+  { id: "csvRecap",        label: "Exports CSV et récap mensuel pour le comptable",           plans: ["solo", "pro"], show: true },
+  { id: "crm",             label: "CRM Clients & Revenus + Analytics",                        plans: ["solo", "pro"], show: true },
   { id: "team",            label: "Gestion d'équipe, rôles et validation devis",              plans: ["pro"], show: true },
-  { id: "catalog",         label: "Catalogue prestations : forfaits & suivi du temps",        plans: ["pro"], show: true },
-  { id: "subdomain",       label: "Sous-domaine de partage (votremarque.getdeviso.fr)",       plans: ["pro"], show: true },
-  { id: "accentColor",     label: "Couleur d'accent sur vos PDF",                             plans: ["pro"], show: true },
+  { id: "catalog",         label: "Catalogue prestations : forfaits & suivi du temps",        plans: ["solo", "pro"], show: true },
+  { id: "subdomain",       label: "Sous-domaine de partage (votremarque.getdeviso.fr)",       plans: ["solo", "pro"], show: true },
+  { id: "accentColor",     label: "Couleur d'accent sur vos PDF",                             plans: ["solo", "pro"], show: true },
 
   // Droits internes, appliqués par l'application mais non vendus sur une
   // ligne de carte (pas de doublon avec les lignes commerciales ci-dessus).
   { id: "invoices",          label: "Émission de factures",             plans: ["solo", "pro"], show: false },
   { id: "logo",              label: "Logo personnalisé",                plans: ["solo", "pro"], show: false },
-  { id: "signatureAdvanced", label: "Signature avancée (nom signataire)", plans: ["pro"],       show: false },
+  { id: "signatureAdvanced", label: "Signature avancée (nom signataire)", plans: ["solo", "pro"],       show: false },
   { id: "templates",         label: "Modèles de devis",                 plans: ["solo", "pro"], show: false },
 ];
 

@@ -193,9 +193,9 @@ export default function CRMPage() {
         <Users size={36} className="mx-auto text-gray-600" />
         <h1 className="text-2xl font-semibold text-white">Clients & Revenus</h1>
         <p className="text-gray-400">
-          L&apos;historique complet par client est réservé au plan Pro.
+          L&apos;historique complet par client est réservé aux plans payants.
         </p>
-        <UpgradeButton plan="pro" label="Passer Pro" />
+        <UpgradeButton plan="solo" label="Passer Solo" />
       </div>
     );
   }

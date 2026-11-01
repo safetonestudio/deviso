@@ -441,9 +441,9 @@ export default function StatsPage() {
                 <div className="w-10 h-10 rounded-full bg-indigo-500/20 border border-indigo-500/30 flex items-center justify-center mx-auto mb-3">
                   <Lock size={16} className="text-indigo-400" />
                 </div>
-                <p className="text-white font-semibold text-base mb-1">Analytics avancées, Plan Pro</p>
+                <p className="text-white font-semibold text-base mb-1">Analytics avancées</p>
                 <p className="text-gray-400 text-sm mb-4">Funnel de conversion, délai moyen de signature, meilleur mois et efficacité de vos relances.</p>
-                <UpgradeButton plan="pro" label="Passer Pro, 34€/mois" />
+                <UpgradeButton plan="solo" label="Passer Solo, 18€/mois" />
               </div>
             </div>
           </div>
@@ -567,9 +567,9 @@ export default function StatsPage() {
             </div>
             <div className="absolute inset-0 bg-ds-bg/60 backdrop-blur-[2px] flex items-center justify-center rounded-xl">
               <div className="text-center px-4">
-                <p className="text-white font-semibold text-sm mb-1">Exports avancés, Plan Pro</p>
+                <p className="text-white font-semibold text-sm mb-1">Exports avancés</p>
                 <p className="text-gray-400 text-xs mb-3">CSV factures et récapitulatif mensuel pour votre comptable.</p>
-                <UpgradeButton plan="pro" label="Passer Pro" />
+                <UpgradeButton plan="solo" label="Passer Solo" />
               </div>
             </div>
           </div>
