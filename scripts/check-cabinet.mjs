@@ -119,6 +119,22 @@ contreEpreuve("une page admin sans contrôle d'accès", litEnAdmin("const a = cr
   );
 }
 
+// 6 bis. Le statut plateforme affiche est le statut officiel, jamais un
+// « Transmise » generique : une facture rejetee (fr:213) ou refusee (fr:210)
+// passait pour transmise dans la premiere version de la fiche client.
+{
+  const fiche = lire(join("app", "(cabinet)", "cabinet", "[id]", "page.tsx"));
+  const synth = lire(join("lib", "cabinet-dossiers.ts"));
+  const officiel = (s) => /libelleStatut\(f\.superpdp_status\)/.test(s) && !/texte: "Transmise"/.test(s);
+  exige("fiche client, libellé officiel du statut plateforme", officiel(fiche), "un statut de rejet s'affichait « Transmise »");
+  contreEpreuve("un libellé « Transmise » générique", !officiel(fiche + '\n{ texte: "Transmise" }'));
+  exige(
+    "anomalies, refus et rejets plateforme comptés en rouge",
+    /estEchecPlateforme\(f\.superpdp_status\)/.test(synth) && /ton === "attention" && !!st\.cloture/.test(synth),
+    "un dossier avec des factures rejetées restait vert",
+  );
+}
+
 // 7. Rien du serveur cabinet n'est envoye au navigateur.
 {
   const interdits = /from "@\/lib\/(cabinet-acces|cabinet-dossiers|cabinet|exports-comptables|zip)"/;

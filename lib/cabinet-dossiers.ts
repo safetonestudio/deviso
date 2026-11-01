@@ -2,6 +2,7 @@ import type { createAdminClient } from "@/lib/supabase/admin";
 import { ventilationTva, type LigneMontant } from "./tva";
 import { estAvoir } from "./exports-comptables";
 import { natureOperation } from "./superpdp-nature";
+import { libelleStatut } from "./superpdp-statuts";
 
 type Admin = ReturnType<typeof createAdminClient>;
 
@@ -100,6 +101,18 @@ export function tvaParTaux(factures: FactureCabinet[]): { taux: number; base_ht:
     .sort((a, b) => b.taux - a.taux);
 }
 
+/** Statut plateforme qui clot la facture sur un echec (refusee, rejetee, irrecevable). */
+export function estEchecPlateforme(code: string | null | undefined): boolean {
+  const st = libelleStatut(code);
+  return !!st && st.ton === "attention" && !!st.cloture;
+}
+
+/** Statut plateforme qui demande un suivi sans etre un echec (litige, suspension). */
+export function estASuivrePlateforme(code: string | null | undefined): boolean {
+  const st = libelleStatut(code);
+  return !!st && st.ton === "attention" && !st.cloture;
+}
+
 const RANG: Record<Niveau, number> = { rouge: 0, orange: 1, vert: 2 };
 
 export async function syntheseDossiers(
@@ -141,9 +154,16 @@ export async function syntheseDossiers(
     if (!raccorde) {
       anomalies.push({ niveau: "rouge", libelle: "Non raccordé à une plateforme agréée (réception obligatoire depuis le 1er septembre 2026)" });
     }
-    const enErreur = emises.filter((f) => f.superpdp_error);
-    if (enErreur.length > 0) {
-      anomalies.push({ niveau: "rouge", libelle: `${enErreur.length} facture(s) en erreur de transmission à la plateforme` });
+    // Le statut officiel fait foi (lib/superpdp-statuts.ts, tableau 8 DGFiP) :
+    // une facture refusee (fr:210), rejetee (fr:213) ou irrecevable est un
+    // echec, au meme titre qu'une erreur technique de transmission.
+    const enEchec = emises.filter((f) => f.superpdp_error || estEchecPlateforme(f.superpdp_status));
+    if (enEchec.length > 0) {
+      anomalies.push({ niveau: "rouge", libelle: `${enEchec.length} facture(s) refusée(s), rejetée(s) ou en erreur à la plateforme` });
+    }
+    const aSuivre = emises.filter((f) => !f.superpdp_error && estASuivrePlateforme(f.superpdp_status));
+    if (aSuivre.length > 0) {
+      anomalies.push({ niveau: "orange", libelle: `${aSuivre.length} facture(s) en litige ou suspendue(s)` });
     }
     const sansSiren = annee_.filter((f) => natureOperation(f) === "B2B" && !f.client_siren?.trim());
     if (sansSiren.length > 0) {

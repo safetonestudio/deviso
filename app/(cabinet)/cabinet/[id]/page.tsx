@@ -13,6 +13,7 @@ import {
   type FactureCabinet,
 } from "@/lib/cabinet-dossiers";
 import { estAvoir } from "@/lib/exports-comptables";
+import { libelleStatut } from "@/lib/superpdp-statuts";
 
 export const metadata: Metadata = { title: "Dossier client" };
 export const dynamic = "force-dynamic";
@@ -29,11 +30,20 @@ const STATUT: Record<string, string> = {
   cancelled: "Annulée",
 };
 
+// Libelle officiel du cycle de vie (lib/superpdp-statuts.ts) : une facture
+// refusee ou rejetee ne doit jamais apparaitre comme « transmise ».
 function plateforme(f: FactureCabinet): { texte: string; ton: string } {
   if (!estEmise(f)) return { texte: "", ton: "" };
-  if (f.superpdp_error) return { texte: "Erreur", ton: "text-red-400" };
-  if (f.superpdp_status) return { texte: "Transmise", ton: "text-emerald-400" };
-  return { texte: "Non transmise", ton: "text-gray-500" };
+  if (f.superpdp_error) return { texte: "Erreur de transmission", ton: "text-red-400" };
+  const st = libelleStatut(f.superpdp_status);
+  if (!st) {
+    // Code hors table : affiche brut plutot que sous un libelle invente.
+    return f.superpdp_status
+      ? { texte: f.superpdp_status, ton: "text-gray-400" }
+      : { texte: "Non transmise", ton: "text-gray-500" };
+  }
+  const ton = st.ton === "attention" ? (st.cloture ? "text-red-400" : "text-amber-400") : st.ton === "bien" ? "text-emerald-400" : "text-gray-300";
+  return { texte: st.texte, ton };
 }
 
 export default async function FicheClient({

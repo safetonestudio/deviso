@@ -76,7 +76,8 @@
     "verify:rendu:quiet": "node scripts/build-quiet.mjs && node scripts/check-rendu.mjs",
     "check:claude-md": "node scripts/check-claude-md.mjs",
     "check:cabinet": "node scripts/check-cabinet.mjs",
-    "test:zip": "node --experimental-strip-types --no-warnings scripts/e2e/zip.mjs"
+    "test:zip": "node --experimental-strip-types --no-warnings scripts/e2e/zip.mjs",
+    "semis:cabinet": "node scripts/semis-cabinet-demo.mjs"
   },
   "dependencies": {
     "@react-pdf/renderer": "^4.3.0",
