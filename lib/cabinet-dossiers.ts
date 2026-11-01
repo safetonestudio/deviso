@@ -3,6 +3,7 @@ import { ventilationTva, type LigneMontant } from "./tva";
 import { estAvoir } from "./exports-comptables";
 import { natureOperation } from "./superpdp-nature";
 import { libelleStatut } from "./superpdp-statuts";
+import { siretValide, toSiren } from "./facturx-helpers";
 
 type Admin = ReturnType<typeof createAdminClient>;
 
@@ -17,6 +18,15 @@ type Admin = ReturnType<typeof createAdminClient>;
 
 export type Niveau = "rouge" | "orange" | "vert";
 export type Anomalie = { niveau: "rouge" | "orange"; libelle: string };
+
+/** Etat de conformite d'un dossier a la reforme de la facturation electronique. */
+export type Conformite = {
+  raccordePA: boolean; // raccorde a une Plateforme Agreee
+  joignableAnnuaire: boolean; // une ligne d'annuaire existe : peut recevoir
+  siretValide: boolean; // SIRET present et cle de Luhn correcte
+  tvaConforme: boolean; // regime TVA et n° de TVA coherents
+  pret: boolean; // tout vert : recoit et aucune donnee de reference fausse
+};
 
 export type FactureCabinet = {
   id: string;
@@ -47,6 +57,7 @@ export type SyntheseDossier = {
   tvaRegime: string | null;
   tvaPeriodicite: string | null;
   raccorde: boolean;
+  conformite: Conformite;
   nbFacturesAnnee: number;
   nbFacturesMois: number;
   caHtMois: number;
@@ -175,15 +186,20 @@ export async function syntheseDossiers(
   const aujourdhui = reference.toISOString().slice(0, 10);
 
   const [{ data: profils }, { data: connexions }, factures] = await Promise.all([
-    admin.from("profiles").select("id, company_name, full_name, siret, tva_regime, tva_periodicite").in("id", ownerIds),
-    // Table sans politique RLS (elle porte un jeton) : on ne lit que le statut.
-    admin.from("superpdp_connections").select("user_id, session_status").in("user_id", ownerIds),
+    admin.from("profiles").select("id, company_name, full_name, siret, tva_regime, tva_periodicite, tva_number").in("id", ownerIds),
+    // Table sans politique RLS (elle porte un jeton) : on ne lit que le statut
+    // et l'adresse d'annuaire (jamais le jeton).
+    admin.from("superpdp_connections").select("user_id, session_status, directory_address").in("user_id", ownerIds),
     lireFacturesDossiers(admin, ownerIds, `${annee - 1}-01-01`),
   ]);
 
   const dossiers = ownerIds.map((id): SyntheseDossier => {
     const p = (profils ?? []).find((x) => x.id === id);
-    const raccorde = (connexions ?? []).some((c) => c.user_id === id && c.session_status === "verified");
+    const conn = (connexions ?? []).find((c) => c.user_id === id);
+    const raccorde = conn?.session_status === "verified";
+    // Joignable = raccorde ET une ligne d'annuaire existe. Raccorde sans ligne,
+    // c'est le piege « se croit joignable et ne l'est pas » : ne recoit rien.
+    const joignable = raccorde && !!conn?.directory_address;
     const toutes = factures.filter((f) => f.user_id === id);
     const emises = toutes.filter(estEmise);
     const annee_ = emises.filter((f) => f.issue_date.startsWith(String(annee)));
@@ -219,17 +235,52 @@ export async function syntheseDossiers(
     }
     // Conformite TVA au regime declare dans le profil du client.
     const franchise = (p?.tva_regime ?? "franchise") === "franchise";
+    let tvaRegimeOk = true;
     if (franchise) {
       // En franchise en base, le client ne doit pas collecter de TVA : une
       // facture avec TVA est une erreur a corriger (art. 293 B CGI).
       const avecTva = annee_.filter((f) => !estAvoir(f) && factureAvecTva(f));
       if (avecTva.length > 0) {
+        tvaRegimeOk = false;
         anomalies.push({ niveau: "rouge", libelle: `${avecTva.length} facture(s) avec TVA alors que le dossier est en franchise en base (art. 293 B CGI)` });
       }
     } else if (!p?.tva_periodicite) {
       // Assujetti sans periodicite : impossible de savoir quand il declare.
+      tvaRegimeOk = false;
       anomalies.push({ niveau: "orange", libelle: "Assujetti à la TVA sans périodicité de déclaration renseignée" });
     }
+
+    // Donnees de reference : un SIRET faux, un n° de TVA incoherent, ou une
+    // entreprise raccordee mais pas joignable font rejeter les factures a la
+    // plateforme. C'est la premiere chose que craint un cabinet avant la reforme.
+    const siretOk = siretValide(p?.siret);
+    if (!p?.siret) {
+      anomalies.push({ niveau: "orange", libelle: "SIRET manquant" });
+    } else if (!siretOk) {
+      anomalies.push({ niveau: "orange", libelle: "SIRET invalide (clé de contrôle) : risque de rejet des factures" });
+    }
+    if (raccorde && !joignable) {
+      anomalies.push({ niveau: "rouge", libelle: "Raccordé mais pas joignable à l'annuaire : l'entreprise ne peut pas recevoir de factures" });
+    }
+    const sirenP = toSiren(p?.siret);
+    const tvaNum = (p?.tva_number ?? "").replace(/\s/g, "").toUpperCase();
+    let tvaNumIncoherent = false;
+    if (!franchise && tvaNum) {
+      if (!/^FR[0-9A-Z]{2}\d{9}$/.test(tvaNum)) tvaNumIncoherent = true;
+      else if (sirenP && tvaNum.slice(-9) !== sirenP) tvaNumIncoherent = true;
+    }
+    if (tvaNumIncoherent) {
+      anomalies.push({ niveau: "orange", libelle: "N° de TVA incohérent avec le SIREN" });
+    }
+
+    // Etat de conformite reforme, pour le tableau de bord du cabinet.
+    const conformite = {
+      raccordePA: raccorde,
+      joignableAnnuaire: joignable,
+      siretValide: !!p?.siret && siretOk,
+      tvaConforme: tvaRegimeOk && !tvaNumIncoherent,
+      pret: joignable && !!p?.siret && siretOk && tvaRegimeOk && !tvaNumIncoherent,
+    };
     if (impayes.nb > 0) {
       anomalies.push({ niveau: "orange", libelle: `${impayes.nb} facture(s) échue(s) non payée(s)` });
     }
@@ -267,6 +318,7 @@ export async function syntheseDossiers(
       tvaRegime: p?.tva_regime ?? null,
       tvaPeriodicite: p?.tva_periodicite ?? null,
       raccorde,
+      conformite,
       // Un avoir est deduit du CA et de la TVA, mais ce n'est pas une facture.
       nbFacturesAnnee: annee_.filter((f) => !estAvoir(f)).length,
       nbFacturesMois: mois.filter((f) => !estAvoir(f)).length,

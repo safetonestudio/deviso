@@ -31,6 +31,27 @@ export function toSiret(value: string | null | undefined): string | null {
 }
 
 /**
+ * SIRET valide : 14 chiffres qui satisfont la cle de Luhn. Un SIRET faux est la
+ * premiere cause de rejet d'une facture electronique a la plateforme, donc on
+ * le repere avant. (L'exception historique de La Poste, 356000000..., n'est pas
+ * geree : cas marginal, et un faux positif ne fait qu'inviter a verifier.)
+ */
+export function siretValide(value: string | null | undefined): boolean {
+  const s = digitsOnly(value);
+  if (s.length !== 14) return false;
+  let somme = 0;
+  for (let i = 0; i < 14; i++) {
+    let d = Number(s[i]);
+    if ((14 - i) % 2 === 0) {
+      d *= 2;
+      if (d > 9) d -= 9;
+    }
+    somme += d;
+  }
+  return somme % 10 === 0;
+}
+
+/**
  * Clé de contrôle du n° de TVA intracommunautaire français.
  * Formule officielle : clé = (12 + 3 × (SIREN mod 97)) mod 97
  * Permet de produire BT-31 sans que l'utilisateur ait à le saisir.

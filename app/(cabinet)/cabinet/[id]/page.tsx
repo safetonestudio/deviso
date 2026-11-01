@@ -190,6 +190,31 @@ export default async function FicheClient({
         </div>
       </div>
 
+      <div className="bg-ds-surface border border-ds-border rounded-xl p-4 mb-6">
+        <div className="flex flex-wrap items-baseline justify-between gap-2 mb-3">
+          <h2 className="text-white font-semibold">Conformité à la réforme</h2>
+          {synthese.conformite.pret ? (
+            <span className="text-xs px-2 py-0.5 rounded-full border border-emerald-500/30 bg-emerald-500/10 text-emerald-400">Prêt</span>
+          ) : (
+            <span className="text-xs px-2 py-0.5 rounded-full border border-amber-500/30 bg-amber-500/10 text-amber-400">À régulariser</span>
+          )}
+        </div>
+        <ul className="grid grid-cols-1 sm:grid-cols-2 gap-y-2 gap-x-6 text-sm">
+          {[
+            { label: "Raccordé à une plateforme agréée", ok: synthese.conformite.raccordePA },
+            { label: "Peut recevoir des factures (annuaire)", ok: synthese.conformite.joignableAnnuaire },
+            { label: "SIRET valide", ok: synthese.conformite.siretValide },
+            { label: "Régime et n° de TVA cohérents", ok: synthese.conformite.tvaConforme },
+            { label: "Émet au format Factur-X", ok: true },
+          ].map((c) => (
+            <li key={c.label} className="flex items-start gap-2">
+              <span className={`mt-1.5 w-2 h-2 rounded-full shrink-0 ${c.ok ? "bg-emerald-500" : "bg-amber-500"}`} />
+              <span className={c.ok ? "text-gray-300" : "text-amber-300"}>{c.label}</span>
+            </li>
+          ))}
+        </ul>
+      </div>
+
       {synthese.anomalies.length > 0 && (
         <div className="bg-ds-surface border border-ds-border rounded-xl p-4 mb-6">
           <h2 className="text-white font-semibold mb-2">À traiter</h2>

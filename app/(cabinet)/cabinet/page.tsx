@@ -9,6 +9,7 @@ import { calendrierTva } from "@/lib/cabinet-tva-calendrier";
 import { CabinetInvitations } from "@/components/CabinetInvitations";
 import { CabinetPortefeuille } from "@/components/CabinetPortefeuille";
 import { CabinetCalendrierTva } from "@/components/CabinetCalendrierTva";
+import { CabinetConformite } from "@/components/CabinetConformite";
 
 export const metadata: Metadata = { title: "Portefeuille cabinet" };
 export const dynamic = "force-dynamic";
@@ -27,6 +28,7 @@ export default async function CabinetCockpit() {
   const dossiers = await syntheseDossiers(admin, ownerIds, maintenant);
   const factures = await lireFacturesDossiers(admin, ownerIds, `${maintenant.getFullYear() - 1}-01-01`);
   const calendrier = calendrierTva(dossiers, factures, maintenant);
+  const conformite = dossiers.map((d) => ({ id: d.id, nom: d.nom, conformite: d.conformite }));
 
   const rouges = dossiers.filter((d) => d.niveau === "rouge").length;
   const oranges = dossiers.filter((d) => d.niveau === "orange").length;
@@ -77,6 +79,11 @@ export default async function CabinetCockpit() {
         </div>
       ) : (
         <>
+          <div className="bg-indigo-500/10 border border-indigo-500/30 rounded-xl p-4 mb-6 text-sm text-indigo-200">
+            Les factures de vente de vos clients sont créées dans Deviso : elles sont déjà là, conformes et
+            horodatées. Aucune pièce de vente à réclamer, rien à ressaisir.
+          </div>
+          <CabinetConformite lignes={conformite} />
           <CabinetPortefeuille dossiers={dossiers} annee={maintenant.getFullYear()} />
           <CabinetCalendrierTva lignes={calendrier} />
         </>

@@ -37,7 +37,7 @@ const CABINET = {
   email: "deviso-demo-cabinet@example.com",
   full_name: "Claire Lefèvre",
   company_name: "Cabinet Lefèvre Conseil",
-  siret: "91234567800021",
+  siret: "91234567800029",
   address: "14 cours de l'Intendance, 33000 Bordeaux",
 };
 
@@ -47,7 +47,7 @@ const CLIENTS = [
     email: "deviso-demo-boulangerie@example.com",
     full_name: "Marc Durand",
     company_name: "Boulangerie Durand",
-    siret: "84123657800017",
+    siret: "84123657800016",
     address: "3 place du Marché, 33850 Léognan",
     tva_periodicite: "monthly",
     tva_regime: "reduit",
@@ -58,7 +58,7 @@ const CLIENTS = [
     email: "deviso-demo-studio@example.com",
     full_name: "Inès Garnier",
     company_name: "Studio Lumen",
-    siret: "88765432100015",
+    siret: "88765432100017",
     address: "27 rue Sainte-Catherine, 33000 Bordeaux",
     tva_periodicite: "quarterly",
     tva_regime: "normal",

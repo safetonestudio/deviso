@@ -231,6 +231,33 @@ contreEpreuve("une page admin sans contrôle d'accès", litEnAdmin("const a = cr
   contreEpreuve("une clôture sans filtre d'espace", !/\.eq\("client_id", clientId\)/.test(slib.replaceAll('.eq("client_id", clientId)', "")));
 }
 
+// 10. Conformite reforme + controles de donnees de reference. Le cabinet voit
+// qui peut emettre ET recevoir, et quelles donnees font rejeter les factures.
+{
+  const synth = lire(join("lib", "cabinet-dossiers.ts"));
+  const page = lire(join("app", "(cabinet)", "cabinet", "page.tsx"));
+  const detecte = (s) =>
+    /directory_address/.test(s) &&
+    /siretValide\(p\?\.siret\)/.test(s) &&
+    /conformite = \{/.test(s) &&
+    /joignableAnnuaire:/.test(s);
+  exige("conformité réforme, calculée par dossier", detecte(synth), "le cabinet doit voir qui peut émettre ET recevoir, pas seulement « raccordé »");
+  exige(
+    "conformité réforme, affichée sur le portefeuille",
+    /<CabinetConformite lignes=\{conformite\}/.test(page) && /const conformite = dossiers\.map/.test(page),
+    "le tableau de conformité doit être rendu sur /cabinet",
+  );
+  contreEpreuve("une conformité sans contrôle de joignabilité", !detecte(synth.replace(/directory_address/g, "xxx")));
+  exige(
+    "données de référence, SIRET invalide / non joignable / n° TVA incohérent détectés",
+    /SIRET invalide \(clé de contrôle\)/.test(synth) &&
+      /Raccordé mais pas joignable à l'annuaire/.test(synth) &&
+      /N° de TVA incohérent avec le SIREN/.test(synth),
+    "un SIRET faux, une entreprise non joignable ou un n° de TVA incohérent font rejeter les factures",
+  );
+  contreEpreuve("une file sans contrôle du SIRET", !/SIRET invalide \(clé de contrôle\)/.test(synth.replace("SIRET invalide (clé de contrôle)", "")));
+}
+
 console.log("");
 if (echecs) {
   console.log(`check:cabinet, ${echecs} contrôle(s) en échec.`);
