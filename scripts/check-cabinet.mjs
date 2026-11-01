@@ -135,6 +135,18 @@ contreEpreuve("une page admin sans contrôle d'accès", litEnAdmin("const a = cr
   );
 }
 
+// 6 ter. Les trous de numerotation sont detectes et remontes en anomalie.
+{
+  const synth = lire(join("lib", "cabinet-dossiers.ts"));
+  const detecte = (s) =>
+    /export function trousNumerotation/.test(s) &&
+    /for \(let i = min; i <= max; i\+\+\) if \(!set\.has\(i\)\)/.test(s) &&
+    /trousNumerotation\(emises\)/.test(s) &&
+    /Trou de num/.test(s);
+  exige("anomalies, trous de numérotation interieurs détectés", detecte(synth), "la continuité de la numérotation est une obligation légale, un trou est la première chose qu'un comptable cherche");
+  contreEpreuve("une détection sans parcours des numéros manquants", !detecte(synth.replace("for (let i = min; i <= max; i++)", "for (let i = min; i < min; i++)")));
+}
+
 // 7. Rien du serveur cabinet n'est envoye au navigateur.
 {
   const interdits = /from "@\/lib\/(cabinet-acces|cabinet-dossiers|cabinet|exports-comptables|zip)"/;

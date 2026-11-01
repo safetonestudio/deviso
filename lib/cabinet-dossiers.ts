@@ -115,6 +115,41 @@ export function estASuivrePlateforme(code: string | null | undefined): boolean {
 
 const RANG: Record<Niveau, number> = { rouge: 0, orange: 1, vert: 2 };
 
+// Numero de facture Deviso : « AAAA-NNN », une seule serie par an partagee par
+// les factures et les avoirs (lib/*numerotation*). Les numeros hors format
+// (tests, imports) sont ignores.
+const RE_NUMERO = /^(\d{4})-(\d+)$/;
+
+/**
+ * Trous de numerotation : numeros manquants A L'INTERIEUR de la serie d'une
+ * annee (entre le plus petit et le plus grand emis). La continuite de la
+ * numerotation est une obligation legale, et un trou est la premiere chose
+ * qu'un comptable cherche. On ne signale que les trous interieurs : une serie
+ * qui commence a 003 n'est pas un trou (report d'un autre outil, numero de
+ * depart choisi), un numero manquant au milieu en est un.
+ */
+export function trousNumerotation(factures: FactureCabinet[]): { annee: number; manquants: number[] }[] {
+  const parAn = new Map<number, Set<number>>();
+  for (const f of factures) {
+    if (!estEmise(f)) continue;
+    const m = f.invoice_number?.match(RE_NUMERO);
+    if (!m) continue;
+    const an = Number(m[1]);
+    if (!parAn.has(an)) parAn.set(an, new Set());
+    parAn.get(an)!.add(Number(m[2]));
+  }
+  const out: { annee: number; manquants: number[] }[] = [];
+  for (const [annee, set] of parAn) {
+    const nums = [...set];
+    const min = Math.min(...nums);
+    const max = Math.max(...nums);
+    const manquants: number[] = [];
+    for (let i = min; i <= max; i++) if (!set.has(i)) manquants.push(i);
+    if (manquants.length) out.push({ annee, manquants });
+  }
+  return out.sort((a, b) => b.annee - a.annee);
+}
+
 export async function syntheseDossiers(
   admin: Admin,
   ownerIds: string[],
@@ -171,6 +206,18 @@ export async function syntheseDossiers(
     }
     if (impayes.nb > 0) {
       anomalies.push({ niveau: "orange", libelle: `${impayes.nb} facture(s) échue(s) non payée(s)` });
+    }
+    const trous = trousNumerotation(emises);
+    const totalTrous = trous.reduce((n, t) => n + t.manquants.length, 0);
+    if (totalTrous > 0) {
+      const fmt = (t: { annee: number; manquants: number[] }) =>
+        t.manquants.slice(0, 3).map((n) => `${t.annee}-${String(n).padStart(3, "0")}`).join(", ");
+      const exemples = trous.map(fmt).join(", ");
+      const reste = totalTrous - trous.reduce((n, t) => n + Math.min(t.manquants.length, 3), 0);
+      anomalies.push({
+        niveau: "orange",
+        libelle: `Trou de numérotation : ${totalTrous} numéro(s) manquant(s) (${exemples}${reste > 0 ? `, +${reste}` : ""})`,
+      });
     }
     if (!derniere) {
       anomalies.push({ niveau: "orange", libelle: "Aucune facture émise" });

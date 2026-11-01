@@ -3,7 +3,7 @@ import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 import { terminerDemo } from "@/components/DemoSession";
 
-export function SignOutButton({ isDemo = false }: { isDemo?: boolean }) {
+export function SignOutButton({ isDemo = false, compact = false }: { isDemo?: boolean; compact?: boolean }) {
   const router = useRouter();
 
   const handleSignOut = async () => {
@@ -30,7 +30,11 @@ export function SignOutButton({ isDemo = false }: { isDemo?: boolean }) {
   return (
     <button
       onClick={handleSignOut}
-      className="flex items-center gap-3 w-full px-3 py-2.5 rounded-lg text-gray-400 hover:text-white hover:bg-ds-elevated text-sm transition-colors"
+      className={
+        compact
+          ? "inline-flex items-center gap-2 rounded-lg border border-ds-border bg-ds-elevated px-3 py-2 text-sm font-medium text-gray-400 hover:text-white hover:bg-ds-surface transition-colors whitespace-nowrap"
+          : "flex items-center gap-3 w-full px-3 py-2.5 rounded-lg text-gray-400 hover:text-white hover:bg-ds-elevated text-sm transition-colors"
+      }
     >
       <svg className="w-4 h-4 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.8}>
         <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 9V5.25A2.25 2.25 0 0 0 13.5 3h-6a2.25 2.25 0 0 0-2.25 2.25v13.5A2.25 2.25 0 0 0 7.5 21h6a2.25 2.25 0 0 0 2.25-2.25V15m3 0 3-3m0 0-3-3m3 3H9" />

@@ -50,15 +50,18 @@ export function DashboardThemeProvider({ children }: { children: React.ReactNode
 }
 
 /** Bouton toggle mode clair/sombre, à placer dans la sidebar footer. */
-export function ThemeToggle() {
+export function ThemeToggle({ compact = false }: { compact?: boolean }) {
   const { theme, toggle } = useContext(ThemeContext);
   const isLight = theme === "light";
 
+  // Compact : bouton encadre pour une barre horizontale (en-tete cabinet).
+  // Par defaut : pleine largeur, pour la colonne laterale du tableau de bord.
+  const classe = compact
+    ? "inline-flex items-center gap-2 rounded-lg border border-ds-border bg-ds-elevated px-3 py-2 text-sm font-medium text-gray-400 hover:text-white hover:bg-ds-surface transition-colors whitespace-nowrap"
+    : "flex items-center gap-3 w-full px-3 py-2.5 rounded-xl text-sm font-medium text-gray-400 hover:text-white hover:bg-ds-elevated transition-all mb-2";
+
   return (
-    <button
-      onClick={toggle}
-      className="flex items-center gap-3 w-full px-3 py-2.5 rounded-xl text-sm font-medium text-gray-400 hover:text-white hover:bg-ds-elevated transition-all mb-2"
-    >
+    <button onClick={toggle} className={classe}>
       {isLight
         ? <Moon size={16} className="shrink-0" />
         : <Sun size={16} className="shrink-0" />

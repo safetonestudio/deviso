@@ -34,16 +34,12 @@ export default async function CabinetLayout({ children }: { children: ReactNode 
                 Cabinet
               </span>
             </a>
-            <div className="flex items-center gap-2">
-              <span className="hidden sm:block text-sm text-gray-400 truncate max-w-[220px]">
+            <div className="flex items-center gap-2 sm:gap-3">
+              <span className="hidden sm:inline-flex items-center rounded-lg border border-ds-border bg-ds-elevated px-3 py-2 text-sm text-gray-300 max-w-[240px] truncate">
                 {profile?.company_name || profile?.full_name || user.email}
               </span>
-              <div className="shrink-0 whitespace-nowrap">
-                <ThemeToggle />
-              </div>
-              <div className="shrink-0 whitespace-nowrap">
-                <SignOutButton />
-              </div>
+              <ThemeToggle compact />
+              <SignOutButton compact />
             </div>
           </div>
         </header>

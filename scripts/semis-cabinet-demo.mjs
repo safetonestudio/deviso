@@ -71,6 +71,7 @@ const CLIENTS = [
     address: "8 avenue de la Libération, 33600 Pessac",
     tva_periodicite: "simplified",
     raccorde: false,
+    trou: true,
   },
 ];
 
@@ -193,21 +194,33 @@ function facture(userId, numero, o) {
 }
 
 /**
- * Numerote par annee, dans l'ordre chronologique, avec un compteur PAR SERIE
- * (FAC et AV) : un compteur commun creerait un trou dans la suite des factures,
- * l'irregularite qu'un comptable repere en premier.
+ * Numerote comme Deviso : « AAAA-NNN », une SEULE serie par an partagee par les
+ * factures et les avoirs (confirme sur les donnees reelles). Ordre chronologique.
  */
 function numeroter(liste) {
-  const compteurs = new Map();
+  const parAn = new Map();
   return [...liste]
     .sort((a, b) => b.jours - a.jours)
     .map((o) => {
       const an = jour(o.jours).getFullYear();
-      const serie = o.avoirDe ? "AV" : "FAC";
-      const n = (compteurs.get(`${serie}-${an}`) ?? 0) + 1;
-      compteurs.set(`${serie}-${an}`, n);
-      return { ...o, numero: `${serie}-${an}-${String(n).padStart(3, "0")}`, an, n };
+      const n = (parAn.get(an) ?? 0) + 1;
+      parAn.set(an, n);
+      return { ...o, numero: `${an}-${String(n).padStart(3, "0")}`, an, n };
     });
+}
+
+/**
+ * Perce un trou volontaire dans la serie d'une annee : le numero (apres + 1)
+ * manque, les suivants sont decales. Sert la demo (un comptable cherche d'abord
+ * les trous de numerotation). Le trou doit rester interieur (ni premier, ni
+ * dernier) pour etre detecte.
+ */
+function perforer(numerotees, annee, apres) {
+  return numerotees.map((o) => {
+    if (o.an !== annee || o.n <= apres) return o;
+    const n = o.n + 1;
+    return { ...o, n, numero: `${annee}-${String(n).padStart(3, "0")}` };
+  });
 }
 
 const HOTEL = { contact: "Sylvie Morin", email: "achats@hotel-medoc.example.com", societe: "Hôtel Le Médoc", siren: "512398741", adresse: "2 allée de Tourny, 33000 Bordeaux" };
@@ -276,7 +289,9 @@ async function semerClient(c, userId, cabinetId) {
     if (error) throw new Error(`${table} : ${error.message}`);
   }
 
-  const numerotees = numeroter(scenario(c.cle));
+  const numerotees = c.trou
+    ? perforer(numeroter(scenario(c.cle)), MAINTENANT.getFullYear(), 4)
+    : numeroter(scenario(c.cle));
   const ids = new Map();
   for (const o of numerotees) if (o.id) ids.set(o.id, randomUUID());
   const lignes = numerotees.map((o) =>
@@ -287,7 +302,7 @@ async function semerClient(c, userId, cabinetId) {
 
   // Compteurs de numerotation au niveau de ce qui vient d'etre seme.
   const maxParAn = new Map();
-  for (const o of numerotees) if (!o.avoirDe) maxParAn.set(o.an, Math.max(maxParAn.get(o.an) ?? 0, o.n));
+  for (const o of numerotees) maxParAn.set(o.an, Math.max(maxParAn.get(o.an) ?? 0, o.n));
   for (const [year, last_seq] of maxParAn) {
     const { error } = await admin.from("document_sequences").upsert({ user_id: userId, doc_type: "invoice", year, last_seq }, { onConflict: "user_id,doc_type,year" });
     if (error) throw new Error(`compteur ${c.company_name} ${year} : ${error.message}`);
