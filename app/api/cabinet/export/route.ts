@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { dossiersDuCabinet } from "@/lib/cabinet-acces";
+import { journaliser } from "@/lib/cabinet-journal";
 import { genererFec, genererCsvFactures, segmentFichier, STATUTS_FEC } from "@/lib/exports-comptables";
 import { creerZip } from "@/lib/zip";
 
@@ -68,6 +69,14 @@ export async function GET(req: NextRequest) {
         : { nom: `Factures_${year}_${base}.csv`, contenu: genererCsvFactures(invoices ?? []) },
     );
   }
+
+  await journaliser(
+    admin,
+    user.id,
+    format === "fec" ? "export_fec" : "export_csv",
+    selection.length === 1 ? selection[0] : null,
+    `${year} · ${selection.length} dossier${selection.length > 1 ? "s" : ""}`,
+  );
 
   if (fichiers.length === 1) {
     const f = fichiers[0];

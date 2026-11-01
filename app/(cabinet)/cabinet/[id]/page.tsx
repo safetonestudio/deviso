@@ -4,6 +4,9 @@ import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { estComptableDe } from "@/lib/cabinet-acces";
+import { journaliser } from "@/lib/cabinet-journal";
+import { signalementsDuDossier } from "@/lib/cabinet-signalements";
+import { CabinetSignalements } from "@/components/CabinetSignalements";
 import {
   syntheseDossiers,
   lireFacturesDossiers,
@@ -64,16 +67,40 @@ export default async function FicheClient({
   // Un dossier hors portefeuille n'existe pas, vu du cabinet.
   if (!(await estComptableDe(admin, user.id, id))) notFound();
 
+  // Trace l'acces au dossier (best-effort, ne bloque jamais l'affichage).
+  await journaliser(admin, user.id, "consultation", id);
+
   const maintenant = new Date();
   const anneeCourante = maintenant.getFullYear();
   const annee = /^\d{4}$/.test(anneeParam ?? "") ? Number(anneeParam) : anneeCourante;
 
   const [[synthese], toutes] = await Promise.all([
     syntheseDossiers(admin, [id], maintenant),
-    lireFacturesDossiers(admin, [id], `${annee}-01-01`),
+    // On lit aussi l'annee precedente : elle sert a la comparaison N-1.
+    lireFacturesDossiers(admin, [id], `${annee - 1}-01-01`),
   ]);
   const factures = toutes.filter((f) => f.issue_date.startsWith(String(annee)));
   const emises = factures.filter(estEmise);
+
+  // Comparaison N-1 sur une base comparable : pour l'annee en cours, on arrete
+  // les deux periodes a la meme date du calendrier (year-to-date), sinon on
+  // compare deux annees pleines. Sans cela, le « YTD » de cette annee serait
+  // compare a une annee complete et afficherait toujours une baisse.
+  const finPeriode = annee === anneeCourante ? maintenant.toISOString().slice(5, 10) : "12-31";
+  const totauxPeriode = (an: number) => {
+    const em = toutes.filter(
+      (f) => estEmise(f) && f.issue_date >= `${an}-01-01` && f.issue_date <= `${an}-${finPeriode}`,
+    );
+    return {
+      caHt: Math.round(em.reduce((s, f) => s + signe(f) * Number(f.total_ht ?? 0), 0) * 100) / 100,
+      tva: Math.round(tvaParTaux(em).reduce((s, t) => s + t.tva, 0) * 100) / 100,
+      nb: em.filter((f) => !estAvoir(f)).length,
+    };
+  };
+  const nActuel = totauxPeriode(annee);
+  const nPrecedent = totauxPeriode(annee - 1);
+
+  const signalements = await signalementsDuDossier(admin, user.id, id);
 
   const caHt = Math.round(emises.reduce((s, f) => s + signe(f) * Number(f.total_ht ?? 0), 0) * 100) / 100;
   const nbAvoirs = emises.filter((f) => estAvoir(f)).length;
@@ -109,6 +136,17 @@ export default async function FicheClient({
       valeur: synthese.impayes.nb ? `${synthese.impayes.nb} · ${eur(synthese.impayes.montant)}` : "Aucun",
     },
   ];
+
+  const comparaisons = [
+    { label: "CA HT", actuel: nActuel.caHt, precedent: nPrecedent.caHt, fmt: eur },
+    { label: "TVA collectée", actuel: nActuel.tva, precedent: nPrecedent.tva, fmt: eur },
+    { label: "Factures émises", actuel: nActuel.nb, precedent: nPrecedent.nb, fmt: (n: number) => String(n) },
+  ];
+  const evolution = (actuel: number, precedent: number): { texte: string; ton: string } | null => {
+    if (!precedent) return actuel ? { texte: "nouveau", ton: "text-gray-500" } : null;
+    const pct = Math.round(((actuel - precedent) / Math.abs(precedent)) * 100);
+    return { texte: `${pct > 0 ? "+" : ""}${pct} %`, ton: pct > 0 ? "text-emerald-400" : pct < 0 ? "text-amber-400" : "text-gray-500" };
+  };
 
   return (
     <div>
@@ -166,6 +204,8 @@ export default async function FicheClient({
         </div>
       )}
 
+      <CabinetSignalements clientId={id} initiaux={signalements} />
+
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 mb-6">
         {tuiles.map((t) => (
           <div key={t.label} className="bg-ds-surface border border-ds-border rounded-xl p-4">
@@ -173,6 +213,30 @@ export default async function FicheClient({
             <div className="text-xl font-semibold mt-1 text-white">{t.valeur}</div>
           </div>
         ))}
+      </div>
+
+      <div className="bg-ds-surface border border-ds-border rounded-xl p-4 mb-6">
+        <div className="flex flex-wrap items-baseline justify-between gap-2 mb-3">
+          <h2 className="text-white font-semibold">Comparaison avec {annee - 1}</h2>
+          <span className="text-xs text-gray-500">
+            {annee === anneeCourante ? "À date, du 1er janvier à aujourd'hui" : "Année complète"}
+          </span>
+        </div>
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+          {comparaisons.map((c) => {
+            const ev = evolution(c.actuel, c.precedent);
+            return (
+              <div key={c.label} className="bg-ds-bg border border-ds-border rounded-lg p-3">
+                <div className="text-xs text-gray-500">{c.label}</div>
+                <div className="flex items-baseline gap-2 mt-1">
+                  <span className="text-lg font-semibold text-white">{c.fmt(c.actuel)}</span>
+                  {ev && <span className={`text-xs font-medium ${ev.ton}`}>{ev.texte}</span>}
+                </div>
+                <div className="text-xs text-gray-500 mt-0.5">{annee - 1} : {c.fmt(c.precedent)}</div>
+              </div>
+            );
+          })}
+        </div>
       </div>
 
       <div className="bg-ds-surface border border-ds-border rounded-xl mb-6 overflow-hidden">

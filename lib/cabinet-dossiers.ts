@@ -44,6 +44,8 @@ export type SyntheseDossier = {
   id: string;
   nom: string;
   siret: string | null;
+  tvaRegime: string | null;
+  tvaPeriodicite: string | null;
   raccorde: boolean;
   nbFacturesAnnee: number;
   nbFacturesMois: number;
@@ -69,6 +71,17 @@ export const estEmise = (f: Pick<FactureCabinet, "status">) => f.status === "sen
 
 /** Un avoir vient en deduction : ses montants sont positifs, son type porte le sens. */
 export const signe = (f: Pick<FactureCabinet, "invoice_type" | "type_code">) => (estAvoir(f) ? -1 : 1);
+
+/**
+ * Une facture porte-t-elle de la TVA ? Vrai des qu'un taux positif est
+ * reellement facture (au moins un groupe de ventilation a un taux > 0 et un
+ * montant de TVA non nul). Sert a reperer une TVA facturee par un dossier en
+ * franchise en base, qui ne doit pas en collecter (art. 293 B CGI).
+ */
+export function factureAvecTva(f: FactureCabinet): boolean {
+  const v = ventilationTva((f.items ?? []) as LigneMontant[], f.tva_rate);
+  return v.groupes.some((g) => g.taux > 0 && g.montant_tva > 0.005);
+}
 
 export async function lireFacturesDossiers(admin: Admin, ownerIds: string[], depuis: string): Promise<FactureCabinet[]> {
   if (ownerIds.length === 0) return [];
@@ -162,7 +175,7 @@ export async function syntheseDossiers(
   const aujourdhui = reference.toISOString().slice(0, 10);
 
   const [{ data: profils }, { data: connexions }, factures] = await Promise.all([
-    admin.from("profiles").select("id, company_name, full_name, siret").in("id", ownerIds),
+    admin.from("profiles").select("id, company_name, full_name, siret, tva_regime, tva_periodicite").in("id", ownerIds),
     // Table sans politique RLS (elle porte un jeton) : on ne lit que le statut.
     admin.from("superpdp_connections").select("user_id, session_status").in("user_id", ownerIds),
     lireFacturesDossiers(admin, ownerIds, `${annee - 1}-01-01`),
@@ -204,6 +217,19 @@ export async function syntheseDossiers(
     if (sansSiren.length > 0) {
       anomalies.push({ niveau: "orange", libelle: `${sansSiren.length} facture(s) à une entreprise française sans SIREN client` });
     }
+    // Conformite TVA au regime declare dans le profil du client.
+    const franchise = (p?.tva_regime ?? "franchise") === "franchise";
+    if (franchise) {
+      // En franchise en base, le client ne doit pas collecter de TVA : une
+      // facture avec TVA est une erreur a corriger (art. 293 B CGI).
+      const avecTva = annee_.filter((f) => !estAvoir(f) && factureAvecTva(f));
+      if (avecTva.length > 0) {
+        anomalies.push({ niveau: "rouge", libelle: `${avecTva.length} facture(s) avec TVA alors que le dossier est en franchise en base (art. 293 B CGI)` });
+      }
+    } else if (!p?.tva_periodicite) {
+      // Assujetti sans periodicite : impossible de savoir quand il declare.
+      anomalies.push({ niveau: "orange", libelle: "Assujetti à la TVA sans périodicité de déclaration renseignée" });
+    }
     if (impayes.nb > 0) {
       anomalies.push({ niveau: "orange", libelle: `${impayes.nb} facture(s) échue(s) non payée(s)` });
     }
@@ -238,6 +264,8 @@ export async function syntheseDossiers(
       id,
       nom: p?.company_name || p?.full_name || "Client sans nom",
       siret: p?.siret ?? null,
+      tvaRegime: p?.tva_regime ?? null,
+      tvaPeriodicite: p?.tva_periodicite ?? null,
       raccorde,
       // Un avoir est deduit du CA et de la TVA, mais ce n'est pas une facture.
       nbFacturesAnnee: annee_.filter((f) => !estAvoir(f)).length,

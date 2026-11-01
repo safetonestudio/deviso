@@ -147,15 +147,88 @@ contreEpreuve("une page admin sans contrôle d'accès", litEnAdmin("const a = cr
   contreEpreuve("une détection sans parcours des numéros manquants", !detecte(synth.replace("for (let i = min; i <= max; i++)", "for (let i = min; i < min; i++)")));
 }
 
+// 6 quater. Conformite TVA au regime declare : une TVA facturee par un dossier
+// en franchise (rouge) et un assujetti sans periodicite (orange) remontent dans
+// la file a traiter. Ce sont des erreurs qu'un comptable cherche en premier.
+{
+  const synth = lire(join("lib", "cabinet-dossiers.ts"));
+  const detecte = (s) =>
+    /factureAvecTva\(f\)/.test(s) &&
+    /franchise en base \(art\. 293 B CGI\)/.test(s) &&
+    /sans périodicité de déclaration/.test(s);
+  exige("anomalies, conformité TVA au régime (franchise / périodicité)", detecte(synth), "une TVA facturée en franchise ou une périodicité manquante doit remonter dans la file à traiter");
+  contreEpreuve("une file sans contrôle de la franchise", !detecte(synth.replace("franchise en base (art. 293 B CGI)", "")));
+}
+
+// 6 quinquies. Calendrier TVA : l'echeance par dossier (periode close a declarer
+// et periode en cours) est calculee et affichee sur le portefeuille.
+{
+  const lib = lire(join("lib", "cabinet-tva-calendrier.ts"));
+  const page = lire(join("app", "(cabinet)", "cabinet", "page.tsx"));
+  const calcule = (s) => /export function calendrierTva/.test(s) && /aDeclarer/.test(s) && /enCours/.test(s);
+  exige("calendrier TVA, échéance par dossier calculée", calcule(lib), "le comptable doit voir la TVA à déclarer par dossier, sans ouvrir chaque fiche");
+  exige(
+    "calendrier TVA, branché sur le portefeuille",
+    /calendrierTva\(/.test(page) && /CabinetCalendrierTva/.test(page),
+    "le calcul doit être rendu sur /cabinet",
+  );
+  contreEpreuve("un calendrier sans période close à déclarer", !calcule(lib.replace(/aDeclarer/g, "xxx")));
+}
+
 // 7. Rien du serveur cabinet n'est envoye au navigateur.
 {
-  const interdits = /from "@\/lib\/(cabinet-acces|cabinet-dossiers|cabinet|exports-comptables|zip)"/;
+  const interdits = /from "@\/lib\/(cabinet-acces|cabinet-dossiers|cabinet-tva-calendrier|cabinet-journal|cabinet-signalements|cabinet|exports-comptables|zip)"/;
   for (const f of fichiers("components").concat(surfaces)) {
     const src = lire(f);
     if (!/^"use client"/.test(src.trimStart())) continue;
     exige(`${f}, composant client sans import serveur cabinet`, !interdits.test(src), "crypto, clé de service ou lecture de dossiers embarqués dans le bundle navigateur");
   }
   contreEpreuve("un composant client qui importe cabinet-dossiers", interdits.test('import { x } from "@/lib/cabinet-dossiers";'));
+}
+
+// 8. Journal des acces : chaque consultation de dossier et chaque export est
+// trace, et un cabinet ne lit que son propre journal.
+{
+  const fiche = lire(join("app", "(cabinet)", "cabinet", "[id]", "page.tsx"));
+  const exp = lire(join("app", "api", "cabinet", "export", "route.ts"));
+  const jlib = lire(join("lib", "cabinet-journal.ts"));
+  exige(
+    "journal, consultation de dossier tracée",
+    /journaliser\(admin, user\.id, "consultation", id\)/.test(fiche),
+    "chaque ouverture de fiche client doit laisser une trace",
+  );
+  exige(
+    "journal, export tracé (FEC et CSV)",
+    /journaliser\(/.test(exp) && /"export_fec"/.test(exp) && /"export_csv"/.test(exp),
+    "chaque export doit laisser une trace",
+  );
+  exige(
+    "journal, lecture bornée au cabinet connecté",
+    /\.eq\("cabinet_id", cabinetId\)/.test(jlib),
+    "un cabinet ne doit lire que son propre journal",
+  );
+  contreEpreuve("une lecture de journal sans filtre cabinet", !/\.eq\("cabinet_id", cabinetId\)/.test(jlib.replace('.eq("cabinet_id", cabinetId)', "")));
+}
+
+// 9. Signalement cible : le cabinet ne signale qu'a un client de son
+// portefeuille (estComptableDe), et la cloture cote client est bornee a son
+// espace (client_id = espace du client).
+{
+  const creer = lire(join("app", "api", "cabinet", "signalement", "route.ts"));
+  const traiter = lire(join("app", "api", "signalements", "traiter", "route.ts"));
+  const slib = lire(join("lib", "cabinet-signalements.ts"));
+  exige(
+    "signalement, création bornée au portefeuille (estComptableDe)",
+    /estComptableDe\(admin, user\.id, clientId\)/.test(creer) && /status: 403/.test(creer),
+    "un cabinet ne doit pouvoir signaler qu'un client qu'il suit",
+  );
+  contreEpreuve("une création de signalement sans contrôle d'accès", !/estComptableDe\(/.test(creer.replace(/estComptableDe\(/g, "xx(")));
+  exige(
+    "signalement, clôture bornée à l'espace du client",
+    /\.eq\("client_id", clientId\)/.test(slib) && /getWorkspaceUserId\(user\.id\)/.test(traiter),
+    "un client ne doit clore que les signalements de son espace",
+  );
+  contreEpreuve("une clôture sans filtre d'espace", !/\.eq\("client_id", clientId\)/.test(slib.replaceAll('.eq("client_id", clientId)', "")));
 }
 
 console.log("");

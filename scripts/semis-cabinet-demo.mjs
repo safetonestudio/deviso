@@ -50,6 +50,7 @@ const CLIENTS = [
     siret: "84123657800017",
     address: "3 place du Marché, 33850 Léognan",
     tva_periodicite: "monthly",
+    tva_regime: "reduit",
     raccorde: true,
   },
   {
@@ -60,6 +61,7 @@ const CLIENTS = [
     siret: "88765432100015",
     address: "27 rue Sainte-Catherine, 33000 Bordeaux",
     tva_periodicite: "quarterly",
+    tva_regime: "normal",
     raccorde: true,
   },
   {
@@ -70,6 +72,7 @@ const CLIENTS = [
     siret: "79345612800024",
     address: "8 avenue de la Libération, 33600 Pessac",
     tva_periodicite: "simplified",
+    tva_regime: "intermediaire",
     raccorde: false,
     trou: true,
   },
@@ -139,7 +142,7 @@ async function compte(fiche, motDePasse) {
     address: fiche.address,
     email: fiche.email,
     is_demo: true,
-    ...(fiche.tva_periodicite ? { plan: "solo", tva_periodicite: fiche.tva_periodicite } : {}),
+    ...(fiche.tva_periodicite ? { plan: "solo", tva_periodicite: fiche.tva_periodicite, tva_regime: fiche.tva_regime } : {}),
   });
   if (error) throw error;
   return u.id;
@@ -353,8 +356,10 @@ if (nouveau) {
   appendFileSync(".env.local", `\n# Compte de demonstration du cockpit cabinet (scripts/semis-cabinet-demo.mjs)\nCABINET_DEMO_EMAIL=${CABINET.email}\nCABINET_DEMO_PASSWORD=${motDePasse}\n`);
 }
 
+const idsClients = new Map();
 for (const c of CLIENTS) {
   const id = await compte(c);
+  idsClients.set(c.cle, id);
   const n = await semerClient(c, id, cabinetId);
   console.log(`  ${c.company_name.padEnd(22)} ${n} factures, ${c.raccorde ? "raccordé" : "non raccordé"}`);
 }
@@ -365,6 +370,35 @@ const A = "ABCDEFGHJKMNPQRSTUVWXYZ23456789";
 const bloc = () => Array.from({ length: 4 }, () => A[randomInt(A.length)]).join("");
 const { error: errInv } = await admin.from("cabinet_invitations").insert({ cabinet_id: cabinetId, code: `${bloc()}-${bloc()}`, libelle: "Garage Moreau" });
 if (errInv) throw new Error(`invitation : ${errInv.message}`);
+
+// Un signalement ouvert : le cabinet a pointe une anomalie au client. Visible
+// sur la fiche cote cabinet ET dans le tableau de bord du client.
+await admin.from("cabinet_signalements").delete().eq("cabinet_id", cabinetId);
+const studioId = idsClients.get("studio");
+if (studioId) {
+  const { error } = await admin.from("cabinet_signalements").insert({
+    cabinet_id: cabinetId,
+    client_id: studioId,
+    message: "Plus aucune facture émise depuis deux mois : est-ce normal, ou des factures restent-elles à établir ?",
+  });
+  if (error) throw new Error(`signalement démo : ${error.message}`);
+}
+
+// Quelques traces d'activite pour que le journal des acces ne soit pas vide.
+await admin.from("cabinet_journal").delete().eq("cabinet_id", cabinetId);
+const anneeCourante = MAINTENANT.getFullYear();
+const boulId = idsClients.get("boulangerie");
+const journal = [];
+if (boulId) {
+  journal.push({ cabinet_id: cabinetId, client_id: boulId, action: "consultation", created_at: tsIso(2) });
+  journal.push({ cabinet_id: cabinetId, client_id: boulId, action: "export_fec", details: `${anneeCourante} · 1 dossier`, created_at: tsIso(2) });
+}
+if (studioId) journal.push({ cabinet_id: cabinetId, client_id: studioId, action: "consultation", created_at: tsIso(5) });
+journal.push({ cabinet_id: cabinetId, client_id: null, action: "export_csv", details: `${anneeCourante} · 3 dossiers`, created_at: tsIso(1) });
+if (journal.length) {
+  const { error } = await admin.from("cabinet_journal").insert(journal);
+  if (error) throw new Error(`journal démo : ${error.message}`);
+}
 
 console.log("");
 console.log(`Cabinet : ${CABINET.company_name}, 3 dossiers rattachés, 1 code en attente.`);

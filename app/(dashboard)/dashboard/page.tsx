@@ -8,6 +8,7 @@ import { EmptyState } from "@/components/ui/EmptyState";
 import { ProductTour } from "@/components/ProductTour";
 import { GuidedTourBanner } from "@/components/GuidedTourBanner";
 import { DashboardActionFeed, type ActionItem } from "@/components/DashboardActionFeed";
+import { SignalementsClient } from "@/components/SignalementsClient";
 import { CaUrssafWidget } from "@/components/CaUrssafWidget";
 import { caMensuelHt as calculerCaMensuelHt, encaisseTtcDuMois, type FactureRecette } from "@/lib/recettes";
 import {
@@ -221,6 +222,8 @@ export default async function DashboardPage() {
     <div className="space-y-8 max-w-7xl mx-auto">
 
       <GuidedTourBanner pageKey="dashboard" />
+
+      <SignalementsClient workspaceId={workspaceId} />
 
       {/* ── Header ── */}
       <div className="flex items-start justify-between gap-4 flex-wrap">

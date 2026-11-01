@@ -1,11 +1,14 @@
 import { redirect } from "next/navigation";
 import type { Metadata } from "next";
+import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { dossiersDuCabinet } from "@/lib/cabinet-acces";
-import { syntheseDossiers } from "@/lib/cabinet-dossiers";
+import { syntheseDossiers, lireFacturesDossiers } from "@/lib/cabinet-dossiers";
+import { calendrierTva } from "@/lib/cabinet-tva-calendrier";
 import { CabinetInvitations } from "@/components/CabinetInvitations";
 import { CabinetPortefeuille } from "@/components/CabinetPortefeuille";
+import { CabinetCalendrierTva } from "@/components/CabinetCalendrierTva";
 
 export const metadata: Metadata = { title: "Portefeuille cabinet" };
 export const dynamic = "force-dynamic";
@@ -22,6 +25,8 @@ export default async function CabinetCockpit() {
   const ownerIds = await dossiersDuCabinet(admin, user.id);
   const maintenant = new Date();
   const dossiers = await syntheseDossiers(admin, ownerIds, maintenant);
+  const factures = await lireFacturesDossiers(admin, ownerIds, `${maintenant.getFullYear() - 1}-01-01`);
+  const calendrier = calendrierTva(dossiers, factures, maintenant);
 
   const rouges = dossiers.filter((d) => d.niveau === "rouge").length;
   const oranges = dossiers.filter((d) => d.niveau === "orange").length;
@@ -37,11 +42,19 @@ export default async function CabinetCockpit() {
 
   return (
     <div>
-      <div className="mb-6">
-        <h1 className="text-2xl font-semibold text-white">Portefeuille</h1>
-        <p className="text-sm text-gray-400 mt-1">
-          Vos dossiers clients Deviso, en lecture seule. Ceux qui demandent une action apparaissent en premier.
-        </p>
+      <div className="mb-6 flex flex-wrap items-start justify-between gap-3">
+        <div>
+          <h1 className="text-2xl font-semibold text-white">Portefeuille</h1>
+          <p className="text-sm text-gray-400 mt-1">
+            Vos dossiers clients Deviso, en lecture seule. Ceux qui demandent une action apparaissent en premier.
+          </p>
+        </div>
+        <Link
+          href="/cabinet/journal"
+          className="text-sm px-3 py-1.5 border border-ds-border text-gray-300 rounded-lg hover:bg-white/5 font-medium transition-colors whitespace-nowrap"
+        >
+          Journal des accès
+        </Link>
       </div>
 
       {dossiers.length > 0 && (
@@ -63,7 +76,10 @@ export default async function CabinetCockpit() {
           </p>
         </div>
       ) : (
-        <CabinetPortefeuille dossiers={dossiers} annee={maintenant.getFullYear()} />
+        <>
+          <CabinetPortefeuille dossiers={dossiers} annee={maintenant.getFullYear()} />
+          <CabinetCalendrierTva lignes={calendrier} />
+        </>
       )}
 
       <CabinetInvitations />
