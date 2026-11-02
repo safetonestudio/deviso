@@ -96,7 +96,7 @@ export default async function Declarations() {
   const aTraiter = declarations.filter((d) => d.aTraiter).length;
 
   return (
-    <div className="max-w-7xl mx-auto">
+    <div className="w-full">
       <GuidedTourBanner pageKey="declarations" />
       <div>
         <h1 className="text-2xl font-semibold text-ink">Déclarations au fisc</h1>

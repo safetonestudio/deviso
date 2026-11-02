@@ -77,7 +77,7 @@ export default async function LivreRecettes({ searchParams }: { searchParams: Pr
   const annees = [anneeCourante, anneeCourante - 1, anneeCourante - 2];
 
   return (
-    <div className="max-w-7xl mx-auto">
+    <div className="w-full">
       <GuidedTourBanner pageKey="livre-recettes" />
       <div className="flex flex-wrap items-start justify-between gap-3 mb-6">
         <div>

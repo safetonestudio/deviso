@@ -43,8 +43,14 @@ const PAGES = {
   "app/(dashboard)/stats/page.tsx": LISTE,
   "app/(dashboard)/catalogue/page.tsx": LISTE,
   "app/(dashboard)/team/page.tsx": LISTE,
+  "app/(dashboard)/livre-recettes/page.tsx": LISTE,
+  "app/(dashboard)/declarations/page.tsx": LISTE,
+  "app/(dashboard)/achats-internationaux/page.tsx": LISTE,
+  "app/(dashboard)/admin/page.tsx": LISTE,
+  "app/(dashboard)/invoices/[id]/page.tsx": LISTE,
+  "app/(dashboard)/proposals/[id]/page.tsx": LISTE,
   "app/(dashboard)/paiements/page.tsx": FORMULAIRE,
-  "app/(dashboard)/profil/page.tsx": FORMULAIRE,
+  "app/(dashboard)/profil/page.tsx": LISTE,
   "app/(dashboard)/billing/page.tsx": FORMULAIRE,
 };
 
@@ -58,8 +64,15 @@ const PAGES = {
  */
 function cadreDe(chemin) {
   const source = readFileSync(chemin, "utf8");
-  const m = source.match(/\n {2}return \(\s*\n\s*<>?\s*\n?\s*<div className="([^"]*)"/)
-    ?? source.match(/\n {2}return \(\s*\n\s*<div className="([^"]*)"/);
+  // On lit le conteneur racine du composant de PAGE, celui qui suit
+  // `export default`. Partir du debut du fichier attrapait le `return` d'un
+  // sous-composant declare plus haut (une carte de la colonne laterale sur les
+  // pages de detail), d'ou une fausse alerte. La page exportee est le dernier
+  // `export default function` du fichier.
+  const iExport = source.lastIndexOf("export default");
+  const zone = iExport === -1 ? source : source.slice(iExport);
+  const m = zone.match(/\n {2}return \(\s*\n\s*<>?\s*\n?\s*<div className="([^"]*)"/)
+    ?? zone.match(/\n {2}return \(\s*\n\s*<div className="([^"]*)"/);
   return m ? m[1] : null;
 }
 

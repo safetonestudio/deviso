@@ -59,7 +59,7 @@ export default async function Pilotage() {
   const alertes = lignes.filter((l) => l.nb_erreurs_pa + l.nb_achats_bloques > 0).length;
 
   return (
-    <div className="max-w-7xl mx-auto">
+    <div className="w-full">
       <div className="mb-6">
         <h1 className="text-2xl font-semibold text-ink">Pilotage</h1>
         <p className="text-sm text-gray-400 mt-1">

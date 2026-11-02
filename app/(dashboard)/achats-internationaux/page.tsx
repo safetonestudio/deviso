@@ -51,7 +51,7 @@ export default async function AchatsInternationaux() {
   const liste = (achats ?? []) as AchatInternational[];
 
   return (
-    <div className="max-w-7xl mx-auto">
+    <div className="w-full">
       <GuidedTourBanner pageKey="achats-internationaux" />
       <div className="mb-6">
         <h1 className="text-2xl font-semibold text-ink">Achats à l&apos;étranger</h1>

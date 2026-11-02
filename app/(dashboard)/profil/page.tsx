@@ -24,18 +24,20 @@ const TVA_REGIMES: { value: TvaRegime; label: string; rate: number; description:
 // (l'etat des formulaires est preserve), seule la hauteur est repliee. Reduit la
 // densite de la page sans rien retirer (retour UX 28/09).
 function SectionRepliable({
+  id,
   titre,
   sousTitre,
   droite,
   children,
 }: {
+  id?: string;
   titre: string;
   sousTitre?: React.ReactNode;
   droite?: React.ReactNode;
   children: React.ReactNode;
 }) {
   return (
-    <details className="group carte mt-6 overflow-hidden [&_summary::-webkit-details-marker]:hidden">
+    <details id={id} className="group carte mt-6 overflow-hidden scroll-mt-24 [&_summary::-webkit-details-marker]:hidden">
       <summary className="flex items-center justify-between gap-3 px-5 py-4 cursor-pointer list-none select-none hover:bg-ds-elevated/40 transition-colors">
         <div className="min-w-0">
           <h2 className="font-semibold text-ink">{titre}</h2>
@@ -50,6 +52,50 @@ function SectionRepliable({
       </summary>
       <div className="px-5 pb-5 space-y-4">{children}</div>
     </details>
+  );
+}
+
+// Menu lateral ancre des reglages : on saute a une section d'un clic plutot que
+// de derouler toute la page (retour Selim 02/11, scroll interminable).
+const PARAM_SECTIONS: { titre: string; liens: { id: string; label: string }[] }[] = [
+  { titre: "Entreprise", liens: [
+    { id: "logo", label: "Logo" },
+    { id: "identite", label: "Identité" },
+    { id: "statut-tva", label: "Statut & TVA" },
+  ] },
+  { titre: "Documents", liens: [
+    { id: "documents", label: "Apparence" },
+    { id: "sous-domaine", label: "Sous-domaine" },
+    { id: "relances", label: "Relances" },
+    { id: "cgv", label: "CGV" },
+  ] },
+  { titre: "Conformité & comptable", liens: [
+    { id: "comptable", label: "Expert-comptable" },
+    { id: "chorus", label: "Chorus Pro" },
+  ] },
+  { titre: "Compte", liens: [
+    { id: "abonnement", label: "Abonnement" },
+  ] },
+];
+
+function ParametresNav() {
+  return (
+    <nav className="hidden lg:block lg:sticky lg:top-20 space-y-5 text-sm">
+      {PARAM_SECTIONS.map((groupe) => (
+        <div key={groupe.titre}>
+          <p className="text-[11px] font-semibold tracking-wide text-gray-500 mb-1.5 px-3">{groupe.titre}</p>
+          <ul className="space-y-0.5">
+            {groupe.liens.map((l) => (
+              <li key={l.id}>
+                <a href={`#${l.id}`} className="block px-3 py-1.5 rounded-lg text-gray-400 hover:text-ink hover:bg-ds-elevated transition-colors">
+                  {l.label}
+                </a>
+              </li>
+            ))}
+          </ul>
+        </div>
+      ))}
+    </nav>
   );
 }
 
@@ -411,15 +457,20 @@ Les présentes CGV sont soumises au droit français. Tout litige relève de la c
   }
 
   return (
-    <div className="max-w-2xl mx-auto">
+    <div className="w-full">
       <GuidedTourBanner pageKey="profil" />
-      <div className="mb-8">
+      <div className="en-tete-page mb-6">
         <h1 className="text-3xl font-semibold text-ink tracking-tight">Mon profil</h1>
         <p className="text-gray-500 text-sm mt-1">Ces informations apparaîtront automatiquement sur tes devis et factures.</p>
       </div>
 
+      <div className="grid lg:grid-cols-[200px_minmax(0,1fr)] gap-8 items-start">
+        <ParametresNav />
+        <div className="min-w-0 space-y-6">
+
       {/* Abonnement */}
       <SectionRepliable
+        id="abonnement"
         titre="Abonnement"
         droite={
           <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold ${
@@ -463,7 +514,7 @@ Les présentes CGV sont soumises au droit français. Tout litige relève de la c
 
       <form onSubmit={handleSubmit} className="space-y-6">
         {/* Logo */}
-        <section className="carte p-5">
+        <section id="logo" className="carte p-5 scroll-mt-24">
           <h2 className="font-semibold text-ink mb-4">Logo</h2>
           {profile.plan === "free" ? (
             <UpgradeBanner variant="logo_blocked" />
@@ -495,7 +546,7 @@ Les présentes CGV sont soumises au droit français. Tout litige relève de la c
         </section>
 
         {/* Identité */}
-        <section className="carte p-5 space-y-4">
+        <section id="identite" className="carte p-5 space-y-4 scroll-mt-24">
           <h2 className="font-semibold text-ink">Identité</h2>
           <div className="grid grid-cols-2 gap-3">
             <div>
@@ -534,7 +585,7 @@ Les présentes CGV sont soumises au droit français. Tout litige relève de la c
         </section>
 
         {/* Statut de l'entreprise */}
-        <section className="carte p-5 space-y-4">
+        <section id="statut-tva" className="carte p-5 space-y-4 scroll-mt-24">
           <h2 className="font-semibold text-ink">Statut de l&apos;entreprise</h2>
           <p className="text-xs text-gray-500">Il adapte ton tableau de bord : échéances URSSAF et cotisations pour un micro-entrepreneur, échéances de TVA si tu y es assujetti.</p>
           <div className="space-y-2">
@@ -638,7 +689,7 @@ Les présentes CGV sont soumises au droit français. Tout litige relève de la c
 
         {/* Apparence */}
         {canName(profile.plan, "accentColor") ? (
-          <SectionRepliable titre="Apparence des documents" sousTitre="Choisissez le style de vos devis et factures envoyés aux clients.">
+          <SectionRepliable id="documents" titre="Apparence des documents" sousTitre="Choisissez le style de vos devis et factures envoyés aux clients.">
             <div>
               <label className="block text-xs font-medium text-gray-400 mb-2">Mise en page</label>
               <div className="grid grid-cols-3 gap-3">
@@ -703,7 +754,7 @@ Les présentes CGV sont soumises au droit français. Tout litige relève de la c
 
       {/* ── Sous-domaine ── */}
       {canName(profile.plan, "subdomain") ? (
-        <SectionRepliable titre="Sous-domaine personnalisé" sousTitre={<>Vos devis seront accessibles via <span className="text-indigo-400 font-mono">votre-nom.getdeviso.fr</span>.</>}>
+        <SectionRepliable id="sous-domaine" titre="Sous-domaine personnalisé" sousTitre={<>Vos devis seront accessibles via <span className="text-indigo-400 font-mono">votre-nom.getdeviso.fr</span>.</>}>
           {profile.subdomain && (
             <div className="flex items-center gap-2 bg-emerald-500/10 border border-emerald-500/20 rounded-lg px-3 py-2">
               <span className="text-emerald-400 text-sm">✓</span>
@@ -762,7 +813,7 @@ Les présentes CGV sont soumises au droit français. Tout litige relève de la c
 
       {/* ── Relances programmables ── */}
       {canName(profile.plan, "remindersCustom") ? (
-        <SectionRepliable titre="Relances automatiques" sousTitre="Définissez vos propres délais de relance (en jours après envoi) et un message personnalisé inclus dans chaque email.">
+        <SectionRepliable id="relances" titre="Relances automatiques" sousTitre="Définissez vos propres délais de relance (en jours après envoi) et un message personnalisé inclus dans chaque email.">
 
           {/* Intervalles */}
           <div>
@@ -853,6 +904,7 @@ Les présentes CGV sont soumises au droit français. Tout litige relève de la c
 
       {/* ── Chorus Pro (B2G, Réforme 2026) ── */}
       <SectionRepliable
+        id="chorus"
         titre="Chorus Pro"
         droite={<span className="text-xs font-semibold bg-blue-500/15 text-blue-300 border border-blue-500/20 px-2 py-0.5 rounded-full">Réforme 2026 · B2G</span>}
         sousTitre="Pour déposer vos factures auprès du service public (collectivités, ministères, hôpitaux) en un clic. Laissez vide si vous ne facturez pas le secteur public."
@@ -946,6 +998,7 @@ Les présentes CGV sont soumises au droit français. Tout litige relève de la c
 
       {/* ── CGV ── */}
       <SectionRepliable
+        id="cgv"
         titre="Conditions Générales de Vente"
         sousTitre="Rédigées une fois, annexées automatiquement à chaque devis PDF. Le client voit la mention « Acceptation de ce devis vaut acceptation des CGV ci-jointes »."
       >
@@ -995,11 +1048,14 @@ Les présentes CGV sont soumises au droit français. Tout litige relève de la c
       <SuperPdpCard />
 
       <SectionRepliable
+        id="comptable"
         titre="Expert-comptable"
         sousTitre="Donnez un acces gratuit en lecture seule a votre comptable (devis, factures, exports FEC). Il n'occupe aucun siege."
       >
         <ComptableAcces />
       </SectionRepliable>
+        </div>
+      </div>
     </div>
   );
 }

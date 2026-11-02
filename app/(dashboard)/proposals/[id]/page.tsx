@@ -82,7 +82,7 @@ export default async function ProposalDetailPage({ params }: { params: Promise<{
 
 
   return (
-    <div className="max-w-5xl mx-auto">
+    <div className="w-full">
       <GuidedTourBanner pageKey="proposals_detail" />
       {/* Retour */}
       <Link href="/proposals" className="text-sm text-gray-500 hover:text-gray-400 transition-colors mb-5 inline-block">
@@ -90,7 +90,7 @@ export default async function ProposalDetailPage({ params }: { params: Promise<{
       </Link>
 
       {/* Layout deux colonnes */}
-      <div className="grid grid-cols-1 lg:grid-cols-[1fr_260px] gap-6 items-start">
+      <div className="grid grid-cols-1 lg:grid-cols-[minmax(0,880px)_300px] gap-6 items-start">
 
         {/* ── Colonne gauche : document ── */}
         <div className="min-w-0">
