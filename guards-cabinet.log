@@ -1,0 +1,123 @@
+
+> deviso@0.1.0 test:conformite
+> node scripts/e2e/conformite-xml.mjs
+
+
+── Conformité du Factur-X, jugée par le validateur officiel ───
+   base : https://getdeviso.fr
+   15 situations
+
+  ok   B2B France, services, TVA 20 %, Factur-X conforme
+       nature B2B · exigibilité BT-8 = 72
+  ok   B2B France, vente de biens, Factur-X conforme
+       nature B2B · exigibilité BT-8 = 72
+  ok   B2B, TVA sur les débits, Factur-X conforme
+       nature B2B · exigibilité BT-8 = 5
+  ok   B2B, franchise de TVA (taux 0), Factur-X conforme
+       nature B2B · exigibilité BT-8 = 72
+  ok   B2B, TVA réduite 10 %, Factur-X conforme
+       nature B2B · exigibilité BT-8 = 72
+  ok   B2B, TVA super-réduite 5,5 %, Factur-X conforme
+       nature B2B · exigibilité BT-8 = 72
+  ok   B2B France, deux taux de TVA par ligne (20 % et 10 %), Factur-X conforme
+       nature B2B · exigibilité BT-8 = 72
+  ok   B2B, plusieurs lignes et centimes, Factur-X conforme
+       nature B2B · exigibilité BT-8 = 72
+  ok   B2B, quantité fractionnaire, Factur-X conforme
+       nature B2B · exigibilité BT-8 = 72
+  ok   B2B, échéance dépassée, Factur-X conforme
+       nature B2B · exigibilité BT-8 = 72
+  ok   B2B, émise et échue le même jour, Factur-X conforme
+       nature B2B · exigibilité BT-8 = 72
+  ok   B2C, client particulier, Factur-X conforme
+       nature B2C · exigibilité BT-8 = 72
+  ok   B2BInt, client belge, Factur-X conforme
+       nature B2BInt · exigibilité BT-8 = 72
+  ok   B2BInt sans adresse électronique, doit être bloqué en amont, arrêtée par le pré-contrôle
+       l'e-mail de Tricatel Deutschland (il sert d'adresse de facturation électronique pour une opération internationale)
+  ok   Facture d'acompte (30 %), Factur-X conforme
+       nature B2B · exigibilité BT-8 = 72
+  ok   Contre-épreuve : le validateur refuse un document invalide
+  ok   Contre-épreuve : le refus est motivé
+
+   15/15 facture(s) de test supprimée(s).
+
+17/17 vérifications passées
+
+> deviso@0.1.0 test:demo
+> node scripts/e2e/demo.mjs
+
+── Refus attendus ───────────────────────────────────────────
+  ok   /api/demo/end, sans session : 200
+  ok   /api/demo/heartbeat, sans session : 401
+
+── Une session vivante n'est pas supprimée ──────────────────
+  ok   le battement de cœur est accepté et reconnaît une démo
+  ok   la session survit à la purge qu'elle vient de déclencher
+  ok   la purge s'exécute depuis le battement, sans échec
+
+── Le raccordement Super PDP fictif reste intact ─────────────
+  ok   la synchronisation d une demo repond sans erreur
+  ok   le raccordement fictif reste verifie apres statut et synchronisation
+  ok   aucune erreur de plateforme n est inscrite sur la demo
+  ok   la demo est joignable (ligne d annuaire fictive en service)
+
+── L equipe de demonstration est visible dans la vue pipeline ──
+  ok   la vue pipeline montre la proprietaire et ses deux membres
+  ok   les membres portent leurs devis (Emma : 2 envoyes, Thomas : 1 brouillon)
+
+── La sortie explicite supprime vraiment le compte ──────────
+  ok   les donnees de la demo respectent les regles de transmission actuelles
+  ok   la démo est bien vivante avant la sortie
+  ok   /api/demo/end confirme la suppression
+  ok   la sortie supprime aussi les deux comptes membres de la demo
+  ok   le compte n'existe plus après la sortie
+  ok   un second appel ne casse rien (double clic sur le bouton)
+
+── Non couvert par ce script ────────────────────────────────
+  · la suppression par inactivité (10 min de silence) : le script
+    devrait attendre 10 minutes réelles. Règle de décision vérifiée
+    séparément en SQL, sur les deux côtés de la limite.
+  · le battement envoyé par le navigateur lui-même : ici on appelle
+    la route directement. Le câblage du composant reste à voir à l'œil.
+  · base testée : https://getdeviso.fr
+
+
+17/17 vérifications passées
+
+> deviso@0.1.0 test:avoir
+> node scripts/e2e/avoir.mjs
+
+
+── Avoir : corriger une facture qu'on ne peut plus modifier ───
+   base : https://getdeviso.fr
+
+  ok   une facture est créée
+ÉCHEC  elle est transmise, donc elle n'est plus modifiable, HTTP 500 {"error":"Transmission impossible","message":"Une erreur inattendue est survenue et nous ne savons pas si la facture est partie. Ne la retransmettez pas tout de suite : rechargez la page dans quelques
+  ok   un avoir peut être établi sur cette facture
+  ok   il porte le type de document 381
+  ok   il est marqué comme avoir
+  ok   il désigne la facture qu'il annule
+  ok   il a son propre numéro, distinct de la facture
+  ok   il naît en brouillon, pour pouvoir être réduit avant envoi
+  ok   ses montants sont POSITIFS, le sens vient du type 381, pas du signe
+  ok   et ses lignes aussi
+  ok   rien de l'histoire de la facture d'origine n'est recopié
+  ok   l'avoir passe le validateur officiel (189 contrôles Schematron et XSD)
+  ok   et Deviso ne lui trouve rien à redire non plus
+ÉCHEC  la Plateforme Agréée accepte l'avoir, HTTP 500 {"error":"Transmission impossible","message":"Une erreur inattendue est survenue et nous ne savons pas si la facture est partie. Ne la retransmettez pas tout de suite : rechargez la page dans quelques minutes pour voir son état réel."}
+  ok   une facture ne s'annule pas deux fois
+  ok   un avoir ne s'annule pas par un autre avoir
+  ok   un brouillon se corrige, il ne s'annule pas
+  ok   un avoir ne peut pas être relancé
+  ok   l'avoir reste visible dans la liste des factures
+  ok   et il s'y annonce comme un avoir
+
+   Facture annulée : 2026-1425 (1afc070e-fb65-4427-8cda-96f5cb1bd10f)
+   Avoir transmis  : 2026-1426 (cc5dfbf6-01f7-45c7-b8c1-2d92025784d9)
+
+18/20 vérifications passées
+
+Échecs :
+  · elle est transmise, donc elle n'est plus modifiable, HTTP 500 {"error":"Transmission impossible","message":"Une erreur inattendue est survenue et nous ne savons pas si la facture est partie. Ne la retransmettez pas tout de suite : rechargez la page dans quelques
+  · la Plateforme Agréée accepte l'avoir, HTTP 500 {"error":"Transmission impossible","message":"Une erreur inattendue est survenue et nous ne savons pas si la facture est partie. Ne la retransmettez pas tout de suite : rechargez la page dans quelques minutes pour voir son état réel."}

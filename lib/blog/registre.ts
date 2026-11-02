@@ -491,6 +491,31 @@ export const ARTICLES: Article[] = [
 
   // ── Famille « obligations » ────────────────────────────────────────────────
   {
+    slug: "livre-des-recettes-micro-entrepreneur",
+    categorie: "obligations",
+    titre: "Le livre des recettes du micro-entrepreneur",
+    description:
+      "Le seul document comptable obligatoire en micro-entreprise. Les mentions à porter, le piège de l'encaissement, et ce qui est vraiment sanctionné.",
+    h1: "Le livre des recettes du micro-entrepreneur : le tenir juste, sans y passer ses soirées",
+    og: {
+      titre: "Livre des recettes du micro-entrepreneur : le guide clair",
+      description:
+        "Obligatoire pour tous les micro-entrepreneurs. Les mentions, le piège de l'encaissement, le registre des achats et les sanctions.",
+    },
+    publieLe: "2026-11-02",
+    misAJourLe: "2026-11-02",
+    dureeLecture: 7,
+    carte: {
+      titre: "Le livre des recettes du micro-entrepreneur",
+      resume: "Les mentions obligatoires, le piège de l'encaissement, et ce qui est vraiment sanctionné",
+    },
+    lies: [
+      "plafonds-micro-entreprise-2026",
+      "reforme-facturation-micro-entrepreneur",
+      "numerotation-factures-freelance",
+    ],
+  },
+  {
     slug: "plafonds-micro-entreprise-2026",
     categorie: "obligations",
     titre: "Plafonds de la micro-entreprise 2026-2028",

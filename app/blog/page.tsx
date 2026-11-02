@@ -8,7 +8,7 @@ import { MenuCategorie } from "@/components/blog/MenuCategorie";
 import { ARTICLES, SITE, articlesDe, urlArticle } from "@/lib/blog/registre";
 import { LISTE_CATEGORIES } from "@/lib/blog/categories";
 import {
-  BadgeEuro, BarChart3, Calculator, Camera, CircleCheck, CircleX, Coins, Expand,
+  BadgeEuro, BarChart3, BookOpen, Calculator, Camera, CircleCheck, CircleX, Coins, Expand,
   FileMinus, FilePlus, FileSignature, Globe, GraduationCap, HandCoins, HardHat,
   Hash, Laptop, Link2, ListChecks, Palette, PenLine, Plane, RadioTower, Receipt, ScrollText,
   ShieldCheck, Smartphone, Stamp, Target,
@@ -53,6 +53,7 @@ const ICONES: Record<string, LucideIcon> = {
   "refacturer-frais-client-freelance": BadgeEuro,
   "facturer-client-etranger-freelance": Plane,
   "numerotation-factures-freelance": Hash,
+  "livre-des-recettes-micro-entrepreneur": BookOpen,
   "plafonds-micro-entreprise-2026": Coins,
   // Métier
   "devis-graphiste-freelance": Palette,

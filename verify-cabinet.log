@@ -1,0 +1,1298 @@
+
+> deviso@0.1.0 verify
+> npm run check:claude-md && npm run check:forms && npm run check:emails && npm run check:theme && npm run check:sentry && npm run check:vitrine-exports && npm run check:demo-superpdp && npm run check:stripe && npm run check:droits && npm run check:nav && npm run check:guide && npm run check:comptable-plan && npm run check:plan-membre && npm run check:cadres && npm run check:emoji && npm run check:tirets && npm run check:client-pur && npm run check:blog && npm run check:taux && npm run test:tva && npm run check:abonnement && npm run check:comptable && npm run check:comptable-acces && npm run check:cabinet && npm run test:zip && npm run check:effets-reels && npm run test:exoneration && npm run test:roles && npm run test:permissions && npm run test:promises && npm run test:devis && npm run test:equipe && npm run test:catalogue && npm run test:envois && npm run test:crons && npm run test:pdf && npm run test:stripe && npm run test:stripe-prix && npm run test:sieges && npm run test:comptable && npm run check:superpdp-connect && npm run check:superpdp-env && npm run test:superpdp && npm run test:superpdp-refus && npm run test:achats && npm run test:urssaf-tdae && npm run test:blocages && npm run test:annuaire-reel && npm run test:conformite && npm run test:concurrence && npm run test:encaissement-concurrent && npm run test:date-encaissement && npm run test:avoir && npm run test:avoir-interne && npm run test:fermeture-ligne && npm run test:ligne-reelle && npm run test:demo
+
+
+> deviso@0.1.0 check:claude-md
+> node scripts/check-claude-md.mjs
+
+check:claude-md OK (704 lignes, 1 bloc Reprise)
+
+> deviso@0.1.0 check:forms
+> node scripts/check-form-wiring.mjs
+
+✓ Profil, identité et facturation, 13 champs saisissables, tous transmis
+✓ Paiements, 4 champs saisissables, tous transmis
+✓ Nouveau devis, 11 champs saisissables, tous transmis
+✓ Nouvelle facture (standard, acompte, solde), 25 champs saisissables, tous transmis
+
+> deviso@0.1.0 check:emails
+> node scripts/check-emails.mjs
+
+✓ Emails clients, expéditeur au nom du prestataire, textes accentués, marque conditionnelle
+
+> deviso@0.1.0 check:theme
+> node scripts/check-theme-clair.mjs
+
+✓ Thème clair, 1380 usages de couleurs claires et aucun fond hex sombre fige, 0 fond Tailwind sombre non couvert, surcharges colorees lisibles, boutons blancs a 4,5 mini, tout est couvert
+
+> deviso@0.1.0 check:sentry
+> node scripts/check-sentry.mjs
+
+✓ Sentry cable : instrumentation (serveur/edge), instrumentation-client (navigateur), global-error (React), withSentryConfig
+
+> deviso@0.1.0 check:vitrine-exports
+> node scripts/check-vitrine-exports.mjs
+
+✓ Vitrine <-> droits alignés : 25 fonctions dans la matrice, 11 règles de route croisées, vitrines dérivées.
+
+> deviso@0.1.0 check:demo-superpdp
+> node scripts/check-demo-superpdp.mjs
+
+✓ Demo/Super PDP : garde au point de passage, revocation et synchronisation, aucun appel direct hors liste
+
+> deviso@0.1.0 check:stripe
+> node scripts/check-stripe.mjs
+
+  ok    app\api\stripe\checkout\route.ts, 3 écriture(s) Stripe
+  ok    app\api\stripe\portal\route.ts, 1 écriture(s) Stripe
+  ok    lib\stripe-seats.ts, 3 écriture(s) Stripe
+
+7 écritures Stripe réparties sur 3 fichiers.
+Contre-épreuve : un fichier sans garde-fou est bien détecté.
+
+Toute écriture Stripe est dans un fichier qui refuse les comptes de démonstration.
+
+> deviso@0.1.0 check:droits
+> node scripts/check-droits.mjs
+
+  ok   proposals/[id]/send-email/route.ts garde « envoyer_devis »
+  ok   invoices/[id]/send-email/route.ts garde « envoyer_facture »
+  ok   superpdp/invoices/[id]/emettre/route.ts garde « transmettre_pa »
+  ok   invoices/[id]/chorus-pro/route.ts garde « deposer_chorus »
+  ok   superpdp/invoices/[id]/refuser/route.ts garde « refuser_facture_recue »
+  ok   proposals PATCH garde status=sent par « envoyer_devis »
+  ok   invoices PATCH garde status=sent par « envoyer_facture »
+  ok   export/fec/route.ts appelle exigerTitulaire
+  ok   export/invoices-csv/route.ts appelle exigerTitulaire
+  ok   export/monthly-recap/route.ts appelle exigerTitulaire
+  ok   export/livre-recettes/route.ts appelle exigerTitulaire
+  ok   urssaf/tdae/route.ts appelle exigerTitulaire
+  ok   crm/route.ts appelle exigerTitulaire
+  ok   stats/route.ts appelle exigerTitulaire
+  ok   superpdp/invoices/[id]/encaisser/route.ts appelle exigerTitulaire
+  ok   superpdp/connect/route.ts appelle exigerTitulaire
+  ok   proposals/[id]/route.ts appelle exigerTitulaire
+  ok   invoices/[id]/route.ts appelle exigerTitulaire
+  ok   team/route.ts appelle exigerTitulaire
+  ok   team/[memberId]/route.ts appelle exigerTitulaire
+  ok   invoices PATCH garde « payée » par exigerTitulaire
+  ok   « proposals/[id]/approve » reste supprimée
+  ok   « proposals/[id]/reject » reste supprimée
+  ok   « proposals/[id]/submit-for-approval » reste supprimée
+
+check:droits, modèle d'autorisations intègre : 5 actes gardés, titulaire-seul gardé, ancien circuit absent.
+
+> deviso@0.1.0 check:nav
+> node scripts/check-nav.mjs
+
+Contre-épreuve : une liste de navigation locale serait bien détectée.
+
+✓ Navigation, 16 entrées, une seule source, consommée par les deux supports
+
+> deviso@0.1.0 check:guide
+> node scripts/check-guide.mjs
+
+Contre-épreuve : une page sans bandeau serait bien détectée.
+
+✓ Mode guidé : 15 page(s) de navigation couvertes, 18 clés, aucune orpheline ni morte
+
+> deviso@0.1.0 check:comptable-plan
+> node scripts/check-comptable-plan.mjs
+
+Contre-épreuve : une liste de plans en dur serait bien détectée.
+
+✓ Comptable : route et garde du layout partagent PLANS_ACCES_COMPTABLE, aucune liste en dur
+
+> deviso@0.1.0 check:plan-membre
+> node scripts/check-plan-membre.mjs
+
+Contre-épreuve : une lecture de plan par le client utilisateur serait détectée.
+
+✓ Plan de l'espace lu via un client privilégié, jamais via le client de l'invité
+
+> deviso@0.1.0 check:cadres
+> node scripts/check-cadres.mjs
+
+Contre-épreuve : un cadre manquant serait bien détecté.
+
+✓ Cadres, 11 pages, deux largeurs seulement (liste / formulaire)
+
+> deviso@0.1.0 check:emoji
+> node scripts/check-emoji.mjs
+
+check:emoji, 311 fichiers, aucun emoji dans l'interface.
+
+> deviso@0.1.0 check:tirets
+> node scripts/check-tirets.mjs
+
+✓ Tirets, aucun tiret cadratin U+2014 dans le code ni le contenu.
+
+> deviso@0.1.0 check:client-pur
+> node scripts/check-client-pur.mjs
+
+
+-- check:client-pur, aucun code serveur dans un fichier client --
+  66 fichier(s) client analyse(s), 311 fichier(s) au total
+  .    contre-epreuve : le module serveur superpdp.ts est bien dans la liste interdite
+  .    contre-epreuve : crypto est bien une feuille interdite
+  .    contre-epreuve : @/lib/superpdp se resout bien vers le fichier interdit
+  .    contre-epreuve : un import de type n'est PAS compte
+  .    contre-epreuve : un import runtime vers superpdp EST detecte
+  ok   aucun fichier client ne remonte vers crypto / supabase admin / superpdp.ts
+
+check:client-pur, aucune fuite de code serveur dans le bundle client.
+
+> deviso@0.1.0 check:blog
+> node scripts/check-blog.mjs
+
+
+── Registre et pages : aucun article d'un côté seulement ───────
+  ok   34 article(s) au registre, 34 page(s) sur le disque
+  ok   toute page d'article est déclarée au registre
+  ok   tout article du registre a sa page
+
+── Catégories : déclarées dans categories.ts, et aucune vide ───
+  ok   5 catégorie(s) déclarée(s) : reforme, documents, obligations, metier, transverse
+  ok   aucun article ne référence une catégorie non déclarée
+  ok   aucune catégorie déclarée sans article
+  ok   au plus une catégorie ouverte par défaut
+  ok   l'index du blog dérive ses menus des catégories
+  ok   chaque article a une icône sur l'index
+
+── Entités HTML : rendues, jamais affichées telles quelles ─────
+  ok   aucun champ d'auteur interpolé en texte brut dans ArticleLong
+  ok   aucune entité HTML dans les champs rendus en texte brut
+
+── Dates : misAJourLe ne peut pas précéder publieLe ────────────
+  ok   aucune date de mise à jour antérieure à la publication
+  ok   aucune date de mise à jour dans le futur
+  ok   toutes les dates sont au format AAAA-MM-JJ
+
+── Articles liés : aucun lien interne vers une page inexistante 
+  ok   93 lien(s) « à lire ensuite » vérifié(s)
+
+── Sitemap : généré depuis les mêmes sources que les pages ─────
+  ok   aucune URL d'article écrite à la main dans le sitemap
+  ok   le sitemap lit le registre
+  ok   aucun lastModified global à la date du build
+
+── Maquettes de devis : le total correspond à son libellé ──────
+  ok   app/freelance-artisan/page.tsx, HT 4900 € pour 4900 € de lignes
+  ok   app/freelance-coach/page.tsx, HT 2910 € pour 2910 € de lignes
+  ok   app/freelance-community-manager/page.tsx, HT 1450 € pour 1450 € de lignes
+  ok   app/freelance-consultant/page.tsx, TTC 13440 € pour 11200 € de lignes
+  ok   app/freelance-developpeur/page.tsx, TTC 6120 € pour 5100 € de lignes
+  ok   app/freelance-formateur/page.tsx, TTC 6000 € pour 5000 € de lignes
+  ok   app/freelance-graphiste/page.tsx, TTC 3720 € pour 3100 € de lignes
+  ok   app/freelance-photographe/page.tsx, TTC 2400 € pour 2000 € de lignes
+  ok   app/freelance-redacteur/page.tsx, TTC 2580 € pour 2150 € de lignes
+  ok   app/freelance-traducteur/page.tsx, HT 1200 € pour 1200 € de lignes
+  ok   le libellé du total est déduit de la valeur, pas écrit à côté
+
+── Données structurées : chaque page de contenu est balisée ────
+  ok   app/blog/amendes-facturation-electronique-2026, métadonnées et JSON-LD
+  ok   app/blog/attestation-vigilance-urssaf-freelance, métadonnées et JSON-LD
+  ok   app/blog/checklist-reforme-facturation-2026, métadonnées et JSON-LD
+  ok   app/blog/choisir-plateforme-agreee-freelance, métadonnées et JSON-LD
+  ok   app/blog/clauses-devis-freelance, métadonnées et JSON-LD
+  ok   app/blog/devis-artisan-btp, métadonnées et JSON-LD
+  ok   app/blog/devis-coach-freelance, métadonnées et JSON-LD
+  ok   app/blog/devis-community-manager, métadonnées et JSON-LD
+  ok   app/blog/devis-consultant-independant, métadonnées et JSON-LD
+  ok   app/blog/devis-developpeur-web, métadonnées et JSON-LD
+  ok   app/blog/devis-formateur-independant, métadonnées et JSON-LD
+  ok   app/blog/devis-graphiste-freelance, métadonnées et JSON-LD
+  ok   app/blog/devis-photographe-freelance, métadonnées et JSON-LD
+  ok   app/blog/devis-redacteur-web, métadonnées et JSON-LD
+  ok   app/blog/devis-traducteur-freelance, métadonnées et JSON-LD
+  ok   app/blog/e-reporting-freelance-2026, métadonnées et JSON-LD
+  ok   app/blog/factur-x-explique-freelance, métadonnées et JSON-LD
+  ok   app/blog/facturation-electronique-2026, métadonnées et JSON-LD
+  ok   app/blog/facturation-electronique-petit-chiffre-affaires, métadonnées et JSON-LD
+  ok   app/blog/facture-acompte-freelance, métadonnées et JSON-LD
+  ok   app/blog/facture-avoir-erreur-facture, métadonnées et JSON-LD
+  ok   app/blog/facture-electronique-refusee-que-faire, métadonnées et JSON-LD
+  ok   app/blog/facturer-client-etranger-freelance, métadonnées et JSON-LD
+  ok   app/blog/fixer-ses-tarifs-freelance, métadonnées et JSON-LD
+  ok   app/blog/gerer-impayes-freelance, métadonnées et JSON-LD
+  ok   app/blog/liste-plateformes-agreees, métadonnées et JSON-LD
+  ok   app/blog/note-honoraires-ou-facture, métadonnées et JSON-LD
+  ok   app/blog/numerotation-factures-freelance, métadonnées et JSON-LD
+  ok   app/blog/pas-de-plateforme-gratuite-etat, métadonnées et JSON-LD
+  ok   app/blog/plafonds-micro-entreprise-2026, métadonnées et JSON-LD
+  ok   app/blog/plateforme-agreee-ou-solution-compatible, métadonnées et JSON-LD
+  ok   app/blog/refacturer-frais-client-freelance, métadonnées et JSON-LD
+  ok   app/blog/reforme-facturation-micro-entrepreneur, métadonnées et JSON-LD
+  ok   app/blog/scope-creep-freelance, métadonnées et JSON-LD
+  ok   components/blog/BlogPost.tsx balise lui-même l'article
+  ok   components/blog/ArticleLong.tsx balise lui-même l'article
+  ok   19 page(s) indexable(s) avec canonique explicite
+  ok   un fil d'Ariane est balisé (BreadcrumbList)
+
+── Maillage : un seul pied de page, et il mène aux trois familles de pages 
+  ok   aucun pied de page réécrit à la main sur les pages publiques
+  ok   le pied de page mène à /blog
+  ok   le pied de page mène à /combien-facturer
+  ok   le pied de page mène à /conformite
+  ok   le pied de page mène à /blog/facturation-electronique-2026
+
+── Réglementaire : les montants d'amendes de la LF 2026 ────────
+  ok   aucun montant d'amende d'avant le 1er septembre 2026
+  ok   aucune échéance au 1er décembre 2026
+  ok   aucun ancien seuil de franchise en base de TVA (36 800 / 91 900)
+
+── FAQ : ce qui est déclaré à Google est visible sur la page ───
+  ok   app/blog/scope-creep-freelance/page.tsx, la liste FAQ est rendue
+  ok   app/blog/reforme-facturation-micro-entrepreneur/page.tsx, la liste FAQ est rendue
+  ok   app/blog/refacturer-frais-client-freelance/page.tsx, la liste FAQ est rendue
+  ok   app/blog/plateforme-agreee-ou-solution-compatible/page.tsx, la liste FAQ est rendue
+  ok   app/blog/plafonds-micro-entreprise-2026/page.tsx, la liste FAQ est rendue
+  ok   app/blog/pas-de-plateforme-gratuite-etat/page.tsx, la liste FAQ est rendue
+  ok   app/blog/numerotation-factures-freelance/page.tsx, la liste FAQ est rendue
+  ok   app/blog/note-honoraires-ou-facture/page.tsx, la liste FAQ est rendue
+  ok   app/blog/liste-plateformes-agreees/page.tsx, la liste FAQ est rendue
+  ok   app/blog/gerer-impayes-freelance/page.tsx, la liste FAQ est rendue
+  ok   app/blog/fixer-ses-tarifs-freelance/page.tsx, la liste FAQ est rendue
+  ok   app/blog/facturer-client-etranger-freelance/page.tsx, la liste FAQ est rendue
+  ok   app/blog/facture-electronique-refusee-que-faire/page.tsx, la liste FAQ est rendue
+  ok   app/blog/facture-avoir-erreur-facture/page.tsx, la liste FAQ est rendue
+  ok   app/blog/facture-acompte-freelance/page.tsx, la liste FAQ est rendue
+  ok   app/blog/facturation-electronique-petit-chiffre-affaires/page.tsx, la liste FAQ est rendue
+  ok   app/blog/facturation-electronique-2026/page.tsx, la liste FAQ est rendue
+  ok   app/blog/factur-x-explique-freelance/page.tsx, la liste FAQ est rendue
+  ok   app/blog/e-reporting-freelance-2026/page.tsx, la liste FAQ est rendue
+  ok   app/blog/clauses-devis-freelance/page.tsx, la liste FAQ est rendue
+  ok   app/blog/choisir-plateforme-agreee-freelance/page.tsx, la liste FAQ est rendue
+  ok   app/blog/attestation-vigilance-urssaf-freelance/page.tsx, la liste FAQ est rendue
+  ok   app/blog/amendes-facturation-electronique-2026/page.tsx, la liste FAQ est rendue
+  ok   ArticleLong affiche la FAQ qu'il balise
+
+── Signature : l'auteur du balisage est affiché sur la page ────
+  ok   le JSON-LD des articles déclare une Person, pas une Organization
+  ok   app/blog/amendes-facturation-electronique-2026, signature affichée
+  ok   app/blog/attestation-vigilance-urssaf-freelance, signature affichée
+  ok   app/blog/checklist-reforme-facturation-2026, signature affichée
+  ok   app/blog/choisir-plateforme-agreee-freelance, signature affichée
+  ok   app/blog/clauses-devis-freelance, signature affichée
+  ok   app/blog/devis-artisan-btp, signature affichée
+  ok   app/blog/devis-coach-freelance, signature affichée
+  ok   app/blog/devis-community-manager, signature affichée
+  ok   app/blog/devis-consultant-independant, signature affichée
+  ok   app/blog/devis-developpeur-web, signature affichée
+  ok   app/blog/devis-formateur-independant, signature affichée
+  ok   app/blog/devis-graphiste-freelance, signature affichée
+  ok   app/blog/devis-photographe-freelance, signature affichée
+  ok   app/blog/devis-redacteur-web, signature affichée
+  ok   app/blog/devis-traducteur-freelance, signature affichée
+  ok   app/blog/e-reporting-freelance-2026, signature affichée
+  ok   app/blog/factur-x-explique-freelance, signature affichée
+  ok   app/blog/facturation-electronique-2026, signature affichée
+  ok   app/blog/facturation-electronique-petit-chiffre-affaires, signature affichée
+  ok   app/blog/facture-acompte-freelance, signature affichée
+  ok   app/blog/facture-avoir-erreur-facture, signature affichée
+  ok   app/blog/facture-electronique-refusee-que-faire, signature affichée
+  ok   app/blog/facturer-client-etranger-freelance, signature affichée
+  ok   app/blog/fixer-ses-tarifs-freelance, signature affichée
+  ok   app/blog/gerer-impayes-freelance, signature affichée
+  ok   app/blog/liste-plateformes-agreees, signature affichée
+  ok   app/blog/note-honoraires-ou-facture, signature affichée
+  ok   app/blog/numerotation-factures-freelance, signature affichée
+  ok   app/blog/pas-de-plateforme-gratuite-etat, signature affichée
+  ok   app/blog/plafonds-micro-entreprise-2026, signature affichée
+  ok   app/blog/plateforme-agreee-ou-solution-compatible, signature affichée
+  ok   app/blog/refacturer-frais-client-freelance, signature affichée
+  ok   app/blog/reforme-facturation-micro-entrepreneur, signature affichée
+  ok   app/blog/scope-creep-freelance, signature affichée
+  ok   components/blog/BlogPost.tsx affiche la signature
+  ok   components/blog/ArticleLong.tsx affiche la signature
+  ok   la page auteur existe et est liée depuis le pied de page
+
+── Contre-épreuves ─────────────────────────────────────────────
+  ·    contre-épreuve : un titre de section interpolé en texte brut serait bien détecté
+  ·    contre-épreuve : une entité HTML dans une réponse de FAQ serait bien détectée
+  ·    contre-épreuve : un montant d'amende périmé est bien détecté
+  ·    contre-épreuve : l'échéance inventée est bien détectée
+  ·    contre-épreuve : l'ancien montant d'émission (15 € par facture) est bien détecté
+  ·    contre-épreuve : un ancien seuil de franchise en base de TVA est bien détecté
+  ·    contre-épreuve : une URL d'article en dur dans le sitemap serait bien détectée
+  ·    contre-épreuve : une date de mise à jour antérieure à la publication serait bien détectée
+  ·    contre-épreuve : un total TTC égal au HT serait bien détecté
+  ·    contre-épreuve : un pied de page réécrit à la main serait bien détecté
+  ·    contre-épreuve : une FAQ déclarée mais non affichée serait bien détectée
+
+check:blog, 34 articles, registre et pages cohérents, sitemap généré, balisage en place, aucun montant périmé.
+
+> deviso@0.1.0 check:taux
+> node --experimental-strip-types --no-warnings scripts/check-taux.mjs
+
+  ·    contre-épreuve : un taux de cotisations recopié bien détecté
+  ·    contre-épreuve : un revenu net calculé par un complément en dur bien détecté
+check:taux, 236 fichiers, aucun taux de cotisations en dur (source : 25,6 % / 23,2 % Cipav).
+
+> deviso@0.1.0 test:tva
+> node --experimental-strip-types --no-warnings scripts/e2e/tva-multitaux.mjs
+
+
+-- TVA multi-taux : ventilation --
+
+  ok   mono: un seul groupe, multiTaux faux
+  ok   mono: total_ht 100
+  ok   mono: total_tva 20
+  ok   mono: total_ttc 120
+  ok   multi: deux groupes, multiTaux vrai
+  ok   multi: 20% => 100 HT / 20 TVA
+  ok   multi: 10% => 50 HT / 5 TVA
+  ok   multi: total_ht 150
+  ok   multi: total_tva 25
+  ok   multi: total_ttc 175
+  ok   defaut herite: 20% base 100
+  ok   defaut herite: 10% base 50
+  ok   meme taux: un seul groupe
+  ok   arrondi: TVA 6.67
+  ok   arrondi: TTC 40.00
+  ok   mix 0%: deux groupes
+  ok   mix 0%: total_tva 20
+  ok   mix 0%: total_ttc 150
+
+18/18 vérifications passées
+
+> deviso@0.1.0 check:abonnement
+> node scripts/check-abonnement.mjs
+
+  ·    contre-épreuve : un checkout d'abonnement sans lecture de l'abonnement existant bien détecté
+  ·    contre-épreuve : une quantité de sièges incrémentée bien détecté
+  ·    contre-épreuve : une base d'API Stripe ouverte à un hôte tiers bien détecté
+  ·    contre-épreuve : une écriture de siège qui ne calcule pas bien détecté
+check:abonnement, 261 fichiers. Aucun second abonnement possible, aucune quantité de sièges incrémentée.
+
+> deviso@0.1.0 check:comptable
+> node scripts/check-comptable.mjs
+
+
+── Exports : le fichier s'ouvre, et il est faux ───────────────
+
+  ok   CSV des factures, séparateur compatible avec la virgule décimale
+  ok   CSV des factures, l'échappement couvre le point-virgule
+  ok   monthly-recap, séparateur compatible avec la virgule décimale
+  ·    contre-épreuve : séparateur CSV
+  ok   FEC et CSV, les routes délèguent à la source partagée
+  ok   FEC, un avoir s'enregistre en sens inverse
+  ok   FEC, la date de règlement est la date d'encaissement
+  ok   FEC, le compte auxiliaire est stable d'une facture à l'autre
+  ok   FEC, les ventes de biens vont au 707
+  ok   facture, le total d'une ligne est arrondi au centime
+  ok   facture, les totaux le sont aussi
+  ok   facture, le serveur recalcule les totaux au lieu de croire le navigateur
+  ok   factures récurrentes, pas de numéro de repli
+  ·    contre-épreuve : numéro de repli
+  ok   statistiques, un avoir se retranche du chiffre d'affaires
+  ok   tableau de bord, un avoir se retranche du chiffre d'affaires
+  ok   récapitulatif mensuel, un avoir se retranche du chiffre d'affaires
+
+── Le même document, quatre rendus ────────────────────────────
+
+  ok   download, référence au document lié résolue par la règle partagée
+  ok   send-email, référence au document lié résolue par la règle partagée
+  ok   Factur-X, la date du document lié atteint le XML embarqué
+  ok   courriel, un avoir ne réclame pas de paiement
+  ok   lib/invoice-xml.ts, le motif d'exonération vient de la règle partagée
+  ok   lib/invoice-pdf.tsx, le motif d'exonération vient de la règle partagée
+  ·    contre-épreuve : franchise déduite du seul taux
+
+── Cloisonnement et secrets ───────────────────────────────────
+
+  ok   cleanup-demo, contrôle par cronAutorise
+  ok   recurring, contrôle par cronAutorise
+  ok   send-reminders, contrôle par cronAutorise
+  ok   superpdp-sync, contrôle par cronAutorise
+  ·    contre-épreuve : comparaison de secret en dur
+  ok   invoices/[id]/download/route.ts, profil lu sur l'espace, pas sur la personne
+  ok   invoices/[id]/send-email/route.ts, profil lu sur l'espace, pas sur la personne
+  ok   invoices/[id]/payment-link/route.ts, profil lu sur l'espace, pas sur la personne
+  ok   invoices/[id]/send-reminder/route.ts, profil lu sur l'espace, pas sur la personne
+  ok   proposals/[id]/remind/route.ts, profil lu sur l'espace, pas sur la personne
+  ok   export/fec/route.ts, profil lu sur l'espace, pas sur la personne
+  ok   tableau de bord, filtre d'espace explicite en plus de la RLS
+  ok   devis, PATCH filtré par liste blanche
+  ok   invitation, l'adresse créée est celle qui a été invitée
+  ok   invitation, l'acceptation vérifie l'adresse côté serveur
+  ok   Plateforme Agréée, seul le propriétaire peut débrancher
+  ok   courriel de devis, le lien est reconstruit côté serveur
+  ok   courriel de devis, les valeurs interpolées sont échappées
+
+── Ce que le produit promet, il le fait ───────────────────────
+
+  ok   signature de devis, notification en base, pas seulement un courriel
+  ok   refus de devis, idem
+  ok   signature de devis, le nom du signataire est échappé dans le courriel
+  ok   signature de devis, l'échec d'envoi est journalisé
+  ok   webhook, plus de branche morte prétendant rapprocher un paiement par lien
+  ok   lien de paiement, l'interface dit que le suivi est manuel
+  ok   tableau de bord, le récapitulatif de CA est monté
+  ok   récapitulatif, daté de l'encaissement, pas de l'émission
+  ok   récapitulatif, les échéances URSSAF ne s'affichent que si elles s'appliquent
+
+check:comptable, toutes les régressions surveillées sont absentes.
+
+> deviso@0.1.0 check:comptable-acces
+> node scripts/check-comptable-acces.mjs
+
+  ok   droitsDe court-circuite le comptable en lecture seule
+  ok   contre-epreuve (droits sans court-circuit est detecte)
+  ok   synchroniserSieges exclut le comptable du comptage
+  ok   contre-epreuve (comptage sans neq est detecte)
+  ok   team/route exclut le comptable de la liste et du quota (>=2)
+  ok   endpoint comptable : garde de plan (PLAN_REQUIRED des Solo)
+  ok   rattachement par code cabinet : meme garde de plan
+  ok   endpoint comptable : insertion avec role comptable
+  ok   contre-epreuve (garde de plan absente est detectee)
+
+Acces expert-comptable : garde OK.
+
+> deviso@0.1.0 check:cabinet
+> node scripts/check-cabinet.mjs
+
+
+-- check:cabinet --
+
+  ok   app\api\cabinet\export\route.ts, lecture par la clé de service précédée du contrôle d'accès
+  ok   app\api\cabinet\signalement\route.ts, lecture par la clé de service précédée du contrôle d'accès
+  ok   app\(cabinet)\cabinet\journal\page.tsx, lecture par la clé de service précédée du contrôle d'accès
+  ok   app\(cabinet)\cabinet\page.tsx, lecture par la clé de service précédée du contrôle d'accès
+  ok   app\(cabinet)\cabinet\[id]\page.tsx, lecture par la clé de service précédée du contrôle d'accès
+  ok   contre-epreuve : une page admin sans contrôle d'accès EST detecte
+  ok   fiche client, contrôle d'accès avant toute lecture
+  ok   export cabinet, identifiant hors portefeuille refusé (403)
+  ok   contre-epreuve : un export sans filtre de portefeuille EST detecte
+  ok   code cabinet, usage unique (pending exigé, puis claimed)
+  ok   contre-epreuve : un code jamais consommé EST detecte
+  ok   getWorkspaceUserId, les lignes comptable ne résolvent pas vers un client
+  ok   contre-epreuve : un retour à maybeSingle EST detecte
+  ok   index d'appartenance active (20261101_cabinet_invitations.sql), comptables exclus
+  ok   fiche client, libellé officiel du statut plateforme
+  ok   contre-epreuve : un libellé « Transmise » générique EST detecte
+  ok   anomalies, refus et rejets plateforme comptés en rouge
+  ok   anomalies, trous de numérotation interieurs détectés
+  ok   contre-epreuve : une détection sans parcours des numéros manquants EST detecte
+  ok   anomalies, conformité TVA au régime (franchise / périodicité)
+  ok   contre-epreuve : une file sans contrôle de la franchise EST detecte
+  ok   calendrier TVA, échéance par dossier calculée
+  ok   calendrier TVA, branché sur le portefeuille
+  ok   contre-epreuve : un calendrier sans période close à déclarer EST detecte
+  ok   components\CabinetCalendrierTva.tsx, composant client sans import serveur cabinet
+  ok   components\CabinetInvitations.tsx, composant client sans import serveur cabinet
+  ok   components\CabinetPortefeuille.tsx, composant client sans import serveur cabinet
+  ok   components\CabinetSignalements.tsx, composant client sans import serveur cabinet
+  ok   components\CaUrssafWidget.tsx, composant client sans import serveur cabinet
+  ok   components\ComptableAcces.tsx, composant client sans import serveur cabinet
+  ok   components\DashboardActionFeed.tsx, composant client sans import serveur cabinet
+  ok   components\DashboardTheme.tsx, composant client sans import serveur cabinet
+  ok   components\DemoSession.tsx, composant client sans import serveur cabinet
+  ok   components\DicteeVocale.tsx, composant client sans import serveur cabinet
+  ok   components\FacturXCompliance.tsx, composant client sans import serveur cabinet
+  ok   components\GuidedTourBanner.tsx, composant client sans import serveur cabinet
+  ok   components\landing\DemoButton.tsx, composant client sans import serveur cabinet
+  ok   components\landing\PricingSection.tsx, composant client sans import serveur cabinet
+  ok   components\landing\TjmSimulator.tsx, composant client sans import serveur cabinet
+  ok   components\landing\WaitlistButton.tsx, composant client sans import serveur cabinet
+  ok   components\MobileNav.tsx, composant client sans import serveur cabinet
+  ok   components\NavbarMobile.tsx, composant client sans import serveur cabinet
+  ok   components\NotificationBell.tsx, composant client sans import serveur cabinet
+  ok   components\PasswordChecklist.tsx, composant client sans import serveur cabinet
+  ok   components\PermissionsMembre.tsx, composant client sans import serveur cabinet
+  ok   components\PlanContext.tsx, composant client sans import serveur cabinet
+  ok   components\ProductTour.tsx, composant client sans import serveur cabinet
+  ok   components\ProposalDocument.tsx, composant client sans import serveur cabinet
+  ok   components\ProposalPreviewWrapper.tsx, composant client sans import serveur cabinet
+  ok   components\proposals\ProposalTableRows.tsx, composant client sans import serveur cabinet
+  ok   components\RechercheEntreprise.tsx, composant client sans import serveur cabinet
+  ok   components\ServiceWorker.tsx, composant client sans import serveur cabinet
+  ok   components\SessionGuard.tsx, composant client sans import serveur cabinet
+  ok   components\SidebarNav.tsx, composant client sans import serveur cabinet
+  ok   components\SignalementAcquitter.tsx, composant client sans import serveur cabinet
+  ok   components\SignOutButton.tsx, composant client sans import serveur cabinet
+  ok   components\SuperPdpCard.tsx, composant client sans import serveur cabinet
+  ok   components\SuperPdpSync.tsx, composant client sans import serveur cabinet
+  ok   components\SupportButton.tsx, composant client sans import serveur cabinet
+  ok   components\UpgradeBanner.tsx, composant client sans import serveur cabinet
+  ok   components\UpgradeButton.tsx, composant client sans import serveur cabinet
+  ok   contre-epreuve : un composant client qui importe cabinet-dossiers EST detecte
+  ok   journal, consultation de dossier tracée
+  ok   journal, export tracé (FEC et CSV)
+  ok   journal, lecture bornée au cabinet connecté
+  ok   contre-epreuve : une lecture de journal sans filtre cabinet EST detecte
+  ok   signalement, création bornée au portefeuille (estComptableDe)
+  ok   contre-epreuve : une création de signalement sans contrôle d'accès EST detecte
+  ok   signalement, clôture bornée à l'espace du client
+  ok   contre-epreuve : une clôture sans filtre d'espace EST detecte
+
+check:cabinet, accès au cockpit verrouillé : contrôle avant lecture, export borné au portefeuille, codes à usage unique.
+
+> deviso@0.1.0 test:zip
+> node --experimental-strip-types --no-warnings scripts/e2e/zip.mjs
+
+
+-- ZIP du cockpit cabinet --
+
+  ok   CRC32, vecteur de reference « 123456789 »
+  ok   signature de fin de répertoire central
+  ok   nombre d'entrées annoncé = 2
+  ok   entrée 1, signature centrale
+  ok   entrée 1, drapeau UTF-8 posé
+  ok   entrée 1, signature locale
+  ok   entrée 1, CRC conforme au contenu
+  ok   entrée 2, signature centrale
+  ok   entrée 2, drapeau UTF-8 posé
+  ok   entrée 2, signature locale
+  ok   entrée 2, CRC conforme au contenu
+  ok   noms accentués restitués à l'identique
+  ok   contenus restitués à l'identique (BOM compris)
+
+13/13 vérifications passées
+
+> deviso@0.1.0 check:effets-reels
+> node scripts/check-effets-reels.mjs
+
+
+── Courriel : aucun envoi depuis un compte de démonstration ─────────────────────────────────
+  ·    app/auth/callback/route.ts, exempté : exclut explicitement les adresses @deviso.internal
+  ok   app/api/webhooks/stripe/route.ts
+  ·    app/api/team/route.ts, exempté : refuse les adresses @deviso.internal
+  ok   app/api/team/comptable/route.ts
+  ·    app/api/public/proposals/[token]/route.ts, exempté : route publique, notifie le propriétaire du document
+  ok   app/api/proposals/[id]/send-email/route.ts
+  ok   app/api/proposals/[id]/remind/route.ts
+  ok   app/api/invoices/[id]/send-reminder/route.ts
+  ok   app/api/invoices/[id]/send-email/route.ts
+  ·    app/api/cron/send-reminders/route.ts, exempté : cron, filtre is_demo dans sa requête
+  ·    app/api/cron/recurring/route.ts, exempté : cron, aucun compte de démonstration n'a de facture récurrente
+
+── Tiers : aucun dépôt en production depuis un compte de démonstration ─────────────────────────────────
+  ok   app/api/invoices/[id]/chorus-pro/route.ts
+  ok   app/api/invoices/[id]/chorus-pro/status/route.ts
+
+── Contre-épreuves ───────────────────────────────────────────
+  ·    un fichier d'envoi sans garde-fou est bien détecté
+  ·    un fichier gardé est bien reconnu
+
+check:effets-reels, aucun effet réel possible depuis un compte de démonstration.
+
+> deviso@0.1.0 test:exoneration
+> node --experimental-strip-types --no-warnings scripts/e2e/exoneration.mjs
+
+
+── Exoneration de TVA : quatre causes, pas une ────────────────
+
+  ok   une facture avec TVA reste categorie S, sans mention
+  ok   un vendeur sans numero de TVA est en franchise : categorie E
+  ok   et lui seul cite l'article 293 B
+  ok   la franchise suit le vendeur, y compris a l'export
+  ok   une livraison intracommunautaire est categorie K
+  ok   et sa mention est l'autoliquidation, pas la franchise
+  ok   sans numero de TVA client, on n'affirme aucune exoneration
+  ok   et l'on dit ce qui manque, nommement
+  ok   une exportation hors UE est categorie G
+  ok   et cite l'article 262 I, pas 293 B
+  ok   la Suisse est hors Union : exportation, pas intracommunautaire
+  ok   un assujetti facturant 0 % en France : aucune reference d'article inventee
+  ok   ecrire un mauvais article est pire que n'en ecrire aucun
+  ok   MC n'est pas traite comme une exportation
+  ok   RE n'est pas traite comme une exportation
+  ok   GP n'est pas traite comme une exportation
+
+── Taches planifiees : un secret absent ferme la porte ────────
+
+  ok   sans CRON_SECRET, « Bearer undefined » ne passe pas
+  ok   sans CRON_SECRET, rien ne passe du tout
+  ok   un secret trop court est refuse plutot qu'accepte
+  ok   le bon secret passe
+  ok   un secret voisin ne passe pas
+  ok   un prefixe du bon secret ne passe pas
+
+22/22 vérifications passées
+
+> deviso@0.1.0 test:roles
+> node scripts/e2e/two-roles.mjs
+
+── Mise en place ─────────────────────────────────────────────
+  propriétaire : marie@studiocreatimd.fr
+  membre       : marie@studiocreatimd.fr (rattaché)
+
+  ok   le membre voit les factures de l'espace de travail
+
+── Documents créés par le propriétaire ──────────────────────
+  ok   le propriétaire crée un devis
+  ok   le propriétaire crée une facture
+  ok   l'adresse client est recomposée à l'écriture
+
+── Chaque route, dans les trois rôles ───────────────────────
+  ok   GET /api/profile, anonyme refusé
+  ok   GET /api/profile, propriétaire
+  ok   GET /api/profile, membre d'équipe
+  ok   GET /api/invoices, anonyme refusé
+  ok   GET /api/invoices, propriétaire
+  ok   GET /api/invoices, membre d'équipe
+  ok   GET /api/proposals, anonyme refusé
+  ok   GET /api/proposals, propriétaire
+  ok   GET /api/proposals, membre d'équipe
+  ok   GET /api/catalog, anonyme refusé
+  ok   GET /api/catalog, propriétaire
+  ok   GET /api/catalog, membre d'équipe
+  ok   GET /api/crm, anonyme refusé
+  ok   GET /api/crm, propriétaire
+  ok   GET /api/crm, membre d'équipe
+  ok   GET /api/stats, anonyme refusé
+  ok   GET /api/stats, propriétaire
+  ok   GET /api/stats, membre d'équipe
+  ok   GET /api/notifications, anonyme refusé
+  ok   GET /api/notifications, propriétaire
+  ok   GET /api/notifications, membre d'équipe
+  ok   GET /api/templates, anonyme refusé
+  ok   GET /api/templates, propriétaire
+  ok   GET /api/templates, membre d'équipe
+  ok   GET /api/recurring, anonyme refusé
+  ok   GET /api/recurring, propriétaire
+  ok   GET /api/recurring, membre d'équipe
+  ok   GET /api/team, anonyme refusé
+  ok   GET /api/team, propriétaire
+  ok   GET /api/team, membre d'équipe
+  ok   GET /api/invoices/6b407b79-44a5-4c68-a795-3cd912911574, anonyme refusé
+  ok   GET /api/invoices/6b407b79-44a5-4c68-a795-3cd912911574, propriétaire
+  ok   GET /api/invoices/6b407b79-44a5-4c68-a795-3cd912911574, membre d'équipe
+  ok   GET /api/invoices/6b407b79-44a5-4c68-a795-3cd912911574/download, anonyme refusé
+  ok   GET /api/invoices/6b407b79-44a5-4c68-a795-3cd912911574/download, propriétaire
+  ok   GET /api/invoices/6b407b79-44a5-4c68-a795-3cd912911574/download, membre d'équipe
+  ok   GET /api/proposals/221ee392-6633-4037-aef1-238a9839f278, anonyme refusé
+  ok   GET /api/proposals/221ee392-6633-4037-aef1-238a9839f278, propriétaire
+  ok   GET /api/proposals/221ee392-6633-4037-aef1-238a9839f278, membre d'équipe
+  ok   POST /api/invoices/6b407b79-44a5-4c68-a795-3cd912911574/payment-link, anonyme refusé
+  ok   POST /api/invoices/6b407b79-44a5-4c68-a795-3cd912911574/payment-link, propriétaire
+  ok   POST /api/invoices/6b407b79-44a5-4c68-a795-3cd912911574/payment-link, membre d'équipe
+  ok   POST /api/proposals/221ee392-6633-4037-aef1-238a9839f278/remind, anonyme refusé
+  ok   POST /api/proposals/221ee392-6633-4037-aef1-238a9839f278/remind, propriétaire
+  ok   POST /api/proposals/221ee392-6633-4037-aef1-238a9839f278/remind, membre d'équipe
+
+── Le membre peut aussi modifier ────────────────────────────
+  ok   le membre modifie une facture de l'espace
+
+── Comptes de test laissés à la purge automatique (2 h) ─────
+
+
+50/50 vérifications passées
+
+> deviso@0.1.0 test:permissions
+> node scripts/e2e/permissions.mjs
+
+── Mise en place ─────────────────────────────────────────────
+  ok   le membre est rattaché et visible côté équipe
+
+── Défaut à l'invitation : le membre ne peut rien envoyer ────
+  ok   envoyer une facture est refusé (envoyer_facture décoché)
+  ok   envoyer un devis est refusé (envoyer_devis décoché)
+  ok   relancer une facture reste permis (la relance n'est pas un acte reglable)
+  ok   relancer un devis reste permis (la relance n'est pas un acte reglable)
+  ok   transmettre à la PA est refusé (transmettre_pa décoché)
+  ok   déposer sur Chorus est refusé (deposer_chorus décoché)
+  ok   refuser une facture reçue est refusé (décoché)
+
+── Actes titulaire seul : refusés au membre quoi qu'il arrive ─
+  ok   marquer payée est réservé au titulaire
+  ok   supprimer une facture est réservé au titulaire
+  ok   l'export FEC est réservé au titulaire
+  ok   le CRM complet est réservé au titulaire
+  ok   les statistiques sont réservées au titulaire
+
+── Le gérant coche : la fonction s'ouvre, uniquement celle-là ─
+  ok   envoyer une facture aboutit une fois coché
+  ok   envoyer un devis aboutit une fois coché
+  ok   transmettre à la PA reste refusé (non coché)
+
+── Tout coché : la garde d'acte laisse passer (PA/Chorus) ────
+  ok   transmettre à la PA n'est plus refusé pour permission (garde franchie)
+  ok   déposer sur Chorus n'est plus refusé pour permission (garde franchie)
+  ok   marquer payée reste titulaire seul, même tout coché
+
+── Le titulaire, lui, peut tout ──────────────────────────────
+  ok   le titulaire envoie une facture
+  ok   le titulaire exporte le FEC
+
+21/21 vérifications passées
+
+> deviso@0.1.0 test:promises
+> node scripts/e2e/promesses.mjs
+
+Compte de test : plan pro
+
+  ok   « Devis IA en 30 secondes », la génération répond
+  ok   un devis est créé avec un jeton de partage
+  ok   « Signature électronique », le devis est consultable publiquement
+  ok   « Signature électronique », la signature aboutit
+  ok   la signature est horodatée et l'empreinte conservée
+  ok   la signature retient le nom du signataire et une empreinte du document
+  ok   « Signature electronique », le vendeur en est notifie durablement
+  ok   et la notification nomme le signataire et mene au devis
+  ok   « Factures acompte et solde », les trois types se créent
+  ok   l'acompte suit une numérotation indépendante
+  ok   « Factures récurrentes », une récurrence se crée
+  ok   « Exports comptables FEC », /api/export/fec
+  ok   « Export CSV », /api/export/invoices-csv
+  ok   « Récap mensuel », /api/export/monthly-recap
+  ok   « CRM Clients & Revenus », /api/crm
+  ok   « Analytics », /api/stats
+  ok   « Catalogue prestations », /api/catalog
+  ok   « Relances automatiques programmables », les intervalles s'enregistrent
+  ok   « Sous-domaine de partage », il s'enregistre
+  ok   « Couleur d'accent sur vos PDF », elle s'enregistre
+  ok   « Widget CA URSSAF », le recapitulatif est bien affiche sur le tableau de bord
+  ok   et il propose les deux vues, trimestrielle et mensuelle
+
+── Promesses non prouvées par ce script ─────────────────────
+  ? « Factures Factur-X conformes réforme 2026 »
+      XML validé contre le validateur Super PDP le 12/08 : 137 contrôles, 0 échec. Non rejoué à chaque exécution.
+  ? « Dépôt Chorus Pro B2G »
+      exige des identifiants PISTE de production, jamais exercé.
+  ? « Sans branding Deviso sur vos documents »
+      différence visuelle dans le PDF, non vérifiée automatiquement.
+  ? « 3 utilisateurs inclus, +5 €/utilisateur »
+      dépend de la facturation Stripe réelle, non exercée.
+  ? « Couleur d'accent » appliquée au PDF
+      la valeur est enregistrée ; son effet visuel n'est pas contrôlé.
+
+
+22/22 vérifications passées
+
+> deviso@0.1.0 test:devis
+> node scripts/e2e/devis.mjs
+
+── Mise en place ─────────────────────────────────────────────
+  propriétaire : marie@studiocreatimd.fr
+  membre       : marie@studiocreatimd.fr (rattaché)
+
+── Vue publique par jeton de partage ─────────────────────────
+  ok   un devis créé porte un jeton de partage
+  ok   un anonyme consulte le devis par son jeton, sans session
+  ok   la vue publique livre aussi le profil émetteur et son hôte canonique
+  ok   un jeton inconnu renvoie 404, pas une erreur serveur
+
+── Passage automatique en « vu » ─────────────────────────────
+  ok   consulter un devis envoyé le fait passer en « vu »
+
+── Actions publiques mal formées ─────────────────────────────
+  ok   une action manquante est refusée
+  ok   une action inconnue est refusée
+
+── Un devis déjà traité ne se retraite pas ───────────────────
+  ok   le jeu de démonstration fournit un devis déjà signé
+  ok   un devis déjà signé ne peut pas être re-signé
+  ok   un devis déjà signé ne peut pas être refusé après coup
+  ok   relire un devis déjà signé reste possible
+
+── Non couvert par ce script ─────────────────────────────────
+  ? La signature elle-même (action « sign » aboutie)
+      couverte par promesses.mjs, qui vérifie statut, horodatage, empreinte et nom du signataire.
+  ? Le refus client abouti (action « decline »)
+      la route notifie le propriétaire par email avant de répondre ; sur un compte de démonstration l'adresse est fictive, donc un rejet dur. À couvrir dès qu'un garde-fou d'envoi existera (voir CLAUDE.md).
+  ? Le rendu de la page publique du devis
+      ce script interroge l'API ; l'affichage aux couleurs de l'émetteur reste à juger à l'œil.
+
+
+11/11 vérifications passées
+
+> deviso@0.1.0 test:equipe
+> node scripts/e2e/equipe.mjs
+
+── Mise en place ─────────────────────────────────────────────
+  propriétaire : marie@studiocreatimd.fr
+
+── Lecture de l'équipe ───────────────────────────────────────
+  ok   un anonyme ne lit pas l'équipe
+  ok   le propriétaire lit la liste des membres
+  ok   un membre voit l'équipe de l'espace de travail, pas une liste vide
+
+── Invitation ────────────────────────────────────────────────
+  ok   une adresse invalide est refusée
+  ok   un anonyme ne peut pas inviter
+  ok   le propriétaire invite un collaborateur
+  ok   aucun email n'est envoyé à une adresse fictive
+  ok   le lien d'invitation porte un jeton exploitable
+
+── Page d'accueil de l'invitation ────────────────────────────
+  ok   l'invité consulte son invitation sans être connecté
+  ok   l'invitation nomme celui qui invite
+  ok   un jeton d'invitation inconnu renvoie 404
+
+── Ré-invitation ─────────────────────────────────────────────
+  ok   ré-inviter la même adresse aboutit
+  ok   la ré-invitation régénère le jeton
+  ok   l'ancien lien d'invitation ne fonctionne plus
+  ok   la ré-invitation ne crée pas de second siège
+
+── Vue manager (pipeline) ────────────────────────────────────
+  ok   un anonyme ne lit pas le pipeline
+  ok   le propriétaire lit le pipeline de son équipe
+  ok   un membre lit le pipeline de l'espace, avec des données
+  ok   le pipeline compte le propriétaire parmi les membres
+
+── Limite de sièges (10 pour l'offre Pro) ────────────────────
+  ok   la limite de sièges finit par refuser une invitation de plus
+  ok   le refus intervient bien à 10 sièges, pas avant
+
+── Retrait d'un membre ───────────────────────────────────────
+  ok   un membre fictif est disponible pour le retrait
+  ok   un anonyme ne peut pas retirer un membre
+  ok   le propriétaire retire un membre
+  ok   le membre retiré disparaît vraiment de la liste
+  ok   retirer un membre libère bien son siège
+  ok   le script rend l'équipe dans l'état où il l'a trouvée
+  (8 invitation(s) de test retirée(s))
+
+── Non couvert par ce script ─────────────────────────────────
+  ? L'acceptation d'une invitation
+      couverte par linkAsTeamMember, empruntée par two-roles.mjs et par ce script en préalable.
+  ? L'inscription depuis une invitation (/api/team/invite-signup)
+      crée un compte réel, non purgé par le ménage des démonstrations. À traverser à la main.
+  ? Le refus de s'inviter soi-même
+      le contrôle porte sur l'adresse d'authentification du compte, qu'aucune route ne renvoie, donc inatteignable depuis un script.
+  ? L'invitation d'une invitation déjà acceptée (409 already_accepted)
+      exigerait le jeton d'un membre actif, que GET /api/team ne renvoie pas.
+  ? La facturation du siège chez Stripe
+      retirer un membre actif appelle removeSeatFromSubscription ; les comptes de démonstration en sont exclus par construction (check:stripe).
+  ? L'email d'invitation lui-même
+      volontairement coupé ici : toutes les adresses de test sont fictives. Son rendu se vérifie par scripts/e2e/emails.mjs, hors verify.
+
+
+27/27 vérifications passées
+
+> deviso@0.1.0 test:catalogue
+> node scripts/e2e/catalogue.mjs
+
+── Mise en place ─────────────────────────────────────────────
+  propriétaire, membre rattaché, et un espace étranger
+
+── Catalogue, lecture ───────────────────────────────────────
+  ok   un anonyme ne lit pas le catalogue
+  ok   le propriétaire lit son catalogue
+  ok   un membre lit le catalogue de l'espace, pas un catalogue vide
+
+── Catalogue, création ──────────────────────────────────────
+  ok   une prestation sans nom est refusée
+  ok   un anonyme ne crée pas de prestation
+  ok   le propriétaire crée une prestation au forfait
+  ok   une prestation horaire est forcée à l'unité « heure », même si le formulaire dit autre chose
+  ok   un type inconnu retombe sur « fixed » au lieu d'être enregistré tel quel
+  ok   un membre d'équipe peut enrichir le catalogue de l'espace
+  ok   ce qu'un membre crée apparaît bien dans le catalogue du propriétaire
+
+── Catalogue, modification et suppression ───────────────────
+  ok   le propriétaire modifie une prestation
+  ok   un champ non autorisé est ignoré, la prestation reste dans l'espace
+  ok   un membre d'équipe modifie une prestation de l'espace
+  ok   un espace étranger ne modifie pas une prestation qui ne lui appartient pas
+  ok   un membre d'équipe supprime une prestation de l'espace
+  ok   les prestations de test sont bien supprimées
+
+── Modèles de devis ──────────────────────────────────────────
+  ok   un anonyme ne lit pas les modèles
+  ok   le propriétaire lit ses modèles
+  ok   un membre lit les modèles de l'espace
+  ok   un modèle sans nom est refusé
+  ok   le propriétaire crée un modèle
+  ok   un membre d'équipe crée un modèle partagé
+  ok   un membre ne supprime PAS un modèle : c'est réservé au propriétaire
+  ok   le propriétaire supprime les modèles de test
+
+── Non couvert par ce script ─────────────────────────────────
+  ? Le refus du catalogue aux plans Free et Solo
+      la création exige le plan Pro ; les comptes de démonstration sont tous en Pro, donc la branche PLAN_REQUIRED n'est pas atteignable ici.
+  ? Le refus des modèles au plan Free
+      même raison : les modèles exigent Solo ou Pro, et les comptes de test sont en Pro.
+  ? L'usage d'un modèle pour pré-remplir un devis
+      câblage d'interface, hors d'atteinte d'un script qui n'interroge que l'API.
+
+
+24/24 vérifications passées
+
+> deviso@0.1.0 test:envois
+> node scripts/e2e/envois.mjs
+
+── Mise en place ─────────────────────────────────────────────
+  propriétaire et membre rattaché (droits d'envoi accordés)
+
+  ok   une facture sans email client est créée pour les besoins du test
+  ok   un devis sans email client est créé pour les besoins du test
+
+── Aucune route d'envoi n'est ouverte à un anonyme ───────────
+  ok   envoi d'une facture, un anonyme est refusé
+  ok   relance d'une facture, un anonyme est refusé
+  ok   envoi d'un devis, un anonyme est refusé
+  ok   relance d'un devis, un anonyme est refusé
+
+── Un document inexistant ne fait pas tomber la route ────────
+  ok   envoi d'une facture, document inexistant : 404
+  ok   relance d'une facture, document inexistant : 404
+  ok   envoi d'un devis, document inexistant : 404
+  ok   relance d'un devis, document inexistant : 404
+
+── Un email client manquant est dit clairement ───────────────
+  ok   envoyer une facture sans email client est refusé, pas tenté
+  ok   relancer une facture sans email client est refusé
+  ok   relancer un devis sans email client est refusé
+  ok   envoyer un devis sans destinataire ni lien est refusé
+
+── Un devis signé ne se relance plus ─────────────────────────
+  ok   le jeu de démonstration fournit un devis signé avec email client
+  ok   relancer un devis déjà signé est refusé
+
+── Un membre d'équipe atteint les documents de l'espace ──────
+  ok   un membre atteint la facture de l'espace (400 « email manquant », et non 404)
+  ok   un membre atteint la facture pour la relancer (400, et non 404)
+  ok   un membre atteint le devis pour le relancer (400, et non 404)
+  ok   un membre est arrêté sur les paramètres d'envoi du devis, pas sur un 404
+
+── Non couvert par ce script ─────────────────────────────────
+  ? L'envoi réel d'un email et son contenu
+      c'est l'objet de scripts/e2e/emails.mjs (nom d'expéditeur, Reply-To, pièce jointe Factur-X, accents), volontairement hors de verify puisqu'il écrit à une vraie boîte.
+  ? Le passage automatique en « envoyée » après un envoi réussi
+      vérifié par emails.mjs : le contrôle exige un envoi abouti, impossible ici sans écrire à quelqu'un.
+  ? La traduction des erreurs Resend (adresse invalide, quota dépassé)
+      exige de provoquer un vrai refus côté Resend ; c'est ce que fait scripts/e2e/contre-epreuve-emails.mjs, à lancer à la main.
+  ? L'absence du pied de page « via Deviso » selon le plan
+      différence de rendu dans le message ; scripts/e2e/marque.mjs l'envoie pour comparaison à l'œil.
+
+
+20/20 vérifications passées
+
+> deviso@0.1.0 test:crons
+> node scripts/e2e/crons.mjs
+
+── Protection des tâches planifiées ─────────────────────────
+  ok   /api/cron/send-reminders, refusé sans le secret
+  ok   /api/cron/send-reminders, refusé avec un mauvais secret
+  ok   /api/cron/recurring, refusé sans le secret
+  ok   /api/cron/recurring, refusé avec un mauvais secret
+  ok   /api/cron/cleanup-demo, refusé sans le secret
+  ok   /api/cron/cleanup-demo, refusé avec un mauvais secret
+
+── Le cron ne relance que ce qui est dû ─────────────────────
+  ok   le cron de relances s'exécute avec le bon secret
+  ok   un devis créé aujourd'hui n'est pas relancé (premier intervalle : 3 jours)
+  ok   les comptes de démonstration sont exclus des relances automatiques
+
+── Facturation récurrente ───────────────────────────────────
+  ok   le cron de facturation récurrente s'exécute
+
+── Purge des comptes de démonstration ───────────────────────
+  ok   la purge s'exécute et ne signale aucun échec
+
+
+11/11 vérifications passées
+
+> deviso@0.1.0 test:pdf
+> node scripts/e2e/pdf.mjs
+
+  ok   la facture de test est créée
+  ok   le PDF se télécharge
+  ok   c'est bien un fichier PDF
+  ok   un profil colorimétrique est déclaré (exigé par PDF/A)
+  ok   les métadonnées XMP sont présentes (déclaration PDF/A)
+  ok   le XML Factur-X est référencé comme fichier associé
+  ok   le XML Factur-X est bien embarqué sous son nom normalisé
+  ok   toutes les polices sont embarquées
+
+PDF conservé dans scripts/e2e/.facture-test.pdf, ouvre-le pour juger du rendu,
+c'est la seule chose qu'un script ne sait pas faire.
+
+
+8/8 vérifications passées
+
+> deviso@0.1.0 test:stripe
+> node scripts/e2e/stripe.mjs
+
+── Refus attendus ───────────────────────────────────────────
+  ok   /api/stripe/checkout, anonyme refusé
+  ok   /api/stripe/portal, anonyme refusé
+  ok   un plan inconnu est refusé
+
+── Le mode démonstration ne touche pas le compte Stripe ─────
+  ok   le tunnel de paiement refuse un compte de démonstration
+  ok   le portail de facturation refuse un compte de démonstration
+
+── Non couvert par ce script ────────────────────────────────
+  · le paiement lui-même, et le webhook qui active l'abonnement :
+    Stripe est en mode réel, un test impliquerait un vrai débit.
+  · à vérifier une fois, à la main, avec une carte réelle puis remboursement.
+
+
+5/5 vérifications passées
+
+> deviso@0.1.0 test:stripe-prix
+> node scripts/e2e/stripe-prix.mjs
+
+
+── Les prix vendus existent-ils, et au bon montant ? ──────────
+   source lue : .env.local, PAS la production. Voir l'en-tête.
+
+  ok   la clé Stripe ouvre bien le compte de Deviso
+  ok   Solo mensuel, 18,00 € par mois
+  ok   Solo annuel, 172,80 € par an
+  ok   Pro mensuel, 34,00 € par mois
+  ok   Pro annuel, 326,40 € par an
+  ok   Siège en plus, 5,00 € par mois
+
+── Le webhook est-il branché, et sur les bons événements ? ────
+  ok   un endpoint webhook pointe vers la production
+  ok   cet endpoint est activé
+  ok   il couvre les événements dont le code dépend
+
+── Anciens prix encore actifs ────────────────────────────────
+  ok   aucun prix récurrent actif INATTENDU hors de la grille
+
+── Contre-épreuves ───────────────────────────────────────────
+  ok   un identifiant inventé est bien rejeté par Stripe
+  ok   un montant faux serait bien détecté
+
+── Non couvert ───────────────────────────────────────────────
+  · les valeurs réellement posées sur Vercel : illisibles d'ici.
+  · le paiement lui-même : Stripe est en mode réel.
+  · l'annuel et le siège supplémentaire n'ont jamais été souscrits
+    en production, leur prix est juste, leur tunnel n'est pas prouvé.
+
+
+12/12 vérifications passées
+
+> deviso@0.1.0 test:sieges
+> node --experimental-strip-types --no-warnings scripts/e2e/sieges.mjs
+
+
+── Sièges facturés : la fonction contre les CGU ───────────────
+
+  ok   les CGU annoncent bien le titulaire et 2 membres inclus
+  ok   MEMBRES_INCLUS vaut ce que les CGU annoncent
+  ok   le titulaire seul ne paie aucun siège
+  ok   le premier collaborateur est inclus
+  ok   le deuxième collaborateur est inclus
+  ok   le troisième collaborateur est le premier siège facturé
+  ok   puis un siège par collaborateur
+  ok   et cela reste vrai à la limite de dix membres
+  ok   un décompte négatif ne produit pas de siège négatif
+
+── Contre-épreuve ────────────────────────────────────────────
+  ok   un calcul qui facturerait dès le premier membre serait bien détecté
+
+── Non couvert ───────────────────────────────────────────────
+  · la pose réelle de la quantité chez Stripe : il faudrait un
+    abonnement vivant, donc un débit réel.
+  · l'alignement en cas de divergence déjà installée : la fonction
+    la répare au prochain appel, ce n'est pas prouvé ici.
+
+
+10/10 vérifications passées
+
+> deviso@0.1.0 test:comptable
+> npx -y tsx scripts/e2e/comptable.ts
+
+  ok   titulaire : tous les actes autorises
+  ok   comptable : aucun acte autorise malgre des permissions ouvertes
+  ok   membre normal : recoit le droit accorde, et pas les autres
+[droits] lecture des permissions impossible (11111111-1111-1111-1111-111111111111/22222222-2222-2222-2222-222222222222) : boom
+  ok   erreur de lecture : aucun acte autorise
+
+4/4 vérifications passées
+
+> deviso@0.1.0 check:superpdp-connect
+> node --experimental-strip-types --no-warnings scripts/check-superpdp-connect.mjs
+
+── Invariant directory_entry_identifier ⟹ company_number ──────
+  ok   invariant tenu, scheme=fr_siren prefill=true siren=oui email=oui
+  ok   réception forcée, scheme=fr_siren prefill=true siren=oui email=oui
+  ok   invariant tenu, scheme=fr_siren prefill=true siren=oui email=non
+  ok   réception forcée, scheme=fr_siren prefill=true siren=oui email=non
+  ok   invariant tenu, scheme=fr_siren prefill=true siren=non email=oui
+  ok   réception forcée, scheme=fr_siren prefill=true siren=non email=oui
+  ok   invariant tenu, scheme=fr_siren prefill=true siren=non email=non
+  ok   réception forcée, scheme=fr_siren prefill=true siren=non email=non
+  ok   invariant tenu, scheme=fr_siren prefill=false siren=oui email=oui
+  ok   réception forcée, scheme=fr_siren prefill=false siren=oui email=oui
+  ok   invariant tenu, scheme=fr_siren prefill=false siren=oui email=non
+  ok   réception forcée, scheme=fr_siren prefill=false siren=oui email=non
+  ok   invariant tenu, scheme=fr_siren prefill=false siren=non email=oui
+  ok   réception forcée, scheme=fr_siren prefill=false siren=non email=oui
+  ok   invariant tenu, scheme=fr_siren prefill=false siren=non email=non
+  ok   réception forcée, scheme=fr_siren prefill=false siren=non email=non
+  ok   invariant tenu, scheme=sandbox prefill=true siren=oui email=oui
+  ok   réception forcée, scheme=sandbox prefill=true siren=oui email=oui
+  ok   invariant tenu, scheme=sandbox prefill=true siren=oui email=non
+  ok   réception forcée, scheme=sandbox prefill=true siren=oui email=non
+  ok   invariant tenu, scheme=sandbox prefill=true siren=non email=oui
+  ok   réception forcée, scheme=sandbox prefill=true siren=non email=oui
+  ok   invariant tenu, scheme=sandbox prefill=true siren=non email=non
+  ok   réception forcée, scheme=sandbox prefill=true siren=non email=non
+  ok   invariant tenu, scheme=sandbox prefill=false siren=oui email=oui
+  ok   réception forcée, scheme=sandbox prefill=false siren=oui email=oui
+  ok   invariant tenu, scheme=sandbox prefill=false siren=oui email=non
+  ok   réception forcée, scheme=sandbox prefill=false siren=oui email=non
+  ok   invariant tenu, scheme=sandbox prefill=false siren=non email=oui
+  ok   réception forcée, scheme=sandbox prefill=false siren=non email=oui
+  ok   invariant tenu, scheme=sandbox prefill=false siren=non email=non
+  ok   réception forcée, scheme=sandbox prefill=false siren=non email=non
+
+── Comportements attendus de pré-remplissage ──────────────────
+  ok   défaut (prefill off) : aucun pré-remplissage entreprise
+  ok   prefill on + fr_siren : company_number ET directory présents
+  ok   prefill on + sandbox : company_number sans directory
+
+── Contre-épreuve : le détecteur voit le vrai bug ─────────────
+  ok   le détecteur signale directory seul (bug du 07/10)
+  ok   le détecteur accepte les deux ensemble
+
+── Source unique : la route délègue, sans set en direct ───────
+  ok   connect/route.ts ne construit aucun param en direct (aucun params.set)
+  ok   connect/route.ts appelle construireParamsAutorisation
+
+check:superpdp-connect : tout vert.
+
+> deviso@0.1.0 check:superpdp-env
+> node scripts/check-superpdp-env.mjs
+
+── Partition d'environnement (sandbox vs prod) ────────────────
+  ok   prod traite fr_siren
+  ok   prod traite be_numero_entreprise
+  ok   prod SAUTE sandbox
+  ok   sandbox traite sandbox
+  ok   sandbox SAUTE fr_siren
+  ok   sandbox SAUTE be_numero_entreprise
+
+── Contre-épreuve : le cas dangereux est bien écarté ──────────
+  ok   une connexion sandbox N'EST PAS traitée en prod
+  ok   un « tout traiter » laisserait passer le cas dangereux
+
+── Source : le helper existe et le cron l'utilise ─────────────
+  ok   lib/superpdp.ts définit estConnexionDeCetEnv avec la bonne logique
+  ok   le cron superpdp-sync appelle estConnexionDeCetEnv et saute l'autre env
+
+check:superpdp-env : tout vert.
+
+> deviso@0.1.0 test:superpdp
+> node scripts/e2e/superpdp.mjs
+
+── Émission B2B vers un destinataire raccordé ────────────────
+  ok   facture B2B créée
+ÉCHEC  la facture est transmise à la Plateforme Agréée, HTTP 500 {"error":"Transmission impossible","message":"Une erreur inattendue est survenue et nous ne savons pas si la facture est partie. Ne la retransmettez pas tout de suite : rechargez la page dans quelques minutes pour voir son état réel."}
+ÉCHEC  hors annuaire, l'émission retombe sur le SIREN, et le dit, source = undefined
+ÉCHEC  une facture déjà transmise n'est pas réémise, HTTP 409 {"error":"Transmission déjà en cours","message":"Cette facture est déjà en cours de transmission. Patientez quelques secondes et rechargez la page plutôt que de réessayer : un second envoi la ferait a
+
+── Encaissement (fr:212), obligatoire art. 290 A CGI ─────────
+  ok   la facture est marquée payée
+ÉCHEC  l'encaissement finit par être déclaré à la Plateforme Agréée, HTTP 200 {"encaissee":false,"raison":"non_transmise"}
+ÉCHEC  un second appel ne renvoie pas un second événement, HTTP 200 {"encaissee":false,"raison":"non_transmise"}
+
+── Régime de TVA propagé à la Plateforme Agréée ──────────────
+  ok   le statut expose le régime de TVA connu de la Plateforme Agréée
+  ok   le profil accepte la périodicité de déclaration
+ÉCHEC  changer la périodicité dans Deviso la change chez Super PDP (→ quarterly), attendu quarterly, obtenu null
+ÉCHEC  la franchise en base se traduit seule en vat_exemption, sans rien demander, obtenu null
+
+── Résolution de l'adresse par l'Annuaire national ───────────
+ÉCHEC  l'adresse d'un vrai client est lue dans l'Annuaire, pas fabriquée, source = undefined · HTTP 500
+ÉCHEC  une adresse saisie à la main prime sur l'annuaire, source = undefined · HTTP 500
+
+── Facture B2C : un particulier n'a pas de SIREN ─────────────
+  ok   facture B2C créée sans SIREN client
+ÉCHEC  une facture B2C est transmise sans exiger de SIREN client, HTTP 500 {"error":"Transmission impossible","message":"Une erreur inattendue est survenue et nous ne savons pas si la facture est partie. Ne la retransmettez pas tout de suite : rechargez la page dans quelques minutes pour voir son état réel."}
+
+── Facture mixte biens+services : refusée avant l'envoi ──────
+  ok   facture mixte créée (la création n'est pas bloquante)
+  ok   une facture mixte est refusée à l'émission, avec un message explicite
+  ok   le refus nomme ce qui manque, sous une forme exploitable par l'interface
+  ok   sans SIREN client, le refus désigne le client par son nom
+  ok   un brouillon ne peut pas être transmis, même par appel direct
+  ok   un client étranger n'est plus bloqué par l'absence de SIREN français
+ÉCHEC  le statut expose de quoi décider d'afficher la colonne de transmission, HTTP 200 {"available":true,"sandbox":false,"connected":true,"status":"error","messageStatut":null,"companyId":"57701","directoryAddress":"0225:315143296_57701","ligne":null,"regimeTva":null,"discordanceEnv":nu
+
+── Synchronisation avec la Plateforme Agréée ─────────────────
+ÉCHEC  la synchronisation s'exécute vraiment, elle ne se contente pas de répondre, HTTP 200 {"synchronise":false,"recuperees":0,"entrantes":0,"jusquA":1080322,"raison":"erreur","detail":"Super PDP /oauth2/token 400 : {\"error\":\"invalid_grant\",\"error_description\":\"The provided authoriza
+  ok   la facture émise est redescendue par la synchronisation
+  ok   le raccordement se déclare sain, sans erreur en attente
+ÉCHEC  le statut de la facture suit la plateforme, il ne reste pas à api:uploaded, superpdp_status = null (après une minute d'attente et six synchronisations)
+
+── Validation officielle avant transmission ──────────────────
+  ok   une facture peut être validée sans être transmise
+  ok   la validation fait bien tourner les validateurs officiels
+  ok   le XML produit par Deviso est jugé conforme
+
+── Cycle de vie : répondre sans refuser ──────────────────────
+ÉCHEC  on ne pose pas un statut de destinataire sur sa propre facture émise, HTTP 0 null
+ÉCHEC  le refus garde sa route dédiée et n'est pas banalisé ici, HTTP 0 null
+ÉCHEC  un code hors nomenclature est refusé avant tout appel, HTTP 0 null
+
+── Exigibilité de la TVA : débits contre encaissements ───────
+  ok   une facture sur les débits reste conforme aux validateurs officiels
+  ok   sur les débits, l'exigibilité déclarée est la date de facture (5)
+  ok   sur les encaissements, l'exigibilité déclarée est le paiement (72)
+
+── Rechercher un client plutôt que lui demander son SIREN ────
+  ok   une recherche sans critère est refusée avant tout appel
+  ok   une recherche par SIREN retourne une entreprise identifiable
+
+── Ce qui est déclaré au fisc ────────────────────────────────
+ÉCHEC  les déclarations d'e-reporting sont lisibles, HTTP 500 {"error":"Lecture impossible"}
+ÉCHEC  on peut savoir ce qui a été déclaré au fisc pour une facture, HTTP 200 {"transmise":false,"transactions":[],"paiements":[],"evenements":[]}
+ÉCHEC  l'aperçu de ce qui partira au fisc est consultable, HTTP 500 {"error":"Aperçu indisponible"}
+  ok   une date d'aperçu invalide est refusée avant tout appel
+
+── Téléchargement Factur-X d'une facture de la plateforme ────
+
+── Garde-fous du refus (fr:210) ──────────────────────────────
+  ok   un identifiant non numérique est refusé
+  ok   un refus sans motif est rejeté
+  ok   un motif hors liste est rejeté
+  ok   refuser une facture d'un autre espace renvoie 404
+
+── Non couvert par ce script ─────────────────────────────────
+  ? L'acheminement réel d'une facture B2BInt
+      le bac à sable n'a pas d'entreprise étrangère raccordée ; on vérifie que Deviso ne bloque plus et déclare la bonne nature.
+  ? Le contenu d'une déclaration rejetée
+      il faut qu'une déclaration soit effectivement rejetée par le PPF ; le bac à sable n'en produit pas à la demande.
+  ? Le refus abouti d'une facture reçue (fr:210)
+      exige une session sur le compte destinataire, et l'acte est définitif, il oblige le fournisseur à une annulation comptable. Tous ses garde-fous sont couverts ci-dessus ; le succès se constate à la main sur une facture reçue.
+  ? Le tunnel de raccordement (connect → callback → déconnexion)
+      redirection OAuth, donc un navigateur. Les comptes de test restent raccordés d'une exécution à l'autre, ce script ne le rejoue pas.
+  ? L'émission depuis une entreprise réelle
+      le bac à sable et la production partagent l'hôte d'API ; c'est le type de compte qui décide. Émettre pour de vrai engage le réseau national de facturation.
+  ? L'affichage de la page Factures reçues
+      ce script interroge l'API ; le rendu reste à juger à l'œil.
+
+── Comptes de test ───────────────────────────────────────────
+  superpdp-test@getdeviso.fr (Burger Queen), pas une démo, purge manuelle par Selim
+  facture B2B émise : Deviso 0bc0c731-b944-4ee3-b5b2-a8491f346515 → Super PDP ?
+  facture B2C : 80de1111-aac9-4716-a638-351959350736 · facture mixte (jamais transmise) : bdb657c4-0d7c-4317-919c-4320f6fc01f6
+
+
+26/45 vérifications passées
+
+Échecs :
+  · la facture est transmise à la Plateforme Agréée, HTTP 500 {"error":"Transmission impossible","message":"Une erreur inattendue est survenue et nous ne savons pas si la facture est partie. Ne la retransmettez pas tout de suite : rechargez la page dans quelques minutes pour voir son état réel."}
+  · hors annuaire, l'émission retombe sur le SIREN, et le dit, source = undefined
+  · une facture déjà transmise n'est pas réémise, HTTP 409 {"error":"Transmission déjà en cours","message":"Cette facture est déjà en cours de transmission. Patientez quelques secondes et rechargez la page plutôt que de réessayer : un second envoi la ferait a
+  · l'encaissement finit par être déclaré à la Plateforme Agréée, HTTP 200 {"encaissee":false,"raison":"non_transmise"}
+  · un second appel ne renvoie pas un second événement, HTTP 200 {"encaissee":false,"raison":"non_transmise"}
+  · changer la périodicité dans Deviso la change chez Super PDP (→ quarterly), attendu quarterly, obtenu null
+  · la franchise en base se traduit seule en vat_exemption, sans rien demander, obtenu null
+  · l'adresse d'un vrai client est lue dans l'Annuaire, pas fabriquée, source = undefined · HTTP 500
+  · une adresse saisie à la main prime sur l'annuaire, source = undefined · HTTP 500
+  · une facture B2C est transmise sans exiger de SIREN client, HTTP 500 {"error":"Transmission impossible","message":"Une erreur inattendue est survenue et nous ne savons pas si la facture est partie. Ne la retransmettez pas tout de suite : rechargez la page dans quelques minutes pour voir son état réel."}
+  · le statut expose de quoi décider d'afficher la colonne de transmission, HTTP 200 {"available":true,"sandbox":false,"connected":true,"status":"error","messageStatut":null,"companyId":"57701","directoryAddress":"0225:315143296_57701","ligne":null,"regimeTva":null,"discordanceEnv":nu
+  · la synchronisation s'exécute vraiment, elle ne se contente pas de répondre, HTTP 200 {"synchronise":false,"recuperees":0,"entrantes":0,"jusquA":1080322,"raison":"erreur","detail":"Super PDP /oauth2/token 400 : {\"error\":\"invalid_grant\",\"error_description\":\"The provided authoriza
+  · le statut de la facture suit la plateforme, il ne reste pas à api:uploaded, superpdp_status = null (après une minute d'attente et six synchronisations)
+  · on ne pose pas un statut de destinataire sur sa propre facture émise, HTTP 0 null
+  · le refus garde sa route dédiée et n'est pas banalisé ici, HTTP 0 null
+  · un code hors nomenclature est refusé avant tout appel, HTTP 0 null
+  · les déclarations d'e-reporting sont lisibles, HTTP 500 {"error":"Lecture impossible"}
+  · on peut savoir ce qui a été déclaré au fisc pour une facture, HTTP 200 {"transmise":false,"transactions":[],"paiements":[],"evenements":[]}
+  · l'aperçu de ce qui partira au fisc est consultable, HTTP 500 {"error":"Aperçu indisponible"}
+npm notice
+npm notice New major version of npm available! 11.12.1 -> 12.2.1
+npm notice Changelog: https://github.com/npm/cli/releases/tag/v12.2.1
+npm notice To update run: npm install -g npm@12.2.1
+npm notice

@@ -1,0 +1,11 @@
+
+> deviso@0.1.0 test:comptable
+> npx -y tsx scripts/e2e/comptable.ts
+
+  ok   titulaire : tous les actes autorises
+  ok   comptable : aucun acte autorise malgre des permissions ouvertes
+  ok   membre normal : recoit le droit accorde, et pas les autres
+[droits] lecture des permissions impossible (11111111-1111-1111-1111-111111111111/22222222-2222-2222-2222-222222222222) : boom
+  ok   erreur de lecture : aucun acte autorise
+
+4/4 vérifications passées
