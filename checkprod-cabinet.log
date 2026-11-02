@@ -1,5 +1,0 @@
-
-> deviso@0.1.0 check:prod
-> node scripts/check-prod-a-jour.mjs --attendre
-
-✓ Production a jour : https://getdeviso.fr sert bff656d (HEAD de main)

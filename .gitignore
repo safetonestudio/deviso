@@ -57,3 +57,6 @@ _scratch/
 
 # Graphify (graphe de code local, ne pas committer)
 graphify-out/
+
+# logs de build et de guards (jamais versionnes)
+*.log
