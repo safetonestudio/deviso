@@ -8,17 +8,15 @@ import { EmptyState } from "@/components/ui/EmptyState";
 import { CaUrssafWidget } from "@/components/CaUrssafWidget";
 import { ProductTour } from "@/components/ProductTour";
 import { GuidedTourBanner } from "@/components/GuidedTourBanner";
-import { DashboardActionFeed, type ActionItem } from "@/components/DashboardActionFeed";
+import { ActionsGlobales } from "@/components/ActionsGlobales";
+import { tauxCotisationCategorie, TAUX_COTISATIONS_VENTE } from "@/lib/tarifs-data";
 import { SignalementsClient } from "@/components/SignalementsClient";
 import { caMensuelHt as calculerCaMensuelHt, encaisseTtcDuMois, lignesRecettes, totauxParCategorie, type FactureRecette } from "@/lib/recettes";
 import { jaugeFranchise } from "@/lib/seuils-micro";
 import { HeroCa } from "@/components/dashboard/HeroCa";
 import { CaMensuelBarres } from "@/components/dashboard/CaMensuelBarres";
 import { EcheanceCarte } from "@/components/dashboard/EcheanceCarte";
-import {
-  Sparkles, Receipt, FileText, Send,
-  Euro, TrendingUp, ArrowRight, Clock,
-} from "lucide-react";
+import { Receipt, FileText, ArrowRight, Plus } from "lucide-react";
 
 const PROPOSAL_STATUS: Record<string, { label: string; color: string }> = {
   draft:    { label: "Brouillon",  color: "bg-ds-elevated text-gray-400" },
@@ -79,11 +77,12 @@ export default async function DashboardPage() {
     invoicesQuery  = invoicesQuery.eq("created_by", user.id);
   }
 
-  const [{ data: allProposals }, { data: invoices }, { data: profile }, { data: profilEspace }] = await Promise.all([
+  const [{ data: allProposals }, { data: invoices }, { data: profile }, { data: profilEspace }, { data: compteUrssaf }] = await Promise.all([
     proposalsQuery,
     invoicesQuery,
     supabase.from("profiles").select("plan").eq("id", user.id).single(),
     supabase.from("profiles").select("tva_regime").eq("id", workspaceId).maybeSingle(),
+    supabase.from("urssaf_tdae_comptes").select("categorie_ca, acre").eq("user_id", workspaceId).maybeSingle(),
   ]);
 
   const proposals = (allProposals ?? []) as Proposal[];
@@ -169,6 +168,16 @@ export default async function DashboardPage() {
   const jauge = echeancesUrssaf
     ? jaugeFranchise({ biens: totauxAnnee.biens.ht, services: totauxAnnee.services.ht })
     : null;
+  // Cotisations estimees du trimestre : CA x taux 2026 de la categorie Urssaf
+  // (lib/tarifs-data.ts). Categorie inconnue : seule une activite 100 % vente
+  // de biens permet d'estimer sans la deviner.
+  const lignesTrimestre = lignesRecettes(inv as unknown as FactureRecette[], anneeCourante)
+    .filter((l) => Math.floor((Number(l.date.slice(5, 7)) - 1) / 3) === currentQuarter);
+  const tauxCotisations =
+    tauxCotisationCategorie(compteUrssaf?.categorie_ca) ??
+    (lignesTrimestre.length > 0 && lignesTrimestre.every((l) => l.categorie === "biens") ? TAUX_COTISATIONS_VENTE : null);
+  const cotisationsEstimees = tauxCotisations !== null ? Math.round(caTrimestreHt * tauxCotisations) : null;
+
   // Assujettis a la TVA : la TVA percue sur les encaissements du trimestre,
   // a reverser lors de la declaration. Meme source (lignes du livre).
   const tvaTrimestre = echeancesUrssaf
@@ -193,83 +202,47 @@ export default async function DashboardPage() {
   const toInvoice           = proposals.filter((p) => p.status === "signed" && !invoicedProposalIds.has(p.id));
   const toInvoiceAmount     = toInvoice.reduce((s, p) => s + p.total_ttc, 0);
 
-  // ── Action feed ──────────────────────────────────────────────────────────
-  const toRemind = pendingProposals.filter((p) => daysSince(p.created_at) >= 7);
-
-  const actionItems: ActionItem[] = [
-    // Factures en retard (urgence haute)
-    ...overdueInvoices.slice(0, 3).map((i) => {
-      const days = Math.floor((now.getTime() - new Date(i.due_date!).getTime()) / 86_400_000);
-      return {
-        type: "overdue_invoice" as const,
-        id: i.id,
-        label: `${i.invoice_number} · ${i.client_name || "-"}`,
-        sublabel: `En retard de ${days}j · ${fmt(i.total_ttc)}`,
-        urgency: "high" as const,
-        href: `/invoices/${i.id}`,
-        actionLabel: "Relancer",
-        actionApi: `/api/invoices/${i.id}/send-reminder`,
-      };
-    }),
-    // Devis sans réponse depuis +7j (urgence moyenne)
-    ...toRemind.slice(0, 3).map((p) => ({
-      type: "remind_proposal" as const,
-      id: p.id,
-      label: `${p.title || p.client_name || "Devis sans titre"}`,
-      sublabel: `Sans réponse depuis ${daysSince(p.created_at)}j · ${fmt(p.total_ttc)}`,
-      urgency: "medium" as const,
-      href: `/proposals/${p.id}`,
-      actionLabel: "Relancer",
-      actionApi: `/api/proposals/${p.id}/remind`,
-    })),
-    // Devis signés à facturer (urgence basse)
-    ...toInvoice.slice(0, 2).map((p) => ({
-      type: "to_invoice" as const,
-      id: `inv-${p.id}`,
-      label: `${p.title || p.client_name || "Devis signé"}`,
-      sublabel: `Signé, en attente de facturation · ${fmt(p.total_ttc)}`,
-      urgency: "low" as const,
-      href: `/proposals/${p.id}`,
-      actionLabel: "Facturer",
-      actionHref: `/invoices/new?from=${p.id}`,
-    })),
-  ].slice(0, 6);
 
   // ── Listes récentes ───────────────────────────────────────────────────────
-  const recentProposals = proposals.slice(0, 5);
-  const recentInvoices  = inv.slice(0, 5);
+  const recentProposals = proposals.slice(0, 4);
+  const recentInvoices  = inv.slice(0, 4);
 
   return (
     <>
-    <div className="space-y-6 max-w-7xl mx-auto">
+    <div className="space-y-6 w-full">
 
       <GuidedTourBanner pageKey="dashboard" />
 
-      {/* ── Header ── */}
-      <div className="flex items-start justify-between gap-4 flex-wrap">
+      {/* ── En-tete : titre, actions, cloche et theme sur une ligne ── */}
+      <div className="en-tete-page flex items-start justify-between gap-4 flex-wrap">
         <div>
-          <h1 className="text-[32px] sm:text-[34px] font-bold text-ink tracking-tight leading-tight">
+          <h1 className="text-[34px] sm:text-[44px] font-bold text-ink tracking-tight leading-[1.05]">
             {isMember ? "Mon activité" : "Tableau de bord"}
           </h1>
-          <p className="text-sm text-gray-500 mt-1.5">
+          <p className="text-[15px] sm:text-[17px] text-gray-400 mt-2">
             {isMember ? "Tes devis et factures personnels" : "Vue d'ensemble de ton activité"}
           </p>
         </div>
-        <div className="flex gap-2">
+        <div className="flex items-center gap-2.5 flex-wrap sm:mt-3">
           <Link
             href="/proposals/new"
-            className="flex items-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-ink font-medium px-4 py-2 rounded-lg transition-colors text-sm"
+            className={
+              isPaid
+                ? "flex items-center gap-2 border border-ds-border bg-ds-surface hover:bg-ds-elevated text-ink font-semibold px-5 h-11 rounded-xl transition-colors text-[15px]"
+                : "flex items-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-ink font-semibold px-5 h-11 rounded-xl transition-colors text-[15px]"
+            }
           >
-            <Sparkles size={14} /> Nouveau devis
+            <Plus size={17} /> Nouveau devis
           </Link>
           {isPaid && (
             <Link
               href="/invoices/new"
-              className="flex items-center gap-2 bg-ds-surface hover:bg-ds-elevated text-gray-300 hover:text-ink font-medium px-4 py-2 rounded-lg transition-colors text-sm border border-ds-border"
+              className="flex items-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-ink font-semibold px-5 h-11 rounded-xl transition-colors text-[15px]"
             >
-              <Receipt size={14} /> Nouvelle facture
+              <FileText size={17} /> Nouvelle facture
             </Link>
           )}
+          <ActionsGlobales />
         </div>
       </div>
 
@@ -304,60 +277,43 @@ export default async function DashboardPage() {
         />
       )}
 
-      {/* ── Zone À FAIRE : ce qui réclame une action, tout en haut ── */}
-      {!isMember && (
-        <DashboardActionFeed items={actionItems} />
-      )}
-
-      {/* ── Pouls d'activité : les chiffres à lire d'un coup d'oeil ── */}
-      <div>
-        <h2 className="text-xs font-semibold text-gray-500 mb-3">
-          En un coup d&apos;oeil
-        </h2>
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-          {/* 1. Encours à encaisser */}
-          <KpiCard
-            label="Encours à encaisser"
-            value={fmt(caToCollect)}
-            icon={TrendingUp}
-            trend={overdueAmount > 0 ? `dont ${fmt(overdueAmount)} en retard` : sentInvoices.length > 0 ? `${sentInvoices.length} facture${sentInvoices.length > 1 ? "s" : ""} envoyée${sentInvoices.length > 1 ? "s" : ""}` : "Aucune en attente"}
-          />
-
-          {/* 2. Devis en attente de réponse */}
-          <KpiCard
-            label="Devis en attente"
-            value={pendingProposals.length > 0 ? fmt(totalDevisEnAttente) : "0"}
-            icon={Send}
-            trend={pendingProposals.length > 0
-              ? `${pendingProposals.length} devis · plus ancien ${oldestDevisAge}j`
-              : "Aucun devis en cours"}
-          />
-
-          {/* 3. Encaissé ce mois */}
-          <KpiCard
-            label="Encaissé ce mois"
-            value={fmt(caThisMonth)}
-            icon={Euro}
-            trend={facturéThisMonth > caThisMonth
-              ? `Facturé : ${fmt(facturéThisMonth)}`
-              : facturéThisMonth > 0 ? "Tout encaissé ✓" : "Aucune facture ce mois"}
-          />
-
-          {/* 4. Signés à facturer */}
-          <KpiCard
-            label="Signés à facturer"
-            value={toInvoice.length > 0 ? fmt(toInvoiceAmount) : "0€"}
-            icon={Clock}
-            trend={toInvoice.length > 0
-              ? `${toInvoice.length} devis en attente`
-              : "Tout est facturé ✓"}
-          />
-        </div>
+      {/* ── Indicateurs ── */}
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-5">
+        <KpiCard
+          label="Encours à encaisser"
+          value={fmt(caToCollect)}
+          point={overdueAmount > 0 ? "alerte" : "neutre"}
+          trend={overdueAmount > 0 ? `dont ${fmt(overdueAmount)} en retard` : sentInvoices.length > 0 ? `${sentInvoices.length} facture${sentInvoices.length > 1 ? "s" : ""} envoyée${sentInvoices.length > 1 ? "s" : ""}` : "Aucune en attente"}
+        />
+        <KpiCard
+          label="Devis en attente"
+          value={fmt(pendingProposals.length > 0 ? totalDevisEnAttente : 0)}
+          point="info"
+          trend={pendingProposals.length > 0
+            ? `${pendingProposals.length} devis, plus ancien ${oldestDevisAge} j`
+            : "Aucun devis en cours"}
+        />
+        <KpiCard
+          label="Encaissé ce mois"
+          value={fmt(caThisMonth)}
+          point="bon"
+          trend={facturéThisMonth > caThisMonth
+            ? `Facturé : ${fmt(facturéThisMonth)}`
+            : new Date().toLocaleDateString("fr-FR", { month: "long" })}
+        />
+        <KpiCard
+          label="Signés à facturer"
+          value={fmt(toInvoice.length > 0 ? toInvoiceAmount : 0)}
+          point="neutre"
+          trend={toInvoice.length > 0
+            ? `${toInvoice.length} devis prêt${toInvoice.length > 1 ? "s" : ""}`
+            : "Tout est facturé"}
+        />
       </div>
 
       {/* ── CA mois par mois et prochaine echeance ── */}
       {!isMember && (
-        <div className="grid gap-5 lg:grid-cols-3">
+        <div className="grid gap-5 lg:grid-cols-3 items-stretch">
           <div className="lg:col-span-2 min-w-0">
             <CaMensuelBarres mensuelHt={caMensuelHt} moisCourant={now.getMonth()} annee={anneeCourante} />
           </div>
@@ -366,6 +322,8 @@ export default async function DashboardPage() {
             trimestre={currentQuarter + 1}
             caTrimestreHt={caTrimestreHt}
             annee={anneeCourante}
+            cotisations={echeancesUrssaf ? cotisationsEstimees : null}
+            acre={!!compteUrssaf?.acre}
           />
         </div>
       )}
@@ -375,10 +333,10 @@ export default async function DashboardPage() {
 
         {/* Devis récents */}
         <div className="carte overflow-hidden">
-          <div className="px-5 pt-4 pb-3 flex items-end justify-between gap-3">
+          <div className="px-6 pt-5 pb-3 flex items-end justify-between gap-3">
               <div>
-                <h2 className="text-[17px] font-semibold text-ink">Devis récents</h2>
-                <p className="text-[13px] text-gray-400">Les cinq derniers</p>
+                <h2 className="text-[20px] font-semibold text-ink">Devis récents</h2>
+                <p className="text-[14px] text-gray-400">Les quatre derniers</p>
               </div>
             <Link href="/proposals" className="text-xs text-gray-500 hover:text-gray-300 transition-colors flex items-center gap-1">
               Voir tout <ArrowRight size={11} />
@@ -410,7 +368,7 @@ export default async function DashboardPage() {
                   <Link
                     key={proposal.id}
                     href={`/proposals/${proposal.id}`}
-                    className="flex items-center justify-between px-5 py-3.5 hover:bg-ds-elevated/60 transition-colors group"
+                    className="grid grid-cols-[minmax(0,1fr)_auto_auto] sm:grid-cols-[minmax(0,1fr)_minmax(110px,30%)_100px] items-center gap-3 mx-6 py-4 hover:opacity-80 transition-opacity group"
                   >
                     <div className="flex-1 min-w-0">
                       <div className="font-semibold text-ink text-sm truncate">
@@ -424,9 +382,9 @@ export default async function DashboardPage() {
                         </span>
                       </div>
                     </div>
-                    <div className="flex items-center gap-3 ml-3 shrink-0">
-                      <span className={`text-xs font-semibold px-2.5 py-0.5 rounded-full ${s.color}`}>{s.label}</span>
-                      <span className="font-display font-semibold text-ink text-sm tabular-nums w-20 text-right">{fmt(proposal.total_ttc)}</span>
+                    <div className="contents">
+                      <span className={`justify-self-start text-[13px] font-semibold px-3 py-1 rounded-full ${s.color}`}>{s.label}</span>
+                      <span className="font-display font-semibold text-ink text-[15px] tabular-nums text-right justify-self-end">{fmt(proposal.total_ttc)}</span>
                     </div>
                   </Link>
                 );
@@ -438,10 +396,10 @@ export default async function DashboardPage() {
         {/* Factures récentes (Solo+) */}
         {isPaid && (
           <div className="carte overflow-hidden lg:order-first">
-            <div className="px-5 pt-4 pb-3 flex items-end justify-between gap-3">
+            <div className="px-6 pt-5 pb-3 flex items-end justify-between gap-3">
               <div>
-                <h2 className="text-[17px] font-semibold text-ink">Factures récentes</h2>
-                <p className="text-[13px] text-gray-400">Les cinq dernières</p>
+                <h2 className="text-[20px] font-semibold text-ink">Factures récentes</h2>
+                <p className="text-[14px] text-gray-400">Les quatre dernières</p>
               </div>
               <Link href="/invoices" className="text-xs text-gray-500 hover:text-gray-300 transition-colors flex items-center gap-1">
                 Voir tout <ArrowRight size={11} />
@@ -473,7 +431,7 @@ export default async function DashboardPage() {
                     <Link
                       key={invoice.id}
                       href={`/invoices/${invoice.id}`}
-                      className="flex items-center justify-between px-5 py-3.5 hover:bg-ds-elevated/60 transition-colors group"
+                      className="grid grid-cols-[minmax(0,1fr)_auto_auto] sm:grid-cols-[minmax(0,1fr)_minmax(110px,30%)_100px] items-center gap-3 mx-6 py-4 hover:opacity-80 transition-opacity group"
                     >
                       <div className="flex-1 min-w-0">
                         <div className="font-semibold text-ink text-sm truncate">
@@ -488,11 +446,11 @@ export default async function DashboardPage() {
                             : `créée le ${new Date(invoice.created_at).toLocaleDateString("fr-FR")}`}
                         </div>
                       </div>
-                      <div className="flex items-center gap-3 ml-3 shrink-0">
-                        <span className={`text-xs font-semibold px-2.5 py-0.5 rounded-full ${isOverdue ? "bg-amber-500/10 text-amber-400" : s.color}`}>
+                      <div className="contents">
+                        <span className={`justify-self-start text-[13px] font-semibold px-3 py-1 rounded-full ${isOverdue ? "bg-amber-500/10 text-amber-400" : s.color}`}>
                           {isOverdue ? "En retard" : s.label}
                         </span>
-                        <span className="font-display font-semibold text-ink text-sm tabular-nums w-20 text-right">{fmt(invoice.total_ttc)}</span>
+                        <span className="font-display font-semibold text-ink text-[15px] tabular-nums text-right justify-self-end">{fmt(invoice.total_ttc)}</span>
                       </div>
                     </Link>
                   );

@@ -127,7 +127,7 @@ export default function CataloguePage() {
   // référence. Les formulaires (Paramètres, Paiements, Abonnement) restent
   // volontairement plus étroits : une colonne courte se saisit mieux.
   return (
-    <div className="max-w-7xl mx-auto">
+    <div className="w-full">
       <GuidedTourBanner pageKey="catalogue" />
 
       <div className="mb-8">

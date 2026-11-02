@@ -589,6 +589,28 @@ export const TAUX_COTISATIONS_BNC = 0.256;
 export const TAUX_COTISATIONS_BNC_CIPAV = 0.232;
 
 /**
+ * Vente de marchandises (BIC) et prestations de services commerciales ou
+ * artisanales (BIC), taux 2026 verifies le 02/11/2026 aupres de l'Urssaf.
+ */
+export const TAUX_COTISATIONS_VENTE = 0.123;
+export const TAUX_COTISATIONS_BIC = 0.212;
+
+/**
+ * Taux de cotisations d'une categorie de chiffre d'affaires Urssaf (celle de
+ * la declaration en tierce, `urssaf_tdae_comptes.categorie_ca`). null quand la
+ * categorie est inconnue ou non couverte (location meublee) : on n'estime pas.
+ */
+export function tauxCotisationCategorie(categorie: string | null | undefined): number | null {
+  switch (categorie) {
+    case "caVente": return TAUX_COTISATIONS_VENTE;
+    case "caPrestationService": return TAUX_COTISATIONS_BIC;
+    case "caPrestationAutres": return TAUX_COTISATIONS_BNC;
+    case "recettesCipav": return TAUX_COTISATIONS_BNC_CIPAV;
+    default: return null;
+  }
+}
+
+/**
  * Calcul du simulateur de TJM, en micro-BNC au régime général.
  */
 export function simulateTjm(params: {

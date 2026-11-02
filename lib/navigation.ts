@@ -15,6 +15,7 @@ import {
   Inbox,
   Landmark,
   Globe,
+  Bell,
   type LucideIcon,
 } from "lucide-react";
 
@@ -68,6 +69,9 @@ export const estSection = (item: NavItem): item is NavSection => "section" in it
 
 export const NAVIGATION: NavItem[] = [
   { href: "/dashboard", label: "Accueil", icon: LayoutDashboard },
+  // Relances de devis et de factures, et historique des evenements : sortis
+  // du tableau de bord, qui ne garde en tete que les messages du cabinet.
+  { href: "/notifications", label: "Notifications", icon: Bell },
 
   // Hors section, juste sous l'accueil : c'est l'action que l'utilisateur vient
   // faire le plus souvent, pas une rubrique à parcourir.

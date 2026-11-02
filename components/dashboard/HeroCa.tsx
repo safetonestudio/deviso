@@ -28,17 +28,16 @@ export function HeroCa({ annee, caAnneeHt, caTrimestreHt, trimestre, caMoisTtc, 
   const remplissage = etat === "depasse" ? "bg-red-600" : etat === "proche" ? "bg-amber-500" : "bg-indigo-600";
 
   return (
-    <section className="carte p-6 sm:p-7 grid gap-7 lg:grid-cols-[1.15fr_1fr] items-center">
+    <section className="carte p-7 sm:p-9 grid gap-8 lg:grid-cols-[1.15fr_1fr] items-center">
       <div className="min-w-0">
         <div className="text-[13px] font-semibold text-gray-400">Chiffre d&apos;affaires encaissé, {annee}</div>
-        <div className="font-display font-bold text-ink leading-none tracking-[-0.03em] text-[44px] sm:text-[60px] mt-2 mb-3 break-words">
+        <div className="font-display font-bold text-ink leading-none tracking-[-0.03em] text-[52px] sm:text-[76px] mt-3 mb-4 break-words">
           {nombre.format(Math.round(caAnneeHt))}
           <span className="text-[0.5em] text-gray-400 font-semibold ml-1.5">€</span>
         </div>
         <p className="text-sm text-gray-400">
-          Hors taxes, à l&apos;encaissement, comme ton livre des recettes.{" "}
-          <span className="text-ink font-semibold">{euros(caTrimestreHt)}</span> encaissés au {trimestre}
-          <sup>e</sup> trimestre.
+          Base encaissement, comme ton livre des recettes.{" "}
+          <span className="text-ink font-semibold">{euros(caTrimestreHt)}</span> encaissés ce trimestre.
         </p>
       </div>
 

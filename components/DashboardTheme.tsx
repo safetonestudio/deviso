@@ -69,6 +69,24 @@ export function DashboardThemeProvider({
   );
 }
 
+/** Bouton de theme en carre, icone seule, pour l'en-tete des pages. */
+export function ThemeToggleIcone() {
+  const { theme, toggle } = useContext(ThemeContext);
+  const clair = theme === "light";
+  const libelle = clair ? "Passer en mode sombre" : "Passer en mode clair";
+  return (
+    <button
+      type="button"
+      onClick={toggle}
+      aria-label={libelle}
+      title={libelle}
+      className="w-10 h-10 grid place-items-center rounded-xl border border-ds-border text-gray-400 hover:text-ink hover:border-gray-500 transition-colors"
+    >
+      {clair ? <Moon size={17} /> : <Sun size={17} />}
+    </button>
+  );
+}
+
 /** Bouton toggle mode clair/sombre, à placer dans la sidebar footer. */
 export function ThemeToggle({ compact = false }: { compact?: boolean }) {
   const { theme, toggle } = useContext(ThemeContext);

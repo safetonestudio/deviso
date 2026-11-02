@@ -17,7 +17,7 @@ interface Notification {
 interface Props {
   /** "sidebar" → dropdown à droite du bouton, aligné en bas
    *  "topbar"  → dropdown en dessous, aligné à droite */
-  placement?: "sidebar" | "topbar";
+  placement?: "sidebar" | "topbar" | "entete";
 }
 
 function typeIcon(type: string): LucideIcon {
@@ -118,12 +118,16 @@ export function NotificationBell({ placement = "sidebar" }: Props) {
     <div ref={ref} className="relative">
       <button
         onClick={() => setOpen((v) => !v)}
-        className="relative p-1.5 rounded-lg text-gray-500 hover:text-ink hover:bg-ds-elevated transition-colors"
+        className={
+          placement === "entete"
+            ? "relative w-10 h-10 grid place-items-center rounded-xl border border-ds-border text-gray-400 hover:text-ink hover:border-gray-500 transition-colors"
+            : "relative p-1.5 rounded-lg text-gray-500 hover:text-ink hover:bg-ds-elevated transition-colors"
+        }
         aria-label="Notifications"
       >
-        <Bell size={16} />
+        <Bell size={placement === "entete" ? 17 : 16} />
         {unread > 0 && (
-          <span className="absolute -top-0.5 -right-0.5 min-w-[16px] h-4 bg-red-600 text-ink text-[9px] font-bold rounded-full flex items-center justify-center px-0.5">
+          <span className={`absolute ${placement === "entete" ? "-top-1.5 -right-1.5 min-w-[19px] h-[19px] text-[11px] border-2 border-[color:var(--ds-bg)]" : "-top-0.5 -right-0.5 min-w-[16px] h-4 text-[9px]"} bg-amber-500 text-ink font-bold rounded-full flex items-center justify-center px-1`}>
             {unread > 9 ? "9+" : unread}
           </span>
         )}
@@ -134,7 +138,7 @@ export function NotificationBell({ placement = "sidebar" }: Props) {
           className={`absolute ${dropdownPos} w-[420px] carte shadow-2xl z-50 overflow-hidden`}
         >
           <div className="flex items-center justify-between px-5 py-4 border-b border-ds-border">
-            <span className="text-base font-semibold text-ink">Notifications</span>
+            <a href="/notifications" className="text-base font-semibold text-ink hover:text-indigo-400 transition-colors">Notifications</a>
             {unread > 0 && (
               <button
                 onClick={() => markRead()}

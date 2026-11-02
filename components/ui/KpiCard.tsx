@@ -3,8 +3,11 @@ import { LucideIcon } from "lucide-react";
 interface KpiCardProps {
   label: string;
   value: string | number;
-  icon: LucideIcon;
+  /** Conserve pour compatibilite : la carte ne l'affiche plus (maquette du 02/11/2026). */
+  icon?: LucideIcon;
   trend?: string;
+  /** Couleur du point devant `trend` : alerte, information, bonne nouvelle ou neutre. */
+  point?: "alerte" | "info" | "bon" | "neutre";
   delta?: { value: string; positive: boolean };
   /** Occupation de colonnes dans la grille appelante (ex. `col-span-2`). */
   className?: string;
@@ -31,30 +34,44 @@ interface KpiCardProps {
  * Ce qui doit alerter (un retard, un impayé) le fait par le texte de `trend`
  * ou par `delta`, pas par une nuance de bordure que personne ne décode.
  */
-export function KpiCard({ label, value, icon: Icon, trend, delta, className = "" }: KpiCardProps) {
+const POINT = {
+  alerte: "bg-amber-500",
+  info: "bg-sky-400",
+  bon: "bg-emerald-500",
+  neutre: "bg-gray-400",
+} as const;
+
+/** Separe le symbole euro final pour l'afficher plus petit que le montant. */
+function montant(value: string | number) {
+  const v = String(value);
+  const m = v.match(/^(.*?)\s*€$/);
+  return m ? { nombre: m[1], euro: true } : { nombre: v, euro: false };
+}
+
+export function KpiCard({ label, value, trend, point = "neutre", delta, className = "" }: KpiCardProps) {
+  const { nombre, euro } = montant(value);
   return (
-    <div
-      className={`bg-ds-surface border border-ds-border shadow-ds-card rounded-xl p-4 sm:p-5 flex flex-col gap-3 ${className}`}
-    >
-      <div className="w-8 h-8 flex items-center justify-center bg-indigo-500/10 rounded-lg text-indigo-400 shrink-0">
-        <Icon size={18} />
+    <div className={`carte p-5 flex flex-col gap-2.5 min-w-0 ${className}`}>
+      <div className="text-[14px] font-medium text-gray-400">{label}</div>
+      <div className="font-display text-[28px] leading-none font-bold text-ink tabular-nums tracking-tight break-words">
+        {nombre}
+        {euro && <span className="text-[0.55em] text-gray-400 font-semibold ml-0.5">€</span>}
       </div>
-      <div>
-        <div className="text-[13px] font-medium text-gray-400 mb-1">{label}</div>
-        <div className="font-display text-2xl sm:text-[28px] leading-tight font-bold text-ink tabular-nums tracking-tight break-words">
-          {value}
+      {trend && (
+        <div className="flex items-center gap-2 text-[13px] text-gray-400 min-w-0">
+          <span className={`w-1.5 h-1.5 rounded-full shrink-0 ${POINT[point]}`} />
+          <span className="truncate">{trend}</span>
         </div>
-        {trend && <div className="text-[12.5px] text-gray-400 mt-2">{trend}</div>}
-        {delta && (
-          <div
-            className={`inline-flex items-center gap-0.5 text-xs mt-2 font-medium px-1.5 py-0.5 rounded-md ${
-              delta.positive ? "bg-emerald-500/10 text-emerald-400" : "bg-red-500/10 text-red-400"
-            }`}
-          >
-            {delta.positive ? "↑" : "↓"} {delta.value}
-          </div>
-        )}
-      </div>
+      )}
+      {delta && (
+        <div
+          className={`inline-flex self-start items-center gap-0.5 text-xs font-medium px-1.5 py-0.5 rounded-md ${
+            delta.positive ? "bg-emerald-500/10 text-emerald-400" : "bg-red-500/10 text-red-400"
+          }`}
+        >
+          {delta.positive ? "↑" : "↓"} {delta.value}
+        </div>
+      )}
     </div>
   );
 }

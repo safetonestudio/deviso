@@ -13,7 +13,8 @@
  *
  * Deux cadres, et deux seulement :
  *
- *   · pages de **liste**       → `max-w-7xl mx-auto`  (élargies le 27/09/2026)
+ *   · pages de **liste**       → `w-full`  (pleine largeur depuis le 02/11/2026 :
+ *     les marges latérales ne servaient à rien, retour de Selim sur la maquette)
  *   · pages de **formulaire**  → `max-w-2xl mx-auto`
  *
  * La distinction n'est pas cosmétique. Une liste gagne à occuper la largeur
@@ -28,12 +29,13 @@
 
 import { readFileSync } from "node:fs";
 
-const LISTE = "max-w-7xl mx-auto";
+const LISTE = "w-full";
 const FORMULAIRE = "max-w-2xl mx-auto";
 
 /** Chaque page et le cadre qu'elle doit porter. */
 const PAGES = {
   "app/(dashboard)/dashboard/page.tsx": LISTE,
+  "app/(dashboard)/notifications/page.tsx": LISTE,
   "app/(dashboard)/proposals/page.tsx": LISTE,
   "app/(dashboard)/invoices/page.tsx": LISTE,
   "app/(dashboard)/factures-recues/page.tsx": LISTE,

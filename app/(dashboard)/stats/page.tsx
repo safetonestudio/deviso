@@ -73,7 +73,7 @@ export default function StatsPage() {
   const maxCa = Math.max(...stats.monthly_ca.map((m) => m.ca), 1);
 
   return (
-    <div className="space-y-8 max-w-7xl mx-auto">
+    <div className="space-y-8 w-full">
       <GuidedTourBanner pageKey="stats" />
       <div>
         <h1 className="text-3xl font-semibold text-ink tracking-tight">Activité</h1>

@@ -248,7 +248,7 @@ export default async function DashboardLayout({ children }: { children: React.Re
         <main className="flex-1 lg:ml-64 min-w-0">
           {/* Barre du haut (ordinateur) : date du jour, notifications, theme.
               Sur mobile, MobileNav porte deja sa propre barre avec la cloche. */}
-          <div className="hidden lg:flex sticky top-0 z-30 h-14 items-center justify-between gap-4 px-8 bg-ds-bg/85 backdrop-blur border-b border-ds-border">
+          <div className="barre-haut hidden lg:flex sticky top-0 z-30 h-14 items-center justify-between gap-4 px-6 bg-ds-bg/85 backdrop-blur border-b border-ds-border">
             <span className="text-sm text-gray-400 first-letter:uppercase">
               {new Date().toLocaleDateString("fr-FR", { weekday: "long", day: "numeric", month: "long", timeZone: "Europe/Paris" })}
             </span>
@@ -257,7 +257,7 @@ export default async function DashboardLayout({ children }: { children: React.Re
               <ThemeToggle compact />
             </div>
           </div>
-          <div className="p-4 lg:p-8 pt-[4.5rem] lg:pt-7">
+          <div className="p-4 lg:p-6 pt-[4.5rem] lg:pt-6">
           <SessionGuard />
           {synchroniserPdp && <SuperPdpSync />}
           {/* Bandeau de démo : un seul, en haut du contenu, sur toutes les

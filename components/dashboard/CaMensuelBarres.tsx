@@ -16,7 +16,7 @@ export function CaMensuelBarres({ mensuelHt, moisCourant, annee }: { mensuelHt: 
   const meilleur = mois.indexOf(max);
 
   return (
-    <section className="carte p-5 min-w-0">
+    <section className="carte p-6 min-w-0 h-full">
       <h2 className="text-[17px] font-semibold text-ink">Chiffre d&apos;affaires encaissé</h2>
       <p className="text-[13px] text-gray-400 mb-4">Mois par mois, {annee}, hors taxes</p>
 
@@ -26,17 +26,17 @@ export function CaMensuelBarres({ mensuelHt, moisCourant, annee }: { mensuelHt: 
         </p>
       ) : (
         <>
-          <div className="flex items-end gap-1.5 sm:gap-2 h-36" role="img" aria-label={`Chiffre d'affaires encaissé par mois en ${annee}`}>
+          <div className="flex items-end gap-2 sm:gap-4 h-48" role="img" aria-label={`Chiffre d'affaires encaissé par mois en ${annee}`}>
             {mois.map((v, i) => {
               const h = Math.max(2, Math.round((v / max) * 100));
               const courant = i === moisCourant;
               return (
                 <div key={i} className="flex-1 h-full flex flex-col justify-end items-center gap-1.5 min-w-0" title={`${MOIS[i]} : ${euros(v)}`}>
                   <div
-                    className={`w-full max-w-[28px] rounded-t-md rounded-b-sm ${courant ? "bg-indigo-600" : "bg-indigo-500/15"}`}
+                    className={`w-full max-w-[40px] rounded-md ${courant ? "bg-indigo-500" : "bg-indigo-500/20"}`}
                     style={{ height: `${h}%` }}
                   />
-                  <span className={`text-[11px] ${courant ? "text-ink font-semibold" : "text-gray-400"}`}>{INITIALES[i]}</span>
+                  <span className={`text-[12px] ${courant ? "text-ink font-semibold" : "text-gray-400"}`}>{INITIALES[i]}</span>
                 </div>
               );
             })}
