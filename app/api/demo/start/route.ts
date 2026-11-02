@@ -58,6 +58,7 @@ async function seedDemoData(userId: string): Promise<string[]> {
       // que montre la maquette du tableau de bord (jauge du seuil, echeance
       // URSSAF, cotisations). Aucun document ne porte donc de TVA.
       tva_regime: "franchise",
+      statut_juridique: "micro",
       proposal_color: "#6366f1",
       payment_method: "bank",
       bank_iban: "FR76 3000 6000 0112 3456 7890 189",

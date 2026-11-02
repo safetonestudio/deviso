@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import type { TvaRegime } from "@/types";
+import { STATUTS, type StatutJuridique } from "@/lib/statut-entreprise";
 
 const TVA_REGIMES: { value: TvaRegime; label: string; description: string }[] = [
   { value: "franchise",     label: "Franchise, TVA non applicable (art. 293 B CGI)", description: "Micro-entrepreneur ou CA sous le seuil" },
@@ -21,6 +22,7 @@ export default function OnboardingPage() {
     company_name: "",
     siret: "",
     address: "",
+    statut_juridique: "micro" as StatutJuridique,
     tva_regime: "franchise" as TvaRegime,
   });
 
@@ -96,6 +98,35 @@ export default function OnboardingPage() {
               placeholder="12 rue de la Paix, 75001 Paris"
               className="w-full bg-ds-bg border border-ds-border rounded-xl px-4 py-2.5 text-sm text-ink placeholder:text-gray-600 focus:outline-none focus:ring-1 focus:ring-indigo-500/30 focus:border-indigo-500"
             />
+          </div>
+        </div>
+
+        <div>
+          <label className="block text-xs font-semibold text-gray-400 mb-2">Statut de ton entreprise</label>
+          <div className="space-y-2">
+            {STATUTS.map((st) => (
+              <label
+                key={st.value}
+                className={`flex items-start gap-3 p-3 rounded-xl border cursor-pointer transition-colors ${
+                  form.statut_juridique === st.value
+                    ? "border-indigo-500 bg-indigo-500/10"
+                    : "border-ds-border hover:border-gray-500"
+                }`}
+              >
+                <input
+                  type="radio"
+                  name="statut"
+                  value={st.value}
+                  checked={form.statut_juridique === st.value}
+                  onChange={() => set("statut_juridique", st.value)}
+                  className="mt-0.5 accent-indigo-500"
+                />
+                <div>
+                  <div className="text-sm font-medium text-ink">{st.label}</div>
+                  <div className="text-xs text-gray-500">{st.description}</div>
+                </div>
+              </label>
+            ))}
           </div>
         </div>
 

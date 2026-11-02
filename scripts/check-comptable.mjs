@@ -390,6 +390,17 @@ console.log("");
     /echeancesUrssaf \? URSSAF_DEADLINES\[/.test(src) && /\{echeanceDepot && <EcheanceCarte/.test(src),
     "« 30 avril », « 31 juillet » sont les dates du micro-entrepreneur : les montrer à une société serait une information fausse imprimée par l'outil",
   );
+  exige(
+    "vue du tableau de bord pilotée par le statut de l'entreprise, jamais devinée du régime de TVA",
+    /vueTableauDeBord\(/.test(src) && /echeancesUrssaf = vue\.echeanceUrssaf/.test(src) && !/tva_regime === "franchise"/.test(src),
+    "un micro assujetti à la TVA déclare toujours son CA à l'URSSAF, une société en franchise ne le fait jamais : la franchise ne dit pas le statut",
+  );
+  const statut = lire("lib/statut-entreprise.ts");
+  exige(
+    "statut de l'entreprise, l'échéance URSSAF réservée au micro",
+    /echeanceUrssaf: statut === "micro"/.test(statut) && /<EcheanceTvaCarte/.test(src) && /<StatutAPreciser/.test(src),
+    "sans statut, le tableau de bord montrerait les dates URSSAF à des entreprises qui n'en ont pas",
+  );
 }
 
 console.log("");

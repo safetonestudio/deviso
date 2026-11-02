@@ -15,6 +15,11 @@ import { jaugeFranchise } from "@/lib/seuils-micro";
 import { HeroCa } from "@/components/dashboard/HeroCa";
 import { CaMensuelBarres } from "@/components/dashboard/CaMensuelBarres";
 import { EcheanceCarte } from "@/components/dashboard/EcheanceCarte";
+import { EcheanceTvaCarte } from "@/components/dashboard/EcheanceTvaCarte";
+import { StatutAPreciser } from "@/components/dashboard/StatutAPreciser";
+import { vueTableauDeBord, prochaineDeclarationTva } from "@/lib/statut-entreprise";
+import { echeanceDossier } from "@/lib/cabinet-tva-calendrier";
+import type { FactureCabinet } from "@/lib/cabinet-dossiers";
 import { Receipt, FileText, ArrowRight, Plus } from "lucide-react";
 
 const PROPOSAL_STATUS: Record<string, { label: string; color: string }> = {
@@ -67,7 +72,7 @@ export default async function DashboardPage() {
 
   let invoicesQuery = supabase
     .from("invoices")
-    .select("id, invoice_number, client_name, client_email, status, total_ht, total_ttc, due_date, issue_date, paid_at, created_at, proposal_id, invoice_type, operation_category")
+    .select("id, invoice_number, client_name, client_email, status, total_ht, total_ttc, due_date, issue_date, paid_at, created_at, proposal_id, invoice_type, operation_category, user_id, tva_rate, items, type_code")
     .eq("user_id", workspaceId)
     .order("created_at", { ascending: false });
 
@@ -80,7 +85,7 @@ export default async function DashboardPage() {
     proposalsQuery,
     invoicesQuery,
     supabase.from("profiles").select("plan").eq("id", user.id).single(),
-    supabase.from("profiles").select("tva_regime").eq("id", workspaceId).maybeSingle(),
+    supabase.from("profiles").select("tva_regime, tva_periodicite, statut_juridique").eq("id", workspaceId).maybeSingle(),
     supabase.from("urssaf_tdae_comptes").select("categorie_ca, acre").eq("user_id", workspaceId).maybeSingle(),
   ]);
 
@@ -141,12 +146,12 @@ export default async function DashboardPage() {
   // Calcul partagé avec le livre des recettes (lib/recettes.ts).
   const caMensuelHt = calculerCaMensuelHt(inv as unknown as FactureRecette[], anneeCourante);
 
-  // Les échéances URSSAF affichées par le widget sont celles du
-  // micro-entrepreneur. On ne les montre que lorsqu'on peut l'affirmer, la
-  // franchise en base est le seul indice fiable dont on dispose, faute de
-  // champ « forme juridique ». Le récapitulatif, lui, s'affiche pour tous :
-  // savoir ce qu'on a encaissé par trimestre n'a pas de régime.
-  const echeancesUrssaf = profilEspace?.tva_regime === "franchise";
+  // Vue adaptee a l'entreprise (lib/statut-entreprise.ts) : echeance URSSAF
+  // pour le micro-entrepreneur seulement, jauge de franchise pour toute
+  // entreprise en franchise, echeance de TVA pour les assujettis. Rien n'est
+  // deduit du regime de TVA : un micro peut etre assujetti, une societe en franchise.
+  const vue = vueTableauDeBord(profilEspace?.statut_juridique, profilEspace?.tva_regime);
+  const echeancesUrssaf = vue.echeanceUrssaf;
 
   // Total HT du trimestre en cours (carte d'echeance et bloc heros) : total HT
   // du trimestre en cours, et l'échéance de dépôt quand elle s'applique.
@@ -164,7 +169,7 @@ export default async function DashboardPage() {
   // ventile par categorie : le seuil des prestations n'est pas celui des ventes.
   const totauxAnnee = totauxParCategorie(lignesRecettes(inv as unknown as FactureRecette[], anneeCourante));
   const caAnneeHt = Math.round((totauxAnnee.biens.ht + totauxAnnee.services.ht) * 100) / 100;
-  const jauge = echeancesUrssaf
+  const jauge = vue.jaugeFranchise
     ? jaugeFranchise({ biens: totauxAnnee.biens.ht, services: totauxAnnee.services.ht })
     : null;
   // Cotisations estimees du trimestre : CA x taux 2026 de la categorie Urssaf
@@ -179,13 +184,28 @@ export default async function DashboardPage() {
 
   // Assujettis a la TVA : la TVA percue sur les encaissements du trimestre,
   // a reverser lors de la declaration. Meme source (lignes du livre).
-  const tvaTrimestre = echeancesUrssaf
+  const tvaTrimestre = vue.jaugeFranchise
     ? null
     : Math.round(
         lignesRecettes(inv as unknown as FactureRecette[], anneeCourante)
           .filter((l) => Math.floor((Number(l.date.slice(5, 7)) - 1) / 3) === currentQuarter)
           .reduce((t, l) => t + (l.ttc - l.ht), 0) * 100
       ) / 100;
+  // Prochaine declaration de TVA des assujettis : memes montants que le
+  // calendrier TVA du cabinet, pour que l'entrepreneur et son comptable lisent
+  // le meme chiffre.
+  const periodiciteTva = profilEspace?.tva_periodicite ?? null;
+  const echeanceTva = !vue.echeanceTva
+    ? null
+    : periodiciteTva
+      ? (() => {
+          const prochaine = prochaineDeclarationTva(periodiciteTva, now);
+          const p = echeanceDossier(periodiciteTva, inv as unknown as FactureCabinet[], now)[prochaine.periode];
+          return { formulaire: periodiciteTva === "simplified" ? "CA12" as const : "CA3" as const, periode: p.libelle, depot: prochaine.depot, baseHt: p.base_ht, tva: p.tva, enCours: prochaine.periode === "enCours" };
+        })()
+      : { formulaire: null, periode: "", depot: "", baseHt: 0, tva: 0, enCours: false };
+  const colonneEcheances = !!echeanceDepot || !!echeanceTva;
+
   // Encaissé ce mois : date d'ENCAISSEMENT (paid_at), pas date de création de
   // la facture comme jusqu'au 24/10/2026. Même source que le livre des recettes.
   const caThisMonth = encaisseTtcDuMois(
@@ -246,6 +266,9 @@ export default async function DashboardPage() {
       </div>
 
       <SignalementsClient workspaceId={workspaceId} />
+
+      {/* Statut non renseigne : on le demande plutot que de le deviner. */}
+      {!isMember && vue.statutInconnu && <StatutAPreciser />}
 
       {/* ── Upgrade banner (free, owners only) ── */}
       {!isPaid && !isMember && (
@@ -313,19 +336,24 @@ export default async function DashboardPage() {
       {/* ── CA mois par mois et prochaine echeance ── */}
       {!isMember && (
         <div className="grid gap-5 lg:grid-cols-3 items-stretch">
-          {/* Sans echeance URSSAF applicable (hors micro en franchise), pas de
-              carte de remplacement : le graphique prend toute la largeur. */}
-          <div className={`${echeanceDepot ? "lg:col-span-2" : "lg:col-span-3"} min-w-0`}>
+          {/* Sans echeance applicable (ni URSSAF ni TVA), pas de carte de
+              remplacement : le graphique prend toute la largeur. */}
+          <div className={`${colonneEcheances ? "lg:col-span-2" : "lg:col-span-3"} min-w-0`}>
             <CaMensuelBarres mensuelHt={caMensuelHt} moisCourant={now.getMonth()} annee={anneeCourante} />
           </div>
-          {echeanceDepot && <EcheanceCarte
-            echeance={echeanceDepot}
-            trimestre={currentQuarter + 1}
-            caTrimestreHt={caTrimestreHt}
-            annee={anneeCourante}
-            cotisations={cotisationsEstimees}
-            acre={!!compteUrssaf?.acre}
-          />}
+          {colonneEcheances && (
+            <div className="flex flex-col gap-5 min-w-0">
+              {echeanceDepot && <EcheanceCarte
+                echeance={echeanceDepot}
+                trimestre={currentQuarter + 1}
+                caTrimestreHt={caTrimestreHt}
+                annee={anneeCourante}
+                cotisations={cotisationsEstimees}
+                acre={!!compteUrssaf?.acre}
+              />}
+              {echeanceTva && <EcheanceTvaCarte {...echeanceTva} />}
+            </div>
+          )}
         </div>
       )}
 

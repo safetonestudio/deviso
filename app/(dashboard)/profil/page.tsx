@@ -4,6 +4,7 @@ import { useEffect, useRef, useState, useCallback } from "react";
 import Image from "next/image";
 import { Building2 } from "lucide-react";
 import type { Profile, TvaRegime } from "@/types";
+import { STATUTS } from "@/lib/statut-entreprise";
 import { UpgradeBanner } from "@/components/UpgradeBanner";
 import { GuidedTourBanner } from "@/components/GuidedTourBanner";
 import { SuperPdpCard } from "@/components/SuperPdpCard";
@@ -137,6 +138,7 @@ export default function ProfilPage() {
       phone: profile.phone ?? null,
       tva_number: profile.tva_number ?? null,
       tva_regime: profile.tva_regime ?? null,
+      statut_juridique: profile.statut_juridique ?? null,
       // Transmise à la Plateforme Agréée par l'API, où elle commande le
       // calendrier d'e-reporting. L'oublier ici la perdrait en silence.
       tva_periodicite: profile.tva_periodicite ?? null,
@@ -528,6 +530,28 @@ Les présentes CGV sont soumises au droit français. Tout litige relève de la c
               <label className="block text-xs font-medium text-gray-400 mb-1">Ville</label>
               <input aria-label="Ville" value={profile.address_city || ""} onChange={(e) => set("address_city", e.target.value)} placeholder="Gradignan" className={inputCls} />
             </div>
+          </div>
+        </section>
+
+        {/* Statut de l'entreprise */}
+        <section className="carte p-5 space-y-4">
+          <h2 className="font-semibold text-ink">Statut de l&apos;entreprise</h2>
+          <p className="text-xs text-gray-500">Il adapte ton tableau de bord : échéances URSSAF et cotisations pour un micro-entrepreneur, échéances de TVA si tu y es assujetti.</p>
+          <div className="space-y-2">
+            {STATUTS.map((st) => (
+              <label key={st.value}
+                className={`flex items-start gap-3 p-3 rounded-xl border cursor-pointer transition-colors ${
+                  profile.statut_juridique === st.value ? "border-indigo-500 bg-indigo-500/10" : "border-ds-border hover:border-zinc-600"
+                }`}>
+                <input type="radio" name="statut_juridique" value={st.value}
+                  checked={profile.statut_juridique === st.value}
+                  onChange={() => set("statut_juridique", st.value)} className="mt-0.5 accent-indigo-600" />
+                <div>
+                  <div className="text-sm font-medium text-ink">{st.label}</div>
+                  <div className="text-xs text-gray-500 mt-0.5">{st.description}</div>
+                </div>
+              </label>
+            ))}
           </div>
         </section>
 

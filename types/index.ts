@@ -78,6 +78,8 @@ export interface Profile {
   logo_url: string | null;
   tva_number: string | null;
   tva_regime: TvaRegime | null;
+  /** micro | ei_reel | societe ; null = non precise (voir lib/statut-entreprise.ts). */
+  statut_juridique?: "micro" | "ei_reel" | "societe" | null;
   /**
    * Périodicité de déclaration de TVA, transmise à la Plateforme Agréée où elle
    * commande le calendrier d'e-reporting. Sans elle, les factures adressées à

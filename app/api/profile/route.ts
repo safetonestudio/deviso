@@ -1,3 +1,4 @@
+import { estStatut } from "@/lib/statut-entreprise";
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 import { createClient as createAdminClient } from "@supabase/supabase-js";
@@ -40,7 +41,7 @@ export async function PATCH(req: NextRequest) {
     // désynchroniser du code postal et de la ville.
     "full_name", "company_name", "siret", "email", "phone",
     "tva_number", "logo_url", "proposal_template", "proposal_color",
-    "tva_regime", "tva_periodicite",
+    "tva_regime", "tva_periodicite", "statut_juridique",
     "payment_method", "payment_link_provider", "payment_link_profile",
     "bank_iban", "bank_bic", "bank_account_name",
     "cgv_text",
@@ -48,6 +49,11 @@ export async function PATCH(req: NextRequest) {
     "chorus_pro_bank_code", "chorus_pro_user_id",
   ];
   const updates = Object.fromEntries(Object.entries(body).filter(([k]) => allowed.includes(k)));
+  // Le statut decide de ce que montre le tableau de bord (echeance URSSAF des
+  // micros, TVA des assujettis) : une valeur hors liste est refusee.
+  if ("statut_juridique" in updates && updates.statut_juridique !== null && !estStatut(updates.statut_juridique)) {
+    return NextResponse.json({ error: "Statut d'entreprise inconnu" }, { status: 400 });
+  }
 
   // `address` reste la forme affichable (PDF, en-têtes) mais n'est plus saisie
   // directement : on la recompose depuis les champs structurés, dans un ordre
