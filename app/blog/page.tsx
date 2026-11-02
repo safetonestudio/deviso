@@ -13,6 +13,7 @@ import {
   Hash, Laptop, Link2, ListChecks, Palette, PenLine, Plane, RadioTower, Receipt, ScrollText,
   ShieldCheck, Smartphone, Stamp, Target,
   Ban, FileCode, Gavel,
+  Briefcase, CalendarDays, ClipboardList, Compass, Landmark, Percent, PiggyBank, Scale, Split, UserCheck,
   Zap, type LucideIcon,
 } from "lucide-react";
 
@@ -54,6 +55,16 @@ const ICONES: Record<string, LucideIcon> = {
   "facturer-client-etranger-freelance": Plane,
   "numerotation-factures-freelance": Hash,
   "livre-des-recettes-micro-entrepreneur": BookOpen,
+  "biens-ou-services-micro-entrepreneur": Split,
+  "passer-a-la-tva-micro-entrepreneur": Percent,
+  "declarer-chiffre-affaires-urssaf": Landmark,
+  "versement-liberatoire-2026": PiggyBank,
+  "obligations-comptables-micro-entrepreneur": ClipboardList,
+  "micro-ou-reel-quand-basculer": Scale,
+  "quand-prendre-expert-comptable-micro": UserCheck,
+  "experts-comptables-equiper-clients-micro": Briefcase,
+  "calendrier-fiscal-social-micro": CalendarDays,
+  "deviso-solution-comptable-marche": Compass,
   "plafonds-micro-entreprise-2026": Coins,
   // Métier
   "devis-graphiste-freelance": Palette,

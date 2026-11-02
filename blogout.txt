@@ -1,0 +1,213 @@
+
+> deviso@0.1.0 check:blog
+> node scripts/check-blog.mjs
+
+
+── Registre et pages : aucun article d'un côté seulement ───────
+  ok   45 article(s) au registre, 45 page(s) sur le disque
+  ok   toute page d'article est déclarée au registre
+  ok   tout article du registre a sa page
+
+── Catégories : déclarées dans categories.ts, et aucune vide ───
+  ok   5 catégorie(s) déclarée(s) : reforme, documents, obligations, metier, transverse
+  ok   aucun article ne référence une catégorie non déclarée
+  ok   aucune catégorie déclarée sans article
+  ok   au plus une catégorie ouverte par défaut
+  ok   l'index du blog dérive ses menus des catégories
+  ok   chaque article a une icône sur l'index
+
+── Entités HTML : rendues, jamais affichées telles quelles ─────
+  ok   aucun champ d'auteur interpolé en texte brut dans ArticleLong
+  ok   aucune entité HTML dans les champs rendus en texte brut
+
+── Dates : misAJourLe ne peut pas précéder publieLe ────────────
+  ok   aucune date de mise à jour antérieure à la publication
+  ok   aucune date de mise à jour dans le futur
+  ok   toutes les dates sont au format AAAA-MM-JJ
+
+── Articles liés : aucun lien interne vers une page inexistante 
+  ok   126 lien(s) « à lire ensuite » vérifié(s)
+
+── Sitemap : généré depuis les mêmes sources que les pages ─────
+  ok   aucune URL d'article écrite à la main dans le sitemap
+  ok   le sitemap lit le registre
+  ok   aucun lastModified global à la date du build
+
+── Maquettes de devis : le total correspond à son libellé ──────
+  ok   app/freelance-artisan/page.tsx, HT 4900 € pour 4900 € de lignes
+  ok   app/freelance-coach/page.tsx, HT 2910 € pour 2910 € de lignes
+  ok   app/freelance-community-manager/page.tsx, HT 1450 € pour 1450 € de lignes
+  ok   app/freelance-consultant/page.tsx, TTC 13440 € pour 11200 € de lignes
+  ok   app/freelance-developpeur/page.tsx, TTC 6120 € pour 5100 € de lignes
+  ok   app/freelance-formateur/page.tsx, TTC 6000 € pour 5000 € de lignes
+  ok   app/freelance-graphiste/page.tsx, TTC 3720 € pour 3100 € de lignes
+  ok   app/freelance-photographe/page.tsx, TTC 2400 € pour 2000 € de lignes
+  ok   app/freelance-redacteur/page.tsx, TTC 2580 € pour 2150 € de lignes
+  ok   app/freelance-traducteur/page.tsx, HT 1200 € pour 1200 € de lignes
+  ok   le libellé du total est déduit de la valeur, pas écrit à côté
+
+── Données structurées : chaque page de contenu est balisée ────
+  ok   app/blog/amendes-facturation-electronique-2026, métadonnées et JSON-LD
+  ok   app/blog/attestation-vigilance-urssaf-freelance, métadonnées et JSON-LD
+  ok   app/blog/biens-ou-services-micro-entrepreneur, métadonnées et JSON-LD
+  ok   app/blog/calendrier-fiscal-social-micro, métadonnées et JSON-LD
+  ok   app/blog/checklist-reforme-facturation-2026, métadonnées et JSON-LD
+  ok   app/blog/choisir-plateforme-agreee-freelance, métadonnées et JSON-LD
+  ok   app/blog/clauses-devis-freelance, métadonnées et JSON-LD
+  ok   app/blog/declarer-chiffre-affaires-urssaf, métadonnées et JSON-LD
+  ok   app/blog/devis-artisan-btp, métadonnées et JSON-LD
+  ok   app/blog/devis-coach-freelance, métadonnées et JSON-LD
+  ok   app/blog/devis-community-manager, métadonnées et JSON-LD
+  ok   app/blog/devis-consultant-independant, métadonnées et JSON-LD
+  ok   app/blog/devis-developpeur-web, métadonnées et JSON-LD
+  ok   app/blog/devis-formateur-independant, métadonnées et JSON-LD
+  ok   app/blog/devis-graphiste-freelance, métadonnées et JSON-LD
+  ok   app/blog/devis-photographe-freelance, métadonnées et JSON-LD
+  ok   app/blog/devis-redacteur-web, métadonnées et JSON-LD
+  ok   app/blog/devis-traducteur-freelance, métadonnées et JSON-LD
+  ok   app/blog/deviso-solution-comptable-marche, métadonnées et JSON-LD
+  ok   app/blog/e-reporting-freelance-2026, métadonnées et JSON-LD
+  ok   app/blog/experts-comptables-equiper-clients-micro, métadonnées et JSON-LD
+  ok   app/blog/factur-x-explique-freelance, métadonnées et JSON-LD
+  ok   app/blog/facturation-electronique-2026, métadonnées et JSON-LD
+  ok   app/blog/facturation-electronique-petit-chiffre-affaires, métadonnées et JSON-LD
+  ok   app/blog/facture-acompte-freelance, métadonnées et JSON-LD
+  ok   app/blog/facture-avoir-erreur-facture, métadonnées et JSON-LD
+  ok   app/blog/facture-electronique-refusee-que-faire, métadonnées et JSON-LD
+  ok   app/blog/facturer-client-etranger-freelance, métadonnées et JSON-LD
+  ok   app/blog/fixer-ses-tarifs-freelance, métadonnées et JSON-LD
+  ok   app/blog/gerer-impayes-freelance, métadonnées et JSON-LD
+  ok   app/blog/liste-plateformes-agreees, métadonnées et JSON-LD
+  ok   app/blog/livre-des-recettes-micro-entrepreneur, métadonnées et JSON-LD
+  ok   app/blog/micro-ou-reel-quand-basculer, métadonnées et JSON-LD
+  ok   app/blog/note-honoraires-ou-facture, métadonnées et JSON-LD
+  ok   app/blog/numerotation-factures-freelance, métadonnées et JSON-LD
+  ok   app/blog/obligations-comptables-micro-entrepreneur, métadonnées et JSON-LD
+  ok   app/blog/pas-de-plateforme-gratuite-etat, métadonnées et JSON-LD
+  ok   app/blog/passer-a-la-tva-micro-entrepreneur, métadonnées et JSON-LD
+  ok   app/blog/plafonds-micro-entreprise-2026, métadonnées et JSON-LD
+  ok   app/blog/plateforme-agreee-ou-solution-compatible, métadonnées et JSON-LD
+  ok   app/blog/quand-prendre-expert-comptable-micro, métadonnées et JSON-LD
+  ok   app/blog/refacturer-frais-client-freelance, métadonnées et JSON-LD
+  ok   app/blog/reforme-facturation-micro-entrepreneur, métadonnées et JSON-LD
+  ok   app/blog/scope-creep-freelance, métadonnées et JSON-LD
+  ok   app/blog/versement-liberatoire-2026, métadonnées et JSON-LD
+  ok   components/blog/BlogPost.tsx balise lui-même l'article
+  ok   components/blog/ArticleLong.tsx balise lui-même l'article
+  ok   19 page(s) indexable(s) avec canonique explicite
+  ok   un fil d'Ariane est balisé (BreadcrumbList)
+
+── Maillage : un seul pied de page, et il mène aux trois familles de pages 
+  ok   aucun pied de page réécrit à la main sur les pages publiques
+  ok   le pied de page mène à /blog
+  ok   le pied de page mène à /combien-facturer
+  ok   le pied de page mène à /conformite
+  ok   le pied de page mène à /blog/facturation-electronique-2026
+
+── Réglementaire : les montants d'amendes de la LF 2026 ────────
+  ok   aucun montant d'amende d'avant le 1er septembre 2026
+  ok   aucune échéance au 1er décembre 2026
+  ok   aucun ancien seuil de franchise en base de TVA (36 800 / 91 900)
+
+── FAQ : ce qui est déclaré à Google est visible sur la page ───
+  ok   app/blog/versement-liberatoire-2026/page.tsx, la liste FAQ est rendue
+  ok   app/blog/scope-creep-freelance/page.tsx, la liste FAQ est rendue
+  ok   app/blog/reforme-facturation-micro-entrepreneur/page.tsx, la liste FAQ est rendue
+  ok   app/blog/refacturer-frais-client-freelance/page.tsx, la liste FAQ est rendue
+  ok   app/blog/quand-prendre-expert-comptable-micro/page.tsx, la liste FAQ est rendue
+  ok   app/blog/plateforme-agreee-ou-solution-compatible/page.tsx, la liste FAQ est rendue
+  ok   app/blog/plafonds-micro-entreprise-2026/page.tsx, la liste FAQ est rendue
+  ok   app/blog/passer-a-la-tva-micro-entrepreneur/page.tsx, la liste FAQ est rendue
+  ok   app/blog/pas-de-plateforme-gratuite-etat/page.tsx, la liste FAQ est rendue
+  ok   app/blog/obligations-comptables-micro-entrepreneur/page.tsx, la liste FAQ est rendue
+  ok   app/blog/numerotation-factures-freelance/page.tsx, la liste FAQ est rendue
+  ok   app/blog/note-honoraires-ou-facture/page.tsx, la liste FAQ est rendue
+  ok   app/blog/micro-ou-reel-quand-basculer/page.tsx, la liste FAQ est rendue
+  ok   app/blog/livre-des-recettes-micro-entrepreneur/page.tsx, la liste FAQ est rendue
+  ok   app/blog/liste-plateformes-agreees/page.tsx, la liste FAQ est rendue
+  ok   app/blog/gerer-impayes-freelance/page.tsx, la liste FAQ est rendue
+  ok   app/blog/fixer-ses-tarifs-freelance/page.tsx, la liste FAQ est rendue
+  ok   app/blog/facturer-client-etranger-freelance/page.tsx, la liste FAQ est rendue
+  ok   app/blog/facture-electronique-refusee-que-faire/page.tsx, la liste FAQ est rendue
+  ok   app/blog/facture-avoir-erreur-facture/page.tsx, la liste FAQ est rendue
+  ok   app/blog/facture-acompte-freelance/page.tsx, la liste FAQ est rendue
+  ok   app/blog/facturation-electronique-petit-chiffre-affaires/page.tsx, la liste FAQ est rendue
+  ok   app/blog/facturation-electronique-2026/page.tsx, la liste FAQ est rendue
+  ok   app/blog/factur-x-explique-freelance/page.tsx, la liste FAQ est rendue
+  ok   app/blog/experts-comptables-equiper-clients-micro/page.tsx, la liste FAQ est rendue
+  ok   app/blog/e-reporting-freelance-2026/page.tsx, la liste FAQ est rendue
+  ok   app/blog/deviso-solution-comptable-marche/page.tsx, la liste FAQ est rendue
+  ok   app/blog/declarer-chiffre-affaires-urssaf/page.tsx, la liste FAQ est rendue
+  ok   app/blog/clauses-devis-freelance/page.tsx, la liste FAQ est rendue
+  ok   app/blog/choisir-plateforme-agreee-freelance/page.tsx, la liste FAQ est rendue
+  ok   app/blog/calendrier-fiscal-social-micro/page.tsx, la liste FAQ est rendue
+  ok   app/blog/biens-ou-services-micro-entrepreneur/page.tsx, la liste FAQ est rendue
+  ok   app/blog/attestation-vigilance-urssaf-freelance/page.tsx, la liste FAQ est rendue
+  ok   app/blog/amendes-facturation-electronique-2026/page.tsx, la liste FAQ est rendue
+  ok   ArticleLong affiche la FAQ qu'il balise
+
+── Signature : l'auteur du balisage est affiché sur la page ────
+  ok   le JSON-LD des articles déclare une Person, pas une Organization
+  ok   app/blog/amendes-facturation-electronique-2026, signature affichée
+  ok   app/blog/attestation-vigilance-urssaf-freelance, signature affichée
+  ok   app/blog/biens-ou-services-micro-entrepreneur, signature affichée
+  ok   app/blog/calendrier-fiscal-social-micro, signature affichée
+  ok   app/blog/checklist-reforme-facturation-2026, signature affichée
+  ok   app/blog/choisir-plateforme-agreee-freelance, signature affichée
+  ok   app/blog/clauses-devis-freelance, signature affichée
+  ok   app/blog/declarer-chiffre-affaires-urssaf, signature affichée
+  ok   app/blog/devis-artisan-btp, signature affichée
+  ok   app/blog/devis-coach-freelance, signature affichée
+  ok   app/blog/devis-community-manager, signature affichée
+  ok   app/blog/devis-consultant-independant, signature affichée
+  ok   app/blog/devis-developpeur-web, signature affichée
+  ok   app/blog/devis-formateur-independant, signature affichée
+  ok   app/blog/devis-graphiste-freelance, signature affichée
+  ok   app/blog/devis-photographe-freelance, signature affichée
+  ok   app/blog/devis-redacteur-web, signature affichée
+  ok   app/blog/devis-traducteur-freelance, signature affichée
+  ok   app/blog/deviso-solution-comptable-marche, signature affichée
+  ok   app/blog/e-reporting-freelance-2026, signature affichée
+  ok   app/blog/experts-comptables-equiper-clients-micro, signature affichée
+  ok   app/blog/factur-x-explique-freelance, signature affichée
+  ok   app/blog/facturation-electronique-2026, signature affichée
+  ok   app/blog/facturation-electronique-petit-chiffre-affaires, signature affichée
+  ok   app/blog/facture-acompte-freelance, signature affichée
+  ok   app/blog/facture-avoir-erreur-facture, signature affichée
+  ok   app/blog/facture-electronique-refusee-que-faire, signature affichée
+  ok   app/blog/facturer-client-etranger-freelance, signature affichée
+  ok   app/blog/fixer-ses-tarifs-freelance, signature affichée
+  ok   app/blog/gerer-impayes-freelance, signature affichée
+  ok   app/blog/liste-plateformes-agreees, signature affichée
+  ok   app/blog/livre-des-recettes-micro-entrepreneur, signature affichée
+  ok   app/blog/micro-ou-reel-quand-basculer, signature affichée
+  ok   app/blog/note-honoraires-ou-facture, signature affichée
+  ok   app/blog/numerotation-factures-freelance, signature affichée
+  ok   app/blog/obligations-comptables-micro-entrepreneur, signature affichée
+  ok   app/blog/pas-de-plateforme-gratuite-etat, signature affichée
+  ok   app/blog/passer-a-la-tva-micro-entrepreneur, signature affichée
+  ok   app/blog/plafonds-micro-entreprise-2026, signature affichée
+  ok   app/blog/plateforme-agreee-ou-solution-compatible, signature affichée
+  ok   app/blog/quand-prendre-expert-comptable-micro, signature affichée
+  ok   app/blog/refacturer-frais-client-freelance, signature affichée
+  ok   app/blog/reforme-facturation-micro-entrepreneur, signature affichée
+  ok   app/blog/scope-creep-freelance, signature affichée
+  ok   app/blog/versement-liberatoire-2026, signature affichée
+  ok   components/blog/BlogPost.tsx affiche la signature
+  ok   components/blog/ArticleLong.tsx affiche la signature
+  ok   la page auteur existe et est liée depuis le pied de page
+
+── Contre-épreuves ─────────────────────────────────────────────
+  ·    contre-épreuve : un titre de section interpolé en texte brut serait bien détecté
+  ·    contre-épreuve : une entité HTML dans une réponse de FAQ serait bien détectée
+  ·    contre-épreuve : un montant d'amende périmé est bien détecté
+  ·    contre-épreuve : l'échéance inventée est bien détectée
+  ·    contre-épreuve : l'ancien montant d'émission (15 € par facture) est bien détecté
+  ·    contre-épreuve : un ancien seuil de franchise en base de TVA est bien détecté
+  ·    contre-épreuve : une URL d'article en dur dans le sitemap serait bien détectée
+  ·    contre-épreuve : une date de mise à jour antérieure à la publication serait bien détectée
+  ·    contre-épreuve : un total TTC égal au HT serait bien détecté
+  ·    contre-épreuve : un pied de page réécrit à la main serait bien détecté
+  ·    contre-épreuve : une FAQ déclarée mais non affichée serait bien détectée
+
+check:blog, 45 articles, registre et pages cohérents, sitemap généré, balisage en place, aucun montant périmé.

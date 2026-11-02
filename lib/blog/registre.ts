@@ -516,6 +516,131 @@ export const ARTICLES: Article[] = [
     ],
   },
   {
+    slug: "biens-ou-services-micro-entrepreneur",
+    categorie: "obligations",
+    titre: "Biens ou services : la distinction qui change tout",
+    description:
+      "Vente de biens ou prestation ? Cette seule question fixe vos cotisations, votre abattement, votre plafond et votre seuil de TVA. Les chiffres 2026.",
+    h1: "Biens ou services en micro-entreprise : la distinction qui change vos cotisations et vos seuils",
+    og: {
+      titre: "Biens ou services : la distinction qui change tout en micro",
+      description:
+        "Taux de cotisations, abattement, plafond, seuil de TVA : tout dépend de la catégorie de votre activité. Et l'activité mixte se ventile.",
+    },
+    publieLe: "2026-11-02",
+    misAJourLe: "2026-11-02",
+    dureeLecture: 7,
+    carte: {
+      titre: "Biens ou services : la distinction qui change tout",
+      resume: "Cotisations, abattement, plafond, seuil de TVA : pourquoi la catégorie décide de tout",
+    },
+    lies: [
+      "livre-des-recettes-micro-entrepreneur",
+      "plafonds-micro-entreprise-2026",
+      "declarer-chiffre-affaires-urssaf",
+    ],
+  },
+  {
+    slug: "passer-a-la-tva-micro-entrepreneur",
+    categorie: "obligations",
+    titre: "Passer à la TVA en micro-entreprise",
+    description:
+      "La franchise de TVA s'arrête avant votre plafond de micro. Les seuils 2026, ce qui déclenche la bascule, et les démarches pour passer à la TVA.",
+    h1: "Passer à la TVA en micro-entreprise : sortie de franchise et déclaration",
+    og: {
+      titre: "Passer à la TVA en micro : seuils 2026 et démarches",
+      description:
+        "Seuils 85 000 / 37 500 €, seuil majoré, numéro intracommunautaire, CA12 ou CA3 : tout ce qui change le jour où vous facturez la TVA.",
+    },
+    publieLe: "2026-11-02",
+    misAJourLe: "2026-11-02",
+    dureeLecture: 8,
+    carte: {
+      titre: "Passer à la TVA en micro-entreprise",
+      resume: "Sortie de franchise, seuils 2026 et choix du régime de déclaration",
+    },
+    lies: [
+      "plafonds-micro-entreprise-2026",
+      "declarer-chiffre-affaires-urssaf",
+      "biens-ou-services-micro-entrepreneur",
+    ],
+  },
+  {
+    slug: "declarer-chiffre-affaires-urssaf",
+    categorie: "obligations",
+    titre: "Déclarer son chiffre d'affaires à l'URSSAF",
+    description:
+      "Chaque mois ou trimestre, vous déclarez l'encaissé et payez vos cotisations dessus. Taux 2026, bonne périodicité, ACRE et oublis coûteux.",
+    h1: "Déclarer son chiffre d'affaires à l'URSSAF : taux 2026 et ACRE",
+    og: {
+      titre: "Déclarer son CA à l'URSSAF : taux 2026 et ACRE",
+      description:
+        "Déclaration à l'encaissement, même à zéro, taux 12,3 à 25,6 %, ACRE à 25 % depuis juillet 2026 : le mode d'emploi.",
+    },
+    publieLe: "2026-11-02",
+    misAJourLe: "2026-11-02",
+    dureeLecture: 7,
+    carte: {
+      titre: "Déclarer son chiffre d'affaires à l'URSSAF",
+      resume: "Taux 2026, périodicité, ACRE, et les oublis qui coûtent une pénalité",
+    },
+    lies: [
+      "livre-des-recettes-micro-entrepreneur",
+      "biens-ou-services-micro-entrepreneur",
+      "versement-liberatoire-2026",
+    ],
+  },
+  {
+    slug: "versement-liberatoire-2026",
+    categorie: "obligations",
+    titre: "Le versement libératoire en 2026 : pour qui",
+    description:
+      "Payer son impôt au fil de l'eau, séduisant mais pas pour tout le monde. Taux 2026, condition de revenu, et la question qui décide : êtes-vous imposable ?",
+    h1: "Le versement libératoire de l'impôt en 2026 : pour qui est-ce vraiment rentable",
+    og: {
+      titre: "Versement libératoire 2026 : rentable ou pas ?",
+      description:
+        "Taux 1 à 2,2 %, plafond de RFR de 29 315 € par part : à qui le versement libératoire fait gagner, et à qui il fait perdre.",
+    },
+    publieLe: "2026-11-02",
+    misAJourLe: "2026-11-02",
+    dureeLecture: 7,
+    carte: {
+      titre: "Le versement libératoire en 2026 : pour qui",
+      resume: "Taux, condition de RFR, et le piège de l'impôt payé pour rien",
+    },
+    lies: [
+      "declarer-chiffre-affaires-urssaf",
+      "micro-ou-reel-quand-basculer",
+      "plafonds-micro-entreprise-2026",
+    ],
+  },
+  {
+    slug: "obligations-comptables-micro-entrepreneur",
+    categorie: "obligations",
+    titre: "Les obligations comptables au-delà du livre des recettes",
+    description:
+      "Le micro dispense de bilan, pas de tout. Compte bancaire dédié, factures conformes, registre des achats, conservation 10 ans : le tour complet.",
+    h1: "Au-delà du livre des recettes : compte bancaire, factures et conservation",
+    og: {
+      titre: "Obligations comptables du micro : le tour complet",
+      description:
+        "Compte dédié au-delà de 10 000 €, factures numérotées, registre des achats, conservation 10 ans, et ce dont vous êtes dispensé.",
+    },
+    publieLe: "2026-11-02",
+    misAJourLe: "2026-11-02",
+    dureeLecture: 7,
+    carte: {
+      titre: "Les obligations comptables au-delà du livre des recettes",
+      resume: "Compte bancaire, factures, registre des achats, conservation : tout le reste",
+    },
+    lies: [
+      "livre-des-recettes-micro-entrepreneur",
+      "numerotation-factures-freelance",
+      "reforme-facturation-micro-entrepreneur",
+    ],
+  },
+  {
     slug: "plafonds-micro-entreprise-2026",
     categorie: "obligations",
     titre: "Plafonds de la micro-entreprise 2026-2028",
@@ -859,6 +984,131 @@ export const ARTICLES: Article[] = [
   },
 
   // ── Famille « transverse » ─────────────────────────────────────────────────
+  {
+    slug: "micro-ou-reel-quand-basculer",
+    categorie: "transverse",
+    titre: "Micro ou régime réel : quand basculer",
+    description:
+      "Le micro applique un abattement forfaitaire, le réel déduit vos charges. La bascule tient à une question : vos charges dépassent-elles votre abattement ?",
+    h1: "Micro-entreprise ou régime réel : quand le passage devient rentable",
+    og: {
+      titre: "Micro ou régime réel : quand basculer",
+      description:
+        "Abattement forfaitaire contre charges réelles : à partir de quel niveau de charges le régime réel l'emporte, et ce qu'il implique.",
+    },
+    publieLe: "2026-11-02",
+    misAJourLe: "2026-11-02",
+    dureeLecture: 8,
+    carte: {
+      titre: "Micro ou régime réel : quand basculer",
+      resume: "Abattement contre charges réelles : le seuil où le réel devient rentable",
+    },
+    lies: [
+      "biens-ou-services-micro-entrepreneur",
+      "versement-liberatoire-2026",
+      "quand-prendre-expert-comptable-micro",
+    ],
+  },
+  {
+    slug: "quand-prendre-expert-comptable-micro",
+    categorie: "transverse",
+    titre: "Micro-entrepreneur : quand prendre un expert-comptable",
+    description:
+      "En micro, l'expert-comptable n'est pas obligatoire. La vraie question : à partir de quand est-ce rentable. Les moments qui le justifient.",
+    h1: "Micro-entrepreneur : quand (et pourquoi) prendre un expert-comptable",
+    og: {
+      titre: "Micro : quand prendre un expert-comptable",
+      description:
+        "Aucune obligation en micro, mais TVA, régime réel, embauche ou contrôle changent la donne. Ce que vous pouvez garder pour vous.",
+    },
+    publieLe: "2026-11-02",
+    misAJourLe: "2026-11-02",
+    dureeLecture: 7,
+    carte: {
+      titre: "Micro-entrepreneur : quand prendre un expert-comptable",
+      resume: "Pas obligatoire, mais utile à certains moments précis : lesquels",
+    },
+    lies: [
+      "micro-ou-reel-quand-basculer",
+      "obligations-comptables-micro-entrepreneur",
+      "experts-comptables-equiper-clients-micro",
+    ],
+  },
+  {
+    slug: "experts-comptables-equiper-clients-micro",
+    categorie: "transverse",
+    titre: "Experts-comptables : équiper ses clients micro",
+    description:
+      "Le dossier micro est peu rentable non parce qu'il est simple, mais parce qu'il arrive en désordre. L'équiper à la source, et ce que la réforme y change.",
+    h1: "Experts-comptables : équiper ses clients micro d'un outil de facturation conforme",
+    og: {
+      titre: "Experts-comptables : équiper ses clients micro",
+      description:
+        "Ressaisie, relances, non-conformité : ce que le dossier micro mal tenu coûte au cabinet, et pourquoi la réforme rend l'équipement incontournable.",
+    },
+    publieLe: "2026-11-02",
+    misAJourLe: "2026-11-02",
+    dureeLecture: 8,
+    carte: {
+      titre: "Experts-comptables : équiper ses clients micro",
+      resume: "Tarir le désordre à la source plutôt que l'absorber dossier par dossier",
+    },
+    lies: [
+      "quand-prendre-expert-comptable-micro",
+      "deviso-solution-comptable-marche",
+      "reforme-facturation-micro-entrepreneur",
+    ],
+  },
+  {
+    slug: "calendrier-fiscal-social-micro",
+    categorie: "transverse",
+    titre: "Le calendrier fiscal et social du micro",
+    description:
+      "Déclaration de CA, déclaration de revenus, CFE, TVA : le tour des rendez-vous de l'année, et de ceux qui tombent même sans activité.",
+    h1: "Votre calendrier fiscal et social de l'année en micro-entreprise",
+    og: {
+      titre: "Le calendrier fiscal et social du micro",
+      description:
+        "Les échéances récurrentes du micro, les deux dates qui bougent chaque année, et ce qui reste dû même en l'absence d'activité.",
+    },
+    publieLe: "2026-11-02",
+    misAJourLe: "2026-11-02",
+    dureeLecture: 6,
+    carte: {
+      titre: "Le calendrier fiscal et social du micro",
+      resume: "Les rendez-vous de l'année, et ceux qui tombent même sans activité",
+    },
+    lies: [
+      "declarer-chiffre-affaires-urssaf",
+      "versement-liberatoire-2026",
+      "obligations-comptables-micro-entrepreneur",
+    ],
+  },
+  {
+    slug: "deviso-solution-comptable-marche",
+    categorie: "transverse",
+    titre: "Deviso face au marché : notre solution comptable",
+    description:
+      "Le marché des outils déborde, et pourtant le micro reste mal servi. Où Deviso se place, les points de douleur qu'il règle, et ce qu'il ne prétend pas être.",
+    h1: "Deviso face au marché : notre place et les points de douleur que nous réglons",
+    og: {
+      titre: "Deviso face au marché de la facturation",
+      description:
+        "Entre outils grand public imprécis et plateformes cabinet trop lourdes : où Deviso se place pour le micro-entrepreneur et son expert-comptable.",
+    },
+    publieLe: "2026-11-02",
+    misAJourLe: "2026-11-02",
+    dureeLecture: 7,
+    carte: {
+      titre: "Deviso face au marché : notre solution comptable",
+      resume: "Entre outils grand public et grosses plateformes : notre place et nos partis pris",
+    },
+    lies: [
+      "experts-comptables-equiper-clients-micro",
+      "reforme-facturation-micro-entrepreneur",
+      "quand-prendre-expert-comptable-micro",
+    ],
+  },
   {
     slug: "clauses-devis-freelance",
     categorie: "transverse",
