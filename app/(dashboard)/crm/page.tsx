@@ -191,8 +191,8 @@ export default function CRMPage() {
     return (
       <div className="max-w-lg mx-auto mt-24 text-center space-y-4">
         <Users size={36} className="mx-auto text-gray-600" />
-        <h1 className="text-2xl font-semibold text-ink">Clients & Revenus</h1>
-        <p className="text-gray-400">
+        <h1 className="titre-page">Clients & Revenus</h1>
+        <p className="sous-titre-page">
           L&apos;historique complet par client est réservé aux plans payants.
         </p>
         <UpgradeButton plan="solo" label="Passer Solo" />
@@ -216,8 +216,8 @@ export default function CRMPage() {
       <GuidedTourBanner pageKey="crm" />
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-semibold text-ink tracking-tight">Clients & Revenus</h1>
-          <p className="text-sm text-gray-500 mt-1">Vue d&apos;ensemble et historique par client</p>
+          <h1 className="titre-page">Clients & Revenus</h1>
+          <p className="sous-titre-page">Vue d&apos;ensemble et historique par client</p>
         </div>
       </div>
 

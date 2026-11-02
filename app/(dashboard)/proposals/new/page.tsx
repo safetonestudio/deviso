@@ -320,7 +320,7 @@ export default function NewProposalPage() {
       <GuidedTourBanner pageKey="proposals_new" />
       {/* Header */}
       <div className="mb-8">
-        <h1 className="text-3xl font-semibold text-ink tracking-tight">Nouveau devis</h1>
+        <h1 className="titre-page">Nouveau devis</h1>
         <div className="flex items-center gap-4 mt-4">
           {(["brief", "review", "client"] as Step[]).map((s, i) => (
             <div key={s} className="flex items-center gap-2">

@@ -57,6 +57,26 @@
     box-shadow: var(--ds-shadow-card);
   }
   .carte-lg { border-radius: 18px; }
+  /* Titre et sous-titre de page : une seule echelle pour toute l'app. Quatre
+     tailles cohabitaient (24, 30, 38, 44 px), d'ou un rendu disparate d'une
+     page a l'autre (retour Selim 02/11). Le tableau de bord, page d'accueil,
+     garde son titre plus grand. Garde : check:cadres. */
+  .titre-page {
+    font-size: 30px;
+    line-height: 1.1;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    color: rgb(var(--ink, 15 23 42));
+  }
+  .sous-titre-page {
+    font-size: 15px;
+    margin-top: 6px;
+    color: rgb(var(--n-400, 148 163 184));
+  }
+  @media (min-width: 640px) {
+    .titre-page { font-size: 38px; }
+    .sous-titre-page { font-size: 16px; }
+  }
 }
 
 /* Une page qui porte son propre en-tete (cloche et theme dans sa ligne

@@ -47,8 +47,8 @@ export default function OnboardingPage() {
   return (
     <div className="max-w-xl mx-auto py-12">
       <div className="mb-8">
-        <h1 className="text-3xl font-semibold text-ink">Bienvenue sur Deviso</h1>
-        <p className="text-gray-400 mt-2">
+        <h1 className="titre-page">Bienvenue sur Deviso</h1>
+        <p className="sous-titre-page">
           Renseigne tes informations professionnelles, elles apparaîtront automatiquement sur tous tes devis et factures.
         </p>
       </div>

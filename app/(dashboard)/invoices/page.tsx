@@ -280,8 +280,8 @@ export default function InvoicesPage() {
       {/* Header */}
       <div className="flex flex-wrap items-start justify-between gap-3 mb-8">
         <div>
-          <h1 className="text-3xl font-semibold text-ink tracking-tight">Mes factures</h1>
-          <p className="text-gray-400 text-sm mt-1">Factur-X EN 16931 · PDF/A-3 · conforme réforme 2026</p>
+          <h1 className="titre-page">Mes factures</h1>
+          <p className="sous-titre-page">Factur-X EN 16931 · PDF/A-3 · conforme réforme 2026</p>
         </div>
         <div className="flex items-center gap-2 flex-wrap">
           {isPro && !isMember && tab === "invoices" && (

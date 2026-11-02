@@ -90,7 +90,7 @@ export default async function ProposalDetailPage({ params }: { params: Promise<{
       </Link>
 
       {/* Layout deux colonnes */}
-      <div className="grid grid-cols-1 lg:grid-cols-[minmax(0,880px)_300px] gap-6 items-start">
+      <div className="grid grid-cols-1 lg:grid-cols-[minmax(0,1fr)_320px] gap-6 items-start">
 
         {/* ── Colonne gauche : document ── */}
         <div className="min-w-0">
@@ -116,7 +116,7 @@ export default async function ProposalDetailPage({ params }: { params: Promise<{
           </div>
 
           {/* Document devis */}
-          <div id="proposal-print">
+          <div id="proposal-print" className="max-w-4xl mx-auto">
             <ProposalPreviewWrapper proposal={proposal} profile={mergedProfile} showBranding={mergedProfile?.plan === "free"} cgvText={mergedProfile?.cgv_text} />
           </div>
 

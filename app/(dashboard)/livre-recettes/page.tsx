@@ -81,8 +81,8 @@ export default async function LivreRecettes({ searchParams }: { searchParams: Pr
       <GuidedTourBanner pageKey="livre-recettes" />
       <div className="flex flex-wrap items-start justify-between gap-3 mb-6">
         <div>
-          <h1 className="text-2xl font-semibold text-ink">Livre des recettes</h1>
-          <p className="text-sm text-gray-400 mt-1">
+          <h1 className="titre-page">Livre des recettes</h1>
+          <p className="sous-titre-page">
             Tenu automatiquement à partir de vos factures payées, dans l&apos;ordre des encaissements.
           </p>
         </div>

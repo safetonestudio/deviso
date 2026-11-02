@@ -387,8 +387,8 @@ Les présentes CGV sont soumises au droit français. Tout litige relève de la c
     return (
       <div className="max-w-2xl mx-auto space-y-8">
         <div>
-          <h1 className="text-3xl font-semibold text-ink tracking-tight">Mon profil</h1>
-          <p className="text-gray-500 text-sm mt-1">
+          <h1 className="titre-page">Mon profil</h1>
+          <p className="sous-titre-page">
             Ces informations apparaissent sur les devis et factures que tu crées.
           </p>
         </div>
@@ -460,8 +460,8 @@ Les présentes CGV sont soumises au droit français. Tout litige relève de la c
     <div className="w-full">
       <GuidedTourBanner pageKey="profil" />
       <div className="en-tete-page mb-6">
-        <h1 className="text-3xl font-semibold text-ink tracking-tight">Mon profil</h1>
-        <p className="text-gray-500 text-sm mt-1">Ces informations apparaîtront automatiquement sur tes devis et factures.</p>
+        <h1 className="titre-page">Mon profil</h1>
+        <p className="sous-titre-page">Ces informations apparaîtront automatiquement sur tes devis et factures.</p>
       </div>
 
       <div className="grid lg:grid-cols-[200px_minmax(0,1fr)] gap-8 items-start">

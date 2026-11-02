@@ -738,7 +738,7 @@ export default function InvoiceDetailPage() {
       </div>
 
       {/* Layout deux colonnes */}
-      <div className="grid grid-cols-1 lg:grid-cols-[minmax(0,880px)_300px] gap-6 items-start">
+      <div className="grid grid-cols-1 lg:grid-cols-[minmax(0,1fr)_320px] gap-6 items-start">
 
         {/* ── Colonne gauche : document ── */}
         <div className="min-w-0">

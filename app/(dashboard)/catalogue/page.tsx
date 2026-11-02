@@ -108,8 +108,8 @@ export default function CataloguePage() {
       <div className="max-w-2xl mx-auto">
         <GuidedTourBanner pageKey="catalogue" />
         <div className="mb-8">
-          <h1 className="text-3xl font-semibold text-ink tracking-tight">Services</h1>
-          <p className="text-gray-500 text-sm mt-1">Sauvegardez vos prestations pour les réutiliser en un clic.</p>
+          <h1 className="titre-page">Services</h1>
+          <p className="sous-titre-page">Sauvegardez vos prestations pour les réutiliser en un clic.</p>
         </div>
         <div className="carte p-10 text-center">
           <Package size={32} className="mx-auto mb-3 text-gray-600" />
@@ -131,8 +131,8 @@ export default function CataloguePage() {
       <GuidedTourBanner pageKey="catalogue" />
 
       <div className="mb-8">
-        <h1 className="text-3xl font-semibold text-ink tracking-tight">Services</h1>
-        <p className="text-gray-500 text-sm mt-1">
+        <h1 className="titre-page">Services</h1>
+        <p className="sous-titre-page">
           {items.length} prestation{items.length !== 1 ? "s" : ""}, réutilisables en un clic dans vos devis et factures.
         </p>
       </div>

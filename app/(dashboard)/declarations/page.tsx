@@ -99,8 +99,8 @@ export default async function Declarations() {
     <div className="w-full">
       <GuidedTourBanner pageKey="declarations" />
       <div>
-        <h1 className="text-2xl font-semibold text-ink">Déclarations au fisc</h1>
-        <p className="text-sm text-gray-400 mt-1">
+        <h1 className="titre-page">Déclarations au fisc</h1>
+        <p className="sous-titre-page">
           Ce que la Plateforme Agréée déclare à l&apos;administration en votre nom. Pour tout ce que
           vous facturez, vous n&apos;avez rien à envoyer&nbsp;: transmettre la facture suffit.
         </p>

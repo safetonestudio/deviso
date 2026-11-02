@@ -54,8 +54,8 @@ export default async function AchatsInternationaux() {
     <div className="w-full">
       <GuidedTourBanner pageKey="achats-internationaux" />
       <div className="mb-6">
-        <h1 className="text-2xl font-semibold text-ink">Achats à l&apos;étranger</h1>
-        <p className="text-sm text-gray-400 mt-1 max-w-2xl">
+        <h1 className="titre-page">Achats à l&apos;étranger</h1>
+        <p className="sous-titre-page">
           Quand vous achetez un bien ou un service à un fournisseur établi hors de France, vous
           devez déclarer cette acquisition à l&apos;administration (article 290-II du CGI). Sa
           facture ne passe pas par la Plateforme Agréée&nbsp;: saisissez-la ici, Deviso s&apos;occupe

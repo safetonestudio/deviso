@@ -59,8 +59,8 @@ export default function StatsPage() {
         <div className="w-12 h-12 bg-ds-elevated rounded-xl flex items-center justify-center mx-auto">
           <BarChart3 size={24} className="text-gray-500" />
         </div>
-        <h1 className="text-2xl font-semibold text-ink">Activité</h1>
-        <p className="text-gray-400">Taux de conversion, CA prévisionnel et analyses d&apos;activité, inclus dans les plans Solo et Pro.</p>
+        <h1 className="titre-page">Activité</h1>
+        <p className="sous-titre-page">Taux de conversion, CA prévisionnel et analyses d&apos;activité, inclus dans les plans Solo et Pro.</p>
         <UpgradeButton plan="solo" label="Passer Solo" />
       </div>
     );
@@ -76,8 +76,8 @@ export default function StatsPage() {
     <div className="space-y-8 w-full">
       <GuidedTourBanner pageKey="stats" />
       <div>
-        <h1 className="text-3xl font-semibold text-ink tracking-tight">Activité</h1>
-        <p className="text-sm text-gray-500 mt-1">CA, conversion et performance des devis</p>
+        <h1 className="titre-page">Activité</h1>
+        <p className="sous-titre-page">CA, conversion et performance des devis</p>
       </div>
 
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">

@@ -47,8 +47,8 @@ export default async function NotificationsPage() {
       <GuidedTourBanner pageKey="notifications" />
       <div className="en-tete-page flex items-start justify-between gap-4 flex-wrap">
         <div>
-          <h1 className="text-[32px] sm:text-[38px] font-bold text-ink tracking-tight leading-tight">Notifications</h1>
-          <p className="text-[15px] text-gray-400 mt-1">Ce qui demande ton attention, puis l&apos;historique de ton activité</p>
+          <h1 className="titre-page">Notifications</h1>
+          <p className="sous-titre-page">Ce qui demande ton attention, puis l&apos;historique de ton activité</p>
         </div>
         <ActionsGlobales />
       </div>

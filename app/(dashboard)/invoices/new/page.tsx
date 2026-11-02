@@ -452,7 +452,7 @@ export default function NewInvoicePage() {
     <div className="max-w-2xl mx-auto">
       <GuidedTourBanner pageKey="invoices_new" />
       <div className="mb-6">
-        <h1 className="text-3xl font-semibold text-ink tracking-tight">
+        <h1 className="titre-page">
           {invoiceType === "acompte" ? "Nouvelle facture d'acompte" : invoiceType === "solde" ? "Nouvelle facture de solde" : "Nouvelle facture"}
         </h1>
         {proposal && (

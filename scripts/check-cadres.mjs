@@ -27,7 +27,8 @@
  * Usage : node scripts/check-cadres.mjs
  */
 
-import { readFileSync } from "node:fs";
+import { readFileSync, readdirSync, statSync } from "node:fs";
+import { join } from "node:path";
 
 const LISTE = "w-full";
 const FORMULAIRE = "max-w-2xl mx-auto";
@@ -49,9 +50,9 @@ const PAGES = {
   "app/(dashboard)/admin/page.tsx": LISTE,
   "app/(dashboard)/invoices/[id]/page.tsx": LISTE,
   "app/(dashboard)/proposals/[id]/page.tsx": LISTE,
-  "app/(dashboard)/paiements/page.tsx": FORMULAIRE,
+  "app/(dashboard)/paiements/page.tsx": LISTE,
   "app/(dashboard)/profil/page.tsx": LISTE,
-  "app/(dashboard)/billing/page.tsx": FORMULAIRE,
+  "app/(dashboard)/billing/page.tsx": LISTE,
 };
 
 /**
@@ -108,6 +109,31 @@ for (const [chemin, attendu] of Object.entries(PAGES)) {
     console.log(`    trouvé  : ${classes}`);
   }
 }
+
+// Titres de page : une seule echelle (.titre-page dans globals.css). Quatre
+// tailles cohabitaient, d'ou un rendu disparate (retour Selim 02/11). Exceptions :
+// l'accueil (titre plus grand, voulu), et les pages dont le titre est le
+// document lui-meme (numero de facture, titre du devis, article d'aide).
+const TITRE_EXCLUS = new Set(["dashboard", "invoices/[id]", "proposals/[id]", "prise-en-main/[slug]"]);
+const RACINE = "app/(dashboard)";
+function pages(dossier) {
+  return readdirSync(dossier).flatMap((n) => {
+    const c = join(dossier, n);
+    return statSync(c).isDirectory() ? pages(c) : n === "page.tsx" ? [c] : [];
+  });
+}
+const titreHorsCharte = (src) => [...src.matchAll(/<h1 className="([^"]*)"/g)].filter((m) => m[1] !== "titre-page").length;
+let titresKo = 0;
+for (const chemin of pages(RACINE)) {
+  const nom = chemin.replace(/\\/g, "/").replace(`${RACINE}/`, "").replace("/page.tsx", "");
+  if (TITRE_EXCLUS.has(nom)) continue;
+  const n = titreHorsCharte(readFileSync(chemin, "utf8"));
+  if (n > 0) { titresKo++; console.log(`✗ ${nom}, ${n} titre(s) <h1> hors de la classe titre-page`); }
+}
+if (titreHorsCharte('<h1 className="text-3xl font-bold">') !== 1 || titreHorsCharte('<h1 className="titre-page">') !== 0) {
+  console.log("✗ contre-épreuve : la détection des titres ne fonctionne pas."); titresKo++;
+}
+echecs += titresKo;
 
 // Contre-épreuve : le contrôle sait-il repérer un cadre absent ?
 if (porteCadre("space-y-8", LISTE) || !porteCadre(`space-y-8 ${LISTE}`, LISTE)) {

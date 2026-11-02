@@ -180,35 +180,21 @@ export default function PaiementsPage() {
   if (loading) return <div className="text-center py-16 text-gray-500">Chargement…</div>;
 
   return (
-    <div className="max-w-2xl mx-auto">
+    <div className="w-full">
       <GuidedTourBanner pageKey="paiements" />
-      {/* Header */}
-      <div className="mb-8">
-        <div className="flex items-center gap-3 mb-2">
-          <div className="w-10 h-10 rounded-xl bg-emerald-500/20 flex items-center justify-center">
-            <Wallet size={20} className="text-emerald-400" />
-          </div>
-          <div>
-            <h1 className="text-3xl font-semibold text-ink tracking-tight">Paiements clients</h1>
-            <p className="text-gray-500 text-sm mt-1">
-              Comment vos clients vous paient, ces infos apparaîtront sur chaque facture envoyée.
-            </p>
-          </div>
-        </div>
-      </div>
-
-      {/* Avertissement */}
-      <div className="bg-amber-500/10 border border-amber-500/30 rounded-xl px-4 py-3 mb-6 flex gap-3">
-        <AlertTriangle size={16} className="text-amber-400 shrink-0 mt-0.5" />
-        <p className="text-sm text-amber-300 leading-relaxed">
-          <strong>Important :</strong> les paiements de vos clients vous arrivent <strong>directement</strong>, Deviso n'intervient à aucun moment dans la transaction et ne perçoit aucune commission.
+      <div className="en-tete-page mb-6">
+        <h1 className="titre-page">Paiements clients</h1>
+        <p className="sous-titre-page">
+          Comment vos clients vous paient, ces infos apparaîtront sur chaque facture envoyée.
         </p>
       </div>
 
+      <div className="grid gap-6 xl:grid-cols-[minmax(0,1fr)_400px] items-start">
+        <div className="min-w-0 space-y-5">
       {/* Méthode */}
       <section className="carte p-5 mb-5">
         <h2 className="font-semibold text-ink mb-4">Comment souhaitez-vous être payé ?</h2>
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+        <div className="grid grid-cols-1 sm:grid-cols-2 2xl:grid-cols-4 gap-3">
           {[
             { value: "none",  icon: Minus as LucideIcon,    label: "Aucun", desc: "Ne pas afficher d'info de paiement" },
             { value: "link",  icon: Link2 as LucideIcon,    label: "Lien en ligne", desc: "Stripe, PayPal, Wise, Sumeria…" },
@@ -367,9 +353,39 @@ export default function PaiementsPage() {
         </section>
       )}
 
+      {error && (
+        <div className="bg-red-500/10 border border-red-500/30 rounded-lg px-4 py-3 mb-4 text-sm text-red-400">
+          {error}
+        </div>
+      )}
+
+      <button
+        onClick={handleSave}
+        disabled={saving || !canSave}
+        className="w-full bg-emerald-700 hover:bg-emerald-800 disabled:opacity-50 disabled:cursor-not-allowed text-ink rounded-xl py-3 text-sm font-semibold transition-colors"
+      >
+        {saving ? "Enregistrement…" : saved ? "✓ Enregistré !" : "Enregistrer les paramètres de paiement"}
+      </button>
+
+      {saved && (
+        <p className="text-center text-xs text-emerald-400 mt-3">
+          Ces informations apparaîtront désormais sur toutes vos nouvelles factures.
+        </p>
+      )}
+        </div>
+
+        <aside className="space-y-5 xl:sticky xl:top-20">
+      {/* Avertissement */}
+      <div className="bg-amber-500/10 border border-amber-500/30 rounded-xl px-4 py-3 flex gap-3">
+        <AlertTriangle size={16} className="text-amber-400 shrink-0 mt-0.5" />
+        <p className="text-sm text-amber-300 leading-relaxed">
+          <strong>Important :</strong> les paiements de vos clients vous arrivent <strong>directement</strong>, Deviso n'intervient à aucun moment dans la transaction et ne perçoit aucune commission.
+        </p>
+      </div>
+
       {/* Prévisualisation */}
       {method !== "none" && (
-        <section className="carte p-5 mb-5">
+        <section className="carte p-5">
           <h2 className="font-semibold text-ink mb-3 text-sm">Aperçu sur vos factures</h2>
           <div className="bg-ds-elevated border border-ds-border rounded-lg p-4 text-xs text-gray-400 space-y-2">
             <p className="font-semibold text-gray-300 text-xs">Modalités de paiement</p>
@@ -391,25 +407,8 @@ export default function PaiementsPage() {
         </section>
       )}
 
-      {error && (
-        <div className="bg-red-500/10 border border-red-500/30 rounded-lg px-4 py-3 mb-4 text-sm text-red-400">
-          {error}
-        </div>
-      )}
-
-      <button
-        onClick={handleSave}
-        disabled={saving || !canSave}
-        className="w-full bg-emerald-700 hover:bg-emerald-800 disabled:opacity-50 disabled:cursor-not-allowed text-ink rounded-xl py-3 text-sm font-semibold transition-colors"
-      >
-        {saving ? "Enregistrement…" : saved ? "✓ Enregistré !" : "Enregistrer les paramètres de paiement"}
-      </button>
-
-      {saved && (
-        <p className="text-center text-xs text-emerald-400 mt-3">
-          Ces informations apparaîtront désormais sur toutes vos nouvelles factures.
-        </p>
-      )}
+        </aside>
+      </div>
     </div>
   );
 }

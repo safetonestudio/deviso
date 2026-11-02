@@ -208,8 +208,8 @@ export default function PriseEnMainPage() {
   return (
     <div className="max-w-2xl mx-auto">
       <div className="mb-8">
-        <h1 className="text-3xl font-semibold text-ink tracking-tight">Prise en main</h1>
-        <p className="text-gray-500 text-sm mt-1">
+        <h1 className="titre-page">Prise en main</h1>
+        <p className="sous-titre-page">
           Tout ce dont tu as besoin pour utiliser Deviso à 100 % de son potentiel.
         </p>
       </div>

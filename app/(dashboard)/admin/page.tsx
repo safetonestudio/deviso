@@ -61,8 +61,8 @@ export default async function Pilotage() {
   return (
     <div className="w-full">
       <div className="mb-6">
-        <h1 className="text-2xl font-semibold text-ink">Pilotage</h1>
-        <p className="text-sm text-gray-400 mt-1">
+        <h1 className="titre-page">Pilotage</h1>
+        <p className="sous-titre-page">
           Comptes réels uniquement (démos exclues). Compteurs et états seulement, jamais le contenu des documents.
         </p>
       </div>

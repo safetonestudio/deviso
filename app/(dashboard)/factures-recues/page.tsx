@@ -67,8 +67,8 @@ export default async function FacturesRecues() {
       <GuidedTourBanner pageKey="factures-recues" />
       <div className="flex flex-wrap items-start justify-between gap-4 mb-2">
         <div>
-          <h1 className="text-2xl font-semibold text-ink">Factures reçues</h1>
-          <p className="text-sm text-gray-400 mt-1">
+          <h1 className="titre-page">Factures reçues</h1>
+          <p className="sous-titre-page">
             Les factures électroniques que vos fournisseurs vous adressent via la Plateforme Agréée.
           </p>
           <p className="text-xs text-gray-400 mt-2">
