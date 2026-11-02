@@ -1,7 +1,7 @@
 import { redirect } from "next/navigation";
 import type { ReactNode } from "react";
 import { createClient } from "@/lib/supabase/server";
-import { DashboardThemeProvider, ThemeToggle } from "@/components/DashboardTheme";
+import { DashboardThemeProvider, ThemeToggleIcone } from "@/components/DashboardTheme";
 import { policesApp } from "@/app/polices-app";
 import { SignOutButton } from "@/components/SignOutButton";
 
@@ -26,6 +26,7 @@ export default async function CabinetLayout({ children }: { children: ReactNode 
       <div className="min-h-screen bg-app-relief">
         <header className="bg-ds-surface border-b border-ds-border">
           <div className="max-w-6xl mx-auto px-4 sm:px-6 py-3 flex flex-wrap items-center justify-between gap-3">
+            <div className="flex items-center gap-3 min-w-0">
             <a href="/cabinet" className="flex items-center gap-2 min-w-0">
               <div className="w-7 h-7 rounded-[7px] bg-indigo-600 flex items-center justify-center shrink-0">
                 <span className="text-ink font-display font-bold text-[15px]">D</span>
@@ -35,11 +36,12 @@ export default async function CabinetLayout({ children }: { children: ReactNode 
                 Cabinet
               </span>
             </a>
+            <ThemeToggleIcone />
+            </div>
             <div className="flex items-center gap-2 sm:gap-3">
               <span className="hidden sm:inline-flex items-center rounded-lg border border-ds-border bg-ds-elevated px-3 py-2 text-sm text-gray-300 max-w-[240px] truncate">
                 {profile?.company_name || profile?.full_name || user.email}
               </span>
-              <ThemeToggle compact />
               <SignOutButton compact />
             </div>
           </div>

@@ -69,7 +69,8 @@ export function DashboardThemeProvider({
   );
 }
 
-/** Bouton de theme en carre, icone seule, pour l'en-tete des pages. */
+/** Bouton de theme en carre encadre, icone seule, place a cote du logo Deviso
+ *  (barre laterale, barre mobile, en-tete cabinet) : toujours au meme endroit. */
 export function ThemeToggleIcone() {
   const { theme, toggle } = useContext(ThemeContext);
   const clair = theme === "light";
@@ -80,7 +81,7 @@ export function ThemeToggleIcone() {
       onClick={toggle}
       aria-label={libelle}
       title={libelle}
-      className="w-10 h-10 grid place-items-center rounded-xl border border-ds-border text-gray-400 hover:text-ink hover:border-gray-500 transition-colors"
+      className="w-9 h-9 shrink-0 grid place-items-center rounded-xl border border-gray-500/60 bg-ds-elevated text-ink shadow-ds-sm hover:border-indigo-500 hover:text-indigo-400 transition-colors"
     >
       {clair ? <Moon size={17} /> : <Sun size={17} />}
     </button>

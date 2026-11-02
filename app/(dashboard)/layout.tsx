@@ -4,7 +4,7 @@ import { createClient } from "@/lib/supabase/server";
 import { getWorkspaceUserId } from "@/lib/workspace";
 import { droitsDe, ROLE_COMPTABLE, PLANS_ACCES_COMPTABLE } from "@/lib/droits";
 import { PAGES_COMPTABLE } from "@/lib/navigation";
-import { DashboardThemeProvider, ThemeToggle } from "@/components/DashboardTheme";
+import { DashboardThemeProvider, ThemeToggleIcone } from "@/components/DashboardTheme";
 import { policesApp } from "@/app/polices-app";
 import { MobileNav } from "@/components/MobileNav";
 import { SidebarNav } from "@/components/SidebarNav";
@@ -191,8 +191,8 @@ export default async function DashboardLayout({ children }: { children: React.Re
         />
 
         <aside className="hidden lg:flex w-64 bg-ds-surface border-r border-ds-border flex-col fixed h-full">
-          <div className="p-5 border-b border-ds-border">
-            <a href="/dashboard" className="flex items-center gap-2">
+          <div className="px-5 py-4 border-b border-ds-border flex items-center justify-between gap-2">
+            <a href="/dashboard" className="flex items-center gap-2 min-w-0">
               <div className="w-7 h-7 rounded-[7px] bg-indigo-600 flex items-center justify-center">
                 <span className="text-ink font-display font-bold text-[15px]">D</span>
               </div>
@@ -203,6 +203,7 @@ export default async function DashboardLayout({ children }: { children: React.Re
                 </span>
               )}
             </a>
+            <ThemeToggleIcone />
           </div>
 
           <SidebarNav isMember={isMember} isComptable={isComptable} />
@@ -254,7 +255,6 @@ export default async function DashboardLayout({ children }: { children: React.Re
             </span>
             <div className="flex items-center gap-2">
               <NotificationBell placement="topbar" />
-              <ThemeToggle compact />
             </div>
           </div>
           <div className="p-4 lg:p-6 pt-[4.5rem] lg:pt-6">

@@ -8,6 +8,7 @@ import { terminerDemo } from "@/components/DemoSession";
 import { Menu, X } from "lucide-react";
 import { NAVIGATION, estSection, lienActif, lienVisible, sectionVisible } from "@/lib/navigation";
 import { NotificationBell } from "@/components/NotificationBell";
+import { ThemeToggleIcone } from "@/components/DashboardTheme";
 
 
 interface MobileNavProps {
@@ -65,12 +66,15 @@ export function MobileNav({ initials, userName, userEmail, isMember = false, isC
   return (
     <>
       <div className="lg:hidden fixed top-0 left-0 right-0 z-50 bg-ds-bg border-b border-ds-border flex items-center justify-between px-4 h-14">
-        <Link href="/dashboard" className="flex items-center gap-2">
-          <div className="w-7 h-7 rounded-lg bg-gradient-to-br from-indigo-600 to-violet-600 flex items-center justify-center">
-            <span className="text-ink font-semibold text-xs">D</span>
-          </div>
-          <span className="font-semibold text-ink text-sm">Deviso</span>
-        </Link>
+        <div className="flex items-center gap-2.5">
+          <Link href="/dashboard" className="flex items-center gap-2">
+            <div className="w-7 h-7 rounded-[7px] bg-indigo-600 flex items-center justify-center">
+              <span className="text-ink font-display font-bold text-[15px]">D</span>
+            </div>
+            <span className="font-display font-bold text-[17px] tracking-tight text-ink">Deviso</span>
+          </Link>
+          <ThemeToggleIcone />
+        </div>
         <div className="flex items-center gap-1">
           <NotificationBell placement="topbar" />
           <button onClick={() => setOpen(true)} className="p-2 rounded-lg text-gray-500 hover:bg-ds-elevated transition-colors" aria-label="Ouvrir le menu">
