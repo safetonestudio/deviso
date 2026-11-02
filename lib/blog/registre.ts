@@ -492,7 +492,7 @@ export const ARTICLES: Article[] = [
   // ── Famille « obligations » ────────────────────────────────────────────────
   {
     slug: "livre-des-recettes-micro-entrepreneur",
-    categorie: "obligations",
+    categorie: "comptabilite",
     titre: "Le livre des recettes du micro-entrepreneur",
     description:
       "Le seul document comptable obligatoire en micro-entreprise. Les mentions à porter, le piège de l'encaissement, et ce qui est vraiment sanctionné.",
@@ -517,7 +517,7 @@ export const ARTICLES: Article[] = [
   },
   {
     slug: "biens-ou-services-micro-entrepreneur",
-    categorie: "obligations",
+    categorie: "comptabilite",
     titre: "Biens ou services : la distinction qui change tout",
     description:
       "Vente de biens ou prestation ? Cette seule question fixe vos cotisations, votre abattement, votre plafond et votre seuil de TVA. Les chiffres 2026.",
@@ -542,7 +542,7 @@ export const ARTICLES: Article[] = [
   },
   {
     slug: "passer-a-la-tva-micro-entrepreneur",
-    categorie: "obligations",
+    categorie: "comptabilite",
     titre: "Passer à la TVA en micro-entreprise",
     description:
       "La franchise de TVA s'arrête avant votre plafond de micro. Les seuils 2026, ce qui déclenche la bascule, et les démarches pour passer à la TVA.",
@@ -567,7 +567,7 @@ export const ARTICLES: Article[] = [
   },
   {
     slug: "declarer-chiffre-affaires-urssaf",
-    categorie: "obligations",
+    categorie: "comptabilite",
     titre: "Déclarer son chiffre d'affaires à l'URSSAF",
     description:
       "Chaque mois ou trimestre, vous déclarez l'encaissé et payez vos cotisations dessus. Taux 2026, bonne périodicité, ACRE et oublis coûteux.",
@@ -592,7 +592,7 @@ export const ARTICLES: Article[] = [
   },
   {
     slug: "versement-liberatoire-2026",
-    categorie: "obligations",
+    categorie: "comptabilite",
     titre: "Le versement libératoire en 2026 : pour qui",
     description:
       "Payer son impôt au fil de l'eau, séduisant mais pas pour tout le monde. Taux 2026, condition de revenu, et la question qui décide : êtes-vous imposable ?",
@@ -617,7 +617,7 @@ export const ARTICLES: Article[] = [
   },
   {
     slug: "obligations-comptables-micro-entrepreneur",
-    categorie: "obligations",
+    categorie: "comptabilite",
     titre: "Les obligations comptables au-delà du livre des recettes",
     description:
       "Le micro dispense de bilan, pas de tout. Compte bancaire dédié, factures conformes, registre des achats, conservation 10 ans : le tour complet.",
@@ -986,7 +986,7 @@ export const ARTICLES: Article[] = [
   // ── Famille « transverse » ─────────────────────────────────────────────────
   {
     slug: "micro-ou-reel-quand-basculer",
-    categorie: "transverse",
+    categorie: "comptabilite",
     titre: "Micro ou régime réel : quand basculer",
     description:
       "Le micro applique un abattement forfaitaire, le réel déduit vos charges. La bascule tient à une question : vos charges dépassent-elles votre abattement ?",
@@ -1011,7 +1011,7 @@ export const ARTICLES: Article[] = [
   },
   {
     slug: "quand-prendre-expert-comptable-micro",
-    categorie: "transverse",
+    categorie: "comptabilite",
     titre: "Micro-entrepreneur : quand prendre un expert-comptable",
     description:
       "En micro, l'expert-comptable n'est pas obligatoire. La vraie question : à partir de quand est-ce rentable. Les moments qui le justifient.",
@@ -1036,7 +1036,7 @@ export const ARTICLES: Article[] = [
   },
   {
     slug: "experts-comptables-equiper-clients-micro",
-    categorie: "transverse",
+    categorie: "comptabilite",
     titre: "Experts-comptables : équiper ses clients micro",
     description:
       "Le dossier micro est peu rentable non parce qu'il est simple, mais parce qu'il arrive en désordre. L'équiper à la source, et ce que la réforme y change.",
@@ -1061,7 +1061,7 @@ export const ARTICLES: Article[] = [
   },
   {
     slug: "calendrier-fiscal-social-micro",
-    categorie: "transverse",
+    categorie: "comptabilite",
     titre: "Le calendrier fiscal et social du micro",
     description:
       "Déclaration de CA, déclaration de revenus, CFE, TVA : le tour des rendez-vous de l'année, et de ceux qui tombent même sans activité.",
@@ -1086,7 +1086,7 @@ export const ARTICLES: Article[] = [
   },
   {
     slug: "deviso-solution-comptable-marche",
-    categorie: "transverse",
+    categorie: "comptabilite",
     titre: "Deviso face au marché : notre solution comptable",
     description:
       "Le marché des outils déborde, et pourtant le micro reste mal servi. Où Deviso se place, les points de douleur qu'il règle, et ce qu'il ne prétend pas être.",

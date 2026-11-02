@@ -39,7 +39,7 @@ type FormeCategorie = {
    * Couleur d'accent. Volontairement limitée à quatre valeurs connues : une
    * couleur libre par catégorie produirait une page arlequin au quatrième ajout.
    */
-  accent: "amber" | "indigo" | "emerald" | "rose";
+  accent: "amber" | "indigo" | "emerald" | "rose" | "sky";
   /**
    * Les catégories réglementaires bougent et portent la valeur SEO : leurs
    * articles sortent en priorité 0.9 au sitemap, les autres en 0.8.
@@ -59,6 +59,14 @@ export const CATEGORIES = [
     accent: "amber",
     prioritaire: true,
     ouverteParDefaut: true,
+  },
+  {
+    id: "comptabilite",
+    titre: "La comptabilité du micro-entrepreneur",
+    badge: "Comptabilité",
+    resume:
+      "Livre des recettes, TVA, cotisations, versement libératoire, régime réel, calendrier : tenir sa comptabilité de micro sans s'y perdre, et savoir quand se faire aider.",
+    accent: "sky",
   },
   {
     id: "documents",
@@ -156,6 +164,13 @@ export const ACCENTS: Record<
     bordureActive: "open:border-rose-500/30 hover:border-rose-500/40",
     texte: "group-open:text-rose-200",
     survol: "group-hover/item:text-rose-200",
+  },
+  sky: {
+    badge: "bg-sky-500/10 text-sky-300 border-sky-500/20",
+    bordure: "border-ds-border",
+    bordureActive: "open:border-sky-500/30 hover:border-sky-500/40",
+    texte: "group-open:text-sky-200",
+    survol: "group-hover/item:text-sky-200",
   },
 };
 
