@@ -11,6 +11,8 @@ type Props = {
   caMoisTtc: number;
   /** null quand le regime de TVA n'est pas la franchise : pas de seuil a suivre. */
   jauge: JaugeFranchise | null;
+  /** Assujettis : TVA percue sur les encaissements du trimestre (null en franchise). */
+  tvaTrimestre?: number | null;
 };
 
 /**
@@ -20,7 +22,7 @@ type Props = {
  * en ouvrant son outil (ou j'en suis, et quand vais-je devoir facturer la TVA).
  * Widget autonome : ne depend que de ses props.
  */
-export function HeroCa({ annee, caAnneeHt, caTrimestreHt, trimestre, caMoisTtc, jauge }: Props) {
+export function HeroCa({ annee, caAnneeHt, caTrimestreHt, trimestre, caMoisTtc, jauge, tvaTrimestre = null }: Props) {
   const pct = jauge ? Math.min(100, Math.round(jauge.ratio * 100)) : 0;
   const etat = !jauge ? null : jauge.ratio >= 1 ? "depasse" : jauge.ratio >= 0.85 ? "proche" : "ok";
   const remplissage = etat === "depasse" ? "bg-red-600" : etat === "proche" ? "bg-amber-500" : "bg-indigo-600";
@@ -79,14 +81,14 @@ export function HeroCa({ annee, caAnneeHt, caTrimestreHt, trimestre, caMoisTtc, 
       ) : (
         <div className="grid grid-cols-2 gap-3">
           <div className="rounded-xl bg-ds-elevated p-4">
-            <div className="text-[13px] text-gray-400">Ce trimestre</div>
-            <div className="font-display text-2xl font-bold text-ink mt-1">{euros(caTrimestreHt)}</div>
-            <div className="text-xs text-gray-400 mt-1">hors taxes</div>
+            <div className="text-[13px] text-gray-400">Encaissé ce mois</div>
+            <div className="font-display text-2xl font-bold text-ink mt-1">{euros(caMoisTtc)}</div>
+            <div className="text-xs text-gray-400 mt-1">TTC</div>
           </div>
           <div className="rounded-xl bg-ds-elevated p-4">
-            <div className="text-[13px] text-gray-400">Ce mois</div>
-            <div className="font-display text-2xl font-bold text-ink mt-1">{euros(caMoisTtc)}</div>
-            <div className="text-xs text-gray-400 mt-1">encaissés, TTC</div>
+            <div className="text-[13px] text-gray-400">TVA perçue ce trimestre</div>
+            <div className="font-display text-2xl font-bold text-ink mt-1">{euros(tvaTrimestre ?? 0)}</div>
+            <div className="text-xs text-gray-400 mt-1">sur tes encaissements</div>
           </div>
         </div>
       )}

@@ -16,20 +16,13 @@ export type ActionItem = {
   actionHref?: string; // navigate → facturer
 };
 
-// Fonds pleins : une teinte translucide (4%) laissait passer le fond a relief
-// derriere le contenu du dashboard et cassait la lisibilite (retour 28/09).
-// On garde la couleur d'urgence en version opaque (teinte sombre composee) plus
-// la bordure gauche coloree comme signal.
-const URGENCY_STYLE = {
-  high:   "border-l-red-500/60   bg-[var(--urgency-high-bg)]",
-  medium: "border-l-amber-500/60 bg-[var(--urgency-medium-bg)]",
-  low:    "border-l-ds-border    bg-ds-surface",
-};
-
+// Une seule carte, des lignes calmes : l'urgence se lit dans la pastille
+// d'icone (couleur et forme), pas dans un fond colore ni une barre laterale,
+// qui criaient plus fort que le contenu (refonte visuelle, 02/11/2026).
 const URGENCY_ICON = {
-  high:   { icon: AlertCircle, cls: "text-red-400" },
-  medium: { icon: Clock,       cls: "text-amber-400" },
-  low:    { icon: Receipt,     cls: "text-gray-500" },
+  high:   { icon: AlertCircle, cls: "bg-red-500/10 text-red-400" },
+  medium: { icon: Clock,       cls: "bg-amber-500/10 text-amber-400" },
+  low:    { icon: Receipt,     cls: "bg-indigo-500/10 text-indigo-400" },
 };
 
 export function DashboardActionFeed({ items }: { items: ActionItem[] }) {
@@ -69,7 +62,7 @@ export function DashboardActionFeed({ items }: { items: ActionItem[] }) {
       <h2 className="text-xs font-semibold text-gray-500 mb-3">
         Actions requises
       </h2>
-      <div className="space-y-2">
+      <div className="carte divide-y divide-ds-border overflow-hidden">
         {visible.map((item) => {
           const { icon: Icon, cls } = URGENCY_ICON[item.urgency];
           const isLoading = loading.has(item.id);
@@ -77,15 +70,17 @@ export function DashboardActionFeed({ items }: { items: ActionItem[] }) {
           return (
             <div
               key={item.id}
-              className={`flex items-center gap-3 border border-ds-border border-l-2 rounded-xl px-4 py-3 transition-all ${URGENCY_STYLE[item.urgency]}`}
+              className="flex items-center gap-3 px-4 py-3"
             >
-              <Icon size={14} className={`${cls} shrink-0`} />
+              <span className={`w-8 h-8 rounded-lg grid place-items-center shrink-0 ${cls}`}>
+                <Icon size={15} />
+              </span>
 
               <Link href={item.href} className="flex-1 min-w-0 group">
-                <p className="text-sm font-medium text-ink group-hover:text-indigo-200 transition-colors leading-snug truncate">
+                <p className="text-sm font-semibold text-ink group-hover:text-indigo-400 transition-colors leading-snug truncate">
                   {item.label}
                 </p>
-                <p className="text-xs text-gray-500 mt-0.5 truncate">{item.sublabel}</p>
+                <p className="text-xs text-gray-400 mt-0.5 truncate">{item.sublabel}</p>
               </Link>
 
               {/* Action inline */}
@@ -95,8 +90,8 @@ export function DashboardActionFeed({ items }: { items: ActionItem[] }) {
                   disabled={isLoading}
                   className={`shrink-0 text-xs font-semibold px-3 py-1.5 rounded-lg transition-colors disabled:opacity-40 ${
                     item.urgency === "high"
-                      ? "bg-red-500/10 hover:bg-red-500/20 text-red-400 border border-red-500/20"
-                      : "bg-amber-500/10 hover:bg-amber-500/20 text-amber-400 border border-amber-500/20"
+                      ? "bg-ds-surface hover:bg-ds-elevated text-red-400 border border-ds-border"
+                      : "bg-ds-surface hover:bg-ds-elevated text-amber-400 border border-ds-border"
                   }`}
                 >
                   {isLoading ? "…" : item.actionLabel}

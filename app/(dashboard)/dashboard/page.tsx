@@ -169,6 +169,15 @@ export default async function DashboardPage() {
   const jauge = echeancesUrssaf
     ? jaugeFranchise({ biens: totauxAnnee.biens.ht, services: totauxAnnee.services.ht })
     : null;
+  // Assujettis a la TVA : la TVA percue sur les encaissements du trimestre,
+  // a reverser lors de la declaration. Meme source (lignes du livre).
+  const tvaTrimestre = echeancesUrssaf
+    ? null
+    : Math.round(
+        lignesRecettes(inv as unknown as FactureRecette[], anneeCourante)
+          .filter((l) => Math.floor((Number(l.date.slice(5, 7)) - 1) / 3) === currentQuarter)
+          .reduce((t, l) => t + (l.ttc - l.ht), 0) * 100
+      ) / 100;
   // Encaissé ce mois : date d'ENCAISSEMENT (paid_at), pas date de création de
   // la facture comme jusqu'au 24/10/2026. Même source que le livre des recettes.
   const caThisMonth = encaisseTtcDuMois(
@@ -291,6 +300,7 @@ export default async function DashboardPage() {
           trimestre={currentQuarter + 1}
           caMoisTtc={caThisMonth}
           jauge={jauge}
+          tvaTrimestre={tvaTrimestre}
         />
       )}
 
