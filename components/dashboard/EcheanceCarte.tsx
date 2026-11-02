@@ -54,7 +54,8 @@ export function EcheanceCarte({
           <span className="text-gray-400">CA du trimestre à ce jour</span>
           <span className="font-display font-semibold text-ink">{euros(caTrimestreHt)}</span>
         </div>
-        <div className="flex items-center justify-between gap-3 py-3">
+        {/* Cotisations micro : seulement quand l'echeance URSSAF s'applique. */}
+        {echeance && <div className="flex items-center justify-between gap-3 py-3">
           <span className="text-gray-400">Cotisations estimées{acre && cotisations !== null ? ", hors ACRE" : ""}</span>
           {cotisations !== null ? (
             <span className="font-display font-semibold text-ink">{euros(cotisations)}</span>
@@ -63,7 +64,7 @@ export function EcheanceCarte({
               Préciser mon activité
             </Link>
           )}
-        </div>
+        </div>}
       </div>
 
       <p className="text-[13px] text-gray-400 bg-ds-elevated rounded-xl px-3.5 py-3">
