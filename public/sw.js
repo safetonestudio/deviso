@@ -1,11 +1,23 @@
-const CACHE_NAME = "deviso-v1";
+// v2 : la v1 mettait en cache n'importe quelle reponse, y compris une erreur
+// renvoyee pendant un redemarrage ou un deploiement, puis la resservait a vie
+// (page sans mise en forme). Changer le nom purge ces caches empoisonnes.
+const CACHE_NAME = "deviso-v2";
 
-// Assets statiques à mettre en cache immédiatement
+// Pages servies hors ligne en dernier recours.
 const STATIC_ASSETS = ["/", "/login", "/signup"];
+
+// Ne garde que les reponses saines du site lui-meme.
+const cachable = (res) => res && res.ok && res.type === "basic";
+
+function mettreEnCache(request, res) {
+  if (!cachable(res)) return;
+  const clone = res.clone();
+  caches.open(CACHE_NAME).then((cache) => cache.put(request, clone));
+}
 
 self.addEventListener("install", (event) => {
   event.waitUntil(
-    caches.open(CACHE_NAME).then((cache) => cache.addAll(STATIC_ASSETS))
+    caches.open(CACHE_NAME).then((cache) => cache.addAll(STATIC_ASSETS)).catch(() => {})
   );
   self.skipWaiting();
 });
@@ -24,35 +36,38 @@ self.addEventListener("activate", (event) => {
 
 self.addEventListener("fetch", (event) => {
   const { request } = event;
+  if (request.method !== "GET") return;
   const url = new URL(request.url);
 
-  // Ne pas intercepter les appels API ou Supabase
-  if (url.pathname.startsWith("/api/") || url.hostname.includes("supabase")) {
+  // Ne pas intercepter les appels API, Supabase ni les autres domaines
+  if (url.origin !== self.location.origin || url.pathname.startsWith("/api/")) {
     return;
   }
 
-  // Stratégie Network First pour les pages, Cache First pour les assets statiques
-  if (request.destination === "document") {
-    event.respondWith(
-      fetch(request)
-        .then((res) => {
-          const clone = res.clone();
-          caches.open(CACHE_NAME).then((cache) => cache.put(request, clone));
-          return res;
-        })
-        .catch(() => caches.match(request))
-    );
-  } else if (["style", "script", "image", "font"].includes(request.destination)) {
+  // Fichiers de build : nom unique par contenu, donc immuables. Cache d'abord.
+  if (url.pathname.startsWith("/_next/static/")) {
     event.respondWith(
       caches.match(request).then(
         (cached) =>
           cached ||
           fetch(request).then((res) => {
-            const clone = res.clone();
-            caches.open(CACHE_NAME).then((cache) => cache.put(request, clone));
+            mettreEnCache(request, res);
             return res;
           })
       )
+    );
+    return;
+  }
+
+  // Pages et autres ressources : reseau d'abord, cache seulement hors ligne.
+  if (request.destination === "document" || ["style", "script", "image", "font"].includes(request.destination)) {
+    event.respondWith(
+      fetch(request)
+        .then((res) => {
+          mettreEnCache(request, res);
+          return res;
+        })
+        .catch(() => caches.match(request))
     );
   }
 });
