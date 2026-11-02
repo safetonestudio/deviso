@@ -180,7 +180,7 @@ export default async function DashboardLayout({ children }: { children: React.Re
   return (
     <DashboardThemeProvider className={policesApp}>
     <PlanProvider plan={plan} isMember={isMember} droits={droits}>
-      <div className="min-h-screen bg-app-relief flex overflow-x-hidden">
+      <div className="min-h-screen bg-app-relief flex overflow-x-clip">
         <MobileNav
           initials={initials}
           userName={profile?.full_name || ""}

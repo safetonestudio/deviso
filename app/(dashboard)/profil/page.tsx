@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState, useCallback } from "react";
 import Image from "next/image";
-import { Building2 } from "lucide-react";
+import { Building2, FileText, ShieldCheck, CreditCard, type LucideIcon } from "lucide-react";
 import type { Profile, TvaRegime } from "@/types";
 import { STATUTS } from "@/lib/statut-entreprise";
 import { UpgradeBanner } from "@/components/UpgradeBanner";
@@ -57,44 +57,86 @@ function SectionRepliable({
 
 // Menu lateral ancre des reglages : on saute a une section d'un clic plutot que
 // de derouler toute la page (retour Selim 02/11, scroll interminable).
-const PARAM_SECTIONS: { titre: string; liens: { id: string; label: string }[] }[] = [
-  { titre: "Entreprise", liens: [
+const PARAM_SECTIONS: { titre: string; icone: LucideIcon; liens: { id: string; label: string }[] }[] = [
+  { titre: "Entreprise", icone: Building2, liens: [
     { id: "logo", label: "Logo" },
     { id: "identite", label: "Identité" },
     { id: "statut-tva", label: "Statut & TVA" },
   ] },
-  { titre: "Documents", liens: [
+  { titre: "Documents", icone: FileText, liens: [
     { id: "documents", label: "Apparence" },
     { id: "sous-domaine", label: "Sous-domaine" },
     { id: "relances", label: "Relances" },
     { id: "cgv", label: "CGV" },
   ] },
-  { titre: "Conformité & comptable", liens: [
+  { titre: "Conformité", icone: ShieldCheck, liens: [
     { id: "comptable", label: "Expert-comptable" },
     { id: "chorus", label: "Chorus Pro" },
   ] },
-  { titre: "Compte", liens: [
+  { titre: "Compte", icone: CreditCard, liens: [
     { id: "abonnement", label: "Abonnement" },
   ] },
 ];
 
+const PARAM_IDS = PARAM_SECTIONS.flatMap((g) => g.liens.map((l) => l.id));
+
+// Menu lateral des reglages, a la maniere des reglages de Linear ou Stripe :
+// l'entree de la section ou l'on se trouve s'allume, un clic y amene. L'etat
+// actif est pilote par la position de defilement (IntersectionObserver), pas
+// par un simple survol : c'est ce qui donne le repere "vous etes ici".
 function ParametresNav() {
+  const [actif, setActif] = useState<string>(PARAM_IDS[0]);
+  useEffect(() => {
+    const cibles = PARAM_IDS
+      .map((id) => document.getElementById(id))
+      .filter((e): e is HTMLElement => e !== null);
+    if (cibles.length === 0) return;
+    const obs = new IntersectionObserver(
+      (entrees) => {
+        const visibles = entrees
+          .filter((e) => e.isIntersecting)
+          .sort((a, b) => a.boundingClientRect.top - b.boundingClientRect.top);
+        if (visibles[0]) setActif(visibles[0].target.id);
+      },
+      { rootMargin: "-88px 0px -70% 0px", threshold: 0 },
+    );
+    cibles.forEach((c) => obs.observe(c));
+    return () => obs.disconnect();
+  }, []);
+
   return (
-    <nav className="hidden lg:block lg:sticky lg:top-20 space-y-5 text-sm">
-      {PARAM_SECTIONS.map((groupe) => (
-        <div key={groupe.titre}>
-          <p className="text-[11px] font-semibold tracking-wide text-gray-500 mb-1.5 px-3">{groupe.titre}</p>
-          <ul className="space-y-0.5">
-            {groupe.liens.map((l) => (
-              <li key={l.id}>
-                <a href={`#${l.id}`} className="block px-3 py-1.5 rounded-lg text-gray-400 hover:text-ink hover:bg-ds-elevated transition-colors">
-                  {l.label}
-                </a>
-              </li>
-            ))}
-          </ul>
-        </div>
-      ))}
+    <nav className="hidden lg:block lg:self-start lg:sticky lg:top-[88px] space-y-6 text-sm">
+      {PARAM_SECTIONS.map((groupe) => {
+        const Icone = groupe.icone;
+        return (
+          <div key={groupe.titre}>
+            <div className="flex items-center gap-2 px-3 mb-2 text-gray-500">
+              <Icone size={14} className="shrink-0" />
+              <span className="text-[11px] font-semibold tracking-wide">{groupe.titre}</span>
+            </div>
+            <ul className="space-y-0.5">
+              {groupe.liens.map((l) => {
+                const estActif = actif === l.id;
+                return (
+                  <li key={l.id}>
+                    <a
+                      href={`#${l.id}`}
+                      aria-current={estActif ? "true" : undefined}
+                      className={`block rounded-lg px-3 py-1.5 transition-colors ${
+                        estActif
+                          ? "bg-indigo-500/10 text-indigo-400 font-semibold"
+                          : "text-gray-400 hover:text-ink hover:bg-ds-elevated"
+                      }`}
+                    >
+                      {l.label}
+                    </a>
+                  </li>
+                );
+              })}
+            </ul>
+          </div>
+        );
+      })}
     </nav>
   );
 }
@@ -464,9 +506,9 @@ Les présentes CGV sont soumises au droit français. Tout litige relève de la c
         <p className="sous-titre-page">Ces informations apparaîtront automatiquement sur tes devis et factures.</p>
       </div>
 
-      <div className="grid lg:grid-cols-[200px_minmax(0,1fr)] gap-8 items-start">
+      <div className="grid lg:grid-cols-[240px_minmax(0,1fr)] gap-10">
         <ParametresNav />
-        <div className="min-w-0 space-y-6">
+        <div className="min-w-0 max-w-[720px] space-y-6">
 
       {/* Abonnement */}
       <SectionRepliable
