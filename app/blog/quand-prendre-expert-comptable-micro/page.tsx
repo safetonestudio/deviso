@@ -103,9 +103,9 @@ const FAQ = [
 
 const SOURCES: Source[] = [
   {
-    libelle: "Ordre des experts-comptables, Le rôle de l&rsquo;expert-comptable",
+    libelle: "Ordre des experts-comptables, Le rôle de l'expert-comptable",
     url: "https://www.experts-comptables.fr/",
-    precision: "missions de conseil et d&rsquo;accompagnement",
+    precision: "missions de conseil et d'accompagnement",
   },
   {
     libelle: "Service-public.gouv.fr, Obligations comptables du micro-entrepreneur",

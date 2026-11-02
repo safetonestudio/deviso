@@ -109,9 +109,9 @@ const FAQ = [
 
 const SOURCES: Source[] = [
   {
-    libelle: "Urssaf, Le versement libératoire de l&rsquo;impôt sur le revenu",
+    libelle: "Urssaf, Le versement libératoire de l'impôt sur le revenu",
     url: "https://www.autoentrepreneur.urssaf.fr/portail/accueil/une-question/questions-sur-mes-impots.html",
-    precision: "taux, plafond de RFR et délais d&rsquo;option 2026",
+    precision: "taux, plafond de RFR et délais d'option 2026",
   },
   {
     libelle: "Service-public.gouv.fr, Impôt sur le revenu du micro-entrepreneur",

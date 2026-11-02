@@ -102,7 +102,7 @@ const SOURCES: Source[] = [
     precision: "panorama des solutions du marché français",
   },
   {
-    libelle: "Siècle Digital, Pennylane lève 175 millions d&rsquo;euros (janvier 2026)",
+    libelle: "Siècle Digital, Pennylane lève 175 millions d'euros (janvier 2026)",
     url: "https://siecledigital.fr/2026/01/20/pennylane-soffre-175-millions-deuros-pour-changer-dechelle/",
     precision: "dynamique du marché des plateformes pour experts-comptables",
   },

@@ -60,3 +60,4 @@ graphify-out/
 
 # logs de build et de guards (jamais versionnes)
 *.log
+blogout.txt

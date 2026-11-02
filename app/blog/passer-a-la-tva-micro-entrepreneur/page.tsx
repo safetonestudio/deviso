@@ -109,7 +109,7 @@ const SOURCES: Source[] = [
     precision: "seuils de franchise et conditions de sortie",
   },
   {
-    libelle: "Impots.gouv.fr, Régimes d&rsquo;imposition et déclarations de TVA",
+    libelle: "Impots.gouv.fr, Régimes d'imposition et déclarations de TVA",
     url: "https://www.impots.gouv.fr/professionnel/les-regimes-dimposition",
     precision: "réel simplifié (CA12) et réel normal (CA3)",
   },

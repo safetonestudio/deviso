@@ -111,7 +111,7 @@ const FAQ = [
 
 const SOURCES: Source[] = [
   {
-    libelle: "Service-public.gouv.fr, Régimes d&rsquo;imposition des bénéfices",
+    libelle: "Service-public.gouv.fr, Régimes d'imposition des bénéfices",
     url: "https://entreprendre.service-public.gouv.fr/vosdroits/F32917",
     precision: "micro, réel simplifié et réel normal",
   },

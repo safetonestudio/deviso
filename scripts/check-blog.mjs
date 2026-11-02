@@ -188,7 +188,7 @@ const champsTexteBrut = [];
 for (const slug of slugsRegistre) {
   const src = lire(`app/blog/${slug}/page.tsx`);
   for (const nom of ["FAQ", "SOURCES"]) {
-    const bloc = src.match(new RegExp(`const ${nom} = \\[[\\s\\S]*?\\n\\];`));
+    const bloc = src.match(new RegExp(`const ${nom}(?::\\s*[^=]+)? = \\[[\\s\\S]*?\\n\\];`));
     if (bloc && ENTITE.test(bloc[0])) champsTexteBrut.push(`${slug} (${nom})`);
   }
 }

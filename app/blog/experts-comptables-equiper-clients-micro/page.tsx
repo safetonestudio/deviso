@@ -107,7 +107,7 @@ const SOURCES: Source[] = [
   {
     libelle: "Service-public.gouv.fr, Facturation électronique entre entreprises",
     url: "https://entreprendre.service-public.gouv.fr/vosdroits/F23208",
-    precision: "calendrier de réception et d&rsquo;émission des factures électroniques",
+    precision: "calendrier de réception et d'émission des factures électroniques",
   },
   {
     libelle: "Deviso, page dédiée aux experts-comptables",

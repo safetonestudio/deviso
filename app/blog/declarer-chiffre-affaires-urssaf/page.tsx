@@ -105,7 +105,7 @@ const SOURCES: Source[] = [
   {
     libelle: "Service-public.gouv.fr, Cotisations du micro-entrepreneur et ACRE",
     url: "https://entreprendre.service-public.gouv.fr/vosdroits/F23267",
-    precision: "assiette, taux et exonération de début d&rsquo;activité",
+    precision: "assiette, taux et exonération de début d'activité",
   },
 ];
 
