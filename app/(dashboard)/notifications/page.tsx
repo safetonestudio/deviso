@@ -4,6 +4,7 @@ import { isTeamMember, getWorkspaceUserId } from "@/lib/workspace";
 import { DashboardActionFeed } from "@/components/DashboardActionFeed";
 import { NotificationsHistorique } from "@/components/NotificationsHistorique";
 import { ActionsGlobales } from "@/components/ActionsGlobales";
+import { GuidedTourBanner } from "@/components/GuidedTourBanner";
 import { actionsRequises } from "@/lib/actions-requises";
 
 export const metadata = { title: "Notifications" };
@@ -43,6 +44,7 @@ export default async function NotificationsPage() {
 
   return (
     <div className="space-y-6 w-full">
+      <GuidedTourBanner pageKey="notifications" />
       <div className="en-tete-page flex items-start justify-between gap-4 flex-wrap">
         <div>
           <h1 className="text-[32px] sm:text-[38px] font-bold text-ink tracking-tight leading-tight">Notifications</h1>

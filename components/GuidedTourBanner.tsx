@@ -6,6 +6,7 @@ import { Lightbulb } from "lucide-react";
 
 type PageKey =
   | "dashboard"
+  | "notifications"
   | "proposals"
   | "proposals_new"
   | "proposals_detail"
@@ -27,7 +28,11 @@ type PageKey =
 const CONTENT: Record<PageKey, { title: string; body: string }> = {
   dashboard: {
     title: "Ton tableau de bord",
-    body: "Ton activité du mois d'un coup d'œil, et les alertes qui demandent une action : impayés, relances, approbations.",
+    body: "Ton chiffre d'affaires encaissé, la distance au seuil de TVA, ta prochaine échéance URSSAF et les messages de ton expert-comptable.",
+  },
+  notifications: {
+    title: "Tes notifications",
+    body: "Ce qui demande une action (factures en retard, devis à relancer, devis signés à facturer), puis l'historique : signatures, refus, paiements.",
   },
   proposals: {
     title: "Tes devis",

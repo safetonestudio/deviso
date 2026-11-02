@@ -5,7 +5,6 @@ import { isTeamMember, getWorkspaceUserId } from "@/lib/workspace";
 import type { Proposal } from "@/types";
 import { KpiCard } from "@/components/ui/KpiCard";
 import { EmptyState } from "@/components/ui/EmptyState";
-import { CaUrssafWidget } from "@/components/CaUrssafWidget";
 import { ProductTour } from "@/components/ProductTour";
 import { GuidedTourBanner } from "@/components/GuidedTourBanner";
 import { ActionsGlobales } from "@/components/ActionsGlobales";
@@ -149,7 +148,7 @@ export default async function DashboardPage() {
   // savoir ce qu'on a encaissé par trimestre n'a pas de régime.
   const echeancesUrssaf = profilEspace?.tva_regime === "franchise";
 
-  // Résumé porté par la barre fermée du récap CA/URSSAF (accordéon) : total HT
+  // Total HT du trimestre en cours (carte d'echeance et bloc heros) : total HT
   // du trimestre en cours, et l'échéance de dépôt quand elle s'applique.
   // Calculé côté serveur pour rester lisible sans ouvrir l'accordéon.
   const currentQuarter = Math.floor(now.getMonth() / 3);
@@ -314,17 +313,19 @@ export default async function DashboardPage() {
       {/* ── CA mois par mois et prochaine echeance ── */}
       {!isMember && (
         <div className="grid gap-5 lg:grid-cols-3 items-stretch">
-          <div className="lg:col-span-2 min-w-0">
+          {/* Sans echeance URSSAF applicable (hors micro en franchise), pas de
+              carte de remplacement : le graphique prend toute la largeur. */}
+          <div className={`${echeanceDepot ? "lg:col-span-2" : "lg:col-span-3"} min-w-0`}>
             <CaMensuelBarres mensuelHt={caMensuelHt} moisCourant={now.getMonth()} annee={anneeCourante} />
           </div>
-          <EcheanceCarte
+          {echeanceDepot && <EcheanceCarte
             echeance={echeanceDepot}
             trimestre={currentQuarter + 1}
             caTrimestreHt={caTrimestreHt}
             annee={anneeCourante}
-            cotisations={echeancesUrssaf ? cotisationsEstimees : null}
+            cotisations={cotisationsEstimees}
             acre={!!compteUrssaf?.acre}
-          />
+          />}
         </div>
       )}
 
@@ -461,44 +462,6 @@ export default async function DashboardPage() {
         )}
       </div>
 
-      {/* ── Récap du CA encaissé, replié par défaut ── */}
-      {/* Réservé au propriétaire : un collaborateur ne voit que ses propres
-          documents, la somme n'aurait aucun sens comme récapitulatif de
-          l'entreprise. Le total du trimestre et l'échéance restent lisibles
-          sur la barre fermée ; le détail mois par mois s'ouvre au clic. */}
-      {!isMember && (
-        <details className="group carte overflow-hidden [&_summary::-webkit-details-marker]:hidden">
-          <summary className="flex items-center justify-between gap-3 px-5 py-4 cursor-pointer list-none select-none hover:bg-ds-elevated/40 transition-colors">
-            <div className="min-w-0">
-              <h2 className="text-sm font-semibold text-ink">
-                {echeancesUrssaf ? "Récap CA, URSSAF" : "Récap chiffre d'affaires"}
-              </h2>
-              <p className="text-xs text-gray-500 mt-0.5">
-                T{currentQuarter + 1} en cours : <span className="text-gray-300 font-medium">{fmt(caTrimestreHt)} HT</span>
-              </p>
-            </div>
-            <div className="flex items-center gap-3 shrink-0">
-              {echeanceDepot && (
-                <span className="text-xs text-amber-400 bg-amber-500/10 border border-amber-500/20 px-2 py-0.5 rounded-full font-medium">
-                  Dépôt {echeanceDepot}
-                </span>
-              )}
-              <svg className="w-4 h-4 shrink-0 text-gray-400 transition-transform group-open:rotate-180" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                <path strokeLinecap="round" strokeLinejoin="round" d="m19.5 8.25-7.5 7.5-7.5-7.5" />
-              </svg>
-            </div>
-          </summary>
-          <div className="border-t border-ds-border">
-            <CaUrssafWidget
-              monthlyHT={caMensuelHt}
-              currentMonth={now.getMonth()}
-              currentYear={anneeCourante}
-              echeancesUrssaf={echeancesUrssaf}
-              bare
-            />
-          </div>
-        </details>
-      )}
     </div>
 
     <ProductTour isMember={isMember} />

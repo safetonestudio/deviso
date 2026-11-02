@@ -369,27 +369,25 @@ console.log("");
   );
 }
 
-// ── 18. Le récapitulatif de CA promis est réellement affiché ────────────────
+// ── 18. Le suivi du CA URSSAF promis est réellement affiché ───────────────
+// Depuis la refonte du 02/11/2026, la promesse (« suivi du CA URSSAF ») est
+// tenue par le graphique du CA encaissé mois par mois et la carte de
+// prochaine échéance, qui remplacent l'ancien récapitulatif replié.
 {
   const src = lire("app/(dashboard)/dashboard/page.tsx");
   exige(
-    "tableau de bord, le récapitulatif de CA est monté",
-    /<CaUrssafWidget/.test(src),
-    "le composant existait, complet, et n'était monté nulle part, alors que le tour du produit le promet explicitement",
+    "tableau de bord, le CA encaissé mois par mois et l'échéance URSSAF sont montés",
+    /<CaMensuelBarres/.test(src) && /<EcheanceCarte/.test(src),
+    "la vitrine promet un suivi du CA URSSAF : sans ces deux widgets, la promesse n'est tenue nulle part",
   );
   exige(
-    "récapitulatif, daté de l'encaissement, pas de l'émission",
-    // La datation a été centralisée dans lib/recettes.ts le 24/10 (source
-    // unique du livre, du récap et de la tuile). On la vérifie donc là, pas
-    // dans la page du tableau de bord qui délègue désormais ce calcul.
+    "suivi du CA, daté de l'encaissement, pas de l'émission",
     /f\.paid_at \|\| f\.issue_date/.test(lire("lib/recettes.ts")),
     "on déclare ce qu'on a perçu sur la période : une facture émise en mars et réglée en avril appartient à avril",
   );
-
-  const widget = lire("components/CaUrssafWidget.tsx");
   exige(
-    "récapitulatif, les échéances URSSAF ne s'affichent que si elles s'appliquent",
-    /echeancesUrssaf/.test(widget),
+    "échéance URSSAF, affichée seulement quand elle s'applique",
+    /echeancesUrssaf \? URSSAF_DEADLINES\[/.test(src) && /\{echeanceDepot && <EcheanceCarte/.test(src),
     "« 30 avril », « 31 juillet » sont les dates du micro-entrepreneur : les montrer à une société serait une information fausse imprimée par l'outil",
   );
 }

@@ -4,6 +4,7 @@ import { purgeExpiredDemoAccounts } from "@/lib/demo-cleanup";
 import { JETON_DEMO } from "@/lib/superpdp";
 import { resolveAddress } from "@/lib/address";
 import { manquesPourEmission } from "@/lib/superpdp-precontrole";
+import { creerSignalement } from "@/lib/cabinet-signalements";
 import * as Sentry from "@sentry/nextjs";
 
 /**
@@ -53,7 +54,10 @@ async function seedDemoData(userId: string): Promise<string[]> {
       phone: "06 12 34 56 78",
       plan: "pro",
       subscription_status: "active",
-      tva_regime: "normal",
+      // Micro-entrepreneur en franchise en base : la cible de Deviso, et ce
+      // que montre la maquette du tableau de bord (jauge du seuil, echeance
+      // URSSAF, cotisations). Aucun document ne porte donc de TVA.
+      tva_regime: "franchise",
       proposal_color: "#6366f1",
       payment_method: "bank",
       bank_iban: "FR76 3000 6000 0112 3456 7890 189",
@@ -73,7 +77,8 @@ async function seedDemoData(userId: string): Promise<string[]> {
     seller_company: "Studio Créatif MD",
     seller_siren: "82134756100018",
     seller_address: "12 rue de la Paix, 75001 Paris",
-    seller_tva_number: "FR01821347561",
+    // Pas de numero de TVA : c'est ce qui qualifie la franchise en base (293 B)
+    // dans lib/exoneration.ts.
   };
 
   // ── Clients récurrents ──────────────────────────────────────────────────────
@@ -189,7 +194,7 @@ async function seedDemoData(userId: string): Promise<string[]> {
         { id: crypto.randomUUID(), description: "Maquettes Figma (wireframes → haute fidélité)", quantity: 1, unit: "forfait", unit_price: 1200, total: 1200 },
         { id: crypto.randomUUID(), description: "Droits de cession (web + print + réseaux)", quantity: 1, unit: "forfait", unit_price: 600, total: 600 },
       ],
-      total_ht: 4400, tva_rate: 20, total_ttc: 5280,
+      total_ht: 4400, tva_rate: 0, total_ttc: 4400,
       status: "signed",
       valid_until: daysAgo(45),
       payment_terms: "30% à la commande, 70% à la livraison, Pénalités de retard : 3× taux légal (art. L441-10 C.Com.)",
@@ -218,7 +223,7 @@ async function seedDemoData(userId: string): Promise<string[]> {
         { id: crypto.randomUUID(), description: "Maquettes Figma (wireframes → haute fidélité)", quantity: 1, unit: "forfait", unit_price: 1200, total: 1200 },
         { id: crypto.randomUUID(), description: "Consulting UX, Comité de pilotage (4 séances)", quantity: 4, unit: "heure", unit_price: 150, total: 600 },
       ],
-      total_ht: 2600, tva_rate: 20, total_ttc: 3120,
+      total_ht: 2600, tva_rate: 0, total_ttc: 2600,
       status: "signed",
       valid_until: daysAgo(28),
       payment_terms: "Paiement à 30 jours fin de mois, Facturation via Chorus Pro",
@@ -247,7 +252,7 @@ async function seedDemoData(userId: string): Promise<string[]> {
         { id: crypto.randomUUID(), description: "Landing page complète (page acquisition)", quantity: 1, unit: "forfait", unit_price: 1500, total: 1500 },
         { id: crypto.randomUUID(), description: "Droits de cession (web + réseaux)", quantity: 1, unit: "forfait", unit_price: 600, total: 600 },
       ],
-      total_ht: 4100, tva_rate: 20, total_ttc: 4920,
+      total_ht: 4100, tva_rate: 0, total_ttc: 4100,
       status: "sent",
       valid_until: daysFromNow(12),
       payment_terms: "40% à la commande, 60% à la livraison, Pénalités : 3× taux légal",
@@ -278,7 +283,7 @@ async function seedDemoData(userId: string): Promise<string[]> {
         { id: crypto.randomUUID(), description: "Maquettes Figma desktop + mobile", quantity: 1, unit: "forfait", unit_price: 1200, total: 1200 },
         { id: crypto.randomUUID(), description: "Droits de cession (web + réseaux)", quantity: 1, unit: "forfait", unit_price: 600, total: 600 },
       ],
-      total_ht: 4600, tva_rate: 20, total_ttc: 5520,
+      total_ht: 4600, tva_rate: 0, total_ttc: 4600,
       status: "viewed",
       valid_until: daysFromNow(22),
       payment_terms: "30% à la commande, 40% mi-projet, 30% à la livraison",
@@ -306,7 +311,7 @@ async function seedDemoData(userId: string): Promise<string[]> {
         { id: crypto.randomUUID(), description: "Formation design intra-entreprise, 2 journées × 7h", quantity: 14, unit: "heure", unit_price: 200, total: 2800 },
         { id: crypto.randomUUID(), description: "Supports de cours personnalisés (création)", quantity: 1, unit: "forfait", unit_price: 400, total: 400 },
       ],
-      total_ht: 3200, tva_rate: 20, total_ttc: 3840,
+      total_ht: 3200, tva_rate: 0, total_ttc: 3200,
       status: "draft",
       valid_until: daysFromNow(30),
       payment_terms: "100% à la commande, Annulation possible jusqu'à J-7",
@@ -340,7 +345,7 @@ async function seedDemoData(userId: string): Promise<string[]> {
       items: [
         { id: crypto.randomUUID(), description: "Création logo + charte graphique", quantity: 1, unit: "forfait", unit_price: 1800, total: 1800 },
       ],
-      total_ht: 1800, tva_rate: 20, total_ttc: 2160,
+      total_ht: 1800, tva_rate: 0, total_ttc: 1800,
       status: "paid",
       issue_date: daysAgo(365), due_date: daysAgo(335),
       payment_terms: "30 jours net",
@@ -363,7 +368,7 @@ async function seedDemoData(userId: string): Promise<string[]> {
       items: [
         { id: crypto.randomUUID(), description: "Consulting UX / design, Juillet–Août 2025", quantity: 12, unit: "heure", unit_price: 150, total: 1800 },
       ],
-      total_ht: 1800, tva_rate: 20, total_ttc: 2160,
+      total_ht: 1800, tva_rate: 0, total_ttc: 1800,
       status: "paid",
       issue_date: daysAgo(335), due_date: daysAgo(305),
       payment_terms: "30 jours net",
@@ -387,7 +392,7 @@ async function seedDemoData(userId: string): Promise<string[]> {
         { id: crypto.randomUUID(), description: "Audit UX complet site cabinet", quantity: 1, unit: "forfait", unit_price: 800, total: 800 },
         { id: crypto.randomUUID(), description: "Maquettes Figma (wireframes → haute fidélité)", quantity: 1, unit: "forfait", unit_price: 1200, total: 1200 },
       ],
-      total_ht: 2000, tva_rate: 20, total_ttc: 2400,
+      total_ht: 2000, tva_rate: 0, total_ttc: 2000,
       status: "paid",
       issue_date: daysAgo(305), due_date: daysAgo(275),
       payment_terms: "30 jours net",
@@ -409,7 +414,7 @@ async function seedDemoData(userId: string): Promise<string[]> {
       items: [
         { id: crypto.randomUUID(), description: "Landing page complète (refonte page services)", quantity: 1, unit: "forfait", unit_price: 1500, total: 1500 },
       ],
-      total_ht: 1500, tva_rate: 20, total_ttc: 1800,
+      total_ht: 1500, tva_rate: 0, total_ttc: 1500,
       status: "paid",
       issue_date: daysAgo(290), due_date: daysAgo(260),
       payment_terms: "30 jours net",
@@ -433,7 +438,7 @@ async function seedDemoData(userId: string): Promise<string[]> {
         { id: crypto.randomUUID(), description: "Refonte UI boutique en ligne (8 pages clés)", quantity: 1, unit: "forfait", unit_price: 2000, total: 2000 },
         { id: crypto.randomUUID(), description: "Droits de cession (web + réseaux)", quantity: 1, unit: "forfait", unit_price: 600, total: 600 },
       ],
-      total_ht: 2600, tva_rate: 20, total_ttc: 3120,
+      total_ht: 2600, tva_rate: 0, total_ttc: 2600,
       status: "paid",
       issue_date: daysAgo(274), due_date: daysAgo(244),
       payment_terms: "30 jours net",
@@ -455,7 +460,7 @@ async function seedDemoData(userId: string): Promise<string[]> {
       items: [
         { id: crypto.randomUUID(), description: "Refonte UI site web StartupX (6 pages)", quantity: 1, unit: "forfait", unit_price: 2000, total: 2000 },
       ],
-      total_ht: 2000, tva_rate: 20, total_ttc: 2400,
+      total_ht: 2000, tva_rate: 0, total_ttc: 2000,
       status: "paid",
       issue_date: daysAgo(260), due_date: daysAgo(230),
       payment_terms: "30 jours net",
@@ -478,7 +483,7 @@ async function seedDemoData(userId: string): Promise<string[]> {
       items: [
         { id: crypto.randomUUID(), description: "Formation design intra-entreprise, 8h", quantity: 8, unit: "heure", unit_price: 200, total: 1600 },
       ],
-      total_ht: 1600, tva_rate: 20, total_ttc: 1920,
+      total_ht: 1600, tva_rate: 0, total_ttc: 1600,
       status: "paid",
       issue_date: daysAgo(244), due_date: daysAgo(214),
       payment_terms: "30 jours net",
@@ -500,7 +505,7 @@ async function seedDemoData(userId: string): Promise<string[]> {
       items: [
         { id: crypto.randomUUID(), description: "Consulting UX / design, Oct.–Nov. 2025", quantity: 10, unit: "heure", unit_price: 150, total: 1500 },
       ],
-      total_ht: 1500, tva_rate: 20, total_ttc: 1800,
+      total_ht: 1500, tva_rate: 0, total_ttc: 1500,
       status: "paid",
       issue_date: daysAgo(230), due_date: daysAgo(200),
       payment_terms: "30 jours net",
@@ -524,7 +529,7 @@ async function seedDemoData(userId: string): Promise<string[]> {
         { id: crypto.randomUUID(), description: "Maquettes Figma nouvelle app (wireframes → haute fidélité)", quantity: 1, unit: "forfait", unit_price: 1200, total: 1200 },
         { id: crypto.randomUUID(), description: "Droits de cession (web + réseaux)", quantity: 1, unit: "forfait", unit_price: 600, total: 600 },
       ],
-      total_ht: 1800, tva_rate: 20, total_ttc: 2160,
+      total_ht: 1800, tva_rate: 0, total_ttc: 1800,
       status: "paid",
       issue_date: daysAgo(213), due_date: daysAgo(183),
       payment_terms: "30 jours net",
@@ -549,7 +554,7 @@ async function seedDemoData(userId: string): Promise<string[]> {
       items: [
         { id: crypto.randomUUID(), description: "Landing page complète, Collection printemps 2026", quantity: 1, unit: "forfait", unit_price: 1500, total: 1500 },
       ],
-      total_ht: 1500, tva_rate: 20, total_ttc: 1800,
+      total_ht: 1500, tva_rate: 0, total_ttc: 1500,
       status: "paid",
       issue_date: daysAgo(180), due_date: daysAgo(150),
       payment_terms: "30 jours net",
@@ -573,7 +578,7 @@ async function seedDemoData(userId: string): Promise<string[]> {
         { id: crypto.randomUUID(), description: "Audit UX complet site cabinet (refonte partielle)", quantity: 1, unit: "forfait", unit_price: 800, total: 800 },
         { id: crypto.randomUUID(), description: "Consulting UX / design, Suivi recommandations", quantity: 6, unit: "heure", unit_price: 150, total: 900 },
       ],
-      total_ht: 1700, tva_rate: 20, total_ttc: 2040,
+      total_ht: 1700, tva_rate: 0, total_ttc: 1700,
       status: "paid",
       issue_date: daysAgo(149), due_date: daysAgo(119),
       payment_terms: "30 jours net",
@@ -597,7 +602,7 @@ async function seedDemoData(userId: string): Promise<string[]> {
         { id: crypto.randomUUID(), description: "Refonte UI site web Agence Lumière", quantity: 1, unit: "forfait", unit_price: 2000, total: 2000 },
         { id: crypto.randomUUID(), description: "Landing page complète (page cas clients)", quantity: 1, unit: "forfait", unit_price: 1500, total: 1500 },
       ],
-      total_ht: 3500, tva_rate: 20, total_ttc: 4200,
+      total_ht: 3500, tva_rate: 0, total_ttc: 3500,
       status: "paid",
       issue_date: daysAgo(120), due_date: daysAgo(90),
       payment_terms: "30 jours net",
@@ -621,7 +626,7 @@ async function seedDemoData(userId: string): Promise<string[]> {
         { id: crypto.randomUUID(), description: "Formation design intra-entreprise, 8h", quantity: 8, unit: "heure", unit_price: 200, total: 1600 },
         { id: crypto.randomUUID(), description: "Consulting UX / design, Workshop produit", quantity: 4, unit: "heure", unit_price: 150, total: 600 },
       ],
-      total_ht: 2200, tva_rate: 20, total_ttc: 2640,
+      total_ht: 2200, tva_rate: 0, total_ttc: 2200,
       status: "paid",
       issue_date: daysAgo(90), due_date: daysAgo(60),
       payment_terms: "30 jours net",
@@ -645,7 +650,7 @@ async function seedDemoData(userId: string): Promise<string[]> {
         { id: crypto.randomUUID(), description: "Maquettes Figma collection été, desktop + mobile", quantity: 1, unit: "forfait", unit_price: 1200, total: 1200 },
         { id: crypto.randomUUID(), description: "Droits de cession (web + réseaux)", quantity: 1, unit: "forfait", unit_price: 600, total: 600 },
       ],
-      total_ht: 1800, tva_rate: 20, total_ttc: 2160,
+      total_ht: 1800, tva_rate: 0, total_ttc: 1800,
       status: "paid",
       issue_date: daysAgo(60), due_date: daysAgo(30),
       payment_terms: "30 jours net",
@@ -669,7 +674,7 @@ async function seedDemoData(userId: string): Promise<string[]> {
         { id: crypto.randomUUID(), description: "Maquettes Figma portail citoyen (wireframes → haute fidélité)", quantity: 1, unit: "forfait", unit_price: 1200, total: 1200 },
         { id: crypto.randomUUID(), description: "Consulting UX, Comité de pilotage (4 séances)", quantity: 4, unit: "heure", unit_price: 150, total: 600 },
       ],
-      total_ht: 2600, tva_rate: 20, total_ttc: 3120,
+      total_ht: 2600, tva_rate: 0, total_ttc: 2600,
       status: "paid",
       issue_date: daysAgo(55), due_date: daysAgo(25),
       payment_terms: "30 jours fin de mois, Chorus Pro",
@@ -694,7 +699,7 @@ async function seedDemoData(userId: string): Promise<string[]> {
       items: [
         { id: crypto.randomUUID(), description: "Création logo + charte graphique (client référencé Agence Lumière)", quantity: 1, unit: "forfait", unit_price: 1800, total: 1800 },
       ],
-      total_ht: 1800, tva_rate: 20, total_ttc: 2160,
+      total_ht: 1800, tva_rate: 0, total_ttc: 1800,
       status: "paid",
       issue_date: daysAgo(22), due_date: daysAgo(8),
       payment_terms: "14 jours net",
@@ -717,7 +722,7 @@ async function seedDemoData(userId: string): Promise<string[]> {
         { id: crypto.randomUUID(), description: "Retouches et révisions, Charte graphique", quantity: 4, unit: "heure", unit_price: 90, total: 360 },
         { id: crypto.randomUUID(), description: "Consulting UX, Bilan semestriel", quantity: 2, unit: "heure", unit_price: 150, total: 300 },
       ],
-      total_ht: 660, tva_rate: 20, total_ttc: 792,
+      total_ht: 660, tva_rate: 0, total_ttc: 660,
       status: "sent",
       issue_date: daysAgo(18), due_date: daysAgo(4), // échéance dépassée → relance active
       payment_terms: "14 jours net",
@@ -740,7 +745,7 @@ async function seedDemoData(userId: string): Promise<string[]> {
       items: [
         { id: crypto.randomUUID(), description: "Refonte e-commerce Boutique Élégance, Acompte 30%", quantity: 1, unit: "forfait", unit_price: 1380, total: 1380 },
       ],
-      total_ht: 1380, tva_rate: 20, total_ttc: 1656,
+      total_ht: 1380, tva_rate: 0, total_ttc: 1380,
       status: "sent",
       issue_date: daysAgo(10), due_date: daysFromNow(20),
       payment_terms: "30 jours net",
@@ -762,7 +767,7 @@ async function seedDemoData(userId: string): Promise<string[]> {
       items: [
         { id: crypto.randomUUID(), description: "Maintenance et support technique, Juin 2026", quantity: 1, unit: "forfait", unit_price: 400, total: 400 },
       ],
-      total_ht: 400, tva_rate: 20, total_ttc: 480,
+      total_ht: 400, tva_rate: 0, total_ttc: 400,
       status: "draft",
       issue_date: daysAgo(0), due_date: daysFromNow(30),
       payment_terms: "30 jours net",
@@ -903,7 +908,7 @@ async function seedDemoData(userId: string): Promise<string[]> {
       items: [
         { id: crypto.randomUUID(), description: "Maintenance et support technique mensuel", quantity: 1, unit: "forfait", unit_price: 400, total: 400 },
       ],
-      tva_rate: 20,
+      tva_rate: 0,
       payment_terms: "30 jours net",
       notes: "Contrat de maintenance signé le 01/01/2026",
       interval: "monthly",
@@ -926,7 +931,7 @@ async function seedDemoData(userId: string): Promise<string[]> {
         { id: crypto.randomUUID(), description: "Maquettes Figma (wireframes → haute fidélité)", quantity: 1, unit: "forfait", unit_price: 1200, total: 1200 },
         { id: crypto.randomUUID(), description: "Droits de cession (web + print + réseaux)", quantity: 1, unit: "forfait", unit_price: 600, total: 600 },
       ],
-      tva_rate: 20,
+      tva_rate: 0,
       payment_terms: "30% à la commande, 70% à la livraison, Pénalités : 3× taux légal",
       notes: "Inclut 2 cycles de révisions. Délai : 5 semaines.",
     },
@@ -941,7 +946,7 @@ async function seedDemoData(userId: string): Promise<string[]> {
         { id: crypto.randomUUID(), description: "Landing page complète (page d'acquisition)", quantity: 1, unit: "forfait", unit_price: 1500, total: 1500 },
         { id: crypto.randomUUID(), description: "Droits de cession (web + réseaux)", quantity: 1, unit: "forfait", unit_price: 600, total: 600 },
       ],
-      tva_rate: 20,
+      tva_rate: 0,
       payment_terms: "40% à la commande, 60% à la livraison",
       notes: "Délai : 4 semaines. Hébergement et nom de domaine non inclus.",
     },
@@ -954,7 +959,7 @@ async function seedDemoData(userId: string): Promise<string[]> {
         { id: crypto.randomUUID(), description: "Consulting UX / design, Sessions mensuelles", quantity: 8, unit: "heure", unit_price: 150, total: 1200 },
         { id: crypto.randomUUID(), description: "Retouches et révisions, Livrables du mois", quantity: 4, unit: "heure", unit_price: 90, total: 360 },
       ],
-      tva_rate: 20,
+      tva_rate: 0,
       payment_terms: "Paiement mensuel, Préavis 1 mois",
       notes: "Engagement minimum 3 mois. Sessions en visio ou présentiel Paris.",
     },
@@ -1056,6 +1061,55 @@ async function seedDemoData(userId: string): Promise<string[]> {
       transmission_error: "Cette facture est hors du délai de déclaration accepté par la Plateforme Agréée. À régulariser avec votre comptable : un réessai automatique ne la fera pas passer.",
     },
   ]);
+
+  // 9. Declaration URSSAF en mode SIMULATION (aucun appel a l'URSSAF) :
+  //    categorie d'activite d'une graphiste en liberal, pour que le tableau de
+  //    bord estime les cotisations du trimestre.
+  await admin.from("urssaf_tdae_comptes").upsert(
+    {
+      user_id: userId,
+      siret: "82134756100018",
+      categorie_ca: "caPrestationAutres",
+      periodicite: "T",
+      debut_activite: "2021-03-01",
+      acre: false,
+      mandat_statut: "actif",
+      mandat_signe_at: tsAgo(30),
+      mode: "simulation",
+    },
+    { onConflict: "user_id" },
+  );
+
+  // 10. Expert-comptable : un compte systeme Cabinet Martel, cree une seule
+  //     fois puis partage par toutes les demos (il n'est pas marque is_demo,
+  //     le menage ne l'efface donc pas), et un message ouvert pour ce client.
+  //     Le message disparait avec le compte de demo (cle etrangere en cascade).
+  const CABINET_DEMO = "cabinet.martel@demo.getdeviso.fr";
+  const trouverCabinet = async () =>
+    (await admin.from("profiles").select("id").eq("email", CABINET_DEMO).maybeSingle()).data?.id ?? null;
+  let cabinetId = await trouverCabinet();
+  if (!cabinetId) {
+    const { data: cree } = await admin.auth.admin.createUser({
+      email: CABINET_DEMO,
+      password: crypto.randomUUID(),
+      email_confirm: true,
+    });
+    if (cree?.user) {
+      await admin
+        .from("profiles")
+        .upsert({ id: cree.user.id, email: CABINET_DEMO, full_name: "Claire Martel", company_name: "Cabinet Martel" }, { onConflict: "id" });
+    }
+    // Deux demos lancees en meme temps : la seconde creation echoue, on relit.
+    cabinetId = cree?.user?.id ?? (await trouverCabinet());
+  }
+  if (cabinetId) {
+    await creerSignalement(
+      admin,
+      cabinetId,
+      userId,
+      "Il manque le justificatif de paiement de la facture FAC-2026-006 (Thomas Lefebvre). Peux-tu l'ajouter avant la clôture du trimestre ?",
+    );
+  }
 
   return ecartsDemo;
 }

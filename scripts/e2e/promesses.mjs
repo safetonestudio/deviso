@@ -196,14 +196,14 @@ aVerifierAlaMain("« Dépôt Chorus Pro B2G »", "exige des identifiants PISTE d
 // laissee passer. On lit donc le HTML du tableau de bord.
 const html = await fetch(`${BASE}/dashboard`, { headers: { cookie: s.cookie } }).then((r) => r.text());
 verifier(
-  "« Widget CA URSSAF », le recapitulatif est bien affiche sur le tableau de bord",
-  /Récap (CA, URSSAF|chiffre d&#x27;affaires|chiffre d'affaires)/.test(html),
-  "le composant CaUrssafWidget n'apparait pas dans la page rendue",
+  "« Suivi CA URSSAF », le CA encaisse mois par mois est bien affiche sur le tableau de bord",
+  /Chiffre d(&#x27;|')affaires encaissé/.test(html),
+  "le graphique du CA encaisse (CaMensuelBarres) n'apparait pas dans la page rendue",
 );
 verifier(
-  "et il propose les deux vues, trimestrielle et mensuelle",
+  "et il montre le trimestre en cours et le detail mois par mois",
   /Trimestr/i.test(html) && /(Mensuel|Mois)/i.test(html),
-  "les bascules du widget sont absentes du rendu",
+  "le trimestre ou le detail mensuel sont absents du rendu",
 );
 aVerifierAlaMain("« Sans branding Deviso sur vos documents »", "différence visuelle dans le PDF, non vérifiée automatiquement.");
 aVerifierAlaMain("« 3 utilisateurs inclus, +5 €/utilisateur »", "dépend de la facturation Stripe réelle, non exercée.");

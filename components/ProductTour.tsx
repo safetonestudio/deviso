@@ -11,7 +11,7 @@ const STEPS_OWNER = [
   {
     target: "dashboard",
     title: "Ton tableau de bord",
-    body: "L'essentiel du mois d'un coup d'œil, et les alertes qui demandent une action.",
+    body: "L'essentiel en un coup d'œil : chiffre d'affaires, seuil de TVA, échéance URSSAF et messages de ton comptable. Les relances sont dans Notifications.",
   },
   {
     target: "proposals",
