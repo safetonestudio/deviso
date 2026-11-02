@@ -81,7 +81,7 @@ export default async function LivreRecettes({ searchParams }: { searchParams: Pr
       <GuidedTourBanner pageKey="livre-recettes" />
       <div className="flex flex-wrap items-start justify-between gap-3 mb-6">
         <div>
-          <h1 className="text-2xl font-semibold text-white">Livre des recettes</h1>
+          <h1 className="text-2xl font-semibold text-ink">Livre des recettes</h1>
           <p className="text-sm text-gray-400 mt-1">
             Tenu automatiquement à partir de vos factures payées, dans l&apos;ordre des encaissements.
           </p>
@@ -92,7 +92,7 @@ export default async function LivreRecettes({ searchParams }: { searchParams: Pr
               <Link
                 key={a}
                 href={`/livre-recettes?annee=${a}`}
-                className={`text-sm px-3 py-1.5 rounded-lg border ${a === annee ? "border-indigo-500 text-white" : "border-ds-border text-gray-400 hover:text-white"}`}
+                className={`text-sm px-3 py-1.5 rounded-lg border ${a === annee ? "border-indigo-500 text-ink" : "border-ds-border text-gray-400 hover:text-ink"}`}
               >
                 {a}
               </Link>
@@ -113,51 +113,51 @@ export default async function LivreRecettes({ searchParams }: { searchParams: Pr
           <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 mb-6">
             <div className="bg-ds-surface border border-ds-border rounded-xl p-4">
               <p className="text-xs text-gray-400">Encaissé {annee} (HT)</p>
-              <p className="text-2xl font-semibold text-white tabular-nums mt-1">{eur(totalHt)}</p>
+              <p className="text-2xl font-semibold text-ink tabular-nums mt-1">{eur(totalHt)}</p>
             </div>
             <div className="bg-ds-surface border border-ds-border rounded-xl p-4">
               <p className="text-xs text-gray-400">Encaissé {annee} (TTC)</p>
-              <p className="text-2xl font-semibold text-white tabular-nums mt-1">{eur(totalTtc)}</p>
+              <p className="text-2xl font-semibold text-ink tabular-nums mt-1">{eur(totalTtc)}</p>
             </div>
             <div className="bg-ds-surface border border-ds-border rounded-xl p-4">
               <p className="text-xs text-gray-400">Encaissements</p>
-              <p className="text-2xl font-semibold text-white tabular-nums mt-1">{lignes.length}</p>
+              <p className="text-2xl font-semibold text-ink tabular-nums mt-1">{lignes.length}</p>
             </div>
           </div>
 
           <div className="bg-ds-surface border border-ds-border rounded-xl p-4 mb-6">
-            <h2 className="text-white font-semibold text-sm">Répartition pour la déclaration</h2>
+            <h2 className="text-ink font-semibold text-sm">Répartition pour la déclaration</h2>
             <p className="text-xs text-gray-500 mt-0.5">
               Le CA micro se déclare séparément : prestations de services et ventes de biens n&apos;ont pas le même abattement ni le même seuil.
             </p>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mt-3">
               <div className="bg-ds-bg border border-ds-border rounded-lg p-3">
                 <p className="text-xs text-gray-500">Prestations de services (HT)</p>
-                <p className="text-lg font-semibold text-white tabular-nums mt-0.5">{eur(parCategorie.services.ht)}</p>
+                <p className="text-lg font-semibold text-ink tabular-nums mt-0.5">{eur(parCategorie.services.ht)}</p>
                 <p className="text-xs text-gray-500 mt-0.5">{parCategorie.services.nb} encaissement{parCategorie.services.nb > 1 ? "s" : ""}</p>
               </div>
               <div className="bg-ds-bg border border-ds-border rounded-lg p-3">
                 <p className="text-xs text-gray-500">Ventes de biens (HT)</p>
-                <p className="text-lg font-semibold text-white tabular-nums mt-0.5">{eur(parCategorie.biens.ht)}</p>
+                <p className="text-lg font-semibold text-ink tabular-nums mt-0.5">{eur(parCategorie.biens.ht)}</p>
                 <p className="text-xs text-gray-500 mt-0.5">{parCategorie.biens.nb} encaissement{parCategorie.biens.nb > 1 ? "s" : ""}</p>
               </div>
             </div>
           </div>
 
           <div className="bg-ds-surface border border-ds-border rounded-xl p-4 mb-6">
-            <h2 className="text-white font-semibold text-sm">Exports comptables {annee}</h2>
+            <h2 className="text-ink font-semibold text-sm">Exports comptables {annee}</h2>
             <p className="text-xs text-gray-500 mt-0.5">À transmettre à votre comptable ou à conserver en cas de contrôle.</p>
             <div className="flex flex-wrap gap-2 mt-3">
-              <a href={`/api/export/livre-recettes?annee=${annee}`} className="text-sm px-3 py-1.5 rounded-lg bg-indigo-600 hover:bg-indigo-700 text-white font-medium">
+              <a href={`/api/export/livre-recettes?annee=${annee}`} className="text-sm px-3 py-1.5 rounded-lg bg-indigo-600 hover:bg-indigo-700 text-ink font-medium">
                 Livre des recettes (CSV)
               </a>
-              <a href={`/api/export/fec?year=${annee}`} className="text-sm px-3 py-1.5 rounded-lg border border-ds-border text-gray-300 hover:bg-white/5 font-medium">
+              <a href={`/api/export/fec?year=${annee}`} className="text-sm px-3 py-1.5 rounded-lg border border-ds-border text-gray-300 hover:bg-ink/5 font-medium">
                 Écritures comptables (FEC)
               </a>
-              <a href={`/api/export/invoices-csv?year=${annee}`} className="text-sm px-3 py-1.5 rounded-lg border border-ds-border text-gray-300 hover:bg-white/5 font-medium">
+              <a href={`/api/export/invoices-csv?year=${annee}`} className="text-sm px-3 py-1.5 rounded-lg border border-ds-border text-gray-300 hover:bg-ink/5 font-medium">
                 Factures de l&apos;année (CSV)
               </a>
-              <a href={`/api/export/monthly-recap?year=${annee}`} className="text-sm px-3 py-1.5 rounded-lg border border-ds-border text-gray-300 hover:bg-white/5 font-medium">
+              <a href={`/api/export/monthly-recap?year=${annee}`} className="text-sm px-3 py-1.5 rounded-lg border border-ds-border text-gray-300 hover:bg-ink/5 font-medium">
                 Récapitulatif mensuel CA (CSV)
               </a>
             </div>
@@ -206,7 +206,7 @@ export default async function LivreRecettes({ searchParams }: { searchParams: Pr
                             {l.dateEstimee && <span className="block text-xs text-amber-400">date d&apos;émission</span>}
                           </td>
                           <td className="px-4 py-3 text-gray-300 whitespace-nowrap">{l.numero}</td>
-                          <td className="px-4 py-3 text-white">{l.client}</td>
+                          <td className="px-4 py-3 text-ink">{l.client}</td>
                           <td className="px-4 py-3 whitespace-nowrap">
                             <span className={`text-xs px-2 py-0.5 rounded-full border ${l.categorie === "biens" ? "border-sky-500/30 bg-sky-500/10 text-sky-300" : "border-violet-500/30 bg-violet-500/10 text-violet-300"}`}>
                               {l.categorie === "biens" ? "Biens" : "Services"}
@@ -214,7 +214,7 @@ export default async function LivreRecettes({ searchParams }: { searchParams: Pr
                           </td>
                           <td className="px-4 py-3 text-gray-400 max-w-[22rem]">{l.nature}</td>
                           <td className="px-4 py-3 text-gray-300 text-right tabular-nums whitespace-nowrap">{eur(l.ht)}</td>
-                          <td className="px-4 py-3 text-white text-right tabular-nums whitespace-nowrap">{eur(l.ttc)}</td>
+                          <td className="px-4 py-3 text-ink text-right tabular-nums whitespace-nowrap">{eur(l.ttc)}</td>
                           <td className="px-4 py-3 text-gray-400 whitespace-nowrap">
                             {l.mode ? MODES_REGLEMENT[l.mode] : <span className="text-amber-400">non renseigné</span>}
                           </td>
@@ -223,7 +223,7 @@ export default async function LivreRecettes({ searchParams }: { searchParams: Pr
                       <tr className="border-b border-ds-border bg-ds-elevated/40">
                         <td colSpan={5} className="px-4 py-2 text-xs font-medium text-gray-400">Total {m.nom.toLowerCase()}</td>
                         <td className="px-4 py-2 text-right text-xs font-medium text-gray-300 tabular-nums">{eur(m.ht)}</td>
-                        <td className="px-4 py-2 text-right text-xs font-medium text-white tabular-nums">{eur(m.ttc)}</td>
+                        <td className="px-4 py-2 text-right text-xs font-medium text-ink tabular-nums">{eur(m.ttc)}</td>
                         <td />
                       </tr>
                     </Fragment>

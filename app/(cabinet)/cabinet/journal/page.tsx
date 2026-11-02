@@ -36,12 +36,12 @@ export default async function JournalCabinet() {
 
   return (
     <div>
-      <Link href="/cabinet" className="text-sm text-gray-400 hover:text-white">
+      <Link href="/cabinet" className="text-sm text-gray-400 hover:text-ink">
         ← Portefeuille
       </Link>
 
       <div className="mt-3 mb-6">
-        <h1 className="text-2xl font-semibold text-white">Journal des accès et exports</h1>
+        <h1 className="text-2xl font-semibold text-ink">Journal des accès et exports</h1>
         <p className="text-sm text-gray-400 mt-1">
           Chaque consultation de dossier et chaque export de votre cabinet est tracé ici. Vous seul y avez accès.
         </p>
@@ -49,7 +49,7 @@ export default async function JournalCabinet() {
 
       {entrees.length === 0 ? (
         <div className="bg-ds-surface border border-ds-border rounded-xl p-8 text-center">
-          <p className="text-white font-semibold mb-1">Aucune activité pour l&apos;instant</p>
+          <p className="text-ink font-semibold mb-1">Aucune activité pour l&apos;instant</p>
           <p className="text-gray-500 text-sm">Les consultations et exports apparaîtront ici au fil de l&apos;eau.</p>
         </div>
       ) : (

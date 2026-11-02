@@ -58,21 +58,21 @@ export default function Page() {
       <DonneesStructurees donnees={jsonLdArticle(SLUG, FAQ)} />
 
       {/* ── Navbar ── */}
-      <nav className="fixed top-0 left-0 right-0 z-50 bg-ds-bg/80 backdrop-blur-xl border-b border-white/[0.06]">
+      <nav className="fixed top-0 left-0 right-0 z-50 bg-ds-bg/80 backdrop-blur-xl border-b border-ink/[0.06]">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
           <Link href="/" aria-label="Deviso" className="flex items-center gap-2">
             <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-indigo-600 to-violet-600 flex items-center justify-center">
-              <span className="text-white font-semibold text-sm">D</span>
+              <span className="text-ink font-semibold text-sm">D</span>
             </div>
-            <span className="font-semibold text-lg text-white">Deviso</span>
+            <span className="font-semibold text-lg text-ink">Deviso</span>
           </Link>
           <div className="hidden md:flex items-center gap-8 text-sm font-medium">
-            <Link href="/blog" className="text-white font-semibold">Blog</Link>
-            <Link href="/conformite" className="text-gray-400 hover:text-white transition-colors">Conformité</Link>
-            <Link href="/#tarifs" className="text-gray-400 hover:text-white transition-colors">Tarifs</Link>
+            <Link href="/blog" className="text-ink font-semibold">Blog</Link>
+            <Link href="/conformite" className="text-gray-400 hover:text-ink transition-colors">Conformité</Link>
+            <Link href="/#tarifs" className="text-gray-400 hover:text-ink transition-colors">Tarifs</Link>
           </div>
           <div className="hidden md:flex items-center gap-3">
-            <Link href="/login" className="text-sm font-medium text-gray-400 hover:text-white transition-colors">Connexion</Link>
+            <Link href="/login" className="text-sm font-medium text-gray-400 hover:text-ink transition-colors">Connexion</Link>
             <WaitlistButton
               plan="free"
               label="Essayer gratuitement"
@@ -105,7 +105,7 @@ export default function Page() {
                 {a.dureeLecture} min
               </span>
             </div>
-            <h1 className="text-3xl sm:text-4xl font-semibold text-white leading-tight mb-4">{a.h1}</h1>
+            <h1 className="text-3xl sm:text-4xl font-semibold text-ink leading-tight mb-4">{a.h1}</h1>
             <p className="text-lg text-gray-400 leading-relaxed">
               Vous comparez deux logiciels de facturation. L&apos;un affiche « plateforme agréée », l&apos;autre
               « conforme à la réforme 2026 ». Ce n&apos;est pas une nuance de vocabulaire commercial : les deux
@@ -125,7 +125,7 @@ export default function Page() {
                 <li className="flex gap-2">
                   <span className="text-indigo-400 shrink-0">→</span>
                   <span>
-                    Une <strong className="text-white">plateforme agréée</strong> est immatriculée par
+                    Une <strong className="text-ink">plateforme agréée</strong> est immatriculée par
                     l&apos;administration fiscale. Elle peut transmettre vos factures, en recevoir pour votre
                     compte, et transmettre les données à l&apos;administration.
                   </span>
@@ -133,7 +133,7 @@ export default function Page() {
                 <li className="flex gap-2">
                   <span className="text-indigo-400 shrink-0">→</span>
                   <span>
-                    Une <strong className="text-white">solution compatible</strong> ne peut faire aucune de ces
+                    Une <strong className="text-ink">solution compatible</strong> ne peut faire aucune de ces
                     trois choses. Elle doit s&apos;adosser à une plateforme agréée.
                   </span>
                 </li>
@@ -142,7 +142,7 @@ export default function Page() {
                   <span>
                     Donc la question à poser à votre éditeur n&apos;est pas « êtes-vous conforme ? », tout le
                     monde répond oui. C&apos;est{" "}
-                    <strong className="text-white">« êtes-vous agréé, ou adossé à qui ? »</strong>
+                    <strong className="text-ink">« êtes-vous agréé, ou adossé à qui ? »</strong>
                   </span>
                 </li>
               </ul>
@@ -150,7 +150,7 @@ export default function Page() {
 
             {/* ── 1. Les définitions officielles ── */}
             <section>
-              <h2 className="text-xl font-semibold text-white mb-4">
+              <h2 className="text-xl font-semibold text-ink mb-4">
                 Les définitions officielles, et pourquoi elles sont contraignantes
               </h2>
               <p className="mb-4">
@@ -205,7 +205,7 @@ export default function Page() {
 
             {/* ── 2. Ce que ça change vraiment ── */}
             <section>
-              <h2 className="text-xl font-semibold text-white mb-4">
+              <h2 className="text-xl font-semibold text-ink mb-4">
                 Ce que ça change pour vous, et ce que ça ne change pas
               </h2>
               <div className="grid sm:grid-cols-2 gap-4">
@@ -236,22 +236,22 @@ export default function Page() {
 
             {/* ── 3. Vérifier ── */}
             <section>
-              <h2 className="text-xl font-semibold text-white mb-4">Comment vérifier, en deux minutes</h2>
+              <h2 className="text-xl font-semibold text-ink mb-4">Comment vérifier, en deux minutes</h2>
               <p className="mb-4">
-                La liste est publique. Et elle est <strong className="text-white">double</strong>, ce qui est la
+                La liste est publique. Et elle est <strong className="text-ink">double</strong>, ce qui est la
                 subtilité que presque aucun comparatif ne mentionne :
               </p>
               <div className="space-y-3 mb-5">
                 <div className="bg-ds-surface border border-emerald-500/20 rounded-xl p-5">
-                  <p className="text-white font-medium mb-1">Immatriculation définitive</p>
+                  <p className="text-ink font-medium mb-1">Immatriculation définitive</p>
                   <p className="text-gray-400">
                     La liste des opérateurs <em>satisfaisant à l&apos;ensemble des conditions, incluant les tests
-                    d&apos;interopérabilité</em>. Dossier complet <strong className="text-white">et</strong> tests
+                    d&apos;interopérabilité</em>. Dossier complet <strong className="text-ink">et</strong> tests
                     réussis.
                   </p>
                 </div>
                 <div className="bg-ds-surface border border-ds-border rounded-xl p-5">
-                  <p className="text-white font-medium mb-1">Immatriculation sous réserve</p>
+                  <p className="text-ink font-medium mb-1">Immatriculation sous réserve</p>
                   <p className="text-gray-400">
                     La liste des opérateurs <em>ayant déposé un dossier complet et conforme et en attente de leur
                     immatriculation définitive conditionnée à la réussite des tests d&apos;interopérabilité</em>.
@@ -281,7 +281,7 @@ export default function Page() {
               <div className="flex gap-3 bg-[#241d11] border border-amber-500/25 rounded-xl p-5">
                 <TriangleAlert size={18} className="shrink-0 mt-0.5 text-amber-400" />
                 <div>
-                  <p className="font-semibold text-white mb-1">
+                  <p className="font-semibold text-ink mb-1">
                     Pourquoi ne pas se fier aux comparateurs sur ce point précis
                   </p>
                   <p className="text-gray-400">
@@ -298,7 +298,7 @@ export default function Page() {
 
             {/* ── 5. Les trois questions ── */}
             <section>
-              <h2 className="text-xl font-semibold text-white mb-4">
+              <h2 className="text-xl font-semibold text-ink mb-4">
                 Les trois questions à poser à votre éditeur
               </h2>
               <p className="mb-5">
@@ -327,7 +327,7 @@ export default function Page() {
                       {i + 1}
                     </span>
                     <div>
-                      <p className="text-white font-medium mb-1">{item.q}</p>
+                      <p className="text-ink font-medium mb-1">{item.q}</p>
                       <p className="text-gray-400">{item.pourquoi}</p>
                     </div>
                   </li>
@@ -341,8 +341,8 @@ export default function Page() {
                 Et nous, pour être clair
               </p>
               <p className="mb-4">
-                Appliquons-nous les trois questions. <strong className="text-white">Deviso est une solution
-                compatible</strong>, adossée à <strong className="text-white">Super PDP</strong>, qui est la
+                Appliquons-nous les trois questions. <strong className="text-ink">Deviso est une solution
+                compatible</strong>, adossée à <strong className="text-ink">Super PDP</strong>, qui est la
                 plateforme agréée. Nous ne transmettons rien directement à l&apos;administration : c&apos;est
                 Super PDP qui dépose vos factures et transmet les données.
               </p>
@@ -362,11 +362,11 @@ export default function Page() {
 
             {/* ── FAQ ── */}
             <section>
-              <h2 className="text-xl font-semibold text-white mb-6">Questions fréquentes</h2>
+              <h2 className="text-xl font-semibold text-ink mb-6">Questions fréquentes</h2>
               <div className="space-y-4">
                 {FAQ.map(({ q, a: reponse }) => (
                   <div key={q} className="bg-ds-surface rounded-xl border border-ds-border p-6">
-                    <h3 className="text-white font-medium mb-3">{q}</h3>
+                    <h3 className="text-ink font-medium mb-3">{q}</h3>
                     <p className="text-gray-400 text-sm leading-relaxed">{reponse}</p>
                   </div>
                 ))}
@@ -375,7 +375,7 @@ export default function Page() {
 
             {/* ── Sources ── */}
             <section>
-              <h2 className="text-xl font-semibold text-white mb-4">Sources</h2>
+              <h2 className="text-xl font-semibold text-ink mb-4">Sources</h2>
               <ul className="space-y-2 text-gray-400">
                 <li>
                   <a
@@ -405,7 +405,7 @@ export default function Page() {
             {/* ── À lire ensuite ── */}
             {lectures.length > 0 && (
               <section>
-                <h2 className="text-xl font-semibold text-white mb-6">À lire ensuite</h2>
+                <h2 className="text-xl font-semibold text-ink mb-6">À lire ensuite</h2>
                 <div className="grid gap-4 sm:grid-cols-2">
                   {lectures.map((l) => (
                     <Link
@@ -413,7 +413,7 @@ export default function Page() {
                       href={l.href}
                       className="group bg-ds-surface border border-ds-border rounded-xl p-5 hover:border-indigo-500/40 transition-all"
                     >
-                      <p className="text-white font-medium text-sm leading-snug mb-2 group-hover:text-indigo-200 transition-colors">
+                      <p className="text-ink font-medium text-sm leading-snug mb-2 group-hover:text-indigo-200 transition-colors">
                         {l.titre}
                       </p>
                       <p className="text-gray-500 text-xs leading-relaxed line-clamp-2 mb-3">{l.resume}</p>

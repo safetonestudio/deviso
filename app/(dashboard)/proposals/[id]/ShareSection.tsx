@@ -59,12 +59,12 @@ export default function ShareSection({ proposal, shareUrl, profile }: Props) {
       {/* Lien de partage */}
       <div className="flex items-center justify-between gap-4">
         <div className="min-w-0">
-          <div className="font-semibold text-white text-sm mb-1">Lien de partage client</div>
+          <div className="font-semibold text-ink text-sm mb-1">Lien de partage client</div>
           <div className="text-xs text-gray-500 font-mono truncate">{shareUrl}</div>
         </div>
         <button
           onClick={copyLink}
-          className="shrink-0 text-sm bg-indigo-600 text-white font-semibold px-4 py-2 rounded-lg hover:bg-indigo-700 transition-colors"
+          className="shrink-0 text-sm bg-indigo-600 text-ink font-semibold px-4 py-2 rounded-lg hover:bg-indigo-700 transition-colors"
         >
           {copied ? "Copie !" : "Copier le lien"}
         </button>
@@ -77,7 +77,7 @@ export default function ShareSection({ proposal, shareUrl, profile }: Props) {
       {!showEmailForm ? (
         <div className="flex items-center justify-between">
           <div>
-            <div className="font-semibold text-white text-sm mb-0.5">Envoyer par email au client</div>
+            <div className="font-semibold text-ink text-sm mb-0.5">Envoyer par email au client</div>
             <div className="text-xs text-gray-500">
               {proposal.client_email
                 ? `Destinataire : ${proposal.client_email}`
@@ -93,19 +93,19 @@ export default function ShareSection({ proposal, shareUrl, profile }: Props) {
         </div>
       ) : (
         <div className="space-y-3">
-          <div className="font-semibold text-white text-sm">Envoyer le devis par email</div>
+          <div className="font-semibold text-ink text-sm">Envoyer le devis par email</div>
           <div className="flex gap-2">
             <input
               type="email"
               value={emailTo}
               onChange={(e) => setEmailTo(e.target.value)}
               placeholder="email@client.fr"
-              className="flex-1 bg-ds-elevated border border-ds-border rounded-lg px-3 py-2 text-sm text-white placeholder:text-gray-600 focus:outline-none focus:ring-1 focus:ring-indigo-500/30 focus:border-indigo-500"
+              className="flex-1 bg-ds-elevated border border-ds-border rounded-lg px-3 py-2 text-sm text-ink placeholder:text-gray-600 focus:outline-none focus:ring-1 focus:ring-indigo-500/30 focus:border-indigo-500"
             />
             <button
               onClick={sendEmail}
               disabled={sending || !emailTo}
-              className="shrink-0 text-sm bg-indigo-600 text-white font-semibold px-4 py-2 rounded-lg hover:bg-indigo-700 disabled:opacity-50 transition-colors"
+              className="shrink-0 text-sm bg-indigo-600 text-ink font-semibold px-4 py-2 rounded-lg hover:bg-indigo-700 disabled:opacity-50 transition-colors"
             >
               {sending ? "Envoi..." : "Envoyer"}
             </button>

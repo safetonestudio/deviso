@@ -165,29 +165,29 @@ export function FreelanceLanding({
         <span className="text-indigo-300 font-semibold">Réforme 2026&nbsp;:</span>
         <span className="text-gray-300 ml-1.5">La facturation électronique B2B devient obligatoire en France.&nbsp;</span>
         <span className="text-indigo-400 font-medium">Deviso est déjà conforme Factur-X, sans rien faire de votre côté.</span>
-        <a href="#fonctionnalites" className="ml-2 text-indigo-300 hover:text-white font-semibold transition-colors underline underline-offset-2">
+        <a href="#fonctionnalites" className="ml-2 text-indigo-300 hover:text-ink font-semibold transition-colors underline underline-offset-2">
           Voir comment →
         </a>
       </div>
 
       {/* ── Navbar ── */}
-      <nav className="fixed top-9 left-0 right-0 z-50 bg-ds-bg/80 backdrop-blur-xl border-b border-white/[0.06]">
+      <nav className="fixed top-9 left-0 right-0 z-50 bg-ds-bg/80 backdrop-blur-xl border-b border-ink/[0.06]">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
           <Link href="/" aria-label="Deviso" className="flex items-center gap-2">
             <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-indigo-600 to-violet-600 flex items-center justify-center">
-              <span className="text-white font-semibold text-sm">D</span>
+              <span className="text-ink font-semibold text-sm">D</span>
             </div>
-            <span className="font-semibold text-lg text-white">Deviso</span>
+            <span className="font-semibold text-lg text-ink">Deviso</span>
           </Link>
           <div className="hidden md:flex items-center gap-8 text-sm font-medium">
-            <a href="#pourquoi" className="text-gray-400 hover:text-white transition-colors">Pourquoi Deviso</a>
-            <a href="#fonctionnalites" className="text-gray-400 hover:text-white transition-colors">Fonctionnalités</a>
-            <a href="#tarifs" className="text-gray-400 hover:text-white transition-colors">Tarifs</a>
-            <Link href="/experts-comptables" className="text-gray-400 hover:text-white transition-colors">Experts-comptables</Link>
-            <Link href="/blog" className="text-gray-400 hover:text-white transition-colors">Blog</Link>
+            <a href="#pourquoi" className="text-gray-400 hover:text-ink transition-colors">Pourquoi Deviso</a>
+            <a href="#fonctionnalites" className="text-gray-400 hover:text-ink transition-colors">Fonctionnalités</a>
+            <a href="#tarifs" className="text-gray-400 hover:text-ink transition-colors">Tarifs</a>
+            <Link href="/experts-comptables" className="text-gray-400 hover:text-ink transition-colors">Experts-comptables</Link>
+            <Link href="/blog" className="text-gray-400 hover:text-ink transition-colors">Blog</Link>
           </div>
           <div className="hidden md:flex items-center gap-3">
-            <Link href="/login" className="text-sm font-medium text-gray-400 hover:text-white transition-colors">
+            <Link href="/login" className="text-sm font-medium text-gray-400 hover:text-ink transition-colors">
               Connexion
             </Link>
             <WaitlistButton
@@ -207,7 +207,7 @@ export function FreelanceLanding({
           <div className="inline-block px-3 py-1 rounded-full text-xs font-semibold bg-indigo-500/10 text-indigo-300 border border-indigo-500/20 mb-6">
             Fait pour les {professionLabel}s
           </div>
-          <h1 className="text-5xl sm:text-6xl md:text-7xl font-semibold text-white leading-tight tracking-tight mb-6">
+          <h1 className="text-5xl sm:text-6xl md:text-7xl font-semibold text-ink leading-tight tracking-tight mb-6">
             {heroTitle}{" "}
             <span className="bg-gradient-to-r from-indigo-400 to-violet-400 bg-clip-text text-transparent">
               {heroHighlight}
@@ -217,7 +217,7 @@ export function FreelanceLanding({
             {heroSubtitle}
           </p>
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-6">
-            <DemoButton className="w-full sm:w-auto bg-indigo-600 hover:bg-indigo-700 text-white font-semibold px-8 py-4 rounded-xl text-lg transition-all shadow-lg shadow-indigo-900/50" />
+            <DemoButton className="w-full sm:w-auto bg-indigo-600 hover:bg-indigo-700 text-ink font-semibold px-8 py-4 rounded-xl text-lg transition-all shadow-lg shadow-indigo-900/50" />
             <WaitlistButton
               plan="free"
               label="Créer un compte gratuit"
@@ -241,7 +241,7 @@ export function FreelanceLanding({
                   getdeviso.fr/proposals/new
                 </div>
               </div>
-              <div className="p-6 text-white">
+              <div className="p-6 text-ink">
                 <div className="mb-4 text-sm text-gray-500 font-medium uppercase tracking-wider">
                   Décris ton projet
                 </div>
@@ -292,7 +292,7 @@ export function FreelanceLanding({
       <section id="pourquoi" className="py-20 px-4 sm:px-6 border-t border-zinc-900">
         <div className="max-w-5xl mx-auto">
           <div className="text-center mb-14">
-            <h2 className="text-4xl font-semibold text-white mb-4">
+            <h2 className="text-4xl font-semibold text-ink mb-4">
               Fait pour les {professionLabel}s
             </h2>
             <p className="text-lg text-gray-400">
@@ -306,7 +306,7 @@ export function FreelanceLanding({
                 className="bg-ds-surface/90 border border-ds-border rounded-2xl p-6 hover:border-indigo-500/30 hover:bg-ds-surface transition-all duration-200"
               >
                 <div className="bg-indigo-500/10 rounded-lg p-2 mb-4 w-fit text-indigo-400"><p.icon size={22} /></div>
-                <h3 className="text-lg font-semibold text-white mb-2">{p.title}</h3>
+                <h3 className="text-lg font-semibold text-ink mb-2">{p.title}</h3>
                 <p className="text-gray-400 text-sm leading-relaxed">{p.desc}</p>
               </div>
             ))}
@@ -318,7 +318,7 @@ export function FreelanceLanding({
       <section className="py-20 px-4 sm:px-6 border-t border-zinc-900">
         <div className="max-w-5xl mx-auto">
           <div className="text-center mb-14">
-            <h2 className="text-4xl font-semibold text-white mb-4">Comment ça marche</h2>
+            <h2 className="text-4xl font-semibold text-ink mb-4">Comment ça marche</h2>
             <p className="text-lg text-gray-400">De la description à la facture signée. Trois étapes.</p>
           </div>
           <div className="grid md:grid-cols-3 gap-8 relative">
@@ -328,7 +328,7 @@ export function FreelanceLanding({
                 <div className="w-14 h-14 rounded-xl bg-indigo-500/10 border border-indigo-500/20 text-indigo-400 font-semibold text-xl flex items-center justify-center mx-auto mb-4">
                   {step.num}
                 </div>
-                <h3 className="text-xl font-semibold text-white mb-2">{step.title}</h3>
+                <h3 className="text-xl font-semibold text-ink mb-2">{step.title}</h3>
                 <p className="text-gray-400 leading-relaxed">{step.desc}</p>
               </div>
             ))}
@@ -340,7 +340,7 @@ export function FreelanceLanding({
       <section id="fonctionnalites" className="py-20 px-4 sm:px-6">
         <div className="max-w-5xl mx-auto">
           <div className="text-center mb-14">
-            <h2 className="text-4xl font-semibold text-white mb-4">Tout ce dont tu as besoin</h2>
+            <h2 className="text-4xl font-semibold text-ink mb-4">Tout ce dont tu as besoin</h2>
             <p className="text-lg text-gray-400 max-w-xl mx-auto">
               Tout ce que tes concurrents font à la main, Deviso le fait automatiquement.
             </p>
@@ -352,7 +352,7 @@ export function FreelanceLanding({
                 className="bg-ds-surface/90 border border-ds-border rounded-2xl p-6 hover:border-indigo-500/30 hover:bg-ds-surface transition-all duration-200"
               >
                 <div className="bg-indigo-500/10 rounded-lg p-2 mb-4 w-fit text-indigo-400"><f.icon size={20} /></div>
-                <h3 className="text-lg font-semibold text-white mb-2">{f.title}</h3>
+                <h3 className="text-lg font-semibold text-ink mb-2">{f.title}</h3>
                 <p className="text-gray-400 text-sm leading-relaxed">{f.desc}</p>
               </div>
             ))}
@@ -363,7 +363,7 @@ export function FreelanceLanding({
       {/* ── Tarifs ── */}
       <section id="tarifs" className="py-20 px-4 sm:px-6 border-t border-zinc-900">
         <div className="max-w-3xl mx-auto text-center">
-          <h2 className="text-4xl font-semibold text-white mb-4">Tarifs simples</h2>
+          <h2 className="text-4xl font-semibold text-ink mb-4">Tarifs simples</h2>
           <p className="text-lg text-gray-400 mb-10">Sans engagement. Sans surprise.</p>
           <div className="grid sm:grid-cols-2 gap-4 text-left mb-10">
             {[
@@ -374,13 +374,13 @@ export function FreelanceLanding({
                 key={p.name}
                 className={`rounded-2xl p-6 border ${p.highlight ? "bg-indigo-950/85 border-indigo-500/40 ring-1 ring-indigo-500/20" : "bg-ds-surface/90 border-ds-border"}`}
               >
-                <div className="text-lg font-semibold text-white mb-1">{p.name}</div>
-                <div className="text-2xl font-semibold text-white mb-3">{p.price}</div>
+                <div className="text-lg font-semibold text-ink mb-1">{p.name}</div>
+                <div className="text-2xl font-semibold text-ink mb-3">{p.price}</div>
                 <p className="text-gray-400 text-sm leading-relaxed mb-4">{p.desc}</p>
                 <WaitlistButton
                   plan={p.name === "Solo" ? "solo" : "pro"}
                   label={`Essayer ${p.name} gratuitement`}
-                  className={`w-full text-center font-semibold py-2.5 px-4 rounded-xl transition-all text-sm ${p.highlight ? "bg-indigo-600 hover:bg-indigo-500 text-white" : "bg-ds-elevated text-gray-200 hover:bg-gray-700 border border-ds-border"}`}
+                  className={`w-full text-center font-semibold py-2.5 px-4 rounded-xl transition-all text-sm ${p.highlight ? "bg-indigo-600 hover:bg-indigo-500 text-ink" : "bg-ds-elevated text-gray-200 hover:bg-gray-700 border border-ds-border"}`}
                 />
               </div>
             ))}
@@ -395,7 +395,7 @@ export function FreelanceLanding({
       {metier && (metier.article || metier.tarifs) && (
         <section className="py-16 px-4 sm:px-6">
           <div className="max-w-5xl mx-auto">
-            <h2 className="text-2xl font-semibold text-white mb-2">
+            <h2 className="text-2xl font-semibold text-ink mb-2">
               Pour aller plus loin
             </h2>
             <p className="text-gray-400 text-sm mb-8">
@@ -410,7 +410,7 @@ export function FreelanceLanding({
                   <p className="text-xs text-gray-500 font-medium uppercase tracking-wider mb-3">
                     Guide pratique
                   </p>
-                  <p className="text-white font-semibold leading-snug mb-2 group-hover:text-indigo-200 transition-colors">
+                  <p className="text-ink font-semibold leading-snug mb-2 group-hover:text-indigo-200 transition-colors">
                     Ce qu&apos;un devis de {professionLabel} doit contenir
                   </p>
                   <p className="text-gray-500 text-sm leading-relaxed">
@@ -428,7 +428,7 @@ export function FreelanceLanding({
                   <p className="text-xs text-gray-500 font-medium uppercase tracking-wider mb-3">
                     Tarifs du marché
                   </p>
-                  <p className="text-white font-semibold leading-snug mb-2 group-hover:text-indigo-200 transition-colors">
+                  <p className="text-ink font-semibold leading-snug mb-2 group-hover:text-indigo-200 transition-colors">
                     Combien facturer quand on est {professionLabel} ?
                   </p>
                   <p className="text-gray-500 text-sm leading-relaxed">
@@ -446,8 +446,8 @@ export function FreelanceLanding({
       {/* ── CTA Final ── */}
       <section className="py-20 px-4 sm:px-6">
         <div className="max-w-3xl mx-auto">
-          <div className="relative overflow-hidden bg-gradient-to-br from-indigo-600/20 to-violet-600/20 border border-white/[0.08] rounded-3xl p-16 text-center">
-            <h2 className="text-4xl font-semibold text-white mb-4">
+          <div className="relative overflow-hidden bg-gradient-to-br from-indigo-600/20 to-violet-600/20 border border-ink/[0.08] rounded-3xl p-16 text-center">
+            <h2 className="text-4xl font-semibold text-ink mb-4">
               Prêt à envoyer ton prochain devis en 30 secondes ?
             </h2>
             <p className="text-gray-400 text-lg mb-8">

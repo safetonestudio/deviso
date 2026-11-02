@@ -46,20 +46,20 @@ export default function ReformeFacturationMicroEntrepreneurPage() {
         <span className="text-indigo-400 font-medium">Deviso génère déjà des factures Factur-X conformes.</span>
       </div>
 
-      <nav className="fixed top-9 left-0 right-0 z-50 bg-ds-bg/80 backdrop-blur-xl border-b border-white/[0.06]">
+      <nav className="fixed top-9 left-0 right-0 z-50 bg-ds-bg/80 backdrop-blur-xl border-b border-ink/[0.06]">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
           <Link href="/" className="flex items-center gap-2">
             <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-indigo-600 to-violet-600 flex items-center justify-center">
-              <span className="text-white font-semibold text-sm">D</span>
+              <span className="text-ink font-semibold text-sm">D</span>
             </div>
-            <span className="font-semibold text-lg text-white">Deviso</span>
+            <span className="font-semibold text-lg text-ink">Deviso</span>
           </Link>
           <div className="hidden md:flex items-center gap-8 text-sm font-medium">
-            <Link href="/blog" className="text-gray-400 hover:text-white transition-colors">Blog</Link>
-            <Link href="/#fonctionnalites" className="text-gray-400 hover:text-white transition-colors">Fonctionnalités</Link>
+            <Link href="/blog" className="text-gray-400 hover:text-ink transition-colors">Blog</Link>
+            <Link href="/#fonctionnalites" className="text-gray-400 hover:text-ink transition-colors">Fonctionnalités</Link>
           </div>
           <div className="hidden md:flex items-center gap-3">
-            <Link href="/login" className="text-sm font-medium text-gray-400 hover:text-white transition-colors">Connexion</Link>
+            <Link href="/login" className="text-sm font-medium text-gray-400 hover:text-ink transition-colors">Connexion</Link>
             <WaitlistButton plan="free" label="Essayer gratuitement" className="bg-white text-black text-sm font-semibold px-4 py-2 rounded-lg hover:bg-zinc-100 transition-colors" />
           </div>
           <NavbarMobile />
@@ -69,11 +69,11 @@ export default function ReformeFacturationMicroEntrepreneurPage() {
       <main className="max-w-3xl mx-auto px-4 sm:px-6 pt-36 pb-20">
 
         <nav className="flex items-center gap-2 text-xs text-gray-400 mb-8">
-          <Link href="/" className="hover:text-white transition-colors">Accueil</Link>
+          <Link href="/" className="hover:text-ink transition-colors">Accueil</Link>
           <span>/</span>
-          <Link href="/blog" className="hover:text-white transition-colors">Blog</Link>
+          <Link href="/blog" className="hover:text-ink transition-colors">Blog</Link>
           <span>/</span>
-          <Link href="/blog/facturation-electronique-2026" className="hover:text-white transition-colors">Réforme 2026</Link>
+          <Link href="/blog/facturation-electronique-2026" className="hover:text-ink transition-colors">Réforme 2026</Link>
           <span>/</span>
           <span className="text-gray-400">Micro-entrepreneur</span>
         </nav>
@@ -83,7 +83,7 @@ export default function ReformeFacturationMicroEntrepreneurPage() {
             <span className="text-xs font-semibold text-indigo-400 bg-indigo-500/10 border border-indigo-500/20 rounded-full px-3 py-1">Réforme 2026 · Micro-entrepreneur</span>
             <span className="text-xs text-gray-400">7 min · Mis à jour juillet 2026</span>
           </div>
-          <h1 className="text-3xl sm:text-4xl font-bold text-white leading-tight mb-4">
+          <h1 className="text-3xl sm:text-4xl font-bold text-ink leading-tight mb-4">
             Micro-entrepreneur : ce que la réforme de facturation 2026 change vraiment pour toi
           </h1>
           <p className="text-lg text-gray-400 leading-relaxed">
@@ -102,33 +102,33 @@ export default function ReformeFacturationMicroEntrepreneurPage() {
             <div className="bg-[#14211a] border border-emerald-500/20 rounded-2xl p-6">
               <p className="text-sm font-bold text-emerald-400 mb-2">✓ La réalité</p>
               <p className="text-sm text-gray-300">
-                La franchise en base de TVA est un <strong className="text-white">régime fiscal</strong>. La réforme de facturation électronique est une <strong className="text-white">obligation administrative et fiscale</strong> distincte. Les deux ne sont pas liés. Un micro-entrepreneur en franchise de TVA devra quand même émettre ses factures B2B au format électronique structuré à partir du 1er septembre 2027.
+                La franchise en base de TVA est un <strong className="text-ink">régime fiscal</strong>. La réforme de facturation électronique est une <strong className="text-ink">obligation administrative et fiscale</strong> distincte. Les deux ne sont pas liés. Un micro-entrepreneur en franchise de TVA devra quand même émettre ses factures B2B au format électronique structuré à partir du 1er septembre 2027.
               </p>
             </div>
           </section>
 
           <section>
-            <h2 className="text-xl font-bold text-white mb-4">Ta situation selon ton type de clients</h2>
+            <h2 className="text-xl font-bold text-ink mb-4">Ta situation selon ton type de clients</h2>
             <div className="space-y-4">
               <div className="bg-ds-surface border border-indigo-500/30 rounded-xl p-5">
-                <p className="text-sm font-bold text-white mb-2">Tu factures des entreprises (B2B)</p>
-                <p className="text-sm">→ Tu devras émettre tes factures au format <strong className="text-white">Factur-X</strong> via une PDP à partir du <strong className="text-white">1er septembre 2027</strong>. Les factures PDF classiques ne seront plus valides pour les transactions B2B.</p>
+                <p className="text-sm font-bold text-ink mb-2">Tu factures des entreprises (B2B)</p>
+                <p className="text-sm">→ Tu devras émettre tes factures au format <strong className="text-ink">Factur-X</strong> via une PDP à partir du <strong className="text-ink">1er septembre 2027</strong>. Les factures PDF classiques ne seront plus valides pour les transactions B2B.</p>
               </div>
               <div className="bg-ds-surface border border-ds-border rounded-xl p-5">
-                <p className="text-sm font-bold text-white mb-2">Tu factures des particuliers (B2C)</p>
-                <p className="text-sm">→ Tu n&apos;es pas concerné par l&apos;e-invoicing (réservé au B2B). En revanche, tu seras concerné par l&apos;<strong className="text-white">e-reporting</strong> : obligation de transmettre à la DGFiP les données de tes transactions B2C (montants, dates). Même calendrier : septembre 2027.</p>
+                <p className="text-sm font-bold text-ink mb-2">Tu factures des particuliers (B2C)</p>
+                <p className="text-sm">→ Tu n&apos;es pas concerné par l&apos;e-invoicing (réservé au B2B). En revanche, tu seras concerné par l&apos;<strong className="text-ink">e-reporting</strong> : obligation de transmettre à la DGFiP les données de tes transactions B2C (montants, dates). Même calendrier : septembre 2027.</p>
               </div>
               <div className="bg-ds-surface border border-ds-border rounded-xl p-5">
-                <p className="text-sm font-bold text-white mb-2">Tu factures les deux</p>
+                <p className="text-sm font-bold text-ink mb-2">Tu factures les deux</p>
                 <p className="text-sm">→ Double obligation : e-invoicing pour les clients pros, e-reporting pour les clients particuliers. Concrètement, ton logiciel de facturation s&apos;en occupera automatiquement.</p>
               </div>
             </div>
           </section>
 
           <section>
-            <h2 className="text-xl font-bold text-white mb-4">Ce que la franchise TVA change dans les données de ta facture</h2>
+            <h2 className="text-xl font-bold text-ink mb-4">Ce que la franchise TVA change dans les données de ta facture</h2>
             <p>
-              Ta facture Factur-X ne contiendra pas de montant TVA (puisque tu es en franchise). Mais elle devra quand même inclure les <strong className="text-white">champs TVA</strong> dans ses données structurées, avec le code d&apos;exonération correct : <code className="text-indigo-300 bg-indigo-500/10 px-1.5 py-0.5 rounded text-xs">E</code> (exempté) et la mention &quot;TVA non applicable - article 293B du CGI&quot;.
+              Ta facture Factur-X ne contiendra pas de montant TVA (puisque tu es en franchise). Mais elle devra quand même inclure les <strong className="text-ink">champs TVA</strong> dans ses données structurées, avec le code d&apos;exonération correct : <code className="text-indigo-300 bg-indigo-500/10 px-1.5 py-0.5 rounded text-xs">E</code> (exempté) et la mention &quot;TVA non applicable - article 293B du CGI&quot;.
             </p>
             <p className="mt-3">
               Ce n&apos;est pas toi qui le gères : c&apos;est ton logiciel de facturation. Deviso détecte ton régime TVA (franchisé) et génère automatiquement la bonne catégorie dans le XML Factur-X. Tu n&apos;as rien à faire.
@@ -136,7 +136,7 @@ export default function ReformeFacturationMicroEntrepreneurPage() {
           </section>
 
           <section>
-            <h2 className="text-xl font-bold text-white mb-4">Le calendrier pour toi, micro-entrepreneur</h2>
+            <h2 className="text-xl font-bold text-ink mb-4">Le calendrier pour toi, micro-entrepreneur</h2>
             <div className="space-y-4">
               {[
                 {
@@ -176,7 +176,7 @@ export default function ReformeFacturationMicroEntrepreneurPage() {
                     status === "deadline" ? "text-red-400" :
                     "text-gray-500"
                   }`}>{date}</p>
-                  <p className="text-sm font-medium text-white">{action}</p>
+                  <p className="text-sm font-medium text-ink">{action}</p>
                   <p className="text-xs text-gray-500 mt-1">{detail}</p>
                 </div>
               ))}
@@ -184,18 +184,18 @@ export default function ReformeFacturationMicroEntrepreneurPage() {
           </section>
 
           <section>
-            <h2 className="text-xl font-bold text-white mb-4">Le seuil de franchise ne change pas avec la réforme</h2>
+            <h2 className="text-xl font-bold text-ink mb-4">Le seuil de franchise ne change pas avec la réforme</h2>
             <p>
               Autre point de confusion : certains pensent que la réforme modifie les seuils de franchise TVA. Non. Les seuils restent inchangés :
             </p>
             <div className="mt-4 bg-ds-surface border border-ds-border rounded-xl p-4 text-sm">
               <div className="grid grid-cols-2 gap-2">
                 <div><span className="text-gray-500">Prestation de services BIC :</span></div>
-                <div className="text-white font-semibold">37 500 € / an</div>
+                <div className="text-ink font-semibold">37 500 € / an</div>
                 <div><span className="text-gray-500">Activités libérales BNC :</span></div>
-                <div className="text-white font-semibold">37 500 € / an</div>
+                <div className="text-ink font-semibold">37 500 € / an</div>
                 <div><span className="text-gray-500">Commerce / hébergement :</span></div>
-                <div className="text-white font-semibold">85 000 € / an</div>
+                <div className="text-ink font-semibold">85 000 € / an</div>
               </div>
             </div>
             <p className="mt-3 text-sm">
@@ -204,11 +204,11 @@ export default function ReformeFacturationMicroEntrepreneurPage() {
           </section>
 
           <section>
-            <h2 className="text-xl font-bold text-white mb-4">Questions fréquentes des micro-entrepreneurs</h2>
+            <h2 className="text-xl font-bold text-ink mb-4">Questions fréquentes des micro-entrepreneurs</h2>
             <div className="space-y-5">
               {FAQ.map(({ q, a }) => (
                 <div key={q} className="border-b border-ds-border pb-5 last:border-0">
-                  <h3 className="text-sm font-semibold text-white mb-2">{q}</h3>
+                  <h3 className="text-sm font-semibold text-ink mb-2">{q}</h3>
                   <p className="text-sm">{a}</p>
                 </div>
               ))}
@@ -236,11 +236,11 @@ export default function ReformeFacturationMicroEntrepreneurPage() {
         </div>
 
         <div className="rounded-2xl bg-[#191830] border border-indigo-500/20 p-8 text-center mb-14">
-          <h2 className="text-xl font-bold text-white mb-3">Factur-X inclus dans Deviso</h2>
+          <h2 className="text-xl font-bold text-ink mb-3">Factur-X inclus dans Deviso</h2>
           <p className="text-sm text-gray-400 mb-6 max-w-lg mx-auto">
             Toutes vos factures Deviso sont déjà au format Factur-X EN 16931, le format requis par la réforme. La mention &ldquo;franchise TVA&rdquo; est gérée automatiquement selon votre régime.
           </p>
-          <WaitlistButton plan="free" label="Essayer Deviso 14 jours →" className="inline-flex items-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold px-6 py-3 rounded-xl transition-colors text-sm" />
+          <WaitlistButton plan="free" label="Essayer Deviso 14 jours →" className="inline-flex items-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-ink font-semibold px-6 py-3 rounded-xl transition-colors text-sm" />
           <Signature />
         </div>
 

@@ -54,7 +54,7 @@ export function CabinetPortefeuille({ dossiers, annee }: { dossiers: DossierVue[
   }
 
   const selecteur =
-    "bg-ds-bg border border-ds-border rounded-lg px-2.5 py-1.5 text-sm text-white focus:outline-none focus:border-indigo-500";
+    "bg-ds-bg border border-ds-border rounded-lg px-2.5 py-1.5 text-sm text-ink focus:outline-none focus:border-indigo-500";
 
   return (
     <div className="bg-ds-surface border border-ds-border rounded-xl mb-6 overflow-hidden">
@@ -81,18 +81,18 @@ export function CabinetPortefeuille({ dossiers, annee }: { dossiers: DossierVue[
           {selection.size > 0 ? (
             <a
               href={lien([...selection])}
-              className="px-3 py-1.5 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 text-sm font-medium transition-colors"
+              className="px-3 py-1.5 bg-indigo-600 text-ink rounded-lg hover:bg-indigo-700 text-sm font-medium transition-colors"
             >
               Exporter la sélection ({selection.size})
             </a>
           ) : (
-            <span className="px-3 py-1.5 bg-indigo-600/40 text-white/60 rounded-lg text-sm font-medium cursor-not-allowed">
+            <span className="px-3 py-1.5 bg-indigo-600/40 text-ink/60 rounded-lg text-sm font-medium cursor-not-allowed">
               Exporter la sélection
             </span>
           )}
           <a
             href={lien([])}
-            className="px-3 py-1.5 border border-ds-border text-gray-300 rounded-lg hover:bg-white/5 text-sm font-medium transition-colors"
+            className="px-3 py-1.5 border border-ds-border text-gray-300 rounded-lg hover:bg-ink/5 text-sm font-medium transition-colors"
           >
             Tout le portefeuille
           </a>
@@ -118,7 +118,7 @@ export function CabinetPortefeuille({ dossiers, annee }: { dossiers: DossierVue[
             />
             <span className={`w-2.5 h-2.5 rounded-full shrink-0 ${PASTILLE[d.niveau]}`} title={LIBELLE[d.niveau]} />
             <div className="min-w-0 flex-1 basis-56">
-              <div className="font-medium text-white truncate">{d.nom}</div>
+              <div className="font-medium text-ink truncate">{d.nom}</div>
               <div className="text-xs text-gray-500 mt-0.5">
                 {LIBELLE[d.niveau]}
                 {d.anomalies.length > 0

@@ -59,7 +59,7 @@ export default function StatsPage() {
         <div className="w-12 h-12 bg-ds-elevated rounded-xl flex items-center justify-center mx-auto">
           <BarChart3 size={24} className="text-gray-500" />
         </div>
-        <h1 className="text-2xl font-semibold text-white">Activité</h1>
+        <h1 className="text-2xl font-semibold text-ink">Activité</h1>
         <p className="text-gray-400">Taux de conversion, CA prévisionnel et analyses d&apos;activité, inclus dans les plans Solo et Pro.</p>
         <UpgradeButton plan="solo" label="Passer Solo" />
       </div>
@@ -76,7 +76,7 @@ export default function StatsPage() {
     <div className="space-y-8 max-w-7xl mx-auto">
       <GuidedTourBanner pageKey="stats" />
       <div>
-        <h1 className="text-3xl font-semibold text-white tracking-tight">Activité</h1>
+        <h1 className="text-3xl font-semibold text-ink tracking-tight">Activité</h1>
         <p className="text-sm text-gray-500 mt-1">CA, conversion et performance des devis</p>
       </div>
 
@@ -212,7 +212,7 @@ export default function StatsPage() {
                       <span className="font-medium text-gray-300 truncate max-w-[160px]">
                         <span className="text-gray-500 mr-1.5">#{i + 1}</span>{c.name}
                       </span>
-                      <span className="font-semibold text-white shrink-0">{fmt(c.ca)}</span>
+                      <span className="font-semibold text-ink shrink-0">{fmt(c.ca)}</span>
                     </div>
                     <div className="w-full bg-ds-elevated rounded-full h-2">
                       <div className="h-2 rounded-full transition-all"
@@ -230,7 +230,7 @@ export default function StatsPage() {
           <div className="space-y-4">
             <div className="flex justify-between items-center">
               <span className="text-sm text-gray-400">Devis envoyés</span>
-              <span className="font-semibold text-white">{stats.proposals_total}</span>
+              <span className="font-semibold text-ink">{stats.proposals_total}</span>
             </div>
             <div className="flex justify-between items-center">
               <span className="text-sm text-gray-400">Signés</span>
@@ -292,7 +292,7 @@ export default function StatsPage() {
                   return (
                     <div key={stage.label} className="flex-1 flex flex-col items-center gap-2">
                       <div className="w-full flex flex-col items-center">
-                        <div className="text-lg font-bold text-white">{stage.value}</div>
+                        <div className="text-lg font-bold text-ink">{stage.value}</div>
                         <div className={`w-full h-2 rounded-full ${stage.color} mt-1`} style={{ opacity: Math.max(pct / 100, 0.15) }} />
                         <div className="text-[10px] text-gray-500 mt-1.5 font-medium">{stage.label}</div>
                         {i < arr.length - 1 && stage.value > 0 && (
@@ -314,7 +314,7 @@ export default function StatsPage() {
               </div>
               {stats.avg_days_to_sign != null ? (
                 <>
-                  <div className="text-3xl font-bold text-white">{stats.avg_days_to_sign}<span className="text-sm text-gray-400 ml-1">j</span></div>
+                  <div className="text-3xl font-bold text-ink">{stats.avg_days_to_sign}<span className="text-sm text-gray-400 ml-1">j</span></div>
                   <div className="text-xs text-gray-500 mt-1">
                     {stats.avg_days_to_sign <= 3 ? "Très rapide" : stats.avg_days_to_sign <= 7 ? "Dans la moyenne" : stats.avg_days_to_sign <= 14 ? "Relance conseillée" : "Long, optimise ton pitch"}
                   </div>
@@ -370,7 +370,7 @@ export default function StatsPage() {
                 <div className="flex items-center gap-1">
                   {[100, 78, 52, 34, 12].map((v, i) => (
                     <div key={i} className="flex-1 flex flex-col items-center gap-2">
-                      <div className="text-lg font-bold text-white">{v}</div>
+                      <div className="text-lg font-bold text-ink">{v}</div>
                       <div className="w-full h-2 rounded-full bg-indigo-600" style={{ opacity: v / 100 }} />
                       <div className="text-[10px] text-gray-500">-</div>
                     </div>
@@ -388,7 +388,7 @@ export default function StatsPage() {
                       <Icon size={14} className={color} />
                       <span className="text-xs font-semibold text-gray-400 uppercase tracking-wide">{label}</span>
                     </div>
-                    <div className="text-3xl font-bold text-white">{val}</div>
+                    <div className="text-3xl font-bold text-ink">{val}</div>
                   </div>
                 ))}
               </div>
@@ -398,7 +398,7 @@ export default function StatsPage() {
                 <div className="w-10 h-10 rounded-full bg-indigo-500/20 border border-indigo-500/30 flex items-center justify-center mx-auto mb-3">
                   <Lock size={16} className="text-indigo-400" />
                 </div>
-                <p className="text-white font-semibold text-base mb-1">Analytics avancées</p>
+                <p className="text-ink font-semibold text-base mb-1">Analytics avancées</p>
                 <p className="text-gray-400 text-sm mb-4">Funnel de conversion, délai moyen de signature, meilleur mois et efficacité de vos relances.</p>
                 <UpgradeButton plan="solo" label="Passer Solo, 18€/mois" />
               </div>

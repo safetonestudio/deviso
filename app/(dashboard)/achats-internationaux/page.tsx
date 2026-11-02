@@ -54,7 +54,7 @@ export default async function AchatsInternationaux() {
     <div className="max-w-7xl mx-auto">
       <GuidedTourBanner pageKey="achats-internationaux" />
       <div className="mb-6">
-        <h1 className="text-2xl font-semibold text-white">Achats à l&apos;étranger</h1>
+        <h1 className="text-2xl font-semibold text-ink">Achats à l&apos;étranger</h1>
         <p className="text-sm text-gray-400 mt-1 max-w-2xl">
           Quand vous achetez un bien ou un service à un fournisseur établi hors de France, vous
           devez déclarer cette acquisition à l&apos;administration (article 290-II du CGI). Sa
@@ -65,14 +65,14 @@ export default async function AchatsInternationaux() {
 
       {!raccorde ? (
         <section className="bg-ds-surface border border-ds-border rounded-xl p-6 text-center">
-          <p className="text-white font-medium mb-1">Vous n&apos;êtes pas encore raccordé</p>
+          <p className="text-ink font-medium mb-1">Vous n&apos;êtes pas encore raccordé</p>
           <p className="text-sm text-gray-400 mb-4 max-w-md mx-auto">
             La déclaration de vos achats étrangers passe par votre Plateforme Agréée. Le
             raccordement se fait depuis vos paramètres.
           </p>
           <a
             href="/profil"
-            className="inline-block px-4 py-2 rounded-lg bg-indigo-600 text-white text-sm font-semibold hover:bg-indigo-700 transition-colors"
+            className="inline-block px-4 py-2 rounded-lg bg-indigo-600 text-ink text-sm font-semibold hover:bg-indigo-700 transition-colors"
           >
             Aller aux paramètres
           </a>
@@ -83,7 +83,7 @@ export default async function AchatsInternationaux() {
 
           {error ? (
             <section className="bg-ds-surface border border-red-500/30 rounded-xl p-6 text-center">
-              <p className="text-white font-medium mb-1">Impossible de lire vos achats étrangers</p>
+              <p className="text-ink font-medium mb-1">Impossible de lire vos achats étrangers</p>
               <p className="text-xs font-mono text-red-400/90 mt-2 break-all">{error.message}</p>
             </section>
           ) : (

@@ -76,11 +76,11 @@ export default function JoinPage() {
           <div className="w-12 h-12 rounded-xl bg-emerald-500/20 flex items-center justify-center mx-auto mb-4">
             <UsersRound size={22} className="text-emerald-400" />
           </div>
-          <h1 className="text-xl font-semibold text-white mb-2">Invitation déjà acceptée</h1>
+          <h1 className="text-xl font-semibold text-ink mb-2">Invitation déjà acceptée</h1>
           <p className="text-gray-400 text-sm mb-6">Tu fais déjà partie de cette équipe.</p>
           <Link
             href="/dashboard"
-            className="inline-flex items-center gap-2 px-5 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg font-semibold text-sm transition-colors"
+            className="inline-flex items-center gap-2 px-5 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-ink rounded-lg font-semibold text-sm transition-colors"
           >
             Accéder au dashboard <ArrowRight size={15} />
           </Link>
@@ -96,11 +96,11 @@ export default function JoinPage() {
           <div className="w-12 h-12 rounded-xl bg-red-500/20 flex items-center justify-center mx-auto mb-4">
             <UsersRound size={22} className="text-red-400" />
           </div>
-          <h1 className="text-xl font-semibold text-white mb-2">Invitation invalide</h1>
+          <h1 className="text-xl font-semibold text-ink mb-2">Invitation invalide</h1>
           <p className="text-gray-400 text-sm mb-6">{state.message}</p>
           <Link
             href="/"
-            className="inline-flex items-center gap-2 px-5 py-2.5 border border-[#2B3444] text-gray-300 hover:text-white rounded-lg font-semibold text-sm transition-colors"
+            className="inline-flex items-center gap-2 px-5 py-2.5 border border-[#2B3444] text-gray-300 hover:text-ink rounded-lg font-semibold text-sm transition-colors"
           >
             Retour à l'accueil
           </Link>
@@ -118,11 +118,11 @@ export default function JoinPage() {
           <div className="w-12 h-12 rounded-xl bg-amber-500/20 flex items-center justify-center mx-auto mb-4">
             <AlertCircle size={22} className="text-amber-400" />
           </div>
-          <h1 className="text-xl font-semibold text-white mb-2">Mauvais compte connecté</h1>
+          <h1 className="text-xl font-semibold text-ink mb-2">Mauvais compte connecté</h1>
           <p className="text-gray-400 text-sm mb-1">
             Cette invitation est destinée à
           </p>
-          <p className="text-white font-medium text-sm mb-4">{state.inviteeEmail}</p>
+          <p className="text-ink font-medium text-sm mb-4">{state.inviteeEmail}</p>
           <p className="text-gray-500 text-xs mb-6">
             Tu es actuellement connecté avec <span className="text-gray-400">{state.currentEmail}</span>.
           </p>
@@ -133,7 +133,7 @@ export default function JoinPage() {
                 await supabase.auth.signOut();
                 window.location.reload();
               }}
-              className="flex items-center justify-center gap-2 w-full py-3 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl font-semibold text-sm transition-colors"
+              className="flex items-center justify-center gap-2 w-full py-3 bg-indigo-600 hover:bg-indigo-700 text-ink rounded-xl font-semibold text-sm transition-colors"
             >
               Se déconnecter et rejoindre avec {state.inviteeEmail.split("@")[0]}
             </button>
@@ -142,7 +142,7 @@ export default function JoinPage() {
                 setState({ status: "accepting" });
                 window.location.href = `/api/team/accept/${token}`;
               }}
-              className="w-full py-3 border border-[#2B3444] text-gray-400 hover:text-white rounded-xl text-sm transition-colors"
+              className="w-full py-3 border border-[#2B3444] text-gray-400 hover:text-ink rounded-xl text-sm transition-colors"
             >
               Rejoindre avec mon compte actuel
             </button>
@@ -162,15 +162,15 @@ export default function JoinPage() {
 
         {/* Logo */}
         <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-indigo-600 to-violet-600 flex items-center justify-center mx-auto mb-6">
-          <span className="text-white font-bold text-xl">D</span>
+          <span className="text-ink font-bold text-xl">D</span>
         </div>
 
         {/* Message d'invitation */}
         <div className="mb-8">
           <p className="text-gray-400 text-sm mb-1">Tu as été invité par</p>
-          <p className="text-white font-semibold text-lg">{state.ownerName}</p>
+          <p className="text-ink font-semibold text-lg">{state.ownerName}</p>
           <p className="text-gray-400 text-sm mt-3">
-            à rejoindre son équipe sur <span className="text-white font-medium">Deviso</span>.
+            à rejoindre son équipe sur <span className="text-ink font-medium">Deviso</span>.
           </p>
           {state.inviteeEmail && (
             <p className="text-xs text-gray-500 mt-2">
@@ -183,13 +183,13 @@ export default function JoinPage() {
         <div className="flex flex-col gap-3">
           <Link
             href={signupUrl}
-            className="flex items-center justify-center gap-2 w-full py-3 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl font-semibold text-sm transition-colors"
+            className="flex items-center justify-center gap-2 w-full py-3 bg-indigo-600 hover:bg-indigo-700 text-ink rounded-xl font-semibold text-sm transition-colors"
           >
             Créer mon compte et rejoindre <ArrowRight size={15} />
           </Link>
           <Link
             href={loginUrl}
-            className="flex items-center justify-center gap-2 w-full py-3 border border-[#2B3444] text-gray-300 hover:text-white hover:border-gray-500 rounded-xl font-semibold text-sm transition-colors"
+            className="flex items-center justify-center gap-2 w-full py-3 border border-[#2B3444] text-gray-300 hover:text-ink hover:border-gray-500 rounded-xl font-semibold text-sm transition-colors"
           >
             <LogIn size={15} />
             J'ai déjà un compte

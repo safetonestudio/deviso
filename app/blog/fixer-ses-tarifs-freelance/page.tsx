@@ -46,21 +46,21 @@ export default function Page() {
         <span className="text-indigo-400 font-medium">Deviso est déjà conforme Factur-X.</span>
       </div>
 
-      <nav className="fixed top-9 left-0 right-0 z-50 bg-ds-bg/80 backdrop-blur-xl border-b border-white/[0.06]">
+      <nav className="fixed top-9 left-0 right-0 z-50 bg-ds-bg/80 backdrop-blur-xl border-b border-ink/[0.06]">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
           <Link href="/" aria-label="Deviso" className="flex items-center gap-2">
             <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-indigo-600 to-violet-600 flex items-center justify-center">
-              <span className="text-white font-semibold text-sm">D</span>
+              <span className="text-ink font-semibold text-sm">D</span>
             </div>
-            <span className="font-semibold text-lg text-white">Deviso</span>
+            <span className="font-semibold text-lg text-ink">Deviso</span>
           </Link>
           <div className="hidden md:flex items-center gap-8 text-sm font-medium">
-            <Link href="/blog" className="text-white font-semibold">Blog</Link>
-            <Link href="/#fonctionnalites" className="text-gray-400 hover:text-white transition-colors">Fonctionnalités</Link>
-            <Link href="/#tarifs" className="text-gray-400 hover:text-white transition-colors">Tarifs</Link>
+            <Link href="/blog" className="text-ink font-semibold">Blog</Link>
+            <Link href="/#fonctionnalites" className="text-gray-400 hover:text-ink transition-colors">Fonctionnalités</Link>
+            <Link href="/#tarifs" className="text-gray-400 hover:text-ink transition-colors">Tarifs</Link>
           </div>
           <div className="hidden md:flex items-center gap-3">
-            <Link href="/login" className="text-sm font-medium text-gray-400 hover:text-white transition-colors">Connexion</Link>
+            <Link href="/login" className="text-sm font-medium text-gray-400 hover:text-ink transition-colors">Connexion</Link>
             <WaitlistButton plan="free" label="Essayer gratuitement" className="bg-white text-black text-sm font-semibold px-4 py-2 rounded-lg hover:bg-zinc-100 transition-colors" />
           </div>
           <NavbarMobile />
@@ -83,7 +83,7 @@ export default function Page() {
               <span className="text-xs px-2.5 py-1 rounded-full bg-emerald-500/10 text-emerald-300 border border-emerald-500/20 font-medium">Problèmes freelance</span>
               <span className="text-xs text-gray-400">29 juin 2026 · 7 min</span>
             </div>
-            <h1 className="text-3xl sm:text-4xl font-semibold text-white leading-tight mb-4">
+            <h1 className="text-3xl sm:text-4xl font-semibold text-ink leading-tight mb-4">
               Comment fixer ses tarifs en freelance : TJM, méthodes et erreurs à éviter
             </h1>
             <p className="text-lg text-gray-400 leading-relaxed">
@@ -94,13 +94,13 @@ export default function Page() {
           <div className="space-y-10 text-sm text-gray-300 leading-relaxed">
 
             <section>
-              <h2 className="text-xl font-semibold text-white mb-5">Les 3 méthodes pour calculer son TJM</h2>
+              <h2 className="text-xl font-semibold text-ink mb-5">Les 3 méthodes pour calculer son TJM</h2>
 
               <div className="space-y-6">
                 <div className="bg-ds-surface border border-ds-border rounded-xl p-6">
                   <div className="flex items-center gap-3 mb-3">
                     <span className="text-indigo-400 font-bold font-mono text-sm">01</span>
-                    <h3 className="font-semibold text-white">La méthode du revenu cible (bottom-up)</h3>
+                    <h3 className="font-semibold text-ink">La méthode du revenu cible (bottom-up)</h3>
                   </div>
                   <p className="text-gray-400 text-sm mb-4 leading-relaxed">C&apos;est la méthode la plus fiable. Vous partez de ce dont vous avez besoin pour vivre, et vous calculez ce que vous devez facturer pour y arriver.</p>
                   <div className="bg-ds-elevated rounded-xl p-4 font-mono text-xs text-gray-300 space-y-1">
@@ -116,7 +116,7 @@ export default function Page() {
                 <div className="bg-ds-surface border border-ds-border rounded-xl p-6">
                   <div className="flex items-center gap-3 mb-3">
                     <span className="text-indigo-400 font-bold font-mono text-sm">02</span>
-                    <h3 className="font-semibold text-white">La méthode du marché (benchmarking)</h3>
+                    <h3 className="font-semibold text-ink">La méthode du marché (benchmarking)</h3>
                   </div>
                   <p className="text-gray-400 text-sm leading-relaxed">Regardez ce que pratiquent vos pairs avec le même niveau d&apos;expérience dans la même zone géographique. Malt, Crème de la crème, LinkedIn, les profils publics donnent une bonne indication des fourchettes pratiquées. Attention : les tarifs affichés sont souvent des tarifs maximums, pas des moyennes.</p>
                 </div>
@@ -124,7 +124,7 @@ export default function Page() {
                 <div className="bg-ds-surface border border-ds-border rounded-xl p-6">
                   <div className="flex items-center gap-3 mb-3">
                     <span className="text-indigo-400 font-bold font-mono text-sm">03</span>
-                    <h3 className="font-semibold text-white">La méthode de la valeur délivrée (value-based pricing)</h3>
+                    <h3 className="font-semibold text-ink">La méthode de la valeur délivrée (value-based pricing)</h3>
                   </div>
                   <p className="text-gray-400 text-sm leading-relaxed mb-3">Au lieu de facturer votre temps, vous facturez la valeur que vous créez pour le client. Un consultant qui aide une PME à gagner 100 000€ de CA supplémentaire peut facturer 20 000€ de mission, même si ça lui a pris 20 jours. C&apos;est la méthode la plus rentable, mais elle requiert une bonne compréhension de l&apos;impact de votre travail et la capacité à le quantifier.</p>
                   <p className="text-xs text-gray-400">Particulièrement adaptée aux consultants, coachs business, spécialistes SEO, experts en conversion.</p>
@@ -133,7 +133,7 @@ export default function Page() {
             </section>
 
             <section>
-              <h2 className="text-xl font-semibold text-white mb-4">Les erreurs classiques qui font sous-facturer</h2>
+              <h2 className="text-xl font-semibold text-ink mb-4">Les erreurs classiques qui font sous-facturer</h2>
 
               <div className="space-y-4">
                 {[
@@ -155,7 +155,7 @@ export default function Page() {
                   },
                 ].map((item) => (
                   <div key={item.title} className="border border-rose-500/20 bg-rose-500/5 rounded-xl p-5">
-                    <p className="font-semibold text-white text-sm mb-2">✗ {item.title}</p>
+                    <p className="font-semibold text-ink text-sm mb-2">✗ {item.title}</p>
                     <p className="text-gray-400 text-sm leading-relaxed">{item.desc}</p>
                   </div>
                 ))}
@@ -163,7 +163,7 @@ export default function Page() {
             </section>
 
             <section>
-              <h2 className="text-xl font-semibold text-white mb-4">Comment augmenter ses tarifs sans perdre ses clients</h2>
+              <h2 className="text-xl font-semibold text-ink mb-4">Comment augmenter ses tarifs sans perdre ses clients</h2>
               <p className="mb-4 text-gray-400">L&apos;augmentation de tarifs est inévitable, l&apos;inflation, la progression de vos compétences, et la demande croissante l&apos;exigent. La plupart des freelances repoussent cette conversation indéfiniment. Voici comment l&apos;aborder.</p>
               <div className="space-y-3">
                 {[
@@ -181,11 +181,11 @@ export default function Page() {
             </section>
 
             <section>
-              <h2 className="text-xl font-semibold text-white mb-4">TJM vs forfait : lequel choisir ?</h2>
+              <h2 className="text-xl font-semibold text-ink mb-4">TJM vs forfait : lequel choisir ?</h2>
               <p className="mb-4 text-gray-400">Les deux modèles coexistent et chacun a ses avantages.</p>
               <div className="grid grid-cols-2 gap-4">
                 <div className="bg-ds-surface border border-ds-border rounded-xl p-5">
-                  <p className="font-semibold text-white text-sm mb-2">TJM (régie)</p>
+                  <p className="font-semibold text-ink text-sm mb-2">TJM (régie)</p>
                   <ul className="text-gray-400 text-xs space-y-1">
                     <li>✓ Adapté aux missions longues ou évolutives</li>
                     <li>✓ Protège contre le scope creep</li>
@@ -194,7 +194,7 @@ export default function Page() {
                   </ul>
                 </div>
                 <div className="bg-ds-surface border border-ds-border rounded-xl p-5">
-                  <p className="font-semibold text-white text-sm mb-2">Forfait</p>
+                  <p className="font-semibold text-ink text-sm mb-2">Forfait</p>
                   <ul className="text-gray-400 text-xs space-y-1">
                     <li>✓ Rentabilité croissante avec l&apos;expérience</li>
                     <li>✓ Le client sait exactement son budget</li>
@@ -209,11 +209,11 @@ export default function Page() {
 
           {/* ── Questions fréquentes ── */}
           <section className="mb-12">
-            <h2 className="text-2xl font-semibold text-white mb-6">Questions fréquentes</h2>
+            <h2 className="text-2xl font-semibold text-ink mb-6">Questions fréquentes</h2>
             <div className="space-y-4">
               {FAQ.map(({ q, a }) => (
                 <div key={q} className="bg-ds-surface rounded-xl border border-ds-border p-6">
-                  <h3 className="text-white font-medium mb-3">{q}</h3>
+                  <h3 className="text-ink font-medium mb-3">{q}</h3>
                   <p className="text-gray-400 text-sm leading-relaxed">{a}</p>
                 </div>
               ))}
@@ -222,11 +222,11 @@ export default function Page() {
 
           {/* CTA */}
           <div className="mt-14 bg-gradient-to-br from-indigo-900/40 to-violet-900/20 rounded-2xl border border-indigo-500/20 p-8 text-center">
-            <h2 className="text-2xl font-semibold text-white mb-3">Facturez au bon prix, présentez-vous comme un pro</h2>
+            <h2 className="text-2xl font-semibold text-ink mb-3">Facturez au bon prix, présentez-vous comme un pro</h2>
             <p className="text-gray-400 mb-6 max-w-lg mx-auto text-sm leading-relaxed">
               Avec Deviso, vos devis sont générés en 30 secondes, signés électroniquement et relancés automatiquement. Professionnalisme et sérénité, dès le premier contact.
             </p>
-            <WaitlistButton plan="free" label="Générer mon premier devis, gratuit" className="inline-block bg-indigo-600 hover:bg-indigo-700 text-white font-semibold px-8 py-3 rounded-xl transition-all" />
+            <WaitlistButton plan="free" label="Générer mon premier devis, gratuit" className="inline-block bg-indigo-600 hover:bg-indigo-700 text-ink font-semibold px-8 py-3 rounded-xl transition-all" />
           </div>
 
           <div className="mt-14 pt-8">

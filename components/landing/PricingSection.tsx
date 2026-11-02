@@ -26,7 +26,7 @@ export function PricingSection() {
     <section id="tarifs" className="py-20 px-4 sm:px-6">
       <div className="max-w-5xl mx-auto">
         <div className="text-center mb-10">
-          <h2 className="text-3xl sm:text-4xl font-semibold text-white mb-3 tracking-tight">
+          <h2 className="text-3xl sm:text-4xl font-semibold text-ink mb-3 tracking-tight">
             Tarifs simples
           </h2>
           <p className="text-gray-500 mb-6">14 jours gratuits · Sans carte bancaire · Sans engagement.</p>
@@ -35,13 +35,13 @@ export function PricingSection() {
           <div className="inline-flex items-center gap-1 bg-ds-surface border border-ds-border rounded-xl p-1">
             <button
               onClick={() => setBilling("monthly")}
-              className={`text-sm font-medium px-4 py-2 rounded-lg transition-all ${ billing === "monthly" ? "bg-ds-elevated text-white shadow-sm" : "text-gray-500 hover:text-gray-300" }`}
+              className={`text-sm font-medium px-4 py-2 rounded-lg transition-all ${ billing === "monthly" ? "bg-ds-elevated text-ink shadow-sm" : "text-gray-500 hover:text-gray-300" }`}
             >
               Mensuel
             </button>
             <button
               onClick={() => setBilling("annual")}
-              className={`text-sm font-medium px-4 py-2 rounded-lg transition-all flex items-center gap-2 ${ billing === "annual" ? "bg-ds-elevated text-white shadow-sm" : "text-gray-500 hover:text-gray-300" }`}
+              className={`text-sm font-medium px-4 py-2 rounded-lg transition-all flex items-center gap-2 ${ billing === "annual" ? "bg-ds-elevated text-ink shadow-sm" : "text-gray-500 hover:text-gray-300" }`}
             >
               Annuel
               <span className="text-[11px] font-semibold px-1.5 py-0.5 rounded-md bg-emerald-500/20 text-emerald-400 border border-emerald-500/20">
@@ -59,13 +59,13 @@ export function PricingSection() {
               <div className="inline-block bg-indigo-500/15 text-indigo-300 text-xs font-semibold px-2.5 py-1 rounded-full mb-3">
                 Le plus populaire
               </div>
-              <h3 className="text-xl font-semibold text-white mb-1">Solo</h3>
+              <h3 className="text-xl font-semibold text-ink mb-1">Solo</h3>
               <p className="text-sm text-gray-400">Pour le freelance qui veut une image pro et zéro admin.</p>
             </div>
 
             <div className="mb-6">
               <div className="flex items-end gap-1">
-                <span className="text-4xl font-semibold text-white tabular-nums">{soloPrice}</span>
+                <span className="text-4xl font-semibold text-ink tabular-nums">{soloPrice}</span>
                 <span className="text-gray-500 text-sm mb-1.5">/mois</span>
               </div>
               <p className="text-xs text-gray-500 mt-1">{soloPeriod}</p>
@@ -82,7 +82,7 @@ export function PricingSection() {
 
             <Link
               href="/signup?plan=solo"
-              className="w-full text-center bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-3 px-5 rounded-xl transition-all text-sm"
+              className="w-full text-center bg-indigo-600 hover:bg-indigo-700 text-ink font-semibold py-3 px-5 rounded-xl transition-all text-sm"
             >
               Essayer gratuitement 14 jours →
             </Link>
@@ -95,13 +95,13 @@ export function PricingSection() {
               <div className="inline-block bg-violet-500/15 text-violet-300 text-xs font-semibold px-2.5 py-1 rounded-full mb-3">
                 Recommandé
               </div>
-              <h3 className="text-xl font-semibold text-white mb-1">Pro</h3>
+              <h3 className="text-xl font-semibold text-ink mb-1">Pro</h3>
               <p className="text-sm text-gray-400">Pour le freelance pro et les petits studios jusqu'à 5 personnes.</p>
             </div>
 
             <div className="mb-6">
               <div className="flex items-end gap-1">
-                <span className="text-4xl font-semibold text-white tabular-nums">{proPrice}</span>
+                <span className="text-4xl font-semibold text-ink tabular-nums">{proPrice}</span>
                 <span className="text-gray-500 text-sm mb-1.5">/mois</span>
               </div>
               <p className="text-xs text-gray-500 mt-1">{proPeriod}</p>
@@ -118,7 +118,7 @@ export function PricingSection() {
 
             <Link
               href="/signup?plan=pro"
-              className="w-full text-center bg-white/[0.07] hover:bg-white/[0.12] border border-white/[0.10] text-white font-semibold py-3 px-5 rounded-xl transition-all text-sm"
+              className="w-full text-center bg-ink/[0.07] hover:bg-ink/[0.12] border border-ink/[0.10] text-ink font-semibold py-3 px-5 rounded-xl transition-all text-sm"
             >
               Essayer gratuitement 14 jours →
             </Link>

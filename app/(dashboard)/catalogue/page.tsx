@@ -35,7 +35,7 @@ export default function CataloguePage() {
   const [editId, setEditId] = useState<string | null>(null);
   const [saving, setSaving] = useState(false);
 
-  const inputCls = "w-full px-3 py-2 rounded-lg bg-ds-bg border border-ds-border text-sm focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500/30 text-white placeholder:text-gray-600";
+  const inputCls = "w-full px-3 py-2 rounded-lg bg-ds-bg border border-ds-border text-sm focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500/30 text-ink placeholder:text-gray-600";
 
   useEffect(() => {
     fetch("/api/catalog").then((r) => r.json()).then((catalogData) => {
@@ -108,12 +108,12 @@ export default function CataloguePage() {
       <div className="max-w-2xl mx-auto">
         <GuidedTourBanner pageKey="catalogue" />
         <div className="mb-8">
-          <h1 className="text-3xl font-semibold text-white tracking-tight">Services</h1>
+          <h1 className="text-3xl font-semibold text-ink tracking-tight">Services</h1>
           <p className="text-gray-500 text-sm mt-1">Sauvegardez vos prestations pour les réutiliser en un clic.</p>
         </div>
         <div className="bg-ds-surface border border-ds-border rounded-xl p-10 text-center">
           <Package size={32} className="mx-auto mb-3 text-gray-600" />
-          <p className="text-white font-semibold mb-1">Catalogue de prestations</p>
+          <p className="text-ink font-semibold mb-1">Catalogue de prestations</p>
           <p className="text-gray-500 text-sm mb-6">
             Créez votre catalogue de prestations et insérez-les en un clic dans vos devis.
           </p>
@@ -131,7 +131,7 @@ export default function CataloguePage() {
       <GuidedTourBanner pageKey="catalogue" />
 
       <div className="mb-8">
-        <h1 className="text-3xl font-semibold text-white tracking-tight">Services</h1>
+        <h1 className="text-3xl font-semibold text-ink tracking-tight">Services</h1>
         <p className="text-gray-500 text-sm mt-1">
           {items.length} prestation{items.length !== 1 ? "s" : ""}, réutilisables en un clic dans vos devis et factures.
         </p>
@@ -145,7 +145,7 @@ export default function CataloguePage() {
               ? <Clock size={15} className="text-violet-400" />
               : <Package size={15} className="text-indigo-400" />
             }
-            <h2 className="font-semibold text-white text-sm">
+            <h2 className="font-semibold text-ink text-sm">
               {editId ? "Modifier" : "Nouvelle prestation"}, {" "}
               <span className={formType === "hourly" ? "text-violet-400" : "text-indigo-400"}>
                 {formType === "hourly" ? "Taux horaire" : "À l'acte"}
@@ -217,7 +217,7 @@ export default function CataloguePage() {
             <button
               onClick={handleSave}
               disabled={saving || !form.name.trim()}
-              className="px-4 py-2 text-sm font-semibold bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 disabled:opacity-50 transition-colors"
+              className="px-4 py-2 text-sm font-semibold bg-indigo-600 text-ink rounded-lg hover:bg-indigo-700 disabled:opacity-50 transition-colors"
             >
               {saving ? "Enregistrement…" : editId ? "Mettre à jour" : "Ajouter"}
             </button>
@@ -319,7 +319,7 @@ function Section({
       <div className="flex items-center justify-between mb-3">
         <div className="flex items-center gap-2">
           {icon}
-          <h2 className="text-sm font-semibold text-white">{title}</h2>
+          <h2 className="text-sm font-semibold text-ink">{title}</h2>
           {badge}
         </div>
         {onAdd && (
@@ -365,14 +365,14 @@ function ItemRow({ item, badge, priceLabel, onEdit, onDelete }: {
     <div className="bg-ds-surface border border-ds-border rounded-xl px-5 py-3.5 flex items-center gap-4 hover:bg-ds-elevated/50 transition-colors">
       <div className="flex-1 min-w-0">
         <div className="flex items-center gap-2">
-          <span className="font-medium text-white text-sm">{item.name}</span>
+          <span className="font-medium text-ink text-sm">{item.name}</span>
           {badge}
         </div>
         {item.description && (
           <div className="text-gray-500 text-xs mt-0.5 truncate">{item.description}</div>
         )}
       </div>
-      <div className="text-sm font-semibold text-white shrink-0">{priceLabel}</div>
+      <div className="text-sm font-semibold text-ink shrink-0">{priceLabel}</div>
       {(onEdit || onDelete) && (
         <div className="flex gap-3 shrink-0">
           {onEdit && (

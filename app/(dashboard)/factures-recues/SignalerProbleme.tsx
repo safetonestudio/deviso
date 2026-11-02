@@ -163,9 +163,9 @@ export function SignalerProbleme({
         <div className="relative w-full sm:max-w-md bg-ds-surface border border-ds-border rounded-t-2xl sm:rounded-2xl p-5 shadow-xl max-h-[90vh] overflow-y-auto">
           {etape === "choix" ? (
             <>
-              <h2 className="text-white font-semibold mb-1">Un problème sur cette facture ?</h2>
+              <h2 className="text-ink font-semibold mb-1">Un problème sur cette facture ?</h2>
               <p className="text-sm text-gray-400 mb-4">
-                Facture de <strong className="text-white">{fournisseur}</strong>.
+                Facture de <strong className="text-ink">{fournisseur}</strong>.
               </p>
 
               {/* Le mot libre accompagne l'action : sans lui, le fournisseur
@@ -179,7 +179,7 @@ export function SignalerProbleme({
                 rows={2}
                 maxLength={500}
                 placeholder="Ex. : le total de la ligne 3 ne correspond pas au devis signé."
-                className="w-full bg-ds-bg border border-ds-border text-white rounded-lg px-3 py-2 text-sm mb-4 focus:outline-none focus:border-indigo-500 placeholder:text-gray-600"
+                className="w-full bg-ds-bg border border-ds-border text-ink rounded-lg px-3 py-2 text-sm mb-4 focus:outline-none focus:border-indigo-500 placeholder:text-gray-600"
               />
 
               <div className="space-y-2">
@@ -190,7 +190,7 @@ export function SignalerProbleme({
                     disabled={enCours}
                     className="w-full text-left px-3 py-2.5 rounded-lg border border-ds-border hover:bg-ds-elevated transition-colors disabled:opacity-50"
                   >
-                    <span className="block text-sm font-medium text-white">{issue.titre}</span>
+                    <span className="block text-sm font-medium text-ink">{issue.titre}</span>
                     <span className="block text-xs text-gray-500 mt-0.5 leading-relaxed">
                       {issue.effet}
                     </span>
@@ -228,16 +228,16 @@ export function SignalerProbleme({
               <button
                 onClick={fermer}
                 disabled={enCours}
-                className="w-full mt-3 px-3 py-2 rounded-lg text-gray-500 hover:text-white text-sm transition-colors disabled:opacity-50"
+                className="w-full mt-3 px-3 py-2 rounded-lg text-gray-500 hover:text-ink text-sm transition-colors disabled:opacity-50"
               >
                 Annuler
               </button>
             </>
           ) : (
             <>
-              <h2 className="text-white font-semibold mb-2">Refuser cette facture</h2>
+              <h2 className="text-ink font-semibold mb-2">Refuser cette facture</h2>
               <p className="text-sm text-gray-400 mb-4 leading-relaxed">
-                Facture de <strong className="text-white">{fournisseur}</strong>. Le refus est{" "}
+                Facture de <strong className="text-ink">{fournisseur}</strong>. Le refus est{" "}
                 <strong className="text-red-400">définitif</strong> et porte sur la facture
                 entière.
               </p>
@@ -249,7 +249,7 @@ export function SignalerProbleme({
                 value={motif}
                 onChange={(e) => setMotif(e.target.value)}
                 autoFocus
-                className="w-full bg-ds-bg border border-ds-border text-white rounded-lg px-3 py-2.5 text-sm mb-2 focus:outline-none focus:border-indigo-500"
+                className="w-full bg-ds-bg border border-ds-border text-ink rounded-lg px-3 py-2.5 text-sm mb-2 focus:outline-none focus:border-indigo-500"
               >
                 <option value="">Choisir un motif…</option>
                 {MOTIFS_REFUS.map((m) => (
@@ -284,7 +284,7 @@ export function SignalerProbleme({
                     setErreur(null);
                   }}
                   disabled={enCours}
-                  className="flex-1 px-3 py-2.5 rounded-lg border border-ds-border text-gray-400 hover:text-white text-sm font-medium transition-colors disabled:opacity-50"
+                  className="flex-1 px-3 py-2.5 rounded-lg border border-ds-border text-gray-400 hover:text-ink text-sm font-medium transition-colors disabled:opacity-50"
                 >
                   Retour
                 </button>

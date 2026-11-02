@@ -51,7 +51,7 @@ export default async function ProposalsPage() {
         action={
           <Link
             href="/proposals/new"
-            className="bg-indigo-600 hover:bg-indigo-700 text-white font-semibold px-4 py-2 sm:px-5 sm:py-2.5 rounded-lg transition-colors text-sm flex items-center gap-2"
+            className="bg-indigo-600 hover:bg-indigo-700 text-ink font-semibold px-4 py-2 sm:px-5 sm:py-2.5 rounded-lg transition-colors text-sm flex items-center gap-2"
           >
             <Sparkles size={16} />Nouveau devis
           </Link>
@@ -67,7 +67,7 @@ export default async function ProposalsPage() {
           action={
             <Link
               href="/proposals/new"
-              className="bg-indigo-600 hover:bg-indigo-700 text-white font-semibold px-5 py-2.5 rounded-lg transition-colors text-sm inline-block"
+              className="bg-indigo-600 hover:bg-indigo-700 text-ink font-semibold px-5 py-2.5 rounded-lg transition-colors text-sm inline-block"
             >
               Créer mon premier devis
             </Link>
@@ -85,14 +85,14 @@ export default async function ProposalsPage() {
                   className="block bg-ds-surface border border-ds-border rounded-xl p-4 hover:bg-ds-elevated/50 transition-colors"
                 >
                   <div className="flex items-start justify-between gap-2 mb-2">
-                    <div className="font-semibold text-white text-sm leading-snug">{proposal.title}</div>
+                    <div className="font-semibold text-ink text-sm leading-snug">{proposal.title}</div>
                     <span className={`text-xs font-medium px-2 py-0.5 rounded-full shrink-0 ${s.color}`}>
                       {s.label}
                     </span>
                   </div>
                   <div className="flex items-center justify-between">
                     <div className="text-sm text-gray-400">{proposal.client_name || "-"}</div>
-                    <div className="text-sm font-semibold text-white">{fmt(proposal.total_ttc)}</div>
+                    <div className="text-sm font-semibold text-ink">{fmt(proposal.total_ttc)}</div>
                   </div>
                   <div className="text-xs text-gray-500 mt-1.5">
                     {new Date(proposal.created_at).toLocaleDateString("fr-FR")}

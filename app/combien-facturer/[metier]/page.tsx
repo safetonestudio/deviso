@@ -121,26 +121,26 @@ export default async function MetierTarifsPage({ params }: Props) {
   const otherMetiers = TARIFS_DATA.filter((m) => m.slug !== data.slug).slice(0, 5);
 
   return (
-    <div className="min-h-screen bg-site text-white">
+    <div className="min-h-screen bg-site text-ink">
       <DonneesStructurees donnees={jsonLd} />
 
       {/* Navbar */}
-      <nav className="sticky top-0 z-40 bg-ds-bg/90 backdrop-blur-xl border-b border-white/[0.06]">
+      <nav className="sticky top-0 z-40 bg-ds-bg/90 backdrop-blur-xl border-b border-ink/[0.06]">
         <div className="max-w-5xl mx-auto px-4 sm:px-6 h-14 flex items-center justify-between">
           <Link href="/" className="flex items-center gap-2">
             <div className="w-7 h-7 rounded-lg bg-gradient-to-br from-indigo-600 to-violet-600 flex items-center justify-center">
-              <span className="text-white font-semibold text-xs">D</span>
+              <span className="text-ink font-semibold text-xs">D</span>
             </div>
-            <span className="font-semibold text-base text-white">Deviso</span>
+            <span className="font-semibold text-base text-ink">Deviso</span>
           </Link>
           <div className="flex items-center gap-4 text-sm">
-            <Link href="/combien-facturer" className="text-gray-400 hover:text-white transition-colors hidden sm:block">
+            <Link href="/combien-facturer" className="text-gray-400 hover:text-ink transition-colors hidden sm:block">
               Tous les metiers
             </Link>
-            <Link href="/login" className="text-gray-400 hover:text-white transition-colors">Connexion</Link>
+            <Link href="/login" className="text-gray-400 hover:text-ink transition-colors">Connexion</Link>
             <Link
               href="/login"
-              className="bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-semibold px-4 py-2 rounded-lg transition-colors"
+              className="bg-indigo-600 hover:bg-indigo-700 text-ink text-sm font-semibold px-4 py-2 rounded-lg transition-colors"
             >
               Essai gratuit
             </Link>
@@ -165,7 +165,7 @@ export default async function MetierTarifsPage({ params }: Props) {
             <div className="inline-flex items-center gap-2 text-xs font-semibold text-indigo-400 bg-indigo-500/10 border border-indigo-500/20 rounded-full px-3 py-1 mb-4">
               Baromètre Malt 2026 · URSSAF
             </div>
-            <h1 className="text-3xl sm:text-4xl font-bold text-white leading-tight mb-3">
+            <h1 className="text-3xl sm:text-4xl font-bold text-ink leading-tight mb-3">
               {data.title}
             </h1>
             <p className="text-base text-gray-400 leading-relaxed max-w-2xl">{data.description}</p>
@@ -201,20 +201,20 @@ export default async function MetierTarifsPage({ params }: Props) {
         {/* Simulateur */}
         <section className="grid lg:grid-cols-2 gap-8 items-start">
           <div>
-            <h2 className="text-xl font-bold text-white mb-3">
+            <h2 className="text-xl font-bold text-ink mb-3">
               Simulez votre revenu net
             </h2>
             <p className="text-sm text-gray-400 leading-relaxed mb-4">
-              En <strong className="text-white">micro-BNC</strong> (régime standard pour les{" "}
+              En <strong className="text-ink">micro-BNC</strong> (régime standard pour les{" "}
               {data.label}s), vous versez{" "}
-              <strong className="text-white">{pctCotisations} % de cotisations URSSAF</strong> sur votre
+              <strong className="text-ink">{pctCotisations} % de cotisations URSSAF</strong> sur votre
               CA. Le simulateur ci-contre calcule votre revenu net mensuel avant impôt, ou le TJM à
               atteindre pour un revenu cible.
             </p>
             <div className="bg-ds-surface border border-ds-border rounded-xl p-4 space-y-2 text-sm">
               <div className="flex justify-between">
                 <span className="text-gray-500">Jours facturables estimés</span>
-                <span className="font-semibold text-white">{data.joursFacturables} j/mois</span>
+                <span className="font-semibold text-ink">{data.joursFacturables} j/mois</span>
               </div>
               <div className="flex justify-between">
                 <span className="text-gray-500">TJM médian ({data.name} confirmé)</span>
@@ -233,7 +233,7 @@ export default async function MetierTarifsPage({ params }: Props) {
 
         {/* Spécialités */}
         <section>
-          <h2 className="text-xl font-bold text-white mb-2">
+          <h2 className="text-xl font-bold text-ink mb-2">
             Spécialités qui augmentent le TJM
           </h2>
           <p className="text-sm text-gray-500 mb-5">
@@ -260,7 +260,7 @@ export default async function MetierTarifsPage({ params }: Props) {
 
         {/* Erreurs de tarification */}
         <section className="bg-ds-surface border border-ds-border rounded-2xl p-6 sm:p-8">
-          <h2 className="text-xl font-bold text-white mb-5">
+          <h2 className="text-xl font-bold text-ink mb-5">
             Erreurs de tarification à éviter
           </h2>
           <ul className="space-y-4">
@@ -276,7 +276,7 @@ export default async function MetierTarifsPage({ params }: Props) {
         {/* Deviso CTA */}
         <section className="rounded-2xl border border-indigo-500/20 bg-[#191830] p-6 sm:p-8 flex flex-col sm:flex-row gap-6 items-center">
           <div className="flex-1">
-            <h2 className="text-lg font-bold text-white mb-2">
+            <h2 className="text-lg font-bold text-ink mb-2">
               Creez vos devis de {data.label} en 30 secondes
             </h2>
             <p className="text-sm text-gray-400 leading-relaxed">
@@ -288,7 +288,7 @@ export default async function MetierTarifsPage({ params }: Props) {
           <div className="shrink-0">
             <Link
               href="/login"
-              className="inline-flex items-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold px-5 py-3 rounded-xl transition-colors text-sm whitespace-nowrap"
+              className="inline-flex items-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-ink font-semibold px-5 py-3 rounded-xl transition-colors text-sm whitespace-nowrap"
             >
               Essai gratuit 14 jours
             </Link>
@@ -310,7 +310,7 @@ export default async function MetierTarifsPage({ params }: Props) {
             <p className="text-xs text-gray-500 font-medium uppercase tracking-wider mb-2">
               Guide pratique
             </p>
-            <h2 className="text-lg font-semibold text-white mb-2">
+            <h2 className="text-lg font-semibold text-ink mb-2">
               Savoir quoi facturer, c&apos;est une chose. Savoir l&apos;écrire sur un devis, c&apos;en est
               une autre.
             </h2>
@@ -329,13 +329,13 @@ export default async function MetierTarifsPage({ params }: Props) {
 
         {/* FAQ */}
         <section>
-          <h2 className="text-xl font-bold text-white mb-6">
+          <h2 className="text-xl font-bold text-ink mb-6">
             Questions frequentes sur les tarifs {data.label}
           </h2>
           <div className="space-y-5">
             {data.faq.map(({ q, a }) => (
               <div key={q} className="border-b border-ds-border pb-5 last:border-0">
-                <h3 className="text-sm font-semibold text-white mb-2">{q}</h3>
+                <h3 className="text-sm font-semibold text-ink mb-2">{q}</h3>
                 <p className="text-sm text-gray-400 leading-relaxed">{a}</p>
               </div>
             ))}
@@ -344,13 +344,13 @@ export default async function MetierTarifsPage({ params }: Props) {
 
         {/* Cross-links metiers */}
         <section>
-          <h2 className="text-lg font-bold text-white mb-4">TJM d&apos;autres metiers freelance</h2>
+          <h2 className="text-lg font-bold text-ink mb-4">TJM d&apos;autres metiers freelance</h2>
           <div className="flex flex-wrap gap-2">
             {otherMetiers.map((m) => (
               <Link
                 key={m.slug}
                 href={`/combien-facturer/${m.slug}`}
-                className="text-xs font-medium px-3 py-1.5 rounded-lg bg-ds-surface border border-ds-border text-gray-400 hover:text-white hover:border-indigo-500/40 transition-all"
+                className="text-xs font-medium px-3 py-1.5 rounded-lg bg-ds-surface border border-ds-border text-gray-400 hover:text-ink hover:border-indigo-500/40 transition-all"
               >
                 TJM {m.label}
               </Link>

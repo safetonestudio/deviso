@@ -2,6 +2,7 @@ import { redirect } from "next/navigation";
 import type { ReactNode } from "react";
 import { createClient } from "@/lib/supabase/server";
 import { DashboardThemeProvider, ThemeToggle } from "@/components/DashboardTheme";
+import { policesApp } from "@/app/polices-app";
 import { SignOutButton } from "@/components/SignOutButton";
 
 /**
@@ -21,15 +22,15 @@ export default async function CabinetLayout({ children }: { children: ReactNode 
     .maybeSingle();
 
   return (
-    <DashboardThemeProvider>
+    <DashboardThemeProvider className={policesApp}>
       <div className="min-h-screen bg-app-relief">
         <header className="bg-ds-surface border-b border-ds-border">
           <div className="max-w-6xl mx-auto px-4 sm:px-6 py-3 flex flex-wrap items-center justify-between gap-3">
             <a href="/cabinet" className="flex items-center gap-2 min-w-0">
               <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-indigo-600 to-violet-600 flex items-center justify-center shrink-0">
-                <span className="text-white font-semibold text-sm">D</span>
+                <span className="text-ink font-semibold text-sm">D</span>
               </div>
-              <span className="font-semibold text-white">Deviso</span>
+              <span className="font-semibold text-ink">Deviso</span>
               <span className="text-[10px] font-bold uppercase tracking-wide bg-indigo-500/15 text-indigo-300 border border-indigo-500/30 px-1.5 py-0.5 rounded">
                 Cabinet
               </span>

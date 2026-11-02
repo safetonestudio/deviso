@@ -41,7 +41,7 @@ export function KpiCard({ label, value, icon: Icon, trend, delta, className = ""
       </div>
       <div>
         <div className="text-xs font-medium text-gray-600 uppercase tracking-wider mb-1">{label}</div>
-        <div className="text-2xl sm:text-3xl font-semibold text-white tabular-nums tracking-tight break-words">
+        <div className="text-2xl sm:text-3xl font-semibold text-ink tabular-nums tracking-tight break-words">
           {value}
         </div>
         {trend && <div className="text-xs text-gray-600 mt-2">{trend}</div>}

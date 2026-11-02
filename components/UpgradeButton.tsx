@@ -41,7 +41,7 @@ export function UpgradeButton({ plan = "solo", label, className }: UpgradeButton
       <button
         onClick={handleUpgrade}
         disabled={loading}
-        className={className || "bg-indigo-600 hover:bg-indigo-500 disabled:opacity-50 text-white text-sm font-semibold px-4 py-2 rounded-lg transition-colors"}
+        className={className || "bg-indigo-600 hover:bg-indigo-500 disabled:opacity-50 text-ink text-sm font-semibold px-4 py-2 rounded-lg transition-colors"}
       >
         {loading ? "Redirection…" : (label || defaultLabel)}
       </button>

@@ -125,13 +125,13 @@ export function ComptableAcces() {
             value={code}
             onChange={(e) => setCode(e.target.value.toUpperCase())}
             placeholder="XXXX-XXXX"
-            className="flex-1 rounded-lg border border-ds-border bg-ds-elevated px-3 py-2 text-sm font-mono tracking-widest text-white placeholder-gray-500 focus:border-indigo-500 focus:outline-none"
+            className="flex-1 rounded-lg border border-ds-border bg-ds-elevated px-3 py-2 text-sm font-mono tracking-widest text-ink placeholder-gray-500 focus:border-indigo-500 focus:outline-none"
           />
           <button
             type="button"
             disabled={busy || !codeValide}
             onClick={rejoindre}
-            className="rounded-lg bg-indigo-600 px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-indigo-700 disabled:opacity-50"
+            className="rounded-lg bg-indigo-600 px-4 py-2 text-sm font-semibold text-ink transition-colors hover:bg-indigo-700 disabled:opacity-50"
           >
             {busy ? "..." : "Rattacher mon cabinet"}
           </button>
@@ -142,7 +142,7 @@ export function ComptableAcces() {
         <div className="rounded-lg border border-ds-border bg-ds-elevated p-4">
           <div className="flex flex-wrap items-center justify-between gap-3">
             <div className="min-w-0">
-              <p className="truncate text-sm font-medium text-white">
+              <p className="truncate text-sm font-medium text-ink">
                 {comptable.email || "Votre cabinet comptable"}
               </p>
               <p className="text-xs text-gray-500">

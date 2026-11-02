@@ -76,9 +76,9 @@ export interface ArticleLongProps {
 }
 
 const TONS = {
-  info: { cadre: "bg-ds-surface border-ds-border", titre: "text-white", Icone: Info, couleur: "text-indigo-400" },
-  alerte: { cadre: "bg-[#241d11] border-amber-500/25", titre: "text-white", Icone: TriangleAlert, couleur: "text-amber-400" },
-  succes: { cadre: "bg-[#14211a] border-emerald-500/20", titre: "text-white", Icone: CircleCheck, couleur: "text-emerald-400" },
+  info: { cadre: "bg-ds-surface border-ds-border", titre: "text-ink", Icone: Info, couleur: "text-indigo-400" },
+  alerte: { cadre: "bg-[#241d11] border-amber-500/25", titre: "text-ink", Icone: TriangleAlert, couleur: "text-amber-400" },
+  succes: { cadre: "bg-[#14211a] border-emerald-500/20", titre: "text-ink", Icone: CircleCheck, couleur: "text-emerald-400" },
 } as const;
 
 const TONS_COLONNE = {
@@ -117,7 +117,7 @@ function Bloc({ section }: { section: Section }) {
     case "texte":
       return (
         <section>
-          {section.titre && <Riche as="h2" className="text-xl font-semibold text-white mb-4" t={section.titre} />}
+          {section.titre && <Riche as="h2" className="text-xl font-semibold text-ink mb-4" t={section.titre} />}
           {section.paragraphes.map((p, i) => (
             <p
               key={i}
@@ -149,7 +149,7 @@ function Bloc({ section }: { section: Section }) {
     case "liste":
       return (
         <section>
-          {section.titre && <Riche as="h2" className="text-xl font-semibold text-white mb-4" t={section.titre} />}
+          {section.titre && <Riche as="h2" className="text-xl font-semibold text-ink mb-4" t={section.titre} />}
           {section.intro && (
             <p className="mb-5" dangerouslySetInnerHTML={{ __html: section.intro }} />
           )}
@@ -161,7 +161,7 @@ function Bloc({ section }: { section: Section }) {
                     {i + 1}
                   </span>
                   <div>
-                    <Riche as="p" className="text-white font-medium mb-1" t={item.titre} />
+                    <Riche as="p" className="text-ink font-medium mb-1" t={item.titre} />
                     <p className="text-gray-400" dangerouslySetInnerHTML={{ __html: item.texte }} />
                   </div>
                 </li>
@@ -171,7 +171,7 @@ function Bloc({ section }: { section: Section }) {
             <div className="space-y-3">
               {section.items.map((item) => (
                 <div key={item.titre} className="bg-ds-surface border border-ds-border rounded-xl p-5">
-                  <Riche as="p" className="text-white font-medium mb-1" t={item.titre} />
+                  <Riche as="p" className="text-ink font-medium mb-1" t={item.titre} />
                   <p className="text-gray-400" dangerouslySetInnerHTML={{ __html: item.texte }} />
                 </div>
               ))}
@@ -183,7 +183,7 @@ function Bloc({ section }: { section: Section }) {
     case "tableau":
       return (
         <section>
-          {section.titre && <Riche as="h2" className="text-xl font-semibold text-white mb-4" t={section.titre} />}
+          {section.titre && <Riche as="h2" className="text-xl font-semibold text-ink mb-4" t={section.titre} />}
           {section.intro && (
             <p className="mb-5" dangerouslySetInnerHTML={{ __html: section.intro }} />
           )}
@@ -208,7 +208,7 @@ function Bloc({ section }: { section: Section }) {
                     {ligne.map((cellule, j) => (
                       <td
                         key={j}
-                        className={`py-3 pr-4 last:pr-0 align-top ${j === 0 ? "text-white font-medium" : "text-gray-400"}`}
+                        className={`py-3 pr-4 last:pr-0 align-top ${j === 0 ? "text-ink font-medium" : "text-gray-400"}`}
                         dangerouslySetInnerHTML={{ __html: cellule }}
                       />
                     ))}
@@ -226,7 +226,7 @@ function Bloc({ section }: { section: Section }) {
     case "comparaison":
       return (
         <section>
-          {section.titre && <Riche as="h2" className="text-xl font-semibold text-white mb-4" t={section.titre} />}
+          {section.titre && <Riche as="h2" className="text-xl font-semibold text-ink mb-4" t={section.titre} />}
           {section.intro && (
             <p className="mb-5" dangerouslySetInnerHTML={{ __html: section.intro }} />
           )}
@@ -234,7 +234,7 @@ function Bloc({ section }: { section: Section }) {
             {section.colonnes.map((c) => (
               <div key={c.titre} className={`border rounded-xl p-5 ${TONS_COLONNE[c.ton]}`}>
                 <Riche as="p" className="text-xs font-semibold uppercase tracking-wider mb-2 text-gray-400" t={c.titre} />
-                {c.sousTitre && <Riche as="p" className="text-white font-medium mb-2" t={c.sousTitre} />}
+                {c.sousTitre && <Riche as="p" className="text-ink font-medium mb-2" t={c.sousTitre} />}
                 <p className="text-gray-400" dangerouslySetInnerHTML={{ __html: c.texte }} />
               </div>
             ))}
@@ -270,21 +270,21 @@ export function ArticleLong({ slug, chapeau, enBref, sections, faq, sources, cta
       <DonneesStructurees donnees={jsonLdArticle(slug, faq)} />
 
       {/* ── Navbar ── */}
-      <nav className="fixed top-0 left-0 right-0 z-50 bg-ds-bg/80 backdrop-blur-xl border-b border-white/[0.06]">
+      <nav className="fixed top-0 left-0 right-0 z-50 bg-ds-bg/80 backdrop-blur-xl border-b border-ink/[0.06]">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
           <Link href="/" aria-label="Deviso" className="flex items-center gap-2">
             <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-indigo-600 to-violet-600 flex items-center justify-center">
-              <span className="text-white font-semibold text-sm">D</span>
+              <span className="text-ink font-semibold text-sm">D</span>
             </div>
-            <span className="font-semibold text-lg text-white">Deviso</span>
+            <span className="font-semibold text-lg text-ink">Deviso</span>
           </Link>
           <div className="hidden md:flex items-center gap-8 text-sm font-medium">
-            <Link href="/blog" className="text-white font-semibold">Blog</Link>
-            <Link href="/conformite" className="text-gray-400 hover:text-white transition-colors">Conformité</Link>
-            <Link href="/#tarifs" className="text-gray-400 hover:text-white transition-colors">Tarifs</Link>
+            <Link href="/blog" className="text-ink font-semibold">Blog</Link>
+            <Link href="/conformite" className="text-gray-400 hover:text-ink transition-colors">Conformité</Link>
+            <Link href="/#tarifs" className="text-gray-400 hover:text-ink transition-colors">Tarifs</Link>
           </div>
           <div className="hidden md:flex items-center gap-3">
-            <Link href="/login" className="text-sm font-medium text-gray-400 hover:text-white transition-colors">Connexion</Link>
+            <Link href="/login" className="text-sm font-medium text-gray-400 hover:text-ink transition-colors">Connexion</Link>
             <WaitlistButton
               plan="free"
               label="Essayer gratuitement"
@@ -321,7 +321,7 @@ export function ArticleLong({ slug, chapeau, enBref, sections, faq, sources, cta
                 {a.dureeLecture} min
               </span>
             </div>
-            <h1 className="text-3xl sm:text-4xl font-semibold text-white leading-tight mb-4">{a.h1}</h1>
+            <h1 className="text-3xl sm:text-4xl font-semibold text-ink leading-tight mb-4">{a.h1}</h1>
             <p className="text-lg text-gray-400 leading-relaxed" dangerouslySetInnerHTML={{ __html: chapeau }} />
           </header>
 
@@ -349,22 +349,22 @@ export function ArticleLong({ slug, chapeau, enBref, sections, faq, sources, cta
 
             {cta && (
               <section className="bg-gradient-to-br from-indigo-900/40 to-violet-900/20 rounded-2xl border border-indigo-500/20 p-8 text-center">
-                <Riche as="h2" className="text-xl font-semibold text-white mb-3" t={cta.titre} />
+                <Riche as="h2" className="text-xl font-semibold text-ink mb-3" t={cta.titre} />
                 <Riche as="p" className="text-gray-400 mb-6 max-w-lg mx-auto" t={cta.texte} />
                 <WaitlistButton
                   plan="free"
                   label="Essayer gratuitement"
-                  className="bg-indigo-600 hover:bg-indigo-700 text-white font-semibold px-8 py-3 rounded-xl transition-all shadow-lg shadow-indigo-900/50"
+                  className="bg-indigo-600 hover:bg-indigo-700 text-ink font-semibold px-8 py-3 rounded-xl transition-all shadow-lg shadow-indigo-900/50"
                 />
               </section>
             )}
 
             <section>
-              <h2 className="text-xl font-semibold text-white mb-6">Questions fréquentes</h2>
+              <h2 className="text-xl font-semibold text-ink mb-6">Questions fréquentes</h2>
               <div className="space-y-4">
                 {faq.map(({ q, a: reponse }) => (
                   <div key={q} className="bg-ds-surface rounded-xl border border-ds-border p-6">
-                    <h3 className="text-white font-medium mb-3">{q}</h3>
+                    <h3 className="text-ink font-medium mb-3">{q}</h3>
                     <p className="text-gray-400 text-sm leading-relaxed">{reponse}</p>
                   </div>
                 ))}
@@ -373,7 +373,7 @@ export function ArticleLong({ slug, chapeau, enBref, sections, faq, sources, cta
 
             {sources && sources.length > 0 && (
               <section>
-                <h2 className="text-xl font-semibold text-white mb-4">Sources</h2>
+                <h2 className="text-xl font-semibold text-ink mb-4">Sources</h2>
                 <ul className="space-y-2 text-gray-400">
                   {sources.map((s) => (
                     <li key={s.url}>
@@ -394,7 +394,7 @@ export function ArticleLong({ slug, chapeau, enBref, sections, faq, sources, cta
 
             {lectures.length > 0 && (
               <section>
-                <h2 className="text-xl font-semibold text-white mb-6">À lire ensuite</h2>
+                <h2 className="text-xl font-semibold text-ink mb-6">À lire ensuite</h2>
                 <div className="grid gap-4 sm:grid-cols-2">
                   {lectures.map((l) => (
                     <Link
@@ -402,7 +402,7 @@ export function ArticleLong({ slug, chapeau, enBref, sections, faq, sources, cta
                       href={l.href}
                       className="group bg-ds-surface border border-ds-border rounded-xl p-5 hover:border-indigo-500/40 transition-all"
                     >
-                      <p className="text-white font-medium text-sm leading-snug mb-2 group-hover:text-indigo-200 transition-colors">
+                      <p className="text-ink font-medium text-sm leading-snug mb-2 group-hover:text-indigo-200 transition-colors">
                         {l.titre}
                       </p>
                       <p className="text-gray-500 text-xs leading-relaxed line-clamp-2 mb-3">{l.resume}</p>

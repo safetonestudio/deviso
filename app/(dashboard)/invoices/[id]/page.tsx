@@ -394,7 +394,7 @@ function ActionPanel({ invoice, id, router, hasChorusPro }: {
           <button
             onClick={handleSendEmail}
             disabled={sendingEmail}
-            className="w-full bg-indigo-600 hover:bg-indigo-700 disabled:opacity-50 text-white text-sm font-semibold px-4 py-2.5 rounded-lg transition-colors text-left flex items-center gap-2"
+            className="w-full bg-indigo-600 hover:bg-indigo-700 disabled:opacity-50 text-ink text-sm font-semibold px-4 py-2.5 rounded-lg transition-colors text-left flex items-center gap-2"
           >
             <Send size={17} className="shrink-0" />
             <span className="flex items-center gap-1.5">{emailSent && <Check size={16} className="shrink-0" />}{emailSent ? "Envoyée !" : sendingEmail ? "Envoi en cours…" : "Envoyer au client"}</span>
@@ -690,7 +690,7 @@ function ActionPanel({ invoice, id, router, hasChorusPro }: {
               <button
                 onClick={handleDelete}
                 disabled={deleting}
-                className="flex-1 text-xs py-1.5 rounded-lg bg-red-600 hover:bg-red-700 text-white font-medium transition-colors disabled:opacity-50"
+                className="flex-1 text-xs py-1.5 rounded-lg bg-red-600 hover:bg-red-700 text-ink font-medium transition-colors disabled:opacity-50"
               >
                 {deleting ? "…" : "Confirmer"}
               </button>
@@ -745,7 +745,7 @@ export default function InvoiceDetailPage() {
           {/* Header : numéro + statut + dates */}
           <div className="mb-6">
             <div className="flex items-center gap-3 mb-1 flex-wrap">
-              <h1 className="text-3xl font-semibold text-white tracking-tight font-mono">{invoice.invoice_number}</h1>
+              <h1 className="text-3xl font-semibold text-ink tracking-tight font-mono">{invoice.invoice_number}</h1>
               <span className={`px-2.5 py-0.5 rounded-full text-xs font-medium ${STATUS_COLOR[invoice.status] || ""}`}>
                 {STATUS_LABEL[invoice.status] || invoice.status}
               </span>
@@ -797,14 +797,14 @@ export default function InvoiceDetailPage() {
           <div className="grid grid-cols-2 gap-4 mb-6">
             <div className="bg-ds-surface rounded-xl border border-ds-border p-5">
               <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-2">Émetteur</p>
-              <p className="font-semibold text-white">{invoice.seller_company || invoice.seller_name}</p>
+              <p className="font-semibold text-ink">{invoice.seller_company || invoice.seller_name}</p>
               {invoice.seller_address && <p className="text-sm text-gray-400 mt-1">{invoice.seller_address}</p>}
               {invoice.seller_siren && <p className="text-xs text-gray-500 mt-1">SIREN : {invoice.seller_siren}</p>}
               {invoice.seller_tva_number && <p className="text-xs text-gray-500">N° TVA : {invoice.seller_tva_number}</p>}
             </div>
             <div className="bg-ds-surface rounded-xl border border-ds-border p-5">
               <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-2">Client</p>
-              <p className="font-semibold text-white">{invoice.client_company || invoice.client_name}</p>
+              <p className="font-semibold text-ink">{invoice.client_company || invoice.client_name}</p>
               {invoice.client_name && invoice.client_company && <p className="text-sm text-gray-400">{invoice.client_name}</p>}
               {invoice.client_address && <p className="text-sm text-gray-400 mt-1">{invoice.client_address}</p>}
               {invoice.client_siren && <p className="text-xs text-gray-500 mt-1">SIREN : {invoice.client_siren}</p>}
@@ -828,7 +828,7 @@ export default function InvoiceDetailPage() {
                     <td className="px-5 py-3 text-gray-300 font-medium">{item.description}</td>
                     <td className="px-4 py-3 text-center text-gray-400">{item.quantity} {item.unit}</td>
                     <td className="px-4 py-3 text-right text-gray-400">{fmt(item.unit_price)}</td>
-                    <td className="px-5 py-3 text-right font-semibold text-white">{fmt(item.total)}</td>
+                    <td className="px-5 py-3 text-right font-semibold text-ink">{fmt(item.total)}</td>
                   </tr>
                 ))}
               </tbody>
@@ -871,7 +871,7 @@ export default function InvoiceDetailPage() {
                   <span>{fmt(invoice.total_ttc - invoice.total_ht)}</span>
                 </div>
               )}
-              <div className="flex justify-between font-semibold text-white text-base border-t border-ds-border pt-2">
+              <div className="flex justify-between font-semibold text-ink text-base border-t border-ds-border pt-2">
                 <span>{invoice.invoice_type === "solde" ? "Solde à payer" : invoice.invoice_type === "acompte" ? "Acompte à payer" : "Total TTC"}</span>
                 <span>{fmt(invoice.total_ttc)}</span>
               </div>

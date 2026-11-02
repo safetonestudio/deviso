@@ -51,7 +51,7 @@ export function AchatsListe({ achats }: { achats: AchatInternational[] }) {
   if (achats.length === 0) {
     return (
       <section className="bg-ds-surface border border-ds-border rounded-xl p-6 text-center">
-        <p className="text-white font-medium mb-1">Aucun achat étranger saisi</p>
+        <p className="text-ink font-medium mb-1">Aucun achat étranger saisi</p>
         <p className="text-sm text-gray-400 max-w-md mx-auto">
           Quand vous achetez à un fournisseur établi hors de France, saisissez sa facture ici pour
           en déclarer l&apos;acquisition à l&apos;administration.
@@ -83,7 +83,7 @@ export function AchatsListe({ achats }: { achats: AchatInternational[] }) {
               const s = declare ? DECLARE : STATUT[a.transmission_status];
               return (
                 <tr key={a.id} className="border-b border-ds-border last:border-0 align-top">
-                  <td className="px-4 py-3 text-white">
+                  <td className="px-4 py-3 text-ink">
                     {a.fournisseur_nom}
                     {a.numero && <span className="block text-xs text-gray-500">{a.numero}</span>}
                   </td>
@@ -111,7 +111,7 @@ export function AchatsListe({ achats }: { achats: AchatInternational[] }) {
                       <button
                         onClick={() => retransmettre(a.id)}
                         disabled={enCours === a.id}
-                        className="text-xs px-3 py-1.5 rounded-lg border border-ds-border text-gray-300 hover:text-white hover:bg-ds-elevated transition-colors disabled:opacity-50 whitespace-nowrap"
+                        className="text-xs px-3 py-1.5 rounded-lg border border-ds-border text-gray-300 hover:text-ink hover:bg-ds-elevated transition-colors disabled:opacity-50 whitespace-nowrap"
                       >
                         {enCours === a.id ? "…" : "Retransmettre"}
                       </button>

@@ -29,12 +29,12 @@ export function ProposalTableRows({ proposals }: { proposals: Proposal[] }) {
             className="hover:bg-ds-elevated/50 transition-colors cursor-pointer"
           >
             <td className="px-5 py-4">
-              <div className="font-medium text-white text-sm">{proposal.title}</div>
+              <div className="font-medium text-ink text-sm">{proposal.title}</div>
             </td>
             <td className="px-5 py-4 text-sm text-gray-400">
               {proposal.client_name || "-"}
             </td>
-            <td className="px-5 py-4 text-sm font-semibold text-white">
+            <td className="px-5 py-4 text-sm font-semibold text-ink">
               {fmt(proposal.total_ttc)}
             </td>
             <td className="px-5 py-4">

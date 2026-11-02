@@ -48,21 +48,21 @@ export default function Page() {
       <DonneesStructurees donnees={jsonLdArticle(SLUG, FAQ)} />
 
       {/* Navbar */}
-      <nav className="fixed top-0 left-0 right-0 z-50 bg-ds-bg/80 backdrop-blur-xl border-b border-white/[0.06]">
+      <nav className="fixed top-0 left-0 right-0 z-50 bg-ds-bg/80 backdrop-blur-xl border-b border-ink/[0.06]">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
           <Link href="/" aria-label="Deviso" className="flex items-center gap-2">
             <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-indigo-600 to-violet-600 flex items-center justify-center">
-              <span className="text-white font-semibold text-sm">D</span>
+              <span className="text-ink font-semibold text-sm">D</span>
             </div>
-            <span className="font-semibold text-lg text-white">Deviso</span>
+            <span className="font-semibold text-lg text-ink">Deviso</span>
           </Link>
           <div className="hidden md:flex items-center gap-8 text-sm font-medium">
-            <Link href="/blog" className="text-white font-semibold">Blog</Link>
-            <Link href="/conformite" className="text-gray-400 hover:text-white transition-colors">Conformité</Link>
-            <Link href="/#tarifs" className="text-gray-400 hover:text-white transition-colors">Tarifs</Link>
+            <Link href="/blog" className="text-ink font-semibold">Blog</Link>
+            <Link href="/conformite" className="text-gray-400 hover:text-ink transition-colors">Conformité</Link>
+            <Link href="/#tarifs" className="text-gray-400 hover:text-ink transition-colors">Tarifs</Link>
           </div>
           <div className="hidden md:flex items-center gap-3">
-            <Link href="/login" className="text-sm font-medium text-gray-400 hover:text-white transition-colors">Connexion</Link>
+            <Link href="/login" className="text-sm font-medium text-gray-400 hover:text-ink transition-colors">Connexion</Link>
             <WaitlistButton
               plan="free"
               label="Essayer gratuitement"
@@ -95,7 +95,7 @@ export default function Page() {
                 {a.dureeLecture} min
               </span>
             </div>
-            <h1 className="text-3xl sm:text-4xl font-semibold text-white leading-tight mb-4">{a.h1}</h1>
+            <h1 className="text-3xl sm:text-4xl font-semibold text-ink leading-tight mb-4">{a.h1}</h1>
             <p className="text-lg text-gray-400 leading-relaxed">
               Vous cherchez la plateforme gratuite que l&apos;État devait fournir pour vos factures. C&apos;est
               une recherche légitime : cette plateforme a existé, sur le papier. Elle n&apos;existe plus. Voici
@@ -114,21 +114,21 @@ export default function Page() {
                 <li className="flex gap-2">
                   <span className="text-indigo-400 shrink-0">→</span>
                   <span>
-                    L&apos;État avait bien prévu un <strong className="text-white">portail public gratuit</strong>,
+                    L&apos;État avait bien prévu un <strong className="text-ink">portail public gratuit</strong>,
                     le PPF, pour émettre et recevoir les factures électroniques.
                   </span>
                 </li>
                 <li className="flex gap-2">
                   <span className="text-indigo-400 shrink-0">→</span>
                   <span>
-                    Cette fonction gratuite a été <strong className="text-white">abandonnée en 2024</strong>, puis
+                    Cette fonction gratuite a été <strong className="text-ink">abandonnée en 2024</strong>, puis
                     le développement du portail arrêté. L&apos;État s&apos;est retiré du rôle d&apos;opérateur.
                   </span>
                 </li>
                 <li className="flex gap-2">
                   <span className="text-indigo-400 shrink-0">→</span>
                   <span>
-                    Résultat : tout le monde passe par un <strong className="text-white">opérateur privé
+                    Résultat : tout le monde passe par un <strong className="text-ink">opérateur privé
                     agréé</strong>. Il n&apos;y a pas d&apos;option publique gratuite, mais il y a des options
                     peu coûteuses, et la réception est souvent gratuite.
                   </span>
@@ -138,11 +138,11 @@ export default function Page() {
 
             {/* 1. Ce que le portail devait etre */}
             <section>
-              <h2 className="text-xl font-semibold text-white mb-4">
+              <h2 className="text-xl font-semibold text-ink mb-4">
                 Ce que le portail public devait être
               </h2>
               <p className="mb-4">
-                Au cœur du projet initial de la réforme, il y avait le <strong className="text-white">Portail
+                Au cœur du projet initial de la réforme, il y avait le <strong className="text-ink">Portail
                 Public de Facturation</strong>, le PPF. L&apos;idée était simple et généreuse : une plateforme
                 gérée par l&apos;État, gratuite, par laquelle chaque entreprise aurait pu émettre et recevoir ses
                 factures électroniques sans passer par un prestataire. Une sorte de service public de la facture,
@@ -157,20 +157,20 @@ export default function Page() {
 
             {/* 2. Ce qu'il est devenu */}
             <section>
-              <h2 className="text-xl font-semibold text-white mb-4">
+              <h2 className="text-xl font-semibold text-ink mb-4">
                 Ce qu&apos;il est devenu, et pourquoi
               </h2>
               <p className="mb-4">
-                En <strong className="text-white">octobre 2024</strong>, l&apos;administration annonce un
+                En <strong className="text-ink">octobre 2024</strong>, l&apos;administration annonce un
                 changement de cap : le PPF n&apos;assurera plus les fonctions d&apos;émission et de réception des
                 factures. L&apos;État se retire du rôle d&apos;opérateur d&apos;échange. Le développement de cette
                 partie du portail est arrêté par la suite.
               </p>
               <p className="mb-4">
                 Le PPF ne disparaît pas pour autant. Il subsiste, mais dans un rôle différent :
-                <strong className="text-white"> annuaire central</strong> des destinataires, celui qui permet de
+                <strong className="text-ink"> annuaire central</strong> des destinataires, celui qui permet de
                 savoir vers quelle plateforme envoyer une facture, et
-                <strong className="text-white"> concentrateur des données</strong> transmises à
+                <strong className="text-ink"> concentrateur des données</strong> transmises à
                 l&apos;administration fiscale. Autrement dit, il reste une pièce d&apos;infrastructure côté État,
                 mais il n&apos;est plus le tuyau par lequel vos factures circulent.
               </p>
@@ -184,12 +184,12 @@ export default function Page() {
 
             {/* 3. Ce que ca change */}
             <section>
-              <h2 className="text-xl font-semibold text-white mb-4">
+              <h2 className="text-xl font-semibold text-ink mb-4">
                 Ce que ça change concrètement pour vous
               </h2>
               <p className="mb-4">
                 Puisqu&apos;il n&apos;y a plus de canal public d&apos;échange, toute entreprise assujettie doit
-                passer par un <strong className="text-white">opérateur privé immatriculé</strong>, une plateforme
+                passer par un <strong className="text-ink">opérateur privé immatriculé</strong>, une plateforme
                 agréée, pour émettre et recevoir ses factures. Ce n&apos;est plus une option parmi d&apos;autres,
                 c&apos;est le seul chemin.
               </p>
@@ -206,7 +206,7 @@ export default function Page() {
 
             {/* 4. Ce qui existe gratuitement */}
             <section>
-              <h2 className="text-xl font-semibold text-white mb-4">
+              <h2 className="text-xl font-semibold text-ink mb-4">
                 Ce qui existe gratuitement, malgré tout
               </h2>
               <p className="mb-4">
@@ -217,7 +217,7 @@ export default function Page() {
                 <li className="flex gap-2">
                   <span className="text-emerald-400 shrink-0 mt-0.5">•</span>
                   <span>
-                    <strong className="text-white">La réception est souvent gratuite.</strong> Elle coûte peu à
+                    <strong className="text-ink">La réception est souvent gratuite.</strong> Elle coûte peu à
                     opérer, et de nombreux éditeurs la proposent sans frais. C&apos;est déjà ce qui vous est
                     demandé depuis le 1<sup>er</sup> septembre 2026, avant même l&apos;obligation d&apos;émettre.
                   </span>
@@ -225,7 +225,7 @@ export default function Page() {
                 <li className="flex gap-2">
                   <span className="text-emerald-400 shrink-0 mt-0.5">•</span>
                   <span>
-                    <strong className="text-white">Plusieurs plateformes ont une offre d&apos;émission
+                    <strong className="text-ink">Plusieurs plateformes ont une offre d&apos;émission
                     gratuite</strong>, généralement plafonnée en nombre de factures ou limitée en
                     fonctionnalités. Pour une très petite activité, cela peut réellement suffire.
                   </span>
@@ -233,7 +233,7 @@ export default function Page() {
                 <li className="flex gap-2">
                   <span className="text-gray-500 shrink-0 mt-0.5">•</span>
                   <span>
-                    <strong className="text-white">Ce qui n&apos;existe pas</strong> : une plateforme officielle,
+                    <strong className="text-ink">Ce qui n&apos;existe pas</strong> : une plateforme officielle,
                     publique, illimitée et gratuite. Toute offre gratuite est celle d&apos;un acteur privé, avec
                     ses conditions, et il faut la lire comme telle.
                   </span>
@@ -243,7 +243,7 @@ export default function Page() {
 
             {/* 5. Ne pas trop payer */}
             <section>
-              <h2 className="text-xl font-semibold text-white mb-4">
+              <h2 className="text-xl font-semibold text-ink mb-4">
                 Comment ne pas payer trop cher
               </h2>
               <ol className="space-y-4">
@@ -266,7 +266,7 @@ export default function Page() {
                       {i + 1}
                     </span>
                     <div>
-                      <p className="text-white font-medium mb-1">{item.t}</p>
+                      <p className="text-ink font-medium mb-1">{item.t}</p>
                       <p className="text-gray-400">{item.d}</p>
                     </div>
                   </li>
@@ -288,7 +288,7 @@ export default function Page() {
               <div className="flex gap-3 bg-[#241d11] border border-amber-500/25 rounded-xl p-5">
                 <TriangleAlert size={18} className="shrink-0 mt-0.5 text-amber-400" />
                 <div>
-                  <p className="font-semibold text-white mb-1">
+                  <p className="font-semibold text-ink mb-1">
                     Méfiez-vous des pages qui vendent la peur
                   </p>
                   <p className="text-gray-400">
@@ -307,8 +307,8 @@ export default function Page() {
                 Et nous, pour être clair
               </p>
               <p className="mb-4">
-                Deviso est une <strong className="text-white">solution compatible</strong>, adossée à la
-                plateforme agréée <strong className="text-white">Super PDP</strong>. Nous ne prétendons pas être
+                Deviso est une <strong className="text-ink">solution compatible</strong>, adossée à la
+                plateforme agréée <strong className="text-ink">Super PDP</strong>. Nous ne prétendons pas être
                 l&apos;option gratuite de l&apos;État, elle n&apos;existe pas. Notre statut exact, avec le lien
                 vers la liste officielle pour que vous vérifiiez vous-même, est sur notre page de conformité.
               </p>
@@ -323,11 +323,11 @@ export default function Page() {
 
             {/* FAQ */}
             <section>
-              <h2 className="text-xl font-semibold text-white mb-6">Questions fréquentes</h2>
+              <h2 className="text-xl font-semibold text-ink mb-6">Questions fréquentes</h2>
               <div className="space-y-4">
                 {FAQ.map(({ q, a: reponse }) => (
                   <div key={q} className="bg-ds-surface rounded-xl border border-ds-border p-6">
-                    <h3 className="text-white font-medium mb-3">{q}</h3>
+                    <h3 className="text-ink font-medium mb-3">{q}</h3>
                     <p className="text-gray-400 text-sm leading-relaxed">{reponse}</p>
                   </div>
                 ))}
@@ -336,7 +336,7 @@ export default function Page() {
 
             {/* Sources */}
             <section>
-              <h2 className="text-xl font-semibold text-white mb-4">Sources</h2>
+              <h2 className="text-xl font-semibold text-ink mb-4">Sources</h2>
               <ul className="space-y-2 text-gray-400">
                 <li>
                   <a
@@ -378,7 +378,7 @@ export default function Page() {
             {/* A lire ensuite */}
             {lectures.length > 0 && (
               <section>
-                <h2 className="text-xl font-semibold text-white mb-6">À lire ensuite</h2>
+                <h2 className="text-xl font-semibold text-ink mb-6">À lire ensuite</h2>
                 <div className="grid gap-4 sm:grid-cols-2">
                   {lectures.map((l) => (
                     <Link
@@ -386,7 +386,7 @@ export default function Page() {
                       href={l.href}
                       className="group bg-ds-surface border border-ds-border rounded-xl p-5 hover:border-indigo-500/40 transition-all"
                     >
-                      <p className="text-white font-medium text-sm leading-snug mb-2 group-hover:text-indigo-200 transition-colors">
+                      <p className="text-ink font-medium text-sm leading-snug mb-2 group-hover:text-indigo-200 transition-colors">
                         {l.titre}
                       </p>
                       <p className="text-gray-500 text-xs leading-relaxed line-clamp-2 mb-3">{l.resume}</p>

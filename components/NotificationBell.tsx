@@ -118,12 +118,12 @@ export function NotificationBell({ placement = "sidebar" }: Props) {
     <div ref={ref} className="relative">
       <button
         onClick={() => setOpen((v) => !v)}
-        className="relative p-1.5 rounded-lg text-gray-500 hover:text-white hover:bg-ds-elevated transition-colors"
+        className="relative p-1.5 rounded-lg text-gray-500 hover:text-ink hover:bg-ds-elevated transition-colors"
         aria-label="Notifications"
       >
         <Bell size={16} />
         {unread > 0 && (
-          <span className="absolute -top-0.5 -right-0.5 min-w-[16px] h-4 bg-red-600 text-white text-[9px] font-bold rounded-full flex items-center justify-center px-0.5">
+          <span className="absolute -top-0.5 -right-0.5 min-w-[16px] h-4 bg-red-600 text-ink text-[9px] font-bold rounded-full flex items-center justify-center px-0.5">
             {unread > 9 ? "9+" : unread}
           </span>
         )}
@@ -134,7 +134,7 @@ export function NotificationBell({ placement = "sidebar" }: Props) {
           className={`absolute ${dropdownPos} w-[420px] bg-ds-surface border border-ds-border rounded-xl shadow-2xl z-50 overflow-hidden`}
         >
           <div className="flex items-center justify-between px-5 py-4 border-b border-ds-border">
-            <span className="text-base font-semibold text-white">Notifications</span>
+            <span className="text-base font-semibold text-ink">Notifications</span>
             {unread > 0 && (
               <button
                 onClick={() => markRead()}
@@ -167,7 +167,7 @@ export function NotificationBell({ placement = "sidebar" }: Props) {
                   <div className="flex-1 min-w-0">
                     <p
                       className={`text-sm font-semibold leading-snug ${
-                        n.read ? "text-gray-400" : "text-white"
+                        n.read ? "text-gray-400" : "text-ink"
                       }`}
                     >
                       {n.title}

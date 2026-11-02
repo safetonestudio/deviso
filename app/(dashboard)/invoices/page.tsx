@@ -272,7 +272,7 @@ export default function InvoicesPage() {
   const isPro = canName(plan, "csvRecap");
   const canRecurring = canName(plan, "recurring");
 
-  const inputCls = "w-full bg-ds-elevated border border-ds-border rounded-lg px-3 py-2 text-sm text-white placeholder-gray-500 focus:outline-none focus:border-indigo-500";
+  const inputCls = "w-full bg-ds-elevated border border-ds-border rounded-lg px-3 py-2 text-sm text-ink placeholder-gray-500 focus:outline-none focus:border-indigo-500";
 
   return (
     <div className="max-w-7xl mx-auto">
@@ -280,7 +280,7 @@ export default function InvoicesPage() {
       {/* Header */}
       <div className="flex flex-wrap items-start justify-between gap-3 mb-8">
         <div>
-          <h1 className="text-3xl font-semibold text-white tracking-tight">Mes factures</h1>
+          <h1 className="text-3xl font-semibold text-ink tracking-tight">Mes factures</h1>
           <p className="text-gray-400 text-sm mt-1">Factur-X EN 16931 · PDF/A-3 · conforme réforme 2026</p>
         </div>
         <div className="flex items-center gap-2 flex-wrap">
@@ -311,7 +311,7 @@ export default function InvoicesPage() {
                 <button disabled className="bg-ds-elevated text-gray-500 cursor-not-allowed text-sm font-medium px-4 py-2 rounded-lg">
                   + Nouvelle facture
                 </button>
-                <div className="absolute right-0 top-10 hidden group-hover:block bg-ds-elevated text-white text-xs rounded-lg px-3 py-2 w-52 z-10">
+                <div className="absolute right-0 top-10 hidden group-hover:block bg-ds-elevated text-ink text-xs rounded-lg px-3 py-2 w-52 z-10">
                   Disponible à partir du plan Solo
                 </div>
               </div>
@@ -319,7 +319,7 @@ export default function InvoicesPage() {
               <div className="relative" ref={dropdownRef}>
                 <button
                   onClick={() => setNewDropdownOpen((v) => !v)}
-                  className="bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-medium px-4 py-2 rounded-lg transition-colors flex items-center gap-1.5"
+                  className="bg-indigo-600 hover:bg-indigo-700 text-ink text-sm font-medium px-4 py-2 rounded-lg transition-colors flex items-center gap-1.5"
                 >
                   + Nouvelle facture
                   <ChevronDown size={14} className={`transition-transform ${newDropdownOpen ? "rotate-180" : ""}`} />
@@ -330,7 +330,7 @@ export default function InvoicesPage() {
                       onClick={() => { setNewDropdownOpen(false); router.push("/invoices/new"); }}
                       className="w-full text-left px-4 py-3 hover:bg-ds-elevated transition-colors"
                     >
-                      <div className="text-sm font-medium text-white">Facture standard</div>
+                      <div className="text-sm font-medium text-ink">Facture standard</div>
                       <div className="text-xs text-gray-500 mt-0.5">Facturation classique</div>
                     </button>
                     <div className="border-t border-ds-border" />
@@ -358,7 +358,7 @@ export default function InvoicesPage() {
           {tab === "recurring" && canRecurring && (
             <button
               onClick={() => setShowRecurringForm(true)}
-              className="bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-medium px-4 py-2 rounded-lg transition-colors flex items-center gap-1.5"
+              className="bg-indigo-600 hover:bg-indigo-700 text-ink text-sm font-medium px-4 py-2 rounded-lg transition-colors flex items-center gap-1.5"
             >
               <Plus size={14} /> Nouvelle récurrente
             </button>
@@ -370,13 +370,13 @@ export default function InvoicesPage() {
       <div className="flex gap-1 mb-6 border-b border-ds-border">
         <button
           onClick={() => setTab("invoices")}
-          className={`px-4 py-2 text-sm font-medium transition-colors border-b-2 -mb-px ${tab === "invoices" ? "border-indigo-500 text-white" : "border-transparent text-gray-500 hover:text-gray-300"}`}
+          className={`px-4 py-2 text-sm font-medium transition-colors border-b-2 -mb-px ${tab === "invoices" ? "border-indigo-500 text-ink" : "border-transparent text-gray-500 hover:text-gray-300"}`}
         >
           Factures
         </button>
         <button
           onClick={() => setTab("recurring")}
-          className={`px-4 py-2 text-sm font-medium transition-colors border-b-2 -mb-px flex items-center gap-1.5 ${tab === "recurring" ? "border-indigo-500 text-white" : "border-transparent text-gray-500 hover:text-gray-300"}`}
+          className={`px-4 py-2 text-sm font-medium transition-colors border-b-2 -mb-px flex items-center gap-1.5 ${tab === "recurring" ? "border-indigo-500 text-ink" : "border-transparent text-gray-500 hover:text-gray-300"}`}
         >
           <RefreshCw size={13} />
           Récurrentes
@@ -391,7 +391,7 @@ export default function InvoicesPage() {
           <div className="flex-1">
             <p className="font-semibold text-amber-300 text-sm">Vos clients ne savent pas comment vous payer</p>
             <p className="text-xs text-amber-400/80 mt-0.5 mb-3">Configurez votre moyen de paiement pour débloquer la création de factures.</p>
-            <Link href="/paiements" className="inline-flex items-center gap-1.5 bg-emerald-700 hover:bg-emerald-800 text-white text-xs font-semibold px-3 py-1.5 rounded-lg transition-colors">
+            <Link href="/paiements" className="inline-flex items-center gap-1.5 bg-emerald-700 hover:bg-emerald-800 text-ink text-xs font-semibold px-3 py-1.5 rounded-lg transition-colors">
               Configurer mes paiements →
             </Link>
           </div>
@@ -440,14 +440,14 @@ export default function InvoicesPage() {
           ) : isFree ? (
             <div className="text-center py-16 border border-dashed border-ds-border rounded-xl bg-ds-surface">
               <Lock size={32} className="mx-auto mb-3 text-gray-600" />
-              <p className="text-white font-semibold">Les factures sont réservées au plan Solo</p>
+              <p className="text-ink font-semibold">Les factures sont réservées au plan Solo</p>
               <p className="text-gray-500 text-sm mt-1">Passez Solo pour créer des factures électroniques Factur-X conformes.</p>
             </div>
           ) : invoices.length === 0 ? (
             <div className="text-center py-16 border border-dashed border-ds-border rounded-xl bg-ds-surface">
               <p className="text-gray-400 font-medium">Aucune facture pour l&apos;instant</p>
               <p className="text-gray-500 text-sm mt-1">Créez votre première facture depuis un devis signé ou manuellement.</p>
-              <Link href="/invoices/new" className="mt-4 inline-block bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-medium px-4 py-2 rounded-lg transition-colors">
+              <Link href="/invoices/new" className="mt-4 inline-block bg-indigo-600 hover:bg-indigo-700 text-ink text-sm font-medium px-4 py-2 rounded-lg transition-colors">
                 Créer une facture
               </Link>
             </div>
@@ -472,7 +472,7 @@ export default function InvoicesPage() {
                   >
                     <div className="flex items-start justify-between gap-3">
                       <div className="min-w-0">
-                        <div className="font-medium text-white truncate">
+                        <div className="font-medium text-ink truncate">
                           {inv.client_company || inv.client_name}
                         </div>
                         <div className="font-mono text-xs text-gray-500 truncate mt-0.5">
@@ -482,7 +482,7 @@ export default function InvoicesPage() {
                           {inv.invoice_type === "avoir" && " · avoir"}
                         </div>
                       </div>
-                      <div className="font-semibold text-white whitespace-nowrap shrink-0">
+                      <div className="font-semibold text-ink whitespace-nowrap shrink-0">
                         {fmt(inv.total_ttc)}
                       </div>
                     </div>
@@ -556,7 +556,7 @@ export default function InvoicesPage() {
                       className="border-b border-ds-border hover:bg-ds-elevated/50 transition-colors cursor-pointer"
                     >
                       <td className="px-5 py-3.5">
-                        <div className="font-mono font-medium text-white">{inv.invoice_number}</div>
+                        <div className="font-mono font-medium text-ink">{inv.invoice_number}</div>
                         {inv.invoice_type === "acompte" && (
                           <span className="text-[10px] font-bold px-1.5 py-0.5 rounded bg-emerald-500/15 text-emerald-400 border border-emerald-500/20">ACOMPTE</span>
                         )}
@@ -574,7 +574,7 @@ export default function InvoicesPage() {
                         {inv.client_email && <div className="text-gray-500 text-xs">{inv.client_email}</div>}
                       </td>
                       <td className="px-5 py-3.5 text-gray-400">{fmtDate(inv.issue_date)}</td>
-                      <td className="px-5 py-3.5 text-right font-semibold text-white">{fmt(inv.total_ttc)}</td>
+                      <td className="px-5 py-3.5 text-right font-semibold text-ink">{fmt(inv.total_ttc)}</td>
                       <td className="px-5 py-3.5 text-center">
                         <span className={`inline-block px-2 py-0.5 rounded-full text-xs font-medium ${STATUS_COLOR[inv.status] || ""}`}>
                           {STATUS_LABEL[inv.status] || inv.status}
@@ -635,11 +635,11 @@ export default function InvoicesPage() {
           {!canRecurring ? (
             <div className="text-center py-16 border border-dashed border-ds-border rounded-xl bg-ds-surface">
               <Lock size={32} className="mx-auto mb-3 text-gray-600" />
-              <p className="text-white font-semibold">Factures récurrentes, offre payante</p>
+              <p className="text-ink font-semibold">Factures récurrentes, offre payante</p>
               <p className="text-gray-500 text-sm mt-1 max-w-sm mx-auto">
                 Automatisez vos abonnements et contrats. Deviso génère et envoie les factures à la bonne date, chaque mois.
               </p>
-              <Link href="/billing" className="mt-4 inline-block bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-medium px-4 py-2 rounded-lg transition-colors">
+              <Link href="/billing" className="mt-4 inline-block bg-indigo-600 hover:bg-indigo-700 text-ink text-sm font-medium px-4 py-2 rounded-lg transition-colors">
                 Passer en Solo
               </Link>
             </div>
@@ -650,8 +650,8 @@ export default function InvoicesPage() {
                 <div className="fixed inset-0 z-50 flex items-start justify-center pt-12 px-4 bg-black/60">
                   <div className="bg-ds-surface border border-ds-border rounded-xl w-full max-w-xl max-h-[80vh] overflow-y-auto p-6">
                     <div className="flex items-center justify-between mb-4">
-                      <h2 className="text-base font-semibold text-white">Nouvelle facture récurrente</h2>
-                      <button onClick={() => { setShowRecurringForm(false); resetRForm(); }} className="text-gray-500 hover:text-white">
+                      <h2 className="text-base font-semibold text-ink">Nouvelle facture récurrente</h2>
+                      <button onClick={() => { setShowRecurringForm(false); resetRForm(); }} className="text-gray-500 hover:text-ink">
                         <X size={18} />
                       </button>
                     </div>
@@ -696,13 +696,13 @@ export default function InvoicesPage() {
                               <input
                                 value={item.quantity}
                                 onChange={(e) => updateRItem(i, "quantity", Number(e.target.value))}
-                                className="w-16 bg-ds-elevated border border-ds-border rounded-lg px-2 py-2 text-sm text-white text-center focus:outline-none focus:border-indigo-500"
+                                className="w-16 bg-ds-elevated border border-ds-border rounded-lg px-2 py-2 text-sm text-ink text-center focus:outline-none focus:border-indigo-500"
                                 type="number" min={1}
                               />
                               <input
                                 value={item.unit_price}
                                 onChange={(e) => updateRItem(i, "unit_price", Number(e.target.value))}
-                                className="w-24 bg-ds-elevated border border-ds-border rounded-lg px-2 py-2 text-sm text-white text-right focus:outline-none focus:border-indigo-500"
+                                className="w-24 bg-ds-elevated border border-ds-border rounded-lg px-2 py-2 text-sm text-ink text-right focus:outline-none focus:border-indigo-500"
                                 type="number" min={0} placeholder="Prix HT"
                               />
                               {rItems.length > 1 && (
@@ -755,13 +755,13 @@ export default function InvoicesPage() {
                     {recurringMsg && <p className="text-red-400 text-xs mt-3">{recurringMsg}</p>}
 
                     <div className="flex justify-end gap-2 mt-4">
-                      <button onClick={() => { setShowRecurringForm(false); resetRForm(); }} className="px-4 py-2 text-sm text-gray-400 hover:text-white">
+                      <button onClick={() => { setShowRecurringForm(false); resetRForm(); }} className="px-4 py-2 text-sm text-gray-400 hover:text-ink">
                         Annuler
                       </button>
                       <button
                         onClick={handleSaveRecurring}
                         disabled={savingRecurring}
-                        className="bg-indigo-600 hover:bg-indigo-700 disabled:opacity-50 text-white text-sm font-medium px-4 py-2 rounded-lg"
+                        className="bg-indigo-600 hover:bg-indigo-700 disabled:opacity-50 text-ink text-sm font-medium px-4 py-2 rounded-lg"
                       >
                         {savingRecurring ? "Création…" : "Créer"}
                       </button>
@@ -779,7 +779,7 @@ export default function InvoicesPage() {
                   <p className="text-gray-500 text-sm mt-1">Automatisez vos abonnements et contrats mensuels.</p>
                   <button
                     onClick={() => setShowRecurringForm(true)}
-                    className="mt-4 inline-flex items-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-medium px-4 py-2 rounded-lg transition-colors"
+                    className="mt-4 inline-flex items-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-ink text-sm font-medium px-4 py-2 rounded-lg transition-colors"
                   >
                     <Plus size={14} /> Créer ma première récurrente
                   </button>
@@ -793,7 +793,7 @@ export default function InvoicesPage() {
                       <div key={rec.id} className="bg-ds-surface border border-ds-border rounded-xl p-4 flex flex-wrap items-center justify-between gap-4">
                         <div className="flex-1 min-w-0">
                           <div className="flex items-center gap-2 flex-wrap">
-                            <span className="font-medium text-white">{rec.client_company || rec.client_name || "Client sans nom"}</span>
+                            <span className="font-medium text-ink">{rec.client_company || rec.client_name || "Client sans nom"}</span>
                             <span className={`text-xs px-2 py-0.5 rounded-full font-medium ${rec.active ? "bg-emerald-500/10 text-emerald-400 border border-emerald-500/20" : "bg-ds-elevated text-gray-500"}`}>
                               {rec.active ? "Active" : "En pause"}
                             </span>
@@ -803,7 +803,7 @@ export default function InvoicesPage() {
                           </div>
                           {rec.client_email && <div className="text-xs text-gray-500 mt-0.5">{rec.client_email}</div>}
                           <div className="mt-1 text-sm text-gray-400">
-                            <span className="font-semibold text-white">{fmt(total_ttc)}</span>
+                            <span className="font-semibold text-ink">{fmt(total_ttc)}</span>
                             {" · "}Prochain envoi : <span className="text-indigo-400">{fmtDate(rec.next_billing_date)}</span>
                             {rec.last_billed_at && <span className="text-gray-600"> · Dernier : {fmtDate(rec.last_billed_at)}</span>}
                           </div>
@@ -811,7 +811,7 @@ export default function InvoicesPage() {
                         <div className="flex items-center gap-2">
                           <button
                             onClick={() => handleToggleRecurring(rec.id, !rec.active)}
-                            className={`text-xs font-medium px-3 py-1.5 rounded-lg border transition-colors ${rec.active ? "border-ds-border text-gray-400 hover:text-white" : "border-indigo-500/40 text-indigo-400 hover:bg-indigo-500/10"}`}
+                            className={`text-xs font-medium px-3 py-1.5 rounded-lg border transition-colors ${rec.active ? "border-ds-border text-gray-400 hover:text-ink" : "border-indigo-500/40 text-indigo-400 hover:bg-indigo-500/10"}`}
                           >
                             {rec.active ? "Mettre en pause" : "Réactiver"}
                           </button>

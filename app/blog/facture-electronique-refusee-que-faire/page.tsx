@@ -98,21 +98,21 @@ export default function Page() {
       <DonneesStructurees donnees={jsonLdArticle(SLUG, FAQ)} />
 
       {/* ── Navbar ── */}
-      <nav className="fixed top-0 left-0 right-0 z-50 bg-ds-bg/80 backdrop-blur-xl border-b border-white/[0.06]">
+      <nav className="fixed top-0 left-0 right-0 z-50 bg-ds-bg/80 backdrop-blur-xl border-b border-ink/[0.06]">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
           <Link href="/" aria-label="Deviso" className="flex items-center gap-2">
             <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-indigo-600 to-violet-600 flex items-center justify-center">
-              <span className="text-white font-semibold text-sm">D</span>
+              <span className="text-ink font-semibold text-sm">D</span>
             </div>
-            <span className="font-semibold text-lg text-white">Deviso</span>
+            <span className="font-semibold text-lg text-ink">Deviso</span>
           </Link>
           <div className="hidden md:flex items-center gap-8 text-sm font-medium">
-            <Link href="/blog" className="text-white font-semibold">Blog</Link>
-            <Link href="/conformite" className="text-gray-400 hover:text-white transition-colors">Conformité</Link>
-            <Link href="/#tarifs" className="text-gray-400 hover:text-white transition-colors">Tarifs</Link>
+            <Link href="/blog" className="text-ink font-semibold">Blog</Link>
+            <Link href="/conformite" className="text-gray-400 hover:text-ink transition-colors">Conformité</Link>
+            <Link href="/#tarifs" className="text-gray-400 hover:text-ink transition-colors">Tarifs</Link>
           </div>
           <div className="hidden md:flex items-center gap-3">
-            <Link href="/login" className="text-sm font-medium text-gray-400 hover:text-white transition-colors">Connexion</Link>
+            <Link href="/login" className="text-sm font-medium text-gray-400 hover:text-ink transition-colors">Connexion</Link>
             <WaitlistButton
               plan="free"
               label="Essayer gratuitement"
@@ -145,7 +145,7 @@ export default function Page() {
                 {a.dureeLecture} min
               </span>
             </div>
-            <h1 className="text-3xl sm:text-4xl font-semibold text-white leading-tight mb-4">{a.h1}</h1>
+            <h1 className="text-3xl sm:text-4xl font-semibold text-ink leading-tight mb-4">{a.h1}</h1>
             <p className="text-lg text-gray-400 leading-relaxed">
               Une facture électronique ne se contente pas de partir. Elle porte un statut, qui change au fil de
               son traitement, et deux de ces statuts sont des échecs. Ils n&apos;ont ni la même cause, ni le même
@@ -164,21 +164,21 @@ export default function Page() {
                 <li className="flex gap-2">
                   <span className="text-indigo-400 shrink-0">→</span>
                   <span>
-                    <strong className="text-white">Rejetée (213)</strong> : une plateforme a trouvé une anomalie
+                    <strong className="text-ink">Rejetée (213)</strong> : une plateforme a trouvé une anomalie
                     sur le document. Corrigez la facture, émettez-en une nouvelle.
                   </span>
                 </li>
                 <li className="flex gap-2">
                   <span className="text-indigo-400 shrink-0">→</span>
                   <span>
-                    <strong className="text-white">Refusée (210)</strong> : votre client refuse. Appelez-le avant
+                    <strong className="text-ink">Refusée (210)</strong> : votre client refuse. Appelez-le avant
                     de toucher à quoi que ce soit, le motif vous dit quoi, pas pourquoi.
                   </span>
                 </li>
                 <li className="flex gap-2">
                   <span className="text-indigo-400 shrink-0">→</span>
                   <span>
-                    Dans les deux cas : <strong className="text-white">avoir d&apos;annulation, puis nouvelle
+                    Dans les deux cas : <strong className="text-ink">avoir d&apos;annulation, puis nouvelle
                     facture</strong>. Et cet avoir ne se transmet pas, voir pourquoi plus bas, c&apos;est le
                     point le moins intuitif du dispositif.
                   </span>
@@ -188,7 +188,7 @@ export default function Page() {
 
             {/* ── 1. Refusée vs rejetée ── */}
             <section>
-              <h2 className="text-xl font-semibold text-white mb-4">
+              <h2 className="text-xl font-semibold text-ink mb-4">
                 Refusée, rejetée : deux mots, deux responsables
               </h2>
               <p className="mb-5">
@@ -202,14 +202,14 @@ export default function Page() {
                   <p className="text-xs font-semibold text-rose-300 uppercase tracking-wider mb-2">
                     Refusée · statut 210
                   </p>
-                  <p className="text-white font-medium mb-2">Ça vient de votre client</p>
+                  <p className="text-ink font-medium mb-2">Ça vient de votre client</p>
                   <p className="text-gray-400 mb-3">
                     Il refuse la facture dans son intégralité. La cause est commerciale ou comptable : un montant
                     qu&apos;il conteste, une prestation qu&apos;il ne reconnaît pas, une référence qui manque à
                     son process.
                   </p>
                   <p className="text-gray-300">
-                    <strong className="text-white">Ce que vous faites :</strong> vous lisez le motif, vous
+                    <strong className="text-ink">Ce que vous faites :</strong> vous lisez le motif, vous
                     comprenez, et vous parlez à votre client. Le motif est un code, pas une explication.
                   </p>
                 </div>
@@ -217,13 +217,13 @@ export default function Page() {
                   <p className="text-xs font-semibold text-amber-300 uppercase tracking-wider mb-2">
                     Rejetée · statut 213
                   </p>
-                  <p className="text-white font-medium mb-2">Ça vient d&apos;une plateforme</p>
+                  <p className="text-ink font-medium mb-2">Ça vient d&apos;une plateforme</p>
                   <p className="text-gray-400 mb-3">
                     Celle qui émet ou celle qui reçoit. Ses contrôles fonctionnels ont détecté une anomalie sur
                     la facture elle-même : format, cohérence, données réglementaires, habilitations.
                   </p>
                   <p className="text-gray-300">
-                    <strong className="text-white">Ce que vous faites :</strong> vous corrigez le document. Votre
+                    <strong className="text-ink">Ce que vous faites :</strong> vous corrigez le document. Votre
                     client n&apos;est pas en cause et, le plus souvent, ne l&apos;a même pas vue.
                   </p>
                 </div>
@@ -231,7 +231,7 @@ export default function Page() {
               <div className="flex gap-3 bg-ds-surface border border-ds-border rounded-xl p-5 mt-4">
                 <Info size={18} className="shrink-0 mt-0.5 text-indigo-400" />
                 <p className="text-gray-400">
-                  Ces deux statuts sont <strong className="text-white">obligatoires</strong> dans le cycle de vie
+                  Ces deux statuts sont <strong className="text-ink">obligatoires</strong> dans le cycle de vie
                   d&apos;une facture, avec « Déposée » (200) et « Encaissée » (212). Autrement dit, toute
                   plateforme agréée doit les émettre : vous serez informé d&apos;un échec, quelle que soit la
                   plateforme de votre client.
@@ -241,12 +241,12 @@ export default function Page() {
 
             {/* ── 2. Les statuts ── */}
             <section>
-              <h2 className="text-xl font-semibold text-white mb-4">
+              <h2 className="text-xl font-semibold text-ink mb-4">
                 Les statuts que vous verrez passer
               </h2>
               <p className="mb-5">
                 Voici la liste publiée par la DGFiP. Deux remarques avant de la lire. D&apos;abord, elle{" "}
-                <strong className="text-white">n&apos;est pas exhaustive</strong> : le document renvoie
+                <strong className="text-ink">n&apos;est pas exhaustive</strong> : le document renvoie
                 explicitement, pour la suite, à une norme AFNOR payante, donc un code au-delà de 213 existe
                 peut-être, et personne d&apos;honnête ne peut vous dire ce qu&apos;il signifie. Ensuite, seuls
                 quatre statuts sont obligatoires ; les autres sont facultatifs, et toutes les plateformes ne les
@@ -271,7 +271,7 @@ export default function Page() {
                       >
                         <td className="py-3 pr-3 align-top tabular-nums text-gray-400">{s.code}</td>
                         <td className="py-3 pr-4 align-top">
-                          <span className="text-white font-medium whitespace-nowrap">{s.libelle}</span>
+                          <span className="text-ink font-medium whitespace-nowrap">{s.libelle}</span>
                           {s.obligatoire && (
                             <span className="block text-[10px] font-semibold text-emerald-400 mt-0.5">
                               obligatoire
@@ -285,7 +285,7 @@ export default function Page() {
                 </table>
               </div>
               <p className="mt-4 text-gray-400">
-                Le statut 208 « Suspendue » mérite une mention : ce n&apos;est <strong className="text-white">pas
+                Le statut 208 « Suspendue » mérite une mention : ce n&apos;est <strong className="text-ink">pas
                 un refus</strong>. Quand votre client demande des pièces justificatives, la facture passe en
                 suspens, vous renvoyez un cycle de vie « Complétée » (209) avec les pièces, et le traitement
                 reprend là où il s&apos;était arrêté. Aucun avoir, aucune refacturation.
@@ -294,12 +294,12 @@ export default function Page() {
 
             {/* ── 3. Les motifs ── */}
             <section>
-              <h2 className="text-xl font-semibold text-white mb-4">
+              <h2 className="text-xl font-semibold text-ink mb-4">
                 Les treize motifs de refus possibles
               </h2>
               <p className="mb-3">
                 Un refus porte toujours un motif, et ce motif est un code normé, pas un texte libre. C&apos;est
-                une bonne nouvelle pour vous : <strong className="text-white">la liste des codes acceptés pour un
+                une bonne nouvelle pour vous : <strong className="text-ink">la liste des codes acceptés pour un
                 refus est fermée</strong>, et il n&apos;y a pas de code « Autre ». Votre client ne peut pas
                 refuser « parce que ». Il doit ranger son refus dans l&apos;une de ces treize cases.
               </p>
@@ -315,7 +315,7 @@ export default function Page() {
                       <code className="text-xs text-indigo-300 bg-indigo-500/10 px-2 py-0.5 rounded">
                         {m.code}
                       </code>
-                      <span className="text-white font-medium">{m.libelle}</span>
+                      <span className="text-ink font-medium">{m.libelle}</span>
                     </div>
                     <p className="text-gray-400">{m.pratique}</p>
                   </div>
@@ -324,9 +324,9 @@ export default function Page() {
               <div className="flex gap-3 bg-[#241d11] border border-amber-500/25 rounded-xl p-5 mt-4">
                 <TriangleAlert size={18} className="shrink-0 mt-0.5 text-amber-400" />
                 <div>
-                  <p className="font-semibold text-white mb-1">Le piège de DOUBLE_FACT</p>
+                  <p className="font-semibold text-ink mb-1">Le piège de DOUBLE_FACT</p>
                   <p className="text-gray-400">
-                    Ce code ne veut <strong className="text-white">pas</strong> dire « double facturation ». Il
+                    Ce code ne veut <strong className="text-ink">pas</strong> dire « double facturation ». Il
                     désigne le doublon des <em>données réglementaires</em> transmises à l&apos;administration. Si
                     vous avez réellement été facturé deux fois, ou si votre client le croit, le motif est{" "}
                     <code className="text-xs text-indigo-300 bg-indigo-500/10 px-1.5 py-0.5 rounded">DOUBLON</code>.
@@ -339,11 +339,11 @@ export default function Page() {
 
             {/* ── 4. L'avoir ── */}
             <section>
-              <h2 className="text-xl font-semibold text-white mb-4">
+              <h2 className="text-xl font-semibold text-ink mb-4">
                 L&apos;avoir : pourquoi il ne faut pas le transmettre
               </h2>
               <p className="mb-4">
-                Un refus et un rejet sont tous deux <strong className="text-white">terminaux</strong>. On ne
+                Un refus et un rejet sont tous deux <strong className="text-ink">terminaux</strong>. On ne
                 modifie pas une facture déjà déposée : la numérotation est continue, le document est archivé, et
                 c&apos;est précisément ce qui fait sa valeur probante. La marche à suivre est donc toujours la
                 même : un avoir qui annule la facture, puis une nouvelle facture corrigée.
@@ -358,7 +358,7 @@ export default function Page() {
                 au portail public de facturation. »
               </blockquote>
               <p className="mb-4">
-                Autrement dit : <strong className="text-white">l&apos;avoir reste chez vous</strong>. Il existe
+                Autrement dit : <strong className="text-ink">l&apos;avoir reste chez vous</strong>. Il existe
                 dans votre comptabilité, il annule bien la facture, mais il ne part pas dans le circuit
                 réglementaire.
               </p>
@@ -374,8 +374,8 @@ export default function Page() {
                     Avoir interne, ne se transmet pas
                   </p>
                   <p className="text-gray-300">
-                    Quand il annule une facture <strong className="text-white">refusée</strong> ou{" "}
-                    <strong className="text-white">rejetée</strong>. Écriture comptable, point.
+                    Quand il annule une facture <strong className="text-ink">refusée</strong> ou{" "}
+                    <strong className="text-ink">rejetée</strong>. Écriture comptable, point.
                   </p>
                 </div>
                 <div className="bg-ds-surface border border-ds-border rounded-xl p-5">
@@ -383,7 +383,7 @@ export default function Page() {
                     Avoir ordinaire, se transmet
                   </p>
                   <p className="text-gray-400">
-                    Quand il annule une facture qui a, elle, <strong className="text-white">abouti</strong> :
+                    Quand il annule une facture qui a, elle, <strong className="text-ink">abouti</strong> :
                     remise accordée après coup, geste commercial, retour de marchandise. Là, l&apos;administration
                     n&apos;a aucune raison de le savoir autrement.
                   </p>
@@ -399,7 +399,7 @@ export default function Page() {
 
             {/* ── 5. Quoi faire ── */}
             <section>
-              <h2 className="text-xl font-semibold text-white mb-4">Quoi faire, dans l&apos;ordre</h2>
+              <h2 className="text-xl font-semibold text-ink mb-4">Quoi faire, dans l&apos;ordre</h2>
               <ol className="space-y-4">
                 {[
                   {
@@ -433,7 +433,7 @@ export default function Page() {
                       {i + 1}
                     </span>
                     <div>
-                      <p className="text-white font-medium mb-1">{e.titre}</p>
+                      <p className="text-ink font-medium mb-1">{e.titre}</p>
                       <p className="text-gray-400">{e.detail}</p>
                     </div>
                   </li>
@@ -443,7 +443,7 @@ export default function Page() {
 
             {/* ── 6. Éviter ── */}
             <section>
-              <h2 className="text-xl font-semibold text-white mb-4">
+              <h2 className="text-xl font-semibold text-ink mb-4">
                 Les trois causes de refus les plus évitables
               </h2>
               <div className="space-y-3">
@@ -467,7 +467,7 @@ export default function Page() {
                   <div key={e.titre} className="flex gap-4 bg-ds-surface border border-ds-border rounded-xl p-5">
                     <CircleCheck size={16} className="shrink-0 mt-0.5 text-emerald-400" />
                     <div>
-                      <p className="text-white font-medium mb-1">{e.titre}</p>
+                      <p className="text-ink font-medium mb-1">{e.titre}</p>
                       <p className="text-gray-400">{e.detail}</p>
                     </div>
                   </div>
@@ -477,11 +477,11 @@ export default function Page() {
 
             {/* ── FAQ ── */}
             <section>
-              <h2 className="text-xl font-semibold text-white mb-6">Questions fréquentes</h2>
+              <h2 className="text-xl font-semibold text-ink mb-6">Questions fréquentes</h2>
               <div className="space-y-4">
                 {FAQ.map(({ q, a: reponse }) => (
                   <div key={q} className="bg-ds-surface rounded-xl border border-ds-border p-6">
-                    <h3 className="text-white font-medium mb-3">{q}</h3>
+                    <h3 className="text-ink font-medium mb-3">{q}</h3>
                     <p className="text-gray-400 text-sm leading-relaxed">{reponse}</p>
                   </div>
                 ))}
@@ -490,9 +490,9 @@ export default function Page() {
 
             {/* ── Sources ── */}
             <section>
-              <h2 className="text-xl font-semibold text-white mb-4">Sources</h2>
+              <h2 className="text-xl font-semibold text-ink mb-4">Sources</h2>
               <p className="text-gray-400 mb-3">
-                Tout ce qui est écrit ici vient du <strong className="text-white">dossier de spécifications
+                Tout ce qui est écrit ici vient du <strong className="text-ink">dossier de spécifications
                 externes de la facturation électronique, version 3.2</strong>, publié par la DGFiP le 30 avril
                 2026 :
               </p>
@@ -526,7 +526,7 @@ export default function Page() {
             {/* ── À lire ensuite ── */}
             {lectures.length > 0 && (
               <section>
-                <h2 className="text-xl font-semibold text-white mb-6">À lire ensuite</h2>
+                <h2 className="text-xl font-semibold text-ink mb-6">À lire ensuite</h2>
                 <div className="grid gap-4 sm:grid-cols-2">
                   {lectures.map((l) => (
                     <Link
@@ -534,7 +534,7 @@ export default function Page() {
                       href={l.href}
                       className="group bg-ds-surface border border-ds-border rounded-xl p-5 hover:border-indigo-500/40 transition-all"
                     >
-                      <p className="text-white font-medium text-sm leading-snug mb-2 group-hover:text-indigo-200 transition-colors">
+                      <p className="text-ink font-medium text-sm leading-snug mb-2 group-hover:text-indigo-200 transition-colors">
                         {l.titre}
                       </p>
                       <p className="text-gray-500 text-xs leading-relaxed line-clamp-2 mb-3">{l.resume}</p>

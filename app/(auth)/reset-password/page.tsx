@@ -40,14 +40,14 @@ export default function ResetPasswordPage() {
         <div className="text-center mb-8">
           <Link href="/" className="inline-flex items-center gap-2">
             <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-indigo-600 to-violet-600 flex items-center justify-center">
-              <span className="text-white font-semibold">D</span>
+              <span className="text-ink font-semibold">D</span>
             </div>
-            <span className="font-semibold text-xl text-white">Deviso</span>
+            <span className="font-semibold text-xl text-ink">Deviso</span>
           </Link>
         </div>
 
         <div className="bg-ds-surface rounded-2xl border border-ds-border p-8">
-          <h1 className="text-2xl font-semibold text-white mb-1">Nouveau mot de passe</h1>
+          <h1 className="text-2xl font-semibold text-ink mb-1">Nouveau mot de passe</h1>
           <p className="text-gray-400 text-sm mb-6">
             Choisis un mot de passe robuste, toutes les cases doivent être vertes.
           </p>
@@ -69,7 +69,7 @@ export default function ResetPasswordPage() {
                 onChange={(e) => setPassword(e.target.value)}
                 required
                 placeholder="••••••••"
-                className="w-full px-4 py-3 rounded-xl bg-ds-bg border border-ds-border text-white placeholder:text-gray-600 focus:outline-none focus:border-indigo-500 text-sm transition"
+                className="w-full px-4 py-3 rounded-xl bg-ds-bg border border-ds-border text-ink placeholder:text-gray-600 focus:outline-none focus:border-indigo-500 text-sm transition"
               />
               <PasswordChecklist password={password} />
             </div>
@@ -83,13 +83,13 @@ export default function ResetPasswordPage() {
                 onChange={(e) => setConfirm(e.target.value)}
                 required
                 placeholder="••••••••"
-                className="w-full px-4 py-3 rounded-xl bg-ds-bg border border-ds-border text-white placeholder:text-gray-600 focus:outline-none focus:border-indigo-500 text-sm transition"
+                className="w-full px-4 py-3 rounded-xl bg-ds-bg border border-ds-border text-ink placeholder:text-gray-600 focus:outline-none focus:border-indigo-500 text-sm transition"
               />
             </div>
             <button
               type="submit"
               disabled={loading}
-              className="w-full bg-indigo-600 text-white font-semibold py-3 rounded-xl hover:bg-indigo-700 disabled:opacity-60 transition-all"
+              className="w-full bg-indigo-600 text-ink font-semibold py-3 rounded-xl hover:bg-indigo-700 disabled:opacity-60 transition-all"
             >
               {loading ? "Mise à jour…" : "Enregistrer le mot de passe"}
             </button>

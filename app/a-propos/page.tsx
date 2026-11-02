@@ -66,21 +66,21 @@ export default function AProposPage() {
     <div className="min-h-screen bg-site">
       <DonneesStructurees donnees={jsonLd} />
 
-      <nav className="fixed top-0 left-0 right-0 z-50 bg-ds-bg/80 backdrop-blur-xl border-b border-white/[0.06]">
+      <nav className="fixed top-0 left-0 right-0 z-50 bg-ds-bg/80 backdrop-blur-xl border-b border-ink/[0.06]">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
           <Link href="/" aria-label="Deviso" className="flex items-center gap-2">
             <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-indigo-600 to-violet-600 flex items-center justify-center">
-              <span className="text-white font-semibold text-sm">D</span>
+              <span className="text-ink font-semibold text-sm">D</span>
             </div>
-            <span className="font-semibold text-lg text-white">Deviso</span>
+            <span className="font-semibold text-lg text-ink">Deviso</span>
           </Link>
           <div className="hidden md:flex items-center gap-8 text-sm font-medium">
-            <Link href="/blog" className="text-gray-400 hover:text-white transition-colors">Blog</Link>
-            <Link href="/conformite" className="text-gray-400 hover:text-white transition-colors">Conformité</Link>
-            <Link href="/#tarifs" className="text-gray-400 hover:text-white transition-colors">Tarifs</Link>
+            <Link href="/blog" className="text-gray-400 hover:text-ink transition-colors">Blog</Link>
+            <Link href="/conformite" className="text-gray-400 hover:text-ink transition-colors">Conformité</Link>
+            <Link href="/#tarifs" className="text-gray-400 hover:text-ink transition-colors">Tarifs</Link>
           </div>
           <div className="hidden md:flex items-center gap-3">
-            <Link href="/login" className="text-sm font-medium text-gray-400 hover:text-white transition-colors">Connexion</Link>
+            <Link href="/login" className="text-sm font-medium text-gray-400 hover:text-ink transition-colors">Connexion</Link>
             <WaitlistButton
               plan="free"
               label="Essayer gratuitement"
@@ -101,7 +101,7 @@ export default function AProposPage() {
           </nav>
 
           <div className="mb-10">
-            <h1 className="text-3xl sm:text-4xl font-semibold text-white leading-tight mb-4">
+            <h1 className="text-3xl sm:text-4xl font-semibold text-ink leading-tight mb-4">
               Qui écrit sur ce site
             </h1>
             <p className="text-lg text-gray-400 leading-relaxed">
@@ -114,10 +114,10 @@ export default function AProposPage() {
             <section className="bg-ds-surface border border-ds-border rounded-2xl p-6">
               <div className="flex items-center gap-4 mb-5">
                 <div className="w-14 h-14 rounded-full bg-gradient-to-br from-indigo-600 to-violet-600 flex items-center justify-center shrink-0">
-                  <span className="text-white font-semibold text-lg">SA</span>
+                  <span className="text-ink font-semibold text-lg">SA</span>
                 </div>
                 <div>
-                  <p className="text-white font-semibold text-base">{AUTEUR.nom}</p>
+                  <p className="text-ink font-semibold text-base">{AUTEUR.nom}</p>
                   <p className="text-gray-500 text-sm">{AUTEUR.role}</p>
                 </div>
               </div>
@@ -132,20 +132,20 @@ export default function AProposPage() {
             </section>
 
             <section>
-              <h2 className="text-xl font-semibold text-white mb-4">Pourquoi ce blog existe</h2>
+              <h2 className="text-xl font-semibold text-ink mb-4">Pourquoi ce blog existe</h2>
               <p className="mb-4">
                 En construisant Deviso, j&apos;ai dû lire les textes de la réforme de facturation électronique
                 dans le détail, parce qu&apos;on ne peut pas implémenter un cycle de vie de facture à partir
                 d&apos;un résumé de presse. J&apos;y ai découvert deux choses.
               </p>
               <p className="mb-4">
-                La première, c&apos;est que <strong className="text-white">les contenus disponibles pour les
+                La première, c&apos;est que <strong className="text-ink">les contenus disponibles pour les
                 indépendants sont soit trop vagues, soit écrits pour des directions financières</strong>. Entre
                 « la réforme arrive, préparez-vous » et une note de cabinet sur l&apos;interopérabilité des flux,
                 il n&apos;y a presque rien pour quelqu&apos;un qui facture seul.
               </p>
               <p className="mb-4">
-                La seconde, c&apos;est que <strong className="text-white">beaucoup de ce qui circule est
+                La seconde, c&apos;est que <strong className="text-ink">beaucoup de ce qui circule est
                 faux</strong>, y compris sur des faits vérifiables : des montants d&apos;amendes périmés, des
                 échéances qui n&apos;existent pas, un nombre de plateformes agréées qui varie du simple au
                 double selon les sites. J&apos;en ai moi-même publié certains avant de les corriger, {" "}
@@ -161,7 +161,7 @@ export default function AProposPage() {
             </section>
 
             <section>
-              <h2 className="text-xl font-semibold text-white mb-4">Comment je travaille</h2>
+              <h2 className="text-xl font-semibold text-ink mb-4">Comment je travaille</h2>
               <div className="space-y-4">
                 {[
                   {
@@ -186,7 +186,7 @@ export default function AProposPage() {
                   },
                 ].map(({ titre, texte }) => (
                   <div key={titre} className="bg-ds-surface border border-ds-border rounded-xl p-5">
-                    <p className="text-white font-medium mb-1">{titre}</p>
+                    <p className="text-ink font-medium mb-1">{titre}</p>
                     <p className="text-gray-400">{texte}</p>
                   </div>
                 ))}
@@ -194,7 +194,7 @@ export default function AProposPage() {
             </section>
 
             <section>
-              <h2 className="text-xl font-semibold text-white mb-4">Les guides sur la réforme</h2>
+              <h2 className="text-xl font-semibold text-ink mb-4">Les guides sur la réforme</h2>
               <div className="space-y-2">
                 {reforme.map((a) => (
                   <Link
@@ -203,7 +203,7 @@ export default function AProposPage() {
                     className="flex items-center justify-between gap-4 bg-ds-surface border border-ds-border rounded-xl px-5 py-4 hover:border-indigo-500/40 transition-all group"
                   >
                     <div className="min-w-0">
-                      <p className="text-white text-sm font-medium group-hover:text-indigo-200 transition-colors">
+                      <p className="text-ink text-sm font-medium group-hover:text-indigo-200 transition-colors">
                         {a.carte.titre}
                       </p>
                       <p className="text-gray-500 text-xs mt-0.5">{a.carte.resume}</p>
@@ -223,7 +223,7 @@ export default function AProposPage() {
             </section>
 
             <section className="pt-8">
-              <h2 className="text-xl font-semibold text-white mb-3">Une erreur, une question, un désaccord</h2>
+              <h2 className="text-xl font-semibold text-ink mb-3">Une erreur, une question, un désaccord</h2>
               <p className="text-gray-400">
                 Écrivez à{" "}
                 <a href="mailto:support@getdeviso.fr" className="text-indigo-400 hover:text-indigo-300 transition-colors">

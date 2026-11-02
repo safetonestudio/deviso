@@ -55,7 +55,7 @@ export function MenuCategorie({
             </span>
             <span className="text-xs text-gray-400">{compte}</span>
           </div>
-          <h2 className={`text-white font-semibold text-lg leading-snug mb-2 ${a.texte} transition-colors`}>
+          <h2 className={`text-ink font-semibold text-lg leading-snug mb-2 ${a.texte} transition-colors`}>
             {categorie.titre}
           </h2>
           <p className="text-gray-500 text-sm leading-relaxed">{categorie.resume}</p>
@@ -81,7 +81,7 @@ export function MenuCategorie({
                 <Icone size={18} />
               </span>
               <div className="flex-1 min-w-0">
-                <p className={`text-white text-sm font-medium ${a.survol} transition-colors`}>
+                <p className={`text-ink text-sm font-medium ${a.survol} transition-colors`}>
                   {art.carte.titre}
                 </p>
                 <p className="text-gray-600 text-xs mt-0.5">{art.carte.resume}</p>

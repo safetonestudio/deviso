@@ -1,5 +1,6 @@
-/* Inter est chargée via next/font (voir app/layout.tsx) : la police est
-   auto-hébergée au build. Un @import vers fonts.googleapis.com serait bloqué
+/* Les polices sont chargées via next/font (Inter pour le site, voir
+   app/layout.tsx ; Hanken Grotesk et Bricolage Grotesque pour l'app, voir
+   app/polices-app.ts) : elles sont auto-hébergées au build. Un @import vers fonts.googleapis.com serait bloqué
    par notre CSP, ralentirait le rendu et enverrait l'IP de chaque visiteur
    à Google — incompatible avec nos engagements RGPD. */
 
@@ -51,18 +52,6 @@
 ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.12); border-radius: 4px; }
 ::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.2); }
 
-/* ─────────────────────────────────────────────────────────────────
-   MODE CLAIR — Mercury/Stripe style, fond neutre non-agressif
-   Activé par la classe .light sur <html>, gérée par DashboardThemeProvider.
-   Les landing pages n'utilisent jamais ce layout → toujours en mode sombre.
-   ───────────────────────────────────────────────────────────────── */
-/* === Lisibilite du texte secondaire (theme sombre) ===
-   gray-500 / gray-600 sont sous le seuil AA sur fonds sombres (#080808 / #141414).
-   On les aligne sur la nuance gray-400 (~7:1) : lisible, reposant, uniforme.
-   Le bloc .light ci-dessous reste prioritaire (specificite superieure). */
-.text-gray-500 { color: #9ca3af !important; }
-.text-gray-600 { color: #9ca3af !important; }
-
 /* === Fond de page a relief (pages publiques, hors app) ===
    Grain fin + lueur indigo. Uniquement sur les wrappers publics via .bg-site.
    L'app garde bg-ds-bg (plat). Les cartes (bg-ds-surface) ne sont pas touchees. */
@@ -92,12 +81,6 @@
   background-size: cover, 1456px auto;
   background-position: center, top center;
   background-attachment: scroll, scroll;
-}
-.light .bg-app-relief {
-  background-color: var(--ds-bg);
-  background-image:
-    linear-gradient(rgba(244,244,246,0.10), rgba(244,244,246,0.18)),
-    url('/site-bg-v2-light.webp');
 }
 
 /* === Cartes des pages publiques : verre depoli ===
@@ -141,170 +124,124 @@
   box-shadow: var(--ds-shadow-card);
 }
 
-.light {
-  /* DS tokens : fond gris neutre doux, cartes blanches */
-  --ds-bg:       #F4F4F6;
-  --ds-surface:  #FFFFFF;
-  --ds-elevated: #EBEBEE;
-  --ds-border:   #E2E2E8;
+/* ─────────────────────────────────────────────────────────────────
+   PALETTE DE L'APP (tableau de bord client et espace cabinet)
+   Direction "registre" : papier et encre, un seul vert, les chiffres en heros.
 
-  /* Cartes Actions requises en clair : teintes pastel, texte fonce lisible */
-  --urgency-high-bg:   #FBE9E7;
-  --urgency-medium-bg: #FAF0D7;
-  --urgency-ok-bg:     #E6F4EC;
-
-  /* Shadows : subtiles en light pour donner de la profondeur */
-  --ds-shadow-sm:   0 1px 2px rgba(0,0,0,0.05), 0 1px 1px rgba(0,0,0,0.03);
-  --ds-shadow-card: 0 1px 4px rgba(0,0,0,0.06), 0 1px 2px rgba(0,0,0,0.04);
+   `.ds-app` est pose par DashboardThemeProvider. Chaque nuance Tailwind
+   (gray-400, indigo-600, amber-300...) pointe vers une famille semantique
+   definie ici (voir tailwind.config.ts) : n = neutres, acc = accent vert,
+   warn = alerte, dng = danger, inf = information. Le theme clair redefinit
+   les memes variables : plus aucune surcharge classe par classe.
+   Hors de l'app, rien n'est defini et les couleurs Tailwind d'origine
+   s'appliquent (site public et blog inchanges).
+   ───────────────────────────────────────────────────────────────── */
+.ds-app {
+  --ds-bg: #0E1512; --ds-surface: #16201B; --ds-elevated: #1D2822;
+  --ds-border: rgba(255, 255, 255, 0.09);
+  --ds-shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.4);
+  --ds-shadow-card: 0 1px 2px rgba(0, 0, 0, 0.35), 0 4px 16px rgba(0, 0, 0, 0.25);
+  --urgency-high-bg: #2A1714; --urgency-medium-bg: #2A1E14; --urgency-ok-bg: #12241B;
+  --ink: 231 237 232; --on-accent: 255 255 255;
+  --n-50: 243 246 243; --n-100: 231 237 232; --n-200: 211 220 214; --n-300: 182 194 187; --n-400: 147 162 154; --n-500: 128 142 134;
+  --n-600: 128 142 134; --n-700: 52 64 58; --n-800: 35 45 40; --n-900: 24 33 28; --n-950: 14 21 18;
+  --acc-50: 230 247 239; --acc-100: 201 239 221; --acc-200: 159 227 196; --acc-300: 109 211 166; --acc-400: 61 191 137; --acc-500: 31 165 113;
+  --acc-600: 15 122 85; --acc-700: 12 102 72; --acc-800: 11 79 57; --acc-900: 10 61 45; --acc-950: 8 42 32;
+  --warn-50: 251 239 230; --warn-100: 246 220 200; --warn-200: 239 192 158; --warn-300: 232 162 116; --warn-400: 224 138 82; --warn-500: 204 113 57;
+  --warn-600: 177 90 43; --warn-700: 142 71 34; --warn-800: 107 54 27; --warn-900: 74 38 20; --warn-950: 46 24 13;
+  --dng-50: 253 236 234; --dng-100: 250 214 210; --dng-200: 245 178 170; --dng-300: 242 154 143; --dng-400: 236 116 102; --dng-500: 220 84 70;
+  --dng-600: 185 58 46; --dng-700: 150 46 37; --dng-800: 105 32 26; --dng-900: 62 23 20; --dng-950: 42 15 13;
+  --inf-50: 236 243 248; --inf-100: 214 230 240; --inf-200: 186 213 230; --inf-300: 166 201 224; --inf-400: 116 169 204; --inf-500: 86 144 184;
+  --inf-600: 60 107 136; --inf-700: 47 85 108; --inf-800: 35 63 80; --inf-900: 25 45 57; --inf-950: 16 30 38;
+}
+.light .ds-app {
+  --ds-bg: #EDEFE9; --ds-surface: #FFFFFF; --ds-elevated: #F5F6F1;
+  --ds-border: #E1E4DB;
+  --ds-shadow-sm: 0 1px 2px rgba(22, 33, 28, 0.05);
+  --ds-shadow-card: 0 1px 2px rgba(22, 33, 28, 0.05), 0 6px 20px rgba(22, 33, 28, 0.06);
+  --urgency-high-bg: #F8E6E3; --urgency-medium-bg: #F2E4D9; --urgency-ok-bg: #DCEDE3;
+  --ink: 22 33 28; --on-accent: 255 255 255;
+  --n-50: 18 26 22; --n-100: 28 39 34; --n-200: 38 50 44; --n-300: 54 67 60; --n-400: 91 102 95; --n-500: 91 102 95;
+  --n-600: 91 102 95; --n-700: 191 198 189; --n-800: 225 228 219; --n-900: 237 239 233; --n-950: 245 246 241;
+  --acc-50: 8 42 32; --acc-100: 10 61 45; --acc-200: 12 102 72; --acc-300: 12 107 76; --acc-400: 12 107 76; --acc-500: 15 122 85;
+  --acc-600: 12 107 76; --acc-700: 10 90 64; --acc-800: 207 230 218; --acc-900: 220 237 227; --acc-950: 233 244 238;
+  --warn-50: 46 24 13; --warn-100: 74 38 20; --warn-200: 142 71 34; --warn-300: 142 71 34; --warn-400: 160 80 38; --warn-500: 177 90 43;
+  --warn-600: 177 90 43; --warn-700: 142 71 34; --warn-800: 235 211 193; --warn-900: 242 228 217; --warn-950: 248 238 230;
+  --dng-50: 42 15 13; --dng-100: 62 23 20; --dng-200: 150 46 37; --dng-300: 163 50 42; --dng-400: 163 50 42; --dng-500: 185 58 46;
+  --dng-600: 185 58 46; --dng-700: 150 46 37; --dng-800: 244 210 205; --dng-900: 248 225 222; --dng-950: 252 239 237;
+  --inf-50: 16 30 38; --inf-100: 25 45 57; --inf-200: 47 85 108; --inf-300: 60 107 136; --inf-400: 60 107 136; --inf-500: 74 125 158;
+  --inf-600: 60 107 136; --inf-700: 47 85 108; --inf-800: 210 224 233; --inf-900: 226 234 240; --inf-950: 238 243 247;
 }
 
-.light body { background-color: var(--ds-bg); }
+/* Typographie de l'app : Hanken Grotesk pour l'interface, Bricolage
+   Grotesque pour les titres, chiffres tabulaires partout (un logiciel de
+   facturation vit sur des montants, ils doivent s'aligner en colonne). */
+.ds-app {
+  font-family: var(--font-app), ui-sans-serif, system-ui, sans-serif;
+  font-variant-numeric: tabular-nums;
+  color: rgb(var(--ink));
+}
+.ds-app h1, .ds-app h2, .ds-app h3 {
+  font-family: var(--font-display), var(--font-app), ui-sans-serif, sans-serif;
+  letter-spacing: -0.015em;
+}
 
-/* ── Scrollbar claire ── */
-.light ::-webkit-scrollbar-track { background: #F4F4F6; }
-.light ::-webkit-scrollbar-thumb { background: #CACACE; }
-.light ::-webkit-scrollbar-thumb:hover { background: #B0B0B6; }
+/* Fond de l'app : papier uni, sans texture. Le relief en galets rendait les
+   donnees moins lisibles et datait le produit. */
+.ds-app .bg-app-relief { background-image: none; background-color: var(--ds-bg); }
+.ds-app .carte-app { box-shadow: var(--ds-shadow-card); }
 
-/* ── Texte : renversement du contraste ── */
-.light .text-white    { color: #111116 !important; }
-.light .text-gray-100 { color: #1E1E24 !important; }
-.light .text-gray-200 { color: #2C2C35 !important; }
-.light .text-gray-300 { color: #3D3D48 !important; }
-.light .text-gray-400 { color: #5E5E6B !important; }
-.light .text-gray-500 { color: #5E5E6B !important; }
-.light .text-gray-600 { color: #5E5E6B !important; }
-.light .text-gray-700 { color: #C0C0C8 !important; }
+/* Papier : apercus de documents (devis, factures). Un document reste blanc
+   quel que soit le theme : on y retablit l'echelle standard, clair en haut
+   (50) et fonce en bas (900), sur laquelle ses classes ont ete ecrites. */
+.ds-papier {
+  --ink: 22 33 28;
+  --n-50: 243 246 243; --n-100: 231 237 232; --n-200: 211 220 214; --n-300: 182 194 187; --n-400: 147 162 154; --n-500: 128 142 134;
+  --n-600: 128 142 134; --n-700: 52 64 58; --n-800: 35 45 40; --n-900: 24 33 28; --n-950: 14 21 18;
+  --acc-50: 230 247 239; --acc-100: 201 239 221; --acc-200: 159 227 196; --acc-300: 109 211 166; --acc-400: 61 191 137; --acc-500: 31 165 113;
+  --acc-600: 15 122 85; --acc-700: 12 102 72; --acc-800: 11 79 57; --acc-900: 10 61 45; --acc-950: 8 42 32;
+  --warn-50: 251 239 230; --warn-100: 246 220 200; --warn-200: 239 192 158; --warn-300: 232 162 116; --warn-400: 224 138 82; --warn-500: 204 113 57;
+  --warn-600: 177 90 43; --warn-700: 142 71 34; --warn-800: 107 54 27; --warn-900: 74 38 20; --warn-950: 46 24 13;
+  --dng-50: 253 236 234; --dng-100: 250 214 210; --dng-200: 245 178 170; --dng-300: 242 154 143; --dng-400: 236 116 102; --dng-500: 220 84 70;
+  --dng-600: 185 58 46; --dng-700: 150 46 37; --dng-800: 105 32 26; --dng-900: 62 23 20; --dng-950: 42 15 13;
+  --inf-50: 236 243 248; --inf-100: 214 230 240; --inf-200: 186 213 230; --inf-300: 166 201 224; --inf-400: 116 169 204; --inf-500: 86 144 184;
+  --inf-600: 60 107 136; --inf-700: 47 85 108; --inf-800: 35 63 80; --inf-900: 25 45 57; --inf-950: 16 30 38;
+  color: rgb(var(--ink));
+}
 
-/* ── Cartes de plans (page abonnement) : teintes 950/50 sombres en clair ──
-   Sans surcharge, le texte gris y tombait a ~1,9:1. Teintes pastel equivalentes. */
-.light .bg-indigo-950\/50 { background-color: #EEF0FF; }
-.light .bg-violet-950\/50 { background-color: #F4EFFF; }
+/* Encre sur aplat colore. Un bouton ou un badge plein (bg-*-500 a 700, ou
+   degrade from-*-500 a 700) est sature dans les deux themes : son encre est
+   blanche, pour lui et ses enfants (icone, libelle). Une seule regle, au lieu
+   d'une surcharge par combinaison classe de fond + classe de texte. */
+.ds-app :is(
+  .bg-indigo-500, .bg-indigo-600, .bg-indigo-700, .bg-violet-500, .bg-violet-600,
+  .bg-violet-700, .bg-purple-500, .bg-purple-600, .bg-purple-700, .bg-fuchsia-500,
+  .bg-fuchsia-600, .bg-fuchsia-700, .bg-emerald-500, .bg-emerald-600, .bg-emerald-700,
+  .bg-green-500, .bg-green-600, .bg-green-700, .bg-teal-500, .bg-teal-600, .bg-teal-700,
+  .bg-lime-500, .bg-lime-600, .bg-lime-700, .bg-brand-500, .bg-brand-600, .bg-brand-700,
+  .bg-amber-500, .bg-amber-600, .bg-amber-700, .bg-yellow-500, .bg-yellow-600, .bg-yellow-700,
+  .bg-orange-500, .bg-orange-600, .bg-orange-700, .bg-red-500, .bg-red-600, .bg-red-700,
+  .bg-rose-500, .bg-rose-600, .bg-rose-700, .bg-pink-500, .bg-pink-600, .bg-pink-700,
+  .bg-blue-500, .bg-blue-600, .bg-blue-700, .bg-sky-500, .bg-sky-600, .bg-sky-700,
+  .bg-cyan-500, .bg-cyan-600, .bg-cyan-700, .from-indigo-500, .from-indigo-600,
+  .from-indigo-700, .from-violet-500, .from-violet-600, .from-violet-700, .from-purple-500,
+  .from-purple-600, .from-purple-700, .from-fuchsia-500, .from-fuchsia-600, .from-fuchsia-700,
+  .from-emerald-500, .from-emerald-600, .from-emerald-700, .from-green-500, .from-green-600,
+  .from-green-700, .from-teal-500, .from-teal-600, .from-teal-700, .from-lime-500,
+  .from-lime-600, .from-lime-700, .from-brand-500, .from-brand-600, .from-brand-700,
+  .from-amber-500, .from-amber-600, .from-amber-700, .from-yellow-500, .from-yellow-600,
+  .from-yellow-700, .from-orange-500, .from-orange-600, .from-orange-700, .from-red-500,
+  .from-red-600, .from-red-700, .from-rose-500, .from-rose-600, .from-rose-700, .from-pink-500,
+  .from-pink-600, .from-pink-700, .from-blue-500, .from-blue-600, .from-blue-700,
+  .from-sky-500, .from-sky-600, .from-sky-700, .from-cyan-500, .from-cyan-600, .from-cyan-700
+) { --ink: 255 255 255; }
 
-/* ── Nuances 500 : sans surcharge, illisibles sur fond clair (ambre 500 a 2,1:1) ── */
-.light .text-red-500 { color: #b91c1c !important; }
-.light .text-emerald-500 { color: #065f46 !important; }
-.light .text-amber-500 { color: #92400e !important; }
+/* Hors de l'enveloppe .ds-app (marges de defilement), suivre le theme. */
+.light body { background-color: #EDEFE9; }
+.light ::-webkit-scrollbar-track { background: #EDEFE9; }
+.light ::-webkit-scrollbar-thumb { background: #C9CEC4; }
+.light ::-webkit-scrollbar-thumb:hover { background: #AEB5AA; }
 
-/* ── Hover text ── */
-.light .hover\:text-white:hover    { color: #111116 !important; }
-.light .hover\:text-gray-300:hover { color: #3D3D48 !important; }
-
-/* ── Préserver le texte blanc sur boutons colorés solides ── */
-.light [class~="bg-indigo-600"].text-white,
-.light [class~="bg-indigo-500"].text-white,
-.light [class~="bg-violet-600"].text-white,
-.light [class~="bg-emerald-600"].text-white,
-.light [class~="bg-red-600"].text-white,
-.light [class~="bg-red-500"].text-white,
-.light [class~="bg-amber-600"].text-white,
-.light [class~="bg-amber-500"].text-white,
-.light [class~="bg-blue-600"].text-white,
-.light [class~="bg-blue-500"].text-white,
-.light [class~="bg-teal-600"].text-white,
-.light [class~="bg-emerald-700"].text-white,
-.light [class~="bg-green-700"].text-white,
-.light [class~="bg-amber-700"].text-white,
-.light [class~="bg-red-700"].text-white,
-.light [class~="bg-violet-700"].text-white,
-.light [class~="bg-indigo-700"].text-white,
-.light [class~="bg-green-600"].text-white { color: #ffffff !important; }
-
-/* ── Texte blanc dans les conteneurs dégradés (ex: logo "D") ── */
-.light [class~="from-indigo-600"] .text-white,
-.light [class~="from-violet-600"] .text-white { color: #ffffff !important; }
-
-/* ── Fonds gris sombres utilisés dans les graphiques/badges ── */
-.light .bg-gray-700 { background-color: #DDDDE2 !important; }
-.light .bg-gray-800 { background-color: #E8E8EC !important; }
-.light .bg-gray-900 { background-color: #EFEFF2 !important; }
-
-/* ── Bordures gris sombres ── */
-.light .border-gray-700 { border-color: #DDDDE2 !important; }
-.light .border-gray-800 { border-color: #E8E8EC !important; }
-
-/* ── Couleurs accent : renversement pour le mode clair ──────────────
-   Les variantes claires (*-200, *-300, *-400) sont conçues pour des
-   fonds sombres. Sur fond clair elles deviennent quasi-invisibles.
-   On les remplace par des équivalents foncés à contraste suffisant.
-   ─────────────────────────────────────────────────────────────────── */
-
-/* Variantes -200 (quasi-invisibles sur fond clair) */
-.light .text-indigo-200  { color: #3730a3 !important; }
-.light .text-violet-200  { color: #5b21b6 !important; }
-.light .text-blue-200    { color: #1e40af !important; }
-.light .text-cyan-200    { color: #155e75 !important; }
-.light .text-teal-200    { color: #134e4a !important; }
-.light .text-emerald-200 { color: #065f46 !important; }
-.light .text-green-200   { color: #166534 !important; }
-.light .text-amber-200   { color: #92400e !important; }
-.light .text-amber-200\/80  { color: #92400e !important; } /* bannière aperçu OCR achats, sinon illisible sur fond clair */
-.light .text-yellow-200  { color: #854d0e !important; }
-.light .text-orange-200  { color: #9a3412 !important; }
-.light .text-red-200     { color: #991b1b !important; }
-.light .text-pink-200    { color: #9d174d !important; }
-.light .text-rose-200    { color: #9f1239 !important; }
-
-/* Variantes -300 (trop claires sur fond clair) */
-.light .text-indigo-300  { color: #4338ca !important; }
-.light .text-violet-300  { color: #6d28d9 !important; }
-.light .text-blue-300    { color: #1d4ed8 !important; }
-.light .text-cyan-300    { color: #155e75 !important; }
-.light .text-teal-300    { color: #115e59 !important; }
-.light .text-emerald-300 { color: #065f46 !important; }
-.light .text-green-300   { color: #166534 !important; }
-.light .text-amber-300   { color: #92400e !important; }
-.light .text-yellow-300  { color: #854d0e !important; }
-.light .text-orange-300  { color: #9a3412 !important; }
-.light .text-red-300     { color: #b91c1c !important; }
-.light .text-pink-300    { color: #9d174d !important; }
-.light .text-rose-300    { color: #9f1239 !important; }
-
-/* Variantes -400 et -500 (contraste insuffisant sur fond clair) */
-.light .text-indigo-400  { color: #4338ca !important; }
-.light .text-indigo-500  { color: #4338ca !important; }
-.light .text-violet-400  { color: #6d28d9 !important; }
-.light .text-violet-500  { color: #6d28d9 !important; }
-.light .text-blue-400    { color: #1d4ed8 !important; }
-.light .text-blue-500    { color: #1d4ed8 !important; }
-.light .text-cyan-400    { color: #155e75 !important; }
-.light .text-teal-400    { color: #115e59 !important; }
-.light .text-emerald-400 { color: #065f46 !important; }
-.light .text-green-400   { color: #166534 !important; }
-.light .text-amber-400   { color: #92400e !important; }
-.light .text-yellow-400  { color: #854d0e !important; }
-.light .text-yellow-500  { color: #854d0e !important; }
-.light .text-orange-400  { color: #9a3412 !important; }
-.light .text-red-400     { color: #b91c1c !important; }
-.light .text-pink-400    { color: #9d174d !important; }
-.light .text-rose-400    { color: #9f1239 !important; }
-
-/* Variantes avec opacité */
-.light .text-indigo-400\/70 { color: #4338ca !important; }
-.light .text-indigo-400\/80 { color: #4338ca !important; }
-.light .text-indigo-300\/70 { color: #4338ca !important; }
-.light .text-blue-400\/70   { color: #1d4ed8 !important; }
-.light .text-blue-400\/80   { color: #1d4ed8 !important; }
-.light .text-emerald-400\/70 { color: #065f46 !important; }
-.light .text-emerald-400\/80 { color: #065f46 !important; }
-.light .text-green-400\/70  { color: #166534 !important; }
-.light .text-amber-400\/70  { color: #92400e !important; }
-.light .text-amber-400\/80  { color: #92400e !important; }
-.light .text-amber-400\/90  { color: #92400e !important; }
-.light .text-red-400\/70    { color: #b91c1c !important; }
-.light .text-red-400\/80    { color: #b91c1c !important; }
-.light .text-red-400\/90    { color: #b91c1c !important; }
-.light .text-pink-400\/70   { color: #9d174d !important; }
-.light .text-violet-400\/70 { color: #6d28d9 !important; }
-.light .text-blue-400\/60   { color: #1d4ed8 !important; }
-.light .text-indigo-400\/60 { color: #4338ca !important; }
-.light .text-indigo-200\/70 { color: #4338ca !important; }
-
-/* ⚠️ PIÈGE — ce bloc est une liste blanche de noms de classes EXACTS.
-   `text-amber-200` est surchargé, `text-amber-200/80` ne l'est pas : Tailwind
-   génère deux classes distinctes. Toute variante d'opacité doit être ajoutée
-   ici explicitement, sinon elle reste en pastel et devient illisible en thème
-   clair — sans qu'aucun test ne le signale. Avant d'utiliser une couleur claire
-   avec opacité dans le dashboard, vérifier qu'elle figure ci-dessus. */
 
 @keyframes spin { to { transform: rotate(360deg); } }
 .spinner { animation: spin 1s linear infinite; }

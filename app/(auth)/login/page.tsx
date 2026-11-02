@@ -57,9 +57,9 @@ function LoginForm() {
         <div className="text-center mb-8">
           <Link href="/" className="inline-flex items-center gap-2">
             <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-indigo-600 to-violet-600 flex items-center justify-center">
-              <span className="text-white font-semibold">D</span>
+              <span className="text-ink font-semibold">D</span>
             </div>
-            <span className="font-semibold text-xl text-white">Deviso</span>
+            <span className="font-semibold text-xl text-ink">Deviso</span>
           </Link>
         </div>
 
@@ -70,7 +70,7 @@ function LoginForm() {
             </div>
           )}
 
-          <h1 className="text-2xl font-semibold text-white mb-1">Connexion</h1>
+          <h1 className="text-2xl font-semibold text-ink mb-1">Connexion</h1>
           <p className="text-gray-400 text-sm mb-6">
             Pas encore de compte ?{" "}
             <Link
@@ -98,7 +98,7 @@ function LoginForm() {
                 onChange={(e) => setEmail(e.target.value)}
                 required
                 placeholder="thomas@exemple.fr"
-                className="w-full px-4 py-3 rounded-xl bg-ds-bg border border-ds-border text-white placeholder:text-gray-600 focus:outline-none focus:border-indigo-500 text-sm transition"
+                className="w-full px-4 py-3 rounded-xl bg-ds-bg border border-ds-border text-ink placeholder:text-gray-600 focus:outline-none focus:border-indigo-500 text-sm transition"
               />
             </div>
             <div>
@@ -116,7 +116,7 @@ function LoginForm() {
                 onChange={(e) => setPassword(e.target.value)}
                 required
                 placeholder="••••••••"
-                className="w-full px-4 py-3 rounded-xl bg-ds-bg border border-ds-border text-white placeholder:text-gray-600 focus:outline-none focus:border-indigo-500 text-sm transition"
+                className="w-full px-4 py-3 rounded-xl bg-ds-bg border border-ds-border text-ink placeholder:text-gray-600 focus:outline-none focus:border-indigo-500 text-sm transition"
               />
             </div>
 
@@ -130,7 +130,7 @@ function LoginForm() {
                 }`}
               >
                 {rememberMe && (
-                  <svg className="w-2.5 h-2.5 text-white" fill="none" viewBox="0 0 10 8">
+                  <svg className="w-2.5 h-2.5 text-ink" fill="none" viewBox="0 0 10 8">
                     <path d="M1 4l3 3 5-6" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
                   </svg>
                 )}
@@ -146,7 +146,7 @@ function LoginForm() {
             <button
               type="submit"
               disabled={loading}
-              className="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-3 rounded-xl disabled:opacity-60 disabled:cursor-not-allowed transition-all mt-2"
+              className="w-full bg-indigo-600 hover:bg-indigo-700 text-ink font-semibold py-3 rounded-xl disabled:opacity-60 disabled:cursor-not-allowed transition-all mt-2"
             >
               {loading ? "Connexion..." : isInvite ? "Se connecter et rejoindre →" : "Se connecter"}
             </button>
@@ -167,10 +167,10 @@ function LoginSkeleton() {
     <div className="min-h-screen bg-site flex items-center justify-center px-4">
       <div className="w-full max-w-md">
         <div className="text-center mb-8">
-          <span className="font-semibold text-xl text-white">Deviso</span>
+          <span className="font-semibold text-xl text-ink">Deviso</span>
         </div>
         <div className="bg-ds-surface rounded-2xl border border-ds-border p-8">
-          <h1 className="text-2xl font-semibold text-white mb-1">Connexion</h1>
+          <h1 className="text-2xl font-semibold text-ink mb-1">Connexion</h1>
           <p className="text-gray-400 text-sm">Chargement…</p>
         </div>
       </div>

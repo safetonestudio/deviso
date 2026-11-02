@@ -32,8 +32,8 @@ export function SignOutButton({ isDemo = false, compact = false }: { isDemo?: bo
       onClick={handleSignOut}
       className={
         compact
-          ? "inline-flex items-center gap-2 rounded-lg border border-ds-border bg-ds-elevated px-3 py-2 text-sm font-medium text-gray-400 hover:text-white hover:bg-ds-surface transition-colors whitespace-nowrap"
-          : "flex items-center gap-3 w-full px-3 py-2.5 rounded-lg text-gray-400 hover:text-white hover:bg-ds-elevated text-sm transition-colors"
+          ? "inline-flex items-center gap-2 rounded-lg border border-ds-border bg-ds-elevated px-3 py-2 text-sm font-medium text-gray-400 hover:text-ink hover:bg-ds-surface transition-colors whitespace-nowrap"
+          : "flex items-center gap-3 w-full px-3 py-2.5 rounded-lg text-gray-400 hover:text-ink hover:bg-ds-elevated text-sm transition-colors"
       }
     >
       <svg className="w-4 h-4 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.8}>

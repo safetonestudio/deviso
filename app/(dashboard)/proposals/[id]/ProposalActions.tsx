@@ -105,7 +105,7 @@ export default function ProposalActions({
     return (
       <button
         onClick={copyLink}
-        className="whitespace-nowrap text-sm font-medium px-3 py-1.5 rounded-lg bg-indigo-600 text-white hover:bg-indigo-700 transition-colors"
+        className="whitespace-nowrap text-sm font-medium px-3 py-1.5 rounded-lg bg-indigo-600 text-ink hover:bg-indigo-700 transition-colors"
       >
         {copied ? "Copié !" : "Copier le lien"}
       </button>
@@ -126,7 +126,7 @@ export default function ProposalActions({
             <button
               onClick={markAsSent}
               disabled={sending}
-              className="w-full bg-indigo-600 hover:bg-indigo-700 disabled:opacity-50 text-white text-sm font-semibold px-4 py-2.5 rounded-lg transition-colors text-left flex items-center gap-2"
+              className="w-full bg-indigo-600 hover:bg-indigo-700 disabled:opacity-50 text-ink text-sm font-semibold px-4 py-2.5 rounded-lg transition-colors text-left flex items-center gap-2"
             >
               <Send size={17} className="shrink-0" />
               <span>{sending ? "…" : "Marquer envoyé"}</span>
@@ -179,7 +179,7 @@ export default function ProposalActions({
                         >
                           <FileText size={18} className="shrink-0 text-gray-400" />
                           <div>
-                            <div className="font-medium text-white">Facture standard</div>
+                            <div className="font-medium text-ink">Facture standard</div>
                             <div className="text-xs text-gray-400">Règlement intégral</div>
                           </div>
                         </Link>
@@ -189,7 +189,7 @@ export default function ProposalActions({
                         >
                           <Coins size={18} className="shrink-0 text-gray-400" />
                           <div>
-                            <div className="font-medium text-white">Facture d'acompte</div>
+                            <div className="font-medium text-ink">Facture d'acompte</div>
                             <div className="text-xs text-gray-400">Versement partiel (AC-YYYY-NNN)</div>
                           </div>
                         </button>
@@ -200,14 +200,14 @@ export default function ProposalActions({
                         >
                           <CircleCheck size={18} className="shrink-0 text-gray-400" />
                           <div>
-                            <div className="font-medium text-white">Facture de solde</div>
+                            <div className="font-medium text-ink">Facture de solde</div>
                             <div className="text-xs text-gray-400">Solde après acompte</div>
                           </div>
                         </Link>
                       </>
                     ) : (
                       <div className="px-4 py-3">
-                        <div className="font-medium text-white mb-2">Pourcentage d'acompte</div>
+                        <div className="font-medium text-ink mb-2">Pourcentage d'acompte</div>
                         <div className="flex gap-2 mb-3">
                           {[30, 40, 50].map((pct) => (
                             <button
@@ -215,7 +215,7 @@ export default function ProposalActions({
                               onClick={() => setAcomptePct(pct)}
                               className={`flex-1 py-1 rounded-lg text-xs font-medium border transition-colors ${
                                 acomptePct === pct
-                                  ? "bg-green-600 border-green-600 text-white"
+                                  ? "bg-green-600 border-green-600 text-ink"
                                   : "border-ds-border text-gray-300 hover:bg-ds-elevated"
                               }`}
                             >
@@ -231,7 +231,7 @@ export default function ProposalActions({
                             max={99}
                             value={acomptePct}
                             onChange={(e) => setAcomptePct(Number(e.target.value))}
-                            className="w-full bg-ds-elevated border border-ds-border rounded-lg px-2 py-1 text-sm text-white"
+                            className="w-full bg-ds-elevated border border-ds-border rounded-lg px-2 py-1 text-sm text-ink"
                           />
                           <span className="text-gray-400 text-sm">%</span>
                         </div>
@@ -244,7 +244,7 @@ export default function ProposalActions({
                           </button>
                           <Link
                             href={`/invoices/new?from_proposal=${proposal.id}&type=acompte&pct=${acomptePct}`}
-                            className="flex-1 py-1.5 rounded-lg bg-green-700 text-white text-xs font-medium text-center hover:bg-green-800 transition-colors"
+                            className="flex-1 py-1.5 rounded-lg bg-green-700 text-ink text-xs font-medium text-center hover:bg-green-800 transition-colors"
                             onClick={() => setConvertOpen(false)}
                           >
                             Créer {acomptePct}%
@@ -280,7 +280,7 @@ export default function ProposalActions({
                 <button
                   onClick={handleDelete}
                   disabled={deleting}
-                  className="flex-1 text-xs py-1.5 rounded-lg bg-red-600 hover:bg-red-700 text-white font-medium transition-colors disabled:opacity-50"
+                  className="flex-1 text-xs py-1.5 rounded-lg bg-red-600 hover:bg-red-700 text-ink font-medium transition-colors disabled:opacity-50"
                 >
                   {deleting ? "…" : "Confirmer"}
                 </button>
@@ -294,8 +294,8 @@ export default function ProposalActions({
 
   // ── Mode horizontal classique (fallback) ──
   const BTN_BASE = "whitespace-nowrap text-sm font-medium px-3 py-1.5 rounded-lg border border-ds-border hover:bg-ds-elevated/30 transition-colors";
-  const BTN_PRIMARY = "whitespace-nowrap text-sm font-medium px-3 py-1.5 rounded-lg bg-indigo-600 text-white hover:bg-indigo-500 disabled:opacity-60 transition-colors";
-  const BTN_GREEN = "whitespace-nowrap text-sm font-medium px-3 py-1.5 rounded-lg bg-green-600 text-white hover:bg-green-700 transition-colors";
+  const BTN_PRIMARY = "whitespace-nowrap text-sm font-medium px-3 py-1.5 rounded-lg bg-indigo-600 text-ink hover:bg-indigo-500 disabled:opacity-60 transition-colors";
+  const BTN_GREEN = "whitespace-nowrap text-sm font-medium px-3 py-1.5 rounded-lg bg-green-600 text-ink hover:bg-green-700 transition-colors";
   const BTN_RED = "whitespace-nowrap text-sm font-medium px-3 py-1.5 rounded-lg border border-red-200 text-red-400 hover:bg-red-500/10 disabled:opacity-50 transition-colors";
 
   return (
@@ -307,7 +307,7 @@ export default function ProposalActions({
         <button onClick={markAsSent} disabled={sending} className={BTN_PRIMARY}>{sending ? "…" : "Marquer envoyé"}</button>
       )}
       {canRemind && (
-        <button onClick={handleRemind} disabled={reminding} className="whitespace-nowrap text-sm font-medium px-3 py-1.5 rounded-lg bg-amber-700 hover:bg-amber-800 disabled:opacity-50 text-white transition-colors">
+        <button onClick={handleRemind} disabled={reminding} className="whitespace-nowrap text-sm font-medium px-3 py-1.5 rounded-lg bg-amber-700 hover:bg-amber-800 disabled:opacity-50 text-ink transition-colors">
           {reminding ? "Envoi…" : reminderCount > 0 ? `Relancer (${reminderCount}/3)` : "Relancer le client"}
         </button>
       )}
@@ -319,31 +319,31 @@ export default function ProposalActions({
               {!acompteMode ? (
                 <>
                   <Link href={`/invoices/new?from_proposal=${proposal.id}`} className="flex items-center gap-2 px-4 py-2.5 hover:bg-ds-elevated transition-colors" onClick={() => setConvertOpen(false)}>
-                    <FileText size={18} className="shrink-0 text-gray-400" /><div><div className="font-medium text-white">Facture standard</div><div className="text-xs text-gray-400">Règlement intégral</div></div>
+                    <FileText size={18} className="shrink-0 text-gray-400" /><div><div className="font-medium text-ink">Facture standard</div><div className="text-xs text-gray-400">Règlement intégral</div></div>
                   </Link>
                   <button onClick={() => setAcompteMode(true)} className="w-full flex items-center gap-2 px-4 py-2.5 hover:bg-ds-elevated transition-colors text-left">
-                    <Coins size={18} className="shrink-0 text-gray-400" /><div><div className="font-medium text-white">Facture d'acompte</div><div className="text-xs text-gray-400">Versement partiel</div></div>
+                    <Coins size={18} className="shrink-0 text-gray-400" /><div><div className="font-medium text-ink">Facture d'acompte</div><div className="text-xs text-gray-400">Versement partiel</div></div>
                   </button>
                   <Link href={`/invoices/new?from_proposal=${proposal.id}&type=solde`} className="flex items-center gap-2 px-4 py-2.5 hover:bg-ds-elevated transition-colors" onClick={() => setConvertOpen(false)}>
-                    <CircleCheck size={18} className="shrink-0 text-gray-400" /><div><div className="font-medium text-white">Facture de solde</div><div className="text-xs text-gray-400">Solde après acompte</div></div>
+                    <CircleCheck size={18} className="shrink-0 text-gray-400" /><div><div className="font-medium text-ink">Facture de solde</div><div className="text-xs text-gray-400">Solde après acompte</div></div>
                   </Link>
                 </>
               ) : (
                 <div className="px-4 py-3">
-                  <div className="font-medium text-white mb-2">Pourcentage d'acompte</div>
+                  <div className="font-medium text-ink mb-2">Pourcentage d'acompte</div>
                   <div className="flex gap-2 mb-3">
                     {[30, 40, 50].map((pct) => (
-                      <button key={pct} onClick={() => setAcomptePct(pct)} className={`flex-1 py-1 rounded-lg text-xs font-medium border transition-colors ${acomptePct === pct ? "bg-green-600 border-green-600 text-white" : "border-ds-border text-gray-300 hover:bg-ds-elevated"}`}>{pct}%</button>
+                      <button key={pct} onClick={() => setAcomptePct(pct)} className={`flex-1 py-1 rounded-lg text-xs font-medium border transition-colors ${acomptePct === pct ? "bg-green-600 border-green-600 text-ink" : "border-ds-border text-gray-300 hover:bg-ds-elevated"}`}>{pct}%</button>
                     ))}
                   </div>
                   <div className="flex items-center gap-2 mb-3">
                     <label className="text-xs text-gray-400 shrink-0">Autre :</label>
-                    <input aria-label="Autre" type="number" min={1} max={99} value={acomptePct} onChange={(e) => setAcomptePct(Number(e.target.value))} className="w-full bg-ds-elevated border border-ds-border rounded-lg px-2 py-1 text-sm text-white" />
+                    <input aria-label="Autre" type="number" min={1} max={99} value={acomptePct} onChange={(e) => setAcomptePct(Number(e.target.value))} className="w-full bg-ds-elevated border border-ds-border rounded-lg px-2 py-1 text-sm text-ink" />
                     <span className="text-gray-400 text-sm">%</span>
                   </div>
                   <div className="flex gap-2">
                     <button onClick={() => setAcompteMode(false)} className="flex-1 py-1.5 rounded-lg border border-ds-border text-xs text-gray-400 hover:bg-ds-elevated">← Retour</button>
-                    <Link href={`/invoices/new?from_proposal=${proposal.id}&type=acompte&pct=${acomptePct}`} className="flex-1 py-1.5 rounded-lg bg-green-700 text-white text-xs font-medium text-center hover:bg-green-800 transition-colors" onClick={() => setConvertOpen(false)}>Créer {acomptePct}%</Link>
+                    <Link href={`/invoices/new?from_proposal=${proposal.id}&type=acompte&pct=${acomptePct}`} className="flex-1 py-1.5 rounded-lg bg-green-700 text-ink text-xs font-medium text-center hover:bg-green-800 transition-colors" onClick={() => setConvertOpen(false)}>Créer {acomptePct}%</Link>
                   </div>
                 </div>
               )}

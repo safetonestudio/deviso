@@ -48,21 +48,21 @@ export default function Page() {
       <DonneesStructurees donnees={jsonLdArticle(SLUG, FAQ)} />
 
       {/* Navbar */}
-      <nav className="fixed top-0 left-0 right-0 z-50 bg-ds-bg/80 backdrop-blur-xl border-b border-white/[0.06]">
+      <nav className="fixed top-0 left-0 right-0 z-50 bg-ds-bg/80 backdrop-blur-xl border-b border-ink/[0.06]">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
           <Link href="/" aria-label="Deviso" className="flex items-center gap-2">
             <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-indigo-600 to-violet-600 flex items-center justify-center">
-              <span className="text-white font-semibold text-sm">D</span>
+              <span className="text-ink font-semibold text-sm">D</span>
             </div>
-            <span className="font-semibold text-lg text-white">Deviso</span>
+            <span className="font-semibold text-lg text-ink">Deviso</span>
           </Link>
           <div className="hidden md:flex items-center gap-8 text-sm font-medium">
-            <Link href="/blog" className="text-white font-semibold">Blog</Link>
-            <Link href="/conformite" className="text-gray-400 hover:text-white transition-colors">Conformité</Link>
-            <Link href="/#tarifs" className="text-gray-400 hover:text-white transition-colors">Tarifs</Link>
+            <Link href="/blog" className="text-ink font-semibold">Blog</Link>
+            <Link href="/conformite" className="text-gray-400 hover:text-ink transition-colors">Conformité</Link>
+            <Link href="/#tarifs" className="text-gray-400 hover:text-ink transition-colors">Tarifs</Link>
           </div>
           <div className="hidden md:flex items-center gap-3">
-            <Link href="/login" className="text-sm font-medium text-gray-400 hover:text-white transition-colors">Connexion</Link>
+            <Link href="/login" className="text-sm font-medium text-gray-400 hover:text-ink transition-colors">Connexion</Link>
             <WaitlistButton
               plan="free"
               label="Essayer gratuitement"
@@ -95,7 +95,7 @@ export default function Page() {
                 {a.dureeLecture} min
               </span>
             </div>
-            <h1 className="text-3xl sm:text-4xl font-semibold text-white leading-tight mb-4">{a.h1}</h1>
+            <h1 className="text-3xl sm:text-4xl font-semibold text-ink leading-tight mb-4">{a.h1}</h1>
             <p className="text-lg text-gray-400 leading-relaxed">
               Depuis la réforme, le mot « Factur-X » est partout, et presque personne ne prend le temps de dire ce
               que c&apos;est. La plupart des explications sont écrites pour des comptables. En voici une pour tout
@@ -114,14 +114,14 @@ export default function Page() {
                 <li className="flex gap-2">
                   <span className="text-indigo-400 shrink-0">→</span>
                   <span>
-                    Un fichier Factur-X est un <strong className="text-white">PDF de facture tout à fait
+                    Un fichier Factur-X est un <strong className="text-ink">PDF de facture tout à fait
                     normal</strong>, que vous ouvrez et lisez comme d&apos;habitude.
                   </span>
                 </li>
                 <li className="flex gap-2">
                   <span className="text-indigo-400 shrink-0">→</span>
                   <span>
-                    À l&apos;intérieur de ce PDF est rangé un <strong className="text-white">petit fichier de
+                    À l&apos;intérieur de ce PDF est rangé un <strong className="text-ink">petit fichier de
                     données</strong> qui répète les mêmes informations, sous une forme que les logiciels lisent
                     sans se tromper.
                   </span>
@@ -129,7 +129,7 @@ export default function Page() {
                 <li className="flex gap-2">
                   <span className="text-indigo-400 shrink-0">→</span>
                   <span>
-                    Vous n&apos;avez <strong className="text-white">rien à faire</strong> : votre outil le génère,
+                    Vous n&apos;avez <strong className="text-ink">rien à faire</strong> : votre outil le génère,
                     et vous ne verrez jamais le fichier de données.
                   </span>
                 </li>
@@ -138,7 +138,7 @@ export default function Page() {
 
             {/* Pourquoi ce format existe */}
             <section>
-              <h2 className="text-xl font-semibold text-white mb-4">
+              <h2 className="text-xl font-semibold text-ink mb-4">
                 Le problème que ce format résout
               </h2>
               <p className="mb-4">
@@ -156,7 +156,7 @@ export default function Page() {
               <div className="grid sm:grid-cols-2 gap-4">
                 <div className="bg-ds-surface border border-ds-border rounded-xl p-5">
                   <Eye size={18} className="text-indigo-400 mb-3" />
-                  <p className="text-white font-medium mb-1">Ce que vous voyez</p>
+                  <p className="text-ink font-medium mb-1">Ce que vous voyez</p>
                   <p className="text-gray-400">
                     Une facture PDF ordinaire : votre logo, vos lignes, votre total. Rien ne trahit qu&apos;elle est
                     « spéciale ».
@@ -164,7 +164,7 @@ export default function Page() {
                 </div>
                 <div className="bg-ds-surface border border-ds-border rounded-xl p-5">
                   <Cpu size={18} className="text-indigo-400 mb-3" />
-                  <p className="text-white font-medium mb-1">Ce que la machine lit</p>
+                  <p className="text-ink font-medium mb-1">Ce que la machine lit</p>
                   <p className="text-gray-400">
                     Le fichier de données caché dedans : les mêmes montants, mais rangés dans des cases nommées, que
                     n&apos;importe quel logiciel comprend.
@@ -175,19 +175,19 @@ export default function Page() {
 
             {/* Ce qu'il y a dedans */}
             <section>
-              <h2 className="text-xl font-semibold text-white mb-4">
+              <h2 className="text-xl font-semibold text-ink mb-4">
                 Ce qu&apos;il y a vraiment dans un fichier Factur-X
               </h2>
               <p className="mb-4">
                 Techniquement, et vous pouvez oublier cette phrase juste après l&apos;avoir lue : un Factur-X est un
                 PDF d&apos;un type conçu pour l&apos;archivage (appelé PDF/A-3), dans lequel est incorporé un fichier
-                de données au format XML. Ce fichier de données suit une <strong className="text-white">norme
+                de données au format XML. Ce fichier de données suit une <strong className="text-ink">norme
                 européenne commune</strong>, la EN 16931, ce qui garantit qu&apos;un outil français et un outil
                 allemand y rangent l&apos;information de la même façon.
               </p>
               <p>
                 La seule règle qui compte pour vous : la partie visible et la partie données doivent
-                <strong className="text-white"> dire la même chose</strong>. Un total affiché à 1 200 € et un total
+                <strong className="text-ink"> dire la même chose</strong>. Un total affiché à 1 200 € et un total
                 caché à 1 000 € produirait une facture incohérente. Un bon outil s&apos;assure que les deux
                 coïncident toujours, parce qu&apos;il fabrique les deux à partir de la même saisie.
               </p>
@@ -195,7 +195,7 @@ export default function Page() {
 
             {/* Faut-il choisir */}
             <section>
-              <h2 className="text-xl font-semibold text-white mb-4">
+              <h2 className="text-xl font-semibold text-ink mb-4">
                 Factur-X, UBL, CII : faut-il choisir ?
               </h2>
               <p className="mb-4">
@@ -206,7 +206,7 @@ export default function Page() {
                 <li className="flex gap-2">
                   <span className="text-indigo-400 shrink-0 mt-0.5">•</span>
                   <span>
-                    <strong className="text-white">Factur-X</strong> est le format <em>hybride</em> : une page
+                    <strong className="text-ink">Factur-X</strong> est le format <em>hybride</em> : une page
                     lisible plus les données. C&apos;est le plus confortable, parce qu&apos;il reste un PDF que
                     n&apos;importe qui peut ouvrir.
                   </span>
@@ -214,7 +214,7 @@ export default function Page() {
                 <li className="flex gap-2">
                   <span className="text-gray-500 shrink-0 mt-0.5">•</span>
                   <span>
-                    <strong className="text-white">UBL</strong> et <strong className="text-white">CII</strong> sont
+                    <strong className="text-ink">UBL</strong> et <strong className="text-ink">CII</strong> sont
                     des formats de <em>données seules</em> : parfaits pour les logiciels, mais illisibles pour un
                     humain sans outil dédié.
                   </span>
@@ -228,7 +228,7 @@ export default function Page() {
 
             {/* Ce que ca change */}
             <section>
-              <h2 className="text-xl font-semibold text-white mb-4">
+              <h2 className="text-xl font-semibold text-ink mb-4">
                 Ce que ça change pour vous, concrètement
               </h2>
               <p className="mb-4">
@@ -268,11 +268,11 @@ export default function Page() {
 
             {/* FAQ */}
             <section>
-              <h2 className="text-xl font-semibold text-white mb-6">Questions fréquentes</h2>
+              <h2 className="text-xl font-semibold text-ink mb-6">Questions fréquentes</h2>
               <div className="space-y-4">
                 {FAQ.map(({ q, a: reponse }) => (
                   <div key={q} className="bg-ds-surface rounded-xl border border-ds-border p-6">
-                    <h3 className="text-white font-medium mb-3">{q}</h3>
+                    <h3 className="text-ink font-medium mb-3">{q}</h3>
                     <p className="text-gray-400 text-sm leading-relaxed">{reponse}</p>
                   </div>
                 ))}
@@ -281,7 +281,7 @@ export default function Page() {
 
             {/* Sources */}
             <section>
-              <h2 className="text-xl font-semibold text-white mb-4">Sources</h2>
+              <h2 className="text-xl font-semibold text-ink mb-4">Sources</h2>
               <ul className="space-y-2 text-gray-400">
                 <li>
                   <a
@@ -312,7 +312,7 @@ export default function Page() {
             {/* A lire ensuite */}
             {lectures.length > 0 && (
               <section>
-                <h2 className="text-xl font-semibold text-white mb-6">À lire ensuite</h2>
+                <h2 className="text-xl font-semibold text-ink mb-6">À lire ensuite</h2>
                 <div className="grid gap-4 sm:grid-cols-2">
                   {lectures.map((l) => (
                     <Link
@@ -320,7 +320,7 @@ export default function Page() {
                       href={l.href}
                       className="group bg-ds-surface border border-ds-border rounded-xl p-5 hover:border-indigo-500/40 transition-all"
                     >
-                      <p className="text-white font-medium text-sm leading-snug mb-2 group-hover:text-indigo-200 transition-colors">
+                      <p className="text-ink font-medium text-sm leading-snug mb-2 group-hover:text-indigo-200 transition-colors">
                         {l.titre}
                       </p>
                       <p className="text-gray-500 text-xs leading-relaxed line-clamp-2 mb-3">{l.resume}</p>

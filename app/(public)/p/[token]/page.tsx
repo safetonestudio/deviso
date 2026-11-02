@@ -114,11 +114,11 @@ export default function PublicProposalPage() {
           ) : (
             <>
               <div className="w-8 h-8 rounded-lg bg-indigo-600 flex items-center justify-center">
-                <span className="text-white font-semibold text-sm">
+                <span className="text-ink font-semibold text-sm">
                   {(profile?.company_name || profile?.full_name || "D")[0].toUpperCase()}
                 </span>
               </div>
-              <span className="font-semibold text-lg text-white">
+              <span className="font-semibold text-lg text-ink">
                 {profile?.company_name || profile?.full_name || "Deviso"}
               </span>
             </>
@@ -190,7 +190,7 @@ export default function PublicProposalPage() {
                       confirmed ? "bg-indigo-600 border-indigo-600" : "border-slate-300 group-hover:border-indigo-400"
                     }`}>
                       {confirmed && (
-                        <svg className="w-3 h-3 text-white" fill="none" viewBox="0 0 12 12">
+                        <svg className="w-3 h-3 text-ink" fill="none" viewBox="0 0 12 12">
                           <path d="M2 6l3 3 5-5" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
                         </svg>
                       )}
@@ -216,7 +216,7 @@ export default function PublicProposalPage() {
                   <button
                     onClick={() => handleAction("sign")}
                     disabled={acting || !canSign}
-                    className="flex-grow bg-indigo-600 text-white font-semibold py-3 px-8 rounded-xl hover:bg-indigo-700 disabled:opacity-40 disabled:cursor-not-allowed transition-colors text-sm"
+                    className="flex-grow bg-indigo-600 text-ink font-semibold py-3 px-8 rounded-xl hover:bg-indigo-700 disabled:opacity-40 disabled:cursor-not-allowed transition-colors text-sm"
                   >
                     <span className="inline-flex items-center justify-center gap-2">{!acting && <PenLine size={17} className="shrink-0" />}{acting ? "Enregistrement…" : "Signer le devis"}</span>
                   </button>
@@ -249,7 +249,7 @@ export default function PublicProposalPage() {
                   <button
                     onClick={() => handleAction("sign")}
                     disabled={acting}
-                    className="flex-2 flex-grow bg-indigo-600 text-white font-semibold py-3 px-8 rounded-xl hover:bg-indigo-700 disabled:opacity-50 transition-colors"
+                    className="flex-2 flex-grow bg-indigo-600 text-ink font-semibold py-3 px-8 rounded-xl hover:bg-indigo-700 disabled:opacity-50 transition-colors"
                   >
                     <span className="inline-flex items-center justify-center gap-2">{!acting && <PenLine size={17} className="shrink-0" />}{acting ? "Enregistrement…" : "Accepter et signer"}</span>
                   </button>

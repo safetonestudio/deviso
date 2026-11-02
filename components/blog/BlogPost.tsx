@@ -114,29 +114,29 @@ export function BlogPost({
         <span className="text-indigo-300 font-semibold">Réforme 2026&nbsp;:</span>
         <span className="text-gray-300 ml-1.5">La facturation électronique B2B devient obligatoire en France.&nbsp;</span>
         <span className="text-indigo-400 font-medium">Deviso est déjà conforme Factur-X.</span>
-        <Link href={landingHref} className="ml-2 text-indigo-300 hover:text-white font-semibold transition-colors underline underline-offset-2">
+        <Link href={landingHref} className="ml-2 text-indigo-300 hover:text-ink font-semibold transition-colors underline underline-offset-2">
           En savoir plus →
         </Link>
       </div>
 
       {/* ── Navbar ── */}
-      <nav className="fixed top-9 left-0 right-0 z-50 bg-ds-bg/80 backdrop-blur-xl border-b border-white/[0.06]">
+      <nav className="fixed top-9 left-0 right-0 z-50 bg-ds-bg/80 backdrop-blur-xl border-b border-ink/[0.06]">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
           <Link href="/" aria-label="Deviso" className="flex items-center gap-2">
             <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-indigo-600 to-violet-600 flex items-center justify-center">
-              <span className="text-white font-semibold text-sm">D</span>
+              <span className="text-ink font-semibold text-sm">D</span>
             </div>
-            <span className="font-semibold text-lg text-white">Deviso</span>
+            <span className="font-semibold text-lg text-ink">Deviso</span>
           </Link>
           <div className="hidden md:flex items-center gap-8 text-sm font-medium">
-            <Link href="/blog" className="text-gray-400 hover:text-white transition-colors">Blog</Link>
-            <Link href={landingHref} className="text-gray-400 hover:text-white transition-colors capitalize">
+            <Link href="/blog" className="text-gray-400 hover:text-ink transition-colors">Blog</Link>
+            <Link href={landingHref} className="text-gray-400 hover:text-ink transition-colors capitalize">
               Pour les {professionPluriel}
             </Link>
-            <Link href="/#tarifs" className="text-gray-400 hover:text-white transition-colors">Tarifs</Link>
+            <Link href="/#tarifs" className="text-gray-400 hover:text-ink transition-colors">Tarifs</Link>
           </div>
           <div className="hidden md:flex items-center gap-3">
-            <Link href="/login" className="text-sm font-medium text-gray-400 hover:text-white transition-colors">
+            <Link href="/login" className="text-sm font-medium text-gray-400 hover:text-ink transition-colors">
               Connexion
             </Link>
             <WaitlistButton
@@ -167,7 +167,7 @@ export function BlogPost({
             <div className="inline-block px-3 py-1 rounded-full text-xs font-semibold bg-indigo-500/10 text-indigo-300 border border-indigo-500/20 mb-4">
               Guide pratique · {profession}
             </div>
-            <h1 className="text-3xl sm:text-4xl font-semibold text-white leading-tight mb-4">
+            <h1 className="text-3xl sm:text-4xl font-semibold text-ink leading-tight mb-4">
               {a.h1}
             </h1>
             <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-sm text-gray-500">
@@ -194,7 +194,7 @@ export function BlogPost({
 
           {/* ── Section 1 : Mentions obligatoires ── */}
           <section className="mb-12">
-            <h2 className="text-2xl font-semibold text-white mb-3">{mandatoryTitle}</h2>
+            <h2 className="text-2xl font-semibold text-ink mb-3">{mandatoryTitle}</h2>
             <p className="text-gray-400 mb-6">{mandatoryIntro}</p>
             <ol className="space-y-5">
               {mandatoryItems.map((item, i) => (
@@ -203,7 +203,7 @@ export function BlogPost({
                     {i + 1}
                   </span>
                   <div>
-                    <p className="text-white font-medium mb-1">{item.title}</p>
+                    <p className="text-ink font-medium mb-1">{item.title}</p>
                     <p className="text-gray-400 text-sm leading-relaxed">{item.desc}</p>
                   </div>
                 </li>
@@ -213,14 +213,14 @@ export function BlogPost({
 
           {/* ── Section 2 : Exemple ── */}
           <section className="mb-12">
-            <h2 className="text-2xl font-semibold text-white mb-6">
+            <h2 className="text-2xl font-semibold text-ink mb-6">
               Exemple concret de devis pour un {profession}
             </h2>
             <div className="bg-ds-surface rounded-xl border border-ds-border overflow-hidden">
               {/* Table header */}
               <div className="px-5 py-4 border-b border-ds-border bg-ds-elevated">
                 <p className="text-xs text-gray-500 font-medium uppercase tracking-wider">Client</p>
-                <p className="text-white font-medium mt-0.5">{exampleClient}</p>
+                <p className="text-ink font-medium mt-0.5">{exampleClient}</p>
               </div>
               <div className="divide-y divide-ds-border">
                 {exampleLines.map((line, i) => (
@@ -229,7 +229,7 @@ export function BlogPost({
                       <p className="text-gray-300 text-sm">{line.desc}</p>
                       <p className="text-gray-500 text-xs mt-0.5">{line.qty}</p>
                     </div>
-                    <p className="text-white text-sm font-medium flex-shrink-0">{line.price}</p>
+                    <p className="text-ink text-sm font-medium flex-shrink-0">{line.price}</p>
                   </div>
                 ))}
               </div>
@@ -243,7 +243,7 @@ export function BlogPost({
 
           {/* ── Section 3 : Erreurs fréquentes ── */}
           <section className="mb-12">
-            <h2 className="text-2xl font-semibold text-white mb-6">
+            <h2 className="text-2xl font-semibold text-ink mb-6">
               Les erreurs fréquentes sur un devis de {profession}
             </h2>
             <div className="space-y-4">
@@ -251,7 +251,7 @@ export function BlogPost({
                 <div key={i} className="flex gap-4 bg-red-950/20 border border-red-500/15 rounded-xl p-5">
                   <span className="text-red-400 text-lg flex-shrink-0 mt-0.5">✕</span>
                   <div>
-                    <p className="text-white font-medium mb-1">{m.title}</p>
+                    <p className="text-ink font-medium mb-1">{m.title}</p>
                     <p className="text-gray-400 text-sm leading-relaxed">{m.desc}</p>
                   </div>
                 </div>
@@ -261,7 +261,7 @@ export function BlogPost({
 
           {/* ── CTA Deviso ── */}
           <section className="mb-12 bg-gradient-to-br from-indigo-900/40 to-violet-900/20 rounded-2xl border border-indigo-500/20 p-8 text-center">
-            <h2 className="text-2xl font-semibold text-white mb-3">
+            <h2 className="text-2xl font-semibold text-ink mb-3">
               Créez votre devis de {profession} en 30 secondes
             </h2>
             <p className="text-gray-400 mb-6 max-w-lg mx-auto">
@@ -271,7 +271,7 @@ export function BlogPost({
               <WaitlistButton
                 plan="free"
                 label="Essayer gratuitement"
-                className="w-full sm:w-auto bg-indigo-600 hover:bg-indigo-700 text-white font-semibold px-8 py-3 rounded-xl transition-all shadow-lg shadow-indigo-900/50"
+                className="w-full sm:w-auto bg-indigo-600 hover:bg-indigo-700 text-ink font-semibold px-8 py-3 rounded-xl transition-all shadow-lg shadow-indigo-900/50"
               />
               <Link
                 href={landingHref}
@@ -284,11 +284,11 @@ export function BlogPost({
 
           {/* ── FAQ ── */}
           <section className="mb-12">
-            <h2 className="text-2xl font-semibold text-white mb-6">Questions fréquentes</h2>
+            <h2 className="text-2xl font-semibold text-ink mb-6">Questions fréquentes</h2>
             <div className="space-y-4">
               {faq.map((item, i) => (
                 <div key={i} className="bg-ds-surface rounded-xl border border-ds-border p-6">
-                  <h3 className="text-white font-medium mb-3">{item.q}</h3>
+                  <h3 className="text-ink font-medium mb-3">{item.q}</h3>
                   <p className="text-gray-400 text-sm leading-relaxed">{item.a}</p>
                 </div>
               ))}
@@ -301,7 +301,7 @@ export function BlogPost({
               <p className="text-xs text-gray-500 font-medium uppercase tracking-wider mb-2">
                 Et côté prix ?
               </p>
-              <h2 className="text-xl font-semibold text-white mb-2">
+              <h2 className="text-xl font-semibold text-ink mb-2">
                 Combien facturer quand on est {profession} ?
               </h2>
               <p className="text-gray-400 text-sm leading-relaxed mb-4">
@@ -320,7 +320,7 @@ export function BlogPost({
           {/* ── À lire ensuite ── */}
           {lectures.length > 0 && (
             <section className="mb-12">
-              <h2 className="text-2xl font-semibold text-white mb-6">À lire ensuite</h2>
+              <h2 className="text-2xl font-semibold text-ink mb-6">À lire ensuite</h2>
               <div className="grid gap-4 sm:grid-cols-2">
                 {lectures.map((l) => (
                   <Link
@@ -328,7 +328,7 @@ export function BlogPost({
                     href={l.href}
                     className="group bg-ds-surface border border-ds-border rounded-xl p-5 hover:border-indigo-500/40 transition-all"
                   >
-                    <p className="text-white font-medium text-sm leading-snug mb-2 group-hover:text-indigo-200 transition-colors">
+                    <p className="text-ink font-medium text-sm leading-snug mb-2 group-hover:text-indigo-200 transition-colors">
                       {l.titre}
                     </p>
                     <p className="text-gray-500 text-xs leading-relaxed line-clamp-2 mb-3">{l.resume}</p>
@@ -349,7 +349,7 @@ export function BlogPost({
                 <Link
                   key={x.landing}
                   href={x.landing}
-                  className="text-sm px-4 py-2 rounded-full border border-ds-border text-gray-400 hover:text-white hover:border-gray-500 transition-colors"
+                  className="text-sm px-4 py-2 rounded-full border border-ds-border text-gray-400 hover:text-ink hover:border-gray-500 transition-colors"
                 >
                   {x.label}
                 </Link>

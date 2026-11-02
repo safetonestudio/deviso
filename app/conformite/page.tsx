@@ -66,21 +66,21 @@ export default function ConformitePage() {
       <DonneesStructurees donnees={jsonLd} />
 
       {/* ── Navbar ── */}
-      <nav className="fixed top-0 left-0 right-0 z-50 bg-ds-bg/80 backdrop-blur-xl border-b border-white/[0.06]">
+      <nav className="fixed top-0 left-0 right-0 z-50 bg-ds-bg/80 backdrop-blur-xl border-b border-ink/[0.06]">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
           <Link href="/" aria-label="Deviso" className="flex items-center gap-2">
             <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-indigo-600 to-violet-600 flex items-center justify-center">
-              <span className="text-white font-semibold text-sm">D</span>
+              <span className="text-ink font-semibold text-sm">D</span>
             </div>
-            <span className="font-semibold text-lg text-white">Deviso</span>
+            <span className="font-semibold text-lg text-ink">Deviso</span>
           </Link>
           <div className="hidden md:flex items-center gap-8 text-sm font-medium">
-            <Link href="/blog" className="text-gray-400 hover:text-white transition-colors">Blog</Link>
-            <Link href="/#fonctionnalites" className="text-gray-400 hover:text-white transition-colors">Fonctionnalités</Link>
-            <Link href="/#tarifs" className="text-gray-400 hover:text-white transition-colors">Tarifs</Link>
+            <Link href="/blog" className="text-gray-400 hover:text-ink transition-colors">Blog</Link>
+            <Link href="/#fonctionnalites" className="text-gray-400 hover:text-ink transition-colors">Fonctionnalités</Link>
+            <Link href="/#tarifs" className="text-gray-400 hover:text-ink transition-colors">Tarifs</Link>
           </div>
           <div className="hidden md:flex items-center gap-3">
-            <Link href="/login" className="text-sm font-medium text-gray-400 hover:text-white transition-colors">Connexion</Link>
+            <Link href="/login" className="text-sm font-medium text-gray-400 hover:text-ink transition-colors">Connexion</Link>
             <WaitlistButton
               plan="free"
               label="Essayer gratuitement"
@@ -105,12 +105,12 @@ export default function ConformitePage() {
               <ShieldCheck size={13} className="shrink-0" />
               Réforme de facturation électronique
             </div>
-            <h1 className="text-3xl sm:text-4xl font-semibold text-white leading-tight mb-4">
+            <h1 className="text-3xl sm:text-4xl font-semibold text-ink leading-tight mb-4">
               Ce que Deviso est, au sens de la réforme
             </h1>
             <p className="text-lg text-gray-400 leading-relaxed">
-              La réponse en une phrase : Deviso est une <strong className="text-white">solution compatible</strong>,
-              adossée à <strong className="text-white">Super PDP</strong>, qui est la plateforme agréée. Le reste
+              La réponse en une phrase : Deviso est une <strong className="text-ink">solution compatible</strong>,
+              adossée à <strong className="text-ink">Super PDP</strong>, qui est la plateforme agréée. Le reste
               de cette page explique pourquoi cette distinction compte, et comment la vérifier sans nous faire
               confiance.
             </p>
@@ -120,20 +120,20 @@ export default function ConformitePage() {
 
             {/* ── 1. La distinction ── */}
             <section>
-              <h2 className="text-xl font-semibold text-white mb-4">
+              <h2 className="text-xl font-semibold text-ink mb-4">
                 Plateforme agréée, solution compatible : ce n&apos;est pas du vocabulaire marketing
               </h2>
               <p className="mb-4">
                 La DGFiP définit deux catégories, et elles n&apos;ont pas les mêmes droits. Une{" "}
-                <strong className="text-white">plateforme agréée</strong> est immatriculée par
+                <strong className="text-ink">plateforme agréée</strong> est immatriculée par
                 l&apos;administration et peut transmettre et recevoir des factures électroniques pour le compte
                 d&apos;une entreprise, et transmettre les données de transaction à l&apos;administration. Une{" "}
-                <strong className="text-white">solution compatible</strong> ne peut faire ni l&apos;un ni
+                <strong className="text-ink">solution compatible</strong> ne peut faire ni l&apos;un ni
                 l&apos;autre : elle doit s&apos;adosser à une plateforme agréée.
               </p>
               <p className="mb-4">
                 Autrement dit, la question utile à poser à un éditeur de logiciel n&apos;est pas « êtes-vous
-                conforme ? », tout le monde répond oui. C&apos;est : <strong className="text-white">« êtes-vous
+                conforme ? », tout le monde répond oui. C&apos;est : <strong className="text-ink">« êtes-vous
                 agréé, ou adossé à qui ? »</strong>
               </p>
               <div className="bg-ds-surface border border-ds-border rounded-xl p-5">
@@ -151,13 +151,13 @@ export default function ConformitePage() {
 
             {/* ── 2. Les trois questions ── */}
             <section>
-              <h2 className="text-xl font-semibold text-white mb-4">
+              <h2 className="text-xl font-semibold text-ink mb-4">
                 Les trois questions, et nos réponses
               </h2>
               <div className="space-y-4">
                 {QUESTIONS.map(({ q, r }) => (
                   <div key={q} className="bg-ds-surface border border-ds-border rounded-xl p-5">
-                    <p className="font-semibold text-white mb-2 flex items-start gap-2">
+                    <p className="font-semibold text-ink mb-2 flex items-start gap-2">
                       <CircleCheck size={16} className="shrink-0 mt-0.5 text-emerald-400" />
                       {q}
                     </p>
@@ -169,10 +169,10 @@ export default function ConformitePage() {
 
             {/* ── 3. Vérifier soi-même ── */}
             <section>
-              <h2 className="text-xl font-semibold text-white mb-4">Vérifiez-le vous-même</h2>
+              <h2 className="text-xl font-semibold text-ink mb-4">Vérifiez-le vous-même</h2>
               <p className="mb-4">
                 La liste des plateformes agréées est publiée par la DGFiP et téléchargeable. Elle se
-                présente en <strong className="text-white">deux fichiers</strong>, et la nuance a son
+                présente en <strong className="text-ink">deux fichiers</strong>, et la nuance a son
                 importance. Le premier réunit les «&nbsp;opérateurs satisfaisant à l&apos;ensemble des
                 conditions, incluant les tests d&apos;interopérabilité&nbsp;» : leur numéro
                 d&apos;immatriculation est délivré. Le second réunit les «&nbsp;opérateurs ayant déposé un
@@ -201,7 +201,7 @@ export default function ConformitePage() {
               <div className="flex gap-3 bg-[#241d11] border border-amber-500/25 rounded-xl p-5">
                 <TriangleAlert size={18} className="shrink-0 mt-0.5 text-amber-400" />
                 <div>
-                  <p className="font-semibold text-white mb-1">Méfiez-vous des comparateurs</p>
+                  <p className="font-semibold text-ink mb-1">Méfiez-vous des comparateurs</p>
                   <p className="text-gray-400">
                     Une partie des sites qui comparent les solutions de facturation électronique vivent de
                     l&apos;affiliation, et leurs chiffres se contredisent, le nombre de plateformes agréées y
@@ -214,7 +214,7 @@ export default function ConformitePage() {
 
             {/* ── 4. Ce que Deviso fait déjà, et ce qu'il ne fait pas ── */}
             <section>
-              <h2 className="text-xl font-semibold text-white mb-4">
+              <h2 className="text-xl font-semibold text-ink mb-4">
                 Ce que Deviso fait déjà, et ce qu&apos;il ne fait pas
               </h2>
               <div className="grid sm:grid-cols-2 gap-4">
@@ -223,9 +223,9 @@ export default function ConformitePage() {
                     Fait
                   </p>
                   <ul className="space-y-2 text-gray-300">
-                    <li className="flex gap-2"><span className="text-emerald-400 shrink-0">→</span> <span>Génère vos factures au format <strong className="text-white">Factur-X</strong> conforme à la norme européenne EN 16931</span></li>
-                    <li className="flex gap-2"><span className="text-emerald-400 shrink-0">→</span> <span>Se connecte à Super PDP pour <strong className="text-white">déposer</strong> vos factures et <strong className="text-white">recevoir</strong> celles de vos fournisseurs</span></li>
-                    <li className="flex gap-2"><span className="text-emerald-400 shrink-0">→</span> <span>Suit le <strong className="text-white">cycle de vie</strong> de chaque facture déposée, y compris les refus et les rejets, et vous dit quoi faire</span></li>
+                    <li className="flex gap-2"><span className="text-emerald-400 shrink-0">→</span> <span>Génère vos factures au format <strong className="text-ink">Factur-X</strong> conforme à la norme européenne EN 16931</span></li>
+                    <li className="flex gap-2"><span className="text-emerald-400 shrink-0">→</span> <span>Se connecte à Super PDP pour <strong className="text-ink">déposer</strong> vos factures et <strong className="text-ink">recevoir</strong> celles de vos fournisseurs</span></li>
+                    <li className="flex gap-2"><span className="text-emerald-400 shrink-0">→</span> <span>Suit le <strong className="text-ink">cycle de vie</strong> de chaque facture déposée, y compris les refus et les rejets, et vous dit quoi faire</span></li>
                     <li className="flex gap-2"><span className="text-emerald-400 shrink-0">→</span> Gère la mention d&apos;exonération correcte si vous êtes en franchise de TVA (art. 293 B du CGI)</li>
                     <li className="flex gap-2"><span className="text-emerald-400 shrink-0">→</span> Numérote vos factures de façon continue, comme l&apos;exige l&apos;article 242 nonies A du CGI</li>
                   </ul>
@@ -235,7 +235,7 @@ export default function ConformitePage() {
                     Ne fait pas
                   </p>
                   <ul className="space-y-2 text-gray-400">
-                    <li className="flex gap-2"><span className="text-gray-500 shrink-0">→</span> <span>Deviso n&apos;est <strong className="text-white">pas</strong> une plateforme agréée et ne transmet rien directement à l&apos;administration</span></li>
+                    <li className="flex gap-2"><span className="text-gray-500 shrink-0">→</span> <span>Deviso n&apos;est <strong className="text-ink">pas</strong> une plateforme agréée et ne transmet rien directement à l&apos;administration</span></li>
                     <li className="flex gap-2"><span className="text-gray-500 shrink-0">→</span> Deviso ne remplace pas votre expert-comptable, et ne donne pas de conseil fiscal</li>
                     <li className="flex gap-2"><span className="text-gray-500 shrink-0">→</span> Deviso ne déclare pas vos achats B2B à votre place (art. 290-II du CGI) : cette obligation reste la vôtre</li>
                     <li className="flex gap-2"><span className="text-gray-500 shrink-0">→</span> Deviso ne voit pas les paiements encaissés hors de l&apos;outil : c&apos;est vous qui marquez une facture payée</li>
@@ -246,7 +246,7 @@ export default function ConformitePage() {
 
             {/* ── 5. Où vous en êtes, vous ── */}
             <section>
-              <h2 className="text-xl font-semibold text-white mb-4">Et vous, où en êtes-vous ?</h2>
+              <h2 className="text-xl font-semibold text-ink mb-4">Et vous, où en êtes-vous ?</h2>
               <p className="mb-4">
                 Deux obligations, deux dates, et les confondre est la source de presque toute la confusion sur
                 le sujet.
@@ -268,7 +268,7 @@ export default function ConformitePage() {
                 <div className="bg-ds-surface border border-ds-border rounded-xl p-5">
                   <div className="flex flex-wrap items-center justify-between gap-2 mb-1">
                     <span className="text-sm font-semibold text-gray-300">Émettre</span>
-                    <span className="text-[10px] font-semibold bg-white/[0.06] text-gray-400 rounded-full px-2 py-0.5">
+                    <span className="text-[10px] font-semibold bg-ink/[0.06] text-gray-400 rounded-full px-2 py-0.5">
                       1<sup>er</sup> septembre 2027
                     </span>
                   </div>
@@ -293,7 +293,7 @@ export default function ConformitePage() {
 
             {/* ── 6. Une question ── */}
             <section className="pt-8">
-              <h2 className="text-xl font-semibold text-white mb-3">Une question sur tout ça ?</h2>
+              <h2 className="text-xl font-semibold text-ink mb-3">Une question sur tout ça ?</h2>
               <p className="text-gray-400">
                 Écrivez à{" "}
                 <a href="mailto:support@getdeviso.fr" className="text-indigo-400 hover:text-indigo-300 transition-colors">

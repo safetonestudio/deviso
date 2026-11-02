@@ -32,7 +32,7 @@ export function SidebarNav({ isMember = false, isComptable = false }: { isMember
               href={item.href}
               className={`flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all ${
                 active
-                  ? "bg-indigo-600 text-white"
+                  ? "bg-indigo-600 text-ink"
                   : "text-indigo-400 hover:bg-indigo-500/10 hover:text-indigo-300"
               }`}
             >
@@ -50,7 +50,7 @@ export function SidebarNav({ isMember = false, isComptable = false }: { isMember
             className={`flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all ${
               active
                 ? "bg-indigo-500/10 text-indigo-400 border-l-2 border-indigo-500 pl-[10px]"
-                : "text-gray-400 hover:text-white hover:bg-ds-elevated"
+                : "text-gray-400 hover:text-ink hover:bg-ds-elevated"
             }`}
           >
             <Icon size={16} className="shrink-0" />

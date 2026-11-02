@@ -5,6 +5,7 @@ import { getWorkspaceUserId } from "@/lib/workspace";
 import { droitsDe, ROLE_COMPTABLE, PLANS_ACCES_COMPTABLE } from "@/lib/droits";
 import { PAGES_COMPTABLE } from "@/lib/navigation";
 import { DashboardThemeProvider, ThemeToggle } from "@/components/DashboardTheme";
+import { policesApp } from "@/app/polices-app";
 import { MobileNav } from "@/components/MobileNav";
 import { SidebarNav } from "@/components/SidebarNav";
 import { NotificationBell } from "@/components/NotificationBell";
@@ -139,7 +140,7 @@ export default async function DashboardLayout({ children }: { children: React.Re
     return (
       <div className="min-h-screen bg-ds-bg flex items-center justify-center px-4">
         <div className="max-w-md text-center">
-          <h1 className="text-xl font-semibold text-white mb-3">
+          <h1 className="text-xl font-semibold text-ink mb-3">
             Cet espace n&apos;est plus partagé
           </h1>
           <p className="text-gray-400 text-sm leading-relaxed">
@@ -177,7 +178,7 @@ export default async function DashboardLayout({ children }: { children: React.Re
   const isDemo = !!profile?.is_demo;
 
   return (
-    <DashboardThemeProvider>
+    <DashboardThemeProvider className={policesApp}>
     <PlanProvider plan={plan} isMember={isMember} droits={droits}>
       <div className="min-h-screen bg-app-relief flex overflow-x-hidden">
         <MobileNav
@@ -193,9 +194,9 @@ export default async function DashboardLayout({ children }: { children: React.Re
           <div className="p-5 border-b border-ds-border">
             <a href="/dashboard" className="flex items-center gap-2">
               <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-indigo-600 to-violet-600 flex items-center justify-center">
-                <span className="text-white font-semibold text-sm">D</span>
+                <span className="text-ink font-semibold text-sm">D</span>
               </div>
-              <span className="font-semibold text-white">Deviso</span>
+              <span className="font-semibold text-ink">Deviso</span>
               {isDemo && (
                 <span className="ml-1 text-[10px] font-bold uppercase tracking-wide bg-amber-500/20 text-amber-400 border border-amber-500/30 px-1.5 py-0.5 rounded">
                   démo
@@ -226,7 +227,7 @@ export default async function DashboardLayout({ children }: { children: React.Re
                 {initials}
               </div>
               <div className="flex-1 min-w-0">
-                <div className="text-sm font-semibold text-white truncate">
+                <div className="text-sm font-semibold text-ink truncate">
                   {profile?.full_name || "Mon compte"}
                 </div>
                 <div className="text-xs text-gray-500 truncate">{user.email}</div>

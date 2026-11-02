@@ -53,21 +53,21 @@ export default function Page() {
       </div>
 
       {/* Navbar */}
-      <nav className="fixed top-9 left-0 right-0 z-50 bg-ds-bg/80 backdrop-blur-xl border-b border-white/[0.06]">
+      <nav className="fixed top-9 left-0 right-0 z-50 bg-ds-bg/80 backdrop-blur-xl border-b border-ink/[0.06]">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
           <Link href="/" aria-label="Deviso" className="flex items-center gap-2">
             <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-indigo-600 to-violet-600 flex items-center justify-center">
-              <span className="text-white font-semibold text-sm">D</span>
+              <span className="text-ink font-semibold text-sm">D</span>
             </div>
-            <span className="font-semibold text-lg text-white">Deviso</span>
+            <span className="font-semibold text-lg text-ink">Deviso</span>
           </Link>
           <div className="hidden md:flex items-center gap-8 text-sm font-medium">
-            <Link href="/blog" className="text-white font-semibold">Blog</Link>
-            <Link href="/#fonctionnalites" className="text-gray-400 hover:text-white transition-colors">Fonctionnalités</Link>
-            <Link href="/#tarifs" className="text-gray-400 hover:text-white transition-colors">Tarifs</Link>
+            <Link href="/blog" className="text-ink font-semibold">Blog</Link>
+            <Link href="/#fonctionnalites" className="text-gray-400 hover:text-ink transition-colors">Fonctionnalités</Link>
+            <Link href="/#tarifs" className="text-gray-400 hover:text-ink transition-colors">Tarifs</Link>
           </div>
           <div className="hidden md:flex items-center gap-3">
-            <Link href="/login" className="text-sm font-medium text-gray-400 hover:text-white transition-colors">Connexion</Link>
+            <Link href="/login" className="text-sm font-medium text-gray-400 hover:text-ink transition-colors">Connexion</Link>
             <WaitlistButton plan="free" label="Essayer gratuitement" className="bg-white text-black text-sm font-semibold px-4 py-2 rounded-lg hover:bg-zinc-100 transition-colors" />
           </div>
           <NavbarMobile />
@@ -90,7 +90,7 @@ export default function Page() {
               <span className="text-xs px-2.5 py-1 rounded-full bg-rose-500/10 text-rose-300 border border-rose-500/20 font-medium">Problèmes freelance</span>
               <span className="text-xs text-gray-400">29 juin 2026 · 6 min</span>
             </div>
-            <h1 className="text-3xl sm:text-4xl font-semibold text-white leading-tight mb-4">
+            <h1 className="text-3xl sm:text-4xl font-semibold text-ink leading-tight mb-4">
               Scope creep freelance : qu&apos;est-ce que c&apos;est et comment s&apos;en protéger dans son devis
             </h1>
             <p className="text-lg text-gray-400 leading-relaxed">
@@ -102,9 +102,9 @@ export default function Page() {
           <div className="space-y-10 text-sm text-gray-300 leading-relaxed">
 
             <section>
-              <h2 className="text-xl font-semibold text-white mb-4">Qu&apos;est-ce que le scope creep ?</h2>
+              <h2 className="text-xl font-semibold text-ink mb-4">Qu&apos;est-ce que le scope creep ?</h2>
               <p className="mb-4">
-                Le <strong className="text-white">scope creep</strong> (ou &quot;dérive de périmètre&quot; en français) désigne le phénomène par lequel une mission s&apos;étend progressivement au-delà de ce qui était prévu, sans ajustement du prix ni de la durée. Ce n&apos;est généralement pas une tentative délibérée d&apos;en avoir plus pour le même prix. C&apos;est souvent la conséquence d&apos;un brief flou, d&apos;un devis vague, et d&apos;une relation client où vous avez du mal à dire non.
+                Le <strong className="text-ink">scope creep</strong> (ou &quot;dérive de périmètre&quot; en français) désigne le phénomène par lequel une mission s&apos;étend progressivement au-delà de ce qui était prévu, sans ajustement du prix ni de la durée. Ce n&apos;est généralement pas une tentative délibérée d&apos;en avoir plus pour le même prix. C&apos;est souvent la conséquence d&apos;un brief flou, d&apos;un devis vague, et d&apos;une relation client où vous avez du mal à dire non.
               </p>
               <p>
                 L&apos;ironie du scope creep : plus vous êtes compétent et impliqué, plus vous y êtes exposé. Le client voit que vous faites du bon travail, que vous connaissez son projet mieux que lui, alors il continue à solliciter. &quot;Puisque t&apos;es là, tu peux juste...&quot;
@@ -112,7 +112,7 @@ export default function Page() {
             </section>
 
             <section>
-              <h2 className="text-xl font-semibold text-white mb-4">Comment le scope creep arrive-t-il concrètement ?</h2>
+              <h2 className="text-xl font-semibold text-ink mb-4">Comment le scope creep arrive-t-il concrètement ?</h2>
               <div className="space-y-4">
                 {[
                   { title: "Le brief qui évolue en cours de route", desc: "Le client change d'avis sur la direction créative, le positionnement, la cible. Ce qui était prévu ne colle plus, et il faut refaire. Sans clause de révision, vous absorbez ce coût." },
@@ -121,7 +121,7 @@ export default function Page() {
                   { title: "La pression relationnelle", desc: "Vous ne voulez pas décevoir. Vous voulez que le client soit content. Alors vous faites ce qu'il demande, même si c'est hors périmètre. Et le prix reste le même." },
                 ].map((item) => (
                   <div key={item.title} className="bg-ds-surface border border-ds-border rounded-xl p-5">
-                    <p className="font-semibold text-white mb-1 text-sm flex items-center gap-2"><TriangleAlert size={16} className="shrink-0 text-amber-400" />{item.title}</p>
+                    <p className="font-semibold text-ink mb-1 text-sm flex items-center gap-2"><TriangleAlert size={16} className="shrink-0 text-amber-400" />{item.title}</p>
                     <p className="text-gray-400 text-sm">{item.desc}</p>
                   </div>
                 ))}
@@ -129,7 +129,7 @@ export default function Page() {
             </section>
 
             <section>
-              <h2 className="text-xl font-semibold text-white mb-4">Les clauses qui vous protègent dans votre devis</h2>
+              <h2 className="text-xl font-semibold text-ink mb-4">Les clauses qui vous protègent dans votre devis</h2>
               <p className="mb-5">
                 La protection contre le scope creep commence dans le devis, avant même que la mission démarre. Deux clauses sont essentielles :
               </p>
@@ -154,7 +154,7 @@ export default function Page() {
             </section>
 
             <section>
-              <h2 className="text-xl font-semibold text-white mb-4">La procédure d&apos;avenant : comment facturer les demandes supplémentaires sans froisser le client</h2>
+              <h2 className="text-xl font-semibold text-ink mb-4">La procédure d&apos;avenant : comment facturer les demandes supplémentaires sans froisser le client</h2>
               <p className="mb-4">
                 Avoir la clause dans le devis ne suffit pas, vous devez aussi savoir comment l&apos;activer dans la vraie vie, avec un client qui vous dit &quot;c&apos;est juste deux minutes&quot;.
               </p>
@@ -174,7 +174,7 @@ export default function Page() {
             </section>
 
             <section>
-              <h2 className="text-xl font-semibold text-white mb-4">Prévenir le scope creep dès le brief</h2>
+              <h2 className="text-xl font-semibold text-ink mb-4">Prévenir le scope creep dès le brief</h2>
               <p className="mb-4">
                 La meilleure clause de périmètre est celle que vous n&apos;avez jamais besoin d&apos;activer, parce que le brief initial était suffisamment précis. Avant de rédiger le devis :
               </p>
@@ -190,7 +190,7 @@ export default function Page() {
             <div className="bg-ds-surface border border-ds-border rounded-xl p-5 flex gap-4 items-start">
               <ClipboardList size={20} className="text-indigo-400 flex-shrink-0" />
               <div>
-                <p className="text-sm font-semibold text-white mb-1">Toutes les clauses à mettre dans votre devis</p>
+                <p className="text-sm font-semibold text-ink mb-1">Toutes les clauses à mettre dans votre devis</p>
                 <p className="text-xs text-gray-500 mb-3">Périmètre, acompte, révisions, propriété intellectuelle, résiliation, le guide complet avec formulations prêtes à l&apos;emploi.</p>
                 <Link href="/blog/clauses-devis-freelance" className="text-xs text-indigo-400 hover:text-indigo-300 font-medium">
                   Lire le guide des clauses →
@@ -202,11 +202,11 @@ export default function Page() {
 
           {/* ── Questions fréquentes ── */}
           <section className="mb-12">
-            <h2 className="text-2xl font-semibold text-white mb-6">Questions fréquentes</h2>
+            <h2 className="text-2xl font-semibold text-ink mb-6">Questions fréquentes</h2>
             <div className="space-y-4">
               {FAQ.map(({ q, a }) => (
                 <div key={q} className="bg-ds-surface rounded-xl border border-ds-border p-6">
-                  <h3 className="text-white font-medium mb-3">{q}</h3>
+                  <h3 className="text-ink font-medium mb-3">{q}</h3>
                   <p className="text-gray-400 text-sm leading-relaxed">{a}</p>
                 </div>
               ))}
@@ -215,11 +215,11 @@ export default function Page() {
 
           {/* CTA */}
           <div className="mt-14 bg-gradient-to-br from-indigo-900/40 to-violet-900/20 rounded-2xl border border-indigo-500/20 p-8 text-center">
-            <h2 className="text-2xl font-semibold text-white mb-3">Un devis avec les bonnes clauses, en 30 secondes</h2>
+            <h2 className="text-2xl font-semibold text-ink mb-3">Un devis avec les bonnes clauses, en 30 secondes</h2>
             <p className="text-gray-400 mb-6 max-w-lg mx-auto text-sm leading-relaxed">
               Deviso génère votre devis avec une clause de périmètre et de révisions adaptées à votre mission. Votre client signe électroniquement, vous êtes couvert.
             </p>
-            <WaitlistButton plan="free" label="Générer mon devis, gratuit" className="inline-block bg-indigo-600 hover:bg-indigo-700 text-white font-semibold px-8 py-3 rounded-xl transition-all" />
+            <WaitlistButton plan="free" label="Générer mon devis, gratuit" className="inline-block bg-indigo-600 hover:bg-indigo-700 text-ink font-semibold px-8 py-3 rounded-xl transition-all" />
           </div>
 
           {/* Métiers */}

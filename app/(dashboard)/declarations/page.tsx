@@ -99,7 +99,7 @@ export default async function Declarations() {
     <div className="max-w-7xl mx-auto">
       <GuidedTourBanner pageKey="declarations" />
       <div>
-        <h1 className="text-2xl font-semibold text-white">Déclarations au fisc</h1>
+        <h1 className="text-2xl font-semibold text-ink">Déclarations au fisc</h1>
         <p className="text-sm text-gray-400 mt-1">
           Ce que la Plateforme Agréée déclare à l&apos;administration en votre nom. Pour tout ce que
           vous facturez, vous n&apos;avez rien à envoyer&nbsp;: transmettre la facture suffit.
@@ -111,14 +111,14 @@ export default async function Declarations() {
 
       {!raccorde ? (
         <section className="bg-ds-surface border border-ds-border rounded-xl p-6 mt-6 text-center">
-          <p className="text-white font-medium mb-1">Vous n&apos;êtes pas encore raccordé</p>
+          <p className="text-ink font-medium mb-1">Vous n&apos;êtes pas encore raccordé</p>
           <p className="text-sm text-gray-400 mb-4 max-w-md mx-auto">
             Les déclarations d&apos;e-reporting sont produites par votre Plateforme Agréée. Sans
             raccordement, il n&apos;y en a aucune.
           </p>
           <a
             href="/profil"
-            className="inline-block px-4 py-2 rounded-lg bg-indigo-600 text-white text-sm font-semibold hover:bg-indigo-700 transition-colors"
+            className="inline-block px-4 py-2 rounded-lg bg-indigo-600 text-ink text-sm font-semibold hover:bg-indigo-700 transition-colors"
           >
             Aller aux paramètres
           </a>
@@ -143,11 +143,11 @@ export default async function Declarations() {
             <div className="grid grid-cols-2 gap-3 mt-6">
               <div className="bg-ds-surface border border-ds-border rounded-xl px-4 py-3">
                 <p className="text-xs text-gray-400">Envoyées</p>
-                <p className="text-xl font-semibold mt-0.5 text-white">{declarations.length}</p>
+                <p className="text-xl font-semibold mt-0.5 text-ink">{declarations.length}</p>
               </div>
               <div className="bg-ds-surface border border-ds-border rounded-xl px-4 py-3">
                 <p className="text-xs text-gray-400">En échec</p>
-                <p className={`text-xl font-semibold mt-0.5 ${aTraiter > 0 ? "text-red-400" : "text-white"}`}>{aTraiter}</p>
+                <p className={`text-xl font-semibold mt-0.5 ${aTraiter > 0 ? "text-red-400" : "text-ink"}`}>{aTraiter}</p>
               </div>
             </div>
           )}
@@ -164,7 +164,7 @@ export default async function Declarations() {
           <div className="bg-ds-surface border border-ds-border rounded-xl px-4 py-4 mt-6">
             <div className="flex flex-wrap items-start justify-between gap-3">
               <div className="max-w-xl">
-                <p className="text-sm text-white font-medium mb-1">Vos achats à l&apos;étranger</p>
+                <p className="text-sm text-ink font-medium mb-1">Vos achats à l&apos;étranger</p>
                 <p className="text-xs text-gray-400 leading-relaxed">
                   Un achat auprès d&apos;un fournisseur hors de France doit être déclaré par vos soins
                   (article 290-II du CGI), sa facture ne passe pas par la Plateforme Agréée.
@@ -185,7 +185,7 @@ export default async function Declarations() {
               </div>
               <a
                 href="/achats-internationaux"
-                className="inline-block px-4 py-2 rounded-lg bg-indigo-600 text-white text-sm font-semibold hover:bg-indigo-700 transition-colors whitespace-nowrap"
+                className="inline-block px-4 py-2 rounded-lg bg-indigo-600 text-ink text-sm font-semibold hover:bg-indigo-700 transition-colors whitespace-nowrap"
               >
                 {achatsTotal > 0 ? "Gérer mes achats" : "Saisir un achat"}
               </a>
@@ -194,12 +194,12 @@ export default async function Declarations() {
 
           {erreur ? (
             <section className="bg-ds-surface border border-red-500/30 rounded-xl p-6 mt-6 text-center">
-              <p className="text-white font-medium mb-1">Impossible de lire vos déclarations</p>
+              <p className="text-ink font-medium mb-1">Impossible de lire vos déclarations</p>
               <p className="text-xs font-mono text-red-400/90 mt-2 break-all">{erreur}</p>
             </section>
           ) : declarations.length === 0 ? (
             <section className="bg-ds-surface border border-ds-border rounded-xl p-6 mt-6 text-center">
-              <p className="text-white font-medium mb-1">Aucune déclaration pour l&apos;instant</p>
+              <p className="text-ink font-medium mb-1">Aucune déclaration pour l&apos;instant</p>
               <p className="text-sm text-gray-400 max-w-lg mx-auto">
                 Les déclarations sont déposées selon un calendrier qui dépend de votre périodicité
                 de TVA. Elles apparaîtront ici une fois envoyées.
@@ -220,7 +220,7 @@ export default async function Declarations() {
                 <tbody>
                   {declarations.map((d) => (
                     <tr key={d.id} className="border-b border-ds-border last:border-0">
-                      <td className="px-4 py-3 text-white">
+                      <td className="px-4 py-3 text-ink">
                         {jour(d.debut)}, {jour(d.fin)}
                       </td>
                       <td className="px-4 py-3 text-gray-400">{d.nature}</td>

@@ -67,21 +67,21 @@ export default function Page() {
       <DonneesStructurees donnees={jsonLdArticle(SLUG, FAQ)} />
 
       {/* Navbar */}
-      <nav className="fixed top-0 left-0 right-0 z-50 bg-ds-bg/80 backdrop-blur-xl border-b border-white/[0.06]">
+      <nav className="fixed top-0 left-0 right-0 z-50 bg-ds-bg/80 backdrop-blur-xl border-b border-ink/[0.06]">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
           <Link href="/" aria-label="Deviso" className="flex items-center gap-2">
             <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-indigo-600 to-violet-600 flex items-center justify-center">
-              <span className="text-white font-semibold text-sm">D</span>
+              <span className="text-ink font-semibold text-sm">D</span>
             </div>
-            <span className="font-semibold text-lg text-white">Deviso</span>
+            <span className="font-semibold text-lg text-ink">Deviso</span>
           </Link>
           <div className="hidden md:flex items-center gap-8 text-sm font-medium">
-            <Link href="/blog" className="text-white font-semibold">Blog</Link>
-            <Link href="/conformite" className="text-gray-400 hover:text-white transition-colors">Conformité</Link>
-            <Link href="/#tarifs" className="text-gray-400 hover:text-white transition-colors">Tarifs</Link>
+            <Link href="/blog" className="text-ink font-semibold">Blog</Link>
+            <Link href="/conformite" className="text-gray-400 hover:text-ink transition-colors">Conformité</Link>
+            <Link href="/#tarifs" className="text-gray-400 hover:text-ink transition-colors">Tarifs</Link>
           </div>
           <div className="hidden md:flex items-center gap-3">
-            <Link href="/login" className="text-sm font-medium text-gray-400 hover:text-white transition-colors">Connexion</Link>
+            <Link href="/login" className="text-sm font-medium text-gray-400 hover:text-ink transition-colors">Connexion</Link>
             <WaitlistButton
               plan="free"
               label="Essayer gratuitement"
@@ -114,7 +114,7 @@ export default function Page() {
                 {a.dureeLecture} min
               </span>
             </div>
-            <h1 className="text-3xl sm:text-4xl font-semibold text-white leading-tight mb-4">{a.h1}</h1>
+            <h1 className="text-3xl sm:text-4xl font-semibold text-ink leading-tight mb-4">{a.h1}</h1>
             <p className="text-lg text-gray-400 leading-relaxed">
               Vous voulez savoir ce que vous risquez vraiment, pas la version anxiogène ni la version périmée.
               Les montants ont changé au 1<sup>er</sup> septembre 2026, et une grande partie du web affiche
@@ -133,24 +133,24 @@ export default function Page() {
                 <li className="flex gap-2">
                   <span className="text-indigo-400 shrink-0">→</span>
                   <span>
-                    Ne pas <strong className="text-white">émettre</strong> au format requis quand
-                    c&apos;est obligatoire : <strong className="text-white">50 € par facture</strong>, dans la
+                    Ne pas <strong className="text-ink">émettre</strong> au format requis quand
+                    c&apos;est obligatoire : <strong className="text-ink">50 € par facture</strong>, dans la
                     limite de 15 000 € par an.
                   </span>
                 </li>
                 <li className="flex gap-2">
                   <span className="text-indigo-400 shrink-0">→</span>
                   <span>
-                    Manquer une transmission d&apos;<strong className="text-white">e-reporting</strong> :
-                    <strong className="text-white"> 500 € par transmission</strong>, également plafonnée à
+                    Manquer une transmission d&apos;<strong className="text-ink">e-reporting</strong> :
+                    <strong className="text-ink"> 500 € par transmission</strong>, également plafonnée à
                     15 000 € par an.
                   </span>
                 </li>
                 <li className="flex gap-2">
                   <span className="text-indigo-400 shrink-0">→</span>
                   <span>
-                    Ne pas pouvoir <strong className="text-white">recevoir</strong> une facture électronique :
-                    <strong className="text-white"> 500 €</strong>, porté à 1 000 € en cas de réitération sous
+                    Ne pas pouvoir <strong className="text-ink">recevoir</strong> une facture électronique :
+                    <strong className="text-ink"> 500 €</strong>, porté à 1 000 € en cas de réitération sous
                     trois mois.
                   </span>
                 </li>
@@ -159,7 +159,7 @@ export default function Page() {
 
             {/* Tableau */}
             <section>
-              <h2 className="text-xl font-semibold text-white mb-4">
+              <h2 className="text-xl font-semibold text-ink mb-4">
                 Le tableau des montants réels
               </h2>
               <p className="mb-5">
@@ -185,7 +185,7 @@ export default function Page() {
                     {SANCTIONS.map((s) => (
                       <tr key={s.manquement} className="border-b border-ds-border last:border-0 align-top">
                         <td className="py-3 pr-4 text-gray-300">{s.manquement}</td>
-                        <td className="py-3 px-3 text-white font-medium">{s.montant}</td>
+                        <td className="py-3 px-3 text-ink font-medium">{s.montant}</td>
                         <td className="py-3 pl-3 text-gray-400">{s.plafond}</td>
                       </tr>
                     ))}
@@ -196,12 +196,12 @@ export default function Page() {
 
             {/* Ce que la LF 2026 a change */}
             <section>
-              <h2 className="text-xl font-semibold text-white mb-4">
+              <h2 className="text-xl font-semibold text-ink mb-4">
                 Ce que la loi de finances 2026 a changé
               </h2>
               <p className="mb-4">
                 Ces montants ne sont pas ceux du texte d&apos;origine. La{" "}
-                <strong className="text-white">loi de finances pour 2026</strong> (loi n° 2026-103 du 19 février
+                <strong className="text-ink">loi de finances pour 2026</strong> (loi n° 2026-103 du 19 février
                 2026, article 123) a relevé les sanctions de la réforme. L&apos;e-reporting est passé de 250 à
                 500 € par manquement, et l&apos;émission de 15 à 50 € par facture.
               </p>
@@ -218,7 +218,7 @@ export default function Page() {
               <div className="flex gap-3 bg-[#14211a] border border-emerald-500/25 rounded-xl p-5">
                 <ShieldCheck size={18} className="shrink-0 mt-0.5 text-emerald-400" />
                 <div>
-                  <p className="font-semibold text-white mb-1">
+                  <p className="font-semibold text-ink mb-1">
                     La tolérance que presque personne ne cite
                   </p>
                   <p className="text-gray-400">
@@ -235,13 +235,13 @@ export default function Page() {
 
             {/* Le plafond */}
             <section>
-              <h2 className="text-xl font-semibold text-white mb-4">
+              <h2 className="text-xl font-semibold text-ink mb-4">
                 Le plafond, et pourquoi il ne rassure pas les petites activités
               </h2>
               <p className="mb-4">
                 Le plafond de 15 000 € par an peut sembler lointain quand on émet quelques factures par mois. Il
                 l&apos;est. Le vrai risque, pour une petite activité, n&apos;est pas d&apos;atteindre ce plafond,
-                c&apos;est le <strong className="text-white">coût unitaire</strong> : un seul manquement, une fois
+                c&apos;est le <strong className="text-ink">coût unitaire</strong> : un seul manquement, une fois
                 la tolérance consommée, coûte souvent plus cher qu&apos;une année entière d&apos;un outil adapté.
               </p>
               <p>
@@ -273,11 +273,11 @@ export default function Page() {
 
             {/* FAQ */}
             <section>
-              <h2 className="text-xl font-semibold text-white mb-6">Questions fréquentes</h2>
+              <h2 className="text-xl font-semibold text-ink mb-6">Questions fréquentes</h2>
               <div className="space-y-4">
                 {FAQ.map(({ q, a: reponse }) => (
                   <div key={q} className="bg-ds-surface rounded-xl border border-ds-border p-6">
-                    <h3 className="text-white font-medium mb-3">{q}</h3>
+                    <h3 className="text-ink font-medium mb-3">{q}</h3>
                     <p className="text-gray-400 text-sm leading-relaxed">{reponse}</p>
                   </div>
                 ))}
@@ -286,7 +286,7 @@ export default function Page() {
 
             {/* Sources */}
             <section>
-              <h2 className="text-xl font-semibold text-white mb-4">Sources</h2>
+              <h2 className="text-xl font-semibold text-ink mb-4">Sources</h2>
               <ul className="space-y-2 text-gray-400">
                 <li>
                   <a
@@ -328,7 +328,7 @@ export default function Page() {
             {/* A lire ensuite */}
             {lectures.length > 0 && (
               <section>
-                <h2 className="text-xl font-semibold text-white mb-6">À lire ensuite</h2>
+                <h2 className="text-xl font-semibold text-ink mb-6">À lire ensuite</h2>
                 <div className="grid gap-4 sm:grid-cols-2">
                   {lectures.map((l) => (
                     <Link
@@ -336,7 +336,7 @@ export default function Page() {
                       href={l.href}
                       className="group bg-ds-surface border border-ds-border rounded-xl p-5 hover:border-indigo-500/40 transition-all"
                     >
-                      <p className="text-white font-medium text-sm leading-snug mb-2 group-hover:text-indigo-200 transition-colors">
+                      <p className="text-ink font-medium text-sm leading-snug mb-2 group-hover:text-indigo-200 transition-colors">
                         {l.titre}
                       </p>
                       <p className="text-gray-500 text-xs leading-relaxed line-clamp-2 mb-3">{l.resume}</p>

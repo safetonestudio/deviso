@@ -79,24 +79,24 @@ const jsonLd = {
 
 export default function CombienFacturerPage() {
   return (
-    <div className="min-h-screen bg-site text-white">
+    <div className="min-h-screen bg-site text-ink">
       <DonneesStructurees donnees={jsonLd} />
 
       {/* ── Navbar ── */}
-      <nav className="sticky top-0 z-40 bg-ds-bg/90 backdrop-blur-xl border-b border-white/[0.06]">
+      <nav className="sticky top-0 z-40 bg-ds-bg/90 backdrop-blur-xl border-b border-ink/[0.06]">
         <div className="max-w-5xl mx-auto px-4 sm:px-6 h-14 flex items-center justify-between">
           <Link href="/" className="flex items-center gap-2">
             <div className="w-7 h-7 rounded-lg bg-gradient-to-br from-indigo-600 to-violet-600 flex items-center justify-center">
-              <span className="text-white font-semibold text-xs">D</span>
+              <span className="text-ink font-semibold text-xs">D</span>
             </div>
-            <span className="font-semibold text-base text-white">Deviso</span>
+            <span className="font-semibold text-base text-ink">Deviso</span>
           </Link>
           <div className="flex items-center gap-4 text-sm">
-            <Link href="/blog" className="text-gray-400 hover:text-white transition-colors hidden sm:block">Blog</Link>
-            <Link href="/login" className="text-gray-400 hover:text-white transition-colors">Connexion</Link>
+            <Link href="/blog" className="text-gray-400 hover:text-ink transition-colors hidden sm:block">Blog</Link>
+            <Link href="/login" className="text-gray-400 hover:text-ink transition-colors">Connexion</Link>
             <Link
               href="/login"
-              className="bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-semibold px-4 py-2 rounded-lg transition-colors"
+              className="bg-indigo-600 hover:bg-indigo-700 text-ink text-sm font-semibold px-4 py-2 rounded-lg transition-colors"
             >
               Essai gratuit
             </Link>
@@ -111,7 +111,7 @@ export default function CombienFacturerPage() {
           <div className="inline-flex items-center gap-2 text-xs font-semibold text-indigo-400 bg-indigo-500/10 border border-indigo-500/20 rounded-full px-3 py-1 mb-4">
             Baromètre Malt 2026 · Données URSSAF
           </div>
-          <h1 className="text-4xl sm:text-5xl font-bold text-white leading-tight mb-4">
+          <h1 className="text-4xl sm:text-5xl font-bold text-ink leading-tight mb-4">
             Combien facturer en freelance ?
           </h1>
           <p className="text-lg text-gray-400 leading-relaxed">
@@ -122,7 +122,7 @@ export default function CombienFacturerPage() {
 
         {/* ── Grille TJM par métier ── */}
         <section>
-          <h2 className="text-2xl font-bold text-white mb-2">TJM par métier en 2026</h2>
+          <h2 className="text-2xl font-bold text-ink mb-2">TJM par métier en 2026</h2>
           <p className="text-sm text-gray-500 mb-6">
             Fourchettes junior / confirmé / senior. Cliquez sur un métier pour le détail complet.
           </p>
@@ -143,7 +143,7 @@ export default function CombienFacturerPage() {
                     <td className="py-3 pr-4">
                       <Link
                         href={`/combien-facturer/${m.slug}`}
-                        className="font-medium text-white group-hover:text-indigo-300 transition-colors"
+                        className="font-medium text-ink group-hover:text-indigo-300 transition-colors"
                       >
                         {m.name}
                       </Link>
@@ -170,13 +170,13 @@ export default function CombienFacturerPage() {
         {/* ── Simulateur général ── */}
         <section className="grid lg:grid-cols-2 gap-8 items-start">
           <div>
-            <h2 className="text-2xl font-bold text-white mb-3">
+            <h2 className="text-2xl font-bold text-ink mb-3">
               De votre TJM à votre revenu net
             </h2>
             <p className="text-gray-400 leading-relaxed mb-4">
-              En <strong className="text-white">micro-BNC</strong> (régime le plus courant pour les
+              En <strong className="text-ink">micro-BNC</strong> (régime le plus courant pour les
               prestations intellectuelles), vous versez{" "}
-              <strong className="text-white">{PCT} % de cotisations URSSAF</strong> sur votre chiffre
+              <strong className="text-ink">{PCT} % de cotisations URSSAF</strong> sur votre chiffre
               d&apos;affaires (
               {(TAUX_COTISATIONS_BNC_CIPAV * 100).toLocaleString("fr-FR", { maximumFractionDigits: 1 })} % si
               vous relevez de la Cipav). Le reste est votre revenu net avant impôt sur le revenu.
@@ -184,15 +184,15 @@ export default function CombienFacturerPage() {
             <div className="space-y-3 text-sm text-gray-400">
               <div className="flex items-start gap-3">
                 <span className="text-indigo-400 font-mono font-bold mt-0.5">1</span>
-                <p><strong className="text-white">TJM × jours facturables</strong> = CA mensuel (comptez ~15 j/mois en moyenne)</p>
+                <p><strong className="text-ink">TJM × jours facturables</strong> = CA mensuel (comptez ~15 j/mois en moyenne)</p>
               </div>
               <div className="flex items-start gap-3">
                 <span className="text-indigo-400 font-mono font-bold mt-0.5">2</span>
-                <p><strong className="text-white">CA × {PCT} %</strong> = cotisations URSSAF à payer chaque trimestre</p>
+                <p><strong className="text-ink">CA × {PCT} %</strong> = cotisations URSSAF à payer chaque trimestre</p>
               </div>
               <div className="flex items-start gap-3">
                 <span className="text-indigo-400 font-mono font-bold mt-0.5">3</span>
-                <p><strong className="text-white">CA − cotisations</strong> = revenu net avant IR (entre 15 et 30 % selon votre tranche)</p>
+                <p><strong className="text-ink">CA − cotisations</strong> = revenu net avant IR (entre 15 et 30 % selon votre tranche)</p>
               </div>
             </div>
           </div>
@@ -201,7 +201,7 @@ export default function CombienFacturerPage() {
 
         {/* ── Pages par métier ── */}
         <section>
-          <h2 className="text-2xl font-bold text-white mb-2">Données détaillées par métier</h2>
+          <h2 className="text-2xl font-bold text-ink mb-2">Données détaillées par métier</h2>
           <p className="text-sm text-gray-500 mb-6">
             TJM par spécialité, erreurs de pricing à éviter, FAQ et simulateur spécifique à chaque profession.
           </p>
@@ -215,7 +215,7 @@ export default function CombienFacturerPage() {
                   className="group flex items-center justify-between gap-3 bg-ds-surface hover:bg-ds-elevated border border-ds-border rounded-xl px-4 py-3.5 transition-all"
                 >
                   <div>
-                    <p className="text-sm font-medium text-white group-hover:text-indigo-300 transition-colors">
+                    <p className="text-sm font-medium text-ink group-hover:text-indigo-300 transition-colors">
                       {m.name}
                     </p>
                     <p className="text-xs text-gray-500 mt-0.5">
@@ -234,7 +234,7 @@ export default function CombienFacturerPage() {
 
         {/* ── Erreurs communes ── */}
         <section className="bg-ds-surface border border-ds-border rounded-2xl p-8">
-          <h2 className="text-xl font-bold text-white mb-6">
+          <h2 className="text-xl font-bold text-ink mb-6">
             Les erreurs universelles de pricing en freelance
           </h2>
           <div className="grid sm:grid-cols-2 gap-4 text-sm text-gray-400">
@@ -259,7 +259,7 @@ export default function CombienFacturerPage() {
               <div key={t} className="flex gap-3">
                 <span className="text-red-400 shrink-0 mt-0.5">×</span>
                 <div>
-                  <p className="font-medium text-white mb-1">{t}</p>
+                  <p className="font-medium text-ink mb-1">{t}</p>
                   <p>{d}</p>
                 </div>
               </div>
@@ -269,7 +269,7 @@ export default function CombienFacturerPage() {
 
         {/* ── CTA ── */}
         <section className="text-center py-4">
-          <h2 className="text-2xl font-bold text-white mb-3">
+          <h2 className="text-2xl font-bold text-ink mb-3">
             Vos devis et factures en 30 secondes
           </h2>
           <p className="text-gray-400 mb-6 max-w-xl mx-auto text-sm leading-relaxed">
@@ -278,7 +278,7 @@ export default function CombienFacturerPage() {
           </p>
           <Link
             href="/login"
-            className="inline-flex items-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold px-6 py-3 rounded-xl transition-colors text-sm"
+            className="inline-flex items-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-ink font-semibold px-6 py-3 rounded-xl transition-colors text-sm"
           >
             Essayer Deviso gratuitement 14 jours →
           </Link>

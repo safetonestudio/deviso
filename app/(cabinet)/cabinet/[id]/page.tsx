@@ -150,13 +150,13 @@ export default async function FicheClient({
 
   return (
     <div>
-      <Link href="/cabinet" className="text-sm text-gray-400 hover:text-white">
+      <Link href="/cabinet" className="text-sm text-gray-400 hover:text-ink">
         ← Portefeuille
       </Link>
 
       <div className="mt-3 mb-6 flex flex-wrap items-start justify-between gap-4">
         <div className="min-w-0">
-          <h1 className="text-2xl font-semibold text-white truncate">{synthese.nom}</h1>
+          <h1 className="text-2xl font-semibold text-ink truncate">{synthese.nom}</h1>
           <div className="mt-2 flex flex-wrap items-center gap-2">
             {synthese.siret && <span className="text-xs text-gray-500">SIRET {synthese.siret}</span>}
             {synthese.raccorde ? (
@@ -175,16 +175,16 @@ export default async function FicheClient({
               key={a}
               href={`/cabinet/${id}?annee=${a}`}
               className={`text-sm px-3 py-1.5 rounded-lg border transition-colors ${
-                a === annee ? "border-indigo-500 text-white" : "border-ds-border text-gray-400 hover:text-white"
+                a === annee ? "border-indigo-500 text-ink" : "border-ds-border text-gray-400 hover:text-ink"
               }`}
             >
               {a}
             </Link>
           ))}
-          <a href={exportUrl("fec")} className="text-sm px-3 py-1.5 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 font-medium transition-colors">
+          <a href={exportUrl("fec")} className="text-sm px-3 py-1.5 bg-indigo-600 text-ink rounded-lg hover:bg-indigo-700 font-medium transition-colors">
             Exporter le FEC {annee}
           </a>
-          <a href={exportUrl("csv")} className="text-sm px-3 py-1.5 border border-ds-border text-gray-300 rounded-lg hover:bg-white/5 font-medium transition-colors">
+          <a href={exportUrl("csv")} className="text-sm px-3 py-1.5 border border-ds-border text-gray-300 rounded-lg hover:bg-ink/5 font-medium transition-colors">
             CSV des factures
           </a>
         </div>
@@ -192,7 +192,7 @@ export default async function FicheClient({
 
       <div className="bg-ds-surface border border-ds-border rounded-xl p-4 mb-6">
         <div className="flex flex-wrap items-baseline justify-between gap-2 mb-3">
-          <h2 className="text-white font-semibold">Conformité à la réforme</h2>
+          <h2 className="text-ink font-semibold">Conformité à la réforme</h2>
           {synthese.conformite.pret ? (
             <span className="text-xs px-2 py-0.5 rounded-full border border-emerald-500/30 bg-emerald-500/10 text-emerald-400">Prêt</span>
           ) : (
@@ -217,7 +217,7 @@ export default async function FicheClient({
 
       {synthese.anomalies.length > 0 && (
         <div className="bg-ds-surface border border-ds-border rounded-xl p-4 mb-6">
-          <h2 className="text-white font-semibold mb-2">À traiter</h2>
+          <h2 className="text-ink font-semibold mb-2">À traiter</h2>
           <ul className="space-y-1.5">
             {synthese.anomalies.map((a) => (
               <li key={a.libelle} className="flex items-start gap-2 text-sm text-gray-300">
@@ -235,14 +235,14 @@ export default async function FicheClient({
         {tuiles.map((t) => (
           <div key={t.label} className="bg-ds-surface border border-ds-border rounded-xl p-4">
             <div className="text-xs text-gray-500">{t.label}</div>
-            <div className="text-xl font-semibold mt-1 text-white">{t.valeur}</div>
+            <div className="text-xl font-semibold mt-1 text-ink">{t.valeur}</div>
           </div>
         ))}
       </div>
 
       <div className="bg-ds-surface border border-ds-border rounded-xl p-4 mb-6">
         <div className="flex flex-wrap items-baseline justify-between gap-2 mb-3">
-          <h2 className="text-white font-semibold">Comparaison avec {annee - 1}</h2>
+          <h2 className="text-ink font-semibold">Comparaison avec {annee - 1}</h2>
           <span className="text-xs text-gray-500">
             {annee === anneeCourante ? "À date, du 1er janvier à aujourd'hui" : "Année complète"}
           </span>
@@ -254,7 +254,7 @@ export default async function FicheClient({
               <div key={c.label} className="bg-ds-bg border border-ds-border rounded-lg p-3">
                 <div className="text-xs text-gray-500">{c.label}</div>
                 <div className="flex items-baseline gap-2 mt-1">
-                  <span className="text-lg font-semibold text-white">{c.fmt(c.actuel)}</span>
+                  <span className="text-lg font-semibold text-ink">{c.fmt(c.actuel)}</span>
                   {ev && <span className={`text-xs font-medium ${ev.ton}`}>{ev.texte}</span>}
                 </div>
                 <div className="text-xs text-gray-500 mt-0.5">{annee - 1} : {c.fmt(c.precedent)}</div>
@@ -266,7 +266,7 @@ export default async function FicheClient({
 
       <div className="bg-ds-surface border border-ds-border rounded-xl mb-6 overflow-hidden">
         <div className="p-4 border-b border-ds-border">
-          <h2 className="text-white font-semibold">TVA collectée par mois</h2>
+          <h2 className="text-ink font-semibold">TVA collectée par mois</h2>
           <p className="text-xs text-gray-500 mt-0.5">Avoirs déduits. Pour une déclaration trimestrielle, additionnez les trois mois.</p>
         </div>
         <div className="overflow-x-auto">
@@ -291,7 +291,7 @@ export default async function FicheClient({
                       {eur(l.parTaux.find((x) => x.taux === t)?.tva ?? 0)}
                     </td>
                   ))}
-                  <td className="px-4 py-2 text-right text-white font-medium">{eur(l.tva)}</td>
+                  <td className="px-4 py-2 text-right text-ink font-medium">{eur(l.tva)}</td>
                 </tr>
               ))}
             </tbody>
@@ -301,7 +301,7 @@ export default async function FicheClient({
 
       <div className="bg-ds-surface border border-ds-border rounded-xl overflow-hidden">
         <div className="p-4 border-b border-ds-border">
-          <h2 className="text-white font-semibold">Factures {annee}</h2>
+          <h2 className="text-ink font-semibold">Factures {annee}</h2>
         </div>
         {factures.length === 0 ? (
           <p className="p-4 text-sm text-gray-500">Aucune facture sur {annee}.</p>

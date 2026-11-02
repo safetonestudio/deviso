@@ -18,10 +18,10 @@ export function Signature() {
     <section className="pt-8 mt-12">
       <div className="flex gap-4">
         <div className="w-11 h-11 rounded-full bg-gradient-to-br from-indigo-600 to-violet-600 flex items-center justify-center shrink-0">
-          <span className="text-white font-semibold text-sm">SA</span>
+          <span className="text-ink font-semibold text-sm">SA</span>
         </div>
         <div className="min-w-0">
-          <p className="text-white font-medium text-sm">
+          <p className="text-ink font-medium text-sm">
             {AUTEUR.nom}
             <span className="text-gray-500 font-normal"> · {AUTEUR.role}</span>
           </p>

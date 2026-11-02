@@ -71,7 +71,7 @@ function Tuile({ libelle, valeur, alerte }: { libelle: string; valeur: string; a
   return (
     <div className="bg-ds-surface border border-ds-border rounded-xl px-4 py-3">
       <p className="text-xs text-gray-400">{libelle}</p>
-      <p className={`text-xl font-semibold mt-0.5 ${alerte ? "text-red-400" : "text-white"}`}>{valeur}</p>
+      <p className={`text-xl font-semibold mt-0.5 ${alerte ? "text-red-400" : "text-ink"}`}>{valeur}</p>
     </div>
   );
 }
@@ -110,14 +110,14 @@ export function FacturesRecuesListe({
               <summary className="flex items-center gap-3 px-4 py-3 cursor-pointer list-none [&::-webkit-details-marker]:hidden hover:bg-ds-elevated/40 transition-colors">
                 <div className="min-w-0 flex-1">
                   <div className="flex items-center gap-2 flex-wrap">
-                    <span className="text-white font-medium truncate">{f.seller_name ?? "-"}</span>
+                    <span className="text-ink font-medium truncate">{f.seller_name ?? "-"}</span>
                     <Puce statut={statut} code={f.last_status_code} />
                   </div>
                   <p className={`text-xs mt-0.5 ${enRetard ? "text-red-400 font-medium" : "text-gray-400"}`}>
                     {enRetard ? "En retard depuis le" : "Échéance"} {jour(f.payment_due_date)}
                   </p>
                 </div>
-                <span className="text-white font-semibold whitespace-nowrap shrink-0">
+                <span className="text-ink font-semibold whitespace-nowrap shrink-0">
                   {euros(f.total_with_vat, f.currency_code)}
                 </span>
                 <svg

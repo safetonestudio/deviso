@@ -95,21 +95,21 @@ export default function FacturationElectronique2026Page() {
       </div>
 
       {/* Navbar */}
-      <nav className="fixed top-9 left-0 right-0 z-50 bg-ds-bg/80 backdrop-blur-xl border-b border-white/[0.06]">
+      <nav className="fixed top-9 left-0 right-0 z-50 bg-ds-bg/80 backdrop-blur-xl border-b border-ink/[0.06]">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
           <Link href="/" className="flex items-center gap-2">
             <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-indigo-600 to-violet-600 flex items-center justify-center">
-              <span className="text-white font-semibold text-sm">D</span>
+              <span className="text-ink font-semibold text-sm">D</span>
             </div>
-            <span className="font-semibold text-lg text-white">Deviso</span>
+            <span className="font-semibold text-lg text-ink">Deviso</span>
           </Link>
           <div className="hidden md:flex items-center gap-8 text-sm font-medium">
-            <Link href="/blog" className="text-gray-400 hover:text-white transition-colors">Blog</Link>
-            <Link href="/#fonctionnalites" className="text-gray-400 hover:text-white transition-colors">Fonctionnalités</Link>
-            <Link href="/#tarifs" className="text-gray-400 hover:text-white transition-colors">Tarifs</Link>
+            <Link href="/blog" className="text-gray-400 hover:text-ink transition-colors">Blog</Link>
+            <Link href="/#fonctionnalites" className="text-gray-400 hover:text-ink transition-colors">Fonctionnalités</Link>
+            <Link href="/#tarifs" className="text-gray-400 hover:text-ink transition-colors">Tarifs</Link>
           </div>
           <div className="hidden md:flex items-center gap-3">
-            <Link href="/login" className="text-sm font-medium text-gray-400 hover:text-white transition-colors">Connexion</Link>
+            <Link href="/login" className="text-sm font-medium text-gray-400 hover:text-ink transition-colors">Connexion</Link>
             <WaitlistButton plan="free" label="Essayer gratuitement" className="bg-white text-black text-sm font-semibold px-4 py-2 rounded-lg hover:bg-zinc-100 transition-colors" />
           </div>
           <NavbarMobile />
@@ -121,9 +121,9 @@ export default function FacturationElectronique2026Page() {
 
         {/* Breadcrumb */}
         <nav className="flex items-center gap-2 text-xs text-gray-400 mb-8">
-          <Link href="/" className="hover:text-white transition-colors">Accueil</Link>
+          <Link href="/" className="hover:text-ink transition-colors">Accueil</Link>
           <span>/</span>
-          <Link href="/blog" className="hover:text-white transition-colors">Blog</Link>
+          <Link href="/blog" className="hover:text-ink transition-colors">Blog</Link>
           <span>/</span>
           <span className="text-gray-400">Réforme 2026</span>
         </nav>
@@ -137,7 +137,7 @@ export default function FacturationElectronique2026Page() {
               {new Date(article(SLUG).misAJourLe).toLocaleDateString("fr-FR", { day: "numeric", month: "long", year: "numeric" })}
             </span>
           </div>
-          <h1 className="text-3xl sm:text-4xl font-bold text-white leading-tight mb-4">
+          <h1 className="text-3xl sm:text-4xl font-bold text-ink leading-tight mb-4">
             Facturation électronique 2026 : le guide complet pour freelances et indépendants
           </h1>
           <p className="text-lg text-gray-400 leading-relaxed">
@@ -157,7 +157,7 @@ export default function FacturationElectronique2026Page() {
           </p>
           <p className="text-sm text-gray-300 leading-relaxed mb-4">
             La réforme n&apos;est plus une échéance à préparer : sa première obligation est entrée en
-            application le <strong className="text-white">1<sup>er</sup> septembre 2026</strong>. Il y
+            application le <strong className="text-ink">1<sup>er</sup> septembre 2026</strong>. Il y
             en a deux, à deux dates différentes, et les confondre est la source de presque toute la
             confusion sur le sujet.
           </p>
@@ -175,7 +175,7 @@ export default function FacturationElectronique2026Page() {
               <p className="text-xs font-semibold text-gray-300 mb-2">ÉMETTRE, selon votre taille</p>
               <p className="text-sm text-gray-400 leading-relaxed">
                 Grandes entreprises et ETI : depuis le 1<sup>er</sup> septembre 2026. TPE, PME et
-                micro-entrepreneurs : <strong className="text-white">1<sup>er</sup> septembre 2027</strong>,
+                micro-entrepreneurs : <strong className="text-ink">1<sup>er</sup> septembre 2027</strong>,
                 avec l&apos;e-reporting en plus pour les opérations B2C.
               </p>
             </div>
@@ -186,12 +186,12 @@ export default function FacturationElectronique2026Page() {
         <div className="bg-[#191830] border border-indigo-500/30 rounded-2xl p-6 mb-10">
           <p className="text-xs font-semibold text-indigo-400 uppercase tracking-wider mb-3">L&apos;essentiel en 30 secondes</p>
           <ul className="space-y-2 text-sm text-gray-300">
-            <li className="flex gap-2"><span className="text-indigo-400 shrink-0">→</span> <span>Une facture électronique au sens de la réforme n&apos;est <strong className="text-white">pas un PDF envoyé par email</strong> : c&apos;est un format structuré qui transite par une plateforme agréée</span></li>
-            <li className="flex gap-2"><span className="text-indigo-400 shrink-0">→</span> <span>Freelances et micro-entrepreneurs : obligation d&apos;<strong className="text-white">émettre</strong> au 1<sup>er</sup> septembre 2027, obligation de <strong className="text-white">recevoir</strong> déjà en vigueur</span></li>
-            <li className="flex gap-2"><span className="text-indigo-400 shrink-0">→</span> <span>La <strong className="text-white">franchise en base de TVA n&apos;exempte de rien</strong> : régime fiscal et obligation de facturation électronique sont indépendants</span></li>
-            <li className="flex gap-2"><span className="text-indigo-400 shrink-0">→</span> <span>Format requis : Factur-X, UBL ou CII, Deviso génère Factur-X <strong className="text-white">nativement</strong></span></li>
-            <li className="flex gap-2"><span className="text-indigo-400 shrink-0">→</span> <span>Le portail public (PPF) n&apos;est <strong className="text-white">plus une plateforme d&apos;échange</strong> : il n&apos;existe aucune option gratuite de l&apos;État</span></li>
-            <li className="flex gap-2"><span className="text-indigo-400 shrink-0">→</span> <span>Amendes depuis le 1<sup>er</sup> septembre 2026 : <strong className="text-white">50 € par facture</strong> non émise en électronique, <strong className="text-white">500 € par transmission</strong> d&apos;e-reporting manquante, plafond 15 000 €/an, et <strong className="text-white">500 € puis 1 000 € tous les 3 mois</strong> si vous ne pouvez pas recevoir</span></li>
+            <li className="flex gap-2"><span className="text-indigo-400 shrink-0">→</span> <span>Une facture électronique au sens de la réforme n&apos;est <strong className="text-ink">pas un PDF envoyé par email</strong> : c&apos;est un format structuré qui transite par une plateforme agréée</span></li>
+            <li className="flex gap-2"><span className="text-indigo-400 shrink-0">→</span> <span>Freelances et micro-entrepreneurs : obligation d&apos;<strong className="text-ink">émettre</strong> au 1<sup>er</sup> septembre 2027, obligation de <strong className="text-ink">recevoir</strong> déjà en vigueur</span></li>
+            <li className="flex gap-2"><span className="text-indigo-400 shrink-0">→</span> <span>La <strong className="text-ink">franchise en base de TVA n&apos;exempte de rien</strong> : régime fiscal et obligation de facturation électronique sont indépendants</span></li>
+            <li className="flex gap-2"><span className="text-indigo-400 shrink-0">→</span> <span>Format requis : Factur-X, UBL ou CII, Deviso génère Factur-X <strong className="text-ink">nativement</strong></span></li>
+            <li className="flex gap-2"><span className="text-indigo-400 shrink-0">→</span> <span>Le portail public (PPF) n&apos;est <strong className="text-ink">plus une plateforme d&apos;échange</strong> : il n&apos;existe aucune option gratuite de l&apos;État</span></li>
+            <li className="flex gap-2"><span className="text-indigo-400 shrink-0">→</span> <span>Amendes depuis le 1<sup>er</sup> septembre 2026 : <strong className="text-ink">50 € par facture</strong> non émise en électronique, <strong className="text-ink">500 € par transmission</strong> d&apos;e-reporting manquante, plafond 15 000 €/an, et <strong className="text-ink">500 € puis 1 000 € tous les 3 mois</strong> si vous ne pouvez pas recevoir</span></li>
           </ul>
         </div>
 
@@ -199,25 +199,25 @@ export default function FacturationElectronique2026Page() {
 
           {/* Section 1 */}
           <section>
-            <h2 className="text-xl font-bold text-white mb-4">1. Qu&apos;est-ce que la réforme de facturation électronique ?</h2>
+            <h2 className="text-xl font-bold text-ink mb-4">1. Qu&apos;est-ce que la réforme de facturation électronique ?</h2>
             <p>
-              La réforme, inscrite dans la loi de finances 2020 et précisée par les ordonnances successives de la DGFiP, impose à toutes les entreprises françaises assujetties à la TVA d&apos;émettre et de recevoir leurs factures B2B (entre professionnels) dans un format électronique structuré, transmis via une <strong className="text-white">Plateforme de Dématérialisation Partenaire (PDP)</strong> agréée par la DGFiP.
+              La réforme, inscrite dans la loi de finances 2020 et précisée par les ordonnances successives de la DGFiP, impose à toutes les entreprises françaises assujetties à la TVA d&apos;émettre et de recevoir leurs factures B2B (entre professionnels) dans un format électronique structuré, transmis via une <strong className="text-ink">Plateforme de Dématérialisation Partenaire (PDP)</strong> agréée par la DGFiP.
             </p>
             <p className="mt-3">
-              Une facture électronique au sens de la réforme, ce n&apos;est <strong className="text-white">pas un PDF envoyé par email</strong>. C&apos;est un document dans un format structuré (données lisibles par une machine) qui transite obligatoirement par une plateforme agréée, laquelle transmet les données fiscales à la DGFiP en temps réel.
+              Une facture électronique au sens de la réforme, ce n&apos;est <strong className="text-ink">pas un PDF envoyé par email</strong>. C&apos;est un document dans un format structuré (données lisibles par une machine) qui transite obligatoirement par une plateforme agréée, laquelle transmet les données fiscales à la DGFiP en temps réel.
             </p>
             <p className="mt-3">
               Deux obligations distinctes coexistent :
             </p>
             <ul className="mt-3 space-y-2">
-              <li className="flex gap-2"><span className="text-indigo-400 shrink-0 font-bold">1.</span> <span><strong className="text-white">L&apos;e-invoicing</strong> : obligation d&apos;émettre et de recevoir les factures B2B en format électronique structuré</span></li>
-              <li className="flex gap-2"><span className="text-indigo-400 shrink-0 font-bold">2.</span> <span><strong className="text-white">L&apos;e-reporting</strong> : obligation de transmettre à la DGFiP les données des transactions B2C (clients particuliers) et des transactions B2B avec des partenaires étrangers</span></li>
+              <li className="flex gap-2"><span className="text-indigo-400 shrink-0 font-bold">1.</span> <span><strong className="text-ink">L&apos;e-invoicing</strong> : obligation d&apos;émettre et de recevoir les factures B2B en format électronique structuré</span></li>
+              <li className="flex gap-2"><span className="text-indigo-400 shrink-0 font-bold">2.</span> <span><strong className="text-ink">L&apos;e-reporting</strong> : obligation de transmettre à la DGFiP les données des transactions B2C (clients particuliers) et des transactions B2B avec des partenaires étrangers</span></li>
             </ul>
           </section>
 
           {/* Section 2 */}
           <section>
-            <h2 className="text-xl font-bold text-white mb-4">2. Calendrier : qui est concerné et quand ?</h2>
+            <h2 className="text-xl font-bold text-ink mb-4">2. Calendrier : qui est concerné et quand ?</h2>
 
             <div className="space-y-4">
               {ECHEANCES.map((row) => {
@@ -239,13 +239,13 @@ export default function FacturationElectronique2026Page() {
                         className={`text-[10px] font-semibold rounded-full px-2 py-0.5 ${
                           enVigueur
                             ? "bg-amber-500/20 text-amber-400"
-                            : "bg-white/[0.06] text-gray-400"
+                            : "bg-ink/[0.06] text-gray-400"
                         }`}
                       >
                         {enVigueur ? "En vigueur" : "À venir"}
                       </span>
                     </div>
-                    <p className="text-sm text-white font-medium">{row.entreprises}</p>
+                    <p className="text-sm text-ink font-medium">{row.entreprises}</p>
                     <p className="text-xs text-gray-500 mt-0.5">{row.obligation}</p>
                   </div>
                 );
@@ -261,21 +261,21 @@ export default function FacturationElectronique2026Page() {
 
           {/* Section 3 */}
           <section>
-            <h2 className="text-xl font-bold text-white mb-4">3. Les formats acceptés : Factur-X, UBL, CII</h2>
+            <h2 className="text-xl font-bold text-ink mb-4">3. Les formats acceptés : Factur-X, UBL, CII</h2>
             <p>
               Trois formats sont reconnus par la réforme française :
             </p>
             <div className="mt-4 space-y-3">
               <div className="bg-ds-surface border border-ds-border rounded-xl p-4">
-                <p className="text-sm font-semibold text-white mb-1">Factur-X (recommandé pour les indépendants)</p>
-                <p className="text-sm">Format hybride : un PDF lisible par l&apos;humain, dans lequel sont intégrées des données XML structurées lisibles par les machines. Développé conjointement par la France et l&apos;Allemagne (norme EN 16931). C&apos;est le format le plus simple à adopter : votre facture ressemble à un PDF normal, mais contient toutes les données structurées. <strong className="text-white">C&apos;est ce que génère Deviso.</strong></p>
+                <p className="text-sm font-semibold text-ink mb-1">Factur-X (recommandé pour les indépendants)</p>
+                <p className="text-sm">Format hybride : un PDF lisible par l&apos;humain, dans lequel sont intégrées des données XML structurées lisibles par les machines. Développé conjointement par la France et l&apos;Allemagne (norme EN 16931). C&apos;est le format le plus simple à adopter : votre facture ressemble à un PDF normal, mais contient toutes les données structurées. <strong className="text-ink">C&apos;est ce que génère Deviso.</strong></p>
               </div>
               <div className="bg-ds-surface border border-ds-border rounded-xl p-4">
-                <p className="text-sm font-semibold text-white mb-1">UBL 2.1 (Universal Business Language)</p>
+                <p className="text-sm font-semibold text-ink mb-1">UBL 2.1 (Universal Business Language)</p>
                 <p className="text-sm">Format XML pur, standard européen. Plus utilisé dans les échanges B2B automatisés entre grands groupes, ERP à ERP. Peu adapté aux indépendants.</p>
               </div>
               <div className="bg-ds-surface border border-ds-border rounded-xl p-4">
-                <p className="text-sm font-semibold text-white mb-1">CII (Cross Industry Invoice)</p>
+                <p className="text-sm font-semibold text-ink mb-1">CII (Cross Industry Invoice)</p>
                 <p className="text-sm">Standard UN/CEFACT, utilisé notamment dans les échanges internationaux. Peu courant pour les TPE françaises.</p>
               </div>
             </div>
@@ -283,12 +283,12 @@ export default function FacturationElectronique2026Page() {
 
           {/* Section 4 */}
           <section>
-            <h2 className="text-xl font-bold text-white mb-4">4. Le portail public (PPF) est abandonné, que se passe-t-il ?</h2>
+            <h2 className="text-xl font-bold text-ink mb-4">4. Le portail public (PPF) est abandonné, que se passe-t-il ?</h2>
             <p>
               En octobre 2024, la DGFiP a officiellement annoncé l&apos;abandon du Portail Public de Facturation (PPF) qu&apos;elle développait initialement. Ce portail gratuit devait permettre à toutes les entreprises d&apos;émettre et de recevoir des e-factures sans passer par une plateforme privée.
             </p>
             <p className="mt-3">
-              Ce changement a une conséquence que peu de contenus énoncent clairement : <strong className="text-white">il n&apos;existe aucune option gratuite fournie par l&apos;État.</strong> Toute entreprise assujettie passe par une <strong className="text-white">plateforme agréée</strong> privée, immatriculée par la DGFiP, on parlait avant de « plateforme de dématérialisation partenaire » (PDP), les deux termes désignent la même chose.
+              Ce changement a une conséquence que peu de contenus énoncent clairement : <strong className="text-ink">il n&apos;existe aucune option gratuite fournie par l&apos;État.</strong> Toute entreprise assujettie passe par une <strong className="text-ink">plateforme agréée</strong> privée, immatriculée par la DGFiP, on parlait avant de « plateforme de dématérialisation partenaire » (PDP), les deux termes désignent la même chose.
             </p>
             <div className="mt-4 bg-[#241d11] border border-amber-500/20 rounded-xl p-4">
               <p className="text-sm text-amber-300">
@@ -299,9 +299,9 @@ export default function FacturationElectronique2026Page() {
 
           {/* Section 5 */}
           <section>
-            <h2 className="text-xl font-bold text-white mb-4">5. Franchise TVA et réforme : une confusion courante</h2>
+            <h2 className="text-xl font-bold text-ink mb-4">5. Franchise TVA et réforme : une confusion courante</h2>
             <p>
-              <strong className="text-white">Mythe fréquent : "Je suis en franchise de TVA, donc je ne suis pas concerné."</strong>
+              <strong className="text-ink">Mythe fréquent : "Je suis en franchise de TVA, donc je ne suis pas concerné."</strong>
             </p>
             <p className="mt-3">
               C&apos;est faux. La franchise en base de TVA (auto-entrepreneurs sous 37 500 € de CA, ou TPE sous seuil) est un régime fiscal. L&apos;obligation de facturation électronique est une obligation administrative distincte.
@@ -315,41 +315,41 @@ export default function FacturationElectronique2026Page() {
               <li className="flex gap-2"><span className="text-indigo-400 shrink-0">✓</span> Recevoir les e-factures de ses fournisseurs/clients qui en émettent</li>
             </ul>
             <p className="mt-3">
-              La seule vraie exemption : les <strong className="text-white">transactions B2C</strong> (avec des particuliers). L&apos;e-invoicing s&apos;applique uniquement aux transactions B2B. Pour les clients particuliers, c&apos;est l&apos;e-reporting qui s&apos;applique (voir{" "}
+              La seule vraie exemption : les <strong className="text-ink">transactions B2C</strong> (avec des particuliers). L&apos;e-invoicing s&apos;applique uniquement aux transactions B2B. Pour les clients particuliers, c&apos;est l&apos;e-reporting qui s&apos;applique (voir{" "}
               <Link href="/blog/e-reporting-freelance-2026" className="text-indigo-400 hover:text-indigo-300 underline">notre article dédié</Link>).
             </p>
           </section>
 
           {/* Section 6 */}
           <section>
-            <h2 className="text-xl font-bold text-white mb-4">6. Ce que vous devez faire, et quand</h2>
+            <h2 className="text-xl font-bold text-ink mb-4">6. Ce que vous devez faire, et quand</h2>
 
             <div className="space-y-4">
               <div className="flex gap-4">
                 <div className="shrink-0 w-8 h-8 rounded-full bg-emerald-500/20 border border-emerald-500/30 flex items-center justify-center text-emerald-400 font-bold text-sm">✓</div>
                 <div>
-                  <p className="text-sm font-semibold text-white">Dès maintenant, Vérifiez votre logiciel de facturation</p>
+                  <p className="text-sm font-semibold text-ink">Dès maintenant, Vérifiez votre logiciel de facturation</p>
                   <p className="text-sm mt-1">Votre outil génère-t-il du Factur-X ? Si vous utilisez Deviso, c&apos;est déjà le cas, vos factures sont conformes au format. Rien à faire de ce côté.</p>
                 </div>
               </div>
               <div className="flex gap-4">
                 <div className="shrink-0 w-8 h-8 rounded-full bg-amber-500/20 border border-amber-500/30 flex items-center justify-center text-amber-400 font-bold text-sm">→</div>
                 <div>
-                  <p className="text-sm font-semibold text-white">Depuis septembre 2026, vous recevez des e-factures</p>
+                  <p className="text-sm font-semibold text-ink">Depuis septembre 2026, vous recevez des e-factures</p>
                   <p className="text-sm mt-1">Si vous avez des clients grandes entreprises, ils vous envoient déjà des e-factures (pour leurs achats chez vous). Deviso les reçoit et les traite automatiquement.</p>
                 </div>
               </div>
               <div className="flex gap-4">
                 <div className="shrink-0 w-8 h-8 rounded-full bg-indigo-500/20 border border-indigo-500/30 flex items-center justify-center text-indigo-400 font-bold text-sm">→</div>
                 <div>
-                  <p className="text-sm font-semibold text-white">Début 2027, Choisissez votre PDP</p>
+                  <p className="text-sm font-semibold text-ink">Début 2027, Choisissez votre PDP</p>
                   <p className="text-sm mt-1">Identifiez la plateforme agréée par laquelle vous transmettrez vos factures. Certains logiciels de facturation intégreront directement une PDP. Deviso est déjà raccordé à une Plateforme Agréée (Super PDP) et émet et reçoit déjà vos factures électroniques.</p>
                 </div>
               </div>
               <div className="flex gap-4">
                 <div className="shrink-0 w-8 h-8 rounded-full bg-indigo-500/20 border border-indigo-500/30 flex items-center justify-center text-indigo-400 font-bold text-sm">→</div>
                 <div>
-                  <p className="text-sm font-semibold text-white">1er septembre 2027, Obligation universelle</p>
+                  <p className="text-sm font-semibold text-ink">1er septembre 2027, Obligation universelle</p>
                   <p className="text-sm mt-1">À cette date, toute facture B2B doit transiter par une PDP. Les factures PDF classiques envoyées par email ne seront plus valides fiscalement.</p>
                 </div>
               </div>
@@ -358,7 +358,7 @@ export default function FacturationElectronique2026Page() {
 
           {/* Section 7 */}
           <section>
-            <h2 className="text-xl font-bold text-white mb-4">7. FAQ</h2>
+            <h2 className="text-xl font-bold text-ink mb-4">7. FAQ</h2>
             <div className="space-y-5">
               {[
                 {
@@ -379,7 +379,7 @@ export default function FacturationElectronique2026Page() {
                 },
               ].map(({ q, a }) => (
                 <div key={q} className="border-b border-ds-border pb-5 last:border-0">
-                  <h3 className="text-sm font-semibold text-white mb-2">{q}</h3>
+                  <h3 className="text-sm font-semibold text-ink mb-2">{q}</h3>
                   <p className="text-sm">{a}</p>
                 </div>
               ))}
@@ -390,11 +390,11 @@ export default function FacturationElectronique2026Page() {
 
         {/* ── Questions fréquentes ── */}
         <section className="mb-12">
-          <h2 className="text-2xl font-semibold text-white mb-6">Questions fréquentes</h2>
+          <h2 className="text-2xl font-semibold text-ink mb-6">Questions fréquentes</h2>
           <div className="space-y-4">
             {FAQ.map(({ q, a }) => (
               <div key={q} className="bg-ds-surface rounded-xl border border-ds-border p-6">
-                <h3 className="text-white font-medium mb-3">{q}</h3>
+                <h3 className="text-ink font-medium mb-3">{q}</h3>
                 <p className="text-gray-400 text-sm leading-relaxed">{a}</p>
               </div>
             ))}
@@ -421,11 +421,11 @@ export default function FacturationElectronique2026Page() {
 
         {/* CTA */}
         <div className="rounded-2xl bg-[#191830] border border-indigo-500/20 p-8 text-center mb-14">
-          <h2 className="text-xl font-bold text-white mb-3">Vos factures sont déjà conformes Factur-X</h2>
+          <h2 className="text-xl font-bold text-ink mb-3">Vos factures sont déjà conformes Factur-X</h2>
           <p className="text-sm text-gray-400 mb-6 max-w-lg mx-auto">
             Deviso génère automatiquement des factures Factur-X EN 16931, le format requis par la réforme. Aucune action de votre part, la conformité est intégrée.
           </p>
-          <WaitlistButton plan="free" label="Essayer Deviso gratuitement →" className="inline-flex items-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold px-6 py-3 rounded-xl transition-colors text-sm" />
+          <WaitlistButton plan="free" label="Essayer Deviso gratuitement →" className="inline-flex items-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-ink font-semibold px-6 py-3 rounded-xl transition-colors text-sm" />
           <Signature />
         </div>
 

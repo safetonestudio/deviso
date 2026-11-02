@@ -21,13 +21,13 @@ interface Props {
 }
 
 export function ProposalPreviewWrapper({ proposal, profile, showBranding, cgvText }: Props) {
-  // Défaut : dark (cohérent avec le SSR, évite le flash)
-  const [isDark, setIsDark] = useState(true);
+  // Défaut : clair, comme le reste de l'app (sombre seulement sur choix explicite)
+  const [isDark, setIsDark] = useState(false);
 
   useEffect(() => {
     // Lire le thème sauvegardé
     const saved = localStorage.getItem("deviso_theme");
-    const initialDark = saved !== "light";
+    const initialDark = saved === "dark";
     setIsDark(initialDark);
 
     // Réagir aux basculements en temps réel (MutationObserver sur <html>)

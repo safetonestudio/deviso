@@ -45,7 +45,7 @@ export function DashboardActionFeed({ items }: { items: ActionItem[] }) {
       <div className="flex items-center gap-3 border border-ds-border rounded-xl px-4 py-3.5 bg-[var(--urgency-ok-bg)]">
         <CircleCheck size={16} className="text-emerald-400 shrink-0" />
         <div>
-          <p className="text-sm font-medium text-white leading-snug">Tout est à jour</p>
+          <p className="text-sm font-medium text-ink leading-snug">Tout est à jour</p>
           <p className="text-xs text-gray-500 mt-0.5">Rien ne réclame ton attention pour l&apos;instant.</p>
         </div>
       </div>
@@ -82,7 +82,7 @@ export function DashboardActionFeed({ items }: { items: ActionItem[] }) {
               <Icon size={14} className={`${cls} shrink-0`} />
 
               <Link href={item.href} className="flex-1 min-w-0 group">
-                <p className="text-sm font-medium text-white group-hover:text-indigo-200 transition-colors leading-snug truncate">
+                <p className="text-sm font-medium text-ink group-hover:text-indigo-200 transition-colors leading-snug truncate">
                   {item.label}
                 </p>
                 <p className="text-xs text-gray-500 mt-0.5 truncate">{item.sublabel}</p>

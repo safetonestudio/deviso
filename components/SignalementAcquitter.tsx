@@ -27,7 +27,7 @@ export function SignalementAcquitter({ id }: { id: string }) {
     <button
       onClick={traiter}
       disabled={busy}
-      className="shrink-0 text-xs px-2.5 py-1.5 border border-ds-border text-gray-300 rounded-lg hover:bg-white/5 font-medium transition-colors disabled:opacity-50"
+      className="shrink-0 text-xs px-2.5 py-1.5 border border-ds-border text-gray-300 rounded-lg hover:bg-ink/5 font-medium transition-colors disabled:opacity-50"
     >
       {busy ? "…" : "Marquer traité"}
     </button>

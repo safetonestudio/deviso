@@ -79,7 +79,7 @@ export function CabinetInvitations() {
 
   return (
     <div className="bg-ds-surface border border-ds-border rounded-xl p-5 mb-6">
-      <h2 className="text-white font-semibold mb-1">Inviter un client</h2>
+      <h2 className="text-ink font-semibold mb-1">Inviter un client</h2>
       <p className="text-gray-500 text-sm mb-4">
         Générez un code et transmettez-le à votre client. Il le saisit une fois dans Deviso, son
         dossier apparaît ici. Chaque code ne sert qu&apos;une fois.
@@ -89,12 +89,12 @@ export function CabinetInvitations() {
           value={libelle}
           onChange={(e) => setLibelle(e.target.value)}
           placeholder="Nom du client (optionnel)"
-          className="flex-1 min-w-[200px] bg-ds-bg border border-ds-border rounded-lg px-3 py-2 text-sm text-white placeholder-gray-600 focus:outline-none focus:border-indigo-500"
+          className="flex-1 min-w-[200px] bg-ds-bg border border-ds-border rounded-lg px-3 py-2 text-sm text-ink placeholder-gray-600 focus:outline-none focus:border-indigo-500"
         />
         <button
           onClick={generer}
           disabled={busy}
-          className="px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 text-sm font-medium disabled:opacity-50 transition-colors"
+          className="px-4 py-2 bg-indigo-600 text-ink rounded-lg hover:bg-indigo-700 text-sm font-medium disabled:opacity-50 transition-colors"
         >
           {busy ? "..." : "Générer un code"}
         </button>
@@ -112,12 +112,12 @@ export function CabinetInvitations() {
                 <div className="text-xs text-gray-500">
                   {inv.libelle || "Client sans nom"} · en attente
                 </div>
-                <code className="text-lg font-mono tracking-widest text-white">{inv.code}</code>
+                <code className="text-lg font-mono tracking-widest text-ink">{inv.code}</code>
               </div>
               <div className="flex items-center gap-2">
                 <button
                   onClick={() => copier(inv.code)}
-                  className="text-xs px-2.5 py-1.5 border border-ds-border rounded-lg text-gray-300 hover:bg-white/5 transition-colors"
+                  className="text-xs px-2.5 py-1.5 border border-ds-border rounded-lg text-gray-300 hover:bg-ink/5 transition-colors"
                 >
                   {copie === inv.code ? "Copié" : "Copier"}
                 </button>

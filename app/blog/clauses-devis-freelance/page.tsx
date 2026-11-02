@@ -240,21 +240,21 @@ export default function Page() {
       </div>
 
       {/* ── Navbar ── */}
-      <nav className="fixed top-9 left-0 right-0 z-50 bg-ds-bg/80 backdrop-blur-xl border-b border-white/[0.06]">
+      <nav className="fixed top-9 left-0 right-0 z-50 bg-ds-bg/80 backdrop-blur-xl border-b border-ink/[0.06]">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
           <Link href="/" aria-label="Deviso" className="flex items-center gap-2">
             <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-indigo-600 to-violet-600 flex items-center justify-center">
-              <span className="text-white font-semibold text-sm">D</span>
+              <span className="text-ink font-semibold text-sm">D</span>
             </div>
-            <span className="font-semibold text-lg text-white">Deviso</span>
+            <span className="font-semibold text-lg text-ink">Deviso</span>
           </Link>
           <div className="hidden md:flex items-center gap-8 text-sm font-medium">
-            <Link href="/blog" className="text-white font-semibold">Blog</Link>
-            <Link href="/#fonctionnalites" className="text-gray-400 hover:text-white transition-colors">Fonctionnalités</Link>
-            <Link href="/#tarifs" className="text-gray-400 hover:text-white transition-colors">Tarifs</Link>
+            <Link href="/blog" className="text-ink font-semibold">Blog</Link>
+            <Link href="/#fonctionnalites" className="text-gray-400 hover:text-ink transition-colors">Fonctionnalités</Link>
+            <Link href="/#tarifs" className="text-gray-400 hover:text-ink transition-colors">Tarifs</Link>
           </div>
           <div className="hidden md:flex items-center gap-3">
-            <Link href="/login" className="text-sm font-medium text-gray-400 hover:text-white transition-colors">Connexion</Link>
+            <Link href="/login" className="text-sm font-medium text-gray-400 hover:text-ink transition-colors">Connexion</Link>
             <WaitlistButton plan="free" label="Essayer gratuitement" className="bg-white text-black text-sm font-semibold px-4 py-2 rounded-lg hover:bg-zinc-100 transition-colors" />
           </div>
           <NavbarMobile />
@@ -267,9 +267,9 @@ export default function Page() {
 
           {/* Breadcrumb */}
           <nav className="flex items-center gap-2 text-xs text-gray-400 mb-8">
-            <Link href="/" className="hover:text-white transition-colors">Accueil</Link>
+            <Link href="/" className="hover:text-ink transition-colors">Accueil</Link>
             <span>/</span>
-            <Link href="/blog" className="hover:text-white transition-colors">Blog</Link>
+            <Link href="/blog" className="hover:text-ink transition-colors">Blog</Link>
             <span>/</span>
             <span className="text-gray-400">Clauses devis freelance</span>
           </nav>
@@ -280,7 +280,7 @@ export default function Page() {
               <span className="text-xs px-2.5 py-1 rounded-full bg-indigo-500/10 text-indigo-300 border border-indigo-500/20 font-medium">Guide complet</span>
               <span className="text-xs text-gray-400">29 juin 2026 · 10 min</span>
             </div>
-            <h1 className="text-3xl sm:text-4xl font-semibold text-white leading-tight mb-4">
+            <h1 className="text-3xl sm:text-4xl font-semibold text-ink leading-tight mb-4">
               Les clauses indispensables dans un devis freelance
             </h1>
             <p className="text-lg text-gray-400 leading-relaxed">
@@ -290,7 +290,7 @@ export default function Page() {
 
           {/* Sommaire */}
           <div className="bg-ds-surface border border-ds-border rounded-2xl p-6 mb-12">
-            <p className="text-sm font-semibold text-white mb-4">Sommaire</p>
+            <p className="text-sm font-semibold text-ink mb-4">Sommaire</p>
             <ol className="space-y-2">
               {clauses.map((c) => (
                 <li key={c.id}>
@@ -321,7 +321,7 @@ export default function Page() {
                 <div className="flex items-baseline gap-4 mb-4">
                   <span className={`font-mono text-2xl font-bold ${numColorMap[clause.color]}`}>{clause.num}</span>
                   <div>
-                    <h2 className="text-xl font-semibold text-white">{clause.title}</h2>
+                    <h2 className="text-xl font-semibold text-ink">{clause.title}</h2>
                     <span className="text-xs text-gray-400">Risque couvert : {clause.risk}</span>
                   </div>
                 </div>
@@ -361,7 +361,7 @@ export default function Page() {
 
           {/* CTA */}
           <div className="mt-16 bg-gradient-to-br from-indigo-900/40 to-violet-900/20 rounded-2xl border border-indigo-500/20 p-8 text-center">
-            <h2 className="text-2xl font-semibold text-white mb-3">
+            <h2 className="text-2xl font-semibold text-ink mb-3">
               Intégrez ces clauses dans vos devis en 30 secondes
             </h2>
             <p className="text-gray-400 mb-6 max-w-lg mx-auto text-sm leading-relaxed">
@@ -370,17 +370,17 @@ export default function Page() {
             <WaitlistButton
               plan="free"
               label="Générer mon premier devis, gratuit"
-              className="inline-block bg-indigo-600 hover:bg-indigo-700 text-white font-semibold px-8 py-3 rounded-xl transition-all shadow-lg shadow-indigo-900/50"
+              className="inline-block bg-indigo-600 hover:bg-indigo-700 text-ink font-semibold px-8 py-3 rounded-xl transition-all shadow-lg shadow-indigo-900/50"
             />
           </div>
 
           {/* FAQ */}
           <div className="mt-16">
-            <h2 className="text-xl font-semibold text-white mb-6">Questions fréquentes</h2>
+            <h2 className="text-xl font-semibold text-ink mb-6">Questions fréquentes</h2>
             <div className="space-y-4">
               {FAQ.map((item) => (
                 <div key={item.q} className="bg-ds-surface border border-ds-border rounded-xl p-5">
-                  <p className="font-medium text-white text-sm mb-2">{item.q}</p>
+                  <p className="font-medium text-ink text-sm mb-2">{item.q}</p>
                   <p className="text-gray-400 text-sm leading-relaxed">{item.a}</p>
                 </div>
               ))}

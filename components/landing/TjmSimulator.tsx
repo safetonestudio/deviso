@@ -47,7 +47,7 @@ export function TjmSimulator({ defaultTjm = 350, defaultJours = 15 }: TjmSimulat
     <div className="rounded-2xl border border-indigo-500/20 bg-[#191830] p-6 space-y-6">
       {/* Header */}
       <div>
-        <h3 className="text-base font-semibold text-white mb-1">Simulateur de revenus</h3>
+        <h3 className="text-base font-semibold text-ink mb-1">Simulateur de revenus</h3>
         <p className="text-sm text-gray-500">
           Micro-entrepreneur BNC · cotisations {(TAUX_COTISATIONS_BNC * 100).toLocaleString("fr-FR", { minimumFractionDigits: 1 })} %
         </p>
@@ -59,7 +59,7 @@ export function TjmSimulator({ defaultTjm = 350, defaultJours = 15 }: TjmSimulat
           onClick={() => setMode("tjm-to-revenu")}
           className={`flex-1 text-xs font-medium py-2 rounded-lg transition-all ${
             mode === "tjm-to-revenu"
-              ? "bg-indigo-600 text-white"
+              ? "bg-indigo-600 text-ink"
               : "text-gray-400 hover:text-gray-200"
           }`}
         >
@@ -69,7 +69,7 @@ export function TjmSimulator({ defaultTjm = 350, defaultJours = 15 }: TjmSimulat
           onClick={() => setMode("revenu-to-tjm")}
           className={`flex-1 text-xs font-medium py-2 rounded-lg transition-all ${
             mode === "revenu-to-tjm"
-              ? "bg-indigo-600 text-white"
+              ? "bg-indigo-600 text-ink"
               : "text-gray-400 hover:text-gray-200"
           }`}
         >
@@ -91,7 +91,7 @@ export function TjmSimulator({ defaultTjm = 350, defaultJours = 15 }: TjmSimulat
               step={10}
               value={tjm}
               onChange={(e) => handleTjm(e.target.value)}
-              className="w-full bg-gray-900/80 border border-ds-border rounded-xl px-4 py-3 text-white text-lg font-semibold focus:outline-none focus:border-indigo-500 tabular-nums"
+              className="w-full bg-gray-900/80 border border-ds-border rounded-xl px-4 py-3 text-ink text-lg font-semibold focus:outline-none focus:border-indigo-500 tabular-nums"
             />
           </div>
         ) : (
@@ -106,7 +106,7 @@ export function TjmSimulator({ defaultTjm = 350, defaultJours = 15 }: TjmSimulat
               step={100}
               value={netCible}
               onChange={(e) => handleNet(e.target.value)}
-              className="w-full bg-gray-900/80 border border-ds-border rounded-xl px-4 py-3 text-white text-lg font-semibold focus:outline-none focus:border-indigo-500 tabular-nums"
+              className="w-full bg-gray-900/80 border border-ds-border rounded-xl px-4 py-3 text-ink text-lg font-semibold focus:outline-none focus:border-indigo-500 tabular-nums"
             />
           </div>
         )}
@@ -137,7 +137,7 @@ export function TjmSimulator({ defaultTjm = 350, defaultJours = 15 }: TjmSimulat
         <div className="grid grid-cols-2 gap-3">
           <div className="bg-gray-900/60 rounded-xl p-4 border border-ds-border">
             <p className="text-xs text-gray-500 mb-1">CA mensuel</p>
-            <p className="text-xl font-bold text-white tabular-nums">{fmt(r1.caMensuel)}</p>
+            <p className="text-xl font-bold text-ink tabular-nums">{fmt(r1.caMensuel)}</p>
           </div>
           <div className="bg-gray-900/60 rounded-xl p-4 border border-ds-border">
             <p className="text-xs text-gray-500 mb-1">Cotisations URSSAF</p>
@@ -157,7 +157,7 @@ export function TjmSimulator({ defaultTjm = 350, defaultJours = 15 }: TjmSimulat
           </div>
           <div className="bg-gray-900/60 rounded-xl p-4 border border-ds-border">
             <p className="text-xs text-gray-500 mb-1">CA mensuel requis</p>
-            <p className="text-xl font-bold text-white tabular-nums">{fmt(r2.caMensuelRequis)}</p>
+            <p className="text-xl font-bold text-ink tabular-nums">{fmt(r2.caMensuelRequis)}</p>
           </div>
           <div className="bg-gray-900/60 rounded-xl p-4 border border-ds-border">
             <p className="text-xs text-gray-500 mb-1">Cotisations URSSAF</p>

@@ -154,7 +154,7 @@ export default function BillingPage() {
   return (
     <div className="max-w-2xl mx-auto">
       <GuidedTourBanner pageKey="billing" />
-      <h1 className="text-3xl font-semibold text-white tracking-tight mb-1">Abonnement</h1>
+      <h1 className="text-3xl font-semibold text-ink tracking-tight mb-1">Abonnement</h1>
       <p className="text-gray-500 text-sm mb-8">Gérez votre plan et votre facturation.</p>
 
       {searchParams.get("upgraded") === "1" && (
@@ -166,7 +166,7 @@ export default function BillingPage() {
 
       {confirmation && (
         <div className="bg-amber-500/10 border border-amber-500/30 rounded-xl px-5 py-4 mb-6">
-          <p className="font-semibold text-white mb-1 flex items-center gap-2">
+          <p className="font-semibold text-ink mb-1 flex items-center gap-2">
             <TriangleAlert size={17} className="shrink-0 text-amber-400" />
             Confirmer le passage à Solo
           </p>
@@ -273,7 +273,7 @@ export default function BillingPage() {
               <button
                 onClick={() => setBilling("monthly")}
                 className={`text-xs font-medium px-3 py-1.5 rounded-md transition-colors ${
-                  billing === "monthly" ? "bg-ds-surface text-white" : "text-gray-500 hover:text-gray-300"
+                  billing === "monthly" ? "bg-ds-surface text-ink" : "text-gray-500 hover:text-gray-300"
                 }`}
               >
                 Mensuel
@@ -281,7 +281,7 @@ export default function BillingPage() {
               <button
                 onClick={() => setBilling("annual")}
                 className={`text-xs font-medium px-3 py-1.5 rounded-md transition-colors flex items-center gap-1.5 ${
-                  billing === "annual" ? "bg-ds-surface text-white" : "text-gray-500 hover:text-gray-300"
+                  billing === "annual" ? "bg-ds-surface text-ink" : "text-gray-500 hover:text-gray-300"
                 }`}
               >
                 Annuel
@@ -313,7 +313,7 @@ export default function BillingPage() {
             {(
               <div className="flex items-center justify-between border border-indigo-500/30 bg-indigo-950/50 rounded-xl px-5 py-4">
                 <div>
-                  <p className="font-semibold text-white">
+                  <p className="font-semibold text-ink">
                     Solo à {prices.solo}<span className="text-gray-400 font-normal text-sm">/mois</span>
                     {billing === "annual" && (
                       <span className="text-xs text-gray-500 ml-2">({ANNUAL_TOTAL.solo}/an)</span>
@@ -324,7 +324,7 @@ export default function BillingPage() {
                 <button
                   onClick={() => handleUpgrade("solo")}
                   disabled={acting}
-                  className="bg-indigo-600 text-white text-sm font-semibold px-5 py-2.5 rounded-xl hover:bg-indigo-700 transition-colors shrink-0 disabled:opacity-50"
+                  className="bg-indigo-600 text-ink text-sm font-semibold px-5 py-2.5 rounded-xl hover:bg-indigo-700 transition-colors shrink-0 disabled:opacity-50"
                 >
                   {acting
                     ? "Un instant…"
@@ -339,7 +339,7 @@ export default function BillingPage() {
             <div className="flex items-center justify-between border border-violet-500/30 bg-violet-950/50 rounded-xl px-5 py-4">
               <div>
                 <div className="flex items-center gap-2 mb-0.5">
-                  <p className="font-semibold text-white">
+                  <p className="font-semibold text-ink">
                     Pro à {prices.pro}<span className="text-gray-400 font-normal text-sm">/mois</span>
                     {billing === "annual" && (
                       <span className="text-xs text-gray-500 ml-2">({ANNUAL_TOTAL.pro}/an)</span>
@@ -353,7 +353,7 @@ export default function BillingPage() {
               <button
                 onClick={() => handleUpgrade("pro")}
                 disabled={acting}
-                className="bg-violet-600 text-white text-sm font-semibold px-5 py-2.5 rounded-xl hover:bg-violet-700 transition-colors shrink-0 disabled:opacity-50"
+                className="bg-violet-600 text-ink text-sm font-semibold px-5 py-2.5 rounded-xl hover:bg-violet-700 transition-colors shrink-0 disabled:opacity-50"
               >
                 {acting
                   ? "Un instant…"

@@ -118,24 +118,24 @@ export default function ChecklistReforme2026Page() {
       <DonneesStructurees donnees={jsonLdArticle(SLUG)} />
 
       <div className="fixed top-0 left-0 right-0 bg-indigo-950/95 backdrop-blur-sm border-b border-indigo-500/20 py-2 px-4 text-center text-sm" style={{ zIndex: 60 }}>
-        <span className="text-white font-semibold">1er septembre 2026&nbsp;:</span>
+        <span className="text-ink font-semibold">1er septembre 2026&nbsp;:</span>
         <span className="text-gray-300 ml-1.5">Grandes entreprises → e-facturation obligatoire. Toutes → obligation de réception.</span>
       </div>
 
-      <nav className="fixed top-9 left-0 right-0 z-50 bg-ds-bg/80 backdrop-blur-xl border-b border-white/[0.06]">
+      <nav className="fixed top-9 left-0 right-0 z-50 bg-ds-bg/80 backdrop-blur-xl border-b border-ink/[0.06]">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
           <Link href="/" className="flex items-center gap-2">
             <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-indigo-600 to-violet-600 flex items-center justify-center">
-              <span className="text-white font-semibold text-sm">D</span>
+              <span className="text-ink font-semibold text-sm">D</span>
             </div>
-            <span className="font-semibold text-lg text-white">Deviso</span>
+            <span className="font-semibold text-lg text-ink">Deviso</span>
           </Link>
           <div className="hidden md:flex items-center gap-8 text-sm font-medium">
-            <Link href="/blog" className="text-gray-400 hover:text-white transition-colors">Blog</Link>
-            <Link href="/#fonctionnalites" className="text-gray-400 hover:text-white transition-colors">Fonctionnalités</Link>
+            <Link href="/blog" className="text-gray-400 hover:text-ink transition-colors">Blog</Link>
+            <Link href="/#fonctionnalites" className="text-gray-400 hover:text-ink transition-colors">Fonctionnalités</Link>
           </div>
           <div className="hidden md:flex items-center gap-3">
-            <Link href="/login" className="text-sm font-medium text-gray-400 hover:text-white transition-colors">Connexion</Link>
+            <Link href="/login" className="text-sm font-medium text-gray-400 hover:text-ink transition-colors">Connexion</Link>
             <WaitlistButton plan="free" label="Essayer gratuitement" className="bg-white text-black text-sm font-semibold px-4 py-2 rounded-lg hover:bg-zinc-100 transition-colors" />
           </div>
           <NavbarMobile />
@@ -144,11 +144,11 @@ export default function ChecklistReforme2026Page() {
 
       <main className="max-w-3xl mx-auto px-4 sm:px-6 pt-36 pb-20">
         <nav className="flex items-center gap-2 text-xs text-gray-400 mb-8">
-          <Link href="/" className="hover:text-white transition-colors">Accueil</Link>
+          <Link href="/" className="hover:text-ink transition-colors">Accueil</Link>
           <span>/</span>
-          <Link href="/blog" className="hover:text-white transition-colors">Blog</Link>
+          <Link href="/blog" className="hover:text-ink transition-colors">Blog</Link>
           <span>/</span>
-          <Link href="/blog/facturation-electronique-2026" className="hover:text-white transition-colors">Réforme 2026</Link>
+          <Link href="/blog/facturation-electronique-2026" className="hover:text-ink transition-colors">Réforme 2026</Link>
           <span>/</span>
           <span className="text-gray-400">Checklist</span>
         </nav>
@@ -158,7 +158,7 @@ export default function ChecklistReforme2026Page() {
             <span className="text-xs font-semibold text-indigo-400 bg-indigo-500/10 border border-indigo-500/20 rounded-full px-3 py-1">Réforme 2026 · Checklist</span>
             <span className="text-xs text-gray-400">10 min · Mis à jour juillet 2026</span>
           </div>
-          <h1 className="text-3xl sm:text-4xl font-bold text-white leading-tight mb-4">
+          <h1 className="text-3xl sm:text-4xl font-bold text-ink leading-tight mb-4">
             Checklist réforme facturation 2026 : 7 points à vérifier pour être prêt
           </h1>
           <p className="text-lg text-gray-400 leading-relaxed">
@@ -169,7 +169,7 @@ export default function ChecklistReforme2026Page() {
         {/* Score global */}
         <div className="mb-10 bg-ds-surface border border-ds-border rounded-2xl p-6">
           <div className="flex items-center justify-between mb-4">
-            <h2 className="text-base font-semibold text-white">Votre score de préparation</h2>
+            <h2 className="text-base font-semibold text-ink">Votre score de préparation</h2>
             <span className="text-xs text-gray-500">7 points à cocher</span>
           </div>
           <div className="h-2 bg-ds-elevated rounded-full overflow-hidden">
@@ -214,10 +214,10 @@ export default function ChecklistReforme2026Page() {
                       item.urgency === "high" ? "bg-red-500/60" : item.urgency === "medium" ? "bg-amber-500/60" : "bg-indigo-500/40"
                     }`}
                   />
-                  <span className="text-2xl font-bold text-white/10 leading-none tabular-nums">{item.num}</span>
+                  <span className="text-2xl font-bold text-ink/10 leading-none tabular-nums">{item.num}</span>
                 </div>
                 <div className="flex-1 min-w-0">
-                  <h3 className="text-sm font-bold text-white mb-1.5">{item.title}</h3>
+                  <h3 className="text-sm font-bold text-ink mb-1.5">{item.title}</h3>
                   <p className="text-sm text-gray-400">{item.description}</p>
                 </div>
               </div>
@@ -243,7 +243,7 @@ export default function ChecklistReforme2026Page() {
 
         {/* Récapitulatif des échéances */}
         <section className="mb-14">
-          <h2 className="text-xl font-bold text-white mb-5">Récapitulatif des échéances</h2>
+          <h2 className="text-xl font-bold text-ink mb-5">Récapitulatif des échéances</h2>
           <div className="bg-ds-surface border border-ds-border rounded-2xl overflow-hidden">
             <div className="divide-y divide-ds-border text-sm">
               {[
@@ -254,7 +254,7 @@ export default function ChecklistReforme2026Page() {
                 <div key={date} className="flex gap-4 px-5 py-4">
                   <span className="font-semibold text-indigo-300 shrink-0 min-w-[120px]">{date}</span>
                   <div>
-                    <p className="text-white">{action}</p>
+                    <p className="text-ink">{action}</p>
                     {extra && <p className="text-gray-500 text-xs mt-0.5">{extra}</p>}
                   </div>
                 </div>
@@ -282,11 +282,11 @@ export default function ChecklistReforme2026Page() {
         </div>
 
         <div className="rounded-2xl bg-[#191830] border border-indigo-500/20 p-8 text-center mb-14">
-          <h2 className="text-xl font-bold text-white mb-3">Préparez-vous sans stress avec Deviso</h2>
+          <h2 className="text-xl font-bold text-ink mb-3">Préparez-vous sans stress avec Deviso</h2>
           <p className="text-sm text-gray-400 mb-6 max-w-lg mx-auto">
             Deviso génère déjà des factures Factur-X au profil EN 16931 et, raccordé à une Plateforme Agréée (Super PDP), émet et reçoit déjà vos factures électroniques en conformité avec la réforme. Essayez gratuitement pendant 14 jours, sans carte bancaire.
           </p>
-          <WaitlistButton plan="free" label="Essayer Deviso gratuitement →" className="inline-flex items-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold px-6 py-3 rounded-xl transition-colors text-sm" />
+          <WaitlistButton plan="free" label="Essayer Deviso gratuitement →" className="inline-flex items-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-ink font-semibold px-6 py-3 rounded-xl transition-colors text-sm" />
           <p className="text-xs text-gray-400 mt-3">Factur-X inclus · Plateforme Agréée raccordée · E-reporting géré automatiquement</p>
           <Signature />
         </div>

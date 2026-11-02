@@ -111,7 +111,7 @@ export function RechercheEntreprise({
               type="button"
               onClick={chercher}
               disabled={chargement || !nom.trim()}
-              className="px-3 py-1.5 rounded-md bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-semibold disabled:opacity-50 transition-colors"
+              className="px-3 py-1.5 rounded-md bg-indigo-600 hover:bg-indigo-700 text-ink text-xs font-semibold disabled:opacity-50 transition-colors"
             >
               {chargement ? "…" : "Chercher"}
             </button>
@@ -129,7 +129,7 @@ export function RechercheEntreprise({
               }}
               className="block w-full text-left px-2 py-1.5 rounded-md hover:bg-ds-surface transition-colors"
             >
-              <span className="text-sm text-white">{e.nom}</span>
+              <span className="text-sm text-ink">{e.nom}</span>
               <span className="block text-xs text-gray-500">
                 {e.siren} · {e.code_postal} {e.ville}
               </span>

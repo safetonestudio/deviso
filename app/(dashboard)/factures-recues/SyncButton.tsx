@@ -54,7 +54,7 @@ export function SyncButton({ derniere }: { derniere: string | null }) {
       <button
         onClick={relire}
         disabled={enCours}
-        className="px-3 py-2 rounded-lg border border-ds-border text-gray-300 hover:text-white hover:bg-ds-elevated text-sm font-medium transition-colors disabled:opacity-60"
+        className="px-3 py-2 rounded-lg border border-ds-border text-gray-300 hover:text-ink hover:bg-ds-elevated text-sm font-medium transition-colors disabled:opacity-60"
       >
         {enCours ? "Vérification…" : "Vérifier maintenant"}
       </button>

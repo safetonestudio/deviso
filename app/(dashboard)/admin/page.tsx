@@ -61,7 +61,7 @@ export default async function Pilotage() {
   return (
     <div className="max-w-7xl mx-auto">
       <div className="mb-6">
-        <h1 className="text-2xl font-semibold text-white">Pilotage</h1>
+        <h1 className="text-2xl font-semibold text-ink">Pilotage</h1>
         <p className="text-sm text-gray-400 mt-1">
           Comptes réels uniquement (démos exclues). Compteurs et états seulement, jamais le contenu des documents.
         </p>
@@ -81,7 +81,7 @@ export default async function Pilotage() {
         ].map(([libelle, valeur]) => (
           <div key={libelle as string} className="bg-ds-surface border border-ds-border rounded-xl p-4">
             <p className="text-xs text-gray-400">{libelle}</p>
-            <p className="text-2xl font-semibold text-white tabular-nums mt-1">{valeur}</p>
+            <p className="text-2xl font-semibold text-ink tabular-nums mt-1">{valeur}</p>
           </div>
         ))}
       </div>
@@ -106,7 +106,7 @@ export default async function Pilotage() {
               return (
                 <tr key={l.user_id} className="border-b border-ds-border last:border-0 align-top">
                   <td className="px-4 py-3">
-                    <span className="text-white">{l.entreprise || "Sans nom"}</span>
+                    <span className="text-ink">{l.entreprise || "Sans nom"}</span>
                     <span className="block text-xs text-gray-500">{l.email}</span>
                   </td>
                   <td className="px-4 py-3 text-gray-300 whitespace-nowrap">

@@ -29,9 +29,9 @@ export function SiteFooter() {
           <div>
             <div className="flex items-center gap-2 mb-3">
               <div className="w-7 h-7 rounded-md bg-gradient-to-br from-indigo-600 to-violet-600 flex items-center justify-center">
-                <span className="text-white font-semibold text-xs">D</span>
+                <span className="text-ink font-semibold text-xs">D</span>
               </div>
-              <span className="font-semibold text-white">Deviso</span>
+              <span className="font-semibold text-ink">Deviso</span>
             </div>
             <p className="text-sm max-w-xs leading-relaxed">
               Du devis à la facture Factur-X, pour les freelances et petites équipes en France. 🇫🇷
@@ -40,7 +40,7 @@ export function SiteFooter() {
 
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-8 text-sm">
             <div>
-              <div className="text-white font-semibold mb-3">Produit</div>
+              <div className="text-ink font-semibold mb-3">Produit</div>
               <ul className="space-y-2">
                 <li><Link href="/#fonctionnalites" className="hover:text-gray-300 transition-colors">Fonctionnalités</Link></li>
                 <li><Link href="/#tarifs" className="hover:text-gray-300 transition-colors">Tarifs</Link></li>
@@ -50,7 +50,7 @@ export function SiteFooter() {
             </div>
 
             <div>
-              <div className="text-white font-semibold mb-3">Ressources</div>
+              <div className="text-ink font-semibold mb-3">Ressources</div>
               <ul className="space-y-2">
                 <li><Link href="/conformite" className="hover:text-gray-300 transition-colors">Conformité 2026</Link></li>
                 <li><Link href="/a-propos" className="hover:text-gray-300 transition-colors">À propos</Link></li>
@@ -70,7 +70,7 @@ export function SiteFooter() {
             </div>
 
             <div>
-              <div className="text-white font-semibold mb-3">Métiers</div>
+              <div className="text-ink font-semibold mb-3">Métiers</div>
               <ul className="space-y-2">
                 {METIERS_LANDING.map((m) => (
                   <li key={m.landing}>
@@ -81,7 +81,7 @@ export function SiteFooter() {
             </div>
 
             <div>
-              <div className="text-white font-semibold mb-3">Légal</div>
+              <div className="text-ink font-semibold mb-3">Légal</div>
               <ul className="space-y-2">
                 <li><Link href="/cgu" className="hover:text-gray-300 transition-colors">CGU</Link></li>
                 <li><Link href="/confidentialite" className="hover:text-gray-300 transition-colors">Confidentialité</Link></li>

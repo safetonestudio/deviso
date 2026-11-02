@@ -191,7 +191,7 @@ export default function CRMPage() {
     return (
       <div className="max-w-lg mx-auto mt-24 text-center space-y-4">
         <Users size={36} className="mx-auto text-gray-600" />
-        <h1 className="text-2xl font-semibold text-white">Clients & Revenus</h1>
+        <h1 className="text-2xl font-semibold text-ink">Clients & Revenus</h1>
         <p className="text-gray-400">
           L&apos;historique complet par client est réservé aux plans payants.
         </p>
@@ -216,7 +216,7 @@ export default function CRMPage() {
       <GuidedTourBanner pageKey="crm" />
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-semibold text-white tracking-tight">Clients & Revenus</h1>
+          <h1 className="text-3xl font-semibold text-ink tracking-tight">Clients & Revenus</h1>
           <p className="text-sm text-gray-500 mt-1">Vue d&apos;ensemble et historique par client</p>
         </div>
       </div>
@@ -247,7 +247,7 @@ export default function CRMPage() {
         placeholder="Rechercher un client, email, société…"
         value={search}
         onChange={(e) => setSearch(e.target.value)}
-        className="w-full px-4 py-2.5 bg-ds-bg border border-ds-border rounded-lg text-sm focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500/30 text-white placeholder:text-gray-600"
+        className="w-full px-4 py-2.5 bg-ds-bg border border-ds-border rounded-lg text-sm focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500/30 text-ink placeholder:text-gray-600"
       />
 
       {filtered.length === 0 ? (
@@ -255,7 +255,7 @@ export default function CRMPage() {
           <Users size={32} className="mx-auto mb-3 text-gray-600" />
           <p className="text-gray-400 font-medium">Aucun client trouvé</p>
           <p className="text-sm text-gray-500 mt-1">Vos clients apparaîtront ici dès que vous créerez un devis ou une facture.</p>
-          <Link href="/proposals/new" className="inline-block mt-4 px-4 py-2 bg-indigo-600 text-white text-sm font-medium rounded-lg hover:bg-indigo-700">
+          <Link href="/proposals/new" className="inline-block mt-4 px-4 py-2 bg-indigo-600 text-ink text-sm font-medium rounded-lg hover:bg-indigo-700">
             Créer un devis
           </Link>
         </div>
@@ -279,12 +279,12 @@ export default function CRMPage() {
             >
               <div className="flex items-start justify-between gap-3">
                 <div className="min-w-0">
-                  <div className="font-medium text-white truncate">{c.name}</div>
+                  <div className="font-medium text-ink truncate">{c.name}</div>
                   {c.company && <div className="text-xs text-gray-500 truncate">{c.company}</div>}
                   {c.email && <div className="text-xs text-gray-500 truncate">{c.email}</div>}
                 </div>
                 <div className="text-right shrink-0">
-                  <div className="font-semibold text-white whitespace-nowrap">{fmt(c.ca_total)}</div>
+                  <div className="font-semibold text-ink whitespace-nowrap">{fmt(c.ca_total)}</div>
                   <div className="text-[11px] text-gray-500">encaissé</div>
                 </div>
               </div>
@@ -333,7 +333,7 @@ export default function CRMPage() {
                   className="hover:bg-ds-elevated/50 cursor-pointer transition-colors"
                 >
                   <td className="px-4 py-3">
-                    <div className="font-medium text-white">{c.name}</div>
+                    <div className="font-medium text-ink">{c.name}</div>
                     {c.company && <div className="text-xs text-gray-500">{c.company}</div>}
                     {c.email && <div className="text-xs text-gray-500">{c.email}</div>}
                   </td>
@@ -342,7 +342,7 @@ export default function CRMPage() {
                     <span className={c.nb_signed > 0 ? "text-emerald-400 font-semibold" : "text-gray-500"}>{c.nb_signed}</span>
                   </td>
                   <td className="px-4 py-3 text-center text-gray-300">{c.nb_invoices}</td>
-                  <td className="px-4 py-3 text-right font-semibold text-white">{fmt(c.ca_total)}</td>
+                  <td className="px-4 py-3 text-right font-semibold text-ink">{fmt(c.ca_total)}</td>
                   <td className="px-4 py-3 text-right text-gray-500 text-xs">{fmtDate(c.last_activity)}</td>
                 </tr>
               ))}
@@ -358,7 +358,7 @@ export default function CRMPage() {
           <div className="w-full max-w-lg bg-ds-surface border-l border-ds-border shadow-xl flex flex-col h-full overflow-hidden">
             <div className="px-6 py-5 border-b border-ds-border flex items-start justify-between">
               <div className="flex-1 min-w-0">
-                <h2 className="text-lg font-semibold text-white">{selected.name}</h2>
+                <h2 className="text-lg font-semibold text-ink">{selected.name}</h2>
                 {selected.company && <p className="text-sm text-gray-400">{selected.company}</p>}
                 {selected.email && <p className="text-sm text-gray-500">{selected.email}</p>}
 
@@ -377,7 +377,7 @@ export default function CRMPage() {
                           if (e.key === "Escape") setEditingPhone(false);
                         }}
                         placeholder="+33 6 12 34 56 78"
-                        className="bg-ds-bg border border-ds-border rounded-lg px-2 py-1 text-xs text-white placeholder:text-gray-600 focus:outline-none focus:border-indigo-500 w-44"
+                        className="bg-ds-bg border border-ds-border rounded-lg px-2 py-1 text-xs text-ink placeholder:text-gray-600 focus:outline-none focus:border-indigo-500 w-44"
                       />
                       <button
                         onClick={() => savePhone(selected.email!)}
@@ -414,7 +414,7 @@ export default function CRMPage() {
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 px-4 sm:px-6 py-4 bg-ds-elevated border-b border-ds-border">
               <div className="flex justify-between sm:block sm:text-center">
                 <div className="text-xs text-gray-500 sm:order-2">Devis</div>
-                <div className="text-xl font-semibold text-white sm:order-1">{selected.nb_proposals}</div>
+                <div className="text-xl font-semibold text-ink sm:order-1">{selected.nb_proposals}</div>
               </div>
               <div className="flex justify-between sm:block sm:text-center">
                 <div className="text-xs text-gray-500 sm:order-2">CA encaissé HT</div>
@@ -440,7 +440,7 @@ export default function CRMPage() {
                           className="flex items-center justify-between p-3 rounded-lg border border-ds-border hover:border-indigo-500/30 hover:bg-indigo-500/5 transition-colors"
                         >
                           <div>
-                            <div className="text-sm font-medium text-white">{p.title}</div>
+                            <div className="text-sm font-medium text-ink">{p.title}</div>
                             <div className="text-xs text-gray-500">{p.proposal_number} · {fmtDate(p.created_at)}</div>
                           </div>
                           <div className="flex items-center gap-2">
@@ -467,7 +467,7 @@ export default function CRMPage() {
                           className="flex items-center justify-between p-3 rounded-lg border border-ds-border hover:border-indigo-500/30 hover:bg-indigo-500/5 transition-colors"
                         >
                           <div>
-                            <div className="text-sm font-medium text-white">{inv.invoice_number}</div>
+                            <div className="text-sm font-medium text-ink">{inv.invoice_number}</div>
                             <div className="text-xs text-gray-500">{fmtDate(inv.created_at)}</div>
                           </div>
                           <div className="flex items-center gap-2">

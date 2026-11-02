@@ -36,24 +36,24 @@ export default async function CabinetCockpit() {
   const moisLibelle = maintenant.toLocaleDateString("fr-FR", { month: "long" });
 
   const tuiles = [
-    { label: "Dossiers suivis", valeur: String(dossiers.length), ton: "text-white" },
-    { label: "Action requise", valeur: String(rouges), ton: rouges ? "text-red-400" : "text-white" },
-    { label: "À surveiller", valeur: String(oranges), ton: oranges ? "text-amber-400" : "text-white" },
-    { label: `CA HT cumulé, ${moisLibelle}`, valeur: eur(caMois), ton: "text-white" },
+    { label: "Dossiers suivis", valeur: String(dossiers.length), ton: "text-ink" },
+    { label: "Action requise", valeur: String(rouges), ton: rouges ? "text-red-400" : "text-ink" },
+    { label: "À surveiller", valeur: String(oranges), ton: oranges ? "text-amber-400" : "text-ink" },
+    { label: `CA HT cumulé, ${moisLibelle}`, valeur: eur(caMois), ton: "text-ink" },
   ];
 
   return (
     <div>
       <div className="mb-6 flex flex-wrap items-start justify-between gap-3">
         <div>
-          <h1 className="text-2xl font-semibold text-white">Portefeuille</h1>
+          <h1 className="text-2xl font-semibold text-ink">Portefeuille</h1>
           <p className="text-sm text-gray-400 mt-1">
             Vos dossiers clients Deviso, en lecture seule. Ceux qui demandent une action apparaissent en premier.
           </p>
         </div>
         <Link
           href="/cabinet/journal"
-          className="text-sm px-3 py-1.5 border border-ds-border text-gray-300 rounded-lg hover:bg-white/5 font-medium transition-colors whitespace-nowrap"
+          className="text-sm px-3 py-1.5 border border-ds-border text-gray-300 rounded-lg hover:bg-ink/5 font-medium transition-colors whitespace-nowrap"
         >
           Journal des accès
         </Link>
@@ -72,7 +72,7 @@ export default async function CabinetCockpit() {
 
       {dossiers.length === 0 ? (
         <div className="bg-ds-surface border border-ds-border rounded-xl p-8 text-center mb-6">
-          <p className="text-white font-semibold mb-1">Aucun dossier rattaché pour l&apos;instant</p>
+          <p className="text-ink font-semibold mb-1">Aucun dossier rattaché pour l&apos;instant</p>
           <p className="text-gray-500 text-sm">
             Générez un code ci-dessous et transmettez-le à votre client : dès qu&apos;il le saisit dans Deviso, son dossier apparaît ici.
           </p>

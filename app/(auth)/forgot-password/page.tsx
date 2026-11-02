@@ -33,9 +33,9 @@ export default function ForgotPasswordPage() {
         <div className="text-center mb-8">
           <Link href="/" className="inline-flex items-center gap-2">
             <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-indigo-600 to-violet-600 flex items-center justify-center">
-              <span className="text-white font-semibold">D</span>
+              <span className="text-ink font-semibold">D</span>
             </div>
-            <span className="font-semibold text-xl text-white">Deviso</span>
+            <span className="font-semibold text-xl text-ink">Deviso</span>
           </Link>
         </div>
 
@@ -43,9 +43,9 @@ export default function ForgotPasswordPage() {
           {sent ? (
             <div className="text-center">
               <MailCheck size={36} className="mx-auto mb-4 text-indigo-400" />
-              <h1 className="text-xl font-semibold text-white mb-2">Email envoyé !</h1>
+              <h1 className="text-xl font-semibold text-ink mb-2">Email envoyé !</h1>
               <p className="text-gray-400 text-sm mb-6">
-                Un lien de réinitialisation a été envoyé à <strong className="text-white">{email}</strong>. Vérifie ta boîte mail.
+                Un lien de réinitialisation a été envoyé à <strong className="text-ink">{email}</strong>. Vérifie ta boîte mail.
               </p>
               <Link href="/login" className="text-indigo-400 hover:text-indigo-300 font-semibold hover:underline text-sm">
                 Retour à la connexion
@@ -53,7 +53,7 @@ export default function ForgotPasswordPage() {
             </div>
           ) : (
             <>
-              <h1 className="text-2xl font-semibold text-white mb-1">Mot de passe oublié</h1>
+              <h1 className="text-2xl font-semibold text-ink mb-1">Mot de passe oublié</h1>
               <p className="text-gray-400 text-sm mb-6">
                 Saisis ton email et on t&apos;envoie un lien pour réinitialiser ton mot de passe.
               </p>
@@ -75,13 +75,13 @@ export default function ForgotPasswordPage() {
                     onChange={(e) => setEmail(e.target.value)}
                     required
                     placeholder="thomas@exemple.fr"
-                    className="w-full px-4 py-3 rounded-xl bg-ds-bg border border-ds-border text-white placeholder:text-gray-600 focus:outline-none focus:border-indigo-500 text-sm transition"
+                    className="w-full px-4 py-3 rounded-xl bg-ds-bg border border-ds-border text-ink placeholder:text-gray-600 focus:outline-none focus:border-indigo-500 text-sm transition"
                   />
                 </div>
                 <button
                   type="submit"
                   disabled={loading}
-                  className="w-full bg-indigo-600 text-white font-semibold py-3 rounded-xl hover:bg-indigo-700 disabled:opacity-60 transition-all"
+                  className="w-full bg-indigo-600 text-ink font-semibold py-3 rounded-xl hover:bg-indigo-700 disabled:opacity-60 transition-all"
                 >
                   {loading ? "Envoi…" : "Envoyer le lien"}
                 </button>

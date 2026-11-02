@@ -230,7 +230,7 @@ export function ProductTour({ isMember = false }: { isMember?: boolean }) {
         <div className={`pointer-events-auto bg-ds-elevated border border-ds-border rounded-xl shadow-2xl p-5 ${ancre ? "min-w-[260px] max-w-[340px]" : "w-full max-w-[420px]"}`}>
           <div className="flex items-start justify-between gap-2 mb-2">
             <div className="flex items-center gap-2 flex-wrap">
-              <h3 className="font-semibold text-white text-sm leading-snug">{current.title}</h3>
+              <h3 className="font-semibold text-ink text-sm leading-snug">{current.title}</h3>
               {(current as { pro?: boolean }).pro && (
                 <span className="text-[10px] font-bold px-1.5 py-0.5 rounded-md bg-indigo-500/20 text-indigo-400 border border-indigo-500/30 shrink-0">PRO</span>
               )}
@@ -251,14 +251,14 @@ export function ProductTour({ isMember = false }: { isMember?: boolean }) {
               {step > 0 && (
                 <button
                   onClick={prev}
-                  className="text-xs text-gray-400 hover:text-white px-3 py-1.5 rounded-lg border border-ds-border hover:border-gray-500 transition-colors font-medium"
+                  className="text-xs text-gray-400 hover:text-ink px-3 py-1.5 rounded-lg border border-ds-border hover:border-gray-500 transition-colors font-medium"
                 >
                   Précédent
                 </button>
               )}
               <button
                 onClick={next}
-                className="text-xs font-semibold bg-indigo-600 hover:bg-indigo-700 text-white px-3 py-1.5 rounded-lg transition-colors"
+                className="text-xs font-semibold bg-indigo-600 hover:bg-indigo-700 text-ink px-3 py-1.5 rounded-lg transition-colors"
               >
                 {isLast ? "C'est tout vu ✓" : "Suivant →"}
               </button>

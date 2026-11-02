@@ -158,11 +158,11 @@ export default function TeamPage() {
         <div className="w-12 h-12 bg-ds-elevated rounded-xl flex items-center justify-center mx-auto">
           <UsersRound size={24} className="text-gray-500" />
         </div>
-        <h1 className="text-3xl font-semibold text-white tracking-tight">Équipe</h1>
+        <h1 className="text-3xl font-semibold text-ink tracking-tight">Équipe</h1>
         <p className="text-gray-500">La gestion d&apos;équipe multi-utilisateurs est réservée au plan Pro.</p>
         <a
           href="/billing"
-          className="inline-flex items-center gap-2 px-5 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-semibold rounded-xl transition-colors"
+          className="inline-flex items-center gap-2 px-5 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-ink text-sm font-semibold rounded-xl transition-colors"
         >
           Passer Pro
         </a>
@@ -188,7 +188,7 @@ export default function TeamPage() {
       {/* Header */}
       <div className="flex items-start justify-between gap-4">
         <div>
-          <h1 className="text-3xl font-semibold text-white tracking-tight">Équipe</h1>
+          <h1 className="text-3xl font-semibold text-ink tracking-tight">Équipe</h1>
           <p className="text-sm text-gray-500 mt-1">
             {activeCount + 1} membre{activeCount > 0 ? "s" : ""} actif{activeCount > 0 ? "s" : ""}
             {pendingCount > 0 ? ` · ${pendingCount} invitation${pendingCount > 1 ? "s" : ""} en attente` : ""}
@@ -216,7 +216,7 @@ export default function TeamPage() {
           <button
             key={tab}
             onClick={() => setActiveTab(tab)}
-            className={`px-4 py-1.5 rounded-lg text-sm font-medium transition-all ${ activeTab === tab ? "bg-ds-surface text-white shadow-sm" : "text-gray-500 hover:text-gray-300" }`}
+            className={`px-4 py-1.5 rounded-lg text-sm font-medium transition-all ${ activeTab === tab ? "bg-ds-surface text-ink shadow-sm" : "text-gray-500 hover:text-gray-300" }`}
           >
             {tab === "pipeline" ? "Vue pipeline" : "Membres"}
           </button>
@@ -239,7 +239,7 @@ export default function TeamPage() {
                   </div>
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-2">
-                      <span className="font-medium text-white text-sm">{member.name}</span>
+                      <span className="font-medium text-ink text-sm">{member.name}</span>
                       {member.is_owner && (
                         <span className="flex items-center gap-1 text-[10px] font-semibold px-1.5 py-0.5 rounded-md bg-amber-500/10 text-amber-400 border border-amber-500/20">
                           <Crown size={9} />Propriétaire
@@ -254,7 +254,7 @@ export default function TeamPage() {
                     return (
                       <div className="text-right shrink-0">
                         <div className="text-xs text-gray-500 mb-0.5">Dernier devis</div>
-                        <div className="text-xs text-white truncate max-w-[140px]">{member.last_proposal.title}</div>
+                        <div className="text-xs text-ink truncate max-w-[140px]">{member.last_proposal.title}</div>
                         <span className={`inline-flex mt-0.5 text-[10px] font-medium px-1.5 py-0.5 rounded-full border ${s.color}`}>{s.label}</span>
                       </div>
                     );
@@ -264,7 +264,7 @@ export default function TeamPage() {
                   {[
                     { label: "CA encaissé HT", value: fmt(member.stats.ca_encaisse), color: "text-emerald-400" },
                     { label: "Pipeline", value: fmt(member.stats.ca_pipeline), color: "text-indigo-400" },
-                    { label: "Devis total", value: String(member.stats.proposals_total), color: "text-white" },
+                    { label: "Devis total", value: String(member.stats.proposals_total), color: "text-ink" },
                     { label: "Signés", value: String(member.stats.proposals_signed), color: "text-emerald-400" },
                     { label: "En cours", value: String(member.stats.proposals_pending), color: "text-blue-400" },
                     { label: "Conversion", value: `${member.stats.conversion_rate}%`, color: "text-violet-400" },
@@ -313,7 +313,7 @@ export default function TeamPage() {
         <div className="space-y-4">
           {!atLimit && isOwner && (
             <div className="bg-ds-surface border border-ds-border rounded-xl p-5">
-              <h2 className="font-semibold text-white mb-3 flex items-center gap-2">
+              <h2 className="font-semibold text-ink mb-3 flex items-center gap-2">
                 <Mail size={15} className="text-indigo-400" />
                 Inviter un membre
               </h2>
@@ -324,13 +324,13 @@ export default function TeamPage() {
                   onChange={(e) => setEmail(e.target.value)}
                   placeholder="collaborateur@exemple.fr"
                   required
-                  className="flex-1 bg-ds-bg border border-ds-border text-white placeholder:text-gray-600 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500/30"
+                  className="flex-1 bg-ds-bg border border-ds-border text-ink placeholder:text-gray-600 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500/30"
                 />
 
                 <button
                   type="submit"
                   disabled={inviting}
-                  className="px-4 py-2 bg-indigo-600 text-white text-sm font-semibold rounded-lg hover:bg-indigo-700 disabled:opacity-50 transition-colors shrink-0"
+                  className="px-4 py-2 bg-indigo-600 text-ink text-sm font-semibold rounded-lg hover:bg-indigo-700 disabled:opacity-50 transition-colors shrink-0"
                 >
                   {inviting ? "Envoi…" : "Inviter"}
                 </button>
@@ -371,7 +371,7 @@ export default function TeamPage() {
                 <div key={m.id} className="bg-ds-surface border border-ds-border rounded-xl p-4">
                   <div className="flex items-start justify-between gap-3">
                     <div className="min-w-0 flex-1">
-                      <p className="font-medium text-white text-sm break-all">{m.email}</p>
+                      <p className="font-medium text-ink text-sm break-all">{m.email}</p>
                       <p className="text-xs text-gray-500 mt-0.5">
                         Invité le {fmtDate(m.invited_at)}
                         {m.accepted_at ? ` · rejoint le ${fmtDate(m.accepted_at)}` : ""}
@@ -435,7 +435,7 @@ export default function TeamPage() {
                     <Fragment key={m.id}>
                     <tr className="hover:bg-ds-elevated/50 transition-colors">
                       <td className="px-4 py-3">
-                        <div className="font-medium text-white">{m.email}</div>
+                        <div className="font-medium text-ink">{m.email}</div>
                         {m.accepted_at && (
                           <div className="text-xs text-gray-500">Rejoint le {fmtDate(m.accepted_at)}</div>
                         )}

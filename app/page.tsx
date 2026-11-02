@@ -113,27 +113,27 @@ export default function LandingPage() {
         <span className="text-indigo-300 font-semibold">Réforme 2026&nbsp;:</span>
         <span className="text-gray-300 ml-1.5 hidden sm:inline">La facturation électronique B2B devient obligatoire en France.&nbsp;</span>
         <span className="text-indigo-400 font-medium">Deviso génère du Factur-X et s&apos;appuie sur une plateforme agréée.</span>
-        <a href="/conformite" className="ml-2 text-indigo-300 hover:text-white font-semibold transition-colors underline underline-offset-2 hidden sm:inline">En savoir plus →</a>
+        <a href="/conformite" className="ml-2 text-indigo-300 hover:text-ink font-semibold transition-colors underline underline-offset-2 hidden sm:inline">En savoir plus →</a>
       </div>
 
       {/* ── Navbar ── */}
-      <nav className="fixed left-0 right-0 z-50 bg-ds-bg/90 backdrop-blur-xl border-b border-white/[0.06]" style={{ top: "36px" }}>
+      <nav className="fixed left-0 right-0 z-50 bg-ds-bg/90 backdrop-blur-xl border-b border-ink/[0.06]" style={{ top: "36px" }}>
         <div className="max-w-6xl mx-auto px-4 sm:px-6 h-14 flex items-center justify-between">
           <Link href="/" aria-label="Deviso" className="flex items-center gap-2">
             <div className="w-7 h-7 rounded-lg bg-gradient-to-br from-indigo-600 to-violet-600 flex items-center justify-center">
-              <span className="text-white font-semibold text-xs">D</span>
+              <span className="text-ink font-semibold text-xs">D</span>
             </div>
-            <span className="font-semibold text-base text-white">Deviso</span>
+            <span className="font-semibold text-base text-ink">Deviso</span>
           </Link>
           <div className="hidden md:flex items-center gap-7 text-sm font-medium">
-            <a href="#fonctionnalites" className="text-gray-400 hover:text-white transition-colors">Fonctionnalités</a>
-            <a href="#comment" className="text-gray-400 hover:text-white transition-colors">Comment ça marche</a>
-            <a href="#tarifs" className="text-gray-400 hover:text-white transition-colors">Tarifs</a>
-            <Link href="/experts-comptables" className="text-gray-400 hover:text-white transition-colors">Experts-comptables</Link>
-            <Link href="/blog" className="text-gray-400 hover:text-white transition-colors">Blog</Link>
+            <a href="#fonctionnalites" className="text-gray-400 hover:text-ink transition-colors">Fonctionnalités</a>
+            <a href="#comment" className="text-gray-400 hover:text-ink transition-colors">Comment ça marche</a>
+            <a href="#tarifs" className="text-gray-400 hover:text-ink transition-colors">Tarifs</a>
+            <Link href="/experts-comptables" className="text-gray-400 hover:text-ink transition-colors">Experts-comptables</Link>
+            <Link href="/blog" className="text-gray-400 hover:text-ink transition-colors">Blog</Link>
           </div>
           <div className="hidden md:flex items-center gap-3">
-            <Link href="/login" className="text-sm font-medium text-gray-400 hover:text-white transition-colors">
+            <Link href="/login" className="text-sm font-medium text-gray-400 hover:text-ink transition-colors">
               Connexion
             </Link>
             <WaitlistButton
@@ -150,12 +150,12 @@ export default function LandingPage() {
       <section className="relative pt-44 sm:pt-40 pb-20 px-4 sm:px-6 overflow-hidden">
         <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[700px] h-[500px] bg-indigo-600/10 blur-[120px] rounded-full pointer-events-none" />
         <div className="max-w-4xl mx-auto text-center relative">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-medium bg-white/[0.05] text-gray-400 border border-white/[0.08] mb-6">
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-medium bg-ink/[0.05] text-gray-400 border border-ink/[0.08] mb-6">
             <span className="w-1.5 h-1.5 rounded-full bg-indigo-400 animate-pulse" />
             <span>Conforme réforme facturation 2026</span>
           </div>
 
-          <h1 className="text-4xl sm:text-5xl md:text-6xl font-semibold text-white leading-tight tracking-tight mb-5">
+          <h1 className="text-4xl sm:text-5xl md:text-6xl font-semibold text-ink leading-tight tracking-tight mb-5">
             Décris ta mission,{" "}
             <span className="bg-gradient-to-r from-indigo-400 to-violet-400 bg-clip-text text-transparent">
               ton devis complet est rédigé en 30 secondes.
@@ -172,7 +172,7 @@ export default function LandingPage() {
             <WaitlistButton
               plan="solo"
               label="Essayer gratuitement 14 jours →"
-              className="w-full sm:w-auto text-gray-300 font-medium px-7 py-3 rounded-lg text-base border border-white/[0.10] hover:bg-white/[0.04] transition-all text-center"
+              className="w-full sm:w-auto text-gray-300 font-medium px-7 py-3 rounded-lg text-base border border-ink/[0.10] hover:bg-ink/[0.04] transition-all text-center"
             />
           </div>
 
@@ -183,20 +183,20 @@ export default function LandingPage() {
 
         {/* Mockup */}
         <div className="max-w-3xl mx-auto mt-14">
-          <div className="bg-[#111111] rounded-xl border border-white/[0.08] shadow-2xl overflow-hidden">
-            <div className="flex items-center gap-1.5 px-4 py-3 bg-[#1A1A1A] border-b border-white/[0.06]">
-              <div className="w-2.5 h-2.5 rounded-full bg-white/10" />
-              <div className="w-2.5 h-2.5 rounded-full bg-white/10" />
-              <div className="w-2.5 h-2.5 rounded-full bg-white/10" />
-              <div className="flex-1 mx-4 bg-white/[0.06] rounded-md px-3 py-1 text-xs text-gray-500">
+          <div className="bg-[#111111] rounded-xl border border-ink/[0.08] shadow-2xl overflow-hidden">
+            <div className="flex items-center gap-1.5 px-4 py-3 bg-[#1A1A1A] border-b border-ink/[0.06]">
+              <div className="w-2.5 h-2.5 rounded-full bg-ink/10" />
+              <div className="w-2.5 h-2.5 rounded-full bg-ink/10" />
+              <div className="w-2.5 h-2.5 rounded-full bg-ink/10" />
+              <div className="flex-1 mx-4 bg-ink/[0.06] rounded-md px-3 py-1 text-xs text-gray-500">
                 app.getdeviso.fr/proposals/new
               </div>
             </div>
-            <div className="p-6 text-white">
+            <div className="p-6 text-ink">
               <div className="mb-3 text-xs text-gray-400 font-medium uppercase tracking-wider">
                 Décris ton projet
               </div>
-              <div className="bg-white/[0.04] rounded-lg p-4 border border-white/[0.06] mb-4">
+              <div className="bg-ink/[0.04] rounded-lg p-4 border border-ink/[0.06] mb-4">
                 <p className="text-gray-400 text-sm leading-relaxed">
                   Refonte complète du site vitrine d&apos;un cabinet d&apos;avocats
                   spécialisé en droit des affaires à Lyon. Design moderne,
@@ -247,7 +247,7 @@ export default function LandingPage() {
       <section id="comment" className="py-20 px-4 sm:px-6">
         <div className="max-w-5xl mx-auto">
           <div className="text-center mb-14">
-            <h2 className="text-3xl sm:text-4xl font-semibold text-white mb-3 tracking-tight">
+            <h2 className="text-3xl sm:text-4xl font-semibold text-ink mb-3 tracking-tight">
               Comment ça marche
             </h2>
             <p className="text-gray-500">De la description à la facture signée en trois étapes.</p>
@@ -256,7 +256,7 @@ export default function LandingPage() {
             {steps.map((step) => (
               <div key={step.num} className="carte-site rounded-xl p-6">
                 <div className="text-xs font-semibold text-indigo-400 mb-3 tabular-nums">{step.num}</div>
-                <h3 className="text-base font-semibold text-white mb-2">{step.title}</h3>
+                <h3 className="text-base font-semibold text-ink mb-2">{step.title}</h3>
                 <p className="text-gray-500 text-sm leading-relaxed">{step.desc}</p>
               </div>
             ))}
@@ -268,7 +268,7 @@ export default function LandingPage() {
       <section id="fonctionnalites" className="py-20 px-4 sm:px-6">
         <div className="max-w-5xl mx-auto">
           <div className="text-center mb-14">
-            <h2 className="text-3xl sm:text-4xl font-semibold text-white mb-3 tracking-tight">
+            <h2 className="text-3xl sm:text-4xl font-semibold text-ink mb-3 tracking-tight">
               Tout ce dont tu as besoin
             </h2>
             <p className="text-gray-500 max-w-xl mx-auto">
@@ -282,7 +282,7 @@ export default function LandingPage() {
                 className="carte-site rounded-xl p-5"
               >
                 <div className="mb-3 text-indigo-400" aria-hidden="true"><f.icon size={20} /></div>
-                <h3 className="text-sm font-semibold text-white mb-1.5">{f.title}</h3>
+                <h3 className="text-sm font-semibold text-ink mb-1.5">{f.title}</h3>
                 <p className="text-gray-500 text-sm leading-relaxed">{f.desc}</p>
               </div>
             ))}
@@ -313,11 +313,11 @@ export default function LandingPage() {
               devient, écrivez-moi, je lis tout.
             </p>
             <div className="flex items-center gap-3">
-              <div className="w-9 h-9 rounded-full bg-white/[0.07] text-gray-300 font-semibold text-xs flex items-center justify-center shrink-0">
+              <div className="w-9 h-9 rounded-full bg-ink/[0.07] text-gray-300 font-semibold text-xs flex items-center justify-center shrink-0">
                 SA
               </div>
               <div>
-                <div className="text-white font-medium text-sm">S. Albert</div>
+                <div className="text-ink font-medium text-sm">S. Albert</div>
                 <div className="text-gray-600 text-xs">Fondateur de Deviso</div>
               </div>
             </div>
@@ -332,7 +332,7 @@ export default function LandingPage() {
       <section className="py-20 px-4 sm:px-6">
         <div className="max-w-2xl mx-auto">
           <div className="carte-site rounded-xl p-12 text-center">
-            <h2 className="text-2xl sm:text-3xl font-semibold text-white mb-3 tracking-tight">
+            <h2 className="text-2xl sm:text-3xl font-semibold text-ink mb-3 tracking-tight">
               Prêt à envoyer ton prochain devis en 30 secondes ?
             </h2>
             <p className="text-gray-500 mb-8">

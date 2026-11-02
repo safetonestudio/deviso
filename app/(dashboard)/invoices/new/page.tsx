@@ -140,7 +140,7 @@ export default function NewInvoicePage() {
   const vent = ventilationTva(items, tvaRate);
   const totalTtc = vent.total_ttc;
 
-  const inputCls = "w-full border border-ds-border rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-indigo-500/30 focus:border-indigo-500 bg-ds-elevated text-white placeholder:text-gray-600";
+  const inputCls = "w-full border border-ds-border rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-indigo-500/30 focus:border-indigo-500 bg-ds-elevated text-ink placeholder:text-gray-600";
 
   // Pré-remplissage profil vendeur + catalogue
   useEffect(() => {
@@ -452,12 +452,12 @@ export default function NewInvoicePage() {
     <div className="max-w-2xl mx-auto">
       <GuidedTourBanner pageKey="invoices_new" />
       <div className="mb-6">
-        <h1 className="text-3xl font-semibold text-white tracking-tight">
+        <h1 className="text-3xl font-semibold text-ink tracking-tight">
           {invoiceType === "acompte" ? "Nouvelle facture d'acompte" : invoiceType === "solde" ? "Nouvelle facture de solde" : "Nouvelle facture"}
         </h1>
         {proposal && (
           <p className="text-gray-400 text-sm mt-1">
-            Devis : <span className="font-medium text-white">{proposal.title}</span>
+            Devis : <span className="font-medium text-ink">{proposal.title}</span>
             {proposal.client_name && <span className="text-gray-500"> · {proposal.client_name}</span>}
           </p>
         )}
@@ -487,7 +487,7 @@ export default function NewInvoicePage() {
                 }`}
               >
                 <div className="mb-1"><Icon size={18} className={invoiceType === type ? "text-indigo-400" : "text-gray-400"} /></div>
-                <div className={`text-sm font-semibold ${invoiceType === type ? "text-indigo-300" : "text-white"}`}>{label}</div>
+                <div className={`text-sm font-semibold ${invoiceType === type ? "text-indigo-300" : "text-ink"}`}>{label}</div>
                 <div className="text-xs text-gray-500 mt-0.5">{desc}</div>
               </button>
             ))}
@@ -512,7 +512,7 @@ export default function NewInvoicePage() {
             <select
               value={linkedProposalId || ""}
               onChange={(e) => handleProposalPick(e.target.value)}
-              className="w-full bg-ds-elevated border border-ds-border rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-indigo-500"
+              className="w-full bg-ds-elevated border border-ds-border rounded-lg px-3 py-2 text-sm text-ink focus:outline-none focus:border-indigo-500"
             >
               <option value="">, Choisir un devis, </option>
               {proposalsList.map((p) => (
@@ -536,7 +536,7 @@ export default function NewInvoicePage() {
                     className={`text-xs font-medium px-2.5 py-1 rounded-lg border transition-colors ${
                       depositPct === p
                         ? "border-emerald-500/50 bg-emerald-500/10 text-emerald-300"
-                        : "border-ds-border text-gray-400 hover:text-white"
+                        : "border-ds-border text-gray-400 hover:text-ink"
                     }`}
                   >
                     {p}%
@@ -549,7 +549,7 @@ export default function NewInvoicePage() {
                     max={99}
                     value={depositPct}
                     onChange={(e) => handleDepositPctChange(Math.min(99, Math.max(1, Number(e.target.value))))}
-                    className="w-16 bg-ds-elevated border border-ds-border rounded-lg px-2 py-1 text-xs text-white text-center focus:outline-none focus:border-indigo-500"
+                    className="w-16 bg-ds-elevated border border-ds-border rounded-lg px-2 py-1 text-xs text-ink text-center focus:outline-none focus:border-indigo-500"
                   />
                   <span className="text-xs text-gray-500">%</span>
                 </div>
@@ -613,7 +613,7 @@ export default function NewInvoicePage() {
               </p>
               <Link
                 href="/paiements"
-                className="inline-flex items-center gap-2 bg-emerald-700 hover:bg-emerald-800 text-white text-sm font-semibold px-4 py-2 rounded-lg transition-colors"
+                className="inline-flex items-center gap-2 bg-emerald-700 hover:bg-emerald-800 text-ink text-sm font-semibold px-4 py-2 rounded-lg transition-colors"
               >
                 Configurer mes paiements →
               </Link>
@@ -897,7 +897,7 @@ export default function NewInvoicePage() {
                 <select aria-label="Régime TVA"
                   value={tvaRate}
                   onChange={(e) => setTvaRate(parseFloat(e.target.value))}
-                  className="w-full border border-ds-border rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-indigo-500/30 focus:border-indigo-500 bg-ds-elevated text-white"
+                  className="w-full border border-ds-border rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-indigo-500/30 focus:border-indigo-500 bg-ds-elevated text-ink"
                 >
                   {TVA_OPTIONS.map((opt) => (
                     <option key={opt.rate} value={opt.rate}>{opt.label}</option>
@@ -922,7 +922,7 @@ export default function NewInvoicePage() {
                   ) : (
                     <div className="text-gray-500 text-xs italic">TVA non applicable (art. 293 B CGI)</div>
                   )}
-                  <div className="font-semibold text-base text-white">
+                  <div className="font-semibold text-base text-ink">
                     Total {tvaRate > 0 ? "TTC" : "net"} : <span className="text-indigo-400">{fmt(totalTtc)}</span>
                   </div>
                 </div>
@@ -936,7 +936,7 @@ export default function NewInvoicePage() {
             <div>
               <label className="block text-xs font-medium text-blue-300 mb-1">Nature de l&apos;opération</label>
               <select aria-label="Nature de l'opération" value={operationCategory} onChange={(e) => setOperationCategory(e.target.value as "services" | "goods" | "mixed")}
-                className="border border-ds-border rounded-lg px-3 py-2 text-sm bg-ds-elevated text-white focus:outline-none focus:ring-1 focus:ring-indigo-500/30 focus:border-indigo-500">
+                className="border border-ds-border rounded-lg px-3 py-2 text-sm bg-ds-elevated text-ink focus:outline-none focus:ring-1 focus:ring-indigo-500/30 focus:border-indigo-500">
                 <option value="services">Prestation de services</option>
                 <option value="goods">Livraison de biens</option>
                 <option value="mixed">Mixte (biens + services)</option>
@@ -980,7 +980,7 @@ export default function NewInvoicePage() {
               type="submit"
               disabled={loading || paymentConfigured === false}
               title={paymentConfigured === false ? "Configurez d'abord vos paiements" : undefined}
-              className="flex-1 bg-indigo-600 hover:bg-indigo-700 disabled:opacity-40 disabled:cursor-not-allowed text-white rounded-lg py-2.5 text-sm font-semibold transition-colors"
+              className="flex-1 bg-indigo-600 hover:bg-indigo-700 disabled:opacity-40 disabled:cursor-not-allowed text-ink rounded-lg py-2.5 text-sm font-semibold transition-colors"
             >
               {loading ? "Création…" : invoiceType === "acompte" ? `Créer l'acompte ${depositPct}%` : invoiceType === "solde" ? "Créer la facture de solde" : "Créer la facture"}
             </button>
@@ -1002,7 +1002,7 @@ export default function NewInvoicePage() {
           <div className="relative bg-ds-surface border border-violet-500/30 rounded-xl p-6 w-full max-w-sm shadow-2xl">
             <div className="flex items-center gap-2 mb-1">
               <Clock size={15} className="text-violet-400" />
-              <h3 className="font-semibold text-white text-sm">Durée de la prestation</h3>
+              <h3 className="font-semibold text-ink text-sm">Durée de la prestation</h3>
             </div>
             <p className="text-xs text-gray-500 mb-5">
               <span className="text-gray-300 font-medium">{pendingHourlyItem.name}</span> · {fmt(pendingHourlyItem.unit_price)}/h
@@ -1011,14 +1011,14 @@ export default function NewInvoicePage() {
               <div>
                 <label className="block text-xs font-medium text-gray-400 mb-1.5">Heures</label>
                 <select aria-label="Heures" value={durationHours} onChange={(e) => setDurationHours(parseInt(e.target.value))}
-                  className="w-full px-3 py-2 rounded-lg bg-ds-bg border border-ds-border text-sm text-white focus:outline-none focus:border-violet-500 focus:ring-1 focus:ring-violet-500/30">
+                  className="w-full px-3 py-2 rounded-lg bg-ds-bg border border-ds-border text-sm text-ink focus:outline-none focus:border-violet-500 focus:ring-1 focus:ring-violet-500/30">
                   {Array.from({ length: 24 }, (_, i) => <option key={i} value={i}>{i}h</option>)}
                 </select>
               </div>
               <div>
                 <label className="block text-xs font-medium text-gray-400 mb-1.5">Minutes</label>
                 <select aria-label="Minutes" value={durationMinutes} onChange={(e) => setDurationMinutes(parseInt(e.target.value))}
-                  className="w-full px-3 py-2 rounded-lg bg-ds-bg border border-ds-border text-sm text-white focus:outline-none focus:border-violet-500 focus:ring-1 focus:ring-violet-500/30">
+                  className="w-full px-3 py-2 rounded-lg bg-ds-bg border border-ds-border text-sm text-ink focus:outline-none focus:border-violet-500 focus:ring-1 focus:ring-violet-500/30">
                   {[0, 15, 30, 45].map((m) => <option key={m} value={m}>{m === 0 ? "00 min" : `${m} min`}</option>)}
                 </select>
               </div>
@@ -1030,7 +1030,7 @@ export default function NewInvoicePage() {
                     {durationHours > 0 && `${durationHours}h`}{durationMinutes > 0 && `${durationMinutes}min`}
                     {" "}× {fmt(pendingHourlyItem.unit_price)}/h
                   </span>
-                  <span className="font-semibold text-white">
+                  <span className="font-semibold text-ink">
                     {fmt((durationHours + durationMinutes / 60) * pendingHourlyItem.unit_price)}
                   </span>
                 </div>
@@ -1042,7 +1042,7 @@ export default function NewInvoicePage() {
                 Annuler
               </button>
               <button type="button" onClick={confirmDuration} disabled={durationHours === 0 && durationMinutes === 0}
-                className="flex-1 px-4 py-2 text-sm font-semibold bg-violet-600 text-white rounded-lg hover:bg-violet-700 disabled:opacity-50 transition-colors">
+                className="flex-1 px-4 py-2 text-sm font-semibold bg-violet-600 text-ink rounded-lg hover:bg-violet-700 disabled:opacity-50 transition-colors">
                 Ajouter
               </button>
             </div>

@@ -175,7 +175,7 @@ export default function PaiementsPage() {
     setSaving(false);
   }
 
-  const inputCls = "w-full bg-ds-bg border border-ds-border text-white placeholder:text-gray-600 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500/30";
+  const inputCls = "w-full bg-ds-bg border border-ds-border text-ink placeholder:text-gray-600 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500/30";
 
   if (loading) return <div className="text-center py-16 text-gray-500">Chargement…</div>;
 
@@ -189,7 +189,7 @@ export default function PaiementsPage() {
             <Wallet size={20} className="text-emerald-400" />
           </div>
           <div>
-            <h1 className="text-3xl font-semibold text-white tracking-tight">Paiements clients</h1>
+            <h1 className="text-3xl font-semibold text-ink tracking-tight">Paiements clients</h1>
             <p className="text-gray-500 text-sm mt-1">
               Comment vos clients vous paient, ces infos apparaîtront sur chaque facture envoyée.
             </p>
@@ -207,7 +207,7 @@ export default function PaiementsPage() {
 
       {/* Méthode */}
       <section className="bg-ds-surface border border-ds-border rounded-xl p-5 mb-5">
-        <h2 className="font-semibold text-white mb-4">Comment souhaitez-vous être payé ?</h2>
+        <h2 className="font-semibold text-ink mb-4">Comment souhaitez-vous être payé ?</h2>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
           {[
             { value: "none",  icon: Minus as LucideIcon,    label: "Aucun", desc: "Ne pas afficher d'info de paiement" },
@@ -225,7 +225,7 @@ export default function PaiementsPage() {
               }`}
             >
               <div className="mb-1"><opt.icon size={18} className={method === opt.value ? "text-emerald-400" : "text-gray-400"} /></div>
-              <div className="font-semibold text-white text-sm">{opt.label}</div>
+              <div className="font-semibold text-ink text-sm">{opt.label}</div>
               <div className="text-xs text-gray-500 mt-0.5">{opt.desc}</div>
               {method === opt.value && (
                 <CheckCircle2 size={14} className="text-emerald-400 mt-2" />
@@ -240,7 +240,7 @@ export default function PaiementsPage() {
         <section className="bg-ds-surface border border-ds-border rounded-xl p-5 mb-5">
           <div className="flex items-center gap-2 mb-4">
             <Link2 size={16} className="text-emerald-400" />
-            <h2 className="font-semibold text-white">Lien de paiement en ligne</h2>
+            <h2 className="font-semibold text-ink">Lien de paiement en ligne</h2>
           </div>
 
           {/* Sélection provider */}
@@ -311,7 +311,7 @@ export default function PaiementsPage() {
         <section className="bg-ds-surface border border-ds-border rounded-xl p-5 mb-5">
           <div className="flex items-center gap-2 mb-4">
             <Building2 size={16} className="text-emerald-400" />
-            <h2 className="font-semibold text-white">Coordonnées bancaires (virement)</h2>
+            <h2 className="font-semibold text-ink">Coordonnées bancaires (virement)</h2>
           </div>
 
           <div className="space-y-4">
@@ -370,7 +370,7 @@ export default function PaiementsPage() {
       {/* Prévisualisation */}
       {method !== "none" && (
         <section className="bg-ds-surface border border-ds-border rounded-xl p-5 mb-5">
-          <h2 className="font-semibold text-white mb-3 text-sm">Aperçu sur vos factures</h2>
+          <h2 className="font-semibold text-ink mb-3 text-sm">Aperçu sur vos factures</h2>
           <div className="bg-ds-elevated border border-ds-border rounded-lg p-4 text-xs text-gray-400 space-y-2">
             <p className="font-semibold text-gray-300 text-xs uppercase tracking-wide">Modalités de paiement</p>
             {needsBank && (
@@ -400,7 +400,7 @@ export default function PaiementsPage() {
       <button
         onClick={handleSave}
         disabled={saving || !canSave}
-        className="w-full bg-emerald-700 hover:bg-emerald-800 disabled:opacity-50 disabled:cursor-not-allowed text-white rounded-xl py-3 text-sm font-semibold transition-colors"
+        className="w-full bg-emerald-700 hover:bg-emerald-800 disabled:opacity-50 disabled:cursor-not-allowed text-ink rounded-xl py-3 text-sm font-semibold transition-colors"
       >
         {saving ? "Enregistrement…" : saved ? "✓ Enregistré !" : "Enregistrer les paramètres de paiement"}
       </button>

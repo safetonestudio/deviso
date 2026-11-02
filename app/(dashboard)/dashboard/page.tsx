@@ -228,7 +228,7 @@ export default async function DashboardPage() {
       {/* ── Header ── */}
       <div className="flex items-start justify-between gap-4 flex-wrap">
         <div>
-          <h1 className="text-3xl font-semibold text-white tracking-tight">
+          <h1 className="text-3xl font-semibold text-ink tracking-tight">
             {isMember ? "Mon activité" : "Tableau de bord"}
           </h1>
           <p className="text-sm text-gray-500 mt-1.5">
@@ -238,14 +238,14 @@ export default async function DashboardPage() {
         <div className="flex gap-2">
           <Link
             href="/proposals/new"
-            className="flex items-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white font-medium px-4 py-2 rounded-lg transition-colors text-sm"
+            className="flex items-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-ink font-medium px-4 py-2 rounded-lg transition-colors text-sm"
           >
             <Sparkles size={14} /> Nouveau devis
           </Link>
           {isPaid && (
             <Link
               href="/invoices/new"
-              className="flex items-center gap-2 bg-ds-surface hover:bg-ds-elevated text-gray-300 hover:text-white font-medium px-4 py-2 rounded-lg transition-colors text-sm border border-ds-border"
+              className="flex items-center gap-2 bg-ds-surface hover:bg-ds-elevated text-gray-300 hover:text-ink font-medium px-4 py-2 rounded-lg transition-colors text-sm border border-ds-border"
             >
               <Receipt size={14} /> Nouvelle facture
             </Link>
@@ -255,14 +255,14 @@ export default async function DashboardPage() {
 
       {/* ── Upgrade banner (free, owners only) ── */}
       {!isPaid && !isMember && (
-        <div className="bg-gradient-to-r from-indigo-600 to-violet-600 rounded-xl p-5 flex items-center justify-between gap-4 text-white">
+        <div className="bg-gradient-to-r from-indigo-600 to-violet-600 rounded-xl p-5 flex items-center justify-between gap-4 text-ink">
           <div>
             <div className="font-semibold text-sm">Passez à Solo, débloquez l&apos;IA, les factures et les relances</div>
             <div className="text-xs text-indigo-200 mt-0.5">Essai gratuit 14 jours · sans carte bancaire</div>
           </div>
           <Link
             href="/billing"
-            className="shrink-0 bg-white text-indigo-600 hover:bg-indigo-50 text-sm font-semibold px-4 py-2 rounded-lg transition-colors whitespace-nowrap"
+            className="shrink-0 bg-white text-indigo-600 hover:opacity-90 text-sm font-semibold px-4 py-2 rounded-lg transition-colors whitespace-nowrap"
           >
             Voir les offres →
           </Link>
@@ -341,7 +341,7 @@ export default async function DashboardPage() {
                 action={
                   <Link
                     href="/proposals/new"
-                    className="bg-indigo-600 hover:bg-indigo-700 text-white font-medium px-4 py-2 rounded-lg transition-colors text-sm inline-block"
+                    className="bg-indigo-600 hover:bg-indigo-700 text-ink font-medium px-4 py-2 rounded-lg transition-colors text-sm inline-block"
                   >
                     Créer un devis
                   </Link>
@@ -360,7 +360,7 @@ export default async function DashboardPage() {
                     className="flex items-center justify-between px-5 py-3.5 hover:bg-ds-elevated/60 transition-colors group"
                   >
                     <div className="flex-1 min-w-0">
-                      <div className="font-medium text-white text-sm truncate group-hover:text-gray-100 transition-colors">
+                      <div className="font-medium text-ink text-sm truncate group-hover:text-gray-100 transition-colors">
                         {proposal.title}
                       </div>
                       <div className="text-xs text-gray-500 mt-0.5">
@@ -372,7 +372,7 @@ export default async function DashboardPage() {
                       </div>
                     </div>
                     <div className="flex items-center gap-3 ml-3 shrink-0">
-                      <span className="font-semibold text-white text-sm tabular-nums">{fmt(proposal.total_ttc)}</span>
+                      <span className="font-semibold text-ink text-sm tabular-nums">{fmt(proposal.total_ttc)}</span>
                       <span className={`text-xs font-medium px-2 py-0.5 rounded-full ${s.color}`}>{s.label}</span>
                     </div>
                   </Link>
@@ -401,7 +401,7 @@ export default async function DashboardPage() {
                   action={
                     <Link
                       href="/invoices/new"
-                      className="bg-ds-elevated border border-ds-border hover:bg-ds-border text-white font-medium px-4 py-2 rounded-lg transition-colors text-sm inline-block"
+                      className="bg-ds-elevated border border-ds-border hover:bg-ds-border text-ink font-medium px-4 py-2 rounded-lg transition-colors text-sm inline-block"
                     >
                       Créer une facture
                     </Link>
@@ -420,7 +420,7 @@ export default async function DashboardPage() {
                       className="flex items-center justify-between px-5 py-3.5 hover:bg-ds-elevated/60 transition-colors group"
                     >
                       <div className="flex-1 min-w-0">
-                        <div className="font-medium text-white text-sm truncate group-hover:text-gray-100 transition-colors">
+                        <div className="font-medium text-ink text-sm truncate group-hover:text-gray-100 transition-colors">
                           {invoice.invoice_number || "-"}
                           <span className="text-gray-500 font-normal ml-2 text-xs">{invoice.client_name || "-"}</span>
                         </div>
@@ -433,7 +433,7 @@ export default async function DashboardPage() {
                         </div>
                       </div>
                       <div className="flex items-center gap-3 ml-3 shrink-0">
-                        <span className="font-semibold text-white text-sm tabular-nums">{fmt(invoice.total_ttc)}</span>
+                        <span className="font-semibold text-ink text-sm tabular-nums">{fmt(invoice.total_ttc)}</span>
                         <span className={`text-xs font-medium px-2 py-0.5 rounded-full ${s.color}`}>{s.label}</span>
                       </div>
                     </Link>
@@ -454,7 +454,7 @@ export default async function DashboardPage() {
         <details className="group bg-ds-surface border border-ds-border rounded-xl overflow-hidden [&_summary::-webkit-details-marker]:hidden">
           <summary className="flex items-center justify-between gap-3 px-5 py-4 cursor-pointer list-none select-none hover:bg-ds-elevated/40 transition-colors">
             <div className="min-w-0">
-              <h2 className="text-sm font-semibold text-white">
+              <h2 className="text-sm font-semibold text-ink">
                 {echeancesUrssaf ? "Récap CA, URSSAF" : "Récap chiffre d'affaires"}
               </h2>
               <p className="text-xs text-gray-500 mt-0.5">

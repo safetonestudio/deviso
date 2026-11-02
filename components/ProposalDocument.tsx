@@ -50,7 +50,7 @@ function palette(isDark: boolean) {
         divider: "divide-[#2B3444]",
         border: "border-[#2B3444]",
         clientBg: "bg-[#1F2937] border-[#2B3444]",
-        text900: "text-white",
+        text900: "text-ink",
         text700: "text-gray-200",
         text500: "text-gray-400",
         text400: "text-gray-500",
@@ -94,7 +94,7 @@ function ItemsTable({ proposal, color, headerStyle, p }: {
 }) {
   const thBase = "text-xs font-semibold uppercase tracking-wide py-2";
   const isColored = headerStyle === "colored";
-  const thColor = isColored ? "text-white" : `${p.text400}`;
+  const thColor = isColored ? "text-ink" : `${p.text400}`;
   return (
     <table className="w-full mb-6 table-fixed">
       <colgroup>
@@ -307,7 +307,7 @@ function ModernTemplate({ proposal, profile, color, showBranding, p, cgvText }: 
   return (
     <>
     <div className={`${p.card} rounded-2xl border overflow-hidden mb-6`}>
-      <div style={{ backgroundColor: color }} className="px-8 py-7 text-white">
+      <div style={{ backgroundColor: color }} className="px-8 py-7 text-ink">
         <div className="flex justify-between items-start">
           <div>
             <div className="text-xs font-semibold uppercase tracking-widest opacity-70 mb-1">Devis</div>
@@ -427,11 +427,15 @@ export function ProposalDocument({ proposal, profile, showBranding = true, isDar
   const color = profile?.proposal_color || "#4f46e5";
   const p = palette(isDark);
 
-  if (template === "modern") {
-    return <ModernTemplate proposal={proposal} profile={profile} color={color} showBranding={showBranding} p={p} cgvText={cgvText} />;
-  }
-  if (template === "epure") {
-    return <EpureTemplate proposal={proposal} profile={profile} color={color} showBranding={showBranding} p={p} cgvText={cgvText} />;
-  }
-  return <ClassicTemplate proposal={proposal} profile={profile} color={color} showBranding={showBranding} p={p} cgvText={cgvText} />;
+  const doc =
+    template === "modern" ? (
+      <ModernTemplate proposal={proposal} profile={profile} color={color} showBranding={showBranding} p={p} cgvText={cgvText} />
+    ) : template === "epure" ? (
+      <EpureTemplate proposal={proposal} profile={profile} color={color} showBranding={showBranding} p={p} cgvText={cgvText} />
+    ) : (
+      <ClassicTemplate proposal={proposal} profile={profile} color={color} showBranding={showBranding} p={p} cgvText={cgvText} />
+    );
+  // Version papier : un document reste blanc quel que soit le theme de l'app.
+  // `.ds-papier` (globals.css) y retablit l'echelle de couleurs standard.
+  return isDark ? doc : <div className="ds-papier">{doc}</div>;
 }

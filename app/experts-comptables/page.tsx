@@ -108,22 +108,22 @@ export default function Page() {
       </div>
 
       {/* Navbar */}
-      <nav className="fixed top-9 left-0 right-0 z-50 bg-ds-bg/80 backdrop-blur-xl border-b border-white/[0.06]">
+      <nav className="fixed top-9 left-0 right-0 z-50 bg-ds-bg/80 backdrop-blur-xl border-b border-ink/[0.06]">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
           <Link href="/" aria-label="Deviso" className="flex items-center gap-2">
             <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-indigo-600 to-violet-600 flex items-center justify-center">
-              <span className="text-white font-semibold text-sm">D</span>
+              <span className="text-ink font-semibold text-sm">D</span>
             </div>
-            <span className="font-semibold text-lg text-white">Deviso</span>
+            <span className="font-semibold text-lg text-ink">Deviso</span>
           </Link>
           <div className="hidden md:flex items-center gap-8 text-sm font-medium">
-            <a href="#pourquoi" className="text-gray-400 hover:text-white transition-colors">Pourquoi</a>
-            <a href="#cockpit" className="text-gray-400 hover:text-white transition-colors">Le cockpit</a>
-            <a href="#offre" className="text-gray-400 hover:text-white transition-colors">L'offre</a>
-            <Link href="/blog" className="text-gray-400 hover:text-white transition-colors">Blog</Link>
+            <a href="#pourquoi" className="text-gray-400 hover:text-ink transition-colors">Pourquoi</a>
+            <a href="#cockpit" className="text-gray-400 hover:text-ink transition-colors">Le cockpit</a>
+            <a href="#offre" className="text-gray-400 hover:text-ink transition-colors">L'offre</a>
+            <Link href="/blog" className="text-gray-400 hover:text-ink transition-colors">Blog</Link>
           </div>
           <div className="hidden md:flex items-center gap-3">
-            <Link href="/login" className="text-sm font-medium text-gray-400 hover:text-white transition-colors">Connexion</Link>
+            <Link href="/login" className="text-sm font-medium text-gray-400 hover:text-ink transition-colors">Connexion</Link>
             <a href={CONTACT} className="bg-white text-black text-sm font-semibold px-4 py-2 rounded-lg hover:bg-zinc-100 transition-colors">
               Demander une démo
             </a>
@@ -140,7 +140,7 @@ export default function Page() {
             <span className="w-1.5 h-1.5 rounded-full bg-emerald-400" />
             Pour les cabinets d'expertise comptable
           </div>
-          <h1 className="text-4xl sm:text-5xl font-semibold text-white leading-tight tracking-tight">
+          <h1 className="text-4xl sm:text-5xl font-semibold text-ink leading-tight tracking-tight">
             Vos clients micro et TPE, conformes à la réforme,
             <span className="block bg-gradient-to-r from-indigo-400 to-violet-400 bg-clip-text text-transparent">suivis depuis un seul cockpit</span>
           </h1>
@@ -164,7 +164,7 @@ export default function Page() {
       {/* Pourquoi */}
       <section id="pourquoi" className="py-20 px-4 sm:px-6 border-t border-zinc-900">
         <div className="max-w-5xl mx-auto">
-          <h2 className="text-3xl font-semibold text-white text-center mb-3">Ce que la réforme change pour votre cabinet</h2>
+          <h2 className="text-3xl font-semibold text-ink text-center mb-3">Ce que la réforme change pour votre cabinet</h2>
           <p className="text-gray-400 text-center mb-12 max-w-2xl mx-auto">
             Le plus dur n'est pas votre logiciel de production, c'est d'amener tout un portefeuille de petits clients
             à être conforme, et de le rester.
@@ -175,7 +175,7 @@ export default function Page() {
                 <div className="w-10 h-10 rounded-lg bg-indigo-500/10 border border-indigo-500/20 flex items-center justify-center mb-4">
                   <d.icon size={18} className="text-indigo-400" />
                 </div>
-                <h3 className="text-white font-semibold mb-2">{d.titre}</h3>
+                <h3 className="text-ink font-semibold mb-2">{d.titre}</h3>
                 <p className="text-gray-400 text-sm leading-relaxed">{d.desc}</p>
               </div>
             ))}
@@ -186,7 +186,7 @@ export default function Page() {
       {/* Le cockpit */}
       <section id="cockpit" className="py-20 px-4 sm:px-6 border-t border-zinc-900">
         <div className="max-w-5xl mx-auto">
-          <h2 className="text-3xl font-semibold text-white text-center mb-3">Un cockpit pensé pour un portefeuille</h2>
+          <h2 className="text-3xl font-semibold text-ink text-center mb-3">Un cockpit pensé pour un portefeuille</h2>
           <p className="text-gray-400 text-center mb-12 max-w-2xl mx-auto">
             Tout ce dont vous avez besoin pour suivre vos clients, dans une seule interface. Gratuit, en lecture seule.
           </p>
@@ -196,7 +196,7 @@ export default function Page() {
                 <div className="w-10 h-10 rounded-lg bg-indigo-500/10 border border-indigo-500/20 flex items-center justify-center mb-4">
                   <f.icon size={18} className="text-indigo-400" />
                 </div>
-                <h3 className="text-white font-semibold mb-2">{f.titre}</h3>
+                <h3 className="text-ink font-semibold mb-2">{f.titre}</h3>
                 <p className="text-gray-400 text-sm leading-relaxed">{f.desc}</p>
               </div>
             ))}
@@ -207,7 +207,7 @@ export default function Page() {
       {/* L'offre */}
       <section id="offre" className="py-20 px-4 sm:px-6 border-t border-zinc-900">
         <div className="max-w-5xl mx-auto">
-          <h2 className="text-3xl font-semibold text-white text-center mb-3">Simple, et gratuit pour vous</h2>
+          <h2 className="text-3xl font-semibold text-ink text-center mb-3">Simple, et gratuit pour vous</h2>
           <p className="text-gray-400 text-center mb-12 max-w-2xl mx-auto">
             Vous ne changez rien à votre logiciel de production. Vous ajoutez un outil conforme pour vos petits clients,
             et un cockpit pour les suivre.
@@ -215,7 +215,7 @@ export default function Page() {
           <div className="grid gap-6 md:grid-cols-3">
             <div className="bg-ds-surface border border-ds-border rounded-2xl p-6">
               <p className="text-xs text-gray-500 font-medium uppercase tracking-wider mb-2">Votre cabinet</p>
-              <p className="text-2xl font-semibold text-white mb-2">Gratuit</p>
+              <p className="text-2xl font-semibold text-ink mb-2">Gratuit</p>
               <p className="text-gray-400 text-sm leading-relaxed">
                 Le cockpit, l'accès en lecture seule à chaque dossier, la conformité, le calendrier de TVA et les exports.
                 Aucun coût pour le cabinet.
@@ -223,7 +223,7 @@ export default function Page() {
             </div>
             <div className="bg-ds-surface border border-ds-border rounded-2xl p-6">
               <p className="text-xs text-gray-500 font-medium uppercase tracking-wider mb-2">Vos clients</p>
-              <p className="text-2xl font-semibold text-white mb-2">18 à 34 €/mois</p>
+              <p className="text-2xl font-semibold text-ink mb-2">18 à 34 €/mois</p>
               <p className="text-gray-400 text-sm leading-relaxed">
                 Deviso complet pour le client : Solo 18 €/mois, Pro 34 €/mois, 14 jours d'essai. Factur-X, raccordement
                 à la plateforme, relances, livre des recettes.
@@ -231,7 +231,7 @@ export default function Page() {
             </div>
             <div className="bg-indigo-950/85 border border-indigo-500/40 ring-1 ring-indigo-500/20 rounded-2xl p-6">
               <p className="text-xs text-indigo-300 font-medium uppercase tracking-wider mb-2">Programme pilote</p>
-              <p className="text-2xl font-semibold text-white mb-2">Gratuit, sans engagement</p>
+              <p className="text-2xl font-semibold text-ink mb-2">Gratuit, sans engagement</p>
               <p className="text-gray-300 text-sm leading-relaxed">
                 On démarre petit : vous mettez 2 ou 3 clients sur Deviso, gratuitement, et on construit avec vous l'outil
                 dont votre cabinet a vraiment besoin.
@@ -244,8 +244,8 @@ export default function Page() {
       {/* CTA final */}
       <section className="py-20 px-4 sm:px-6">
         <div className="max-w-3xl mx-auto">
-          <div className="relative overflow-hidden bg-gradient-to-br from-indigo-600/20 to-violet-600/20 border border-white/[0.08] rounded-3xl p-12 sm:p-16 text-center">
-            <h2 className="text-3xl sm:text-4xl font-semibold text-white mb-4">Prenons 20 minutes</h2>
+          <div className="relative overflow-hidden bg-gradient-to-br from-indigo-600/20 to-violet-600/20 border border-ink/[0.08] rounded-3xl p-12 sm:p-16 text-center">
+            <h2 className="text-3xl sm:text-4xl font-semibold text-ink mb-4">Prenons 20 minutes</h2>
             <p className="text-gray-400 text-lg mb-8 max-w-xl mx-auto">
               Je vous montre le cockpit, et surtout j'aimerais votre retour de professionnel. Si ça vous parle,
               on lance un pilote gratuit sur quelques-uns de vos clients.

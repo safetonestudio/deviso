@@ -50,7 +50,7 @@ export function Apercu() {
     <section className="bg-ds-surface border border-ds-border rounded-xl p-5 mt-6">
       <button
         onClick={() => setOuvert((o) => !o)}
-        className="text-sm font-medium text-white hover:text-indigo-300 transition-colors"
+        className="text-sm font-medium text-ink hover:text-indigo-300 transition-colors"
       >
         Voir ce qui n&apos;est pas encore parti
       </button>
@@ -95,7 +95,7 @@ export function Apercu() {
             <button
               onClick={consulter}
               disabled={chargement}
-              className="self-end px-3 py-1.5 rounded-lg bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-semibold disabled:opacity-50 transition-colors"
+              className="self-end px-3 py-1.5 rounded-lg bg-indigo-600 hover:bg-indigo-700 text-ink text-xs font-semibold disabled:opacity-50 transition-colors"
             >
               {chargement ? "Lecture…" : "Consulter"}
             </button>
@@ -113,7 +113,7 @@ export function Apercu() {
             <div className="text-sm text-gray-300 space-y-2">
               <p>
                 Période retenue par la Plateforme Agréée :{" "}
-                <span className="text-white font-medium">
+                <span className="text-ink font-medium">
                   {resultat.periode ? `${resultat.periode.debut}, ${resultat.periode.fin}` : "non précisée"}
                 </span>
                 {typeof resultat.nombreMontants === "number" && (

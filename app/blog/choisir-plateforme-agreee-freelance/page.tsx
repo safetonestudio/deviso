@@ -41,20 +41,20 @@ export default function ChoisirPlateformeAgreeePage() {
         <span className="text-indigo-400 font-medium">Deviso est raccordé à une Plateforme Agréée (Super PDP) et émet et reçoit déjà vos factures électroniques.</span>
       </div>
 
-      <nav className="fixed top-9 left-0 right-0 z-50 bg-ds-bg/80 backdrop-blur-xl border-b border-white/[0.06]">
+      <nav className="fixed top-9 left-0 right-0 z-50 bg-ds-bg/80 backdrop-blur-xl border-b border-ink/[0.06]">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
           <Link href="/" className="flex items-center gap-2">
             <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-indigo-600 to-violet-600 flex items-center justify-center">
-              <span className="text-white font-semibold text-sm">D</span>
+              <span className="text-ink font-semibold text-sm">D</span>
             </div>
-            <span className="font-semibold text-lg text-white">Deviso</span>
+            <span className="font-semibold text-lg text-ink">Deviso</span>
           </Link>
           <div className="hidden md:flex items-center gap-8 text-sm font-medium">
-            <Link href="/blog" className="text-gray-400 hover:text-white transition-colors">Blog</Link>
-            <Link href="/#fonctionnalites" className="text-gray-400 hover:text-white transition-colors">Fonctionnalités</Link>
+            <Link href="/blog" className="text-gray-400 hover:text-ink transition-colors">Blog</Link>
+            <Link href="/#fonctionnalites" className="text-gray-400 hover:text-ink transition-colors">Fonctionnalités</Link>
           </div>
           <div className="hidden md:flex items-center gap-3">
-            <Link href="/login" className="text-sm font-medium text-gray-400 hover:text-white transition-colors">Connexion</Link>
+            <Link href="/login" className="text-sm font-medium text-gray-400 hover:text-ink transition-colors">Connexion</Link>
             <WaitlistButton plan="free" label="Essayer gratuitement" className="bg-white text-black text-sm font-semibold px-4 py-2 rounded-lg hover:bg-zinc-100 transition-colors" />
           </div>
           <NavbarMobile />
@@ -63,11 +63,11 @@ export default function ChoisirPlateformeAgreeePage() {
 
       <main className="max-w-3xl mx-auto px-4 sm:px-6 pt-36 pb-20">
         <nav className="flex items-center gap-2 text-xs text-gray-400 mb-8">
-          <Link href="/" className="hover:text-white transition-colors">Accueil</Link>
+          <Link href="/" className="hover:text-ink transition-colors">Accueil</Link>
           <span>/</span>
-          <Link href="/blog" className="hover:text-white transition-colors">Blog</Link>
+          <Link href="/blog" className="hover:text-ink transition-colors">Blog</Link>
           <span>/</span>
-          <Link href="/blog/facturation-electronique-2026" className="hover:text-white transition-colors">Réforme 2026</Link>
+          <Link href="/blog/facturation-electronique-2026" className="hover:text-ink transition-colors">Réforme 2026</Link>
           <span>/</span>
           <span className="text-gray-400">Plateforme agréée</span>
         </nav>
@@ -77,7 +77,7 @@ export default function ChoisirPlateformeAgreeePage() {
             <span className="text-xs font-semibold text-indigo-400 bg-indigo-500/10 border border-indigo-500/20 rounded-full px-3 py-1">Réforme 2026 · PDP</span>
             <span className="text-xs text-gray-400">8 min · Mis à jour juillet 2026</span>
           </div>
-          <h1 className="text-3xl sm:text-4xl font-bold text-white leading-tight mb-4">
+          <h1 className="text-3xl sm:text-4xl font-bold text-ink leading-tight mb-4">
             Comment choisir sa plateforme agréée (PDP) quand on est freelance ou indépendant
           </h1>
           <p className="text-lg text-gray-400 leading-relaxed">
@@ -88,13 +88,13 @@ export default function ChoisirPlateformeAgreeePage() {
         <div className="prose prose-invert prose-sm max-w-none space-y-10 text-gray-400 leading-relaxed">
 
           <section>
-            <h2 className="text-xl font-bold text-white mb-4">Qu&apos;est-ce qu&apos;une PDP et pourquoi c&apos;est obligatoire ?</h2>
+            <h2 className="text-xl font-bold text-ink mb-4">Qu&apos;est-ce qu&apos;une PDP et pourquoi c&apos;est obligatoire ?</h2>
             <p>
-              Une <strong className="text-white">Plateforme de Dématérialisation Partenaire (PDP)</strong> est un opérateur privé immatriculé par la DGFiP. Son rôle est double :
+              Une <strong className="text-ink">Plateforme de Dématérialisation Partenaire (PDP)</strong> est un opérateur privé immatriculé par la DGFiP. Son rôle est double :
             </p>
             <ul className="mt-3 space-y-2">
-              <li className="flex gap-2"><span className="text-indigo-400 shrink-0">1.</span> <span><strong className="text-white">Transmettre les factures</strong> entre émetteur et destinataire dans un format structuré (Factur-X, UBL...)</span></li>
-              <li className="flex gap-2"><span className="text-indigo-400 shrink-0">2.</span> <span><strong className="text-white">Déclarer les données fiscales</strong> à la DGFiP en temps réel (montants, TVA, parties, date)</span></li>
+              <li className="flex gap-2"><span className="text-indigo-400 shrink-0">1.</span> <span><strong className="text-ink">Transmettre les factures</strong> entre émetteur et destinataire dans un format structuré (Factur-X, UBL...)</span></li>
+              <li className="flex gap-2"><span className="text-indigo-400 shrink-0">2.</span> <span><strong className="text-ink">Déclarer les données fiscales</strong> à la DGFiP en temps réel (montants, TVA, parties, date)</span></li>
             </ul>
             <p className="mt-3">
               Avant 2024, on espérait pouvoir utiliser le Portail Public de Facturation (PPF) gratuitement pour émettre et recevoir. La DGFiP a abandonné cette fonction en octobre 2024, et l&apos;État a arrêté le développement du portail en août 2025 : il ne reste que les plateformes agréées privées. Vous devez donc en avoir une, mais dans la plupart des cas, votre logiciel de facturation s&apos;en charge pour vous.
@@ -102,9 +102,9 @@ export default function ChoisirPlateformeAgreeePage() {
           </section>
 
           <section>
-            <h2 className="text-xl font-bold text-white mb-4">Dois-je vraiment choisir une PDP moi-même ?</h2>
+            <h2 className="text-xl font-bold text-ink mb-4">Dois-je vraiment choisir une PDP moi-même ?</h2>
             <p>
-              <strong className="text-white">Probablement non.</strong> Il existe deux scénarios :
+              <strong className="text-ink">Probablement non.</strong> Il existe deux scénarios :
             </p>
             <div className="mt-4 space-y-4">
               <div className="bg-[#14211a] border border-emerald-500/20 rounded-xl p-5">
@@ -114,7 +114,7 @@ export default function ChoisirPlateformeAgreeePage() {
                 </p>
               </div>
               <div className="bg-ds-surface border border-ds-border rounded-xl p-5">
-                <p className="text-sm font-bold text-white mb-2">Scénario 2, Vous devez choisir votre propre PDP</p>
+                <p className="text-sm font-bold text-ink mb-2">Scénario 2, Vous devez choisir votre propre PDP</p>
                 <p className="text-sm">
                   Si vous utilisez un outil qui ne gère pas la PDP, ou si vous émettez vos factures depuis un système interne, vous devrez vous connecter directement à une PDP. Dans ce cas, les critères ci-dessous s&apos;appliquent.
                 </p>
@@ -123,7 +123,7 @@ export default function ChoisirPlateformeAgreeePage() {
           </section>
 
           <section>
-            <h2 className="text-xl font-bold text-white mb-4">5 critères pour choisir sa PDP en tant qu&apos;indépendant</h2>
+            <h2 className="text-xl font-bold text-ink mb-4">5 critères pour choisir sa PDP en tant qu&apos;indépendant</h2>
             <div className="space-y-4">
               {[
                 {
@@ -155,7 +155,7 @@ export default function ChoisirPlateformeAgreeePage() {
                 <div key={num} className="flex gap-4 bg-ds-surface border border-ds-border rounded-xl p-4">
                   <span className="text-2xl font-bold text-indigo-500/30 shrink-0 leading-none">{num}</span>
                   <div>
-                    <p className="text-sm font-semibold text-white mb-1">{titre}</p>
+                    <p className="text-sm font-semibold text-ink mb-1">{titre}</p>
                     <p className="text-sm">{desc}</p>
                   </div>
                 </div>
@@ -164,7 +164,7 @@ export default function ChoisirPlateformeAgreeePage() {
           </section>
 
           <section>
-            <h2 className="text-xl font-bold text-white mb-4">Questions à poser à une PDP avant de s&apos;engager</h2>
+            <h2 className="text-xl font-bold text-ink mb-4">Questions à poser à une PDP avant de s&apos;engager</h2>
             <div className="bg-ds-surface border border-ds-border rounded-xl p-5 space-y-3">
               {[
                 "Êtes-vous immatriculé PDP par la DGFiP ? Quelle est votre date d'immatriculation ?",
@@ -184,9 +184,9 @@ export default function ChoisirPlateformeAgreeePage() {
           </section>
 
           <section>
-            <h2 className="text-xl font-bold text-white mb-4">Et Deviso dans tout ça ?</h2>
+            <h2 className="text-xl font-bold text-ink mb-4">Et Deviso dans tout ça ?</h2>
             <p>
-              Deviso est raccordé à une Plateforme Agréée (Super PDP). Vous n&apos;avez <strong className="text-white">rien à faire</strong> : vous créez votre facture dans Deviso comme aujourd&apos;hui, et la transmission à la DGFiP via la Plateforme Agréée se fait automatiquement.
+              Deviso est raccordé à une Plateforme Agréée (Super PDP). Vous n&apos;avez <strong className="text-ink">rien à faire</strong> : vous créez votre facture dans Deviso comme aujourd&apos;hui, et la transmission à la DGFiP via la Plateforme Agréée se fait automatiquement.
             </p>
             <p className="mt-3">
               Vos factures Deviso sont au format Factur-X EN 16931, le format que la Plateforme Agréée reçoit et transmet. Pas de travail de conversion, pas de reformatage. La donnée structurée est déjà là.
@@ -197,7 +197,7 @@ export default function ChoisirPlateformeAgreeePage() {
           </section>
 
           <section>
-            <h2 className="text-xl font-bold text-white mb-4">FAQ</h2>
+            <h2 className="text-xl font-bold text-ink mb-4">FAQ</h2>
             <div className="space-y-5">
               {[
                 {
@@ -218,7 +218,7 @@ export default function ChoisirPlateformeAgreeePage() {
                 },
               ].map(({ q, a }) => (
                 <div key={q} className="border-b border-ds-border pb-5 last:border-0">
-                  <h3 className="text-sm font-semibold text-white mb-2">{q}</h3>
+                  <h3 className="text-sm font-semibold text-ink mb-2">{q}</h3>
                   <p className="text-sm">{a}</p>
                 </div>
               ))}
@@ -228,11 +228,11 @@ export default function ChoisirPlateformeAgreeePage() {
 
         {/* ── Questions fréquentes ── */}
         <section className="mb-12">
-          <h2 className="text-2xl font-semibold text-white mb-6">Questions fréquentes</h2>
+          <h2 className="text-2xl font-semibold text-ink mb-6">Questions fréquentes</h2>
           <div className="space-y-4">
             {FAQ.map(({ q, a }) => (
               <div key={q} className="bg-ds-surface rounded-xl border border-ds-border p-6">
-                <h3 className="text-white font-medium mb-3">{q}</h3>
+                <h3 className="text-ink font-medium mb-3">{q}</h3>
                 <p className="text-gray-400 text-sm leading-relaxed">{a}</p>
               </div>
             ))}
@@ -257,11 +257,11 @@ export default function ChoisirPlateformeAgreeePage() {
         </div>
 
         <div className="rounded-2xl bg-[#191830] border border-indigo-500/20 p-8 text-center mb-14">
-          <h2 className="text-xl font-bold text-white mb-3">Factur-X prêt, Plateforme Agréée raccordée</h2>
+          <h2 className="text-xl font-bold text-ink mb-3">Factur-X prêt, Plateforme Agréée raccordée</h2>
           <p className="text-sm text-gray-400 mb-6 max-w-lg mx-auto">
             Deviso génère déjà des factures au format Factur-X et, raccordé à une Plateforme Agréée (Super PDP), émet et reçoit déjà vos factures électroniques en conformité avec la réforme.
           </p>
-          <WaitlistButton plan="free" label="Essayer Deviso 14 jours →" className="inline-flex items-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold px-6 py-3 rounded-xl transition-colors text-sm" />
+          <WaitlistButton plan="free" label="Essayer Deviso 14 jours →" className="inline-flex items-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-ink font-semibold px-6 py-3 rounded-xl transition-colors text-sm" />
           <Signature />
         </div>
 

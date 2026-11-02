@@ -128,7 +128,7 @@ export function GrillePermissions({
                 aria-label={titre}
                 className={`shrink-0 w-5 h-5 rounded-md border flex items-center justify-center transition-colors ${
                   actif
-                    ? "bg-indigo-600 border-indigo-600 text-white"
+                    ? "bg-indigo-600 border-indigo-600 text-ink"
                     : "bg-transparent border-ds-border hover:border-indigo-400"
                 } ${enCours === cle ? "opacity-50" : ""}`}
               >
@@ -142,7 +142,7 @@ export function GrillePermissions({
                 className="flex-1 flex items-center justify-between gap-2 text-left group"
                 aria-expanded={estOuvert}
               >
-                <span className="text-sm font-medium text-white">{titre}</span>
+                <span className="text-sm font-medium text-ink">{titre}</span>
                 <ChevronDown
                   size={16}
                   className={`shrink-0 text-gray-500 group-hover:text-gray-300 transition-transform ${

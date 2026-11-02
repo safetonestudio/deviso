@@ -38,7 +38,7 @@ export function CabinetCalendrierTva({ lignes }: { lignes: Ligne[] }) {
   if (assujettis.length === 0) {
     return (
       <div className="bg-ds-surface border border-ds-border rounded-xl p-4 mb-6">
-        <h2 className="text-white font-semibold mb-1">TVA à déclarer</h2>
+        <h2 className="text-ink font-semibold mb-1">TVA à déclarer</h2>
         <p className="text-sm text-gray-500">
           Aucun dossier assujetti à la TVA dans votre portefeuille : rien à déclarer
           {franchises.length > 0 ? ` (${franchises.length} dossier${franchises.length > 1 ? "s" : ""} en franchise en base).` : "."}
@@ -50,7 +50,7 @@ export function CabinetCalendrierTva({ lignes }: { lignes: Ligne[] }) {
   return (
     <div className="bg-ds-surface border border-ds-border rounded-xl mb-6 overflow-hidden">
       <div className="p-4 border-b border-ds-border">
-        <h2 className="text-white font-semibold">TVA à déclarer par dossier</h2>
+        <h2 className="text-ink font-semibold">TVA à déclarer par dossier</h2>
         <p className="text-xs text-gray-500 mt-0.5">
           TVA collectée (avoirs déduits), prête pour la déclaration. La période close est à déclarer ;
           la période en cours n&apos;est pas encore terminée.
@@ -75,12 +75,12 @@ export function CabinetCalendrierTva({ lignes }: { lignes: Ligne[] }) {
                 onClick={() => router.push(`/cabinet/${l.id}`)}
                 className="border-b border-ds-border last:border-0 cursor-pointer hover:bg-ds-elevated transition-colors"
               >
-                <td className="px-4 py-2 text-white font-medium">{l.nom}</td>
+                <td className="px-4 py-2 text-ink font-medium">{l.nom}</td>
                 <td className="px-4 py-2 text-gray-400">{l.periodicite ? LIBELLE[l.periodicite] : "À renseigner"}</td>
                 {l.periodicite ? (
                   <>
                     <td className="px-4 py-2 text-gray-300 capitalize">{cap(l.aDeclarer?.libelle ?? "")}</td>
-                    <td className="px-4 py-2 text-right text-white font-semibold">{eur(l.aDeclarer?.tva ?? 0)}</td>
+                    <td className="px-4 py-2 text-right text-ink font-semibold">{eur(l.aDeclarer?.tva ?? 0)}</td>
                     <td className="px-4 py-2 text-gray-400 capitalize">{cap(l.enCours?.libelle ?? "")}</td>
                     <td className="px-4 py-2 text-right text-gray-400">{eur(l.enCours?.tva ?? 0)}</td>
                   </>

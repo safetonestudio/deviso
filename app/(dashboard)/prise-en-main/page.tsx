@@ -208,7 +208,7 @@ export default function PriseEnMainPage() {
   return (
     <div className="max-w-2xl mx-auto">
       <div className="mb-8">
-        <h1 className="text-3xl font-semibold text-white tracking-tight">Prise en main</h1>
+        <h1 className="text-3xl font-semibold text-ink tracking-tight">Prise en main</h1>
         <p className="text-gray-500 text-sm mt-1">
           Tout ce dont tu as besoin pour utiliser Deviso à 100 % de son potentiel.
         </p>
@@ -218,7 +218,7 @@ export default function PriseEnMainPage() {
       <section className="carte-app rounded-xl p-6 mb-6">
         <div className="flex items-center justify-between gap-6">
           <div>
-            <h2 className="font-semibold text-white text-base">Mode guidé</h2>
+            <h2 className="font-semibold text-ink text-base">Mode guidé</h2>
             <p className="text-sm text-gray-400 mt-1">
               Quand activé, une carte explicative apparaît en haut de chaque page pour vous expliquer comment elle fonctionne. Désactivez-le quand vous n&apos;en avez plus besoin.
             </p>
@@ -252,7 +252,7 @@ export default function PriseEnMainPage() {
       {/* ── Guides Deviso ── */}
       <section className="mb-6">
         <div className="flex items-center justify-between mb-1">
-          <h2 className="font-semibold text-white text-base">Guides Deviso</h2>
+          <h2 className="font-semibold text-ink text-base">Guides Deviso</h2>
           {readCount > 0 && (
             <span className="text-xs text-gray-500">
               {readCount}/{guides.length} lu{readCount > 1 ? "s" : ""}
@@ -277,7 +277,7 @@ export default function PriseEnMainPage() {
                   <Icon size={18} />
                 </span>
                 <div className="flex-1 min-w-0">
-                  <p className="text-sm font-medium text-white group-hover:text-indigo-200 transition-colors leading-snug">
+                  <p className="text-sm font-medium text-ink group-hover:text-indigo-200 transition-colors leading-snug">
                     {guide.title}
                   </p>
                   <p className="text-xs text-gray-500 mt-0.5 truncate">{guide.desc}</p>
@@ -308,7 +308,7 @@ export default function PriseEnMainPage() {
 
       {/* ── Pages couvertes ── */}
       <section className="carte-app rounded-xl p-5">
-        <h2 className="font-semibold text-white mb-4 text-sm">Pages couvertes par le mode guidé</h2>
+        <h2 className="font-semibold text-ink mb-4 text-sm">Pages couvertes par le mode guidé</h2>
         <div className="space-y-3">
           {PAGES.map((page) => {
             const Icon = page.icon;
@@ -318,7 +318,7 @@ export default function PriseEnMainPage() {
                   <Icon size={17} />
                 </span>
                 <div>
-                  <p className="text-sm font-medium text-white">{page.label}</p>
+                  <p className="text-sm font-medium text-ink">{page.label}</p>
                   <p className="text-xs text-gray-500">{page.desc}</p>
                 </div>
                 {enabled && (

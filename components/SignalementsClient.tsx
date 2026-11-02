@@ -16,7 +16,7 @@ export async function SignalementsClient({ workspaceId }: { workspaceId: string 
 
   return (
     <div className="bg-amber-500/10 border border-amber-500/30 rounded-xl p-4">
-      <h2 className="text-white font-semibold text-sm mb-2">
+      <h2 className="text-ink font-semibold text-sm mb-2">
         Votre expert-comptable vous signale {signalements.length > 1 ? `${signalements.length} points` : "un point"} à vérifier
       </h2>
       <ul className="space-y-2">

@@ -53,9 +53,9 @@ function SignupForm() {
       <div className="min-h-screen bg-site flex items-center justify-center px-4">
         <div className="w-full max-w-md text-center">
           <MailCheck size={44} className="mx-auto mb-4 text-indigo-400" />
-          <h2 className="text-2xl font-bold text-white mb-2">Vérifie tes emails</h2>
+          <h2 className="text-2xl font-bold text-ink mb-2">Vérifie tes emails</h2>
           <p className="text-gray-400 mb-6">
-            On a envoyé un lien de confirmation à <strong className="text-white">{email}</strong>. Clique dessus pour
+            On a envoyé un lien de confirmation à <strong className="text-ink">{email}</strong>. Clique dessus pour
             activer ton compte.
           </p>
           <Link href="/login" className="text-indigo-400 hover:text-indigo-300 font-semibold hover:underline text-sm">
@@ -72,14 +72,14 @@ function SignupForm() {
         <div className="text-center mb-8">
           <Link href="/" className="inline-flex items-center gap-2">
             <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-indigo-600 to-violet-600 flex items-center justify-center">
-              <span className="text-white font-bold">D</span>
+              <span className="text-ink font-bold">D</span>
             </div>
-            <span className="font-bold text-xl text-white">Deviso</span>
+            <span className="font-bold text-xl text-ink">Deviso</span>
           </Link>
         </div>
 
         <div className="bg-ds-surface rounded-2xl border border-ds-border p-8">
-          <h1 className="text-2xl font-bold text-white mb-1">Créer un compte</h1>
+          <h1 className="text-2xl font-bold text-ink mb-1">Créer un compte</h1>
           <p className="text-gray-400 text-sm mb-6">
             Déjà inscrit ?{" "}
             <Link
@@ -105,7 +105,7 @@ function SignupForm() {
                 onChange={(e) => setFullName(e.target.value)}
                 required
                 placeholder="Thomas Dupont"
-                className="w-full px-4 py-3 rounded-xl bg-ds-bg border border-ds-border text-white placeholder:text-gray-600 focus:outline-none focus:border-indigo-500 text-sm transition"
+                className="w-full px-4 py-3 rounded-xl bg-ds-bg border border-ds-border text-ink placeholder:text-gray-600 focus:outline-none focus:border-indigo-500 text-sm transition"
               />
             </div>
             <div>
@@ -116,7 +116,7 @@ function SignupForm() {
                 onChange={(e) => setEmail(e.target.value)}
                 required
                 placeholder="thomas@exemple.fr"
-                className="w-full px-4 py-3 rounded-xl bg-ds-bg border border-ds-border text-white placeholder:text-gray-600 focus:outline-none focus:border-indigo-500 text-sm transition"
+                className="w-full px-4 py-3 rounded-xl bg-ds-bg border border-ds-border text-ink placeholder:text-gray-600 focus:outline-none focus:border-indigo-500 text-sm transition"
               />
             </div>
             <div>
@@ -127,7 +127,7 @@ function SignupForm() {
                 onChange={(e) => setPassword(e.target.value)}
                 required
                 placeholder="12 caractères minimum"
-                className="w-full px-4 py-3 rounded-xl bg-ds-bg border border-ds-border text-white placeholder:text-gray-600 focus:outline-none focus:border-indigo-500 text-sm transition"
+                className="w-full px-4 py-3 rounded-xl bg-ds-bg border border-ds-border text-ink placeholder:text-gray-600 focus:outline-none focus:border-indigo-500 text-sm transition"
               />
               <PasswordChecklist password={password} />
             </div>
@@ -135,7 +135,7 @@ function SignupForm() {
             <button
               type="submit"
               disabled={loading}
-              className="w-full bg-indigo-600 text-white font-bold py-3 rounded-xl hover:bg-indigo-700 disabled:opacity-60 disabled:cursor-not-allowed transition-all mt-2"
+              className="w-full bg-indigo-600 text-ink font-bold py-3 rounded-xl hover:bg-indigo-700 disabled:opacity-60 disabled:cursor-not-allowed transition-all mt-2"
             >
               {loading ? "Création du compte..." : "Créer mon compte →"}
             </button>
@@ -161,10 +161,10 @@ function SignupSkeleton() {
     <div className="min-h-screen bg-site flex items-center justify-center px-4">
       <div className="w-full max-w-md">
         <div className="text-center mb-8">
-          <span className="font-bold text-xl text-white">Deviso</span>
+          <span className="font-bold text-xl text-ink">Deviso</span>
         </div>
         <div className="bg-ds-surface rounded-2xl border border-ds-border p-8">
-          <h1 className="text-2xl font-bold text-white mb-1">Créer un compte</h1>
+          <h1 className="text-2xl font-bold text-ink mb-1">Créer un compte</h1>
           <p className="text-gray-400 text-sm">Chargement…</p>
         </div>
       </div>

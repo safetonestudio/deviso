@@ -20,7 +20,7 @@ import { PAYS_FACTURATION } from "@/lib/superpdp-nature";
  */
 
 const champ =
-  "w-full bg-ds-bg border border-ds-border text-white rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-indigo-500 placeholder:text-gray-600";
+  "w-full bg-ds-bg border border-ds-border text-ink rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-indigo-500 placeholder:text-gray-600";
 const etiquette = "block text-xs font-medium text-gray-400 mb-1.5";
 
 /** Libellés lisibles pour la liste des champs non lus. */
@@ -208,7 +208,7 @@ export function SaisieAchatForm() {
               setOuvert(true);
               setMessage(null);
             }}
-            className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-indigo-600 text-white text-sm font-semibold hover:bg-indigo-700 transition-colors"
+            className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-indigo-600 text-ink text-sm font-semibold hover:bg-indigo-700 transition-colors"
           >
             <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
               <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
@@ -251,7 +251,7 @@ export function SaisieAchatForm() {
 
       {ouvert && (
         <section className="bg-ds-surface border border-ds-border rounded-xl p-5 mt-1">
-          <h2 className="text-white font-semibold mb-1">Nouvel achat à l&apos;étranger</h2>
+          <h2 className="text-ink font-semibold mb-1">Nouvel achat à l&apos;étranger</h2>
           <p className="text-sm text-gray-400 mb-4">
             Recopiez (ou vérifiez) les montants depuis la facture de votre fournisseur. Cette
             déclaration remplit votre obligation d&apos;e-reporting d&apos;acquisition (article 290-II du
@@ -364,14 +364,14 @@ export function SaisieAchatForm() {
                 setApercu(null);
               }}
               disabled={enCours}
-              className="px-4 py-2 rounded-lg border border-ds-border text-gray-400 hover:text-white text-sm font-medium transition-colors disabled:opacity-50"
+              className="px-4 py-2 rounded-lg border border-ds-border text-gray-400 hover:text-ink text-sm font-medium transition-colors disabled:opacity-50"
             >
               Annuler
             </button>
             <button
               onClick={enregistrer}
               disabled={enCours}
-              className="px-4 py-2 rounded-lg bg-indigo-600 text-white text-sm font-semibold hover:bg-indigo-700 transition-colors disabled:opacity-50"
+              className="px-4 py-2 rounded-lg bg-indigo-600 text-ink text-sm font-semibold hover:bg-indigo-700 transition-colors disabled:opacity-50"
             >
               {enCours ? "Enregistrement…" : "Enregistrer l'achat"}
             </button>

@@ -26,7 +26,7 @@ export function PasswordChecklist({ password }: { password: string }) {
           <li key={rule.label} className="flex items-center gap-2 text-xs">
             <span
               className={`flex items-center justify-center w-4 h-4 rounded-full shrink-0 transition-colors ${
-                ok ? "bg-emerald-500 text-white" : "bg-ds-elevated text-gray-600 border border-ds-border"
+                ok ? "bg-emerald-500 text-ink" : "bg-ds-elevated text-gray-600 border border-ds-border"
               }`}
               aria-hidden="true"
             >

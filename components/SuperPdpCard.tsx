@@ -206,7 +206,7 @@ export function SuperPdpCard() {
   return (
     <section className="bg-ds-surface border border-ds-border rounded-xl p-5 mt-6">
       <div className="flex items-start justify-between gap-4 mb-1">
-        <h2 className="font-semibold text-white">Plateforme Agréée</h2>
+        <h2 className="font-semibold text-ink">Plateforme Agréée</h2>
         {etat?.sandbox && (
           <span className="text-[10px] font-bold uppercase tracking-wide bg-amber-500/20 text-amber-400 border border-amber-500/30 px-1.5 py-0.5 rounded shrink-0">
             bac à sable
@@ -246,7 +246,7 @@ export function SuperPdpCard() {
               }`}
             />
             <div className="min-w-0">
-              <p className="text-sm text-white font-medium">
+              <p className="text-sm text-ink font-medium">
                 {verifie
                   ? joignable
                     ? "Raccordé"
@@ -280,7 +280,7 @@ export function SuperPdpCard() {
 
           <a
             href="/api/superpdp/connect"
-            className={`px-4 py-2 rounded-lg text-sm font-semibold transition-colors shrink-0 ${ verifie ? "border border-ds-border text-gray-400 hover:text-white hover:bg-ds-elevated" : "bg-indigo-600 text-white hover:bg-indigo-500" }`}
+            className={`px-4 py-2 rounded-lg text-sm font-semibold transition-colors shrink-0 ${ verifie ? "border border-ds-border text-gray-400 hover:text-ink hover:bg-ds-elevated" : "bg-indigo-600 text-ink hover:bg-indigo-500" }`}
           >
             {verifie ? "Reconnecter" : enAttente ? "Relancer" : "Raccorder mon entreprise"}
           </a>
@@ -334,7 +334,7 @@ export function SuperPdpCard() {
           <button
             onClick={ouvrirLigne}
             disabled={ouverture}
-            className="px-3 py-1.5 rounded-lg bg-amber-700 hover:bg-amber-800 text-white text-xs font-semibold transition-colors disabled:opacity-50"
+            className="px-3 py-1.5 rounded-lg bg-amber-700 hover:bg-amber-800 text-ink text-xs font-semibold transition-colors disabled:opacity-50"
           >
             {ouverture ? "Ouverture…" : "Ouvrir ma ligne de réception"}
           </button>
@@ -379,7 +379,7 @@ export function SuperPdpCard() {
       {verifie && etat?.directoryAddress && (
         <div className="mt-4 bg-ds-elevated border border-ds-border rounded-lg px-4 py-3">
           <p className="text-xs text-gray-400 mb-1">Votre adresse de facturation électronique</p>
-          <p className="text-sm text-white font-mono break-all select-all">{etat.directoryAddress}</p>
+          <p className="text-sm text-ink font-mono break-all select-all">{etat.directoryAddress}</p>
           <p className="text-xs text-gray-600 mt-1.5">
             Communiquez-la à vos clients pour qu&apos;ils puissent vous adresser leurs factures.
           </p>
@@ -436,7 +436,7 @@ export function SuperPdpCard() {
                     setConfirmation(false);
                     setFermerLigne(false);
                   }}
-                  className="px-3 py-1.5 rounded-lg border border-ds-border text-gray-400 hover:text-white text-xs font-medium transition-colors"
+                  className="px-3 py-1.5 rounded-lg border border-ds-border text-gray-400 hover:text-ink text-xs font-medium transition-colors"
                 >
                   Annuler
                 </button>

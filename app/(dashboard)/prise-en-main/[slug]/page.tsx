@@ -66,13 +66,13 @@ function Step({ n, title, children }: { n: number; title: string; children: Reac
   return (
     <div className="flex gap-4">
       <div className="flex flex-col items-center">
-        <div className="w-7 h-7 rounded-full bg-indigo-600 text-white text-xs font-bold flex items-center justify-center shrink-0">
+        <div className="w-7 h-7 rounded-full bg-indigo-600 text-ink text-xs font-bold flex items-center justify-center shrink-0">
           {n}
         </div>
         <div className="w-px bg-ds-border flex-1 mt-2" />
       </div>
       <div className="pb-7 flex-1 min-w-0">
-        <p className="text-sm font-semibold text-white mb-2">{title}</p>
+        <p className="text-sm font-semibold text-ink mb-2">{title}</p>
         <div className="text-sm text-gray-400 leading-relaxed space-y-3">{children}</div>
       </div>
     </div>
@@ -99,7 +99,7 @@ function Li({ children }: { children: React.ReactNode }) {
 function Section({ title, children }: { title: string; children: React.ReactNode }) {
   return (
     <div className="mb-10">
-      <h2 className="text-sm font-semibold text-white mb-4 pb-2 border-b border-ds-border uppercase tracking-wide">
+      <h2 className="text-sm font-semibold text-ink mb-4 pb-2 border-b border-ds-border uppercase tracking-wide">
         {title}
       </h2>
       <div className="space-y-4 text-sm text-gray-400 leading-relaxed">{children}</div>
@@ -108,13 +108,13 @@ function Section({ title, children }: { title: string; children: React.ReactNode
 }
 
 function B({ children }: { children: React.ReactNode }) {
-  return <span className="text-white font-medium">{children}</span>;
+  return <span className="text-ink font-medium">{children}</span>;
 }
 
 function Card({ icon: Icon, title, desc, accent = false }: { icon: LucideIcon; title: string; desc: string; accent?: boolean }) {
   return (
     <div className={`p-4 rounded-xl border ${accent ? "bg-violet-500/5 border-violet-500/20" : "bg-ds-surface border-ds-border"}`}>
-      <p className="text-sm font-medium text-white mb-1 flex items-center gap-2">
+      <p className="text-sm font-medium text-ink mb-1 flex items-center gap-2">
         <Icon size={17} className={accent ? "shrink-0 text-violet-400" : "shrink-0 text-indigo-400"} />
         {title}
       </p>
@@ -726,7 +726,7 @@ const ARTICLES: Record<string, Article> = {
               <div key={item.label} className="flex items-start gap-3 py-2.5 border-b border-ds-border last:border-0">
                 <span className="text-indigo-500 text-xs mt-0.5 shrink-0">✓</span>
                 <div>
-                  <p className="text-sm font-medium text-white">{item.label}</p>
+                  <p className="text-sm font-medium text-ink">{item.label}</p>
                   <p className="text-xs text-gray-500 mt-0.5">{item.detail}</p>
                 </div>
               </div>
@@ -1376,7 +1376,7 @@ export default async function GuideArticlePage({
             {article.readingTime} min de lecture
           </span>
         </div>
-        <h1 className="text-2xl font-semibold text-white leading-snug">{article.title}</h1>
+        <h1 className="text-2xl font-semibold text-ink leading-snug">{article.title}</h1>
         <p className="text-gray-400 text-sm mt-2 leading-relaxed max-w-lg">{article.description}</p>
         <div className="mt-5 h-px bg-ds-border" />
       </div>
@@ -1390,7 +1390,7 @@ export default async function GuideArticlePage({
           <p className="text-sm text-indigo-300 font-medium">Prêt à essayer ?</p>
           <Link
             href={article.cta.href}
-            className="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-semibold rounded-lg transition-colors shrink-0"
+            className="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-ink text-sm font-semibold rounded-lg transition-colors shrink-0"
           >
             {article.cta.label}
           </Link>

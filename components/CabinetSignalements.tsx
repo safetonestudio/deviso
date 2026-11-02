@@ -51,7 +51,7 @@ export function CabinetSignalements({ clientId, initiaux }: { clientId: string; 
   return (
     <div className="bg-ds-surface border border-ds-border rounded-xl mb-6 overflow-hidden">
       <div className="p-4 border-b border-ds-border">
-        <h2 className="text-white font-semibold">Signaler au client</h2>
+        <h2 className="text-ink font-semibold">Signaler au client</h2>
         <p className="text-xs text-gray-500 mt-0.5">
           Un message ciblé que le client verra dans son tableau de bord Deviso. Vous ne modifiez pas son dossier.
         </p>
@@ -63,14 +63,14 @@ export function CabinetSignalements({ clientId, initiaux }: { clientId: string; 
           rows={3}
           maxLength={1000}
           placeholder="Ex. : la facture 2026-012 n'a pas de SIREN client, pouvez-vous le compléter ?"
-          className="w-full bg-ds-bg border border-ds-border rounded-lg px-3 py-2 text-sm text-white placeholder:text-gray-600 focus:outline-none focus:border-indigo-500 resize-y"
+          className="w-full bg-ds-bg border border-ds-border rounded-lg px-3 py-2 text-sm text-ink placeholder:text-gray-600 focus:outline-none focus:border-indigo-500 resize-y"
         />
         <div className="mt-2 flex items-center justify-between gap-3">
           {erreur ? <span className="text-xs text-red-400">{erreur}</span> : <span />}
           <button
             onClick={envoyer}
             disabled={!message.trim() || envoi}
-            className="px-3 py-1.5 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 text-sm font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+            className="px-3 py-1.5 bg-indigo-600 text-ink rounded-lg hover:bg-indigo-700 text-sm font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
           >
             {envoi ? "Envoi…" : "Signaler au client"}
           </button>

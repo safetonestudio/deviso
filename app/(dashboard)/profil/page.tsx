@@ -37,7 +37,7 @@ function SectionRepliable({
     <details className="group bg-ds-surface border border-ds-border rounded-xl mt-6 overflow-hidden [&_summary::-webkit-details-marker]:hidden">
       <summary className="flex items-center justify-between gap-3 px-5 py-4 cursor-pointer list-none select-none hover:bg-ds-elevated/40 transition-colors">
         <div className="min-w-0">
-          <h2 className="font-semibold text-white">{titre}</h2>
+          <h2 className="font-semibold text-ink">{titre}</h2>
           {sousTitre && <div className="text-xs text-gray-500 mt-0.5">{sousTitre}</div>}
         </div>
         <div className="flex items-center gap-3 shrink-0">
@@ -328,7 +328,7 @@ Les présentes CGV sont soumises au droit français. Tout litige relève de la c
   }
 
   const selectedRegime = TVA_REGIMES.find((r) => r.value === profile.tva_regime) ?? TVA_REGIMES[0];
-  const inputCls = "w-full bg-ds-bg border border-ds-border text-white placeholder:text-gray-600 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500/30";
+  const inputCls = "w-full bg-ds-bg border border-ds-border text-ink placeholder:text-gray-600 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500/30";
   const subdomainChanged = subdomainInput.trim().toLowerCase() !== (profile.subdomain || "");
   const canSaveSubdomain = subdomainChanged && (subdomainStatus === "available" || subdomainInput.trim() === "");
 
@@ -339,7 +339,7 @@ Les présentes CGV sont soumises au droit français. Tout litige relève de la c
     return (
       <div className="max-w-2xl mx-auto space-y-8">
         <div>
-          <h1 className="text-3xl font-semibold text-white tracking-tight">Mon profil</h1>
+          <h1 className="text-3xl font-semibold text-ink tracking-tight">Mon profil</h1>
           <p className="text-gray-500 text-sm mt-1">
             Ces informations apparaissent sur les devis et factures que tu crées.
           </p>
@@ -393,7 +393,7 @@ Les présentes CGV sont soumises au droit français. Tout litige relève de la c
               setSaving(false);
             }}
             disabled={saving}
-            className="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-2 rounded-lg text-sm disabled:opacity-60 transition-colors"
+            className="w-full bg-indigo-600 hover:bg-indigo-700 text-ink font-semibold py-2 rounded-lg text-sm disabled:opacity-60 transition-colors"
           >
             {saving ? "Enregistrement…" : saved ? "✓ Enregistré" : "Enregistrer"}
           </button>
@@ -412,7 +412,7 @@ Les présentes CGV sont soumises au droit français. Tout litige relève de la c
     <div className="max-w-2xl mx-auto">
       <GuidedTourBanner pageKey="profil" />
       <div className="mb-8">
-        <h1 className="text-3xl font-semibold text-white tracking-tight">Mon profil</h1>
+        <h1 className="text-3xl font-semibold text-ink tracking-tight">Mon profil</h1>
         <p className="text-gray-500 text-sm mt-1">Ces informations apparaîtront automatiquement sur tes devis et factures.</p>
       </div>
 
@@ -441,11 +441,11 @@ Les présentes CGV sont soumises au droit français. Tout litige relève de la c
             {profile.plan === "free" ? (
               <>
                 <button type="button" onClick={() => handleUpgrade("solo")}
-                  className="text-sm px-3 py-1.5 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 font-medium transition-colors">
+                  className="text-sm px-3 py-1.5 bg-indigo-600 text-ink rounded-lg hover:bg-indigo-700 font-medium transition-colors">
                   Passer Solo à 18€/mois
                 </button>
                 <button type="button" onClick={() => handleUpgrade("pro")}
-                  className="text-sm px-3 py-1.5 bg-violet-600 text-white rounded-lg hover:bg-violet-700 font-medium transition-colors">
+                  className="text-sm px-3 py-1.5 bg-violet-600 text-ink rounded-lg hover:bg-violet-700 font-medium transition-colors">
                   Passer Pro à 34€/mois
                 </button>
               </>
@@ -462,7 +462,7 @@ Les présentes CGV sont soumises au droit français. Tout litige relève de la c
       <form onSubmit={handleSubmit} className="space-y-6">
         {/* Logo */}
         <section className="bg-ds-surface border border-ds-border rounded-xl p-5">
-          <h2 className="font-semibold text-white mb-4">Logo</h2>
+          <h2 className="font-semibold text-ink mb-4">Logo</h2>
           {profile.plan === "free" ? (
             <UpgradeBanner variant="logo_blocked" />
           ) : (
@@ -494,7 +494,7 @@ Les présentes CGV sont soumises au droit français. Tout litige relève de la c
 
         {/* Identité */}
         <section className="bg-ds-surface border border-ds-border rounded-xl p-5 space-y-4">
-          <h2 className="font-semibold text-white">Identité</h2>
+          <h2 className="font-semibold text-ink">Identité</h2>
           <div className="grid grid-cols-2 gap-3">
             <div>
               <label className="block text-xs font-medium text-gray-400 mb-1">Prénom & Nom</label>
@@ -533,7 +533,7 @@ Les présentes CGV sont soumises au droit français. Tout litige relève de la c
 
         {/* TVA */}
         <section className="bg-ds-surface border border-ds-border rounded-xl p-5 space-y-4">
-          <h2 className="font-semibold text-white">Régime TVA</h2>
+          <h2 className="font-semibold text-ink">Régime TVA</h2>
           <p className="text-xs text-gray-500">Ce réglage pré-remplit automatiquement le taux TVA sur tous tes nouveaux devis et factures.</p>
           <div className="space-y-2">
             {TVA_REGIMES.map((regime) => (
@@ -546,7 +546,7 @@ Les présentes CGV sont soumises au droit français. Tout litige relève de la c
                   checked={profile.tva_regime === regime.value || (!profile.tva_regime && regime.value === "franchise")}
                   onChange={() => set("tva_regime", regime.value)} className="mt-0.5 accent-indigo-600" />
                 <div>
-                  <div className="text-sm font-medium text-white">{regime.label}</div>
+                  <div className="text-sm font-medium text-ink">{regime.label}</div>
                   <div className="text-xs text-gray-500 mt-0.5">{regime.description}</div>
                 </div>
               </label>
@@ -567,7 +567,7 @@ Les présentes CGV sont soumises au droit français. Tout litige relève de la c
               se pose pas et n'est donc pas posée. */}
           {selectedRegime.value !== "franchise" && (
             <div className="space-y-2 pt-1">
-              <div className="text-sm font-medium text-white">Périodicité de déclaration de TVA</div>
+              <div className="text-sm font-medium text-ink">Périodicité de déclaration de TVA</div>
               <p className="text-xs text-gray-500">
                 Transmise à la Plateforme Agréée : elle détermine le rythme auquel vos ventes aux
                 particuliers sont déclarées à l&apos;administration. Sans elle, ces factures sont refusées.
@@ -582,7 +582,7 @@ Les présentes CGV sont soumises au droit français. Tout litige relève de la c
                     <input type="radio" name="tva_periodicite" value={p.value}
                       checked={profile.tva_periodicite === p.value}
                       onChange={() => set("tva_periodicite", p.value)} className="accent-indigo-600" />
-                    <span className="text-xs text-white">{p.label}</span>
+                    <span className="text-xs text-ink">{p.label}</span>
                   </label>
                 ))}
               </div>
@@ -597,7 +597,7 @@ Les présentes CGV sont soumises au droit français. Tout litige relève de la c
 
         {/* Légal */}
         <section className="bg-ds-surface border border-ds-border rounded-xl p-5 space-y-4">
-          <h2 className="font-semibold text-white">Informations légales</h2>
+          <h2 className="font-semibold text-ink">Informations légales</h2>
           <div className="grid grid-cols-2 gap-3">
             <div>
               <label className="block text-xs font-medium text-gray-400 mb-1">SIRET <span className="text-gray-500">(14 chiffres)</span></label>
@@ -635,7 +635,7 @@ Les présentes CGV sont soumises au droit français. Tout litige relève de la c
                         {t.value === "epure" && <div className="flex gap-2"><div className="w-0.5 rounded-full self-stretch" style={{ backgroundColor: color }} /><div><div className="text-xs font-semibold tracking-widest text-gray-400 mb-1" style={{ fontSize: 7 }}>DEVIS</div><div className="h-1 w-8 rounded mb-1 bg-zinc-600" /><div className="h-1 w-6 rounded bg-gray-700" /></div></div>}
                       </div>
                       <div className="text-xs font-semibold text-gray-300">{t.label}</div>
-                      {selected && <div className="absolute top-2 right-2 w-4 h-4 rounded-full bg-indigo-500 flex items-center justify-center"><span className="text-white text-xs">✓</span></div>}
+                      {selected && <div className="absolute top-2 right-2 w-4 h-4 rounded-full bg-indigo-500 flex items-center justify-center"><span className="text-ink text-xs">✓</span></div>}
                     </button>
                   );
                 })}
@@ -672,7 +672,7 @@ Les présentes CGV sont soumises au droit français. Tout litige relève de la c
 
         {error && <p className="text-red-400 text-sm">{error}</p>}
         <button type="submit" disabled={saving}
-          className="w-full bg-indigo-600 hover:bg-indigo-700 disabled:opacity-50 text-white rounded-lg py-2.5 text-sm font-semibold transition-colors">
+          className="w-full bg-indigo-600 hover:bg-indigo-700 disabled:opacity-50 text-ink rounded-lg py-2.5 text-sm font-semibold transition-colors">
           {saving ? "Enregistrement…" : saved ? "✓ Enregistré !" : "Enregistrer le profil"}
         </button>
       </form>
@@ -693,7 +693,7 @@ Les présentes CGV sont soumises au droit français. Tout litige relève de la c
               <div className="relative flex-1">
                 <input type="text" value={subdomainInput} onChange={(e) => handleSubdomainChange(e.target.value)}
                   placeholder="mon-agence" maxLength={30}
-                  className={`w-full bg-ds-bg border rounded-l-lg px-3 py-2.5 text-sm text-white placeholder:text-gray-600 focus:outline-none focus:ring-1 transition-colors ${ subdomainStatus === "available" ? "border-emerald-500 focus:ring-emerald-500/30" : subdomainStatus === "taken" || subdomainStatus === "invalid" ? "border-red-500 focus:ring-red-500/30" : "border-ds-border focus:border-indigo-500 focus:ring-indigo-500/30" }`} />
+                  className={`w-full bg-ds-bg border rounded-l-lg px-3 py-2.5 text-sm text-ink placeholder:text-gray-600 focus:outline-none focus:ring-1 transition-colors ${ subdomainStatus === "available" ? "border-emerald-500 focus:ring-emerald-500/30" : subdomainStatus === "taken" || subdomainStatus === "invalid" ? "border-red-500 focus:ring-red-500/30" : "border-ds-border focus:border-indigo-500 focus:ring-indigo-500/30" }`} />
                 {subdomainStatus === "checking" && (
                   <div className="absolute right-3 top-1/2 -translate-y-1/2">
                     <div className="w-3.5 h-3.5 border-2 border-indigo-400 border-t-transparent rounded-full animate-spin" />
@@ -709,7 +709,7 @@ Les présentes CGV sont soumises au droit français. Tout litige relève de la c
           </div>
           <div className="flex gap-3">
             <button type="button" onClick={handleSaveSubdomain} disabled={savingSubdomain || !canSaveSubdomain}
-              className="px-4 py-2 bg-indigo-600 text-white text-sm font-semibold rounded-lg hover:bg-indigo-700 disabled:opacity-40 disabled:cursor-not-allowed transition-colors">
+              className="px-4 py-2 bg-indigo-600 text-ink text-sm font-semibold rounded-lg hover:bg-indigo-700 disabled:opacity-40 disabled:cursor-not-allowed transition-colors">
               {savingSubdomain ? "Enregistrement…" : "Enregistrer"}
             </button>
             {profile.subdomain && (
@@ -768,7 +768,7 @@ Les présentes CGV sont soumises au droit français. Tout litige relève de la c
                 onChange={(e) => setIntervalInput(e.target.value)}
                 onKeyDown={(e) => e.key === "Enter" && (e.preventDefault(), addInterval())}
                 placeholder="ex: 5"
-                className="w-28 bg-ds-bg border border-ds-border text-white placeholder:text-gray-600 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500/30"
+                className="w-28 bg-ds-bg border border-ds-border text-ink placeholder:text-gray-600 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500/30"
               />
               <button type="button" onClick={addInterval}
                 disabled={!intervalInput || reminderIntervals.length >= 10}
@@ -790,7 +790,7 @@ Les présentes CGV sont soumises au droit français. Tout litige relève de la c
               maxLength={500}
               rows={3}
               placeholder="Bonjour, je me permets de vous relancer concernant ce devis. N'hésitez pas à me contacter si vous avez des questions."
-              className="w-full bg-ds-bg border border-ds-border text-white placeholder:text-gray-600 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500/30 resize-none"
+              className="w-full bg-ds-bg border border-ds-border text-ink placeholder:text-gray-600 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500/30 resize-none"
             />
             <div className="flex justify-between items-center mt-1">
               <p className="text-xs text-gray-600">Affiché en encadré vert dans l&apos;email de relance</p>
@@ -800,7 +800,7 @@ Les présentes CGV sont soumises au droit français. Tout litige relève de la c
 
           <div className="flex items-center gap-3 pt-1">
             <button type="button" onClick={handleSaveReminders} disabled={savingReminders}
-              className="px-4 py-2 bg-indigo-600 text-white text-sm font-semibold rounded-lg hover:bg-indigo-700 disabled:opacity-50 transition-colors">
+              className="px-4 py-2 bg-indigo-600 text-ink text-sm font-semibold rounded-lg hover:bg-indigo-700 disabled:opacity-50 transition-colors">
               {savingReminders ? "Enregistrement…" : "Enregistrer"}
             </button>
             {remindersSaved && <span className="text-xs text-emerald-400">✓ Relances enregistrées !</span>}
@@ -913,7 +913,7 @@ Les présentes CGV sont soumises au droit français. Tout litige relève de la c
 
         <div className="flex items-center gap-3 pt-1">
           <button type="button" onClick={handleSaveChorus} disabled={savingChorus}
-            className="px-4 py-2 bg-indigo-600 text-white text-sm font-semibold rounded-lg hover:bg-indigo-700 disabled:opacity-50 transition-colors">
+            className="px-4 py-2 bg-indigo-600 text-ink text-sm font-semibold rounded-lg hover:bg-indigo-700 disabled:opacity-50 transition-colors">
             {savingChorus ? "Enregistrement…" : "Enregistrer"}
           </button>
           {chorusSaved && <span className="text-xs text-emerald-400">✓ Connexion Chorus Pro enregistrée !</span>}
@@ -941,14 +941,14 @@ Les présentes CGV sont soumises au droit français. Tout litige relève de la c
           onChange={(e) => setCgvText(e.target.value)}
           rows={14}
           placeholder="Rédigez vos conditions générales de vente ici, ou cliquez sur « Utiliser le modèle » pour partir d'une base complète…"
-          className="w-full bg-ds-bg border border-ds-border text-white placeholder:text-gray-600 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500/30 resize-y mt-3 font-mono leading-relaxed"
+          className="w-full bg-ds-bg border border-ds-border text-ink placeholder:text-gray-600 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500/30 resize-y mt-3 font-mono leading-relaxed"
         />
         <div className="flex items-center gap-3 mt-3">
           <button
             type="button"
             onClick={handleSaveCgv}
             disabled={savingCgv}
-            className="px-4 py-2 bg-indigo-600 text-white text-sm font-semibold rounded-lg hover:bg-indigo-700 disabled:opacity-50 transition-colors"
+            className="px-4 py-2 bg-indigo-600 text-ink text-sm font-semibold rounded-lg hover:bg-indigo-700 disabled:opacity-50 transition-colors"
           >
             {savingCgv ? "Enregistrement…" : "Enregistrer"}
           </button>

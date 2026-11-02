@@ -66,7 +66,7 @@ export function CaUrssafWidget({ monthlyHT, currentMonth, currentYear, echeances
       <div className={`flex items-center gap-3 ${bare ? "justify-end px-5 pt-5 pb-1" : "justify-between mb-5"}`}>
         {!bare && (
           <div>
-            <h2 className="text-sm font-semibold text-white">
+            <h2 className="text-sm font-semibold text-ink">
               {echeancesUrssaf ? "Récap CA, URSSAF" : "Récap chiffre d'affaires"}
             </h2>
             <p className="text-xs text-gray-500 mt-0.5">CA HT encaissé · {currentYear}</p>
@@ -88,7 +88,7 @@ export function CaUrssafWidget({ monthlyHT, currentMonth, currentYear, echeances
       <div className={bare ? "px-5 pb-5" : ""}>
         {/* Le chiffre de la période courante, en grand */}
         <div className="mb-6">
-          <div className="text-3xl font-bold text-white tabular-nums leading-none">
+          <div className="text-3xl font-bold text-ink tabular-nums leading-none">
             {fmt(periodValue)} <span className="text-base font-normal text-gray-500">HT</span>
           </div>
           <p className="text-xs text-gray-500 mt-2">{caption}</p>

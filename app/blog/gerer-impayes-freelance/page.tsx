@@ -47,21 +47,21 @@ export default function Page() {
         <span className="text-indigo-400 font-medium">Deviso est déjà conforme Factur-X.</span>
       </div>
 
-      <nav className="fixed top-9 left-0 right-0 z-50 bg-ds-bg/80 backdrop-blur-xl border-b border-white/[0.06]">
+      <nav className="fixed top-9 left-0 right-0 z-50 bg-ds-bg/80 backdrop-blur-xl border-b border-ink/[0.06]">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
           <Link href="/" aria-label="Deviso" className="flex items-center gap-2">
             <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-indigo-600 to-violet-600 flex items-center justify-center">
-              <span className="text-white font-semibold text-sm">D</span>
+              <span className="text-ink font-semibold text-sm">D</span>
             </div>
-            <span className="font-semibold text-lg text-white">Deviso</span>
+            <span className="font-semibold text-lg text-ink">Deviso</span>
           </Link>
           <div className="hidden md:flex items-center gap-8 text-sm font-medium">
-            <Link href="/blog" className="text-white font-semibold">Blog</Link>
-            <Link href="/#fonctionnalites" className="text-gray-400 hover:text-white transition-colors">Fonctionnalités</Link>
-            <Link href="/#tarifs" className="text-gray-400 hover:text-white transition-colors">Tarifs</Link>
+            <Link href="/blog" className="text-ink font-semibold">Blog</Link>
+            <Link href="/#fonctionnalites" className="text-gray-400 hover:text-ink transition-colors">Fonctionnalités</Link>
+            <Link href="/#tarifs" className="text-gray-400 hover:text-ink transition-colors">Tarifs</Link>
           </div>
           <div className="hidden md:flex items-center gap-3">
-            <Link href="/login" className="text-sm font-medium text-gray-400 hover:text-white transition-colors">Connexion</Link>
+            <Link href="/login" className="text-sm font-medium text-gray-400 hover:text-ink transition-colors">Connexion</Link>
             <WaitlistButton plan="free" label="Essayer gratuitement" className="bg-white text-black text-sm font-semibold px-4 py-2 rounded-lg hover:bg-zinc-100 transition-colors" />
           </div>
           <NavbarMobile />
@@ -84,7 +84,7 @@ export default function Page() {
               <span className="text-xs px-2.5 py-1 rounded-full bg-rose-500/10 text-rose-300 border border-rose-500/20 font-medium">Problèmes freelance</span>
               <span className="text-xs text-gray-400">29 juin 2026 · 7 min</span>
             </div>
-            <h1 className="text-3xl sm:text-4xl font-semibold text-white leading-tight mb-4">
+            <h1 className="text-3xl sm:text-4xl font-semibold text-ink leading-tight mb-4">
               Gérer les impayés en freelance : de la relance à l&apos;injonction de payer
             </h1>
             <p className="text-lg text-gray-400 leading-relaxed">
@@ -95,7 +95,7 @@ export default function Page() {
           <div className="space-y-10 text-sm text-gray-300 leading-relaxed">
 
             <section>
-              <h2 className="text-xl font-semibold text-white mb-4">Étape 0 : se protéger avant la mission (prévention)</h2>
+              <h2 className="text-xl font-semibold text-ink mb-4">Étape 0 : se protéger avant la mission (prévention)</h2>
               <p className="mb-4">
                 Le meilleur traitement des impayés, c&apos;est de les éviter. Avant de commencer à travailler pour un nouveau client :
               </p>
@@ -115,7 +115,7 @@ export default function Page() {
             </section>
 
             <section>
-              <h2 className="text-xl font-semibold text-white mb-5">Le processus de recouvrement en 4 étapes</h2>
+              <h2 className="text-xl font-semibold text-ink mb-5">Le processus de recouvrement en 4 étapes</h2>
 
               {[
                 {
@@ -161,7 +161,7 @@ export default function Page() {
                 <div key={step.step} className="mb-8">
                   <div className="flex items-center gap-3 mb-4">
                     <span className="w-8 h-8 rounded-lg bg-ds-elevated border border-ds-border flex items-center justify-center text-sm font-bold text-indigo-400 font-mono flex-shrink-0">{step.step}</span>
-                    <h3 className="text-lg font-semibold text-white">{step.title}</h3>
+                    <h3 className="text-lg font-semibold text-ink">{step.title}</h3>
                   </div>
                   <div className="pl-11 space-y-3">
                     {step.content.map((para, i) => (
@@ -173,15 +173,15 @@ export default function Page() {
             </section>
 
             <section>
-              <h2 className="text-xl font-semibold text-white mb-4">Et si le client conteste la facture ?</h2>
+              <h2 className="text-xl font-semibold text-ink mb-4">Et si le client conteste la facture ?</h2>
               <p className="mb-4">
                 Certains clients ne paient pas parce qu&apos;ils sont de mauvaise foi ou en difficulté financière. D&apos;autres contestent sincèrement : ils estiment que le travail n&apos;a pas été livré conforme à ce qui était prévu.
               </p>
               <p className="mb-4">
-                Votre meilleure défense : votre <strong className="text-white">devis signé</strong>. Il définit exactement ce qui était convenu. Si vous avez un devis précis, avec une clause de périmètre et de révision, les marges de contestation sont très limitées.
+                Votre meilleure défense : votre <strong className="text-ink">devis signé</strong>. Il définit exactement ce qui était convenu. Si vous avez un devis précis, avec une clause de périmètre et de révision, les marges de contestation sont très limitées.
               </p>
               <div className="bg-ds-surface border border-ds-border rounded-xl p-5">
-                <p className="text-sm font-semibold text-white mb-2">Ce que le juge regardera en premier</p>
+                <p className="text-sm font-semibold text-ink mb-2">Ce que le juge regardera en premier</p>
                 <ul className="text-gray-400 text-sm space-y-1">
                   <li>, Le devis : a-t-il été signé ? Ce qui était convenu est-il clairement décrit ?</li>
                   <li>, La livraison : avez-vous une preuve que la mission a été accomplie ?</li>
@@ -195,7 +195,7 @@ export default function Page() {
             <div className="bg-ds-surface border border-ds-border rounded-xl p-5 flex gap-4 items-start">
               <ShieldCheck size={20} className="text-indigo-400 flex-shrink-0" />
               <div>
-                <p className="text-sm font-semibold text-white mb-1">Prévenir les impayés dès le devis</p>
+                <p className="text-sm font-semibold text-ink mb-1">Prévenir les impayés dès le devis</p>
                 <p className="text-xs text-gray-500 mb-3">Clause d&apos;acompte, pénalités de retard, conditions de paiement, les clauses qui protègent votre trésorerie avant même de commencer.</p>
                 <Link href="/blog/clauses-devis-freelance" className="text-xs text-indigo-400 hover:text-indigo-300 font-medium">
                   Lire le guide des clauses indispensables →
@@ -207,11 +207,11 @@ export default function Page() {
 
           {/* ── Questions fréquentes ── */}
           <section className="mb-12">
-            <h2 className="text-2xl font-semibold text-white mb-6">Questions fréquentes</h2>
+            <h2 className="text-2xl font-semibold text-ink mb-6">Questions fréquentes</h2>
             <div className="space-y-4">
               {FAQ.map(({ q, a }) => (
                 <div key={q} className="bg-ds-surface rounded-xl border border-ds-border p-6">
-                  <h3 className="text-white font-medium mb-3">{q}</h3>
+                  <h3 className="text-ink font-medium mb-3">{q}</h3>
                   <p className="text-gray-400 text-sm leading-relaxed">{a}</p>
                 </div>
               ))}
@@ -220,11 +220,11 @@ export default function Page() {
 
           {/* CTA */}
           <div className="mt-14 bg-gradient-to-br from-indigo-900/40 to-violet-900/20 rounded-2xl border border-indigo-500/20 p-8 text-center">
-            <h2 className="text-2xl font-semibold text-white mb-3">Les relances automatiques, c&apos;est Deviso</h2>
+            <h2 className="text-2xl font-semibold text-ink mb-3">Les relances automatiques, c&apos;est Deviso</h2>
             <p className="text-gray-400 mb-6 max-w-lg mx-auto text-sm leading-relaxed">
               Deviso envoie automatiquement des relances aux clients en retard, aux intervalles que vous choisissez. Moins de stress, plus de trésorerie.
             </p>
-            <WaitlistButton plan="free" label="Essayer Deviso gratuitement" className="inline-block bg-indigo-600 hover:bg-indigo-700 text-white font-semibold px-8 py-3 rounded-xl transition-all" />
+            <WaitlistButton plan="free" label="Essayer Deviso gratuitement" className="inline-block bg-indigo-600 hover:bg-indigo-700 text-ink font-semibold px-8 py-3 rounded-xl transition-all" />
           </div>
 
           <div className="mt-14 pt-8">

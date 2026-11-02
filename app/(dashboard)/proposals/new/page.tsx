@@ -313,25 +313,25 @@ export default function NewProposalPage() {
   const fmt = (n: number) =>
     new Intl.NumberFormat("fr-FR", { style: "currency", currency: "EUR" }).format(n);
 
-  const inputCls = "w-full text-sm px-3 py-2 rounded-lg border border-ds-border bg-ds-elevated text-white focus:outline-none focus:ring-1 focus:ring-brand-400 placeholder:text-gray-600";
+  const inputCls = "w-full text-sm px-3 py-2 rounded-lg border border-ds-border bg-ds-elevated text-ink focus:outline-none focus:ring-1 focus:ring-brand-400 placeholder:text-gray-600";
 
   return (
     <div className="max-w-3xl mx-auto">
       <GuidedTourBanner pageKey="proposals_new" />
       {/* Header */}
       <div className="mb-8">
-        <h1 className="text-3xl font-semibold text-white tracking-tight">Nouveau devis</h1>
+        <h1 className="text-3xl font-semibold text-ink tracking-tight">Nouveau devis</h1>
         <div className="flex items-center gap-4 mt-4">
           {(["brief", "review", "client"] as Step[]).map((s, i) => (
             <div key={s} className="flex items-center gap-2">
               <div className={`w-7 h-7 rounded-full flex items-center justify-center text-xs font-semibold transition-colors ${
-                s === step ? "bg-indigo-600 text-white"
-                : ["brief", "review", "client"].indexOf(step) > i ? "bg-green-500 text-white"
+                s === step ? "bg-indigo-600 text-ink"
+                : ["brief", "review", "client"].indexOf(step) > i ? "bg-green-500 text-ink"
                 : "bg-ds-elevated text-gray-400"
               }`}>
                 {["brief", "review", "client"].indexOf(step) > i ? "✓" : i + 1}
               </div>
-              <span className={`text-sm font-medium ${s === step ? "text-white" : "text-gray-500"}`}>
+              <span className={`text-sm font-medium ${s === step ? "text-ink" : "text-gray-500"}`}>
                 {["Décrire", "Réviser", "Finaliser"][i]}
               </span>
               {i < 2 && <span className="text-gray-400 ml-2">→</span>}
@@ -356,7 +356,7 @@ export default function NewProposalPage() {
               >
                 <div className="flex items-center gap-2.5">
                   <LayoutTemplate size={15} className="text-indigo-400" />
-                  <span className="text-sm font-medium text-white">Partir d&apos;un devis type</span>
+                  <span className="text-sm font-medium text-ink">Partir d&apos;un devis type</span>
                   <span className="text-xs text-gray-500 bg-ds-elevated px-2 py-0.5 rounded-full">{templates.length}</span>
                 </div>
                 {showTemplates ? <ChevronUp size={14} className="text-gray-500" /> : <ChevronDown size={14} className="text-gray-500" />}
@@ -370,7 +370,7 @@ export default function NewProposalPage() {
                       className="w-full flex items-center justify-between px-5 py-3 text-left hover:bg-indigo-500/10 transition-colors group"
                     >
                       <div>
-                        <div className="text-sm font-medium text-white group-hover:text-indigo-300 transition-colors">{tpl.name}</div>
+                        <div className="text-sm font-medium text-ink group-hover:text-indigo-300 transition-colors">{tpl.name}</div>
                         {tpl.description && <div className="text-xs text-gray-500 mt-0.5">{tpl.description}</div>}
                         <div className="text-xs text-gray-600 mt-0.5">
                           {tpl.items.length} prestation{tpl.items.length > 1 ? "s" : ""}
@@ -389,7 +389,7 @@ export default function NewProposalPage() {
 
           {/* Brief IA */}
           <div className="bg-ds-surface rounded-xl border border-ds-border p-6">
-            <h2 className="font-semibold text-white mb-1 text-lg">Décris ton projet</h2>
+            <h2 className="font-semibold text-ink mb-1 text-lg">Décris ton projet</h2>
             <p className="text-gray-400 text-sm mb-4">
               Parle normalement. L&apos;IA comprend le contexte et génère un devis complet.
             </p>
@@ -412,7 +412,7 @@ export default function NewProposalPage() {
               onChange={(e) => setBrief(e.target.value)}
               rows={5}
               placeholder="Décris ici ton projet, la prestation, le client, le budget approximatif et le délai..."
-              className="w-full px-4 py-3 rounded-xl border border-ds-border bg-ds-elevated text-white placeholder:text-gray-600 focus:outline-none focus:ring-1 focus:ring-indigo-500/30 focus:border-indigo-500 text-sm transition resize-none"
+              className="w-full px-4 py-3 rounded-xl border border-ds-border bg-ds-elevated text-ink placeholder:text-gray-600 focus:outline-none focus:ring-1 focus:ring-indigo-500/30 focus:border-indigo-500 text-sm transition resize-none"
             />
             {catalog.length > 0 && (
               <p className="text-xs text-indigo-400/70 mt-3 flex items-center gap-1.5">
@@ -423,15 +423,15 @@ export default function NewProposalPage() {
             <button
               onClick={handleGenerate}
               disabled={generating || brief.trim().length < 10}
-              className="w-full mt-4 bg-indigo-600 text-white font-semibold py-3.5 rounded-xl hover:bg-indigo-700 disabled:opacity-60 disabled:cursor-not-allowed transition-all flex items-center justify-center gap-2"
+              className="w-full mt-4 bg-indigo-600 text-ink font-semibold py-3.5 rounded-xl hover:bg-indigo-700 disabled:opacity-60 disabled:cursor-not-allowed transition-all flex items-center justify-center gap-2"
             >
               {generating ? (
-                <><span className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full spinner" />Génération en cours...</>
+                <><span className="w-4 h-4 border-2 border-ink/30 border-t-white rounded-full spinner" />Génération en cours...</>
               ) : (<><Zap size={18} className="shrink-0" />Générer le devis avec l&apos;IA</>)}
             </button>
             <button
               onClick={createBlank}
-              className="w-full mt-2 text-sm font-medium text-gray-400 hover:text-white py-2.5 rounded-xl border border-ds-border hover:bg-ds-elevated/60 transition-colors"
+              className="w-full mt-2 text-sm font-medium text-gray-400 hover:text-ink py-2.5 rounded-xl border border-ds-border hover:bg-ds-elevated/60 transition-colors"
             >
               Ou partir d&apos;un devis vierge, sans l&apos;IA
             </button>
@@ -450,7 +450,7 @@ export default function NewProposalPage() {
                   value={generated.title}
                   onChange={(e) => setGenerated({ ...generated, title: e.target.value })}
                   placeholder="Titre du devis"
-                  className="font-semibold text-white text-lg bg-transparent border-b border-transparent hover:border-ds-border focus:border-indigo-500 focus:outline-none w-full placeholder:text-gray-600"
+                  className="font-semibold text-ink text-lg bg-transparent border-b border-transparent hover:border-ds-border focus:border-indigo-500 focus:outline-none w-full placeholder:text-gray-600"
                 />
                 <p className="text-gray-500 text-sm mt-0.5">Modifie le titre et les lignes si nécessaire</p>
               </div>
@@ -574,7 +574,7 @@ export default function NewProposalPage() {
                 <select aria-label="Régime TVA"
                   value={generated.tva_rate}
                   onChange={(e) => updateTvaRate(parseFloat(e.target.value))}
-                  className="w-full border border-ds-border rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-indigo-500/30 focus:border-indigo-500 bg-ds-elevated text-white"
+                  className="w-full border border-ds-border rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-indigo-500/30 focus:border-indigo-500 bg-ds-elevated text-ink"
                 >
                   {TVA_OPTIONS.map((opt) => (
                     <option key={opt.rate} value={opt.rate}>{opt.label}</option>
@@ -607,7 +607,7 @@ export default function NewProposalPage() {
                     <span>TVA non applicable (art. 293 B CGI)</span><span>-</span>
                   </div>
                 )}
-                <div className="flex justify-between font-semibold text-base text-white pt-1 border-t border-ds-border">
+                <div className="flex justify-between font-semibold text-base text-ink pt-1 border-t border-ds-border">
                   <span>Total {generated.tva_rate > 0 ? "TTC" : "net"}</span>
                   <span className="text-indigo-400">{fmt(generated.total_ttc)}</span>
                 </div>
@@ -652,16 +652,16 @@ export default function NewProposalPage() {
                   }
                 }}
                 placeholder="Ex : 'Réduis à 3 500€ max', 'Ajoute une clause de révisions illimitées 1 mois'..."
-                className="flex-1 text-sm px-3 py-2.5 rounded-xl border border-ds-border bg-ds-elevated text-white placeholder:text-gray-600 focus:outline-none focus:ring-1 focus:ring-indigo-500/30 focus:border-indigo-500 transition"
+                className="flex-1 text-sm px-3 py-2.5 rounded-xl border border-ds-border bg-ds-elevated text-ink placeholder:text-gray-600 focus:outline-none focus:ring-1 focus:ring-indigo-500/30 focus:border-indigo-500 transition"
               />
               <button
                 onClick={handleRefine}
                 disabled={refining || refineInput.trim().length < 3}
-                className="px-4 py-2.5 bg-indigo-600 text-white rounded-xl text-sm font-semibold hover:bg-indigo-700 disabled:opacity-50 disabled:cursor-not-allowed transition-all flex items-center gap-2 shrink-0"
+                className="px-4 py-2.5 bg-indigo-600 text-ink rounded-xl text-sm font-semibold hover:bg-indigo-700 disabled:opacity-50 disabled:cursor-not-allowed transition-all flex items-center gap-2 shrink-0"
               >
                 {refining ? (
                   <>
-                    <span className="w-3 h-3 border-2 border-white/30 border-t-white rounded-full spinner" />
+                    <span className="w-3 h-3 border-2 border-ink/30 border-t-white rounded-full spinner" />
                     Affinage...
                   </>
                 ) : (
@@ -682,7 +682,7 @@ export default function NewProposalPage() {
             </div>
           </div>
 
-          <button onClick={() => setStep("client")} className="w-full bg-indigo-600 text-white font-semibold py-3.5 rounded-xl hover:bg-indigo-700 transition-all">
+          <button onClick={() => setStep("client")} className="w-full bg-indigo-600 text-ink font-semibold py-3.5 rounded-xl hover:bg-indigo-700 transition-all">
             Continuer → Informations client
           </button>
         </div>
@@ -692,7 +692,7 @@ export default function NewProposalPage() {
       {step === "client" && generated && (
         <div className="bg-ds-surface rounded-xl border border-ds-border p-6 space-y-4">
           <div>
-            <h2 className="font-semibold text-white text-lg mb-1">Informations client</h2>
+            <h2 className="font-semibold text-ink text-lg mb-1">Informations client</h2>
             <p className="text-gray-400 text-sm">Optionnel, tu pourras compléter après</p>
           </div>
           <div className="grid sm:grid-cols-2 gap-4">
@@ -750,8 +750,8 @@ export default function NewProposalPage() {
 
           <div className="flex gap-3">
             <button onClick={() => setStep("review")} className="flex-1 border border-ds-border text-gray-300 font-semibold py-3 rounded-xl hover:bg-ds-elevated transition-all">← Retour</button>
-            <button onClick={handleSave} disabled={saving} className="flex-grow bg-indigo-600 text-white font-semibold py-3 rounded-xl hover:bg-indigo-700 disabled:opacity-60 transition-all flex items-center justify-center gap-2">
-              {saving ? <><span className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full spinner" />Sauvegarde...</> : (<><Save size={18} className="shrink-0" />Enregistrer le devis</>)}
+            <button onClick={handleSave} disabled={saving} className="flex-grow bg-indigo-600 text-ink font-semibold py-3 rounded-xl hover:bg-indigo-700 disabled:opacity-60 transition-all flex items-center justify-center gap-2">
+              {saving ? <><span className="w-4 h-4 border-2 border-ink/30 border-t-white rounded-full spinner" />Sauvegarde...</> : (<><Save size={18} className="shrink-0" />Enregistrer le devis</>)}
             </button>
           </div>
         </div>
@@ -764,7 +764,7 @@ export default function NewProposalPage() {
           <div className="relative bg-ds-surface border border-violet-500/30 rounded-xl p-6 w-full max-w-sm shadow-2xl">
             <div className="flex items-center gap-2 mb-1">
               <Clock size={15} className="text-violet-400" />
-              <h3 className="font-semibold text-white text-sm">Durée de la prestation</h3>
+              <h3 className="font-semibold text-ink text-sm">Durée de la prestation</h3>
             </div>
             <p className="text-xs text-gray-500 mb-5">
               <span className="text-gray-300 font-medium">{pendingHourlyItem.name}</span> · {fmt(pendingHourlyItem.unit_price)}/h
@@ -776,7 +776,7 @@ export default function NewProposalPage() {
                 <select aria-label="Heures"
                   value={durationHours}
                   onChange={(e) => setDurationHours(parseInt(e.target.value))}
-                  className="w-full px-3 py-2 rounded-lg bg-ds-bg border border-ds-border text-sm text-white focus:outline-none focus:border-violet-500 focus:ring-1 focus:ring-violet-500/30"
+                  className="w-full px-3 py-2 rounded-lg bg-ds-bg border border-ds-border text-sm text-ink focus:outline-none focus:border-violet-500 focus:ring-1 focus:ring-violet-500/30"
                 >
                   {Array.from({ length: 24 }, (_, i) => (
                     <option key={i} value={i}>{i}h</option>
@@ -788,7 +788,7 @@ export default function NewProposalPage() {
                 <select aria-label="Minutes"
                   value={durationMinutes}
                   onChange={(e) => setDurationMinutes(parseInt(e.target.value))}
-                  className="w-full px-3 py-2 rounded-lg bg-ds-bg border border-ds-border text-sm text-white focus:outline-none focus:border-violet-500 focus:ring-1 focus:ring-violet-500/30"
+                  className="w-full px-3 py-2 rounded-lg bg-ds-bg border border-ds-border text-sm text-ink focus:outline-none focus:border-violet-500 focus:ring-1 focus:ring-violet-500/30"
                 >
                   {[0, 15, 30, 45].map((m) => (
                     <option key={m} value={m}>{m === 0 ? "00 min" : `${m} min`}</option>
@@ -805,7 +805,7 @@ export default function NewProposalPage() {
                     {durationHours > 0 && `${durationHours}h`}{durationMinutes > 0 && `${durationMinutes}min`}
                     {" "}× {fmt(pendingHourlyItem.unit_price)}/h
                   </span>
-                  <span className="font-semibold text-white">
+                  <span className="font-semibold text-ink">
                     {fmt((durationHours + durationMinutes / 60) * pendingHourlyItem.unit_price)}
                   </span>
                 </div>
@@ -822,7 +822,7 @@ export default function NewProposalPage() {
               <button
                 onClick={confirmDuration}
                 disabled={durationHours === 0 && durationMinutes === 0}
-                className="flex-1 px-4 py-2 text-sm font-semibold bg-violet-600 text-white rounded-lg hover:bg-violet-700 disabled:opacity-50 transition-colors"
+                className="flex-1 px-4 py-2 text-sm font-semibold bg-violet-600 text-ink rounded-lg hover:bg-violet-700 disabled:opacity-50 transition-colors"
               >
                 Ajouter
               </button>
