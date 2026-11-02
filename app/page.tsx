@@ -130,6 +130,7 @@ export default function LandingPage() {
             <a href="#comment" className="text-gray-400 hover:text-white transition-colors">Comment ça marche</a>
             <a href="#tarifs" className="text-gray-400 hover:text-white transition-colors">Tarifs</a>
             <Link href="/blog" className="text-gray-400 hover:text-white transition-colors">Blog</Link>
+            <Link href="/experts-comptables" className="text-gray-400 hover:text-white transition-colors">Experts-comptables</Link>
           </div>
           <div className="hidden md:flex items-center gap-3">
             <Link href="/login" className="text-sm font-medium text-gray-400 hover:text-white transition-colors">

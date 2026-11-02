@@ -44,6 +44,7 @@ export function SiteFooter() {
               <ul className="space-y-2">
                 <li><Link href="/#fonctionnalites" className="hover:text-gray-300 transition-colors">Fonctionnalités</Link></li>
                 <li><Link href="/#tarifs" className="hover:text-gray-300 transition-colors">Tarifs</Link></li>
+                <li><Link href="/experts-comptables" className="hover:text-gray-300 transition-colors">Experts-comptables</Link></li>
                 <li><Link href="/login" className="hover:text-gray-300 transition-colors">Connexion</Link></li>
               </ul>
             </div>
