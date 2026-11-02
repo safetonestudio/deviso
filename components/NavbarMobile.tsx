@@ -49,18 +49,18 @@ export function NavbarMobile() {
               Tarifs
             </a>
             <Link
-              href="/blog"
-              onClick={() => setOpen(false)}
-              className="px-3 py-2.5 text-sm font-medium text-gray-300 hover:text-white hover:bg-white/[0.06] rounded-lg transition-colors"
-            >
-              Blog
-            </Link>
-            <Link
               href="/experts-comptables"
               onClick={() => setOpen(false)}
               className="px-3 py-2.5 text-sm font-medium text-gray-300 hover:text-white hover:bg-white/[0.06] rounded-lg transition-colors"
             >
               Experts-comptables
+            </Link>
+            <Link
+              href="/blog"
+              onClick={() => setOpen(false)}
+              className="px-3 py-2.5 text-sm font-medium text-gray-300 hover:text-white hover:bg-white/[0.06] rounded-lg transition-colors"
+            >
+              Blog
             </Link>
             <div className="my-2" />
             <Link
