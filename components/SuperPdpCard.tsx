@@ -208,8 +208,8 @@ export function SuperPdpCard() {
       <div className="flex items-start justify-between gap-4 mb-1">
         <h2 className="font-semibold text-ink">Plateforme Agréée</h2>
         {etat?.sandbox && (
-          <span className="text-[10px] font-bold uppercase tracking-wide bg-amber-500/20 text-amber-400 border border-amber-500/30 px-1.5 py-0.5 rounded shrink-0">
-            bac à sable
+          <span className="text-[10px] font-bold bg-amber-500/20 text-amber-400 border border-amber-500/30 px-1.5 py-0.5 rounded shrink-0">
+            Bac à sable
           </span>
         )}
       </div>

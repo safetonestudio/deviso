@@ -346,7 +346,7 @@ Les présentes CGV sont soumises au droit français. Tout litige relève de la c
         </div>
 
         <section className="bg-ds-surface border border-ds-border rounded-xl p-5 space-y-4">
-          <h2 className="text-sm font-semibold text-gray-400 uppercase tracking-wide">Informations personnelles</h2>
+          <h2 className="text-sm font-semibold text-gray-400">Informations personnelles</h2>
 
           <div>
             <label className="block text-sm font-medium text-gray-300 mb-1.5">Prénom et nom</label>
@@ -553,7 +553,7 @@ Les présentes CGV sont soumises au droit français. Tout litige relève de la c
             ))}
           </div>
           <div className="bg-ds-elevated rounded-lg p-3 border border-ds-border">
-            <div className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1">Mention affichée sur tes documents</div>
+            <div className="text-xs font-semibold text-gray-500 mb-1">Mention affichée sur tes documents</div>
             {selectedRegime.value === "franchise"
               ? <p className="text-xs text-gray-400 italic">TVA non applicable, art. 293 B du CGI</p>
               : <p className="text-xs text-gray-400 italic">TVA {selectedRegime.rate}% applicable · Taux en vigueur à la date d&apos;émission</p>}

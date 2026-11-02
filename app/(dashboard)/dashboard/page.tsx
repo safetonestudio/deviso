@@ -276,7 +276,7 @@ export default async function DashboardPage() {
 
       {/* ── Pouls d'activité : les chiffres à lire d'un coup d'oeil ── */}
       <div>
-        <h2 className="text-xs font-semibold text-gray-500 uppercase tracking-widest mb-3">
+        <h2 className="text-xs font-semibold text-gray-500 mb-3">
           En un coup d&apos;oeil
         </h2>
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">

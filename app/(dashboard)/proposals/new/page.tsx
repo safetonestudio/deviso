@@ -460,7 +460,7 @@ export default function NewProposalPage() {
             </div>
 
             <div className="space-y-2 mb-4">
-              <div className="grid grid-cols-12 gap-2 text-xs font-semibold text-gray-500 uppercase tracking-wide px-1">
+              <div className="grid grid-cols-12 gap-2 text-xs font-semibold text-gray-500 px-1">
                 <span className="col-span-3">Description</span>
                 <span className="col-span-2 text-center">Qté</span>
                 <span className="col-span-2 text-center">Unité</span>
@@ -525,7 +525,7 @@ export default function NewProposalPage() {
                         {/* Section À l'acte */}
                         {catalog.filter(i => i.type === "fixed").length > 0 && (
                           <>
-                            <div className="px-4 py-2 text-[10px] font-semibold text-gray-500 uppercase tracking-wider flex items-center gap-1.5 sticky top-0 bg-ds-surface border-b border-ds-border">
+                            <div className="px-4 py-2 text-[10px] font-semibold text-gray-500 flex items-center gap-1.5 sticky top-0 bg-ds-surface border-b border-ds-border">
                               <Package size={10} /> À l&apos;acte
                             </div>
                             {catalog.filter(i => i.type === "fixed").map((item) => (
@@ -543,7 +543,7 @@ export default function NewProposalPage() {
                         {/* Section Taux horaire */}
                         {catalog.filter(i => i.type === "hourly").length > 0 && (
                           <>
-                            <div className="px-4 py-2 text-[10px] font-semibold text-violet-400 uppercase tracking-wider flex items-center gap-1.5 sticky top-0 bg-ds-surface border-b border-ds-border border-t border-ds-border">
+                            <div className="px-4 py-2 text-[10px] font-semibold text-violet-400 flex items-center gap-1.5 sticky top-0 bg-ds-surface border-b border-ds-border border-t border-ds-border">
                               <Clock size={10} /> Taux horaire
                             </div>
                             {catalog.filter(i => i.type === "hourly").map((item) => (

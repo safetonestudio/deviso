@@ -66,7 +66,7 @@ export function DashboardActionFeed({ items }: { items: ActionItem[] }) {
 
   return (
     <div>
-      <h2 className="text-xs font-semibold text-gray-500 uppercase tracking-widest mb-3">
+      <h2 className="text-xs font-semibold text-gray-500 mb-3">
         Actions requises
       </h2>
       <div className="space-y-2">

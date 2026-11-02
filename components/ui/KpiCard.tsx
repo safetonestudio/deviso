@@ -34,17 +34,17 @@ interface KpiCardProps {
 export function KpiCard({ label, value, icon: Icon, trend, delta, className = "" }: KpiCardProps) {
   return (
     <div
-      className={`bg-ds-surface border border-ds-border rounded-xl p-4 sm:p-6 flex flex-col gap-3 sm:gap-4 ${className}`}
+      className={`bg-ds-surface border border-ds-border shadow-ds-card rounded-xl p-4 sm:p-5 flex flex-col gap-3 ${className}`}
     >
-      <div className="w-8 h-8 flex items-center justify-center bg-ds-elevated rounded-lg text-indigo-400 shrink-0">
+      <div className="w-8 h-8 flex items-center justify-center bg-indigo-500/10 rounded-lg text-indigo-400 shrink-0">
         <Icon size={18} />
       </div>
       <div>
-        <div className="text-xs font-medium text-gray-600 uppercase tracking-wider mb-1">{label}</div>
-        <div className="text-2xl sm:text-3xl font-semibold text-ink tabular-nums tracking-tight break-words">
+        <div className="text-[13px] font-medium text-gray-400 mb-1">{label}</div>
+        <div className="font-display text-2xl sm:text-[28px] leading-tight font-bold text-ink tabular-nums tracking-tight break-words">
           {value}
         </div>
-        {trend && <div className="text-xs text-gray-600 mt-2">{trend}</div>}
+        {trend && <div className="text-[12.5px] text-gray-400 mt-2">{trend}</div>}
         {delta && (
           <div
             className={`inline-flex items-center gap-0.5 text-xs mt-2 font-medium px-1.5 py-0.5 rounded-md ${

@@ -270,7 +270,7 @@ export default function TeamPage() {
                     { label: "Conversion", value: `${member.stats.conversion_rate}%`, color: "text-violet-400" },
                   ].map(({ label, value, color }) => (
                     <div key={label} className="bg-ds-elevated rounded-lg p-2.5 text-center">
-                      <div className="text-[10px] text-gray-500 uppercase tracking-wide mb-1">{label}</div>
+                      <div className="text-[10px] text-gray-500 mb-1">{label}</div>
                       <div className={`text-sm font-bold ${color}`}>{value}</div>
                     </div>
                   ))}
@@ -423,9 +423,9 @@ export default function TeamPage() {
               <table className="w-full text-sm">
                 <thead className="border-b border-ds-border">
                   <tr>
-                    <th className="text-left px-4 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wider">Membre</th>
-                    <th className="text-center px-4 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wider">Statut</th>
-                    <th className="text-right px-4 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wider">Invité le</th>
+                    <th className="text-left px-4 py-3 text-xs font-semibold text-gray-500">Membre</th>
+                    <th className="text-center px-4 py-3 text-xs font-semibold text-gray-500">Statut</th>
+                    <th className="text-right px-4 py-3 text-xs font-semibold text-gray-500">Invité le</th>
                     <th className="px-4 py-3" />
                   </tr>
                 </thead>

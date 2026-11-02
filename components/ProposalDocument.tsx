@@ -92,7 +92,7 @@ function ItemsTable({ proposal, color, headerStyle, p }: {
   headerStyle: "classic" | "colored" | "minimal";
   p: ReturnType<typeof palette>;
 }) {
-  const thBase = "text-xs font-semibold uppercase tracking-wide py-2";
+  const thBase = "text-xs font-semibold py-2";
   const isColored = headerStyle === "colored";
   const thColor = isColored ? "text-ink" : `${p.text400}`;
   return (
@@ -188,7 +188,7 @@ function ConditionsSection({ proposal, p, hasCgv }: { proposal: Proposal; p: Ret
 function CgvSection({ cgvText, p }: { cgvText: string; p: ReturnType<typeof palette> }) {
   return (
     <div className={`${p.card} rounded-2xl border p-8 mt-2`}>
-      <h2 className={`text-sm font-semibold uppercase tracking-wider ${p.text400} mb-5 pb-3 border-b ${p.border}`}>
+      <h2 className={`text-sm font-semibold ${p.text400} mb-5 pb-3 border-b ${p.border}`}>
         Conditions Générales de Vente
       </h2>
       <div className={`text-xs ${p.text500} whitespace-pre-wrap leading-relaxed`}>
@@ -215,7 +215,7 @@ function SignatureBlock({ proposal, p }: { proposal: Proposal; p: ReturnType<typ
       <div className={`flex items-start gap-3 ${p.signatureBg} rounded-xl p-4`}>
         <PenLine size={18} className="text-emerald-500 mt-0.5 shrink-0" />
         <div>
-          <p className={`text-xs font-semibold ${p.signatureTitle} uppercase tracking-wide mb-1`}>
+          <p className={`text-xs font-semibold ${p.signatureTitle} mb-1`}>
             Signé électroniquement
           </p>
           <p className={`text-sm ${p.signatureText}`}>
@@ -276,7 +276,7 @@ function ClassicTemplate({ proposal, profile, color, showBranding, p, cgvText }:
           )}
         </div>
         <div className="text-right">
-          <div className={`text-xs font-semibold uppercase tracking-wide ${p.text400} mb-1`}>Adressé à</div>
+          <div className={`text-xs font-semibold ${p.text400} mb-1`}>Adressé à</div>
           <div className={`font-semibold ${p.text900} text-base`}>{proposal.client_company || proposal.client_name || "Client"}</div>
           {proposal.client_name && proposal.client_company && (
             <div className={`text-sm ${p.text500}`}>{proposal.client_name}</div>
@@ -310,7 +310,7 @@ function ModernTemplate({ proposal, profile, color, showBranding, p, cgvText }: 
       <div style={{ backgroundColor: color }} className="px-8 py-7 text-ink">
         <div className="flex justify-between items-start">
           <div>
-            <div className="text-xs font-semibold uppercase tracking-widest opacity-70 mb-1">Devis</div>
+            <div className="text-xs font-semibold opacity-70 mb-1">Devis</div>
             <div className="text-2xl font-semibold">{profile?.company_name || profile?.full_name || ""}</div>
             {profile?.company_name && profile?.full_name && (
               <div className="text-sm opacity-80 mt-0.5">{profile.full_name}</div>
@@ -336,7 +336,7 @@ function ModernTemplate({ proposal, profile, color, showBranding, p, cgvText }: 
 
       <div className={`px-8 py-5 ${p.clientBg} border-b flex justify-end`}>
         <div className="text-right">
-          <div className={`text-xs font-semibold uppercase tracking-wide ${p.text400} mb-1`}>Adressé à</div>
+          <div className={`text-xs font-semibold ${p.text400} mb-1`}>Adressé à</div>
           <div className={`font-semibold ${p.text900}`}>{proposal.client_company || proposal.client_name || "Client"}</div>
           {proposal.client_name && proposal.client_company && (
             <div className={`text-sm ${p.text500}`}>{proposal.client_name}</div>
@@ -372,7 +372,7 @@ function EpureTemplate({ proposal, profile, color, showBranding, p, cgvText }: {
         <div className="flex gap-4">
           <div className="w-0.5 rounded-full self-stretch" style={{ backgroundColor: color }} />
           <div>
-            <div className={`text-xs font-semibold uppercase tracking-[0.2em] ${p.text400} mb-3`}>Devis</div>
+            <div className={`text-xs font-semibold tracking-[0.2em] ${p.text400} mb-3`}>Devis</div>
             {(profile?.company_name || profile?.full_name) && (
               <div className={`font-semibold ${p.text900} text-base`}>{profile?.company_name || profile?.full_name}</div>
             )}
@@ -387,7 +387,7 @@ function EpureTemplate({ proposal, profile, color, showBranding, p, cgvText }: {
         </div>
 
         <div className="text-right">
-          <div className={`text-xs font-semibold uppercase tracking-wide ${p.text300} mb-1`}>Adressé à</div>
+          <div className={`text-xs font-semibold ${p.text300} mb-1`}>Adressé à</div>
           <div className={`font-semibold ${p.text900}`}>{proposal.client_company || proposal.client_name || "Client"}</div>
           {proposal.client_name && proposal.client_company && (
             <div className={`text-sm ${p.text500}`}>{proposal.client_name}</div>

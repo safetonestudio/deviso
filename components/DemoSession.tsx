@@ -104,8 +104,8 @@ export function DemoBanner() {
     <div className="sticky top-14 lg:top-0 z-30 -mx-4 lg:-mx-8 -mt-4 lg:-mt-8 mb-4 lg:mb-6 px-4 lg:px-8 py-2.5 bg-amber-500/10 border-b border-amber-500/20 backdrop-blur-sm">
       <div className="flex items-center justify-between gap-3 flex-wrap">
         <span className="flex items-center gap-2 text-xs sm:text-sm text-amber-400 font-medium min-w-0">
-          <span className="text-[10px] font-bold uppercase tracking-wide bg-amber-500/20 border border-amber-500/30 px-1.5 py-0.5 rounded shrink-0">
-            démo
+          <span className="text-[10px] font-bold bg-amber-500/20 border border-amber-500/30 px-1.5 py-0.5 rounded shrink-0">
+            Démo
           </span>
           <span className="truncate">Données fictives, rien n&apos;est conservé</span>
         </span>

@@ -99,7 +99,7 @@ function Li({ children }: { children: React.ReactNode }) {
 function Section({ title, children }: { title: string; children: React.ReactNode }) {
   return (
     <div className="mb-10">
-      <h2 className="text-sm font-semibold text-ink mb-4 pb-2 border-b border-ds-border uppercase tracking-wide">
+      <h2 className="text-sm font-semibold text-ink mb-4 pb-2 border-b border-ds-border">
         {title}
       </h2>
       <div className="space-y-4 text-sm text-gray-400 leading-relaxed">{children}</div>
@@ -1368,7 +1368,7 @@ export default async function GuideArticlePage({
       {/* Header */}
       <div className="mb-10">
         <div className="flex items-center gap-2 mb-3">
-          <span className="text-[10px] font-semibold px-2 py-0.5 rounded-full bg-indigo-500/15 border border-indigo-500/25 text-indigo-400 uppercase tracking-wide">
+          <span className="text-[10px] font-semibold px-2 py-0.5 rounded-full bg-indigo-500/15 border border-indigo-500/25 text-indigo-400">
             Guide Deviso
           </span>
           <span className="flex items-center gap-1 text-xs text-gray-500">

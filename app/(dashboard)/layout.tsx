@@ -198,8 +198,8 @@ export default async function DashboardLayout({ children }: { children: React.Re
               </div>
               <span className="font-semibold text-ink">Deviso</span>
               {isDemo && (
-                <span className="ml-1 text-[10px] font-bold uppercase tracking-wide bg-amber-500/20 text-amber-400 border border-amber-500/30 px-1.5 py-0.5 rounded">
-                  démo
+                <span className="ml-1 text-[10px] font-bold bg-amber-500/20 text-amber-400 border border-amber-500/30 px-1.5 py-0.5 rounded">
+                  Démo
                 </span>
               )}
             </a>

@@ -210,7 +210,7 @@ export default function BillingPage() {
 
       {/* Plan actuel */}
       <div className="bg-ds-surface border border-ds-border rounded-xl p-6 mb-6">
-        <p className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-3">Plan actuel</p>
+        <p className="text-xs font-semibold text-gray-500 mb-3">Plan actuel</p>
         <div className="flex items-center justify-between gap-4">
           <div>
             <div className="flex items-center gap-2 mb-2">
@@ -265,7 +265,7 @@ export default function BillingPage() {
       */}
       <div className="bg-ds-surface border border-ds-border rounded-xl p-6">
           <div className="flex items-center justify-between mb-5">
-            <p className="text-xs font-semibold text-gray-500 uppercase tracking-wider">
+            <p className="text-xs font-semibold text-gray-500">
               {plan === "free" ? "Commencer votre essai gratuit" : "Changer de formule"}
             </p>
             {/* Toggle mensuel / annuel */}

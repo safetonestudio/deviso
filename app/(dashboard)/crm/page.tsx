@@ -317,12 +317,12 @@ export default function CRMPage() {
           <table className="w-full text-sm">
             <thead className="border-b border-ds-border">
               <tr>
-                <th className="text-left px-4 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wider">Client</th>
-                <th className="text-center px-4 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wider">Devis</th>
-                <th className="text-center px-4 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wider">Signés</th>
-                <th className="text-center px-4 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wider">Factures</th>
-                <th className="text-right px-4 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wider">CA encaissé HT</th>
-                <th className="text-right px-4 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wider">Dernière activité</th>
+                <th className="text-left px-4 py-3 text-xs font-semibold text-gray-500">Client</th>
+                <th className="text-center px-4 py-3 text-xs font-semibold text-gray-500">Devis</th>
+                <th className="text-center px-4 py-3 text-xs font-semibold text-gray-500">Signés</th>
+                <th className="text-center px-4 py-3 text-xs font-semibold text-gray-500">Factures</th>
+                <th className="text-right px-4 py-3 text-xs font-semibold text-gray-500">CA encaissé HT</th>
+                <th className="text-right px-4 py-3 text-xs font-semibold text-gray-500">Dernière activité</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-ds-border">
@@ -429,7 +429,7 @@ export default function CRMPage() {
             <div className="flex-1 overflow-y-auto px-6 py-4 space-y-6">
               {selected.proposals.length > 0 && (
                 <div>
-                  <h3 className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">Devis ({selected.proposals.length})</h3>
+                  <h3 className="text-xs font-semibold text-gray-500 mb-2">Devis ({selected.proposals.length})</h3>
                   <div className="space-y-2">
                     {selected.proposals.map((p) => {
                       const st = PROPOSAL_STATUS[p.status] ?? { label: p.status, color: "bg-ds-elevated text-gray-400" };
@@ -456,7 +456,7 @@ export default function CRMPage() {
 
               {selected.invoices.length > 0 && (
                 <div>
-                  <h3 className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">Factures ({selected.invoices.length})</h3>
+                  <h3 className="text-xs font-semibold text-gray-500 mb-2">Factures ({selected.invoices.length})</h3>
                   <div className="space-y-2">
                     {selected.invoices.map((inv) => {
                       const st = INVOICE_STATUS[inv.status] ?? { label: inv.status, color: "bg-ds-elevated text-gray-400" };

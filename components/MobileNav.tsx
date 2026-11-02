@@ -100,7 +100,7 @@ export function MobileNav({ initials, userName, userEmail, isMember = false, isC
               if (!sectionVisible(i, NAVIGATION, isMember, isComptable)) return null;
               return (
                 <div key={i} className="pt-4 pb-1">
-                  <p className="px-3 text-[10px] font-semibold text-gray-600 uppercase tracking-widest">{item.section}</p>
+                  <p className="px-3 text-[10px] font-semibold text-gray-600">{item.section}</p>
                 </div>
               );
             }

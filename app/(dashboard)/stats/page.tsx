@@ -89,7 +89,7 @@ export default function StatsPage() {
 
       {/* CA mensuel, SVG area chart */}
       <div className="bg-ds-surface border border-ds-border rounded-xl p-6">
-        <h2 className="text-sm font-semibold text-gray-400 uppercase tracking-wide mb-5">CA mensuel, 12 derniers mois</h2>
+        <h2 className="text-sm font-semibold text-gray-400 mb-5">CA mensuel, 12 derniers mois</h2>
         {(() => {
           const data = stats.monthly_ca;
           const n = data.length;
@@ -198,7 +198,7 @@ export default function StatsPage() {
       {/* Top clients + Perf devis */}
       <div className="grid md:grid-cols-2 gap-6">
         <div className="bg-ds-surface border border-ds-border rounded-xl p-6">
-          <h2 className="text-sm font-semibold text-gray-400 uppercase tracking-wide mb-4">Top clients, CA encaissé HT</h2>
+          <h2 className="text-sm font-semibold text-gray-400 mb-4">Top clients, CA encaissé HT</h2>
           {stats.top_clients.length === 0 ? (
             <p className="text-gray-500 text-sm">Aucune facture payée pour l&apos;instant.</p>
           ) : (
@@ -226,7 +226,7 @@ export default function StatsPage() {
         </div>
 
         <div className="bg-ds-surface border border-ds-border rounded-xl p-6">
-          <h2 className="text-sm font-semibold text-gray-400 uppercase tracking-wide mb-4">Performance des devis</h2>
+          <h2 className="text-sm font-semibold text-gray-400 mb-4">Performance des devis</h2>
           <div className="space-y-4">
             <div className="flex justify-between items-center">
               <span className="text-sm text-gray-400">Devis envoyés</span>
@@ -272,13 +272,13 @@ export default function StatsPage() {
       {stats.is_pro ? (
         <div className="space-y-4">
           <div className="flex items-center gap-2">
-            <h2 className="text-sm font-semibold text-gray-400 uppercase tracking-wide">Analytics avancées</h2>
+            <h2 className="text-sm font-semibold text-gray-400">Analytics avancées</h2>
             <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-indigo-500/20 text-indigo-400 border border-indigo-500/30">PRO</span>
           </div>
 
           {stats.funnel && (
             <div className="bg-ds-surface border border-ds-border rounded-xl p-6">
-              <h3 className="text-sm font-semibold text-gray-400 uppercase tracking-wide mb-5">Funnel de conversion</h3>
+              <h3 className="text-sm font-semibold text-gray-400 mb-5">Funnel de conversion</h3>
               <div className="flex items-center gap-1">
                 {[
                   { label: "Créés", value: stats.funnel.created, color: "bg-gray-600" },
@@ -310,7 +310,7 @@ export default function StatsPage() {
             <div className="bg-ds-surface border border-ds-border rounded-xl p-5">
               <div className="flex items-center gap-2 mb-3">
                 <Clock size={14} className="text-blue-400" />
-                <span className="text-xs font-semibold text-gray-400 uppercase tracking-wide">Délai moyen de signature</span>
+                <span className="text-xs font-semibold text-gray-400">Délai moyen de signature</span>
               </div>
               {stats.avg_days_to_sign != null ? (
                 <>
@@ -327,7 +327,7 @@ export default function StatsPage() {
             <div className="bg-ds-surface border border-ds-border rounded-xl p-5">
               <div className="flex items-center gap-2 mb-3">
                 <TrendingUp size={14} className="text-emerald-400" />
-                <span className="text-xs font-semibold text-gray-400 uppercase tracking-wide">Meilleur mois</span>
+                <span className="text-xs font-semibold text-gray-400">Meilleur mois</span>
               </div>
               {stats.best_month ? (
                 <>
@@ -342,7 +342,7 @@ export default function StatsPage() {
             <div className="bg-ds-surface border border-ds-border rounded-xl p-5">
               <div className="flex items-center gap-2 mb-3">
                 <Zap size={14} className="text-amber-400" />
-                <span className="text-xs font-semibold text-gray-400 uppercase tracking-wide">Efficacité relances</span>
+                <span className="text-xs font-semibold text-gray-400">Efficacité relances</span>
               </div>
               {stats.reminders_impact ? (
                 <>
@@ -360,7 +360,7 @@ export default function StatsPage() {
       ) : (
         <div className="relative">
           <div className="flex items-center gap-2 mb-4">
-            <h2 className="text-sm font-semibold text-gray-400 uppercase tracking-wide">Analytics avancées</h2>
+            <h2 className="text-sm font-semibold text-gray-400">Analytics avancées</h2>
             <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-indigo-500/20 text-indigo-400 border border-indigo-500/30">PRO</span>
           </div>
           <div className="relative rounded-xl overflow-hidden">
@@ -386,7 +386,7 @@ export default function StatsPage() {
                   <div key={label} className="bg-ds-surface border border-ds-border rounded-xl p-5">
                     <div className="flex items-center gap-2 mb-3">
                       <Icon size={14} className={color} />
-                      <span className="text-xs font-semibold text-gray-400 uppercase tracking-wide">{label}</span>
+                      <span className="text-xs font-semibold text-gray-400">{label}</span>
                     </div>
                     <div className="text-3xl font-bold text-ink">{val}</div>
                   </div>

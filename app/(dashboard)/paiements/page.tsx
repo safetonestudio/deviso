@@ -372,7 +372,7 @@ export default function PaiementsPage() {
         <section className="bg-ds-surface border border-ds-border rounded-xl p-5 mb-5">
           <h2 className="font-semibold text-ink mb-3 text-sm">Aperçu sur vos factures</h2>
           <div className="bg-ds-elevated border border-ds-border rounded-lg p-4 text-xs text-gray-400 space-y-2">
-            <p className="font-semibold text-gray-300 text-xs uppercase tracking-wide">Modalités de paiement</p>
+            <p className="font-semibold text-gray-300 text-xs">Modalités de paiement</p>
             {needsBank && (
               <div className="space-y-0.5">
                 <p>Virement bancaire</p>

@@ -385,7 +385,7 @@ function ActionPanel({ invoice, id, router, hasChorusPro }: {
     <div className="bg-ds-surface border border-ds-border rounded-xl overflow-hidden sticky top-8">
       {/* En-tête du panel */}
       <div className="px-5 py-4 border-b border-ds-border">
-        <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide">Actions</p>
+        <p className="text-xs font-semibold text-gray-500">Actions</p>
       </div>
 
       <div className="p-4 space-y-2">
@@ -796,14 +796,14 @@ export default function InvoiceDetailPage() {
           {/* Parties émetteur / client */}
           <div className="grid grid-cols-2 gap-4 mb-6">
             <div className="bg-ds-surface rounded-xl border border-ds-border p-5">
-              <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-2">Émetteur</p>
+              <p className="text-xs font-semibold text-gray-500 mb-2">Émetteur</p>
               <p className="font-semibold text-ink">{invoice.seller_company || invoice.seller_name}</p>
               {invoice.seller_address && <p className="text-sm text-gray-400 mt-1">{invoice.seller_address}</p>}
               {invoice.seller_siren && <p className="text-xs text-gray-500 mt-1">SIREN : {invoice.seller_siren}</p>}
               {invoice.seller_tva_number && <p className="text-xs text-gray-500">N° TVA : {invoice.seller_tva_number}</p>}
             </div>
             <div className="bg-ds-surface rounded-xl border border-ds-border p-5">
-              <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-2">Client</p>
+              <p className="text-xs font-semibold text-gray-500 mb-2">Client</p>
               <p className="font-semibold text-ink">{invoice.client_company || invoice.client_name}</p>
               {invoice.client_name && invoice.client_company && <p className="text-sm text-gray-400">{invoice.client_name}</p>}
               {invoice.client_address && <p className="text-sm text-gray-400 mt-1">{invoice.client_address}</p>}
@@ -815,7 +815,7 @@ export default function InvoiceDetailPage() {
           <div className="bg-ds-surface rounded-xl border border-ds-border overflow-hidden mb-6">
             <table className="w-full text-sm">
               <thead>
-                <tr className="bg-ds-elevated border-b border-ds-border text-gray-400 text-xs uppercase tracking-wide">
+                <tr className="bg-ds-elevated border-b border-ds-border text-gray-400 text-xs">
                   <th className="text-left px-5 py-3">Prestation</th>
                   <th className="text-center px-4 py-3">Qté</th>
                   <th className="text-right px-4 py-3">P.U. HT</th>

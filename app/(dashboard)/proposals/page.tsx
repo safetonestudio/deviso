@@ -107,7 +107,7 @@ export default async function ProposalsPage() {
               <thead className="border-b border-ds-border">
                 <tr>
                   {["Titre", "Client", "Montant TTC", "Statut", "Date"].map((h) => (
-                    <th key={h} className="px-5 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wide text-left">
+                    <th key={h} className="px-5 py-3 text-xs font-semibold text-gray-500 text-left">
                       {h}
                     </th>
                   ))}

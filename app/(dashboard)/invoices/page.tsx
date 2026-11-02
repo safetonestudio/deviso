@@ -538,7 +538,7 @@ export default function InvoicesPage() {
             <div className="hidden lg:block bg-ds-surface border border-ds-border rounded-xl overflow-hidden">
               <table className="w-full text-sm min-w-[600px]">
                 <thead>
-                  <tr className="border-b border-ds-border text-gray-500 text-xs uppercase tracking-wide">
+                  <tr className="border-b border-ds-border text-gray-500 text-xs">
                     <th className="text-left px-5 py-3">N°</th>
                     <th className="text-left px-5 py-3">Client</th>
                     <th className="text-left px-5 py-3">Date</th>

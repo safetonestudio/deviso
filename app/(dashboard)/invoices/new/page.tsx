@@ -466,7 +466,7 @@ export default function NewInvoicePage() {
       {/* ── Sélecteur de type (masqué si venu depuis un devis avec type) ── */}
       {!fromProposalParam && (
         <div className="bg-ds-surface border border-ds-border rounded-xl p-4 mb-5">
-          <p className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-3">Type de facture</p>
+          <p className="text-xs font-semibold text-gray-500 mb-3">Type de facture</p>
           {/* Trois tuiles portant chacune un libellé et une description :
               sur un téléphone, trois colonnes ne laissent pas la place au
               texte. Empilées en dessous de 640 px. */}
@@ -498,7 +498,7 @@ export default function NewInvoicePage() {
       {/* ── Picker de devis pour acompte / solde ── */}
       {needsProposalPicker && (
         <div className={`rounded-xl border p-4 mb-5 ${proposalPickerReady ? "bg-ds-surface border-ds-border" : "bg-amber-500/5 border-amber-500/30"}`}>
-          <p className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">
+          <p className="text-xs font-semibold text-gray-400 mb-2">
             {invoiceType === "acompte" ? "Devis à facturer en acompte" : "Devis à solder"}
           </p>
           {proposalsLoading ? (
@@ -848,7 +848,7 @@ export default function NewInvoicePage() {
                       <div className="absolute left-0 top-full mt-1.5 w-80 bg-ds-surface rounded-xl border border-ds-border shadow-xl z-20 overflow-y-auto max-h-80">
                         {catalog.filter(i => i.type === "fixed").length > 0 && (
                           <>
-                            <div className="px-4 py-2 text-[10px] font-semibold text-gray-500 uppercase tracking-wider flex items-center gap-1.5 sticky top-0 bg-ds-surface border-b border-ds-border">
+                            <div className="px-4 py-2 text-[10px] font-semibold text-gray-500 flex items-center gap-1.5 sticky top-0 bg-ds-surface border-b border-ds-border">
                               <Package size={10} /> À l&apos;acte
                             </div>
                             {catalog.filter(i => i.type === "fixed").map((item) => (
@@ -865,7 +865,7 @@ export default function NewInvoicePage() {
                         )}
                         {catalog.filter(i => i.type === "hourly").length > 0 && (
                           <>
-                            <div className="px-4 py-2 text-[10px] font-semibold text-violet-400 uppercase tracking-wider flex items-center gap-1.5 bg-ds-surface border-b border-ds-border border-t border-ds-border">
+                            <div className="px-4 py-2 text-[10px] font-semibold text-violet-400 flex items-center gap-1.5 bg-ds-surface border-b border-ds-border border-t border-ds-border">
                               <Clock size={10} /> Taux horaire
                             </div>
                             {catalog.filter(i => i.type === "hourly").map((item) => (

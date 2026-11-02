@@ -13,7 +13,7 @@ export function SidebarNav({ isMember = false, isComptable = false }: { isMember
           if (!sectionVisible(i, NAVIGATION, isMember, isComptable)) return null;
           return (
             <div key={i} className="pt-4 pb-1">
-              <p className="px-3 text-[10px] font-semibold text-gray-600 uppercase tracking-widest">
+              <p className="px-3 text-[10px] font-semibold text-gray-600">
                 {item.section}
               </p>
             </div>

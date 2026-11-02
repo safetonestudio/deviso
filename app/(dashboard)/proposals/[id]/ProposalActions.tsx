@@ -117,7 +117,7 @@ export default function ProposalActions({
     return (
       <div className="bg-ds-surface border border-ds-border rounded-xl overflow-hidden sticky top-8">
         <div className="px-5 py-4 border-b border-ds-border">
-          <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide">Actions</p>
+          <p className="text-xs font-semibold text-gray-500">Actions</p>
         </div>
 
         <div className="p-4 space-y-2">
