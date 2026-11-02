@@ -193,10 +193,10 @@ export default async function DashboardLayout({ children }: { children: React.Re
         <aside className="hidden lg:flex w-64 bg-ds-surface border-r border-ds-border flex-col fixed h-full">
           <div className="p-5 border-b border-ds-border">
             <a href="/dashboard" className="flex items-center gap-2">
-              <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-indigo-600 to-violet-600 flex items-center justify-center">
-                <span className="text-ink font-semibold text-sm">D</span>
+              <div className="w-7 h-7 rounded-[7px] bg-indigo-600 flex items-center justify-center">
+                <span className="text-ink font-display font-bold text-[15px]">D</span>
               </div>
-              <span className="font-semibold text-ink">Deviso</span>
+              <span className="font-display font-bold text-[19px] tracking-tight text-ink">Deviso</span>
               {isDemo && (
                 <span className="ml-1 text-[10px] font-bold bg-amber-500/20 text-amber-400 border border-amber-500/30 px-1.5 py-0.5 rounded">
                   Démo
@@ -218,9 +218,6 @@ export default async function DashboardLayout({ children }: { children: React.Re
               </a>
             )}
 
-            {/* Toggle mode clair/sombre, juste au dessus du profil */}
-            <ThemeToggle />
-
             {/* Bloc profil */}
             <div className="flex items-center gap-3 px-3 py-3 rounded-xl bg-ds-elevated mb-2">
               <div className="w-9 h-9 rounded-full bg-indigo-500/20 text-indigo-400 font-bold text-sm flex items-center justify-center shrink-0">
@@ -232,7 +229,6 @@ export default async function DashboardLayout({ children }: { children: React.Re
                 </div>
                 <div className="text-xs text-gray-500 truncate">{user.email}</div>
               </div>
-              <NotificationBell placement="sidebar" />
             </div>
 
             {/* Actions profil */}
@@ -249,7 +245,19 @@ export default async function DashboardLayout({ children }: { children: React.Re
             visite guidée, mais le défaut valait pour tous les écrans, c'est
             simplement le premier élément qui le révèle.
             On garde la compensation et on ajoute une vraie respiration. */}
-        <main className="flex-1 lg:ml-64 p-4 lg:p-8 min-w-0 pt-[4.5rem] lg:pt-8">
+        <main className="flex-1 lg:ml-64 min-w-0">
+          {/* Barre du haut (ordinateur) : date du jour, notifications, theme.
+              Sur mobile, MobileNav porte deja sa propre barre avec la cloche. */}
+          <div className="hidden lg:flex sticky top-0 z-30 h-14 items-center justify-between gap-4 px-8 bg-ds-bg/85 backdrop-blur border-b border-ds-border">
+            <span className="text-sm text-gray-400 first-letter:uppercase">
+              {new Date().toLocaleDateString("fr-FR", { weekday: "long", day: "numeric", month: "long", timeZone: "Europe/Paris" })}
+            </span>
+            <div className="flex items-center gap-2">
+              <NotificationBell placement="topbar" />
+              <ThemeToggle compact />
+            </div>
+          </div>
+          <div className="p-4 lg:p-8 pt-[4.5rem] lg:pt-7">
           <SessionGuard />
           {synchroniserPdp && <SuperPdpSync />}
           {/* Bandeau de démo : un seul, en haut du contenu, sur toutes les
@@ -259,6 +267,7 @@ export default async function DashboardLayout({ children }: { children: React.Re
               noyé parmi les réglages sur ordinateur. */}
           {isDemo && <DemoBanner />}
           {children}
+          </div>
         </main>
       </div>
 

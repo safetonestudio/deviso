@@ -102,7 +102,7 @@ export default async function LivreRecettes({ searchParams }: { searchParams: Pr
       </div>
 
       {!autorise ? (
-        <div className="bg-ds-surface border border-ds-border rounded-xl p-6 text-sm text-gray-300">
+        <div className="carte p-6 text-sm text-gray-300">
           Le livre des recettes est inclus dans les formules Solo et Pro.{" "}
           <Link href="/billing" className="text-indigo-400 hover:underline">Voir les formules</Link>
         </div>
@@ -111,21 +111,21 @@ export default async function LivreRecettes({ searchParams }: { searchParams: Pr
       ) : (
         <>
           <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 mb-6">
-            <div className="bg-ds-surface border border-ds-border rounded-xl p-4">
+            <div className="carte p-4">
               <p className="text-xs text-gray-400">Encaissé {annee} (HT)</p>
               <p className="text-2xl font-semibold text-ink tabular-nums mt-1">{eur(totalHt)}</p>
             </div>
-            <div className="bg-ds-surface border border-ds-border rounded-xl p-4">
+            <div className="carte p-4">
               <p className="text-xs text-gray-400">Encaissé {annee} (TTC)</p>
               <p className="text-2xl font-semibold text-ink tabular-nums mt-1">{eur(totalTtc)}</p>
             </div>
-            <div className="bg-ds-surface border border-ds-border rounded-xl p-4">
+            <div className="carte p-4">
               <p className="text-xs text-gray-400">Encaissements</p>
               <p className="text-2xl font-semibold text-ink tabular-nums mt-1">{lignes.length}</p>
             </div>
           </div>
 
-          <div className="bg-ds-surface border border-ds-border rounded-xl p-4 mb-6">
+          <div className="carte p-4 mb-6">
             <h2 className="text-ink font-semibold text-sm">Répartition pour la déclaration</h2>
             <p className="text-xs text-gray-500 mt-0.5">
               Le CA micro se déclare séparément : prestations de services et ventes de biens n&apos;ont pas le même abattement ni le même seuil.
@@ -144,7 +144,7 @@ export default async function LivreRecettes({ searchParams }: { searchParams: Pr
             </div>
           </div>
 
-          <div className="bg-ds-surface border border-ds-border rounded-xl p-4 mb-6">
+          <div className="carte p-4 mb-6">
             <h2 className="text-ink font-semibold text-sm">Exports comptables {annee}</h2>
             <p className="text-xs text-gray-500 mt-0.5">À transmettre à votre comptable ou à conserver en cas de contrôle.</p>
             <div className="flex flex-wrap gap-2 mt-3">
@@ -178,11 +178,11 @@ export default async function LivreRecettes({ searchParams }: { searchParams: Pr
           )}
 
           {lignes.length === 0 ? (
-            <div className="bg-ds-surface border border-ds-border rounded-xl p-6 text-sm text-gray-400">
+            <div className="carte p-6 text-sm text-gray-400">
               Aucun encaissement en {annee}. Une facture apparaît ici dès que vous la marquez payée.
             </div>
           ) : (
-            <div className="bg-ds-surface border border-ds-border rounded-xl overflow-x-auto">
+            <div className="carte overflow-x-auto">
               <table className="w-full text-sm">
                 <thead>
                   <tr className="border-b border-ds-border text-left">

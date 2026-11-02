@@ -37,7 +37,7 @@ export function CabinetCalendrierTva({ lignes }: { lignes: Ligne[] }) {
 
   if (assujettis.length === 0) {
     return (
-      <div className="bg-ds-surface border border-ds-border rounded-xl p-4 mb-6">
+      <div className="carte p-4 mb-6">
         <h2 className="text-ink font-semibold mb-1">TVA à déclarer</h2>
         <p className="text-sm text-gray-500">
           Aucun dossier assujetti à la TVA dans votre portefeuille : rien à déclarer
@@ -48,7 +48,7 @@ export function CabinetCalendrierTva({ lignes }: { lignes: Ligne[] }) {
   }
 
   return (
-    <div className="bg-ds-surface border border-ds-border rounded-xl mb-6 overflow-hidden">
+    <div className="carte mb-6 overflow-hidden">
       <div className="p-4 border-b border-ds-border">
         <h2 className="text-ink font-semibold">TVA à déclarer par dossier</h2>
         <p className="text-xs text-gray-500 mt-0.5">

@@ -251,7 +251,7 @@ export default function CRMPage() {
       />
 
       {filtered.length === 0 ? (
-        <div className="bg-ds-surface border border-ds-border rounded-xl p-16 text-center">
+        <div className="carte p-16 text-center">
           <Users size={32} className="mx-auto mb-3 text-gray-600" />
           <p className="text-gray-400 font-medium">Aucun client trouvé</p>
           <p className="text-sm text-gray-500 mt-1">Vos clients apparaîtront ici dès que vous créerez un devis ou une facture.</p>
@@ -275,7 +275,7 @@ export default function CRMPage() {
             <article
               key={c.key}
               onClick={() => setSelected(c)}
-              className="bg-ds-surface border border-ds-border rounded-xl p-4 cursor-pointer"
+              className="carte p-4 cursor-pointer"
             >
               <div className="flex items-start justify-between gap-3">
                 <div className="min-w-0">
@@ -313,7 +313,7 @@ export default function CRMPage() {
           ))}
         </div>
 
-        <div className="hidden lg:block bg-ds-surface border border-ds-border rounded-xl overflow-hidden">
+        <div className="hidden lg:block carte overflow-hidden">
           <table className="w-full text-sm">
             <thead className="border-b border-ds-border">
               <tr>

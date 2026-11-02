@@ -82,7 +82,7 @@ export default async function ProposalsPage() {
                 <Link
                   key={proposal.id}
                   href={`/proposals/${proposal.id}`}
-                  className="block bg-ds-surface border border-ds-border rounded-xl p-4 hover:bg-ds-elevated/50 transition-colors"
+                  className="block carte p-4 hover:bg-ds-elevated/50 transition-colors"
                 >
                   <div className="flex items-start justify-between gap-2 mb-2">
                     <div className="font-semibold text-ink text-sm leading-snug">{proposal.title}</div>
@@ -102,7 +102,7 @@ export default async function ProposalsPage() {
             })}
           </div>
 
-          <div className="hidden lg:block bg-ds-surface border border-ds-border rounded-xl overflow-hidden">
+          <div className="hidden lg:block carte overflow-hidden">
             <table className="w-full">
               <thead className="border-b border-ds-border">
                 <tr>

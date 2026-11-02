@@ -382,7 +382,7 @@ function ActionPanel({ invoice, id, router, hasChorusPro }: {
   const peutEmettre = inv.status !== "draft" && inv.status !== "cancelled" && !dejaTransmise && peutTransmettrePa;
 
   return (
-    <div className="bg-ds-surface border border-ds-border rounded-xl overflow-hidden sticky top-8">
+    <div className="carte overflow-hidden sticky top-8">
       {/* En-tête du panel */}
       <div className="px-5 py-4 border-b border-ds-border">
         <p className="text-xs font-semibold text-gray-500">Actions</p>

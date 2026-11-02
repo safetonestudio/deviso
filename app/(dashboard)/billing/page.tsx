@@ -140,8 +140,8 @@ export default function BillingPage() {
     return (
       <div className="max-w-2xl mx-auto animate-pulse space-y-6">
         <div className="h-7 w-40 bg-ds-elevated rounded" />
-        <div className="bg-ds-surface border border-ds-border rounded-xl p-6 h-32" />
-        <div className="bg-ds-surface border border-ds-border rounded-xl p-6 h-48" />
+        <div className="carte p-6 h-32" />
+        <div className="carte p-6 h-48" />
       </div>
     );
   }
@@ -209,7 +209,7 @@ export default function BillingPage() {
       )}
 
       {/* Plan actuel */}
-      <div className="bg-ds-surface border border-ds-border rounded-xl p-6 mb-6">
+      <div className="carte p-6 mb-6">
         <p className="text-xs font-semibold text-gray-500 mb-3">Plan actuel</p>
         <div className="flex items-center justify-between gap-4">
           <div>
@@ -263,7 +263,7 @@ export default function BillingPage() {
         désormais toujours proposées ; c'est la route qui décide s'il s'agit
         d'une souscription ou d'une modification.
       */}
-      <div className="bg-ds-surface border border-ds-border rounded-xl p-6">
+      <div className="carte p-6">
           <div className="flex items-center justify-between mb-5">
             <p className="text-xs font-semibold text-gray-500">
               {plan === "free" ? "Commencer votre essai gratuit" : "Changer de formule"}

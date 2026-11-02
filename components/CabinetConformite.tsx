@@ -35,7 +35,7 @@ export function CabinetConformite({ lignes }: { lignes: Ligne[] }) {
   const prets = lignes.filter((l) => l.conformite.pret).length;
 
   return (
-    <div className="bg-ds-surface border border-ds-border rounded-xl mb-6 overflow-hidden">
+    <div className="carte mb-6 overflow-hidden">
       <div className="p-4 border-b border-ds-border flex flex-wrap items-baseline justify-between gap-2">
         <div>
           <h2 className="text-ink font-semibold">Conformité à la réforme</h2>

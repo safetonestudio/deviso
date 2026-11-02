@@ -50,7 +50,7 @@ export function AchatsListe({ achats }: { achats: AchatInternational[] }) {
 
   if (achats.length === 0) {
     return (
-      <section className="bg-ds-surface border border-ds-border rounded-xl p-6 text-center">
+      <section className="carte p-6 text-center">
         <p className="text-ink font-medium mb-1">Aucun achat étranger saisi</p>
         <p className="text-sm text-gray-400 max-w-md mx-auto">
           Quand vous achetez à un fournisseur établi hors de France, saisissez sa facture ici pour
@@ -63,7 +63,7 @@ export function AchatsListe({ achats }: { achats: AchatInternational[] }) {
   return (
     <>
       {erreur && <p className="text-sm text-red-400 mb-3">{erreur}</p>}
-      <section className="bg-ds-surface border border-ds-border rounded-xl overflow-x-auto">
+      <section className="carte overflow-x-auto">
         <table className="w-full text-sm">
           <thead>
             <tr className="border-b border-ds-border text-left">

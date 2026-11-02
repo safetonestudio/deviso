@@ -34,7 +34,7 @@ function SectionRepliable({
   children: React.ReactNode;
 }) {
   return (
-    <details className="group bg-ds-surface border border-ds-border rounded-xl mt-6 overflow-hidden [&_summary::-webkit-details-marker]:hidden">
+    <details className="group carte mt-6 overflow-hidden [&_summary::-webkit-details-marker]:hidden">
       <summary className="flex items-center justify-between gap-3 px-5 py-4 cursor-pointer list-none select-none hover:bg-ds-elevated/40 transition-colors">
         <div className="min-w-0">
           <h2 className="font-semibold text-ink">{titre}</h2>
@@ -345,7 +345,7 @@ Les présentes CGV sont soumises au droit français. Tout litige relève de la c
           </p>
         </div>
 
-        <section className="bg-ds-surface border border-ds-border rounded-xl p-5 space-y-4">
+        <section className="carte p-5 space-y-4">
           <h2 className="text-sm font-semibold text-gray-400">Informations personnelles</h2>
 
           <div>
@@ -399,7 +399,7 @@ Les présentes CGV sont soumises au droit français. Tout litige relève de la c
           </button>
         </section>
 
-        <div className="bg-ds-surface border border-ds-border rounded-xl p-5">
+        <div className="carte p-5">
           <p className="text-sm text-gray-500">
             Les paramètres de l&apos;entreprise (SIRET, IBAN, abonnement, etc.) sont gérés par le propriétaire du compte.
           </p>
@@ -461,7 +461,7 @@ Les présentes CGV sont soumises au droit français. Tout litige relève de la c
 
       <form onSubmit={handleSubmit} className="space-y-6">
         {/* Logo */}
-        <section className="bg-ds-surface border border-ds-border rounded-xl p-5">
+        <section className="carte p-5">
           <h2 className="font-semibold text-ink mb-4">Logo</h2>
           {profile.plan === "free" ? (
             <UpgradeBanner variant="logo_blocked" />
@@ -493,7 +493,7 @@ Les présentes CGV sont soumises au droit français. Tout litige relève de la c
         </section>
 
         {/* Identité */}
-        <section className="bg-ds-surface border border-ds-border rounded-xl p-5 space-y-4">
+        <section className="carte p-5 space-y-4">
           <h2 className="font-semibold text-ink">Identité</h2>
           <div className="grid grid-cols-2 gap-3">
             <div>
@@ -532,7 +532,7 @@ Les présentes CGV sont soumises au droit français. Tout litige relève de la c
         </section>
 
         {/* TVA */}
-        <section className="bg-ds-surface border border-ds-border rounded-xl p-5 space-y-4">
+        <section className="carte p-5 space-y-4">
           <h2 className="font-semibold text-ink">Régime TVA</h2>
           <p className="text-xs text-gray-500">Ce réglage pré-remplit automatiquement le taux TVA sur tous tes nouveaux devis et factures.</p>
           <div className="space-y-2">
@@ -596,7 +596,7 @@ Les présentes CGV sont soumises au droit français. Tout litige relève de la c
         </section>
 
         {/* Légal */}
-        <section className="bg-ds-surface border border-ds-border rounded-xl p-5 space-y-4">
+        <section className="carte p-5 space-y-4">
           <h2 className="font-semibold text-ink">Informations légales</h2>
           <div className="grid grid-cols-2 gap-3">
             <div>

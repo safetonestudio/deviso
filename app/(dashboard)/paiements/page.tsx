@@ -206,7 +206,7 @@ export default function PaiementsPage() {
       </div>
 
       {/* Méthode */}
-      <section className="bg-ds-surface border border-ds-border rounded-xl p-5 mb-5">
+      <section className="carte p-5 mb-5">
         <h2 className="font-semibold text-ink mb-4">Comment souhaitez-vous être payé ?</h2>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
           {[
@@ -237,7 +237,7 @@ export default function PaiementsPage() {
 
       {/* Lien de paiement */}
       {needsLink && (
-        <section className="bg-ds-surface border border-ds-border rounded-xl p-5 mb-5">
+        <section className="carte p-5 mb-5">
           <div className="flex items-center gap-2 mb-4">
             <Link2 size={16} className="text-emerald-400" />
             <h2 className="font-semibold text-ink">Lien de paiement en ligne</h2>
@@ -308,7 +308,7 @@ export default function PaiementsPage() {
 
       {/* Coordonnées bancaires */}
       {needsBank && (
-        <section className="bg-ds-surface border border-ds-border rounded-xl p-5 mb-5">
+        <section className="carte p-5 mb-5">
           <div className="flex items-center gap-2 mb-4">
             <Building2 size={16} className="text-emerald-400" />
             <h2 className="font-semibold text-ink">Coordonnées bancaires (virement)</h2>
@@ -369,7 +369,7 @@ export default function PaiementsPage() {
 
       {/* Prévisualisation */}
       {method !== "none" && (
-        <section className="bg-ds-surface border border-ds-border rounded-xl p-5 mb-5">
+        <section className="carte p-5 mb-5">
           <h2 className="font-semibold text-ink mb-3 text-sm">Aperçu sur vos factures</h2>
           <div className="bg-ds-elevated border border-ds-border rounded-lg p-4 text-xs text-gray-400 space-y-2">
             <p className="font-semibold text-gray-300 text-xs">Modalités de paiement</p>

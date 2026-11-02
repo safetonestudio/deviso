@@ -78,7 +78,7 @@ export function CabinetInvitations() {
   }
 
   return (
-    <div className="bg-ds-surface border border-ds-border rounded-xl p-5 mb-6">
+    <div className="carte p-5 mb-6">
       <h2 className="text-ink font-semibold mb-1">Inviter un client</h2>
       <p className="text-gray-500 text-sm mb-4">
         Générez un code et transmettez-le à votre client. Il le saisit une fois dans Deviso, son

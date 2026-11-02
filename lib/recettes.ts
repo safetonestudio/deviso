@@ -60,7 +60,7 @@ export type LigneRecette = {
   ttc: number;
   mode: ModeReglement | null;
   // Ventes de biens ou prestations de services : abattements et seuils micro
-  // differents (71 %/188 700 EUR vs 50 %/77 700 EUR), la declaration se fait
+  // differents (71 %/203 100 EUR vs 50 %/83 600 EUR, plafonds 2026), la declaration se fait
   // par categorie. Lu de invoices.operation_category (meme source que le FEC).
   categorie: "biens" | "services";
 };

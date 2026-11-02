@@ -190,7 +190,7 @@ export default async function FicheClient({
         </div>
       </div>
 
-      <div className="bg-ds-surface border border-ds-border rounded-xl p-4 mb-6">
+      <div className="carte p-4 mb-6">
         <div className="flex flex-wrap items-baseline justify-between gap-2 mb-3">
           <h2 className="text-ink font-semibold">Conformité à la réforme</h2>
           {synthese.conformite.pret ? (
@@ -216,7 +216,7 @@ export default async function FicheClient({
       </div>
 
       {synthese.anomalies.length > 0 && (
-        <div className="bg-ds-surface border border-ds-border rounded-xl p-4 mb-6">
+        <div className="carte p-4 mb-6">
           <h2 className="text-ink font-semibold mb-2">À traiter</h2>
           <ul className="space-y-1.5">
             {synthese.anomalies.map((a) => (
@@ -233,14 +233,14 @@ export default async function FicheClient({
 
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 mb-6">
         {tuiles.map((t) => (
-          <div key={t.label} className="bg-ds-surface border border-ds-border rounded-xl p-4">
+          <div key={t.label} className="carte p-4">
             <div className="text-xs text-gray-500">{t.label}</div>
             <div className="text-xl font-semibold mt-1 text-ink">{t.valeur}</div>
           </div>
         ))}
       </div>
 
-      <div className="bg-ds-surface border border-ds-border rounded-xl p-4 mb-6">
+      <div className="carte p-4 mb-6">
         <div className="flex flex-wrap items-baseline justify-between gap-2 mb-3">
           <h2 className="text-ink font-semibold">Comparaison avec {annee - 1}</h2>
           <span className="text-xs text-gray-500">
@@ -264,7 +264,7 @@ export default async function FicheClient({
         </div>
       </div>
 
-      <div className="bg-ds-surface border border-ds-border rounded-xl mb-6 overflow-hidden">
+      <div className="carte mb-6 overflow-hidden">
         <div className="p-4 border-b border-ds-border">
           <h2 className="text-ink font-semibold">TVA collectée par mois</h2>
           <p className="text-xs text-gray-500 mt-0.5">Avoirs déduits. Pour une déclaration trimestrielle, additionnez les trois mois.</p>
@@ -299,7 +299,7 @@ export default async function FicheClient({
         </div>
       </div>
 
-      <div className="bg-ds-surface border border-ds-border rounded-xl overflow-hidden">
+      <div className="carte overflow-hidden">
         <div className="p-4 border-b border-ds-border">
           <h2 className="text-ink font-semibold">Factures {annee}</h2>
         </div>

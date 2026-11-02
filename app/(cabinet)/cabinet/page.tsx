@@ -62,7 +62,7 @@ export default async function CabinetCockpit() {
       {dossiers.length > 0 && (
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 mb-6">
           {tuiles.map((t) => (
-            <div key={t.label} className="bg-ds-surface border border-ds-border rounded-xl p-4">
+            <div key={t.label} className="carte p-4">
               <div className="text-xs text-gray-500">{t.label}</div>
               <div className={`text-xl font-semibold mt-1 ${t.ton}`}>{t.valeur}</div>
             </div>
@@ -71,7 +71,7 @@ export default async function CabinetCockpit() {
       )}
 
       {dossiers.length === 0 ? (
-        <div className="bg-ds-surface border border-ds-border rounded-xl p-8 text-center mb-6">
+        <div className="carte p-8 text-center mb-6">
           <p className="text-ink font-semibold mb-1">Aucun dossier rattaché pour l&apos;instant</p>
           <p className="text-gray-500 text-sm">
             Générez un code ci-dessous et transmettez-le à votre client : dès qu&apos;il le saisit dans Deviso, son dossier apparaît ici.

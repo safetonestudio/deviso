@@ -79,14 +79,14 @@ export default async function Pilotage() {
           ["Raccordés PA", raccordes],
           ["Avec alerte", alertes],
         ].map(([libelle, valeur]) => (
-          <div key={libelle as string} className="bg-ds-surface border border-ds-border rounded-xl p-4">
+          <div key={libelle as string} className="carte p-4">
             <p className="text-xs text-gray-400">{libelle}</p>
             <p className="text-2xl font-semibold text-ink tabular-nums mt-1">{valeur}</p>
           </div>
         ))}
       </div>
 
-      <div className="bg-ds-surface border border-ds-border rounded-xl overflow-x-auto">
+      <div className="carte overflow-x-auto">
         <table className="w-full text-sm">
           <thead>
             <tr className="border-b border-ds-border text-left">

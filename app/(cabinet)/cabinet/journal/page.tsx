@@ -48,12 +48,12 @@ export default async function JournalCabinet() {
       </div>
 
       {entrees.length === 0 ? (
-        <div className="bg-ds-surface border border-ds-border rounded-xl p-8 text-center">
+        <div className="carte p-8 text-center">
           <p className="text-ink font-semibold mb-1">Aucune activité pour l&apos;instant</p>
           <p className="text-gray-500 text-sm">Les consultations et exports apparaîtront ici au fil de l&apos;eau.</p>
         </div>
       ) : (
-        <div className="bg-ds-surface border border-ds-border rounded-xl overflow-hidden">
+        <div className="carte overflow-hidden">
           <div className="overflow-x-auto">
             <table className="w-full text-sm">
               <thead>

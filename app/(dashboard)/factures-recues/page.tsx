@@ -86,7 +86,7 @@ export default async function FacturesRecues() {
           passent pas par la Plateforme Agréée. On oriente vers la saisie des
           achats étrangers, dont l'acquisition doit être déclarée séparément. */}
       {raccorde && (
-        <div className="bg-ds-surface border border-ds-border rounded-xl px-4 py-3 mt-4 flex flex-wrap items-center justify-between gap-3">
+        <div className="carte px-4 py-3 mt-4 flex flex-wrap items-center justify-between gap-3">
           <p className="text-xs text-gray-400 max-w-xl">
             Une facture d&apos;un fournisseur <span className="text-gray-300">hors de France</span>{" "}
             n&apos;arrive pas ici&nbsp;: elle vous parvient par courriel et son acquisition se déclare
@@ -104,7 +104,7 @@ export default async function FacturesRecues() {
       {!raccorde ? (
         // Sans raccordement, l'absence de factures ne veut pas dire qu'on n'en a
         // pas reçu, elle veut dire qu'on ne peut pas en recevoir.
-        <section className="bg-ds-surface border border-ds-border rounded-xl p-6 mt-6 text-center">
+        <section className="carte p-6 mt-6 text-center">
           <p className="text-ink font-medium mb-1">Vous n&apos;êtes pas encore raccordé</p>
           <p className="text-sm text-gray-400 mb-4 max-w-md mx-auto">
             Depuis le 1ᵉʳ septembre 2026, toutes les entreprises doivent pouvoir recevoir des
@@ -132,7 +132,7 @@ export default async function FacturesRecues() {
           </p>
         </section>
       ) : liste.length === 0 ? (
-        <section className="bg-ds-surface border border-ds-border rounded-xl p-6 mt-6 text-center">
+        <section className="carte p-6 mt-6 text-center">
           <p className="text-ink font-medium mb-1">Aucune facture reçue pour l&apos;instant</p>
           <p className="text-sm text-gray-400 max-w-md mx-auto">
             Vos fournisseurs peuvent vous adresser leurs factures à l&apos;adresse{" "}

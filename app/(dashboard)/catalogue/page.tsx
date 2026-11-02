@@ -111,7 +111,7 @@ export default function CataloguePage() {
           <h1 className="text-3xl font-semibold text-ink tracking-tight">Services</h1>
           <p className="text-gray-500 text-sm mt-1">Sauvegardez vos prestations pour les réutiliser en un clic.</p>
         </div>
-        <div className="bg-ds-surface border border-ds-border rounded-xl p-10 text-center">
+        <div className="carte p-10 text-center">
           <Package size={32} className="mx-auto mb-3 text-gray-600" />
           <p className="text-ink font-semibold mb-1">Catalogue de prestations</p>
           <p className="text-gray-500 text-sm mb-6">
@@ -362,7 +362,7 @@ function ItemRow({ item, badge, priceLabel, onEdit, onDelete }: {
   onDelete: (() => void) | null;
 }) {
   return (
-    <div className="bg-ds-surface border border-ds-border rounded-xl px-5 py-3.5 flex items-center gap-4 hover:bg-ds-elevated/50 transition-colors">
+    <div className="carte px-5 py-3.5 flex items-center gap-4 hover:bg-ds-elevated/50 transition-colors">
       <div className="flex-1 min-w-0">
         <div className="flex items-center gap-2">
           <span className="font-medium text-ink text-sm">{item.name}</span>

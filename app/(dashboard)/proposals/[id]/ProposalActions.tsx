@@ -115,7 +115,7 @@ export default function ProposalActions({
   // ── Mode panel (colonne droite, layout deux colonnes) ──
   if (panel) {
     return (
-      <div className="bg-ds-surface border border-ds-border rounded-xl overflow-hidden sticky top-8">
+      <div className="carte overflow-hidden sticky top-8">
         <div className="px-5 py-4 border-b border-ds-border">
           <p className="text-xs font-semibold text-gray-500">Actions</p>
         </div>
@@ -169,7 +169,7 @@ export default function ProposalActions({
                   {convertOpen ? <ChevronUp size={16} className="shrink-0" /> : <ChevronDown size={16} className="shrink-0" />}
                 </button>
                 {convertOpen && (
-                  <div className="mt-1 w-full bg-ds-surface border border-ds-border rounded-xl shadow-xl z-50 py-1 text-sm">
+                  <div className="mt-1 w-full carte shadow-xl z-50 py-1 text-sm">
                     {!acompteMode ? (
                       <>
                         <Link
@@ -315,7 +315,7 @@ export default function ProposalActions({
         <div className="relative" ref={dropdownRef}>
           <button onClick={() => { setConvertOpen(!convertOpen); setAcompteMode(false); }} className={BTN_GREEN + " inline-flex items-center gap-1.5"}>Convertir en facture<ChevronDown size={16} className="shrink-0" /></button>
           {convertOpen && (
-            <div className="absolute right-0 mt-1 w-56 bg-ds-surface border border-ds-border rounded-xl shadow-xl z-50 py-1 text-sm">
+            <div className="absolute right-0 mt-1 w-56 carte shadow-xl z-50 py-1 text-sm">
               {!acompteMode ? (
                 <>
                   <Link href={`/invoices/new?from_proposal=${proposal.id}`} className="flex items-center gap-2 px-4 py-2.5 hover:bg-ds-elevated transition-colors" onClick={() => setConvertOpen(false)}>

@@ -69,7 +69,7 @@ function Puce({ statut, code }: { statut: ReturnType<typeof libelleStatut>; code
 
 function Tuile({ libelle, valeur, alerte }: { libelle: string; valeur: string; alerte?: boolean }) {
   return (
-    <div className="bg-ds-surface border border-ds-border rounded-xl px-4 py-3">
+    <div className="carte px-4 py-3">
       <p className="text-xs text-gray-400">{libelle}</p>
       <p className={`text-xl font-semibold mt-0.5 ${alerte ? "text-red-400" : "text-ink"}`}>{valeur}</p>
     </div>
@@ -105,7 +105,7 @@ export function FacturesRecuesListe({
           return (
             <details
               key={f.id}
-              className="group bg-ds-surface border border-ds-border rounded-xl overflow-hidden shadow-sm transition-colors hover:border-gray-600 open:border-indigo-500/40 open:shadow-md"
+              className="group carte overflow-hidden shadow-sm transition-colors hover:border-gray-600 open:border-indigo-500/40 open:shadow-md"
             >
               <summary className="flex items-center gap-3 px-4 py-3 cursor-pointer list-none [&::-webkit-details-marker]:hidden hover:bg-ds-elevated/40 transition-colors">
                 <div className="min-w-0 flex-1">

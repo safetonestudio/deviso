@@ -61,7 +61,7 @@ export function CaUrssafWidget({ monthlyHT, currentMonth, currentYear, echeances
       : `${capitalize(MONTHS_FULL[currentMonth])} ${currentYear}${echeancesUrssaf ? ` · avant le ${monthlyDeadline(currentMonth, currentYear)}` : ""}`;
 
   return (
-    <div className={bare ? "" : "bg-ds-surface border border-ds-border rounded-xl p-5"}>
+    <div className={bare ? "" : "carte p-5"}>
       {/* Sélecteur de période (et titre, hors accordéon) */}
       <div className={`flex items-center gap-3 ${bare ? "justify-end px-5 pt-5 pb-1" : "justify-between mb-5"}`}>
         {!bare && (

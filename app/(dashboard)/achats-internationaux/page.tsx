@@ -64,7 +64,7 @@ export default async function AchatsInternationaux() {
       </div>
 
       {!raccorde ? (
-        <section className="bg-ds-surface border border-ds-border rounded-xl p-6 text-center">
+        <section className="carte p-6 text-center">
           <p className="text-ink font-medium mb-1">Vous n&apos;êtes pas encore raccordé</p>
           <p className="text-sm text-gray-400 mb-4 max-w-md mx-auto">
             La déclaration de vos achats étrangers passe par votre Plateforme Agréée. Le

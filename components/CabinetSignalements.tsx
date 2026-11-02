@@ -49,7 +49,7 @@ export function CabinetSignalements({ clientId, initiaux }: { clientId: string; 
   const badge = "text-xs px-2 py-0.5 rounded-full border";
 
   return (
-    <div className="bg-ds-surface border border-ds-border rounded-xl mb-6 overflow-hidden">
+    <div className="carte mb-6 overflow-hidden">
       <div className="p-4 border-b border-ds-border">
         <h2 className="text-ink font-semibold">Signaler au client</h2>
         <p className="text-xs text-gray-500 mt-0.5">

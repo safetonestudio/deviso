@@ -227,12 +227,12 @@ export default function TeamPage() {
       {activeTab === "pipeline" && (
         <div className="space-y-3">
           {pipeline.length === 0 ? (
-            <div className="bg-ds-surface border border-ds-border rounded-xl p-10 text-center">
+            <div className="carte p-10 text-center">
               <p className="text-gray-400 text-sm">Aucune activité pour l&apos;instant.</p>
             </div>
           ) : (
             pipeline.map((member) => (
-              <div key={member.uid} className="bg-ds-surface border border-ds-border rounded-xl p-5">
+              <div key={member.uid} className="carte p-5">
                 <div className="flex items-center gap-3 mb-4">
                   <div className="w-9 h-9 rounded-full bg-indigo-500/20 text-indigo-300 font-semibold text-sm flex items-center justify-center shrink-0">
                     {initials(member.name)}
@@ -312,7 +312,7 @@ export default function TeamPage() {
       {activeTab === "membres" && (
         <div className="space-y-4">
           {!atLimit && isOwner && (
-            <div className="bg-ds-surface border border-ds-border rounded-xl p-5">
+            <div className="carte p-5">
               <h2 className="font-semibold text-ink mb-3 flex items-center gap-2">
                 <Mail size={15} className="text-indigo-400" />
                 Inviter un membre
@@ -359,7 +359,7 @@ export default function TeamPage() {
           </div>
 
           {members.length === 0 ? (
-            <div className="bg-ds-surface border border-ds-border rounded-xl p-10 text-center">
+            <div className="carte p-10 text-center">
               <p className="text-gray-400 text-sm">Aucun membre invité pour l&apos;instant.</p>
             </div>
           ) : (
@@ -368,7 +368,7 @@ export default function TeamPage() {
                 déjà la largeur utile d'un écran de 390 px. */}
             <div className="lg:hidden space-y-2">
               {members.map((m) => (
-                <div key={m.id} className="bg-ds-surface border border-ds-border rounded-xl p-4">
+                <div key={m.id} className="carte p-4">
                   <div className="flex items-start justify-between gap-3">
                     <div className="min-w-0 flex-1">
                       <p className="font-medium text-ink text-sm break-all">{m.email}</p>
@@ -419,7 +419,7 @@ export default function TeamPage() {
               ))}
             </div>
 
-            <div className="hidden lg:block bg-ds-surface border border-ds-border rounded-xl overflow-hidden">
+            <div className="hidden lg:block carte overflow-hidden">
               <table className="w-full text-sm">
                 <thead className="border-b border-ds-border">
                   <tr>

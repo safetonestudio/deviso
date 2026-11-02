@@ -250,7 +250,7 @@ export function SaisieAchatForm() {
       )}
 
       {ouvert && (
-        <section className="bg-ds-surface border border-ds-border rounded-xl p-5 mt-1">
+        <section className="carte p-5 mt-1">
           <h2 className="text-ink font-semibold mb-1">Nouvel achat à l&apos;étranger</h2>
           <p className="text-sm text-gray-400 mb-4">
             Recopiez (ou vérifiez) les montants depuis la facture de votre fournisseur. Cette

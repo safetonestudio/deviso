@@ -325,7 +325,7 @@ export default function InvoicesPage() {
                   <ChevronDown size={14} className={`transition-transform ${newDropdownOpen ? "rotate-180" : ""}`} />
                 </button>
                 {newDropdownOpen && (
-                  <div className="absolute right-0 top-11 w-56 bg-ds-surface border border-ds-border rounded-xl shadow-xl z-20 overflow-hidden">
+                  <div className="absolute right-0 top-11 w-56 carte shadow-xl z-20 overflow-hidden">
                     <button
                       onClick={() => { setNewDropdownOpen(false); router.push("/invoices/new"); }}
                       className="w-full text-left px-4 py-3 hover:bg-ds-elevated transition-colors"
@@ -464,7 +464,7 @@ export default function InvoicesPage() {
               {invoices.map((inv) => (
                 <article
                   key={inv.id}
-                  className="bg-ds-surface border border-ds-border rounded-xl p-4"
+                  className="carte p-4"
                 >
                   <div
                     onClick={() => router.push(`/invoices/${inv.id}`)}
@@ -535,7 +535,7 @@ export default function InvoicesPage() {
               ))}
             </div>
 
-            <div className="hidden lg:block bg-ds-surface border border-ds-border rounded-xl overflow-hidden">
+            <div className="hidden lg:block carte overflow-hidden">
               <table className="w-full text-sm min-w-[600px]">
                 <thead>
                   <tr className="border-b border-ds-border text-gray-500 text-xs">
@@ -648,7 +648,7 @@ export default function InvoicesPage() {
               {/* Form modal */}
               {showRecurringForm && (
                 <div className="fixed inset-0 z-50 flex items-start justify-center pt-12 px-4 bg-black/60">
-                  <div className="bg-ds-surface border border-ds-border rounded-xl w-full max-w-xl max-h-[80vh] overflow-y-auto p-6">
+                  <div className="carte w-full max-w-xl max-h-[80vh] overflow-y-auto p-6">
                     <div className="flex items-center justify-between mb-4">
                       <h2 className="text-base font-semibold text-ink">Nouvelle facture récurrente</h2>
                       <button onClick={() => { setShowRecurringForm(false); resetRForm(); }} className="text-gray-500 hover:text-ink">
@@ -790,7 +790,7 @@ export default function InvoicesPage() {
                     const total_ht = rec.items.reduce((s, it) => s + it.total, 0);
                     const total_ttc = total_ht * (1 + rec.tva_rate / 100);
                     return (
-                      <div key={rec.id} className="bg-ds-surface border border-ds-border rounded-xl p-4 flex flex-wrap items-center justify-between gap-4">
+                      <div key={rec.id} className="carte p-4 flex flex-wrap items-center justify-between gap-4">
                         <div className="flex-1 min-w-0">
                           <div className="flex items-center gap-2 flex-wrap">
                             <span className="font-medium text-ink">{rec.client_company || rec.client_name || "Client sans nom"}</span>

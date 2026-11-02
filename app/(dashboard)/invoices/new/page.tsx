@@ -465,7 +465,7 @@ export default function NewInvoicePage() {
 
       {/* ── Sélecteur de type (masqué si venu depuis un devis avec type) ── */}
       {!fromProposalParam && (
-        <div className="bg-ds-surface border border-ds-border rounded-xl p-4 mb-5">
+        <div className="carte p-4 mb-5">
           <p className="text-xs font-semibold text-gray-500 mb-3">Type de facture</p>
           {/* Trois tuiles portant chacune un libellé et une description :
               sur un téléphone, trois colonnes ne laissent pas la place au

@@ -88,7 +88,7 @@ export default function StatsPage() {
       </div>
 
       {/* CA mensuel, SVG area chart */}
-      <div className="bg-ds-surface border border-ds-border rounded-xl p-6">
+      <div className="carte p-6">
         <h2 className="text-sm font-semibold text-gray-400 mb-5">CA mensuel, 12 derniers mois</h2>
         {(() => {
           const data = stats.monthly_ca;
@@ -197,7 +197,7 @@ export default function StatsPage() {
 
       {/* Top clients + Perf devis */}
       <div className="grid md:grid-cols-2 gap-6">
-        <div className="bg-ds-surface border border-ds-border rounded-xl p-6">
+        <div className="carte p-6">
           <h2 className="text-sm font-semibold text-gray-400 mb-4">Top clients, CA encaissé HT</h2>
           {stats.top_clients.length === 0 ? (
             <p className="text-gray-500 text-sm">Aucune facture payée pour l&apos;instant.</p>
@@ -225,7 +225,7 @@ export default function StatsPage() {
           )}
         </div>
 
-        <div className="bg-ds-surface border border-ds-border rounded-xl p-6">
+        <div className="carte p-6">
           <h2 className="text-sm font-semibold text-gray-400 mb-4">Performance des devis</h2>
           <div className="space-y-4">
             <div className="flex justify-between items-center">
@@ -277,7 +277,7 @@ export default function StatsPage() {
           </div>
 
           {stats.funnel && (
-            <div className="bg-ds-surface border border-ds-border rounded-xl p-6">
+            <div className="carte p-6">
               <h3 className="text-sm font-semibold text-gray-400 mb-5">Funnel de conversion</h3>
               <div className="flex items-center gap-1">
                 {[
@@ -307,7 +307,7 @@ export default function StatsPage() {
           )}
 
           <div className="grid md:grid-cols-3 gap-4">
-            <div className="bg-ds-surface border border-ds-border rounded-xl p-5">
+            <div className="carte p-5">
               <div className="flex items-center gap-2 mb-3">
                 <Clock size={14} className="text-blue-400" />
                 <span className="text-xs font-semibold text-gray-400">Délai moyen de signature</span>
@@ -324,7 +324,7 @@ export default function StatsPage() {
               )}
             </div>
 
-            <div className="bg-ds-surface border border-ds-border rounded-xl p-5">
+            <div className="carte p-5">
               <div className="flex items-center gap-2 mb-3">
                 <TrendingUp size={14} className="text-emerald-400" />
                 <span className="text-xs font-semibold text-gray-400">Meilleur mois</span>
@@ -339,7 +339,7 @@ export default function StatsPage() {
               )}
             </div>
 
-            <div className="bg-ds-surface border border-ds-border rounded-xl p-5">
+            <div className="carte p-5">
               <div className="flex items-center gap-2 mb-3">
                 <Zap size={14} className="text-amber-400" />
                 <span className="text-xs font-semibold text-gray-400">Efficacité relances</span>
@@ -365,7 +365,7 @@ export default function StatsPage() {
           </div>
           <div className="relative rounded-xl overflow-hidden">
             <div className="filter blur-sm pointer-events-none select-none" aria-hidden>
-              <div className="bg-ds-surface border border-ds-border rounded-xl p-6 mb-4">
+              <div className="carte p-6 mb-4">
                 <div className="h-4 w-40 bg-ds-elevated rounded mb-5" />
                 <div className="flex items-center gap-1">
                   {[100, 78, 52, 34, 12].map((v, i) => (
@@ -383,7 +383,7 @@ export default function StatsPage() {
                   { icon: TrendingUp, color: "text-emerald-400", val: "68%", label: "Meilleur mois" },
                   { icon: Zap, color: "text-amber-400", val: "42%", label: "Efficacité relances" },
                 ].map(({ icon: Icon, color, val, label }) => (
-                  <div key={label} className="bg-ds-surface border border-ds-border rounded-xl p-5">
+                  <div key={label} className="carte p-5">
                     <div className="flex items-center gap-2 mb-3">
                       <Icon size={14} className={color} />
                       <span className="text-xs font-semibold text-gray-400">{label}</span>

@@ -2,8 +2,8 @@
 /**
  * Garde du livre des recettes : distinction ventes de biens / prestations de
  * services. Le CA micro se declare par categorie (abattements et seuils
- * differents : 71 %/188 700 EUR pour les biens, 50 %/77 700 EUR pour les
- * services). Sans cette distinction, le livre ne permet pas de remplir la
+ * differents : 71 %/203 100 EUR pour les biens, 50 %/83 600 EUR pour les
+ * services, plafonds 2026). Sans cette distinction, le livre ne permet pas de remplir la
  * declaration d'une activite mixte. La source est invoices.operation_category,
  * la meme que l'export FEC : les deux ne peuvent pas diverger.
  *

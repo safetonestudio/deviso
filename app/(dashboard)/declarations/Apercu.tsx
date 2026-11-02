@@ -47,7 +47,7 @@ export function Apercu() {
   };
 
   return (
-    <section className="bg-ds-surface border border-ds-border rounded-xl p-5 mt-6">
+    <section className="carte p-5 mt-6">
       <button
         onClick={() => setOuvert((o) => !o)}
         className="text-sm font-medium text-ink hover:text-indigo-300 transition-colors"

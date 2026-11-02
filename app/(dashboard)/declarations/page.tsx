@@ -110,7 +110,7 @@ export default async function Declarations() {
       </div>
 
       {!raccorde ? (
-        <section className="bg-ds-surface border border-ds-border rounded-xl p-6 mt-6 text-center">
+        <section className="carte p-6 mt-6 text-center">
           <p className="text-ink font-medium mb-1">Vous n&apos;êtes pas encore raccordé</p>
           <p className="text-sm text-gray-400 mb-4 max-w-md mx-auto">
             Les déclarations d&apos;e-reporting sont produites par votre Plateforme Agréée. Sans
@@ -141,11 +141,11 @@ export default async function Declarations() {
 
           {declarations.length > 0 && (
             <div className="grid grid-cols-2 gap-3 mt-6">
-              <div className="bg-ds-surface border border-ds-border rounded-xl px-4 py-3">
+              <div className="carte px-4 py-3">
                 <p className="text-xs text-gray-400">Envoyées</p>
                 <p className="text-xl font-semibold mt-0.5 text-ink">{declarations.length}</p>
               </div>
-              <div className="bg-ds-surface border border-ds-border rounded-xl px-4 py-3">
+              <div className="carte px-4 py-3">
                 <p className="text-xs text-gray-400">En échec</p>
                 <p className={`text-xl font-semibold mt-0.5 ${aTraiter > 0 ? "text-red-400" : "text-ink"}`}>{aTraiter}</p>
               </div>
@@ -161,7 +161,7 @@ export default async function Declarations() {
               les saisit et les déclare depuis leur page dédiée. On garde ici un
               rappel de l'obligation et un accès direct, avec l'état de ce qui
               reste à transmettre. */}
-          <div className="bg-ds-surface border border-ds-border rounded-xl px-4 py-4 mt-6">
+          <div className="carte px-4 py-4 mt-6">
             <div className="flex flex-wrap items-start justify-between gap-3">
               <div className="max-w-xl">
                 <p className="text-sm text-ink font-medium mb-1">Vos achats à l&apos;étranger</p>
@@ -198,7 +198,7 @@ export default async function Declarations() {
               <p className="text-xs font-mono text-red-400/90 mt-2 break-all">{erreur}</p>
             </section>
           ) : declarations.length === 0 ? (
-            <section className="bg-ds-surface border border-ds-border rounded-xl p-6 mt-6 text-center">
+            <section className="carte p-6 mt-6 text-center">
               <p className="text-ink font-medium mb-1">Aucune déclaration pour l&apos;instant</p>
               <p className="text-sm text-gray-400 max-w-lg mx-auto">
                 Les déclarations sont déposées selon un calendrier qui dépend de votre périodicité
@@ -206,7 +206,7 @@ export default async function Declarations() {
               </p>
             </section>
           ) : (
-            <section className="bg-ds-surface border border-ds-border rounded-xl overflow-hidden mt-6">
+            <section className="carte overflow-hidden mt-6">
               <table className="w-full text-sm">
                 <thead>
                   <tr className="border-b border-ds-border text-left">

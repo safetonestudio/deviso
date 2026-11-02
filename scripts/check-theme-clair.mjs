@@ -114,6 +114,13 @@ exige("app, aucune etiquette en capitales (classe uppercase)", capitales.length 
   `ecrire les etiquettes en casse normale, la hierarchie passe par la taille et la graisse. En cause : ${capitales.join(", ")}`);
 contre("une etiquette uppercase", CAPITALES.test('className="text-xs uppercase tracking-widest"'));
 
+// 4 ter. Une seule carte : pas de bloc redessine a la main dans l'app.
+const CARTE_MAIN = /(?<![\w:-])bg-ds-surface border border-ds-border rounded-(?:xl|2xl)(?![\w-])/;
+const cartesMain = app.filter((f) => CARTE_MAIN.test(lire(f)));
+exige("app, cartes via la classe .carte (fond, bordure, rayon, relief en un seul endroit)", cartesMain.length === 0,
+  `remplacer "bg-ds-surface border border-ds-border rounded-xl" par "carte". En cause : ${cartesMain.join(", ")}`);
+contre("une carte redessinee a la main", CARTE_MAIN.test('className="bg-ds-surface border border-ds-border rounded-xl p-5"'));
+
 // 5. Enveloppe et polices.
 const theme = lire("components/DashboardTheme.tsx");
 exige("DashboardThemeProvider pose .ds-app et le script anti-flash",

@@ -5,12 +5,16 @@ import { isTeamMember, getWorkspaceUserId } from "@/lib/workspace";
 import type { Proposal } from "@/types";
 import { KpiCard } from "@/components/ui/KpiCard";
 import { EmptyState } from "@/components/ui/EmptyState";
+import { CaUrssafWidget } from "@/components/CaUrssafWidget";
 import { ProductTour } from "@/components/ProductTour";
 import { GuidedTourBanner } from "@/components/GuidedTourBanner";
 import { DashboardActionFeed, type ActionItem } from "@/components/DashboardActionFeed";
 import { SignalementsClient } from "@/components/SignalementsClient";
-import { CaUrssafWidget } from "@/components/CaUrssafWidget";
-import { caMensuelHt as calculerCaMensuelHt, encaisseTtcDuMois, type FactureRecette } from "@/lib/recettes";
+import { caMensuelHt as calculerCaMensuelHt, encaisseTtcDuMois, lignesRecettes, totauxParCategorie, type FactureRecette } from "@/lib/recettes";
+import { jaugeFranchise } from "@/lib/seuils-micro";
+import { HeroCa } from "@/components/dashboard/HeroCa";
+import { CaMensuelBarres } from "@/components/dashboard/CaMensuelBarres";
+import { EcheanceCarte } from "@/components/dashboard/EcheanceCarte";
 import {
   Sparkles, Receipt, FileText, Send,
   Euro, TrendingUp, ArrowRight, Clock,
@@ -66,7 +70,7 @@ export default async function DashboardPage() {
 
   let invoicesQuery = supabase
     .from("invoices")
-    .select("id, invoice_number, client_name, client_email, status, total_ht, total_ttc, due_date, issue_date, paid_at, created_at, proposal_id, invoice_type")
+    .select("id, invoice_number, client_name, client_email, status, total_ht, total_ttc, due_date, issue_date, paid_at, created_at, proposal_id, invoice_type, operation_category")
     .eq("user_id", workspaceId)
     .order("created_at", { ascending: false });
 
@@ -156,6 +160,15 @@ export default async function DashboardPage() {
     caMensuelHt[currentQuarter * 3 + 2];
   const URSSAF_DEADLINES = ["30 avril", "31 juillet", "31 octobre", "31 janvier"];
   const echeanceDepot = echeancesUrssaf ? URSSAF_DEADLINES[currentQuarter] : null;
+
+  // Bloc heros : CA encaisse de l'annee et distance au seuil de franchise.
+  // Meme calcul que le livre des recettes (lignes encaissees, avoirs deduits),
+  // ventile par categorie : le seuil des prestations n'est pas celui des ventes.
+  const totauxAnnee = totauxParCategorie(lignesRecettes(inv as unknown as FactureRecette[], anneeCourante));
+  const caAnneeHt = Math.round((totauxAnnee.biens.ht + totauxAnnee.services.ht) * 100) / 100;
+  const jauge = echeancesUrssaf
+    ? jaugeFranchise({ biens: totauxAnnee.biens.ht, services: totauxAnnee.services.ht })
+    : null;
   // Encaissé ce mois : date d'ENCAISSEMENT (paid_at), pas date de création de
   // la facture comme jusqu'au 24/10/2026. Même source que le livre des recettes.
   const caThisMonth = encaisseTtcDuMois(
@@ -219,16 +232,14 @@ export default async function DashboardPage() {
 
   return (
     <>
-    <div className="space-y-8 max-w-7xl mx-auto">
+    <div className="space-y-6 max-w-7xl mx-auto">
 
       <GuidedTourBanner pageKey="dashboard" />
-
-      <SignalementsClient workspaceId={workspaceId} />
 
       {/* ── Header ── */}
       <div className="flex items-start justify-between gap-4 flex-wrap">
         <div>
-          <h1 className="text-3xl font-semibold text-ink tracking-tight">
+          <h1 className="text-[32px] sm:text-[34px] font-bold text-ink tracking-tight leading-tight">
             {isMember ? "Mon activité" : "Tableau de bord"}
           </h1>
           <p className="text-sm text-gray-500 mt-1.5">
@@ -253,6 +264,8 @@ export default async function DashboardPage() {
         </div>
       </div>
 
+      <SignalementsClient workspaceId={workspaceId} />
+
       {/* ── Upgrade banner (free, owners only) ── */}
       {!isPaid && !isMember && (
         <div className="bg-gradient-to-r from-indigo-600 to-violet-600 rounded-xl p-5 flex items-center justify-between gap-4 text-ink">
@@ -267,6 +280,18 @@ export default async function DashboardPage() {
             Voir les offres →
           </Link>
         </div>
+      )}
+
+      {/* ── Heros : CA encaisse de l'annee et seuil de TVA ── */}
+      {!isMember && (
+        <HeroCa
+          annee={anneeCourante}
+          caAnneeHt={caAnneeHt}
+          caTrimestreHt={caTrimestreHt}
+          trimestre={currentQuarter + 1}
+          caMoisTtc={caThisMonth}
+          jauge={jauge}
+        />
       )}
 
       {/* ── Zone À FAIRE : ce qui réclame une action, tout en haut ── */}
@@ -320,13 +345,31 @@ export default async function DashboardPage() {
         </div>
       </div>
 
+      {/* ── CA mois par mois et prochaine echeance ── */}
+      {!isMember && (
+        <div className="grid gap-5 lg:grid-cols-3">
+          <div className="lg:col-span-2 min-w-0">
+            <CaMensuelBarres mensuelHt={caMensuelHt} moisCourant={now.getMonth()} annee={anneeCourante} />
+          </div>
+          <EcheanceCarte
+            echeance={echeanceDepot}
+            trimestre={currentQuarter + 1}
+            caTrimestreHt={caTrimestreHt}
+            annee={anneeCourante}
+          />
+        </div>
+      )}
+
       {/* ── Activité récente : devis + factures ── */}
-      <div className={`grid gap-6 ${isPaid ? "lg:grid-cols-2" : ""}`}>
+      <div className={`grid gap-5 ${isPaid ? "lg:grid-cols-2" : ""}`}>
 
         {/* Devis récents */}
-        <div className="bg-ds-surface border border-ds-border rounded-xl overflow-hidden">
-          <div className="px-5 py-4 border-b border-ds-border flex items-center justify-between">
-            <h2 className="text-sm font-medium text-gray-400">Devis récents</h2>
+        <div className="carte overflow-hidden">
+          <div className="px-5 pt-4 pb-3 flex items-end justify-between gap-3">
+              <div>
+                <h2 className="text-[17px] font-semibold text-ink">Devis récents</h2>
+                <p className="text-[13px] text-gray-400">Les cinq derniers</p>
+              </div>
             <Link href="/proposals" className="text-xs text-gray-500 hover:text-gray-300 transition-colors flex items-center gap-1">
               Voir tout <ArrowRight size={11} />
             </Link>
@@ -360,20 +403,20 @@ export default async function DashboardPage() {
                     className="flex items-center justify-between px-5 py-3.5 hover:bg-ds-elevated/60 transition-colors group"
                   >
                     <div className="flex-1 min-w-0">
-                      <div className="font-medium text-ink text-sm truncate group-hover:text-gray-100 transition-colors">
+                      <div className="font-semibold text-ink text-sm truncate">
                         {proposal.title}
                       </div>
                       <div className="text-xs text-gray-500 mt-0.5">
                         {proposal.client_name || "-"}
-                        {" · "}
+                        {", "}
                         <span className={age >= 7 && ["sent", "viewed"].includes(proposal.status) ? "text-amber-500" : ""}>
                           {age === 0 ? "aujourd'hui" : `il y a ${age}j`}
                         </span>
                       </div>
                     </div>
                     <div className="flex items-center gap-3 ml-3 shrink-0">
-                      <span className="font-semibold text-ink text-sm tabular-nums">{fmt(proposal.total_ttc)}</span>
-                      <span className={`text-xs font-medium px-2 py-0.5 rounded-full ${s.color}`}>{s.label}</span>
+                      <span className={`text-xs font-semibold px-2.5 py-0.5 rounded-full ${s.color}`}>{s.label}</span>
+                      <span className="font-display font-semibold text-ink text-sm tabular-nums w-20 text-right">{fmt(proposal.total_ttc)}</span>
                     </div>
                   </Link>
                 );
@@ -384,9 +427,12 @@ export default async function DashboardPage() {
 
         {/* Factures récentes (Solo+) */}
         {isPaid && (
-          <div className="bg-ds-surface border border-ds-border rounded-xl overflow-hidden">
-            <div className="px-5 py-4 border-b border-ds-border flex items-center justify-between">
-              <h2 className="text-sm font-medium text-gray-400">Factures récentes</h2>
+          <div className="carte overflow-hidden lg:order-first">
+            <div className="px-5 pt-4 pb-3 flex items-end justify-between gap-3">
+              <div>
+                <h2 className="text-[17px] font-semibold text-ink">Factures récentes</h2>
+                <p className="text-[13px] text-gray-400">Les cinq dernières</p>
+              </div>
               <Link href="/invoices" className="text-xs text-gray-500 hover:text-gray-300 transition-colors flex items-center gap-1">
                 Voir tout <ArrowRight size={11} />
               </Link>
@@ -420,21 +466,23 @@ export default async function DashboardPage() {
                       className="flex items-center justify-between px-5 py-3.5 hover:bg-ds-elevated/60 transition-colors group"
                     >
                       <div className="flex-1 min-w-0">
-                        <div className="font-medium text-ink text-sm truncate group-hover:text-gray-100 transition-colors">
-                          {invoice.invoice_number || "-"}
-                          <span className="text-gray-500 font-normal ml-2 text-xs">{invoice.client_name || "-"}</span>
+                        <div className="font-semibold text-ink text-sm truncate">
+                          {invoice.client_name || "-"}
                         </div>
-                        <div className={`text-xs mt-0.5 ${isOverdue ? "text-red-400 font-medium" : "text-gray-500"}`}>
+                        <div className={`text-xs mt-0.5 truncate ${isOverdue ? "text-amber-400 font-medium" : "text-gray-400"}`}>
+                          {invoice.invoice_number || "Facture"},{" "}
                           {isOverdue
-                            ? `En retard, échéance ${new Date(invoice.due_date!).toLocaleDateString("fr-FR")}`
+                            ? `en retard depuis le ${new Date(invoice.due_date!).toLocaleDateString("fr-FR")}`
                             : invoice.due_date
-                            ? `Échéance ${new Date(invoice.due_date).toLocaleDateString("fr-FR")}`
-                            : `Créée le ${new Date(invoice.created_at).toLocaleDateString("fr-FR")}`}
+                            ? `échéance ${new Date(invoice.due_date).toLocaleDateString("fr-FR")}`
+                            : `créée le ${new Date(invoice.created_at).toLocaleDateString("fr-FR")}`}
                         </div>
                       </div>
                       <div className="flex items-center gap-3 ml-3 shrink-0">
-                        <span className="font-semibold text-ink text-sm tabular-nums">{fmt(invoice.total_ttc)}</span>
-                        <span className={`text-xs font-medium px-2 py-0.5 rounded-full ${s.color}`}>{s.label}</span>
+                        <span className={`text-xs font-semibold px-2.5 py-0.5 rounded-full ${isOverdue ? "bg-amber-500/10 text-amber-400" : s.color}`}>
+                          {isOverdue ? "En retard" : s.label}
+                        </span>
+                        <span className="font-display font-semibold text-ink text-sm tabular-nums w-20 text-right">{fmt(invoice.total_ttc)}</span>
                       </div>
                     </Link>
                   );
@@ -451,7 +499,7 @@ export default async function DashboardPage() {
           l'entreprise. Le total du trimestre et l'échéance restent lisibles
           sur la barre fermée ; le détail mois par mois s'ouvre au clic. */}
       {!isMember && (
-        <details className="group bg-ds-surface border border-ds-border rounded-xl overflow-hidden [&_summary::-webkit-details-marker]:hidden">
+        <details className="group carte overflow-hidden [&_summary::-webkit-details-marker]:hidden">
           <summary className="flex items-center justify-between gap-3 px-5 py-4 cursor-pointer list-none select-none hover:bg-ds-elevated/40 transition-colors">
             <div className="min-w-0">
               <h2 className="text-sm font-semibold text-ink">

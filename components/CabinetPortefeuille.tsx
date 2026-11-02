@@ -57,7 +57,7 @@ export function CabinetPortefeuille({ dossiers, annee }: { dossiers: DossierVue[
     "bg-ds-bg border border-ds-border rounded-lg px-2.5 py-1.5 text-sm text-ink focus:outline-none focus:border-indigo-500";
 
   return (
-    <div className="bg-ds-surface border border-ds-border rounded-xl mb-6 overflow-hidden">
+    <div className="carte mb-6 overflow-hidden">
       <div className="p-4 border-b border-ds-border flex flex-wrap items-center justify-between gap-3">
         <label className="flex items-center gap-2 text-sm text-gray-400 cursor-pointer">
           <input

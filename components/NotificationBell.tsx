@@ -131,7 +131,7 @@ export function NotificationBell({ placement = "sidebar" }: Props) {
 
       {open && (
         <div
-          className={`absolute ${dropdownPos} w-[420px] bg-ds-surface border border-ds-border rounded-xl shadow-2xl z-50 overflow-hidden`}
+          className={`absolute ${dropdownPos} w-[420px] carte shadow-2xl z-50 overflow-hidden`}
         >
           <div className="flex items-center justify-between px-5 py-4 border-b border-ds-border">
             <span className="text-base font-semibold text-ink">Notifications</span>

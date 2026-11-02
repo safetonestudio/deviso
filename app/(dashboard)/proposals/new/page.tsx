@@ -349,7 +349,7 @@ export default function NewProposalPage() {
         <div className="space-y-4">
           {/* Sélecteur de modèles partagés */}
           {templates.length > 0 && (
-            <div className="bg-ds-surface border border-ds-border rounded-xl overflow-hidden">
+            <div className="carte overflow-hidden">
               <button
                 onClick={() => setShowTemplates((v) => !v)}
                 className="w-full flex items-center justify-between px-5 py-3.5 text-left hover:bg-ds-elevated/50 transition-colors"

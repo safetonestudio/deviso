@@ -7,13 +7,13 @@ export function SidebarNav({ isMember = false, isComptable = false }: { isMember
   const pathname = usePathname();
 
   return (
-    <nav className="flex-1 p-4 space-y-0.5 overflow-y-auto">
+    <nav className="flex-1 px-3 py-4 space-y-0.5 overflow-y-auto">
       {NAVIGATION.map((item, i) => {
         if (estSection(item)) {
           if (!sectionVisible(i, NAVIGATION, isMember, isComptable)) return null;
           return (
             <div key={i} className="pt-4 pb-1">
-              <p className="px-3 text-[10px] font-semibold text-gray-600">
+              <p className="px-3 text-[11px] font-semibold text-gray-400 opacity-80">
                 {item.section}
               </p>
             </div>
@@ -30,10 +30,10 @@ export function SidebarNav({ isMember = false, isComptable = false }: { isMember
             <Link
               key={item.href}
               href={item.href}
-              className={`flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all ${
+              className={`flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-semibold transition-colors ${
                 active
                   ? "bg-indigo-600 text-ink"
-                  : "text-indigo-400 hover:bg-indigo-500/10 hover:text-indigo-300"
+                  : "text-indigo-400 hover:bg-indigo-500/10"
               }`}
             >
               <Icon size={16} className="shrink-0" />
@@ -47,10 +47,10 @@ export function SidebarNav({ isMember = false, isComptable = false }: { isMember
             key={item.href}
             href={item.href}
             data-tour={TOUR_TARGETS[item.href]}
-            className={`flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all ${
+            className={`flex items-center gap-3 px-3 py-2 rounded-lg text-sm transition-colors ${
               active
-                ? "bg-indigo-500/10 text-indigo-400 border-l-2 border-indigo-500 pl-[10px]"
-                : "text-gray-400 hover:text-ink hover:bg-ds-elevated"
+                ? "bg-indigo-500/10 text-indigo-400 font-semibold"
+                : "text-gray-400 font-medium hover:text-ink hover:bg-ds-elevated"
             }`}
           >
             <Icon size={16} className="shrink-0" />
