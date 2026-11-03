@@ -6,6 +6,7 @@ import { createAdminClient } from "@/lib/supabase/admin";
 import { dossiersDuCabinet } from "@/lib/cabinet-acces";
 import { syntheseDossiers, lireFacturesDossiers } from "@/lib/cabinet-dossiers";
 import { calendrierTva } from "@/lib/cabinet-tva-calendrier";
+import { KpiCard } from "@/components/ui/KpiCard";
 import { CabinetInvitations } from "@/components/CabinetInvitations";
 import { CabinetPortefeuille } from "@/components/CabinetPortefeuille";
 import { CabinetCalendrierTva } from "@/components/CabinetCalendrierTva";
@@ -35,38 +36,39 @@ export default async function CabinetCockpit() {
   const caMois = dossiers.reduce((s, d) => s + d.caHtMois, 0);
   const moisLibelle = maintenant.toLocaleDateString("fr-FR", { month: "long" });
 
-  const tuiles = [
-    { label: "Dossiers suivis", valeur: String(dossiers.length), ton: "text-ink" },
-    { label: "Action requise", valeur: String(rouges), ton: rouges ? "text-red-400" : "text-ink" },
-    { label: "À surveiller", valeur: String(oranges), ton: oranges ? "text-amber-400" : "text-ink" },
-    { label: `CA HT cumulé, ${moisLibelle}`, valeur: eur(caMois), ton: "text-ink" },
-  ];
-
   return (
-    <div>
+    <div className="w-full">
       <div className="mb-6 flex flex-wrap items-start justify-between gap-3">
         <div>
-          <h1 className="text-2xl font-semibold text-ink">Portefeuille</h1>
-          <p className="text-sm text-gray-400 mt-1">
+          <h1 className="titre-page">Portefeuille</h1>
+          <p className="sous-titre-page">
             Vos dossiers clients Deviso, en lecture seule. Ceux qui demandent une action apparaissent en premier.
           </p>
         </div>
         <Link
           href="/cabinet/journal"
-          className="text-sm px-3 py-1.5 border border-ds-border text-gray-300 rounded-lg hover:bg-ink/5 font-medium transition-colors whitespace-nowrap"
+          className="text-sm px-3 py-1.5 border border-ds-border text-gray-300 rounded-lg hover:bg-ds-elevated font-medium transition-colors whitespace-nowrap"
         >
           Journal des accès
         </Link>
       </div>
 
       {dossiers.length > 0 && (
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 mb-6">
-          {tuiles.map((t) => (
-            <div key={t.label} className="carte p-4">
-              <div className="text-xs text-gray-500">{t.label}</div>
-              <div className={`text-xl font-semibold mt-1 ${t.ton}`}>{t.valeur}</div>
-            </div>
-          ))}
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 mb-6">
+          <KpiCard label="Dossiers suivis" value={String(dossiers.length)} point="info" trend="dans votre portefeuille" />
+          <KpiCard
+            label="Action requise"
+            value={String(rouges)}
+            point={rouges ? "alerte" : "bon"}
+            trend={rouges ? `dossier${rouges > 1 ? "s" : ""} à traiter en priorité` : "aucun blocage"}
+          />
+          <KpiCard
+            label="À surveiller"
+            value={String(oranges)}
+            point={oranges ? "alerte" : "bon"}
+            trend={oranges ? `point${oranges > 1 ? "s" : ""} de vigilance` : "rien à signaler"}
+          />
+          <KpiCard label={`CA HT cumulé · ${moisLibelle}`} value={eur(caMois)} point="neutre" trend="ce mois-ci" />
         </div>
       )}
 

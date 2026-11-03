@@ -86,7 +86,7 @@ async function main() {
     if (ins.error) {
       verifier("la ligne de synchro PPF est semee", false, ins.error.message);
     } else {
-      const r = await synchroniserDeclarationsPpf(admin);
+      const r = await synchroniserDeclarationsPpf(admin, 500, [SANDBOX_USER]);
       const { data: relu } = await admin.from("superpdp_achats_int")
         .select("transmission_status,ppf_ereporting_id,declared_at").eq("id", ins.data.id).single();
       verifier("la synchro PPF lit le compte sans erreur", r.comptesIllisibles === 0, JSON.stringify(r));
@@ -103,9 +103,8 @@ async function main() {
     fournisseur_pays: "DK", fournisseur_tva: "DK12345678",
     numero: `E2E-DK-${Date.now()}`, date_facture: today,
   }) as never);
-  verifier("un pays hors table EAS passe en action_requise, pas en_attente",
-    paysHorsTable.ok === false && paysHorsTable.suite === "action_requise",
-    JSON.stringify(paysHorsTable));
+  verifier("un pays hors table EAS (DK), avec identifiant, est transmis via le schema generique",
+    paysHorsTable.ok === true, JSON.stringify(paysHorsTable));
 
   console.log("\n── Garde d'abandon du cron ───────────────────────────────────");
 
@@ -125,7 +124,7 @@ async function main() {
     const idHaut = seme.data.find((r: { retry_count: number }) => r.retry_count === 167)!.id;
     const idBas = seme.data.find((r: { retry_count: number }) => r.retry_count === 0)!.id;
 
-    await retenterAchatsEnAttente(admin);
+    await retenterAchatsEnAttente(admin, 200, [SANDBOX_USER]);
 
     const { data: apres } = await admin.from("superpdp_achats_int")
       .select("id,transmission_status,retry_count,transmission_error").in("id", ids);

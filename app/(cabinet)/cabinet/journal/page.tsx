@@ -35,14 +35,14 @@ export default async function JournalCabinet() {
   };
 
   return (
-    <div>
-      <Link href="/cabinet" className="text-sm text-gray-400 hover:text-ink">
+    <div className="w-full">
+      <Link href="/cabinet" className="text-sm text-gray-400 hover:text-ink transition-colors">
         ← Portefeuille
       </Link>
 
       <div className="mt-3 mb-6">
-        <h1 className="text-2xl font-semibold text-ink">Journal des accès et exports</h1>
-        <p className="text-sm text-gray-400 mt-1">
+        <h1 className="titre-page">Journal des accès et exports</h1>
+        <p className="sous-titre-page">
           Chaque consultation de dossier et chaque export de votre cabinet est tracé ici. Vous seul y avez accès.
         </p>
       </div>
@@ -57,20 +57,20 @@ export default async function JournalCabinet() {
           <div className="overflow-x-auto">
             <table className="w-full text-sm">
               <thead>
-                <tr className="text-left text-xs text-gray-500 border-b border-ds-border">
-                  <th className="px-4 py-2 font-medium">Date</th>
-                  <th className="px-4 py-2 font-medium">Action</th>
-                  <th className="px-4 py-2 font-medium">Dossier</th>
-                  <th className="px-4 py-2 font-medium">Détail</th>
+                <tr className="text-left text-xs font-semibold text-gray-400 bg-ds-elevated border-b border-ds-border">
+                  <th className="px-4 py-2.5">Date</th>
+                  <th className="px-4 py-2.5">Action</th>
+                  <th className="px-4 py-2.5">Dossier</th>
+                  <th className="px-4 py-2.5">Détail</th>
                 </tr>
               </thead>
               <tbody>
                 {entrees.map((e) => (
-                  <tr key={e.id} className="border-b border-ds-border last:border-0">
-                    <td className="px-4 py-2 text-gray-400 whitespace-nowrap">{horodatage(e.created_at)}</td>
-                    <td className="px-4 py-2 text-gray-200">{LIBELLE_ACTION[e.action]}</td>
-                    <td className="px-4 py-2 text-gray-300">{nom(e.client_id)}</td>
-                    <td className="px-4 py-2 text-gray-500">{e.details ?? ""}</td>
+                  <tr key={e.id} className="border-b border-ds-border last:border-0 hover:bg-ds-elevated/40 transition-colors">
+                    <td className="px-4 py-2.5 text-gray-400 whitespace-nowrap">{horodatage(e.created_at)}</td>
+                    <td className="px-4 py-2.5 text-gray-200">{LIBELLE_ACTION[e.action]}</td>
+                    <td className="px-4 py-2.5 text-gray-300">{nom(e.client_id)}</td>
+                    <td className="px-4 py-2.5 text-gray-500">{e.details ?? ""}</td>
                   </tr>
                 ))}
               </tbody>

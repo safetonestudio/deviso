@@ -167,13 +167,20 @@ const SCHEME_SIREN = "0002";
  * docs.peppol.eu et liste EAS de l'UE).
  *
  * On n'inscrit ici que des codes explicitement libellés « <pays> VAT number »
- * (ou l'équivalent national reconnu). Un pays absent de cette table n'est pas
- * transmis : l'achat reste en attente plutôt que de partir avec un schéma faux,
- * qui serait rejeté par la Plateforme Agréée. DK, FI et le hors-UE ne sont pas
- * encore couverts (schéma non confirmé), volontairement.
+ * (ou l'équivalent national reconnu). Un pays absent de cette table n'est PLUS
+ * bloqué : il part sous le schéma générique de pays tiers (SCHEMA_GENERIQUE),
+ * l'achat n'est jamais retenu pour la seule raison du pays. Restent hors table,
+ * faute de code EAS « VAT » propre : DK et FI (identifiés en EAS par le CVR et
+ * l'OVT, pas par un code TVA) et SI. Ils passent donc par le schéma générique,
+ * comme le hors-UE.
  *
- * Les 16 codes ci-dessous ont été vérifiés le 28/09/2026 sur la liste EAS
- * Peppol (croisement de deux sources). Deux pièges évités :
+ * Les 24 codes ci-dessous (24 des 27 États membres) ont été vérifiés le
+ * 28/09/2026 puis recoupés le 03/11/2026 sur deux sources indépendantes (liste
+ * EAS Peppol officielle et référentiel ISO 6523 Tickstar). Réserve connue :
+ * SE 9955 (TVA suédoise) est donné comme RETIRÉ par la liste Peppol et par
+ * econnect, mais encore listé par Tickstar : statut conflictuel, à confirmer
+ * à la bascule prod (sinon un repli vers le schéma générique est possible).
+ * Deux pièges évités :
  *  - Italie : 0211 = Partita IVA (n° de TVA). NE PAS « corriger » en 0210, qui
  *    est le Codice Fiscale (code fiscal), un identifiant différent.
  *  - Espagne, Autriche : identifiés par le schéma fiscal national (Agencia
@@ -186,20 +193,28 @@ const SCHEME_SIREN = "0002";
 const EAS_TVA_PAR_PAYS: Record<string, string> = {
   AT: "9914", // Autriche (USt-IdNr.)
   BE: "9925", // Belgique (VAT number)
+  BG: "9926", // Bulgarie (VAT number)
+  CY: "9928", // Chypre (VAT number)
   CZ: "9929", // Tchéquie (VAT number)
   DE: "9930", // Allemagne (VAT number)
+  EE: "9931", // Estonie (VAT number)
   ES: "9920", // Espagne (Agencia Tributaria, identifiant fiscal)
   FR: "9957", // France (VAT number)
   GR: "9933", // Grèce (VAT number)
+  HR: "9934", // Croatie (VAT number)
   HU: "9910", // Hongrie (VAT number)
   IE: "9935", // Irlande (VAT number)
   IT: "0211", // Italie : Partita IVA (VAT). PAS 0210 = Codice Fiscale.
+  LT: "9937", // Lituanie (VAT number)
   LU: "9938", // Luxembourg (VAT number)
+  LV: "9939", // Lettonie (VAT number)
+  MT: "9943", // Malte (VAT number)
   NL: "9944", // Pays-Bas (VAT number)
   PL: "9945", // Pologne (VAT number)
   PT: "9946", // Portugal (VAT number)
   RO: "9947", // Roumanie (VAT number)
-  SE: "9955", // Suède (VAT number)
+  SE: "9955", // Suède (VAT number) : statut conflictuel, voir réserve ci-dessus
+  SK: "9950", // Slovaquie (VAT number)
 };
 
 /** Code EAS du schéma « n° de TVA » pour un pays (ISO 2 lettres), ou null. */
@@ -207,6 +222,28 @@ export function schemaTvaPays(pays: string | null | undefined): string | null {
   const p = (pays ?? "").trim().toUpperCase();
   return EAS_TVA_PAR_PAYS[p] ?? null;
 }
+
+/**
+ * Schéma d'identifiant pour un vendeur sans n° de TVA intracommunautaire : un
+ * fournisseur hors UE identifié par son identifiant fiscal local. La Plateforme
+ * Agréée EXIGE un `company_id` ET un `company_id_scheme_id` pour le vendeur,
+ * sans exception (vérifié en bac à sable le 03/11/2026 : pays + nom seuls, ou
+ * identifiant sans schéma, sont refusés par un 400 « missing seller
+ * company_id[_scheme_id] for b2bint invoice »). On ne peut donc PAS omettre le
+ * schéma : il faut en poser un, même pour un pays tiers.
+ *
+ * Le bac à sable accepte n'importe quel schéma (9999, DUNS 0060, LEI 0199) et
+ * n'émet jamais de `ppf_ereporting_id` : il ne permet donc PAS de confirmer ce
+ * que la DGFiP acceptera réellement pour un fournisseur de pays tiers. Deux
+ * lectures restent ouvertes tant qu'on n'a pas la prod : soit l'e-reporting
+ * d'acquisition accepte un identifiant libre (9999 passe), soit il valide la
+ * liste EAS (9999, absent de cette liste, serait alors rejeté). C'est LE seul
+ * verrou prod de l'e-reporting hors UE, à confirmer auprès de Super PDP.
+ *
+ * Valeur surchargeable SANS redéploiement via `SUPERPDP_SCHEMA_TIERS`, pour
+ * poser à la bascule prod le schéma que Super PDP aura confirmé.
+ */
+export const SCHEMA_GENERIQUE = process.env.SUPERPDP_SCHEMA_TIERS?.trim() || "9999";
 
 /** Normalise un n° de TVA pour servir d'identifiant (majuscules, sans espaces). */
 function normaliserTva(tva: string | null | undefined): string {
@@ -276,14 +313,17 @@ export function construirePayloadB2bint(
   // Le vendeur (fournisseur étranger) doit porter un `company_id` et son
   // `company_id_scheme_id`, tous deux exigés par l'API. Faute d'autre
   // identifiant, on l'identifie par son n° de TVA sous le schéma EAS du pays.
-  const tvaVendeur = normaliserTva(achat.fournisseur_tva);
+  const idVendeur = normaliserTva(achat.fournisseur_tva);
   const seller: Record<string, unknown> = {
     country: achat.fournisseur_pays,
-    company_id: tvaVendeur,
+    company_id: idVendeur,
     company_id_scheme_id: schemaVendeur,
   };
-  if (tvaVendeur) {
-    seller.tax_registration_id = tvaVendeur;
+  // `tax_registration_id` = n° de TVA, donc uniquement pour un vrai schéma de
+  // TVA UE. Pour un identifiant fiscal hors UE (schéma générique), on ne le
+  // présente pas comme une TVA : il sert seulement de `company_id`.
+  if (idVendeur && schemaVendeur !== SCHEMA_GENERIQUE) {
+    seller.tax_registration_id = idVendeur;
     seller.tax_registration_id_qualifying_id = "VA";
   }
 
@@ -440,27 +480,24 @@ export async function transmettreAchat(
   // vérifié, on ne transmet pas : l'achat reste en attente avec un message
   // clair, plutôt que de partir avec une identité fausse. Best-effort, jamais
   // « échec » : une saisie à compléter n'est pas une saisie fautive.
+  // Identifiant du vendeur : n° de TVA intracommunautaire pour l'UE, ou
+  // identifiant fiscal du fournisseur pour un pays hors UE. La Plateforme Agréée
+  // exige un identifiant (bac à sable du 03/11/2026 : sans lui, 400 « missing
+  // seller company_id »). On ne bloque JAMAIS sur le pays : l'UE utilise son
+  // schéma EAS, le reste du monde un schéma générique accepté par la plateforme.
+  // Seul l'identifiant manquant garde l'achat en attente, et il est corrigeable
+  // par l'utilisateur depuis l'écran.
   if (!normaliserTva(achat.fournisseur_tva)) {
     return {
       ok: false,
       suite: "reessayer",
       message:
-        "Le numéro de TVA du fournisseur est nécessaire pour déclarer cet achat. " +
-        "Ajoutez-le : la déclaration repartira automatiquement.",
-      detail: "tva_fournisseur_absente",
+        "Ajoutez l'identifiant fiscal du fournisseur (son n° de TVA, ou son identifiant " +
+        "fiscal pour un pays hors UE) : la déclaration repartira automatiquement.",
+      detail: "identifiant_fournisseur_absent",
     };
   }
-  const schemaVendeur = schemaTvaPays(achat.fournisseur_pays);
-  if (!schemaVendeur) {
-    return {
-      ok: false,
-      suite: "action_requise",
-      message:
-        "La déclaration des achats auprès de ce pays n'est pas prise en charge. " +
-        "Contactez le support pour l'ajouter : un réessai automatique n'y changera rien.",
-      detail: `pays_non_pris_en_charge:${(achat.fournisseur_pays ?? "").toUpperCase()}`,
-    };
-  }
+  const schemaVendeur = schemaTvaPays(achat.fournisseur_pays) ?? SCHEMA_GENERIQUE;
 
   const payload = construirePayloadB2bint(achat, nous, schemaVendeur);
 
@@ -617,13 +654,22 @@ async function numerosDejaDeclares(workspaceId: string): Promise<Map<string, num
  */
 export async function synchroniserDeclarationsPpf(
   admin: SupabaseClient,
-  limite = 500
+  limite = 500,
+  // Workspaces a traiter : comptes verifies de CET environnement, hors demo,
+  // calcules par le cron. Sans ce filtre, la synchro PROD lirait aussi les
+  // comptes bac a sable (et reciproquement) : leur jeton serait churne en
+  // invalid_grant et le compte marque « error » a chaque passage. Absent =
+  // tous les comptes (tests unitaires).
+  comptesEligibles?: Iterable<string>
 ): Promise<{ examines: number; declares: number; comptesIllisibles: number }> {
-  const { data } = await admin
+  const eligibles = comptesEligibles ? [...comptesEligibles] : null;
+  let requete = admin
     .from("superpdp_achats_int")
     .select("*")
     .eq("transmission_status", "transmis")
-    .is("ppf_ereporting_id", null)
+    .is("ppf_ereporting_id", null);
+  if (eligibles) requete = requete.in("user_id", eligibles);
+  const { data } = await requete
     .order("transmitted_at", { ascending: true })
     .limit(limite);
 
@@ -675,12 +721,20 @@ export async function synchroniserDeclarationsPpf(
  */
 export async function retenterAchatsEnAttente(
   admin: SupabaseClient,
-  limite = 200
+  limite = 200,
+  // Meme filtre d'environnement que synchroniserDeclarationsPpf : on ne retente
+  // que les achats des comptes de CET environnement, sinon un passage prod
+  // churnerait le jeton des comptes bac a sable (et reciproquement) et les
+  // marquerait « error ». Absent = tous les comptes (tests unitaires).
+  comptesEligibles?: Iterable<string>
 ): Promise<{ examines: number; transmis: number; encore: number; echecs: number; abandonnes: number }> {
-  const { data: achats } = await admin
+  const eligibles = comptesEligibles ? [...comptesEligibles] : null;
+  let requete = admin
     .from("superpdp_achats_int")
     .select("*")
-    .eq("transmission_status", "en_attente")
+    .eq("transmission_status", "en_attente");
+  if (eligibles) requete = requete.in("user_id", eligibles);
+  const { data: achats } = await requete
     .order("updated_at", { ascending: true })
     .limit(limite);
 

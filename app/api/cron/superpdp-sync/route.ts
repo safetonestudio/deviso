@@ -47,6 +47,11 @@ export async function GET(req: Request) {
   let echecs = 0;
 
   const sandbox = isSandbox();
+  // Comptes de CET environnement, hors démo : la même liste sert à la synchro
+  // des factures ET au traitement des achats (retry + synchro PPF). Sans elle,
+  // les fonctions d'achat liraient aussi les comptes de l'autre environnement
+  // et churneraient leur jeton (cf. superpdp-achats.ts).
+  const eligibles: string[] = [];
   for (const { user_id, company_number_scheme } of raccordements ?? []) {
     // Chaque déploiement ne synchronise QUE les connexions de son environnement.
     // En prod (app OAuth prod), un token d'entreprise « bac à sable » ne peut pas
@@ -58,6 +63,7 @@ export async function GET(req: Request) {
     // Un compte de démonstration ne touche jamais la vraie Plateforme Agréée :
     // son raccordement est fictif, le synchroniser ne ferait que churner en 401.
     if (await estCompteDemo(user_id)) continue;
+    eligibles.push(user_id);
     // Une entreprise dont la synchronisation échoue ne doit pas empêcher les
     // suivantes : chaque compte est indépendant.
     try {
@@ -116,7 +122,7 @@ export async function GET(req: Request) {
   // « Retransmettre » lui-même, ce qui est tout l'objet de cette page.
   let achats = { examines: 0, transmis: 0, encore: 0, echecs: 0 };
   try {
-    achats = await retenterAchatsEnAttente(admin);
+    achats = await retenterAchatsEnAttente(admin, 200, eligibles);
   } catch (err) {
     console.error("[superpdp-achats-retry] échec :", err instanceof Error ? err.message : err);
   }
@@ -125,7 +131,7 @@ export async function GET(req: Request) {
   // réellement envoyés à l'administration (ppf_ereporting_id renseigné).
   let ppf = { examines: 0, declares: 0, comptesIllisibles: 0 };
   try {
-    ppf = await synchroniserDeclarationsPpf(admin);
+    ppf = await synchroniserDeclarationsPpf(admin, 500, eligibles);
   } catch (err) {
     console.error("[superpdp-achats-ppf] échec :", err instanceof Error ? err.message : err);
   }

@@ -9,22 +9,8 @@ import { RefreshCw, Trash2, Plus, X, ChevronDown, Download, Coins, CircleCheck, 
 import { GuidedTourBanner } from "@/components/GuidedTourBanner";
 import { usePlan, useIsMember, usePermission } from "@/components/PlanContext";
 import { canName } from "@/lib/plans";
-import { phraseManques } from "@/lib/superpdp-precontrole";
 import { etatPdp } from "@/lib/superpdp-etat-facture";
-
-const STATUS_LABEL: Record<string, string> = {
-  draft: "Brouillon",
-  sent: "Envoyée",
-  paid: "Payée",
-  cancelled: "Annulée",
-};
-
-const STATUS_COLOR: Record<string, string> = {
-  draft: "bg-ds-elevated text-gray-400",
-  sent: "bg-blue-500/10 text-blue-400",
-  paid: "bg-emerald-500/10 text-emerald-400",
-  cancelled: "bg-red-500/10 text-red-400",
-};
+import { InvoicesListe } from "@/components/invoices/InvoicesListe";
 
 const INTERVAL_LABEL: Record<string, string> = {
   monthly: "Mensuelle",
@@ -170,7 +156,6 @@ export default function InvoicesPage() {
   }
 
   const etatsPdp = raccordePdp ? invoices.map((i) => etatPdp(i, sandboxPdp)) : [];
-  const aTransmettre = etatsPdp.filter((e) => e?.aFaire).length;
   const bloquees = etatsPdp.filter((e) => e && e.manques.length > 0).length;
 
   async function handleExportFEC() {
@@ -403,23 +388,6 @@ export default function InvoicesPage() {
         <>
           {isFree && <UpgradeBanner variant="invoice_blocked" />}
 
-          {/* Combien de factures n'ont pas encore été transmises.
-              Sous la réforme, une facture émise et jamais transmise n'existe
-              pas pour l'administration. Ce compte doit se lire sans chercher,
-              comme un solde impayé, pas se déduire en parcourant la liste. */}
-          {raccordePdp && aTransmettre > 0 && peutTransmettre && (
-            <div className="bg-amber-500/10 border border-amber-500/30 rounded-xl px-4 py-3 mb-5 flex items-center gap-3">
-              <TriangleAlert size={18} className="shrink-0 text-amber-400" />
-              <p className="text-sm text-amber-300">
-                <span className="font-semibold">
-                  {aTransmettre} facture{aTransmettre > 1 ? "s" : ""} à transmettre
-                </span>{" "}
-                <span className="text-amber-400/80">
-                  à la Plateforme Agréée. Le bouton se trouve sur chaque ligne concernée.
-                </span>
-              </p>
-            </div>
-          )}
 
           {raccordePdp && bloquees > 0 && (
             <div className="bg-red-500/10 border border-red-500/30 rounded-xl px-4 py-3 mb-5 flex items-center gap-3">
@@ -452,179 +420,16 @@ export default function InvoicesPage() {
               </Link>
             </div>
           ) : (
-            <>
-            {/* ── Téléphone : une carte par facture ─────────────────────────
-                Le tableau à six colonnes se comprimait dans la largeur de
-                l'écran : le contenu débordait des cadres et se retrouvait
-                tronqué. Constaté par Selim. Sur la ligne du tableau, toute la
-                rangée est cliquable ; ici c'est la carte entière, avec le
-                téléchargement en action distincte pour qu'un pouce ne
-                déclenche pas l'un en visant l'autre. */}
-            <div className="lg:hidden space-y-3">
-              {invoices.map((inv) => (
-                <article
-                  key={inv.id}
-                  className="carte p-4"
-                >
-                  <div
-                    onClick={() => router.push(`/invoices/${inv.id}`)}
-                    className="cursor-pointer"
-                  >
-                    <div className="flex items-start justify-between gap-3">
-                      <div className="min-w-0">
-                        <div className="font-medium text-ink truncate">
-                          {inv.client_company || inv.client_name}
-                        </div>
-                        <div className="font-mono text-xs text-gray-500 truncate mt-0.5">
-                          {inv.invoice_number}
-                          {inv.invoice_type === "acompte" && " · acompte"}
-                          {inv.invoice_type === "solde" && " · solde"}
-                          {inv.invoice_type === "avoir" && " · avoir"}
-                        </div>
-                      </div>
-                      <div className="font-semibold text-ink whitespace-nowrap shrink-0">
-                        {fmt(inv.total_ttc)}
-                      </div>
-                    </div>
-
-                    <div className="flex items-center gap-2 flex-wrap mt-3 text-xs">
-                      <span className={`px-2 py-0.5 rounded-full font-medium ${STATUS_COLOR[inv.status] || ""}`}>
-                        {STATUS_LABEL[inv.status] || inv.status}
-                      </span>
-                      {raccordePdp && (() => {
-                        const e = etatPdp(inv, sandboxPdp);
-                        return e ? (
-                          <span className={`px-2 py-0.5 rounded-full font-medium ${e.classe}`}>{e.texte}</span>
-                        ) : null;
-                      })()}
-
-                      <span className="text-gray-500">{fmtDate(inv.issue_date)}</span>
-                    </div>
-                  </div>
-
-                  <button
-                    onClick={(e) => handleDownload(inv.id, e)}
-                    className="w-full mt-3 px-3 py-2.5 rounded-lg border border-ds-border text-indigo-400 text-sm font-semibold hover:bg-ds-elevated transition-colors"
-                  >
-                    Télécharger la facture
-                  </button>
-
-                  {/* Sur téléphone, une pastille n'est pas une action. Si la
-                      facture doit partir, le doigt doit trouver un bouton
-                      pleine largeur, au même titre que le téléchargement. */}
-                  {raccordePdp && (() => {
-                    const e = etatPdp(inv, sandboxPdp);
-                    if (!e?.aFaire || !peutTransmettre) return null;
-                    return (
-                      <button
-                        onClick={(ev) => transmettrePdp(inv, ev)}
-                        disabled={transmission === inv.id}
-                        className="w-full mt-2 px-3 py-2.5 rounded-lg border border-amber-500/30 bg-amber-500/5 text-amber-400 text-sm font-semibold hover:bg-amber-500/10 disabled:opacity-50 transition-colors"
-                      >
-                        {transmission === inv.id ? "Transmission…" : "Transmettre à la Plateforme Agréée"}
-                      </button>
-                    );
-                  })()}
-
-                  {messagePdp?.id === inv.id && (
-                    <p className={`mt-2 text-xs ${messagePdp.ok ? "text-emerald-400" : "text-red-400"}`}>
-                      {messagePdp.texte}
-                    </p>
-                  )}
-                </article>
-              ))}
-            </div>
-
-            <div className="hidden lg:block carte overflow-hidden">
-              <table className="w-full text-sm min-w-[600px]">
-                <thead>
-                  <tr className="border-b border-ds-border text-gray-500 text-xs">
-                    <th className="text-left px-5 py-3">N°</th>
-                    <th className="text-left px-5 py-3">Client</th>
-                    <th className="text-left px-5 py-3">Date</th>
-                    <th className="text-right px-5 py-3">Montant TTC</th>
-                    <th className="text-center px-5 py-3">Statut</th>
-                    {raccordePdp && <th className="text-center px-5 py-3">Plateforme Agréée</th>}
-                    <th className="text-right px-5 py-3">Actions</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {invoices.map((inv) => (
-                    <tr
-                      key={inv.id}
-                      onClick={() => router.push(`/invoices/${inv.id}`)}
-                      className="border-b border-ds-border hover:bg-ds-elevated/50 transition-colors cursor-pointer"
-                    >
-                      <td className="px-5 py-3.5">
-                        <div className="font-mono font-medium text-ink">{inv.invoice_number}</div>
-                        {inv.invoice_type === "acompte" && (
-                          <span className="text-[10px] font-bold px-1.5 py-0.5 rounded bg-emerald-500/15 text-emerald-400 border border-emerald-500/20">ACOMPTE</span>
-                        )}
-                        {inv.invoice_type === "solde" && (
-                          <span className="text-[10px] font-bold px-1.5 py-0.5 rounded bg-indigo-500/15 text-indigo-400 border border-indigo-500/20">SOLDE</span>
-                        )}
-                        {/* Un avoir se lit de loin : c'est un montant qu'on rend,
-                            au milieu d'une liste de montants qu'on attend. */}
-                        {inv.invoice_type === "avoir" && (
-                          <span className="text-[10px] font-bold px-1.5 py-0.5 rounded bg-amber-500/15 text-amber-400 border border-amber-500/20">AVOIR</span>
-                        )}
-                      </td>
-                      <td className="px-5 py-3.5 text-gray-300">
-                        <div className="font-medium">{inv.client_company || inv.client_name}</div>
-                        {inv.client_email && <div className="text-gray-500 text-xs">{inv.client_email}</div>}
-                      </td>
-                      <td className="px-5 py-3.5 text-gray-400">{fmtDate(inv.issue_date)}</td>
-                      <td className="px-5 py-3.5 text-right font-semibold text-ink">{fmt(inv.total_ttc)}</td>
-                      <td className="px-5 py-3.5 text-center">
-                        <span className={`inline-block px-2 py-0.5 rounded-full text-xs font-medium ${STATUS_COLOR[inv.status] || ""}`}>
-                          {STATUS_LABEL[inv.status] || inv.status}
-                        </span>
-                      </td>
-                      {raccordePdp && (
-                        <td className="px-5 py-3.5 text-center">
-                          {(() => {
-                            const e = etatPdp(inv, sandboxPdp);
-                            if (!e) return <span className="text-gray-600 text-xs">-</span>;
-                            if (e.aFaire && peutTransmettre)
-                              return (
-                                <button
-                                  onClick={(ev) => transmettrePdp(inv, ev)}
-                                  disabled={transmission === inv.id}
-                                  className="px-2.5 py-1 rounded-full text-xs font-semibold bg-amber-500/10 text-amber-400 hover:bg-amber-500/20 disabled:opacity-50 transition-colors"
-                                >
-                                  {transmission === inv.id ? "Transmission…" : "Transmettre"}
-                                </button>
-                              );
-                            return (
-                              <span
-                                title={e.alerte ?? (e.manques.length ? phraseManques(e.manques) : undefined)}
-                                className={`inline-block px-2 py-0.5 rounded-full text-xs font-medium ${e.classe}`}
-                              >
-                                {e.texte}
-                              </span>
-                            );
-                          })()}
-                          {messagePdp?.id === inv.id && (
-                            <div className={`mt-1 text-[11px] ${messagePdp.ok ? "text-emerald-400" : "text-red-400"}`}>
-                              {messagePdp.texte}
-                            </div>
-                          )}
-                        </td>
-                      )}
-                      <td className="px-5 py-3.5 text-right">
-                        <button
-                          onClick={(e) => handleDownload(inv.id, e)}
-                          className="text-indigo-400 hover:text-indigo-300 text-xs font-medium transition-colors"
-                        >
-                          Télécharger
-                        </button>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-            </>
+            <InvoicesListe
+              invoices={invoices}
+              raccordePdp={raccordePdp}
+              sandboxPdp={sandboxPdp}
+              peutTransmettre={peutTransmettre}
+              transmission={transmission}
+              messagePdp={messagePdp}
+              onTransmettre={transmettrePdp}
+              onDownload={handleDownload}
+            />
           )}
         </>
       )}

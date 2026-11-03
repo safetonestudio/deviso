@@ -152,7 +152,7 @@ export default function BillingPage() {
   const prices = billing === "annual" ? ANNUAL_PRICES : MONTHLY_PRICES;
 
   return (
-    <div className="w-full">
+    <div className="max-w-2xl mx-auto">
       <GuidedTourBanner pageKey="billing" />
       <div className="en-tete-page mb-6">
         <h1 className="titre-page">Abonnement</h1>
@@ -210,9 +210,8 @@ export default function BillingPage() {
         </div>
       )}
 
-      <div className="grid gap-6 xl:grid-cols-[minmax(0,2fr)_minmax(0,3fr)] items-start">
       {/* Plan actuel */}
-      <div className="carte p-6">
+      <div className="carte p-6 mb-6">
         <p className="text-xs font-semibold text-gray-500 mb-3">Plan actuel</p>
         <div className="flex items-center justify-between gap-4">
           <div>
@@ -312,9 +311,9 @@ export default function BillingPage() {
             </div>
           )}
 
-          <div className="grid gap-4 lg:grid-cols-2">
+          <div className="flex flex-col gap-3">
             {(
-              <div className="flex flex-col justify-between gap-4 h-full border border-indigo-500/30 bg-indigo-950/50 rounded-xl px-5 py-5">
+              <div className="flex items-center justify-between border border-indigo-500/30 bg-indigo-950/50 rounded-xl px-5 py-4">
                 <div>
                   <p className="font-semibold text-ink">
                     Solo à {prices.solo}<span className="text-gray-400 font-normal text-sm">/mois</span>
@@ -327,7 +326,7 @@ export default function BillingPage() {
                 <button
                   onClick={() => handleUpgrade("solo")}
                   disabled={acting}
-                  className="bg-indigo-600 text-ink text-sm font-semibold px-5 py-2.5 rounded-xl hover:bg-indigo-700 transition-colors self-start disabled:opacity-50"
+                  className="bg-indigo-600 text-ink text-sm font-semibold px-5 py-2.5 rounded-xl hover:bg-indigo-700 transition-colors shrink-0 disabled:opacity-50"
                 >
                   {acting
                     ? "Un instant…"
@@ -339,7 +338,7 @@ export default function BillingPage() {
                 </button>
               </div>
             )}
-            <div className="flex flex-col justify-between gap-4 h-full border border-violet-500/30 bg-violet-950/50 rounded-xl px-5 py-5">
+            <div className="flex items-center justify-between border border-violet-500/30 bg-violet-950/50 rounded-xl px-5 py-4">
               <div>
                 <div className="flex items-center gap-2 mb-0.5">
                   <p className="font-semibold text-ink">
@@ -356,7 +355,7 @@ export default function BillingPage() {
               <button
                 onClick={() => handleUpgrade("pro")}
                 disabled={acting}
-                className="bg-violet-600 text-ink text-sm font-semibold px-5 py-2.5 rounded-xl hover:bg-violet-700 transition-colors self-start disabled:opacity-50"
+                className="bg-violet-600 text-ink text-sm font-semibold px-5 py-2.5 rounded-xl hover:bg-violet-700 transition-colors shrink-0 disabled:opacity-50"
               >
                 {acting
                   ? "Un instant…"
@@ -372,7 +371,6 @@ export default function BillingPage() {
           {billing === "annual" && (
             <p className="text-xs text-gray-600 mt-3 text-center">Facturation annuelle en une fois · Sans engagement au-delà</p>
           )}
-      </div>
       </div>
     </div>
   );

@@ -17,6 +17,7 @@ import {
 } from "@/lib/cabinet-dossiers";
 import { estAvoir } from "@/lib/exports-comptables";
 import { libelleStatut } from "@/lib/superpdp-statuts";
+import { KpiCard } from "@/components/ui/KpiCard";
 
 export const metadata: Metadata = { title: "Dossier client" };
 export const dynamic = "force-dynamic";
@@ -124,7 +125,7 @@ export default async function FicheClient({
 
   const exportUrl = (format: "fec" | "csv") => `/api/cabinet/export?format=${format}&year=${annee}&clients=${id}`;
   const badge = "text-xs px-2 py-0.5 rounded-full border";
-  const tuiles = [
+  const tuiles: { label: string; valeur: string; point?: "alerte" | "info" | "bon" | "neutre"; trend?: string }[] = [
     { label: `CA HT ${annee}`, valeur: eur(caHt) },
     { label: `TVA collectée ${annee}`, valeur: eur(tvaTotale) },
     {
@@ -134,6 +135,8 @@ export default async function FicheClient({
     {
       label: "Impayés échus",
       valeur: synthese.impayes.nb ? `${synthese.impayes.nb} · ${eur(synthese.impayes.montant)}` : "Aucun",
+      point: synthese.impayes.nb ? "alerte" : "bon",
+      trend: synthese.impayes.nb ? "à relancer" : "rien d'échu",
     },
   ];
 
@@ -149,14 +152,14 @@ export default async function FicheClient({
   };
 
   return (
-    <div>
-      <Link href="/cabinet" className="text-sm text-gray-400 hover:text-ink">
+    <div className="w-full">
+      <Link href="/cabinet" className="text-sm text-gray-400 hover:text-ink transition-colors">
         ← Portefeuille
       </Link>
 
       <div className="mt-3 mb-6 flex flex-wrap items-start justify-between gap-4">
         <div className="min-w-0">
-          <h1 className="text-2xl font-semibold text-ink truncate">{synthese.nom}</h1>
+          <h1 className="titre-page truncate">{synthese.nom}</h1>
           <div className="mt-2 flex flex-wrap items-center gap-2">
             {synthese.siret && <span className="text-xs text-gray-500">SIRET {synthese.siret}</span>}
             {synthese.raccorde ? (
@@ -231,12 +234,9 @@ export default async function FicheClient({
 
       <CabinetSignalements clientId={id} initiaux={signalements} />
 
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 mb-6">
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 mb-6">
         {tuiles.map((t) => (
-          <div key={t.label} className="carte p-4">
-            <div className="text-xs text-gray-500">{t.label}</div>
-            <div className="text-xl font-semibold mt-1 text-ink">{t.valeur}</div>
-          </div>
+          <KpiCard key={t.label} label={t.label} value={t.valeur} point={t.point} trend={t.trend} />
         ))}
       </div>
 
@@ -272,18 +272,18 @@ export default async function FicheClient({
         <div className="overflow-x-auto">
           <table className="w-full text-sm">
             <thead>
-              <tr className="text-left text-xs text-gray-500 border-b border-ds-border">
-                <th className="px-4 py-2 font-medium">Mois</th>
-                <th className="px-4 py-2 font-medium text-right">Base HT</th>
+              <tr className="text-left text-xs font-semibold text-gray-400 bg-ds-elevated border-b border-ds-border">
+                <th className="px-4 py-2.5 font-semibold">Mois</th>
+                <th className="px-4 py-2.5 font-semibold text-right">Base HT</th>
                 {taux.map((t) => (
-                  <th key={t} className="px-4 py-2 font-medium text-right">TVA {pct(t)}</th>
+                  <th key={t} className="px-4 py-2.5 font-semibold text-right">TVA {pct(t)}</th>
                 ))}
-                <th className="px-4 py-2 font-medium text-right">TVA totale</th>
+                <th className="px-4 py-2.5 font-semibold text-right">TVA totale</th>
               </tr>
             </thead>
             <tbody>
               {lignesTva.map((l) => (
-                <tr key={l.mois} className="border-b border-ds-border last:border-0">
+                <tr key={l.mois} className="border-b border-ds-border last:border-0 hover:bg-ds-elevated/40 transition-colors">
                   <td className="px-4 py-2 text-gray-300 capitalize">{l.mois}</td>
                   <td className="px-4 py-2 text-right text-gray-300">{eur(l.base)}</td>
                   {taux.map((t) => (
@@ -309,14 +309,14 @@ export default async function FicheClient({
           <div className="overflow-x-auto">
             <table className="w-full text-sm">
               <thead>
-                <tr className="text-left text-xs text-gray-500 border-b border-ds-border">
-                  <th className="px-4 py-2 font-medium">Numéro</th>
-                  <th className="px-4 py-2 font-medium">Date</th>
-                  <th className="px-4 py-2 font-medium">Client</th>
-                  <th className="px-4 py-2 font-medium text-right">HT</th>
-                  <th className="px-4 py-2 font-medium text-right">TTC</th>
-                  <th className="px-4 py-2 font-medium">Statut</th>
-                  <th className="px-4 py-2 font-medium">Plateforme</th>
+                <tr className="text-left text-xs font-semibold text-gray-400 bg-ds-elevated border-b border-ds-border">
+                  <th className="px-4 py-2.5 font-semibold">Numéro</th>
+                  <th className="px-4 py-2.5 font-semibold">Date</th>
+                  <th className="px-4 py-2.5 font-semibold">Client</th>
+                  <th className="px-4 py-2.5 font-semibold text-right">HT</th>
+                  <th className="px-4 py-2.5 font-semibold text-right">TTC</th>
+                  <th className="px-4 py-2.5 font-semibold">Statut</th>
+                  <th className="px-4 py-2.5 font-semibold">Plateforme</th>
                 </tr>
               </thead>
               <tbody>
@@ -324,7 +324,7 @@ export default async function FicheClient({
                   const s = signe(f);
                   const pf = plateforme(f);
                   return (
-                    <tr key={f.id} className="border-b border-ds-border last:border-0">
+                    <tr key={f.id} className="border-b border-ds-border last:border-0 hover:bg-ds-elevated/40 transition-colors">
                       <td className="px-4 py-2 text-gray-200 whitespace-nowrap">
                         {f.invoice_number || "Brouillon"}
                         {estAvoir(f) && <span className="ml-2 text-xs text-amber-400">Avoir</span>}

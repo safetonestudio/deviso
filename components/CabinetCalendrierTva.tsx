@@ -59,13 +59,13 @@ export function CabinetCalendrierTva({ lignes }: { lignes: Ligne[] }) {
       <div className="overflow-x-auto">
         <table className="w-full text-sm">
           <thead>
-            <tr className="text-left text-xs text-gray-500 border-b border-ds-border">
-              <th className="px-4 py-2 font-medium">Dossier</th>
-              <th className="px-4 py-2 font-medium">Périodicité</th>
-              <th className="px-4 py-2 font-medium">Période à déclarer</th>
-              <th className="px-4 py-2 font-medium text-right">TVA à déclarer</th>
-              <th className="px-4 py-2 font-medium">Période en cours</th>
-              <th className="px-4 py-2 font-medium text-right">TVA en cours</th>
+            <tr className="text-left text-xs font-semibold text-gray-400 bg-ds-elevated border-b border-ds-border">
+              <th className="px-4 py-2.5 font-semibold">Dossier</th>
+              <th className="px-4 py-2.5 font-semibold">Périodicité</th>
+              <th className="px-4 py-2.5 font-semibold">Période à déclarer</th>
+              <th className="px-4 py-2.5 font-semibold text-right">TVA à déclarer</th>
+              <th className="px-4 py-2.5 font-semibold">Période en cours</th>
+              <th className="px-4 py-2.5 font-semibold text-right">TVA en cours</th>
             </tr>
           </thead>
           <tbody>

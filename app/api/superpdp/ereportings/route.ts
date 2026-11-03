@@ -30,6 +30,32 @@ const ETATS: Record<string, { texte: string; ton: "neutre" | "bien" | "attention
   "ppf:ereporting-rejected": { texte: "Rejetée par l'administration", ton: "attention" },
 };
 
+/**
+ * Compte de revue visuelle (superpdp-test@getdeviso.fr). Il n'est PAS marque
+ * "demo" (il doit exercer les vrais flux du bac a sable), mais le bac a sable
+ * de la Plateforme Agreee ne produit aucun e-reporting. Pour pouvoir travailler
+ * l'affichage de cet ecran, on lui sert des declarations factices, en lecture
+ * seule, pour ce seul compte. Aucun effet exterieur.
+ */
+const COMPTE_REVUE_VISUELLE = "ac3abc18-d1ee-4b21-b0ec-bf6f17767e31";
+
+function declarationsFactices() {
+  const j = (recul: number) => {
+    const d = new Date();
+    d.setDate(d.getDate() - recul);
+    return d.toISOString().slice(0, 10);
+  };
+  const declarations = [
+    { id: 9001, nature: "Transactions", role: "Ventes", debut: j(9), fin: j(0), statut: "Acceptée", ton: "bien", le: j(0), aTraiter: false },
+    { id: 9002, nature: "Encaissements", role: "Ventes", debut: j(9), fin: j(0), statut: "Reçue par l'administration", ton: "neutre", le: j(1), aTraiter: false },
+    { id: 9003, nature: "Transactions", role: "Ventes", debut: j(19), fin: j(10), statut: "Rejetée par l'administration", ton: "attention", le: j(9), aTraiter: true },
+    { id: 9004, nature: "Encaissements", role: "Ventes", debut: j(19), fin: j(10), statut: "Erreur d'acheminement", ton: "attention", le: j(10), aTraiter: true },
+    { id: 9005, nature: "Transactions", role: "Achats", debut: j(29), fin: j(20), statut: "Acceptée", ton: "bien", le: j(19), aTraiter: false },
+    { id: 9006, nature: "Transactions", role: "Ventes", debut: j(39), fin: j(30), statut: "Déposée", ton: "neutre", le: j(30), aTraiter: false },
+  ];
+  return { declarations, total: declarations.length };
+}
+
 export async function GET(req: NextRequest) {
   const supabase = await createClient();
   const {
@@ -41,6 +67,11 @@ export async function GET(req: NextRequest) {
   }
 
   const workspaceId = await getWorkspaceUserId(user.id);
+
+  // Compte de revue visuelle : donnees factices, lecture seule (voir ci-dessus).
+  if (workspaceId === COMPTE_REVUE_VISUELLE) {
+    return NextResponse.json(declarationsFactices());
+  }
 
   // En démonstration, aucune déclaration réelle n'existe côté Plateforme Agréée.
   if (await estCompteDemo(workspaceId)) {

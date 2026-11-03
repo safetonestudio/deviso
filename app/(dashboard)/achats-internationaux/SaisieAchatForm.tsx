@@ -295,8 +295,9 @@ export function SaisieAchatForm() {
             </div>
 
             <div>
-              <label className={etiquette} htmlFor="a-tva">N° de TVA du fournisseur <span className="text-gray-600">(si connu)</span></label>
-              <input id="a-tva" className={champ} value={tva} onChange={(e) => setTva(e.target.value)} placeholder="Ex. : BE0123456749" />
+              <label className={etiquette} htmlFor="a-tva">Identifiant fiscal du fournisseur</label>
+              <input id="a-tva" className={champ} value={tva} onChange={(e) => setTva(e.target.value)} placeholder="N° de TVA (UE), ou identifiant fiscal (hors UE)" />
+              <p className="text-xs text-gray-600 mt-1">Nécessaire pour déclarer l&apos;achat : n° de TVA intracommunautaire pour l&apos;UE, identifiant fiscal local pour un pays hors UE.</p>
             </div>
 
             <div>

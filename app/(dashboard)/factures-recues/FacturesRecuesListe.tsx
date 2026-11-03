@@ -1,5 +1,8 @@
 import { SignalerProbleme } from "./SignalerProbleme";
 import { libelleStatut, estCloture } from "@/lib/superpdp-statuts";
+import { ExplicationProbleme } from "@/components/ui/ExplicationProbleme";
+import { expliquerFactureRecue } from "@/lib/superpdp-explications";
+import { FiltreListe } from "@/components/ui/FiltreListe";
 
 /**
  * Liste des factures reçues, une carte dépliable par facture.
@@ -54,12 +57,12 @@ function Puce({ statut, code }: { statut: ReturnType<typeof libelleStatut>; code
   const ton = statut?.ton;
   return (
     <span
-      className={`text-xs px-2 py-0.5 rounded-full whitespace-nowrap ${
+      className={`inline-flex items-center px-2.5 py-1 rounded-full border text-xs font-medium whitespace-nowrap ${
         ton === "bien"
-          ? "bg-emerald-500/15 text-emerald-400"
+          ? "bg-emerald-500/15 text-emerald-400 border-emerald-500/30"
           : ton === "attention"
-            ? "bg-amber-500/15 text-amber-400"
-            : "bg-ds-elevated text-gray-400"
+            ? "bg-amber-500/15 text-amber-400 border-amber-500/30"
+            : "bg-ds-elevated text-gray-300 border-ds-border"
       }`}
     >
       {statut?.texte ?? code ?? "-"}
@@ -98,26 +101,29 @@ export function FacturesRecuesListe({
         <Tuile libelle="À traiter" valeur={String(nbATraiter)} alerte={nbATraiter > 0} />
       </div>
 
-      <div className="space-y-2.5 mt-4">
+      <FiltreListe placeholder="Rechercher un fournisseur, un numéro…" rienTrouve="Aucune facture reçue">
         {factures.map((f) => {
           const statut = libelleStatut(f.last_status_code);
           const enRetard = estEnRetard(f);
+          const ex = expliquerFactureRecue(f.last_status_code, enRetard);
           return (
             <details
               key={f.id}
+              data-recherche={`${f.seller_name ?? ""} ${f.number ?? ""}`.toLowerCase()}
               className="group carte overflow-hidden shadow-sm transition-colors hover:border-gray-600 open:border-indigo-500/40 open:shadow-md"
             >
               <summary className="flex items-center gap-3 px-4 py-3 cursor-pointer list-none [&::-webkit-details-marker]:hidden hover:bg-ds-elevated/40 transition-colors">
-                <div className="min-w-0 flex-1">
-                  <div className="flex items-center gap-2 flex-wrap">
-                    <span className="text-ink font-medium truncate">{f.seller_name ?? "-"}</span>
-                    <Puce statut={statut} code={f.last_status_code} />
-                  </div>
+                <div className="min-w-0 max-w-[55%]">
+                  <span className="text-ink font-medium truncate block">{f.seller_name ?? "-"}</span>
                   <p className={`text-xs mt-0.5 ${enRetard ? "text-red-400 font-medium" : "text-gray-400"}`}>
                     {enRetard ? "En retard depuis le" : "Échéance"} {jour(f.payment_due_date)}
                   </p>
                 </div>
-                <span className="text-ink font-semibold whitespace-nowrap shrink-0">
+                <div className="shrink-0 flex flex-wrap items-center gap-2">
+                  <Puce statut={statut} code={f.last_status_code} />
+                </div>
+                <div className="flex-1" />
+                <span className="text-ink font-semibold whitespace-nowrap shrink-0 tabular-nums">
                   {euros(f.total_with_vat, f.currency_code)}
                 </span>
                 <svg
@@ -153,6 +159,8 @@ export function FacturesRecuesListe({
                   </div>
                 </dl>
 
+                {ex && <ExplicationProbleme ton={ex.ton} probleme={ex.probleme} etapes={ex.etapes} />}
+
                 <div className="flex flex-wrap items-center gap-3">
                   <a
                     href={`/api/superpdp/invoices/${f.id}/download`}
@@ -173,7 +181,7 @@ export function FacturesRecuesListe({
             </details>
           );
         })}
-      </div>
+      </FiltreListe>
 
       {adresseAnnuaire && (
         <p className="text-xs text-gray-400 mt-3">
