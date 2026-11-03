@@ -457,7 +457,7 @@ Les présentes CGV sont soumises au droit français. Tout litige relève de la c
   return (
     <div className="w-full">
       <GuidedTourBanner pageKey="profil" />
-      <div className="en-tete-page mb-10">
+      <div className="en-tete-page mb-16">
         <h1 className="titre-page">Mon profil</h1>
         <p className="sous-titre-page">Ces informations apparaîtront automatiquement sur tes devis et factures.</p>
       </div>
@@ -657,7 +657,7 @@ Les présentes CGV sont soumises au droit français. Tout litige relève de la c
           <SectionRepliable id="documents" titre="Apparence des documents" sousTitre="Choisissez le style de vos devis et factures envoyés aux clients.">
             <div>
               <label className="block text-xs font-medium text-gray-400 mb-2">Mise en page</label>
-              <div className="grid grid-cols-3 gap-3">
+              <div className="grid grid-cols-3 gap-4">
                 {[
                   { value: "classic", label: "Classique" },
                   { value: "modern",  label: "Moderne" },
@@ -669,10 +669,56 @@ Les présentes CGV sont soumises au droit français. Tout litige relève de la c
                     <button key={t.value} type="button"
                       onClick={() => set("proposal_template" as keyof Profile, t.value)}
                       className={`relative rounded-xl border-2 p-3 transition-all text-left ${selected ? "border-indigo-500 bg-indigo-500/10" : "border-ds-border hover:border-zinc-600"}`}>
-                      <div className="bg-ds-elevated rounded border border-ds-border p-2 mb-2 h-16 overflow-hidden">
-                        {t.value === "classic" && <div><div className="text-xs font-semibold mb-1" style={{ color }}>DEVIS</div><div className="h-1 w-10 rounded mb-1 bg-zinc-600" /><div className="h-1 w-7 rounded bg-gray-700" /><div className="mt-2 h-1.5 rounded" style={{ backgroundColor: color, opacity: 0.3 }} /></div>}
-                        {t.value === "modern" && <div><div className="rounded mb-2 px-2 py-1" style={{ backgroundColor: color }}><div className="h-1 w-8 rounded bg-white opacity-80" /></div><div className="h-1 w-10 rounded mb-1 bg-zinc-600" /><div className="h-1 w-7 rounded bg-gray-700" /></div>}
-                        {t.value === "epure" && <div className="flex gap-2"><div className="w-0.5 rounded-full self-stretch" style={{ backgroundColor: color }} /><div><div className="text-xs font-semibold tracking-widest text-gray-400 mb-1" style={{ fontSize: 7 }}>DEVIS</div><div className="h-1 w-8 rounded mb-1 bg-zinc-600" /><div className="h-1 w-6 rounded bg-gray-700" /></div></div>}
+                      <div className="rounded-md bg-ds-bg border border-ds-border overflow-hidden aspect-[3/4] p-3 mb-3">
+                        {t.value === "classic" && (
+                          <div className="h-full flex flex-col">
+                            <div className="text-[11px] font-bold tracking-wide" style={{ color }}>DEVIS</div>
+                            <div className="h-px bg-ink/15 my-2" />
+                            <div className="flex justify-between gap-2 mb-2.5">
+                              <div className="space-y-1"><div className="h-1.5 w-14 rounded bg-ink/25" /><div className="h-1 w-10 rounded bg-ink/15" /></div>
+                              <div className="space-y-1 flex flex-col items-end"><div className="h-1.5 w-12 rounded bg-ink/25" /><div className="h-1 w-8 rounded bg-ink/15" /></div>
+                            </div>
+                            <div className="h-3 rounded" style={{ backgroundColor: color, opacity: 0.22 }} />
+                            <div className="space-y-1.5 mt-2">
+                              <div className="h-1.5 w-full rounded bg-ink/10" />
+                              <div className="h-1.5 w-full rounded bg-ink/10" />
+                              <div className="h-1.5 w-5/6 rounded bg-ink/10" />
+                            </div>
+                            <div className="mt-auto flex justify-end"><div className="h-3 w-16 rounded" style={{ backgroundColor: color }} /></div>
+                          </div>
+                        )}
+                        {t.value === "modern" && (
+                          <div className="h-full flex flex-col">
+                            <div className="-mx-3 -mt-3 mb-2.5 px-3 py-2.5 flex items-center" style={{ backgroundColor: color }}>
+                              <span className="text-[11px] font-bold tracking-wide" style={{ color: "#ffffff" }}>DEVIS</span>
+                            </div>
+                            <div className="flex justify-between gap-2 mb-2.5">
+                              <div className="space-y-1"><div className="h-1.5 w-14 rounded bg-ink/25" /><div className="h-1 w-10 rounded bg-ink/15" /></div>
+                              <div className="space-y-1 flex flex-col items-end"><div className="h-1.5 w-12 rounded bg-ink/25" /><div className="h-1 w-8 rounded bg-ink/15" /></div>
+                            </div>
+                            <div className="space-y-1.5">
+                              <div className="h-1.5 w-full rounded bg-ink/10" />
+                              <div className="h-1.5 w-full rounded bg-ink/10" />
+                              <div className="h-1.5 w-5/6 rounded bg-ink/10" />
+                            </div>
+                            <div className="mt-auto flex justify-end"><div className="h-3 w-16 rounded" style={{ backgroundColor: color }} /></div>
+                          </div>
+                        )}
+                        {t.value === "epure" && (
+                          <div className="h-full flex gap-2.5">
+                            <div className="w-1 rounded-full shrink-0" style={{ backgroundColor: color }} />
+                            <div className="flex-1 flex flex-col">
+                              <div className="text-[9px] font-semibold tracking-[0.3em] text-gray-400">DEVIS</div>
+                              <div className="mt-2.5 space-y-1"><div className="h-1.5 w-14 rounded bg-ink/25" /><div className="h-1 w-10 rounded bg-ink/15" /></div>
+                              <div className="space-y-1.5 mt-3">
+                                <div className="h-1.5 w-full rounded bg-ink/10" />
+                                <div className="h-1.5 w-full rounded bg-ink/10" />
+                                <div className="h-1.5 w-4/6 rounded bg-ink/10" />
+                              </div>
+                              <div className="mt-auto"><div className="h-2.5 w-14 rounded" style={{ backgroundColor: color, opacity: 0.85 }} /></div>
+                            </div>
+                          </div>
+                        )}
                       </div>
                       <div className="text-xs font-semibold text-gray-300">{t.label}</div>
                       {selected && <div className="absolute top-2 right-2 w-4 h-4 rounded-full bg-indigo-500 flex items-center justify-center"><span className="text-ink text-xs">✓</span></div>}

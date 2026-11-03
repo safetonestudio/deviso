@@ -204,7 +204,7 @@ export function SuperPdpCard() {
   const ligneAOuvrir = verifie && (!ligne || ligne.etat === "absente");
 
   return (
-    <section className="carte p-5 mt-6">
+    <section className="carte p-6">
       <div className="flex items-start justify-between gap-4 mb-1">
         <h2 className="font-semibold text-ink">Plateforme Agréée</h2>
         {etat?.sandbox && (
