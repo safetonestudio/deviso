@@ -37,11 +37,11 @@ function SectionRepliable({
   children: React.ReactNode;
 }) {
   return (
-    <section id={id} className="carte p-5">
-      <div className="flex items-start justify-between gap-3 mb-4">
+    <section id={id} className="carte p-6">
+      <div className="flex items-start justify-between gap-3 mb-5">
         <div className="min-w-0">
           <h2 className="font-semibold text-ink">{titre}</h2>
-          {sousTitre && <div className="text-xs text-gray-500 mt-0.5">{sousTitre}</div>}
+          {sousTitre && <div className="text-sm text-gray-500 mt-1.5">{sousTitre}</div>}
         </div>
         {droite && <div className="shrink-0">{droite}</div>}
       </div>
@@ -81,16 +81,16 @@ const PARAM_CORE = ["logo", "identite", "statut-tva", "legal", "documents"];
 // accordeons fermes.
 function ParametresNav({ actif, onSelect }: { actif: string; onSelect: (id: string) => void }) {
   return (
-    <nav className="hidden lg:block lg:self-start lg:sticky lg:top-[88px] space-y-6 text-sm">
+    <nav className="hidden lg:block lg:self-start lg:sticky lg:top-[88px] space-y-7 text-[15px]">
       {PARAM_SECTIONS.map((groupe) => {
         const Icone = groupe.icone;
         return (
           <div key={groupe.titre}>
-            <div className="flex items-center gap-2 px-3 mb-2 text-gray-500">
-              <Icone size={14} className="shrink-0" />
-              <span className="text-[11px] font-semibold tracking-wide">{groupe.titre}</span>
+            <div className="flex items-center gap-2.5 px-3.5 mb-2.5 text-gray-500">
+              <Icone size={15} className="shrink-0" />
+              <span className="text-[12px] font-semibold tracking-wide">{groupe.titre}</span>
             </div>
-            <ul className="space-y-0.5">
+            <ul className="space-y-1">
               {groupe.liens.map((l) => {
                 const estActif = actif === l.id;
                 return (
@@ -99,7 +99,7 @@ function ParametresNav({ actif, onSelect }: { actif: string; onSelect: (id: stri
                       type="button"
                       onClick={() => onSelect(l.id)}
                       aria-current={estActif ? "true" : undefined}
-                      className={`block w-full text-left rounded-lg px-3 py-1.5 transition-colors ${
+                      className={`block w-full text-left rounded-lg px-3.5 py-2 transition-colors ${
                         estActif
                           ? "bg-indigo-500/10 text-indigo-400 font-semibold"
                           : "text-gray-400 hover:text-ink hover:bg-ds-elevated"
@@ -391,7 +391,7 @@ Les présentes CGV sont soumises au droit français. Tout litige relève de la c
           </p>
         </div>
 
-        <section className="carte p-5 space-y-4">
+        <section className="carte p-6 space-y-4">
           <h2 className="text-sm font-semibold text-gray-400">Informations personnelles</h2>
 
           <div>
@@ -445,7 +445,7 @@ Les présentes CGV sont soumises au droit français. Tout litige relève de la c
           </button>
         </section>
 
-        <div className="carte p-5">
+        <div className="carte p-6">
           <p className="text-sm text-gray-500">
             Les paramètres de l&apos;entreprise (SIRET, IBAN, abonnement, etc.) sont gérés par le propriétaire du compte.
           </p>
@@ -457,21 +457,21 @@ Les présentes CGV sont soumises au droit français. Tout litige relève de la c
   return (
     <div className="w-full">
       <GuidedTourBanner pageKey="profil" />
-      <div className="en-tete-page mb-6">
+      <div className="en-tete-page mb-10">
         <h1 className="titre-page">Mon profil</h1>
         <p className="sous-titre-page">Ces informations apparaîtront automatiquement sur tes devis et factures.</p>
       </div>
 
-      <div className="grid lg:grid-cols-[240px_minmax(0,1fr)] gap-10">
+      <div className="grid lg:grid-cols-[260px_minmax(0,1fr)] gap-14">
         <ParametresNav actif={vue} onSelect={setVue} />
-        <div className="min-w-0 max-w-[720px] space-y-6">
+        <div className="min-w-0 max-w-[880px] space-y-6">
 
 
       {PARAM_CORE.includes(vue) && (
       <form onSubmit={handleSubmit} className="space-y-6">
         {vue === "logo" && (<>
         {/* Logo */}
-        <section id="logo" className="carte p-5 scroll-mt-24">
+        <section id="logo" className="carte p-6 scroll-mt-24">
           <h2 className="font-semibold text-ink mb-4">Logo</h2>
           {profile.plan === "free" ? (
             <UpgradeBanner variant="logo_blocked" />
@@ -505,7 +505,7 @@ Les présentes CGV sont soumises au droit français. Tout litige relève de la c
         </>)}
         {vue === "identite" && (<>
         {/* Identité */}
-        <section id="identite" className="carte p-5 space-y-4 scroll-mt-24">
+        <section id="identite" className="carte p-6 space-y-4 scroll-mt-24">
           <h2 className="font-semibold text-ink">Identité</h2>
           <div className="grid grid-cols-2 gap-3">
             <div>
@@ -546,7 +546,7 @@ Les présentes CGV sont soumises au droit français. Tout litige relève de la c
         </>)}
         {vue === "statut-tva" && (<>
         {/* Statut de l'entreprise */}
-        <section id="statut-tva" className="carte p-5 space-y-4 scroll-mt-24">
+        <section id="statut-tva" className="carte p-6 space-y-4 scroll-mt-24">
           <h2 className="font-semibold text-ink">Statut de l&apos;entreprise</h2>
           <p className="text-xs text-gray-500">Il adapte ton tableau de bord : échéances URSSAF et cotisations pour un micro-entrepreneur, échéances de TVA si tu y es assujetti.</p>
           <div className="space-y-2">
@@ -568,7 +568,7 @@ Les présentes CGV sont soumises au droit français. Tout litige relève de la c
         </section>
 
         {/* TVA */}
-        <section className="carte p-5 space-y-4">
+        <section className="carte p-6 space-y-4">
           <h2 className="font-semibold text-ink">Régime TVA</h2>
           <p className="text-xs text-gray-500">Ce réglage pré-remplit automatiquement le taux TVA sur tous tes nouveaux devis et factures.</p>
           <div className="space-y-2">
@@ -634,7 +634,7 @@ Les présentes CGV sont soumises au droit français. Tout litige relève de la c
         </>)}
         {vue === "legal" && (<>
         {/* Légal */}
-        <section className="carte p-5 space-y-4">
+        <section className="carte p-6 space-y-4">
           <h2 className="font-semibold text-ink">Informations légales</h2>
           <div className="grid grid-cols-2 gap-3">
             <div>
@@ -712,10 +712,12 @@ Les présentes CGV sont soumises au droit français. Tout litige relève de la c
 
         </>)}
         {error && <p className="text-red-400 text-sm">{error}</p>}
-        <button type="submit" disabled={saving}
-          className="w-full bg-indigo-600 hover:bg-indigo-700 disabled:opacity-50 text-ink rounded-lg py-2.5 text-sm font-semibold transition-colors">
-          {saving ? "Enregistrement…" : saved ? "✓ Enregistré !" : "Enregistrer le profil"}
-        </button>
+        <div className="flex justify-end pt-1">
+          <button type="submit" disabled={saving}
+            className="bg-indigo-600 hover:bg-indigo-700 disabled:opacity-50 text-ink rounded-lg px-6 py-2.5 text-sm font-semibold transition-colors">
+            {saving ? "Enregistrement…" : saved ? "✓ Enregistré !" : "Enregistrer le profil"}
+          </button>
+        </div>
       </form>
       )}
 
