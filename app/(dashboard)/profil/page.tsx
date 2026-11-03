@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState, useCallback } from "react";
 import Image from "next/image";
-import { Building2, FileText, ShieldCheck, CreditCard, type LucideIcon } from "lucide-react";
+import { Building2, FileText, ShieldCheck, type LucideIcon } from "lucide-react";
 import type { Profile, TvaRegime } from "@/types";
 import { STATUTS } from "@/lib/statut-entreprise";
 import { UpgradeBanner } from "@/components/UpgradeBanner";
@@ -37,21 +37,16 @@ function SectionRepliable({
   children: React.ReactNode;
 }) {
   return (
-    <details id={id} className="group carte mt-6 overflow-hidden scroll-mt-24 [&_summary::-webkit-details-marker]:hidden">
-      <summary className="flex items-center justify-between gap-3 px-5 py-4 cursor-pointer list-none select-none hover:bg-ds-elevated/40 transition-colors">
+    <section id={id} className="carte p-5">
+      <div className="flex items-start justify-between gap-3 mb-4">
         <div className="min-w-0">
           <h2 className="font-semibold text-ink">{titre}</h2>
           {sousTitre && <div className="text-xs text-gray-500 mt-0.5">{sousTitre}</div>}
         </div>
-        <div className="flex items-center gap-3 shrink-0">
-          {droite}
-          <svg className="w-4 h-4 shrink-0 text-gray-400 transition-transform group-open:rotate-180" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-            <path strokeLinecap="round" strokeLinejoin="round" d="m19.5 8.25-7.5 7.5-7.5-7.5" />
-          </svg>
-        </div>
-      </summary>
-      <div className="px-5 pb-5 space-y-4">{children}</div>
-    </details>
+        {droite && <div className="shrink-0">{droite}</div>}
+      </div>
+      <div className="space-y-4">{children}</div>
+    </section>
   );
 }
 
@@ -62,6 +57,7 @@ const PARAM_SECTIONS: { titre: string; icone: LucideIcon; liens: { id: string; l
     { id: "logo", label: "Logo" },
     { id: "identite", label: "Identité" },
     { id: "statut-tva", label: "Statut & TVA" },
+    { id: "legal", label: "Informations légales" },
   ] },
   { titre: "Documents", icone: FileText, liens: [
     { id: "documents", label: "Apparence" },
@@ -70,40 +66,20 @@ const PARAM_SECTIONS: { titre: string; icone: LucideIcon; liens: { id: string; l
     { id: "cgv", label: "CGV" },
   ] },
   { titre: "Conformité", icone: ShieldCheck, liens: [
-    { id: "comptable", label: "Expert-comptable" },
+    { id: "raccordement", label: "Plateforme Agréée" },
     { id: "chorus", label: "Chorus Pro" },
-  ] },
-  { titre: "Compte", icone: CreditCard, liens: [
-    { id: "abonnement", label: "Abonnement" },
+    { id: "comptable", label: "Expert-comptable" },
   ] },
 ];
 
-const PARAM_IDS = PARAM_SECTIONS.flatMap((g) => g.liens.map((l) => l.id));
+// Les reglages du profil partagent un seul formulaire et un seul bouton
+// d'enregistrement. Les autres ont leur propre bouton.
+const PARAM_CORE = ["logo", "identite", "statut-tva", "legal", "documents"];
 
-// Menu lateral des reglages, a la maniere des reglages de Linear ou Stripe :
-// l'entree de la section ou l'on se trouve s'allume, un clic y amene. L'etat
-// actif est pilote par la position de defilement (IntersectionObserver), pas
-// par un simple survol : c'est ce qui donne le repere "vous etes ici".
-function ParametresNav() {
-  const [actif, setActif] = useState<string>(PARAM_IDS[0]);
-  useEffect(() => {
-    const cibles = PARAM_IDS
-      .map((id) => document.getElementById(id))
-      .filter((e): e is HTMLElement => e !== null);
-    if (cibles.length === 0) return;
-    const obs = new IntersectionObserver(
-      (entrees) => {
-        const visibles = entrees
-          .filter((e) => e.isIntersecting)
-          .sort((a, b) => a.boundingClientRect.top - b.boundingClientRect.top);
-        if (visibles[0]) setActif(visibles[0].target.id);
-      },
-      { rootMargin: "-88px 0px -70% 0px", threshold: 0 },
-    );
-    cibles.forEach((c) => obs.observe(c));
-    return () => obs.disconnect();
-  }, []);
-
+// Maitre / detail facon reglages macOS : le menu liste tous les reglages, seul
+// celui sur lequel on clique s'affiche a droite. Fini le defilement et les
+// accordeons fermes.
+function ParametresNav({ actif, onSelect }: { actif: string; onSelect: (id: string) => void }) {
   return (
     <nav className="hidden lg:block lg:self-start lg:sticky lg:top-[88px] space-y-6 text-sm">
       {PARAM_SECTIONS.map((groupe) => {
@@ -119,17 +95,18 @@ function ParametresNav() {
                 const estActif = actif === l.id;
                 return (
                   <li key={l.id}>
-                    <a
-                      href={`#${l.id}`}
+                    <button
+                      type="button"
+                      onClick={() => onSelect(l.id)}
                       aria-current={estActif ? "true" : undefined}
-                      className={`block rounded-lg px-3 py-1.5 transition-colors ${
+                      className={`block w-full text-left rounded-lg px-3 py-1.5 transition-colors ${
                         estActif
                           ? "bg-indigo-500/10 text-indigo-400 font-semibold"
                           : "text-gray-400 hover:text-ink hover:bg-ds-elevated"
                       }`}
                     >
                       {l.label}
-                    </a>
+                    </button>
                   </li>
                 );
               })}
@@ -150,7 +127,6 @@ export default function ProfilPage() {
   const [error, setError] = useState("");
   const [uploadingLogo, setUploadingLogo] = useState(false);
   const logoInputRef = useRef<HTMLInputElement>(null);
-  const [portalLoading, setPortalLoading] = useState(false);
 
   // Subdomain state
   const [subdomainInput, setSubdomainInput] = useState("");
@@ -260,27 +236,6 @@ export default function ProfilPage() {
     if (res.ok) setProfile((p) => ({ ...p, logo_url: data.logo_url }));
     else alert(data.error || "Erreur upload");
     setUploadingLogo(false);
-  }
-
-  async function handlePortal() {
-    setPortalLoading(true);
-    const res = await fetch("/api/stripe/portal", { method: "POST" });
-    const data = await res.json();
-    if (data.url) { window.location.href = data.url; return; }
-    // La route renvoie désormais un code plus un message lisible : afficher le
-    // code brut « NO_SUBSCRIPTION » à l'utilisateur n'aiderait personne.
-    alert(data.message || data.error || "Erreur");
-    setPortalLoading(false);
-  }
-
-  async function handleUpgrade(plan: "solo" | "pro") {
-    const res = await fetch("/api/stripe/checkout", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ plan }),
-    });
-    const data = await res.json();
-    if (data.url) window.location.href = data.url;
   }
 
   async function handleLogoDelete() {
@@ -419,6 +374,7 @@ Les présentes CGV sont soumises au droit français. Tout litige relève de la c
 
   const selectedRegime = TVA_REGIMES.find((r) => r.value === profile.tva_regime) ?? TVA_REGIMES[0];
   const inputCls = "w-full bg-ds-bg border border-ds-border text-ink placeholder:text-gray-600 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500/30";
+  const [vue, setVue] = useState<string>("identite");
   const subdomainChanged = subdomainInput.trim().toLowerCase() !== (profile.subdomain || "");
   const canSaveSubdomain = subdomainChanged && (subdomainStatus === "available" || subdomainInput.trim() === "");
 
@@ -507,54 +463,13 @@ Les présentes CGV sont soumises au droit français. Tout litige relève de la c
       </div>
 
       <div className="grid lg:grid-cols-[240px_minmax(0,1fr)] gap-10">
-        <ParametresNav />
+        <ParametresNav actif={vue} onSelect={setVue} />
         <div className="min-w-0 max-w-[720px] space-y-6">
 
-      {/* Abonnement */}
-      <SectionRepliable
-        id="abonnement"
-        titre="Abonnement"
-        droite={
-          <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold ${
-            profile.plan === "pro" ? "bg-indigo-500/20 text-indigo-300" :
-            profile.plan === "solo" ? "bg-indigo-500/20 text-indigo-300" :
-            "bg-ds-elevated text-gray-400"
-          }`}>
-            {profile.plan === "pro" ? "Pro" : profile.plan === "solo" ? "Solo" : "Gratuit"}
-          </span>
-        }
-      >
-        <div className="flex items-center justify-between flex-wrap gap-3">
-          <div className="flex items-center gap-2 text-xs">
-            {profile.subscription_status === "active"
-              ? <span className="text-emerald-400 font-medium">Abonnement actif</span>
-              : profile.subscription_status
-              ? <span className="text-gray-500">Statut : {profile.subscription_status}</span>
-              : <span className="text-gray-500">Aucun abonnement payant en cours</span>}
-          </div>
-          <div className="flex gap-2">
-            {profile.plan === "free" ? (
-              <>
-                <button type="button" onClick={() => handleUpgrade("solo")}
-                  className="text-sm px-3 py-1.5 bg-indigo-600 text-ink rounded-lg hover:bg-indigo-700 font-medium transition-colors">
-                  Passer Solo à 18€/mois
-                </button>
-                <button type="button" onClick={() => handleUpgrade("pro")}
-                  className="text-sm px-3 py-1.5 bg-violet-600 text-ink rounded-lg hover:bg-violet-700 font-medium transition-colors">
-                  Passer Pro à 34€/mois
-                </button>
-              </>
-            ) : (
-              <button type="button" onClick={handlePortal} disabled={portalLoading}
-                className="text-sm px-3 py-1.5 border border-ds-border rounded-lg hover:bg-ds-elevated font-medium text-gray-300 disabled:opacity-50 transition-colors">
-                {portalLoading ? "Redirection…" : "Gérer mon abonnement →"}
-              </button>
-            )}
-          </div>
-        </div>
-      </SectionRepliable>
 
+      {PARAM_CORE.includes(vue) && (
       <form onSubmit={handleSubmit} className="space-y-6">
+        {vue === "logo" && (<>
         {/* Logo */}
         <section id="logo" className="carte p-5 scroll-mt-24">
           <h2 className="font-semibold text-ink mb-4">Logo</h2>
@@ -587,6 +502,8 @@ Les présentes CGV sont soumises au droit français. Tout litige relève de la c
           )}
         </section>
 
+        </>)}
+        {vue === "identite" && (<>
         {/* Identité */}
         <section id="identite" className="carte p-5 space-y-4 scroll-mt-24">
           <h2 className="font-semibold text-ink">Identité</h2>
@@ -626,6 +543,8 @@ Les présentes CGV sont soumises au droit français. Tout litige relève de la c
           </div>
         </section>
 
+        </>)}
+        {vue === "statut-tva" && (<>
         {/* Statut de l'entreprise */}
         <section id="statut-tva" className="carte p-5 space-y-4 scroll-mt-24">
           <h2 className="font-semibold text-ink">Statut de l&apos;entreprise</h2>
@@ -712,6 +631,8 @@ Les présentes CGV sont soumises au droit français. Tout litige relève de la c
           )}
         </section>
 
+        </>)}
+        {vue === "legal" && (<>
         {/* Légal */}
         <section className="carte p-5 space-y-4">
           <h2 className="font-semibold text-ink">Informations légales</h2>
@@ -729,6 +650,8 @@ Les présentes CGV sont soumises au droit français. Tout litige relève de la c
           </div>
         </section>
 
+        </>)}
+        {vue === "documents" && (<>
         {/* Apparence */}
         {canName(profile.plan, "accentColor") ? (
           <SectionRepliable id="documents" titre="Apparence des documents" sousTitre="Choisissez le style de vos devis et factures envoyés aux clients.">
@@ -787,13 +710,16 @@ Les présentes CGV sont soumises au droit français. Tout litige relève de la c
           </section>
         )}
 
+        </>)}
         {error && <p className="text-red-400 text-sm">{error}</p>}
         <button type="submit" disabled={saving}
           className="w-full bg-indigo-600 hover:bg-indigo-700 disabled:opacity-50 text-ink rounded-lg py-2.5 text-sm font-semibold transition-colors">
           {saving ? "Enregistrement…" : saved ? "✓ Enregistré !" : "Enregistrer le profil"}
         </button>
       </form>
+      )}
 
+      {vue === "sous-domaine" && (<>
       {/* ── Sous-domaine ── */}
       {canName(profile.plan, "subdomain") ? (
         <SectionRepliable id="sous-domaine" titre="Sous-domaine personnalisé" sousTitre={<>Vos devis seront accessibles via <span className="text-indigo-400 font-mono">votre-nom.getdeviso.fr</span>.</>}>
@@ -853,6 +779,8 @@ Les présentes CGV sont soumises au droit français. Tout litige relève de la c
       )}
 
 
+      </>)}
+      {vue === "relances" && (<>
       {/* ── Relances programmables ── */}
       {canName(profile.plan, "remindersCustom") ? (
         <SectionRepliable id="relances" titre="Relances automatiques" sousTitre="Définissez vos propres délais de relance (en jours après envoi) et un message personnalisé inclus dans chaque email.">
@@ -944,6 +872,8 @@ Les présentes CGV sont soumises au droit français. Tout litige relève de la c
         </section>
       )}
 
+      </>)}
+      {vue === "chorus" && (<>
       {/* ── Chorus Pro (B2G, Réforme 2026) ── */}
       <SectionRepliable
         id="chorus"
@@ -1038,6 +968,8 @@ Les présentes CGV sont soumises au droit français. Tout litige relève de la c
         </div>
       </SectionRepliable>
 
+      </>)}
+      {vue === "cgv" && (<>
       {/* ── CGV ── */}
       <SectionRepliable
         id="cgv"
@@ -1084,11 +1016,11 @@ Les présentes CGV sont soumises au droit français. Tout litige relève de la c
         </div>
       </SectionRepliable>
 
-      {/* Raccordement a la Plateforme Agreee. Place en fin de page : reglage
-          rare, mais l'echeance du 1er septembre 2026 le rend reperable par son
-          libelle plutot que par sa position. */}
+      </>)}
+      {vue === "raccordement" && (<>
       <SuperPdpCard />
-
+      </>)}
+      {vue === "comptable" && (<>
       <SectionRepliable
         id="comptable"
         titre="Expert-comptable"
@@ -1096,6 +1028,7 @@ Les présentes CGV sont soumises au droit français. Tout litige relève de la c
       >
         <ComptableAcces />
       </SectionRepliable>
+      </>)}
         </div>
       </div>
     </div>
