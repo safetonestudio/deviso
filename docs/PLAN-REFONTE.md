@@ -143,10 +143,15 @@ TypeScript 7, ESLint 10, uuid 14. @types/node seulement s'il correspond au Node 
 
 - Décision Selim (04/11) : l'animation ne concerne QUE le site public, pas la web app.
 
-- Direction exprimée par Selim (04/11) : site simple et aéré, thématique nature, mode jour et mode
-  nuit comme dans l'app. Aucun des six sites montrés (Linear, Stripe, Qonto, Pennylane, Mercury,
-  Raycast) ne lui plaît. Attention : le fond de forêt a été abandonné plus tôt (voir Décisions) ;
-  ici la nature est une ambiance (palette, matières, illustrations), pas un fond de forêt.
+- Direction landing (04/11, tranchée avec Selim) : prompt de direction artistique de Selim = base de
+  DESIGN.md. Palette Warm Ivory & Muted Sage (clair : #F1EBDD, #E5DECE, #A8BDA0, #456B4B, #252B25) et
+  Deep Charcoal & Electric Sage (sombre : #111511, #1D241E, #304334, #B9F078, #E9EDE5). Le vert est une
+  identité, AUCUN code nature/écologie (pas de forêt, pas de feuilles). Contrastes mesurés : #A8BDA0 en
+  clair et #304334 en sombre = décor seulement (1,7), jamais du texte ; #456B4B sur #E5DECE = 4,5
+  (limite) ; texte sur l'accent #B9F078 = sombre. Cible de la page d'accueil : convertir des
+  indépendants en utilisateurs Deviso (démo, essai 14 jours). La page /experts-comptables a sa propre
+  direction, après. Aucun des six sites montrés (Linear, Stripe, Qonto, Pennylane, Mercury, Raycast)
+  ne plaisait à Selim : ne pas s'en servir comme référence.
 
 ## Points ouverts
 
