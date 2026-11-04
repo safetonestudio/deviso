@@ -141,6 +141,8 @@ TypeScript 7, ESLint 10, uuid 14. @types/node seulement s'il correspond au Node 
   projet). Prévoir plutôt une revue de sécurité ponctuelle avant la mise en production finale.
   Reste : `DESIGN.md`, puis 2 ou 3 sites de référence demandés à Selim.
 
+- Décision Selim (04/11) : l'animation ne concerne QUE le site public, pas la web app.
+
 ## Points ouverts
 
 - Aperçu fiscal en HTTP 500 sur la production (test SuperPDP) : à examiner.
