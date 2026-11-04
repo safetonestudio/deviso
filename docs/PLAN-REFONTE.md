@@ -122,6 +122,19 @@ TypeScript 7, ESLint 10, uuid 14. @types/node seulement s'il correspond au Node 
 - Éviter `grep -r` sur `node_modules`.
 - Les tests `test:*` de parcours ciblent par défaut getdeviso.fr (production), pas le code local.
 
+## Avancement (04/11/2026)
+
+- Étape 1 faite et en production (1461c03). Étape 2 faite. Étape 3 faite et en production (4d3a1f9),
+  validée par comparaison à 30 captures (docs/reference/captures-tailwind3/ et captures-tailwind4/,
+  non versionnées) et par Selim sur téléphone. Prochaine étape : 4 (plugins et DESIGN.md).
+- Défauts préexistants relevés par Selim sur téléphone, à traiter dans la refonte (étape 5), non
+  causés par la migration : (1) éléments qui se superposent et boutons qui se chevauchent sur
+  plusieurs pages en 390 px ; (2) Paramètres : le menu latéral est masqué sous lg, donc sur
+  téléphone seule la section Identité est visible ; (3) démo en franchise de TVA : HT = TTC est
+  normal, envisager d'afficher « TVA non applicable ».
+- Les aperçus Vercel n'ont pas les clés Super PDP (portée production seulement) : pastilles de
+  transmission absentes sur les factures, normal.
+
 ## Points ouverts
 
 - Aperçu fiscal en HTTP 500 sur la production (test SuperPDP) : à examiner.
