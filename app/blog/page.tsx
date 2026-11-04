@@ -150,7 +150,7 @@ export default function BlogIndex() {
       <nav className="fixed top-9 left-0 right-0 z-50 bg-ds-bg/80 backdrop-blur-xl border-b border-ink/6">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
           <Link href="/" aria-label="Deviso" className="flex items-center gap-2">
-            <div className="w-8 h-8 rounded-lg bg-linear-to-br from-indigo-600 to-violet-600 flex items-center justify-center">
+            <div className="w-8 h-8 rounded-lg bg-linear-to-br/srgb from-indigo-600 to-violet-600 flex items-center justify-center">
               <span className="text-ink font-semibold text-sm">D</span>
             </div>
             <span className="font-semibold text-lg text-ink">Deviso</span>
@@ -182,7 +182,7 @@ export default function BlogIndex() {
           </div>
           <h1 className="text-4xl sm:text-5xl font-semibold text-ink leading-tight mb-4">
             Facturation freelance :<br />
-            <span className="bg-linear-to-r from-indigo-400 to-violet-400 bg-clip-text text-transparent">
+            <span className="bg-linear-to-r/srgb from-indigo-400 to-violet-400 bg-clip-text text-transparent">
               guides par métier
             </span>
           </h1>

@@ -186,7 +186,7 @@ export default function PublicProposalPage() {
                       onChange={(e) => setConfirmed(e.target.checked)}
                       className="sr-only"
                     />
-                    <div className={`w-5 h-5 rounded border-2 flex items-center justify-center transition-colors ${
+                    <div className={`w-5 h-5 rounded-sm border-2 flex items-center justify-center transition-colors ${
                       confirmed ? "bg-indigo-600 border-indigo-600" : "border-slate-300 group-hover:border-indigo-400"
                     }`}>
                       {confirmed && (

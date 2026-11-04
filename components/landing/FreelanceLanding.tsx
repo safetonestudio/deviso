@@ -174,7 +174,7 @@ export function FreelanceLanding({
       <nav className="fixed top-9 left-0 right-0 z-50 bg-ds-bg/80 backdrop-blur-xl border-b border-ink/6">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
           <Link href="/" aria-label="Deviso" className="flex items-center gap-2">
-            <div className="w-8 h-8 rounded-lg bg-linear-to-br from-indigo-600 to-violet-600 flex items-center justify-center">
+            <div className="w-8 h-8 rounded-lg bg-linear-to-br/srgb from-indigo-600 to-violet-600 flex items-center justify-center">
               <span className="text-ink font-semibold text-sm">D</span>
             </div>
             <span className="font-semibold text-lg text-ink">Deviso</span>
@@ -209,7 +209,7 @@ export function FreelanceLanding({
           </div>
           <h1 className="text-5xl sm:text-6xl md:text-7xl font-semibold text-ink leading-tight tracking-tight mb-6">
             {heroTitle}{" "}
-            <span className="bg-linear-to-r from-indigo-400 to-violet-400 bg-clip-text text-transparent">
+            <span className="bg-linear-to-r/srgb from-indigo-400 to-violet-400 bg-clip-text text-transparent">
               {heroHighlight}
             </span>
           </h1>
@@ -231,7 +231,7 @@ export function FreelanceLanding({
 
         {/* Mockup */}
         <div className="max-w-4xl mx-auto mt-16">
-          <div className="bg-linear-to-br from-slate-900 to-slate-800 rounded-2xl p-1 shadow-2xl">
+          <div className="bg-linear-to-br/srgb from-slate-900 to-slate-800 rounded-2xl p-1 shadow-2xl">
             <div className="bg-slate-900 rounded-xl overflow-hidden">
               <div className="flex items-center gap-2 px-4 py-3 bg-slate-800/50 border-b border-slate-700">
                 <div className="w-3 h-3 rounded-full bg-red-500/70" />
@@ -322,7 +322,7 @@ export function FreelanceLanding({
             <p className="text-lg text-gray-400">De la description à la facture signée. Trois étapes.</p>
           </div>
           <div className="grid md:grid-cols-3 gap-8 relative">
-            <div className="hidden md:block absolute top-10 left-1/3 right-1/3 h-px bg-linear-to-r from-indigo-500/20 via-indigo-500/40 to-indigo-500/20" />
+            <div className="hidden md:block absolute top-10 left-1/3 right-1/3 h-px bg-linear-to-r/srgb from-indigo-500/20 via-indigo-500/40 to-indigo-500/20" />
             {steps.map((step) => (
               <div key={step.num} className="text-center">
                 <div className="w-14 h-14 rounded-xl bg-indigo-500/10 border border-indigo-500/20 text-indigo-400 font-semibold text-xl flex items-center justify-center mx-auto mb-4">
@@ -446,7 +446,7 @@ export function FreelanceLanding({
       {/* ── CTA Final ── */}
       <section className="py-20 px-4 sm:px-6">
         <div className="max-w-3xl mx-auto">
-          <div className="relative overflow-hidden bg-linear-to-br from-indigo-600/20 to-violet-600/20 border border-ink/8 rounded-3xl p-16 text-center">
+          <div className="relative overflow-hidden bg-linear-to-br/srgb from-indigo-600/20 to-violet-600/20 border border-ink/8 rounded-3xl p-16 text-center">
             <h2 className="text-4xl font-semibold text-ink mb-4">
               Prêt à envoyer ton prochain devis en 30 secondes ?
             </h2>

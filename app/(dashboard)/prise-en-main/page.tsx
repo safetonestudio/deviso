@@ -234,7 +234,7 @@ export default function PriseEnMainPage() {
             aria-pressed={enabled}
           >
             <span
-              className={`inline-block h-5 w-5 rounded-full bg-white shadow transition-transform duration-200 ${
+              className={`inline-block h-5 w-5 rounded-full bg-white shadow-sm transition-transform duration-200 ${
                 enabled ? "translate-x-5" : "translate-x-0.5"
               }`}
             />

@@ -111,7 +111,7 @@ export default function Page() {
       <nav className="fixed top-9 left-0 right-0 z-50 bg-ds-bg/80 backdrop-blur-xl border-b border-ink/6">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
           <Link href="/" aria-label="Deviso" className="flex items-center gap-2">
-            <div className="w-8 h-8 rounded-lg bg-linear-to-br from-indigo-600 to-violet-600 flex items-center justify-center">
+            <div className="w-8 h-8 rounded-lg bg-linear-to-br/srgb from-indigo-600 to-violet-600 flex items-center justify-center">
               <span className="text-ink font-semibold text-sm">D</span>
             </div>
             <span className="font-semibold text-lg text-ink">Deviso</span>
@@ -142,7 +142,7 @@ export default function Page() {
           </div>
           <h1 className="text-4xl sm:text-5xl font-semibold text-ink leading-tight tracking-tight">
             Vos clients micro et TPE, conformes à la réforme,
-            <span className="block bg-linear-to-r from-indigo-400 to-violet-400 bg-clip-text text-transparent">suivis depuis un seul cockpit</span>
+            <span className="block bg-linear-to-r/srgb from-indigo-400 to-violet-400 bg-clip-text text-transparent">suivis depuis un seul cockpit</span>
           </h1>
           <p className="text-lg text-gray-400 mt-6 max-w-2xl mx-auto leading-relaxed">
             Deviso est un outil de facturation simple et conforme pour vos clients indépendants, micro et TPE.
@@ -244,7 +244,7 @@ export default function Page() {
       {/* CTA final */}
       <section className="py-20 px-4 sm:px-6">
         <div className="max-w-3xl mx-auto">
-          <div className="relative overflow-hidden bg-linear-to-br from-indigo-600/20 to-violet-600/20 border border-ink/8 rounded-3xl p-12 sm:p-16 text-center">
+          <div className="relative overflow-hidden bg-linear-to-br/srgb from-indigo-600/20 to-violet-600/20 border border-ink/8 rounded-3xl p-12 sm:p-16 text-center">
             <h2 className="text-3xl sm:text-4xl font-semibold text-ink mb-4">Prenons 20 minutes</h2>
             <p className="text-gray-400 text-lg mb-8 max-w-xl mx-auto">
               Je vous montre le cockpit, et surtout j'aimerais votre retour de professionnel. Si ça vous parle,

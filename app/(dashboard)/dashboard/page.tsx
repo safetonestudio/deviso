@@ -272,7 +272,7 @@ export default async function DashboardPage() {
 
       {/* ── Upgrade banner (free, owners only) ── */}
       {!isPaid && !isMember && (
-        <div className="bg-linear-to-r from-indigo-600 to-violet-600 rounded-xl p-5 flex items-center justify-between gap-4 text-ink">
+        <div className="bg-linear-to-r/srgb from-indigo-600 to-violet-600 rounded-xl p-5 flex items-center justify-between gap-4 text-ink">
           <div>
             <div className="font-semibold text-sm">Passez à Solo, débloquez l&apos;IA, les factures et les relances</div>
             <div className="text-xs text-indigo-200 mt-0.5">Essai gratuit 14 jours · sans carte bancaire</div>

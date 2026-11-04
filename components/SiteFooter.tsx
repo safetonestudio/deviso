@@ -28,7 +28,7 @@ export function SiteFooter() {
         <div className="flex flex-col md:flex-row justify-between items-start gap-8 mb-10">
           <div>
             <div className="flex items-center gap-2 mb-3">
-              <div className="w-7 h-7 rounded-md bg-linear-to-br from-indigo-600 to-violet-600 flex items-center justify-center">
+              <div className="w-7 h-7 rounded-md bg-linear-to-br/srgb from-indigo-600 to-violet-600 flex items-center justify-center">
                 <span className="text-ink font-semibold text-xs">D</span>
               </div>
               <span className="font-semibold text-ink">Deviso</span>

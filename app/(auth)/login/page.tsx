@@ -56,7 +56,7 @@ function LoginForm() {
       <div className="w-full max-w-md relative">
         <div className="text-center mb-8">
           <Link href="/" className="inline-flex items-center gap-2">
-            <div className="w-10 h-10 rounded-xl bg-linear-to-br from-indigo-600 to-violet-600 flex items-center justify-center">
+            <div className="w-10 h-10 rounded-xl bg-linear-to-br/srgb from-indigo-600 to-violet-600 flex items-center justify-center">
               <span className="text-ink font-semibold">D</span>
             </div>
             <span className="font-semibold text-xl text-ink">Deviso</span>
@@ -123,7 +123,7 @@ function LoginForm() {
             <label className="flex items-center gap-2.5 cursor-pointer select-none">
               <div
                 onClick={() => setRememberMe(!rememberMe)}
-                className={`w-4 h-4 rounded border flex items-center justify-center shrink-0 transition-colors ${
+                className={`w-4 h-4 rounded-sm border flex items-center justify-center shrink-0 transition-colors ${
                   rememberMe
                     ? "bg-indigo-600 border-indigo-600"
                     : "bg-transparent border-ds-border"

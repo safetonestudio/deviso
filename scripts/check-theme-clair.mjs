@@ -9,7 +9,8 @@
  * ete trouves a la main.
  *
  * Depuis la refonte visuelle, la classe de bug est supprimee a la racine :
- * chaque nuance Tailwind pointe vers une variable semantique (tailwind.config),
+ * chaque nuance Tailwind pointe vers une variable semantique (bloc @theme
+ * inline de globals.css depuis Tailwind 4, controle 2 bis),
  * que `.ds-app` et `.light .ds-app` redefinissent (globals.css). Ce controle
  * verrouille ce systeme pour qu'il ne se degrade pas :
  *   1. pas de retour des surcharges classe par classe ni des !important ;
@@ -23,6 +24,7 @@
  */
 import { readFileSync, readdirSync, statSync, existsSync } from "node:fs";
 import { join, dirname, resolve } from "node:path";
+import { PALETTE_TW3 } from "./palette-tw3.mjs";
 
 let echecs = 0;
 const ok = (m) => console.log(`  ok   ${m}`);
@@ -45,7 +47,6 @@ console.log("-- check:theme --");
 console.log("");
 
 const css = lire("app/globals.css");
-const config = lire("tailwind.config.ts");
 
 // 1. Plus de surcharges classe par classe, plus de !important hors impression.
 const SURCHARGE = /^\.light\s+\.(text|bg|border|hover\\:)[a-z-]*-\d/m;
@@ -69,9 +70,48 @@ for (const sel of [".ds-app", ".light .ds-app"]) {
   exige(`${sel}, encre et fond definis`, /--ink:/.test(bloc(sel)) && /--ds-bg:/.test(bloc(sel)), "--ink et --ds-bg requis");
 }
 exige(".ds-papier, echelle standard complete", manquantes(bloc(".ds-papier")).length === 0, "les apercus de documents perdraient leur palette");
-exige("tailwind.config, palettes reliees aux familles semantiques",
-  ["gray", "indigo", "violet", "emerald", "amber", "red", "blue", "sky"].every((p) => new RegExp(`\\b${p}: relier\\(`).test(config)) && /\bink:/.test(config),
-  "une palette non reliee garde ses couleurs Tailwind et ignore le theme");
+
+// 2 bis. Liaison des palettes Tailwind aux familles semantiques.
+//   Depuis Tailwind 4, plus de tailwind.config : la liaison vit dans le bloc
+//   @theme inline de globals.css. Trois garanties, chacune avec contre-epreuve :
+//   a) le bloc est "inline" (sinon la couleur est figee a :root, ou les
+//      variables de .ds-app n'existent pas, et toute l'app perd sa palette) ;
+//   b) chaque nuance de chaque palette pointe vers la bonne famille ;
+//   c) chaque repli est la couleur Tailwind 3 d'origine (hors app, rien ne
+//      bouge), a l'exception voulue de gray-500/600, replies sur gray-400.
+const LIAISON = {
+  n: ["gray", "slate", "zinc", "neutral", "stone"],
+  acc: ["indigo", "violet", "purple", "fuchsia", "emerald", "green", "teal", "lime", "brand"],
+  warn: ["amber", "yellow", "orange"],
+  dng: ["red", "rose", "pink"],
+  inf: ["blue", "sky", "cyan"],
+};
+const ORIGINE = { brand: "indigo" };
+const REPLI_FORCE = { "gray-500": PALETTE_TW3.gray[400], "gray-600": PALETTE_TW3.gray[400] };
+const rgbTriplet = (h) => [1, 3, 5].map((i) => parseInt(h.slice(i, i + 2), 16)).join(" ");
+function blocTheme(s) {
+  const m = s.match(/@theme(\s+inline)?\s*\{/);
+  if (!m) return { inline: false, corps: "" };
+  return { inline: !!m[1], corps: s.slice(m.index + m[0].length, s.indexOf("\n}", m.index)) };
+}
+function defautsLiaison(s) {
+  const { inline, corps } = blocTheme(s);
+  const d = [];
+  if (!inline) d.push("le bloc @theme n'est pas inline");
+  for (const [fam, palettes] of Object.entries(LIAISON)) for (const p of palettes) for (const e of ETAPES) {
+    const attendu = `--color-${p}-${e}: rgb(var(--${fam}-${e}, ${rgbTriplet(REPLI_FORCE[`${p}-${e}`] ?? PALETTE_TW3[ORIGINE[p] ?? p][e])}));`;
+    if (!corps.includes(attendu)) d.push(attendu);
+  }
+  for (const v of ["--color-ink: rgb(var(--ink, 255 255 255));", "--color-on-accent: rgb(var(--on-accent, 255 255 255));"])
+    if (!corps.includes(v)) d.push(v);
+  return d;
+}
+const liaison = defautsLiaison(css);
+exige(`globals.css, @theme inline relie les ${Object.values(LIAISON).flat().length} palettes aux familles, replis Tailwind 3`,
+  liaison.length === 0, `ecarts : ${liaison.slice(0, 4).join(" | ")}`);
+contre("un @theme non inline", defautsLiaison(css.replace("@theme inline {", "@theme {")).length > 0);
+contre("une nuance reliee a la mauvaise famille", defautsLiaison(css.replace("--color-sky-400: rgb(var(--inf-400,", "--color-sky-400: rgb(var(--acc-400,")).length > 0);
+contre("un repli oklch de la v4", defautsLiaison(css.replace(/--color-violet-500: rgb\(var\(--acc-500, [^)]*\)\);/, "--color-violet-500: oklch(60.6% 0.25 292.717);")).length > 0);
 
 // 3. Pas de blanc code en dur.
 const BLANC = /(?<![\w-])(?:[a-z0-9-]+:)*(?:(?:text|fill|stroke)-white(?![\w/-])|(?:bg|border|ring|divide|from|via|to|fill|stroke|outline|text|shadow|placeholder|decoration)-white\/)/;

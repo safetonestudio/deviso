@@ -273,7 +273,7 @@ export function ArticleLong({ slug, chapeau, enBref, sections, faq, sources, cta
       <nav className="fixed top-0 left-0 right-0 z-50 bg-ds-bg/80 backdrop-blur-xl border-b border-ink/6">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
           <Link href="/" aria-label="Deviso" className="flex items-center gap-2">
-            <div className="w-8 h-8 rounded-lg bg-linear-to-br from-indigo-600 to-violet-600 flex items-center justify-center">
+            <div className="w-8 h-8 rounded-lg bg-linear-to-br/srgb from-indigo-600 to-violet-600 flex items-center justify-center">
               <span className="text-ink font-semibold text-sm">D</span>
             </div>
             <span className="font-semibold text-lg text-ink">Deviso</span>
@@ -348,7 +348,7 @@ export function ArticleLong({ slug, chapeau, enBref, sections, faq, sources, cta
             ))}
 
             {cta && (
-              <section className="bg-linear-to-br from-indigo-900/40 to-violet-900/20 rounded-2xl border border-indigo-500/20 p-8 text-center">
+              <section className="bg-linear-to-br/srgb from-indigo-900/40 to-violet-900/20 rounded-2xl border border-indigo-500/20 p-8 text-center">
                 <Riche as="h2" className="text-xl font-semibold text-ink mb-3" t={cta.titre} />
                 <Riche as="p" className="text-gray-400 mb-6 max-w-lg mx-auto" t={cta.texte} />
                 <WaitlistButton

@@ -4,11 +4,65 @@
    par notre CSP, ralentirait le rendu et enverrait l'IP de chaque visiteur
    à Google — incompatible avec nos engagements RGPD. */
 
-@import 'tailwindcss';
 
+/* ─────────────────────────────────────────────────────────────────
+   TAILWIND 4 (migre depuis 3.4.19 le 04/11/2026, sans changement de rendu)
+
+   Tailwind est charge en trois morceaux pour remplacer son preflight par
+   celui de la v3 (app/preflight-tw3.css, raisons en tete de ce fichier).
+   L'ordre des couches reste celui de la v3 : base, puis composants, puis
+   utilitaires.
+   ───────────────────────────────────────────────────────────────── */
+@layer theme, base, components, utilities;
+@import "tailwindcss/theme.css" layer(theme);
+@import "./preflight-tw3.css" layer(base);
+@import "tailwindcss/utilities.css" layer(utilities) source(none);
+
+/* Fichiers lus pour trouver les classes : exactement le "content" de la v3.
+   La v4 lirait sinon tout le depot (lib/, scripts/, docs/) et se mettrait a
+   generer des classes que la v3 ignorait. */
+@source "../pages/**/*.{js,ts,jsx,tsx,mdx}";
+@source "../components/**/*.{js,ts,jsx,tsx,mdx}";
+@source "../app/**/*.{js,ts,jsx,tsx,mdx}";
+
+/* Classes ecrites dans le code mais SANS EFFET sous Tailwind 3, qui ne savait
+   pas appliquer une opacite a une couleur var() (bg-ds-bg/80) ni a
+   currentColor, et ne connaissait pas flex-2. Tailwind 4 les ferait marcher
+   d'un coup : en-tetes collants du site et du blog soudain opaques, survols de
+   lignes teintes, bouton de signature du devis public elargi. Exclues ici pour
+   que la migration ne change aucun rendu. Les reactiver (retirer la ligne) est
+   une decision de la refonte, a prendre page par page. Garde : check:tailwind4. */
+@source not inline("bg-ds-bg/{70,80,85,90} bg-ds-elevated/{30,40,60} bg-ds-surface/90 hover:bg-ds-elevated/{30,40,50,60}");
+@source not inline("border-current/20 flex-2");
+
+/* Comportements de la v3 conserves.
+   - dark: tel que darkMode "class" de la v3 (aucun usage aujourd'hui).
+   - hover: la v4 ne l'applique que sur un appareil a pointeur fin
+     (@media (hover: hover)) ; la v3 l'appliquait partout, y compris au
+     toucher sur telephone. On garde la v3 tant que la refonte n'en decide pas.
+   - space-*, divide-* et l'interligne de text-* face a leading-* : voir
+     postcss-compat-tw3.js, qui retablit la feuille de la v3 apres Tailwind. */
 @custom-variant dark (&:is(.dark *));
+@custom-variant hover (&:hover);
 
-@theme {
+/* Palettes de l'app, pilotees par le theme.
+
+   Chaque nuance Tailwind pointe vers une variable semantique (n = neutres,
+   acc = accent vert, warn = alerte, dng = danger, inf = information) que
+   .ds-app et .light .ds-app redefinissent plus bas. Hors de l'app (site
+   public, blog), aucune variable n'est definie : la valeur de repli est la
+   couleur Tailwind 3 d'origine (hex de la v3, PAS l'oklch de la v4), donc rien
+   ne change. Exceptions voulues : gray-500 et gray-600 se replient sur
+   gray-400 (sous le seuil AA sur fond sombre).
+
+   "inline" est indispensable : sans lui, Tailwind 4 declare
+   --color-gray-500: rgb(var(--n-500, ...)) une seule fois sur :root, ou
+   --n-500 n'existe pas ; la valeur y serait figee sur le repli et heritee
+   telle quelle, et l'app perdrait sa palette. Avec "inline", chaque classe
+   porte rgb(var(--n-500, ...)), evalue sur l'element, sous .ds-app.
+
+   Garde : check:theme (scripts/check-theme-clair.mjs). */
+@theme inline {
   --color-gray-50: rgb(var(--n-50, 249 250 251));
   --color-gray-100: rgb(var(--n-100, 243 244 246));
   --color-gray-200: rgb(var(--n-200, 229 231 235));
@@ -294,107 +348,54 @@
   --color-ds-border: var(--ds-border);
 
   --font-sans: var(--font-app, var(--font-inter)), Inter, system-ui, sans-serif;
-  --font-display:
-    var(--font-display, var(--font-app, var(--font-inter))), system-ui,
-    sans-serif;
 
   --shadow-ds-sm: var(--ds-shadow-sm);
   --shadow-ds-card: var(--ds-shadow-card);
+
+  /* Interlignes de la v3, en rem. La v4 les exprime en rapport sans unite
+     (1.4286 pour text-sm) : un enfant qui herite de l'interligne sans fixer
+     le sien (text-[11px] dans un bloc text-sm) le recalculerait sur sa propre
+     taille, et toutes les hauteurs de ligne bougeraient de quelques pixels. */
+  --text-xs--line-height: 1rem;
+  --text-sm--line-height: 1.25rem;
+  --text-base--line-height: 1.5rem;
+  --text-lg--line-height: 1.75rem;
+  --text-xl--line-height: 1.75rem;
+  --text-2xl--line-height: 2rem;
+  --text-3xl--line-height: 2.25rem;
+  --text-4xl--line-height: 2.5rem;
 
   --animate-fade-in: fadeIn 0.5s ease-in-out;
   --animate-slide-up: slideUp 0.6s ease-out;
   --animate-gradient: gradient 8s ease infinite;
 
   @keyframes fadeIn {
-    0% {
-      opacity: 0;
-    }
-    100% {
-      opacity: 1;
-    }
+    0% { opacity: 0; }
+    100% { opacity: 1; }
   }
   @keyframes slideUp {
-    0% {
-      opacity: 0;
-      transform: translateY(20px);
-    }
-    100% {
-      opacity: 1;
-      transform: translateY(0);
-    }
+    0% { opacity: 0; transform: translateY(20px); }
+    100% { opacity: 1; transform: translateY(0); }
   }
   @keyframes gradient {
-    0%,
-    100% {
-      background-position: 0% 50%;
-    }
-    50% {
-      background-position: 100% 50%;
-    }
+    0%, 100% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
   }
 }
 
-/*
-  The default border color has changed to `currentcolor` in Tailwind CSS v4,
-  so we've added these compatibility styles to make sure everything still
-  looks the same as it did with Tailwind CSS v3.
+/* font-display : ecrit en utilitaire et non en variable de theme, parce que
+   la variable de theme s'appellerait --font-display, deja le nom de la
+   variable posee par next/font (Bricolage Grotesque, app/polices-app.ts) :
+   elle se referencerait elle-meme. */
+@utility font-display {
+  font-family: var(--font-display, var(--font-app, var(--font-inter))), system-ui, sans-serif;
+}
 
-  If we ever want to remove these styles, we need to add an explicit border
-  color utility to any element that depends on these defaults.
-*/
+/* Couleur d'anneau par defaut de la v3 (ring-2 sans couleur). La v4 prend
+   currentColor. Valeur relevee dans la feuille compilee par la v3. */
 @layer base {
-  *,
-  ::after,
-  ::before,
-  ::backdrop,
-  ::file-selector-button {
-    border-color: var(--color-gray-200, currentcolor);
-  }
-}
-
-@utility gradient-text {
-  @apply bg-linear-to-r from-indigo-400 to-violet-400 bg-clip-text text-transparent;
-}
-
-@utility gradient-bg {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-}
-
-/* Carte : la surface de base de l'app (fond, bordure, rayon, relief) en un
-   seul endroit. Les 170 blocs qui la redessinaient a la main y sont relies. */
-
-@utility carte {
-  background-color: var(--ds-surface);
-  border: 1px solid var(--ds-border);
-  border-radius: 14px;
-  box-shadow: var(--ds-shadow-card);
-}
-
-@utility carte-lg {
-  border-radius: 18px;
-}
-
-@utility titre-page {
-  /* Titre et sous-titre de page : une seule echelle pour toute l'app. Quatre
-     tailles cohabitaient (24, 30, 38, 44 px), d'ou un rendu disparate d'une
-     page a l'autre (retour Selim 02/11). Le tableau de bord, page d'accueil,
-     garde son titre plus grand. Garde : check:cadres. */
-  font-size: 30px;
-  line-height: 1.1;
-  font-weight: 700;
-  letter-spacing: -0.02em;
-  color: rgb(var(--ink, 15 23 42));
-  @media (min-width: 640px) {
-    font-size: 38px;
-  }
-}
-
-@utility sous-titre-page {
-  font-size: 15px;
-  margin-top: 8px;
-  color: rgb(var(--n-400, 148 163 184));
-  @media (min-width: 640px) {
-    font-size: 16px;
+  *, ::before, ::after, ::backdrop {
+    --tw-ring-color: rgb(147 197 253 / 0.5);
   }
 }
 
@@ -427,6 +428,59 @@
     -moz-osx-font-smoothing: grayscale;
   }
 }
+
+@utility gradient-text {
+  @apply bg-linear-to-r/srgb from-indigo-400 to-violet-400 bg-clip-text text-transparent;
+}
+@utility gradient-bg {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+}
+
+/* Carte : la surface de base de l'app (fond, bordure, rayon, relief) en un
+   seul endroit. Les 170 blocs qui la redessinaient a la main y sont relies.
+   Reste dans la couche components (et non en @utility) : une classe
+   utilitaire posee a cote (rounded-2xl, p-5) doit continuer a l'emporter. */
+@layer components {
+  .carte {
+    background-color: var(--ds-surface);
+    border: 1px solid var(--ds-border);
+    border-radius: 14px;
+    box-shadow: var(--ds-shadow-card);
+  }
+  .carte-lg { border-radius: 18px; }
+  /* Titre et sous-titre de page : une seule echelle pour toute l'app. Quatre
+     tailles cohabitaient (24, 30, 38, 44 px), d'ou un rendu disparate d'une
+     page a l'autre (retour Selim 02/11). Le tableau de bord, page d'accueil,
+     garde son titre plus grand. Garde : check:cadres. */
+  .titre-page {
+    font-size: 30px;
+    line-height: 1.1;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    color: rgb(var(--ink, 15 23 42));
+  }
+  .sous-titre-page {
+    font-size: 15px;
+    margin-top: 8px;
+    color: rgb(var(--n-400, 148 163 184));
+  }
+  @media (min-width: 640px) {
+    .titre-page { font-size: 38px; }
+    .sous-titre-page { font-size: 16px; }
+  }
+}
+
+/* ─────────────────────────────────────────────────────────────────
+   REGLES PROPRES A DEVISO, dans la couche utilities.
+
+   Sous Tailwind 3, ces regles suivaient les utilitaires dans une feuille
+   sans couches : la specificite departageait, puis l'ordre. Laissees hors
+   couche sous Tailwind 4, elles battraient TOUT utilitaire, quelle que soit
+   sa specificite (exemple trouve : .carte-app ecrasait hover:bg-ds-elevated
+   sur les cartes de prise en main). Placees en fin de couche utilities, elles
+   retrouvent exactement l'arbitrage de la v3.
+   ───────────────────────────────────────────────────────────────── */
+@layer utilities {
 
 /* Une page qui porte son propre en-tete (cloche et theme dans sa ligne
    d'actions, composant ActionsGlobales) masque la barre du haut generique. */
@@ -641,3 +695,5 @@
   .no-print { display: none !important; }
   body { font-size: 12px; }
 }
+
+} /* fin @layer utilities */
