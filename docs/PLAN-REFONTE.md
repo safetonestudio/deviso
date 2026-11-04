@@ -135,6 +135,12 @@ TypeScript 7, ESLint 10, uuid 14. @types/node seulement s'il correspond au Node 
 - Les aperçus Vercel n'ont pas les clés Super PDP (portée production seulement) : pastilles de
   transmission absentes sur les factures, normal.
 
+- Étape 4 : lot 1 installé le 04/11 (Motion, UI UX Pro Max, Impeccable sans hook, Taste), branche
+  `outils-design`, règle nº7 de CLAUDE.md. Lot 2 écarté : typescript-lsp (programme global, `tsc`
+  suffit) et security-guidance (hooks permanents, revue par modèle à chaque tour, écrit hors du
+  projet). Prévoir plutôt une revue de sécurité ponctuelle avant la mise en production finale.
+  Reste : `DESIGN.md`, puis 2 ou 3 sites de référence demandés à Selim.
+
 ## Points ouverts
 
 - Aperçu fiscal en HTTP 500 sur la production (test SuperPDP) : à examiner.
