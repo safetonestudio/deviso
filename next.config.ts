@@ -1,5 +1,5 @@
 import type { NextConfig } from "next";
-import { withSentryConfig } from "@sentry/nextjs";
+import { withSentryConfig } from "@sentry/nextjs/config";
 
 const securityHeaders = [
   // Anti-clickjacking : empêche le dashboard d'être embarqué en iframe
@@ -72,6 +72,8 @@ export default withSentryConfig(nextConfig, {
 
   // Réduire la taille du bundle en production
   widenClientFileUpload: true,
-  disableLogger: true,
-  automaticVercelMonitors: false,
+  webpack: {
+    treeshake: { removeDebugLogging: true },
+    automaticVercelMonitors: false,
+  },
 });
