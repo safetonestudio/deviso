@@ -812,23 +812,23 @@ export default function InvoiceDetailPage() {
           </div>
 
           {/* Lignes */}
-          <div className="bg-ds-surface rounded-xl border border-ds-border overflow-hidden mb-6">
+          <div className="bg-ds-surface rounded-xl border border-ds-border overflow-x-auto mb-6">
             <table className="w-full text-sm">
               <thead>
                 <tr className="bg-ds-elevated border-b border-ds-border text-gray-400 text-xs">
-                  <th className="text-left px-5 py-3">Prestation</th>
-                  <th className="text-center px-4 py-3">Qté</th>
-                  <th className="text-right px-4 py-3">P.U. HT</th>
-                  <th className="text-right px-5 py-3">Total HT</th>
+                  <th className="text-left px-3 sm:px-5 py-3">Prestation</th>
+                  <th className="text-center px-2 sm:px-4 py-3">Qté</th>
+                  <th className="text-right px-2 sm:px-4 py-3 whitespace-nowrap">P.U. HT</th>
+                  <th className="text-right px-3 sm:px-5 py-3 whitespace-nowrap">Total HT</th>
                 </tr>
               </thead>
               <tbody>
                 {invoice.items.map((item, i) => (
                   <tr key={i} className="border-b border-ds-border last:border-0">
-                    <td className="px-5 py-3 text-gray-300 font-medium">{item.description}</td>
-                    <td className="px-4 py-3 text-center text-gray-400">{item.quantity} {item.unit}</td>
-                    <td className="px-4 py-3 text-right text-gray-400">{fmt(item.unit_price)}</td>
-                    <td className="px-5 py-3 text-right font-semibold text-ink">{fmt(item.total)}</td>
+                    <td className="px-3 sm:px-5 py-3 text-gray-300 font-medium break-words">{item.description}</td>
+                    <td className="px-2 sm:px-4 py-3 text-center text-gray-400">{item.quantity} {item.unit}</td>
+                    <td className="px-2 sm:px-4 py-3 text-right text-gray-400 whitespace-nowrap">{fmt(item.unit_price)}</td>
+                    <td className="px-3 sm:px-5 py-3 text-right font-semibold text-ink whitespace-nowrap">{fmt(item.total)}</td>
                   </tr>
                 ))}
               </tbody>

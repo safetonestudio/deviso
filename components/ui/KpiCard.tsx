@@ -58,9 +58,9 @@ export function KpiCard({ label, value, trend, point = "neutre", delta, classNam
         {euro && <span className="text-[0.55em] text-gray-400 font-semibold ml-0.5">€</span>}
       </div>
       {trend && (
-        <div className="flex items-center gap-2 text-[13px] text-gray-400 min-w-0">
-          <span className={`w-1.5 h-1.5 rounded-full shrink-0 ${POINT[point]}`} />
-          <span className="truncate">{trend}</span>
+        <div className="flex items-start sm:items-center gap-2 text-[13px] text-gray-400 min-w-0">
+          <span className={`w-1.5 h-1.5 rounded-full shrink-0 mt-1.5 sm:mt-0 ${POINT[point]}`} />
+          <span className="break-words sm:truncate">{trend}</span>
         </div>
       )}
       {delta && (

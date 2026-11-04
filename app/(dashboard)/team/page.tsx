@@ -254,7 +254,7 @@ export default function TeamPage() {
                     return (
                       <div className="text-right shrink-0">
                         <div className="text-xs text-gray-500 mb-0.5">Dernier devis</div>
-                        <div className="text-xs text-ink truncate max-w-[140px]">{member.last_proposal.title}</div>
+                        <div className="text-xs text-ink break-words sm:truncate max-w-[140px]">{member.last_proposal.title}</div>
                         <span className={`inline-flex mt-0.5 text-[10px] font-medium px-1.5 py-0.5 rounded-full border ${s.color}`}>{s.label}</span>
                       </div>
                     );

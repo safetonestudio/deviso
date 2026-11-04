@@ -111,8 +111,8 @@ export function NotificationBell({ placement = "sidebar" }: Props) {
   // topbar  : dropdown en dessous, aligné à droite
   const dropdownPos =
     placement === "sidebar"
-      ? "bottom-0 left-full ml-4"
-      : "top-full mt-2 right-0";
+      ? "absolute bottom-0 left-full ml-4"
+      : "fixed left-3 right-3 top-16 sm:absolute sm:left-auto sm:right-0 sm:top-full sm:mt-2";
 
   return (
     <div ref={ref} className="relative">
@@ -135,7 +135,7 @@ export function NotificationBell({ placement = "sidebar" }: Props) {
 
       {open && (
         <div
-          className={`absolute ${dropdownPos} w-[420px] carte shadow-2xl z-50 overflow-hidden`}
+          className={`${dropdownPos} ${placement === "sidebar" ? "w-[420px]" : "sm:w-[420px]"} carte shadow-2xl z-50 overflow-hidden`}
         >
           <div className="flex items-center justify-between px-5 py-4 border-b border-ds-border">
             <a href="/notifications" className="text-base font-semibold text-ink hover:text-indigo-400 transition-colors">Notifications</a>

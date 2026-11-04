@@ -400,7 +400,7 @@ export default async function DashboardPage() {
                     className="grid grid-cols-[minmax(0,1fr)_auto_auto] sm:grid-cols-[minmax(0,1fr)_minmax(110px,30%)_100px] items-center gap-3 mx-6 py-4 hover:opacity-80 transition-opacity group"
                   >
                     <div className="flex-1 min-w-0">
-                      <div className="font-semibold text-ink text-sm truncate">
+                      <div className="font-semibold text-ink text-sm break-words sm:truncate">
                         {proposal.title}
                       </div>
                       <div className="text-xs text-gray-500 mt-0.5">
@@ -463,10 +463,10 @@ export default async function DashboardPage() {
                       className="grid grid-cols-[minmax(0,1fr)_auto_auto] sm:grid-cols-[minmax(0,1fr)_minmax(110px,30%)_100px] items-center gap-3 mx-6 py-4 hover:opacity-80 transition-opacity group"
                     >
                       <div className="flex-1 min-w-0">
-                        <div className="font-semibold text-ink text-sm truncate">
+                        <div className="font-semibold text-ink text-sm break-words sm:truncate">
                           {invoice.client_name || "-"}
                         </div>
-                        <div className={`text-xs mt-0.5 truncate ${isOverdue ? "text-amber-400 font-medium" : "text-gray-400"}`}>
+                        <div className={`text-xs mt-0.5 break-words sm:truncate ${isOverdue ? "text-amber-400 font-medium" : "text-gray-400"}`}>
                           {invoice.invoice_number || "Facture"},{" "}
                           {isOverdue
                             ? `en retard depuis le ${new Date(invoice.due_date!).toLocaleDateString("fr-FR")}`

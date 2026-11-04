@@ -280,7 +280,7 @@ export default function PriseEnMainPage() {
                   <p className="text-sm font-medium text-ink group-hover:text-indigo-200 transition-colors leading-snug">
                     {guide.title}
                   </p>
-                  <p className="text-xs text-gray-500 mt-0.5 truncate">{guide.desc}</p>
+                  <p className="text-xs text-gray-500 mt-0.5 sm:truncate">{guide.desc}</p>
                 </div>
                 <div className="flex items-center gap-2 shrink-0">
                   <span className="flex items-center gap-1 text-[11px] text-gray-600">

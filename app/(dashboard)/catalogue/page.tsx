@@ -369,7 +369,7 @@ function ItemRow({ item, badge, priceLabel, onEdit, onDelete }: {
           {badge}
         </div>
         {item.description && (
-          <div className="text-gray-500 text-xs mt-0.5 truncate">{item.description}</div>
+          <div className="text-gray-500 text-xs mt-0.5 break-words sm:truncate">{item.description}</div>
         )}
       </div>
       <div className="text-sm font-semibold text-ink shrink-0 mr-auto sm:mr-0">{priceLabel}</div>
