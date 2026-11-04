@@ -52,9 +52,9 @@ export function TuileSynthese({
   alerte?: boolean;
 }) {
   return (
-    <div className="carte px-4 py-3">
+    <div className="carte px-4 py-3 min-w-0 flex items-baseline justify-between gap-3 sm:block">
       <p className="text-xs text-gray-400">{libelle}</p>
-      <p className={`text-xl font-semibold mt-0.5 ${alerte ? "text-red-400" : "text-ink"}`}>{valeur}</p>
+      <p className={`text-xl font-semibold sm:mt-0.5 tabular-nums ${alerte ? "text-red-400" : "text-ink"}`}>{valeur}</p>
     </div>
   );
 }
@@ -85,7 +85,7 @@ export function CarteDepliable({
     <details className="group carte overflow-hidden shadow-xs transition-colors hover:border-gray-600 open:border-indigo-500/40 open:shadow-md">
       <summary className="grid grid-cols-[minmax(0,1fr)_auto_auto] items-center gap-x-3 gap-y-2 sm:flex sm:gap-4 px-4 py-3.5 cursor-pointer list-none [&::-webkit-details-marker]:hidden hover:bg-ds-elevated/40 transition-colors">
         <div className="min-w-0 sm:max-w-[55%]">
-          <span className="text-ink font-medium truncate block">{titre}</span>
+          <span className="text-ink font-medium break-words sm:truncate block">{titre}</span>
           {sousTitre && <div className="text-xs mt-0.5">{sousTitre}</div>}
         </div>
         {pastilles != null && <div className="order-last col-span-3 flex flex-wrap items-center gap-2 sm:order-none sm:col-auto sm:shrink-0">{pastilles}</div>}

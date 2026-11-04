@@ -46,7 +46,7 @@ export function ProposalsListe({ proposals }: { proposals: Proposal[] }) {
 
   return (
     <>
-      <div className="grid grid-cols-3 gap-3 mt-6">
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 sm:gap-3 mt-6">
         <TuileSynthese libelle="En attente de signature" valeur={fmt(montantEnAttente)} />
         <TuileSynthese libelle="Signés" valeur={fmt(montantSigne)} />
         <TuileSynthese libelle="Taux de signature" valeur={taux} />

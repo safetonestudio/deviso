@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Fragment } from "react";
 import Link from "next/link";
+import { ExportsComptables } from "@/components/ExportsComptables";
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { GuidedTourBanner } from "@/components/GuidedTourBanner";
@@ -162,20 +163,7 @@ export default async function LivreRecettes({ searchParams }: { searchParams: Pr
           <div className="carte p-4 mb-6">
             <h2 className="text-ink font-semibold text-sm">Exports comptables {annee}</h2>
             <p className="text-xs text-gray-400 mt-0.5">À transmettre à votre comptable ou à conserver en cas de contrôle.</p>
-            <div className="flex flex-wrap gap-2 mt-3">
-              <a href={`/api/export/livre-recettes?annee=${annee}`} className="text-sm px-3 py-1.5 rounded-lg bg-indigo-600 hover:bg-indigo-700 text-ink font-medium transition-colors">
-                Livre des recettes (CSV)
-              </a>
-              <a href={`/api/export/fec?year=${annee}`} className="text-sm px-3 py-1.5 rounded-lg border border-ds-border text-gray-300 hover:bg-ds-elevated transition-colors font-medium">
-                Écritures comptables (FEC)
-              </a>
-              <a href={`/api/export/invoices-csv?year=${annee}`} className="text-sm px-3 py-1.5 rounded-lg border border-ds-border text-gray-300 hover:bg-ds-elevated transition-colors font-medium">
-                Factures de l&apos;année (CSV)
-              </a>
-              <a href={`/api/export/monthly-recap?year=${annee}`} className="text-sm px-3 py-1.5 rounded-lg border border-ds-border text-gray-300 hover:bg-ds-elevated transition-colors font-medium">
-                Récapitulatif mensuel CA (CSV)
-              </a>
-            </div>
+            <ExportsComptables annee={annee} />
           </div>
 
           {(sansDate > 0 || sansMode > 0) && (

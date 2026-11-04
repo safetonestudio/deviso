@@ -362,9 +362,9 @@ function ItemRow({ item, badge, priceLabel, onEdit, onDelete }: {
   onDelete: (() => void) | null;
 }) {
   return (
-    <div className="carte px-5 py-3.5 flex items-center gap-4 hover:bg-ds-elevated/50 transition-colors">
-      <div className="flex-1 min-w-0">
-        <div className="flex items-center gap-2">
+    <div className="carte px-5 py-3.5 flex flex-wrap items-center gap-x-4 gap-y-2 hover:bg-ds-elevated/50 transition-colors">
+      <div className="min-w-0 basis-full sm:basis-0 sm:flex-1">
+        <div className="flex flex-wrap items-center gap-x-2 gap-y-1">
           <span className="font-medium text-ink text-sm">{item.name}</span>
           {badge}
         </div>
@@ -372,7 +372,7 @@ function ItemRow({ item, badge, priceLabel, onEdit, onDelete }: {
           <div className="text-gray-500 text-xs mt-0.5 truncate">{item.description}</div>
         )}
       </div>
-      <div className="text-sm font-semibold text-ink shrink-0">{priceLabel}</div>
+      <div className="text-sm font-semibold text-ink shrink-0 mr-auto sm:mr-0">{priceLabel}</div>
       {(onEdit || onDelete) && (
         <div className="flex gap-3 shrink-0">
           {onEdit && (

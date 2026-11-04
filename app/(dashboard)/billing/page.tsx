@@ -313,7 +313,7 @@ export default function BillingPage() {
 
           <div className="flex flex-col gap-3">
             {(
-              <div className="flex items-center justify-between border border-indigo-500/30 bg-indigo-950/50 rounded-xl px-5 py-4">
+              <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 sm:gap-4 border border-indigo-500/30 bg-indigo-950/50 rounded-xl px-5 py-4">
                 <div>
                   <p className="font-semibold text-ink">
                     Solo à {prices.solo}<span className="text-gray-400 font-normal text-sm">/mois</span>
@@ -326,7 +326,7 @@ export default function BillingPage() {
                 <button
                   onClick={() => handleUpgrade("solo")}
                   disabled={acting}
-                  className="bg-indigo-600 text-ink text-sm font-semibold px-5 py-2.5 rounded-xl hover:bg-indigo-700 transition-colors shrink-0 disabled:opacity-50"
+                  className="bg-indigo-600 text-ink text-sm w-full sm:w-auto font-semibold px-5 py-2.5 rounded-xl hover:bg-indigo-700 transition-colors shrink-0 disabled:opacity-50"
                 >
                   {acting
                     ? "Un instant…"
@@ -338,7 +338,7 @@ export default function BillingPage() {
                 </button>
               </div>
             )}
-            <div className="flex items-center justify-between border border-violet-500/30 bg-violet-950/50 rounded-xl px-5 py-4">
+            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 sm:gap-4 border border-violet-500/30 bg-violet-950/50 rounded-xl px-5 py-4">
               <div>
                 <div className="flex items-center gap-2 mb-0.5">
                   <p className="font-semibold text-ink">
@@ -355,7 +355,7 @@ export default function BillingPage() {
               <button
                 onClick={() => handleUpgrade("pro")}
                 disabled={acting}
-                className="bg-violet-600 text-ink text-sm font-semibold px-5 py-2.5 rounded-xl hover:bg-violet-700 transition-colors shrink-0 disabled:opacity-50"
+                className="bg-violet-600 text-ink text-sm w-full sm:w-auto font-semibold px-5 py-2.5 rounded-xl hover:bg-violet-700 transition-colors shrink-0 disabled:opacity-50"
               >
                 {acting
                   ? "Un instant…"

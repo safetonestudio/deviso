@@ -112,17 +112,17 @@ export function FacturesRecuesListe({
               data-recherche={`${f.seller_name ?? ""} ${f.number ?? ""}`.toLowerCase()}
               className="group carte overflow-hidden shadow-xs transition-colors hover:border-gray-600 open:border-indigo-500/40 open:shadow-md"
             >
-              <summary className="flex items-center gap-3 px-4 py-3 cursor-pointer list-none [&::-webkit-details-marker]:hidden hover:bg-ds-elevated/40 transition-colors">
-                <div className="min-w-0 max-w-[55%]">
-                  <span className="text-ink font-medium truncate block">{f.seller_name ?? "-"}</span>
+              <summary className="grid grid-cols-[minmax(0,1fr)_auto_auto] items-center gap-x-3 gap-y-2 sm:flex sm:gap-3 px-4 py-3 cursor-pointer list-none [&::-webkit-details-marker]:hidden hover:bg-ds-elevated/40 transition-colors">
+                <div className="min-w-0 sm:max-w-[55%]">
+                  <span className="text-ink font-medium break-words sm:truncate block">{f.seller_name ?? "-"}</span>
                   <p className={`text-xs mt-0.5 ${enRetard ? "text-red-400 font-medium" : "text-gray-400"}`}>
                     {enRetard ? "En retard depuis le" : "Échéance"} {jour(f.payment_due_date)}
                   </p>
                 </div>
-                <div className="shrink-0 flex flex-wrap items-center gap-2">
+                <div className="order-last col-span-3 flex flex-wrap items-center gap-2 sm:order-none sm:col-auto sm:shrink-0">
                   <Puce statut={statut} code={f.last_status_code} />
                 </div>
-                <div className="flex-1" />
+                <div className="hidden sm:block sm:flex-1" />
                 <span className="text-ink font-semibold whitespace-nowrap shrink-0 tabular-nums">
                   {euros(f.total_with_vat, f.currency_code)}
                 </span>

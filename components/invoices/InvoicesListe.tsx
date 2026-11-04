@@ -71,7 +71,7 @@ export function InvoicesListe({
 
   return (
     <>
-      <div className="grid grid-cols-3 gap-3">
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 sm:gap-3">
         <TuileSynthese libelle="Encaissé" valeur={fmt(encaisse)} />
         <TuileSynthese libelle="En attente de paiement" valeur={fmt(enAttente)} />
         <TuileSynthese libelle="À transmettre" valeur={String(aTransmettre)} alerte={aTransmettre > 0} />
