@@ -41,16 +41,16 @@ export default function Page() {
     <div className="min-h-screen bg-site">
       <DonneesStructurees donnees={jsonLdArticle(SLUG, FAQ)} />
 
-      <div className="fixed top-0 left-0 right-0 bg-indigo-950/95 backdrop-blur-sm border-b border-indigo-500/20 py-2 px-4 text-center text-sm" style={{ zIndex: 60 }}>
+      <div className="fixed top-0 left-0 right-0 bg-indigo-950/95 backdrop-blur-xs border-b border-indigo-500/20 py-2 px-4 text-center text-sm" style={{ zIndex: 60 }}>
         <span className="text-indigo-300 font-semibold">Réforme 2026&nbsp;:</span>
         <span className="text-gray-300 ml-1.5">La facturation électronique B2B devient obligatoire.&nbsp;</span>
         <span className="text-indigo-400 font-medium">Deviso est déjà conforme Factur-X.</span>
       </div>
 
-      <nav className="fixed top-9 left-0 right-0 z-50 bg-ds-bg/80 backdrop-blur-xl border-b border-ink/[0.06]">
+      <nav className="fixed top-9 left-0 right-0 z-50 bg-ds-bg/80 backdrop-blur-xl border-b border-ink/6">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
           <Link href="/" aria-label="Deviso" className="flex items-center gap-2">
-            <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-indigo-600 to-violet-600 flex items-center justify-center">
+            <div className="w-8 h-8 rounded-lg bg-linear-to-br from-indigo-600 to-violet-600 flex items-center justify-center">
               <span className="text-ink font-semibold text-sm">D</span>
             </div>
             <span className="font-semibold text-lg text-ink">Deviso</span>
@@ -107,7 +107,7 @@ export default function Page() {
                   { icon: "✓", text: "Pour les gros montants ou les nouveaux clients : vérifiez l'existence légale de l'entreprise sur Pappers.fr." },
                 ].map((item) => (
                   <div key={item.text} className="flex gap-3 bg-ds-elevated rounded-xl p-4 border border-ds-border">
-                    <span className="text-emerald-400 font-bold flex-shrink-0">{item.icon}</span>
+                    <span className="text-emerald-400 font-bold shrink-0">{item.icon}</span>
                     <p className="text-gray-400 text-sm">{item.text}</p>
                   </div>
                 ))}
@@ -160,7 +160,7 @@ export default function Page() {
               ].map((step) => (
                 <div key={step.step} className="mb-8">
                   <div className="flex items-center gap-3 mb-4">
-                    <span className="w-8 h-8 rounded-lg bg-ds-elevated border border-ds-border flex items-center justify-center text-sm font-bold text-indigo-400 font-mono flex-shrink-0">{step.step}</span>
+                    <span className="w-8 h-8 rounded-lg bg-ds-elevated border border-ds-border flex items-center justify-center text-sm font-bold text-indigo-400 font-mono shrink-0">{step.step}</span>
                     <h3 className="text-lg font-semibold text-ink">{step.title}</h3>
                   </div>
                   <div className="pl-11 space-y-3">
@@ -193,7 +193,7 @@ export default function Page() {
 
             {/* Lien hub clauses */}
             <div className="bg-ds-surface border border-ds-border rounded-xl p-5 flex gap-4 items-start">
-              <ShieldCheck size={20} className="text-indigo-400 flex-shrink-0" />
+              <ShieldCheck size={20} className="text-indigo-400 shrink-0" />
               <div>
                 <p className="text-sm font-semibold text-ink mb-1">Prévenir les impayés dès le devis</p>
                 <p className="text-xs text-gray-500 mb-3">Clause d&apos;acompte, pénalités de retard, conditions de paiement, les clauses qui protègent votre trésorerie avant même de commencer.</p>
@@ -219,7 +219,7 @@ export default function Page() {
           </section>
 
           {/* CTA */}
-          <div className="mt-14 bg-gradient-to-br from-indigo-900/40 to-violet-900/20 rounded-2xl border border-indigo-500/20 p-8 text-center">
+          <div className="mt-14 bg-linear-to-br from-indigo-900/40 to-violet-900/20 rounded-2xl border border-indigo-500/20 p-8 text-center">
             <h2 className="text-2xl font-semibold text-ink mb-3">Les relances automatiques, c&apos;est Deviso</h2>
             <p className="text-gray-400 mb-6 max-w-lg mx-auto text-sm leading-relaxed">
               Deviso envoie automatiquement des relances aux clients en retard, aux intervalles que vous choisissez. Moins de stress, plus de trésorerie.

@@ -35,7 +35,7 @@ export function DashboardActionFeed({ items }: { items: ActionItem[] }) {
   // Un fil qui s'efface se lit comme une page vide, pas comme une confirmation.
   if (visible.length === 0) {
     return (
-      <div className="flex items-center gap-3 border border-ds-border rounded-xl px-4 py-3.5 bg-[var(--urgency-ok-bg)]">
+      <div className="flex items-center gap-3 border border-ds-border rounded-xl px-4 py-3.5 bg-(--urgency-ok-bg)">
         <CircleCheck size={16} className="text-emerald-400 shrink-0" />
         <div>
           <p className="text-sm font-medium text-ink leading-snug">Tout est à jour</p>

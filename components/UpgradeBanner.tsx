@@ -43,7 +43,7 @@ export function UpgradeBanner({ variant = "proposal_limit", count = 0 }: Upgrade
   const { title, sub } = messages[variant];
 
   return (
-    <div className="mb-6 bg-gradient-to-r from-indigo-600 to-violet-600 rounded-xl p-5 flex items-center justify-between gap-4 text-ink">
+    <div className="mb-6 bg-linear-to-r from-indigo-600 to-violet-600 rounded-xl p-5 flex items-center justify-between gap-4 text-ink">
       <div>
         <div className="font-semibold text-sm">{title}</div>
         <div className="text-xs text-indigo-200 mt-0.5">{sub}</div>

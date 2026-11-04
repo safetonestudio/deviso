@@ -153,12 +153,12 @@ export function SignalerProbleme({
       {declencheur}
 
       <div
-        className="fixed inset-0 z-[70] flex items-end sm:items-center justify-center p-0 sm:p-4"
+        className="fixed inset-0 z-70 flex items-end sm:items-center justify-center p-0 sm:p-4"
         role="dialog"
         aria-modal="true"
         aria-label="Signaler un problème sur une facture reçue"
       >
-        <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={fermer} />
+        <div className="absolute inset-0 bg-black/60 backdrop-blur-xs" onClick={fermer} />
 
         <div className="relative w-full sm:max-w-md bg-ds-surface border border-ds-border rounded-t-2xl sm:rounded-2xl p-5 shadow-xl max-h-[90vh] overflow-y-auto">
           {etape === "choix" ? (
@@ -179,7 +179,7 @@ export function SignalerProbleme({
                 rows={2}
                 maxLength={500}
                 placeholder="Ex. : le total de la ligne 3 ne correspond pas au devis signé."
-                className="w-full bg-ds-bg border border-ds-border text-ink rounded-lg px-3 py-2 text-sm mb-4 focus:outline-none focus:border-indigo-500 placeholder:text-gray-600"
+                className="w-full bg-ds-bg border border-ds-border text-ink rounded-lg px-3 py-2 text-sm mb-4 focus:outline-hidden focus:border-indigo-500 placeholder:text-gray-600"
               />
 
               <div className="space-y-2">
@@ -249,7 +249,7 @@ export function SignalerProbleme({
                 value={motif}
                 onChange={(e) => setMotif(e.target.value)}
                 autoFocus
-                className="w-full bg-ds-bg border border-ds-border text-ink rounded-lg px-3 py-2.5 text-sm mb-2 focus:outline-none focus:border-indigo-500"
+                className="w-full bg-ds-bg border border-ds-border text-ink rounded-lg px-3 py-2.5 text-sm mb-2 focus:outline-hidden focus:border-indigo-500"
               >
                 <option value="">Choisir un motif…</option>
                 {MOTIFS_REFUS.map((m) => (

@@ -110,7 +110,7 @@ export function FacturesRecuesListe({
             <details
               key={f.id}
               data-recherche={`${f.seller_name ?? ""} ${f.number ?? ""}`.toLowerCase()}
-              className="group carte overflow-hidden shadow-sm transition-colors hover:border-gray-600 open:border-indigo-500/40 open:shadow-md"
+              className="group carte overflow-hidden shadow-xs transition-colors hover:border-gray-600 open:border-indigo-500/40 open:shadow-md"
             >
               <summary className="flex items-center gap-3 px-4 py-3 cursor-pointer list-none [&::-webkit-details-marker]:hidden hover:bg-ds-elevated/40 transition-colors">
                 <div className="min-w-0 max-w-[55%]">

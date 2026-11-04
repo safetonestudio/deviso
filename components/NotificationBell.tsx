@@ -127,7 +127,7 @@ export function NotificationBell({ placement = "sidebar" }: Props) {
       >
         <Bell size={placement === "entete" ? 17 : 16} />
         {unread > 0 && (
-          <span className={`absolute ${placement === "entete" ? "-top-1.5 -right-1.5 min-w-[19px] h-[19px] text-[11px] border-2 border-[color:var(--ds-bg)]" : "-top-0.5 -right-0.5 min-w-[16px] h-4 text-[9px]"} bg-amber-500 text-ink font-bold rounded-full flex items-center justify-center px-1`}>
+          <span className={`absolute ${placement === "entete" ? "-top-1.5 -right-1.5 min-w-[19px] h-[19px] text-[11px] border-2 border-(--ds-bg)" : "-top-0.5 -right-0.5 min-w-[16px] h-4 text-[9px]"} bg-amber-500 text-ink font-bold rounded-full flex items-center justify-center px-1`}>
             {unread > 9 ? "9+" : unread}
           </span>
         )}

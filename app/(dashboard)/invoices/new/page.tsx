@@ -140,7 +140,7 @@ export default function NewInvoicePage() {
   const vent = ventilationTva(items, tvaRate);
   const totalTtc = vent.total_ttc;
 
-  const inputCls = "w-full border border-ds-border rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-indigo-500/30 focus:border-indigo-500 bg-ds-elevated text-ink placeholder:text-gray-600";
+  const inputCls = "w-full border border-ds-border rounded-lg px-3 py-2 text-sm focus:outline-hidden focus:ring-1 focus:ring-indigo-500/30 focus:border-indigo-500 bg-ds-elevated text-ink placeholder:text-gray-600";
 
   // Pré-remplissage profil vendeur + catalogue
   useEffect(() => {
@@ -512,7 +512,7 @@ export default function NewInvoicePage() {
             <select
               value={linkedProposalId || ""}
               onChange={(e) => handleProposalPick(e.target.value)}
-              className="w-full bg-ds-elevated border border-ds-border rounded-lg px-3 py-2 text-sm text-ink focus:outline-none focus:border-indigo-500"
+              className="w-full bg-ds-elevated border border-ds-border rounded-lg px-3 py-2 text-sm text-ink focus:outline-hidden focus:border-indigo-500"
             >
               <option value="">, Choisir un devis, </option>
               {proposalsList.map((p) => (
@@ -549,7 +549,7 @@ export default function NewInvoicePage() {
                     max={99}
                     value={depositPct}
                     onChange={(e) => handleDepositPctChange(Math.min(99, Math.max(1, Number(e.target.value))))}
-                    className="w-16 bg-ds-elevated border border-ds-border rounded-lg px-2 py-1 text-xs text-ink text-center focus:outline-none focus:border-indigo-500"
+                    className="w-16 bg-ds-elevated border border-ds-border rounded-lg px-2 py-1 text-xs text-ink text-center focus:outline-hidden focus:border-indigo-500"
                   />
                   <span className="text-xs text-gray-500">%</span>
                 </div>
@@ -897,7 +897,7 @@ export default function NewInvoicePage() {
                 <select aria-label="Régime TVA"
                   value={tvaRate}
                   onChange={(e) => setTvaRate(parseFloat(e.target.value))}
-                  className="w-full border border-ds-border rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-indigo-500/30 focus:border-indigo-500 bg-ds-elevated text-ink"
+                  className="w-full border border-ds-border rounded-lg px-3 py-2 text-sm focus:outline-hidden focus:ring-1 focus:ring-indigo-500/30 focus:border-indigo-500 bg-ds-elevated text-ink"
                 >
                   {TVA_OPTIONS.map((opt) => (
                     <option key={opt.rate} value={opt.rate}>{opt.label}</option>
@@ -936,7 +936,7 @@ export default function NewInvoicePage() {
             <div>
               <label className="block text-xs font-medium text-blue-300 mb-1">Nature de l&apos;opération</label>
               <select aria-label="Nature de l'opération" value={operationCategory} onChange={(e) => setOperationCategory(e.target.value as "services" | "goods" | "mixed")}
-                className="border border-ds-border rounded-lg px-3 py-2 text-sm bg-ds-elevated text-ink focus:outline-none focus:ring-1 focus:ring-indigo-500/30 focus:border-indigo-500">
+                className="border border-ds-border rounded-lg px-3 py-2 text-sm bg-ds-elevated text-ink focus:outline-hidden focus:ring-1 focus:ring-indigo-500/30 focus:border-indigo-500">
                 <option value="services">Prestation de services</option>
                 <option value="goods">Livraison de biens</option>
                 <option value="mixed">Mixte (biens + services)</option>
@@ -944,7 +944,7 @@ export default function NewInvoicePage() {
             </div>
             {tvaRate > 0 && (
               <div className="flex items-center gap-2">
-                <input type="checkbox" id="payment_on_debit" checked={paymentOnDebit} onChange={(e) => setPaymentOnDebit(e.target.checked)} className="rounded text-indigo-600" />
+                <input type="checkbox" id="payment_on_debit" checked={paymentOnDebit} onChange={(e) => setPaymentOnDebit(e.target.checked)} className="rounded-sm text-indigo-600" />
                 <label htmlFor="payment_on_debit" className="text-sm text-blue-300">
                   TVA acquittée sur les débits (art. 1693 bis CGI)
                   <span className="text-blue-400 text-xs ml-1">, par défaut : sur encaissements</span>
@@ -998,7 +998,7 @@ export default function NewInvoicePage() {
       {/* ── Modal sélecteur de durée (taux horaire) ── */}
       {pendingHourlyItem && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-          <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={() => setPendingHourlyItem(null)} />
+          <div className="absolute inset-0 bg-black/60 backdrop-blur-xs" onClick={() => setPendingHourlyItem(null)} />
           <div className="relative bg-ds-surface border border-violet-500/30 rounded-xl p-6 w-full max-w-sm shadow-2xl">
             <div className="flex items-center gap-2 mb-1">
               <Clock size={15} className="text-violet-400" />
@@ -1011,14 +1011,14 @@ export default function NewInvoicePage() {
               <div>
                 <label className="block text-xs font-medium text-gray-400 mb-1.5">Heures</label>
                 <select aria-label="Heures" value={durationHours} onChange={(e) => setDurationHours(parseInt(e.target.value))}
-                  className="w-full px-3 py-2 rounded-lg bg-ds-bg border border-ds-border text-sm text-ink focus:outline-none focus:border-violet-500 focus:ring-1 focus:ring-violet-500/30">
+                  className="w-full px-3 py-2 rounded-lg bg-ds-bg border border-ds-border text-sm text-ink focus:outline-hidden focus:border-violet-500 focus:ring-1 focus:ring-violet-500/30">
                   {Array.from({ length: 24 }, (_, i) => <option key={i} value={i}>{i}h</option>)}
                 </select>
               </div>
               <div>
                 <label className="block text-xs font-medium text-gray-400 mb-1.5">Minutes</label>
                 <select aria-label="Minutes" value={durationMinutes} onChange={(e) => setDurationMinutes(parseInt(e.target.value))}
-                  className="w-full px-3 py-2 rounded-lg bg-ds-bg border border-ds-border text-sm text-ink focus:outline-none focus:border-violet-500 focus:ring-1 focus:ring-violet-500/30">
+                  className="w-full px-3 py-2 rounded-lg bg-ds-bg border border-ds-border text-sm text-ink focus:outline-hidden focus:border-violet-500 focus:ring-1 focus:ring-violet-500/30">
                   {[0, 15, 30, 45].map((m) => <option key={m} value={m}>{m === 0 ? "00 min" : `${m} min`}</option>)}
                 </select>
               </div>

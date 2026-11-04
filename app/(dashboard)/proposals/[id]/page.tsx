@@ -99,7 +99,7 @@ export default async function ProposalDetailPage({ params }: { params: Promise<{
             <div className="flex items-center gap-3 flex-wrap mb-1">
               <h1 className="text-3xl font-semibold text-ink tracking-tight">{proposal.title}</h1>
               {proposal.proposal_number && (
-                <span className="text-xs font-mono font-semibold text-gray-400 bg-ds-elevated px-2 py-0.5 rounded">
+                <span className="text-xs font-mono font-semibold text-gray-400 bg-ds-elevated px-2 py-0.5 rounded-sm">
                   {proposal.proposal_number}
                 </span>
               )}

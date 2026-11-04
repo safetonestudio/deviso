@@ -46,17 +46,17 @@ export default function Page() {
       <DonneesStructurees donnees={jsonLdArticle(SLUG, FAQ)} />
 
       {/* Bandeau */}
-      <div className="fixed top-0 left-0 right-0 bg-indigo-950/95 backdrop-blur-sm border-b border-indigo-500/20 py-2 px-4 text-center text-sm" style={{ zIndex: 60 }}>
+      <div className="fixed top-0 left-0 right-0 bg-indigo-950/95 backdrop-blur-xs border-b border-indigo-500/20 py-2 px-4 text-center text-sm" style={{ zIndex: 60 }}>
         <span className="text-indigo-300 font-semibold">Réforme 2026&nbsp;:</span>
         <span className="text-gray-300 ml-1.5">La facturation électronique B2B devient obligatoire en France.&nbsp;</span>
         <span className="text-indigo-400 font-medium">Deviso est déjà conforme Factur-X.</span>
       </div>
 
       {/* Navbar */}
-      <nav className="fixed top-9 left-0 right-0 z-50 bg-ds-bg/80 backdrop-blur-xl border-b border-ink/[0.06]">
+      <nav className="fixed top-9 left-0 right-0 z-50 bg-ds-bg/80 backdrop-blur-xl border-b border-ink/6">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
           <Link href="/" aria-label="Deviso" className="flex items-center gap-2">
-            <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-indigo-600 to-violet-600 flex items-center justify-center">
+            <div className="w-8 h-8 rounded-lg bg-linear-to-br from-indigo-600 to-violet-600 flex items-center justify-center">
               <span className="text-ink font-semibold text-sm">D</span>
             </div>
             <span className="font-semibold text-lg text-ink">Deviso</span>
@@ -166,7 +166,7 @@ export default function Page() {
                   { step: "4", text: "Attendez la signature avant de commencer. Sans validation, vous travaillez gratuitement." },
                 ].map((item) => (
                   <div key={item.step} className="flex gap-4 bg-ds-elevated rounded-xl p-4 border border-ds-border">
-                    <span className="text-indigo-400 font-bold font-mono text-sm flex-shrink-0 mt-0.5">{item.step}.</span>
+                    <span className="text-indigo-400 font-bold font-mono text-sm shrink-0 mt-0.5">{item.step}.</span>
                     <p className="text-gray-400 text-sm">{item.text}</p>
                   </div>
                 ))}
@@ -179,16 +179,16 @@ export default function Page() {
                 La meilleure clause de périmètre est celle que vous n&apos;avez jamais besoin d&apos;activer, parce que le brief initial était suffisamment précis. Avant de rédiger le devis :
               </p>
               <ul className="space-y-2 text-gray-400">
-                <li className="flex gap-2"><span className="text-emerald-400 flex-shrink-0">✓</span> Listez les livrables de manière exhaustive (pas &quot;un site web&quot; mais &quot;un site de 5 pages : accueil, services, à propos, contact, mentions légales&quot;)</li>
-                <li className="flex gap-2"><span className="text-emerald-400 flex-shrink-0">✓</span> Précisez ce qui est exclu (pas &quot;le SEO n&apos;est pas inclus&quot; mais &quot;l&apos;optimisation SEO on-page et les campagnes SEA ne font pas partie de cette mission&quot;)</li>
-                <li className="flex gap-2"><span className="text-emerald-400 flex-shrink-0">✓</span> Faites signer le brief avant de signer le devis, ou intégrez-le en annexe du devis</li>
-                <li className="flex gap-2"><span className="text-emerald-400 flex-shrink-0">✓</span> Définissez les jalons et les points de validation pour les projets longs</li>
+                <li className="flex gap-2"><span className="text-emerald-400 shrink-0">✓</span> Listez les livrables de manière exhaustive (pas &quot;un site web&quot; mais &quot;un site de 5 pages : accueil, services, à propos, contact, mentions légales&quot;)</li>
+                <li className="flex gap-2"><span className="text-emerald-400 shrink-0">✓</span> Précisez ce qui est exclu (pas &quot;le SEO n&apos;est pas inclus&quot; mais &quot;l&apos;optimisation SEO on-page et les campagnes SEA ne font pas partie de cette mission&quot;)</li>
+                <li className="flex gap-2"><span className="text-emerald-400 shrink-0">✓</span> Faites signer le brief avant de signer le devis, ou intégrez-le en annexe du devis</li>
+                <li className="flex gap-2"><span className="text-emerald-400 shrink-0">✓</span> Définissez les jalons et les points de validation pour les projets longs</li>
               </ul>
             </section>
 
             {/* Lien hub clauses */}
             <div className="bg-ds-surface border border-ds-border rounded-xl p-5 flex gap-4 items-start">
-              <ClipboardList size={20} className="text-indigo-400 flex-shrink-0" />
+              <ClipboardList size={20} className="text-indigo-400 shrink-0" />
               <div>
                 <p className="text-sm font-semibold text-ink mb-1">Toutes les clauses à mettre dans votre devis</p>
                 <p className="text-xs text-gray-500 mb-3">Périmètre, acompte, révisions, propriété intellectuelle, résiliation, le guide complet avec formulations prêtes à l&apos;emploi.</p>
@@ -214,7 +214,7 @@ export default function Page() {
           </section>
 
           {/* CTA */}
-          <div className="mt-14 bg-gradient-to-br from-indigo-900/40 to-violet-900/20 rounded-2xl border border-indigo-500/20 p-8 text-center">
+          <div className="mt-14 bg-linear-to-br from-indigo-900/40 to-violet-900/20 rounded-2xl border border-indigo-500/20 p-8 text-center">
             <h2 className="text-2xl font-semibold text-ink mb-3">Un devis avec les bonnes clauses, en 30 secondes</h2>
             <p className="text-gray-400 mb-6 max-w-lg mx-auto text-sm leading-relaxed">
               Deviso génère votre devis avec une clause de périmètre et de révisions adaptées à votre mission. Votre client signe électroniquement, vous êtes couvert.

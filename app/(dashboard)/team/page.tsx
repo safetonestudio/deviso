@@ -216,7 +216,7 @@ export default function TeamPage() {
           <button
             key={tab}
             onClick={() => setActiveTab(tab)}
-            className={`px-4 py-1.5 rounded-lg text-sm font-medium transition-all ${ activeTab === tab ? "bg-ds-surface text-ink shadow-sm" : "text-gray-500 hover:text-gray-300" }`}
+            className={`px-4 py-1.5 rounded-lg text-sm font-medium transition-all ${ activeTab === tab ? "bg-ds-surface text-ink shadow-xs" : "text-gray-500 hover:text-gray-300" }`}
           >
             {tab === "pipeline" ? "Vue pipeline" : "Membres"}
           </button>
@@ -324,7 +324,7 @@ export default function TeamPage() {
                   onChange={(e) => setEmail(e.target.value)}
                   placeholder="collaborateur@exemple.fr"
                   required
-                  className="flex-1 bg-ds-bg border border-ds-border text-ink placeholder:text-gray-600 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500/30"
+                  className="flex-1 bg-ds-bg border border-ds-border text-ink placeholder:text-gray-600 rounded-lg px-3 py-2 text-sm focus:outline-hidden focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500/30"
                 />
 
                 <button

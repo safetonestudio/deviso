@@ -31,7 +31,7 @@ export function HeroCa({ annee, caAnneeHt, caTrimestreHt, trimestre, caMoisTtc, 
     <section className="carte p-7 sm:p-9 grid gap-8 lg:grid-cols-[1.15fr_1fr] items-center">
       <div className="min-w-0">
         <div className="text-[13px] font-semibold text-gray-400">Chiffre d&apos;affaires encaissé, {annee}</div>
-        <div className="font-display font-bold text-ink leading-none tracking-[-0.03em] text-[52px] sm:text-[76px] mt-3 mb-4 break-words">
+        <div className="font-display font-bold text-ink leading-none tracking-[-0.03em] text-[52px] sm:text-[76px] mt-3 mb-4 wrap-break-word">
           {nombre.format(Math.round(caAnneeHt))}
           <span className="text-[0.5em] text-gray-400 font-semibold ml-1.5">€</span>
         </div>

@@ -98,10 +98,10 @@ export default function Page() {
       <DonneesStructurees donnees={jsonLdArticle(SLUG, FAQ)} />
 
       {/* ── Navbar ── */}
-      <nav className="fixed top-0 left-0 right-0 z-50 bg-ds-bg/80 backdrop-blur-xl border-b border-ink/[0.06]">
+      <nav className="fixed top-0 left-0 right-0 z-50 bg-ds-bg/80 backdrop-blur-xl border-b border-ink/6">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
           <Link href="/" aria-label="Deviso" className="flex items-center gap-2">
-            <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-indigo-600 to-violet-600 flex items-center justify-center">
+            <div className="w-8 h-8 rounded-lg bg-linear-to-br from-indigo-600 to-violet-600 flex items-center justify-center">
               <span className="text-ink font-semibold text-sm">D</span>
             </div>
             <span className="font-semibold text-lg text-ink">Deviso</span>
@@ -253,7 +253,7 @@ export default function Page() {
                 émettent pas. Ne vous inquiétez pas de ne pas voir défiler les quatorze.
               </p>
               <div className="overflow-x-auto -mx-4 px-4 sm:mx-0 sm:px-0">
-                <table className="w-full text-left border-collapse min-w-[36rem]">
+                <table className="w-full text-left border-collapse min-w-xl">
                   <thead>
                     <tr className="border-b border-ds-border">
                       <th className="py-3 pr-3 text-xs font-semibold text-gray-400 uppercase tracking-wider">Code</th>
@@ -312,7 +312,7 @@ export default function Page() {
                 {MOTIFS.map((m) => (
                   <div key={m.code} className="bg-ds-surface border border-ds-border rounded-xl p-5">
                     <div className="flex flex-wrap items-baseline gap-x-3 gap-y-1 mb-2">
-                      <code className="text-xs text-indigo-300 bg-indigo-500/10 px-2 py-0.5 rounded">
+                      <code className="text-xs text-indigo-300 bg-indigo-500/10 px-2 py-0.5 rounded-sm">
                         {m.code}
                       </code>
                       <span className="text-ink font-medium">{m.libelle}</span>
@@ -329,7 +329,7 @@ export default function Page() {
                     Ce code ne veut <strong className="text-ink">pas</strong> dire « double facturation ». Il
                     désigne le doublon des <em>données réglementaires</em> transmises à l&apos;administration. Si
                     vous avez réellement été facturé deux fois, ou si votre client le croit, le motif est{" "}
-                    <code className="text-xs text-indigo-300 bg-indigo-500/10 px-1.5 py-0.5 rounded">DOUBLON</code>.
+                    <code className="text-xs text-indigo-300 bg-indigo-500/10 px-1.5 py-0.5 rounded-sm">DOUBLON</code>.
                     C&apos;est exactement le genre d&apos;erreur de lecture qui fait annuler une facture pour la
                     mauvaise raison, et Deviso l&apos;a faite avant de lire la table normative.
                   </p>
@@ -429,7 +429,7 @@ export default function Page() {
                   },
                 ].map((e, i) => (
                   <li key={e.titre} className="flex gap-4">
-                    <span className="flex-shrink-0 w-7 h-7 rounded-full bg-indigo-500/15 border border-indigo-500/30 text-indigo-400 text-sm font-semibold flex items-center justify-center mt-0.5">
+                    <span className="shrink-0 w-7 h-7 rounded-full bg-indigo-500/15 border border-indigo-500/30 text-indigo-400 text-sm font-semibold flex items-center justify-center mt-0.5">
                       {i + 1}
                     </span>
                     <div>

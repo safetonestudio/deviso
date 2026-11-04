@@ -364,9 +364,9 @@ export default function StatsPage() {
             <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-indigo-500/20 text-indigo-400 border border-indigo-500/30">PRO</span>
           </div>
           <div className="relative rounded-xl overflow-hidden">
-            <div className="filter blur-sm pointer-events-none select-none" aria-hidden>
+            <div className="filter blur-xs pointer-events-none select-none" aria-hidden>
               <div className="carte p-6 mb-4">
-                <div className="h-4 w-40 bg-ds-elevated rounded mb-5" />
+                <div className="h-4 w-40 bg-ds-elevated rounded-sm mb-5" />
                 <div className="flex items-center gap-1">
                   {[100, 78, 52, 34, 12].map((v, i) => (
                     <div key={i} className="flex-1 flex flex-col items-center gap-2">

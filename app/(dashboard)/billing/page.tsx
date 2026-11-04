@@ -139,7 +139,7 @@ export default function BillingPage() {
   if (loading) {
     return (
       <div className="max-w-2xl mx-auto animate-pulse space-y-6">
-        <div className="h-7 w-40 bg-ds-elevated rounded" />
+        <div className="h-7 w-40 bg-ds-elevated rounded-sm" />
         <div className="carte p-6 h-32" />
         <div className="carte p-6 h-48" />
       </div>

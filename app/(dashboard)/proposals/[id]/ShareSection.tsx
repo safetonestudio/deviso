@@ -100,7 +100,7 @@ export default function ShareSection({ proposal, shareUrl, profile }: Props) {
               value={emailTo}
               onChange={(e) => setEmailTo(e.target.value)}
               placeholder="email@client.fr"
-              className="flex-1 bg-ds-elevated border border-ds-border rounded-lg px-3 py-2 text-sm text-ink placeholder:text-gray-600 focus:outline-none focus:ring-1 focus:ring-indigo-500/30 focus:border-indigo-500"
+              className="flex-1 bg-ds-elevated border border-ds-border rounded-lg px-3 py-2 text-sm text-ink placeholder:text-gray-600 focus:outline-hidden focus:ring-1 focus:ring-indigo-500/30 focus:border-indigo-500"
             />
             <button
               onClick={sendEmail}

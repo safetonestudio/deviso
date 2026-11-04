@@ -108,7 +108,7 @@ export function BlogPost({
       <DonneesStructurees donnees={jsonLdArticle(slug, faq)} />
       {/* ── Bandeau réforme 2026 ── */}
       <div
-        className="fixed top-0 left-0 right-0 bg-indigo-950/95 backdrop-blur-sm border-b border-indigo-500/20 py-2 px-4 text-center text-sm"
+        className="fixed top-0 left-0 right-0 bg-indigo-950/95 backdrop-blur-xs border-b border-indigo-500/20 py-2 px-4 text-center text-sm"
         style={{ zIndex: 60 }}
       >
         <span className="text-indigo-300 font-semibold">Réforme 2026&nbsp;:</span>
@@ -120,10 +120,10 @@ export function BlogPost({
       </div>
 
       {/* ── Navbar ── */}
-      <nav className="fixed top-9 left-0 right-0 z-50 bg-ds-bg/80 backdrop-blur-xl border-b border-ink/[0.06]">
+      <nav className="fixed top-9 left-0 right-0 z-50 bg-ds-bg/80 backdrop-blur-xl border-b border-ink/6">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
           <Link href="/" aria-label="Deviso" className="flex items-center gap-2">
-            <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-indigo-600 to-violet-600 flex items-center justify-center">
+            <div className="w-8 h-8 rounded-lg bg-linear-to-br from-indigo-600 to-violet-600 flex items-center justify-center">
               <span className="text-ink font-semibold text-sm">D</span>
             </div>
             <span className="font-semibold text-lg text-ink">Deviso</span>
@@ -199,7 +199,7 @@ export function BlogPost({
             <ol className="space-y-5">
               {mandatoryItems.map((item, i) => (
                 <li key={i} className="flex gap-4">
-                  <span className="flex-shrink-0 w-7 h-7 rounded-full bg-indigo-500/15 border border-indigo-500/30 text-indigo-400 text-sm font-semibold flex items-center justify-center mt-0.5">
+                  <span className="shrink-0 w-7 h-7 rounded-full bg-indigo-500/15 border border-indigo-500/30 text-indigo-400 text-sm font-semibold flex items-center justify-center mt-0.5">
                     {i + 1}
                   </span>
                   <div>
@@ -229,7 +229,7 @@ export function BlogPost({
                       <p className="text-gray-300 text-sm">{line.desc}</p>
                       <p className="text-gray-500 text-xs mt-0.5">{line.qty}</p>
                     </div>
-                    <p className="text-ink text-sm font-medium flex-shrink-0">{line.price}</p>
+                    <p className="text-ink text-sm font-medium shrink-0">{line.price}</p>
                   </div>
                 ))}
               </div>
@@ -249,7 +249,7 @@ export function BlogPost({
             <div className="space-y-4">
               {mistakes.map((m, i) => (
                 <div key={i} className="flex gap-4 bg-red-950/20 border border-red-500/15 rounded-xl p-5">
-                  <span className="text-red-400 text-lg flex-shrink-0 mt-0.5">✕</span>
+                  <span className="text-red-400 text-lg shrink-0 mt-0.5">✕</span>
                   <div>
                     <p className="text-ink font-medium mb-1">{m.title}</p>
                     <p className="text-gray-400 text-sm leading-relaxed">{m.desc}</p>
@@ -260,7 +260,7 @@ export function BlogPost({
           </section>
 
           {/* ── CTA Deviso ── */}
-          <section className="mb-12 bg-gradient-to-br from-indigo-900/40 to-violet-900/20 rounded-2xl border border-indigo-500/20 p-8 text-center">
+          <section className="mb-12 bg-linear-to-br from-indigo-900/40 to-violet-900/20 rounded-2xl border border-indigo-500/20 p-8 text-center">
             <h2 className="text-2xl font-semibold text-ink mb-3">
               Créez votre devis de {profession} en 30 secondes
             </h2>

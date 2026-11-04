@@ -109,7 +109,7 @@ export default function LandingPage() {
       />
 
       {/* ── Bandeau réforme 2026 ── */}
-      <div className="fixed top-0 left-0 right-0 bg-indigo-950/95 backdrop-blur-sm border-b border-indigo-500/20 py-2 px-4 text-center text-xs sm:text-sm" style={{ zIndex: 60 }}>
+      <div className="fixed top-0 left-0 right-0 bg-indigo-950/95 backdrop-blur-xs border-b border-indigo-500/20 py-2 px-4 text-center text-xs sm:text-sm" style={{ zIndex: 60 }}>
         <span className="text-indigo-300 font-semibold">Réforme 2026&nbsp;:</span>
         <span className="text-gray-300 ml-1.5 hidden sm:inline">La facturation électronique B2B devient obligatoire en France.&nbsp;</span>
         <span className="text-indigo-400 font-medium">Deviso génère du Factur-X et s&apos;appuie sur une plateforme agréée.</span>
@@ -117,10 +117,10 @@ export default function LandingPage() {
       </div>
 
       {/* ── Navbar ── */}
-      <nav className="fixed left-0 right-0 z-50 bg-ds-bg/90 backdrop-blur-xl border-b border-ink/[0.06]" style={{ top: "36px" }}>
+      <nav className="fixed left-0 right-0 z-50 bg-ds-bg/90 backdrop-blur-xl border-b border-ink/6" style={{ top: "36px" }}>
         <div className="max-w-6xl mx-auto px-4 sm:px-6 h-14 flex items-center justify-between">
           <Link href="/" aria-label="Deviso" className="flex items-center gap-2">
-            <div className="w-7 h-7 rounded-lg bg-gradient-to-br from-indigo-600 to-violet-600 flex items-center justify-center">
+            <div className="w-7 h-7 rounded-lg bg-linear-to-br from-indigo-600 to-violet-600 flex items-center justify-center">
               <span className="text-ink font-semibold text-xs">D</span>
             </div>
             <span className="font-semibold text-base text-ink">Deviso</span>
@@ -150,14 +150,14 @@ export default function LandingPage() {
       <section className="relative pt-44 sm:pt-40 pb-20 px-4 sm:px-6 overflow-hidden">
         <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[700px] h-[500px] bg-indigo-600/10 blur-[120px] rounded-full pointer-events-none" />
         <div className="max-w-4xl mx-auto text-center relative">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-medium bg-ink/[0.05] text-gray-400 border border-ink/[0.08] mb-6">
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-medium bg-ink/5 text-gray-400 border border-ink/8 mb-6">
             <span className="w-1.5 h-1.5 rounded-full bg-indigo-400 animate-pulse" />
             <span>Conforme réforme facturation 2026</span>
           </div>
 
           <h1 className="text-4xl sm:text-5xl md:text-6xl font-semibold text-ink leading-tight tracking-tight mb-5">
             Décris ta mission,{" "}
-            <span className="bg-gradient-to-r from-indigo-400 to-violet-400 bg-clip-text text-transparent">
+            <span className="bg-linear-to-r from-indigo-400 to-violet-400 bg-clip-text text-transparent">
               ton devis complet est rédigé en 30 secondes.
             </span>
           </h1>
@@ -172,7 +172,7 @@ export default function LandingPage() {
             <WaitlistButton
               plan="solo"
               label="Essayer gratuitement 14 jours →"
-              className="w-full sm:w-auto text-gray-300 font-medium px-7 py-3 rounded-lg text-base border border-ink/[0.10] hover:bg-ink/[0.04] transition-all text-center"
+              className="w-full sm:w-auto text-gray-300 font-medium px-7 py-3 rounded-lg text-base border border-ink/10 hover:bg-ink/4 transition-all text-center"
             />
           </div>
 
@@ -183,12 +183,12 @@ export default function LandingPage() {
 
         {/* Mockup */}
         <div className="max-w-3xl mx-auto mt-14">
-          <div className="bg-[#111111] rounded-xl border border-ink/[0.08] shadow-2xl overflow-hidden">
-            <div className="flex items-center gap-1.5 px-4 py-3 bg-[#1A1A1A] border-b border-ink/[0.06]">
+          <div className="bg-[#111111] rounded-xl border border-ink/8 shadow-2xl overflow-hidden">
+            <div className="flex items-center gap-1.5 px-4 py-3 bg-[#1A1A1A] border-b border-ink/6">
               <div className="w-2.5 h-2.5 rounded-full bg-ink/10" />
               <div className="w-2.5 h-2.5 rounded-full bg-ink/10" />
               <div className="w-2.5 h-2.5 rounded-full bg-ink/10" />
-              <div className="flex-1 mx-4 bg-ink/[0.06] rounded-md px-3 py-1 text-xs text-gray-500">
+              <div className="flex-1 mx-4 bg-ink/6 rounded-md px-3 py-1 text-xs text-gray-500">
                 app.getdeviso.fr/proposals/new
               </div>
             </div>
@@ -196,7 +196,7 @@ export default function LandingPage() {
               <div className="mb-3 text-xs text-gray-400 font-medium uppercase tracking-wider">
                 Décris ton projet
               </div>
-              <div className="bg-ink/[0.04] rounded-lg p-4 border border-ink/[0.06] mb-4">
+              <div className="bg-ink/4 rounded-lg p-4 border border-ink/6 mb-4">
                 <p className="text-gray-400 text-sm leading-relaxed">
                   Refonte complète du site vitrine d&apos;un cabinet d&apos;avocats
                   spécialisé en droit des affaires à Lyon. Design moderne,

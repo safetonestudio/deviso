@@ -161,7 +161,7 @@ export default function JoinPage() {
       <div className="bg-[#111827] border border-[#2B3444] rounded-2xl p-10 text-center max-w-md w-full">
 
         {/* Logo */}
-        <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-indigo-600 to-violet-600 flex items-center justify-center mx-auto mb-6">
+        <div className="w-12 h-12 rounded-xl bg-linear-to-br from-indigo-600 to-violet-600 flex items-center justify-center mx-auto mb-6">
           <span className="text-ink font-bold text-xl">D</span>
         </div>
 

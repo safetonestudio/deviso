@@ -447,7 +447,7 @@ function ActionPanel({ invoice, id, router, hasChorusPro }: {
                   value={datePaiement}
                   max={new Date().toISOString().slice(0, 10)}
                   onChange={(e) => setDatePaiement(e.target.value)}
-                  className="w-full text-sm px-3 py-2 rounded-lg bg-ds-elevated border border-ds-border text-gray-200 focus:outline-none focus:border-emerald-500/50"
+                  className="w-full text-sm px-3 py-2 rounded-lg bg-ds-elevated border border-ds-border text-gray-200 focus:outline-hidden focus:border-emerald-500/50"
                 />
                 <label htmlFor="mode-reglement" className="block text-sm font-medium text-emerald-300">
                   Réglée par
@@ -456,7 +456,7 @@ function ActionPanel({ invoice, id, router, hasChorusPro }: {
                   id="mode-reglement"
                   value={modeReglement}
                   onChange={(e) => setModeReglement(e.target.value as ModeReglement)}
-                  className="w-full text-sm px-3 py-2 rounded-lg bg-ds-elevated border border-ds-border text-gray-200 focus:outline-none focus:border-emerald-500/50"
+                  className="w-full text-sm px-3 py-2 rounded-lg bg-ds-elevated border border-ds-border text-gray-200 focus:outline-hidden focus:border-emerald-500/50"
                 >
                   {(Object.keys(MODES_REGLEMENT) as ModeReglement[]).map((m) => (
                     <option key={m} value={m}>{MODES_REGLEMENT[m]}</option>

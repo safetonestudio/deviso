@@ -232,7 +232,7 @@ export default async function LivreRecettes({ searchParams }: { searchParams: Pr
                                 texte={l.categorie === "biens" ? "Biens" : "Services"}
                               />
                             </td>
-                            <td className="px-4 py-3 text-gray-400 max-w-[22rem]">{l.nature}</td>
+                            <td className="px-4 py-3 text-gray-400 max-w-88">{l.nature}</td>
                             <td className="px-4 py-3 text-gray-300 text-right tabular-nums whitespace-nowrap">{eur(l.ht)}</td>
                             <td className="px-4 py-3 text-ink text-right tabular-nums whitespace-nowrap font-medium">{eur(l.ttc)}</td>
                             <td className="px-4 py-3 text-gray-400 whitespace-nowrap">

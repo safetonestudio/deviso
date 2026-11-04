@@ -134,7 +134,7 @@ export function ClientCarte({
                 if (e.key === "Escape") setEditing(false);
               }}
               placeholder="+33 6 12 34 56 78"
-              className="bg-ds-bg border border-ds-border rounded-lg px-2 py-1 text-xs text-ink placeholder:text-gray-600 focus:outline-none focus:border-indigo-500 w-44"
+              className="bg-ds-bg border border-ds-border rounded-lg px-2 py-1 text-xs text-ink placeholder:text-gray-600 focus:outline-hidden focus:border-indigo-500 w-44"
             />
             <button onClick={save} disabled={saving} className="text-emerald-400 hover:text-emerald-300 disabled:opacity-50">
               <Check size={14} />

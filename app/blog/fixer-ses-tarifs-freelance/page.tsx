@@ -40,16 +40,16 @@ export default function Page() {
     <div className="min-h-screen bg-site">
       <DonneesStructurees donnees={jsonLdArticle(SLUG, FAQ)} />
 
-      <div className="fixed top-0 left-0 right-0 bg-indigo-950/95 backdrop-blur-sm border-b border-indigo-500/20 py-2 px-4 text-center text-sm" style={{ zIndex: 60 }}>
+      <div className="fixed top-0 left-0 right-0 bg-indigo-950/95 backdrop-blur-xs border-b border-indigo-500/20 py-2 px-4 text-center text-sm" style={{ zIndex: 60 }}>
         <span className="text-indigo-300 font-semibold">Réforme 2026&nbsp;:</span>
         <span className="text-gray-300 ml-1.5">La facturation électronique B2B devient obligatoire.&nbsp;</span>
         <span className="text-indigo-400 font-medium">Deviso est déjà conforme Factur-X.</span>
       </div>
 
-      <nav className="fixed top-9 left-0 right-0 z-50 bg-ds-bg/80 backdrop-blur-xl border-b border-ink/[0.06]">
+      <nav className="fixed top-9 left-0 right-0 z-50 bg-ds-bg/80 backdrop-blur-xl border-b border-ink/6">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
           <Link href="/" aria-label="Deviso" className="flex items-center gap-2">
-            <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-indigo-600 to-violet-600 flex items-center justify-center">
+            <div className="w-8 h-8 rounded-lg bg-linear-to-br from-indigo-600 to-violet-600 flex items-center justify-center">
               <span className="text-ink font-semibold text-sm">D</span>
             </div>
             <span className="font-semibold text-lg text-ink">Deviso</span>
@@ -173,7 +173,7 @@ export default function Page() {
                   { tip: "Un client qui part parce que vous augmentez vos tarifs de 10% était probablement déjà en train de chercher quelqu'un de moins cher. Vous perdez peu." },
                 ].map((item, i) => (
                   <div key={i} className="flex gap-3 bg-ds-elevated rounded-xl p-4 border border-ds-border">
-                    <span className="text-emerald-400 font-bold flex-shrink-0 text-sm">→</span>
+                    <span className="text-emerald-400 font-bold shrink-0 text-sm">→</span>
                     <p className="text-gray-400 text-sm leading-relaxed">{item.tip}</p>
                   </div>
                 ))}
@@ -221,7 +221,7 @@ export default function Page() {
           </section>
 
           {/* CTA */}
-          <div className="mt-14 bg-gradient-to-br from-indigo-900/40 to-violet-900/20 rounded-2xl border border-indigo-500/20 p-8 text-center">
+          <div className="mt-14 bg-linear-to-br from-indigo-900/40 to-violet-900/20 rounded-2xl border border-indigo-500/20 p-8 text-center">
             <h2 className="text-2xl font-semibold text-ink mb-3">Facturez au bon prix, présentez-vous comme un pro</h2>
             <p className="text-gray-400 mb-6 max-w-lg mx-auto text-sm leading-relaxed">
               Avec Deviso, vos devis sont générés en 30 secondes, signés électroniquement et relancés automatiquement. Professionnalisme et sérénité, dès le premier contact.

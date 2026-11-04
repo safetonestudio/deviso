@@ -54,7 +54,7 @@ export function CabinetPortefeuille({ dossiers, annee }: { dossiers: DossierVue[
   }
 
   const selecteur =
-    "bg-ds-bg border border-ds-border rounded-lg px-2.5 py-1.5 text-sm text-ink focus:outline-none focus:border-indigo-500";
+    "bg-ds-bg border border-ds-border rounded-lg px-2.5 py-1.5 text-sm text-ink focus:outline-hidden focus:border-indigo-500";
 
   return (
     <div className="carte mb-6 overflow-hidden">

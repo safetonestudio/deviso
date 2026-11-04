@@ -208,7 +208,7 @@ export function SuperPdpCard() {
       <div className="flex items-start justify-between gap-4 mb-1">
         <h2 className="font-semibold text-ink">Plateforme Agréée</h2>
         {etat?.sandbox && (
-          <span className="text-[10px] font-bold bg-amber-500/20 text-amber-400 border border-amber-500/30 px-1.5 py-0.5 rounded shrink-0">
+          <span className="text-[10px] font-bold bg-amber-500/20 text-amber-400 border border-amber-500/30 px-1.5 py-0.5 rounded-sm shrink-0">
             Bac à sable
           </span>
         )}
@@ -231,7 +231,7 @@ export function SuperPdpCard() {
           }`}
         >
           <p>{retour.texte}</p>
-          {retourDetail && <p className="text-xs opacity-80 mt-1 break-words">{traduire(retourDetail)}</p>}
+          {retourDetail && <p className="text-xs opacity-80 mt-1 wrap-break-word">{traduire(retourDetail)}</p>}
         </div>
       )}
 
@@ -468,7 +468,7 @@ export function SuperPdpCard() {
       )}
 
       {etat?.lastError && (
-        <p className="text-xs text-red-400 mt-3 break-words">Dernière erreur : {etat.lastError}</p>
+        <p className="text-xs text-red-400 mt-3 wrap-break-word">Dernière erreur : {etat.lastError}</p>
       )}
     </section>
   );

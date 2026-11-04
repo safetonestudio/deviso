@@ -65,7 +65,7 @@ export default function OnboardingPage() {
               value={form.full_name}
               onChange={(e) => set("full_name", e.target.value)}
               placeholder="Thomas Dupont"
-              className="w-full bg-ds-bg border border-ds-border rounded-xl px-4 py-2.5 text-sm text-ink placeholder:text-gray-600 focus:outline-none focus:ring-1 focus:ring-indigo-500/30 focus:border-indigo-500"
+              className="w-full bg-ds-bg border border-ds-border rounded-xl px-4 py-2.5 text-sm text-ink placeholder:text-gray-600 focus:outline-hidden focus:ring-1 focus:ring-indigo-500/30 focus:border-indigo-500"
             />
           </div>
           <div>
@@ -75,7 +75,7 @@ export default function OnboardingPage() {
               value={form.company_name}
               onChange={(e) => set("company_name", e.target.value)}
               placeholder="Dupont Consulting"
-              className="w-full bg-ds-bg border border-ds-border rounded-xl px-4 py-2.5 text-sm text-ink placeholder:text-gray-600 focus:outline-none focus:ring-1 focus:ring-indigo-500/30 focus:border-indigo-500"
+              className="w-full bg-ds-bg border border-ds-border rounded-xl px-4 py-2.5 text-sm text-ink placeholder:text-gray-600 focus:outline-hidden focus:ring-1 focus:ring-indigo-500/30 focus:border-indigo-500"
             />
           </div>
         </div>
@@ -87,7 +87,7 @@ export default function OnboardingPage() {
               value={form.siret}
               onChange={(e) => set("siret", e.target.value)}
               placeholder="123 456 789 00012"
-              className="w-full bg-ds-bg border border-ds-border rounded-xl px-4 py-2.5 text-sm text-ink placeholder:text-gray-600 focus:outline-none focus:ring-1 focus:ring-indigo-500/30 focus:border-indigo-500"
+              className="w-full bg-ds-bg border border-ds-border rounded-xl px-4 py-2.5 text-sm text-ink placeholder:text-gray-600 focus:outline-hidden focus:ring-1 focus:ring-indigo-500/30 focus:border-indigo-500"
             />
           </div>
           <div>
@@ -96,7 +96,7 @@ export default function OnboardingPage() {
               value={form.address}
               onChange={(e) => set("address", e.target.value)}
               placeholder="12 rue de la Paix, 75001 Paris"
-              className="w-full bg-ds-bg border border-ds-border rounded-xl px-4 py-2.5 text-sm text-ink placeholder:text-gray-600 focus:outline-none focus:ring-1 focus:ring-indigo-500/30 focus:border-indigo-500"
+              className="w-full bg-ds-bg border border-ds-border rounded-xl px-4 py-2.5 text-sm text-ink placeholder:text-gray-600 focus:outline-hidden focus:ring-1 focus:ring-indigo-500/30 focus:border-indigo-500"
             />
           </div>
         </div>

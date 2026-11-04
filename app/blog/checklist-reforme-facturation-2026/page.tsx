@@ -117,15 +117,15 @@ export default function ChecklistReforme2026Page() {
     <div className="min-h-screen bg-site">
       <DonneesStructurees donnees={jsonLdArticle(SLUG)} />
 
-      <div className="fixed top-0 left-0 right-0 bg-indigo-950/95 backdrop-blur-sm border-b border-indigo-500/20 py-2 px-4 text-center text-sm" style={{ zIndex: 60 }}>
+      <div className="fixed top-0 left-0 right-0 bg-indigo-950/95 backdrop-blur-xs border-b border-indigo-500/20 py-2 px-4 text-center text-sm" style={{ zIndex: 60 }}>
         <span className="text-ink font-semibold">1er septembre 2026&nbsp;:</span>
         <span className="text-gray-300 ml-1.5">Grandes entreprises → e-facturation obligatoire. Toutes → obligation de réception.</span>
       </div>
 
-      <nav className="fixed top-9 left-0 right-0 z-50 bg-ds-bg/80 backdrop-blur-xl border-b border-ink/[0.06]">
+      <nav className="fixed top-9 left-0 right-0 z-50 bg-ds-bg/80 backdrop-blur-xl border-b border-ink/6">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
           <Link href="/" className="flex items-center gap-2">
-            <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-indigo-600 to-violet-600 flex items-center justify-center">
+            <div className="w-8 h-8 rounded-lg bg-linear-to-br from-indigo-600 to-violet-600 flex items-center justify-center">
               <span className="text-ink font-semibold text-sm">D</span>
             </div>
             <span className="font-semibold text-lg text-ink">Deviso</span>
@@ -173,7 +173,7 @@ export default function ChecklistReforme2026Page() {
             <span className="text-xs text-gray-500">7 points à cocher</span>
           </div>
           <div className="h-2 bg-ds-elevated rounded-full overflow-hidden">
-            <div className="h-full w-0 bg-gradient-to-r from-indigo-600 to-violet-500 rounded-full" style={{ width: "0%" }} />
+            <div className="h-full w-0 bg-linear-to-r from-indigo-600 to-violet-500 rounded-full" style={{ width: "0%" }} />
           </div>
           <p className="text-xs text-gray-400 mt-3 italic">Cochez les points au fur et à mesure dans cet article pour évaluer votre préparation.</p>
         </div>

@@ -373,7 +373,7 @@ Les présentes CGV sont soumises au droit français. Tout litige relève de la c
   }
 
   const selectedRegime = TVA_REGIMES.find((r) => r.value === profile.tva_regime) ?? TVA_REGIMES[0];
-  const inputCls = "w-full bg-ds-bg border border-ds-border text-ink placeholder:text-gray-600 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500/30";
+  const inputCls = "w-full bg-ds-bg border border-ds-border text-ink placeholder:text-gray-600 rounded-lg px-3 py-2 text-sm focus:outline-hidden focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500/30";
   const [vue, setVue] = useState<string>("identite");
   const subdomainChanged = subdomainInput.trim().toLowerCase() !== (profile.subdomain || "");
   const canSaveSubdomain = subdomainChanged && (subdomainStatus === "available" || subdomainInput.trim() === "");
@@ -669,22 +669,22 @@ Les présentes CGV sont soumises au droit français. Tout litige relève de la c
                     <button key={t.value} type="button"
                       onClick={() => set("proposal_template" as keyof Profile, t.value)}
                       className={`relative rounded-xl border-2 p-3 transition-all text-left ${selected ? "border-indigo-500 bg-indigo-500/10" : "border-ds-border hover:border-zinc-600"}`}>
-                      <div className="rounded-md bg-ds-bg border border-ds-border overflow-hidden aspect-[3/4] p-3 mb-3">
+                      <div className="rounded-md bg-ds-bg border border-ds-border overflow-hidden aspect-3/4 p-3 mb-3">
                         {t.value === "classic" && (
                           <div className="h-full flex flex-col">
                             <div className="text-[11px] font-bold tracking-wide" style={{ color }}>DEVIS</div>
                             <div className="h-px bg-ink/15 my-2" />
                             <div className="flex justify-between gap-2 mb-2.5">
-                              <div className="space-y-1"><div className="h-1.5 w-14 rounded bg-ink/25" /><div className="h-1 w-10 rounded bg-ink/15" /></div>
-                              <div className="space-y-1 flex flex-col items-end"><div className="h-1.5 w-12 rounded bg-ink/25" /><div className="h-1 w-8 rounded bg-ink/15" /></div>
+                              <div className="space-y-1"><div className="h-1.5 w-14 rounded-sm bg-ink/25" /><div className="h-1 w-10 rounded-sm bg-ink/15" /></div>
+                              <div className="space-y-1 flex flex-col items-end"><div className="h-1.5 w-12 rounded-sm bg-ink/25" /><div className="h-1 w-8 rounded-sm bg-ink/15" /></div>
                             </div>
-                            <div className="h-3 rounded" style={{ backgroundColor: color, opacity: 0.22 }} />
+                            <div className="h-3 rounded-sm" style={{ backgroundColor: color, opacity: 0.22 }} />
                             <div className="space-y-1.5 mt-2">
-                              <div className="h-1.5 w-full rounded bg-ink/10" />
-                              <div className="h-1.5 w-full rounded bg-ink/10" />
-                              <div className="h-1.5 w-5/6 rounded bg-ink/10" />
+                              <div className="h-1.5 w-full rounded-sm bg-ink/10" />
+                              <div className="h-1.5 w-full rounded-sm bg-ink/10" />
+                              <div className="h-1.5 w-5/6 rounded-sm bg-ink/10" />
                             </div>
-                            <div className="mt-auto flex justify-end"><div className="h-3 w-16 rounded" style={{ backgroundColor: color }} /></div>
+                            <div className="mt-auto flex justify-end"><div className="h-3 w-16 rounded-sm" style={{ backgroundColor: color }} /></div>
                           </div>
                         )}
                         {t.value === "modern" && (
@@ -693,15 +693,15 @@ Les présentes CGV sont soumises au droit français. Tout litige relève de la c
                               <span className="text-[11px] font-bold tracking-wide" style={{ color: "#ffffff" }}>DEVIS</span>
                             </div>
                             <div className="flex justify-between gap-2 mb-2.5">
-                              <div className="space-y-1"><div className="h-1.5 w-14 rounded bg-ink/25" /><div className="h-1 w-10 rounded bg-ink/15" /></div>
-                              <div className="space-y-1 flex flex-col items-end"><div className="h-1.5 w-12 rounded bg-ink/25" /><div className="h-1 w-8 rounded bg-ink/15" /></div>
+                              <div className="space-y-1"><div className="h-1.5 w-14 rounded-sm bg-ink/25" /><div className="h-1 w-10 rounded-sm bg-ink/15" /></div>
+                              <div className="space-y-1 flex flex-col items-end"><div className="h-1.5 w-12 rounded-sm bg-ink/25" /><div className="h-1 w-8 rounded-sm bg-ink/15" /></div>
                             </div>
                             <div className="space-y-1.5">
-                              <div className="h-1.5 w-full rounded bg-ink/10" />
-                              <div className="h-1.5 w-full rounded bg-ink/10" />
-                              <div className="h-1.5 w-5/6 rounded bg-ink/10" />
+                              <div className="h-1.5 w-full rounded-sm bg-ink/10" />
+                              <div className="h-1.5 w-full rounded-sm bg-ink/10" />
+                              <div className="h-1.5 w-5/6 rounded-sm bg-ink/10" />
                             </div>
-                            <div className="mt-auto flex justify-end"><div className="h-3 w-16 rounded" style={{ backgroundColor: color }} /></div>
+                            <div className="mt-auto flex justify-end"><div className="h-3 w-16 rounded-sm" style={{ backgroundColor: color }} /></div>
                           </div>
                         )}
                         {t.value === "epure" && (
@@ -709,13 +709,13 @@ Les présentes CGV sont soumises au droit français. Tout litige relève de la c
                             <div className="w-1 rounded-full shrink-0" style={{ backgroundColor: color }} />
                             <div className="flex-1 flex flex-col">
                               <div className="text-[9px] font-semibold tracking-[0.3em] text-gray-400">DEVIS</div>
-                              <div className="mt-2.5 space-y-1"><div className="h-1.5 w-14 rounded bg-ink/25" /><div className="h-1 w-10 rounded bg-ink/15" /></div>
+                              <div className="mt-2.5 space-y-1"><div className="h-1.5 w-14 rounded-sm bg-ink/25" /><div className="h-1 w-10 rounded-sm bg-ink/15" /></div>
                               <div className="space-y-1.5 mt-3">
-                                <div className="h-1.5 w-full rounded bg-ink/10" />
-                                <div className="h-1.5 w-full rounded bg-ink/10" />
-                                <div className="h-1.5 w-4/6 rounded bg-ink/10" />
+                                <div className="h-1.5 w-full rounded-sm bg-ink/10" />
+                                <div className="h-1.5 w-full rounded-sm bg-ink/10" />
+                                <div className="h-1.5 w-4/6 rounded-sm bg-ink/10" />
                               </div>
-                              <div className="mt-auto"><div className="h-2.5 w-14 rounded" style={{ backgroundColor: color, opacity: 0.85 }} /></div>
+                              <div className="mt-auto"><div className="h-2.5 w-14 rounded-sm" style={{ backgroundColor: color, opacity: 0.85 }} /></div>
                             </div>
                           </div>
                         )}
@@ -738,7 +738,7 @@ Les présentes CGV sont soumises au droit français. Tout litige relève de la c
                 <div className="flex items-center gap-1.5 ml-1">
                   <input type="color" value={profile.proposal_color || "#4f46e5"}
                     onChange={(e) => set("proposal_color" as keyof Profile, e.target.value)}
-                    className="w-8 h-8 rounded cursor-pointer border border-ds-border" />
+                    className="w-8 h-8 rounded-sm cursor-pointer border border-ds-border" />
                   <span className="text-xs text-gray-500">Personnalisée</span>
                 </div>
               </div>
@@ -784,7 +784,7 @@ Les présentes CGV sont soumises au droit français. Tout litige relève de la c
               <div className="relative flex-1">
                 <input type="text" value={subdomainInput} onChange={(e) => handleSubdomainChange(e.target.value)}
                   placeholder="mon-agence" maxLength={30}
-                  className={`w-full bg-ds-bg border rounded-l-lg px-3 py-2.5 text-sm text-ink placeholder:text-gray-600 focus:outline-none focus:ring-1 transition-colors ${ subdomainStatus === "available" ? "border-emerald-500 focus:ring-emerald-500/30" : subdomainStatus === "taken" || subdomainStatus === "invalid" ? "border-red-500 focus:ring-red-500/30" : "border-ds-border focus:border-indigo-500 focus:ring-indigo-500/30" }`} />
+                  className={`w-full bg-ds-bg border rounded-l-lg px-3 py-2.5 text-sm text-ink placeholder:text-gray-600 focus:outline-hidden focus:ring-1 transition-colors ${ subdomainStatus === "available" ? "border-emerald-500 focus:ring-emerald-500/30" : subdomainStatus === "taken" || subdomainStatus === "invalid" ? "border-red-500 focus:ring-red-500/30" : "border-ds-border focus:border-indigo-500 focus:ring-indigo-500/30" }`} />
                 {subdomainStatus === "checking" && (
                   <div className="absolute right-3 top-1/2 -translate-y-1/2">
                     <div className="w-3.5 h-3.5 border-2 border-indigo-400 border-t-transparent rounded-full animate-spin" />
@@ -861,7 +861,7 @@ Les présentes CGV sont soumises au droit français. Tout litige relève de la c
                 onChange={(e) => setIntervalInput(e.target.value)}
                 onKeyDown={(e) => e.key === "Enter" && (e.preventDefault(), addInterval())}
                 placeholder="ex: 5"
-                className="w-28 bg-ds-bg border border-ds-border text-ink placeholder:text-gray-600 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500/30"
+                className="w-28 bg-ds-bg border border-ds-border text-ink placeholder:text-gray-600 rounded-lg px-3 py-2 text-sm focus:outline-hidden focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500/30"
               />
               <button type="button" onClick={addInterval}
                 disabled={!intervalInput || reminderIntervals.length >= 10}
@@ -883,7 +883,7 @@ Les présentes CGV sont soumises au droit français. Tout litige relève de la c
               maxLength={500}
               rows={3}
               placeholder="Bonjour, je me permets de vous relancer concernant ce devis. N'hésitez pas à me contacter si vous avez des questions."
-              className="w-full bg-ds-bg border border-ds-border text-ink placeholder:text-gray-600 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500/30 resize-none"
+              className="w-full bg-ds-bg border border-ds-border text-ink placeholder:text-gray-600 rounded-lg px-3 py-2 text-sm focus:outline-hidden focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500/30 resize-none"
             />
             <div className="flex justify-between items-center mt-1">
               <p className="text-xs text-gray-600">Affiché en encadré vert dans l&apos;email de relance</p>
@@ -937,7 +937,7 @@ Les présentes CGV sont soumises au droit français. Tout litige relève de la c
               chorus-pro.gouv.fr
             </a>{" "}
             → Mon compte → Gérer mes comptes techniques. L&apos;identifiant a le format{" "}
-            <code className="bg-blue-500/10 px-1 rounded">TECH_1_xxxxx@cpro.fr</code>.
+            <code className="bg-blue-500/10 px-1 rounded-sm">TECH_1_xxxxx@cpro.fr</code>.
           </p>
         </div>
 
@@ -1040,7 +1040,7 @@ Les présentes CGV sont soumises au droit français. Tout litige relève de la c
           onChange={(e) => setCgvText(e.target.value)}
           rows={14}
           placeholder="Rédigez vos conditions générales de vente ici, ou cliquez sur « Utiliser le modèle » pour partir d'une base complète…"
-          className="w-full bg-ds-bg border border-ds-border text-ink placeholder:text-gray-600 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500/30 resize-y mt-3 font-mono leading-relaxed"
+          className="w-full bg-ds-bg border border-ds-border text-ink placeholder:text-gray-600 rounded-lg px-3 py-2.5 text-sm focus:outline-hidden focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500/30 resize-y mt-3 font-mono leading-relaxed"
         />
         <div className="flex items-center gap-3 mt-3">
           <button

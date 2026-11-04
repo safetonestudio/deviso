@@ -83,12 +83,12 @@ export function MobileNav({ initials, userName, userEmail, isMember = false, isC
         </div>
       </div>
 
-      {open && <div className="lg:hidden fixed inset-0 z-[60] bg-black/60 backdrop-blur-sm" onClick={() => setOpen(false)} />}
+      {open && <div className="lg:hidden fixed inset-0 z-60 bg-black/60 backdrop-blur-xs" onClick={() => setOpen(false)} />}
 
-      <div className={`lg:hidden fixed top-0 left-0 bottom-0 z-[60] w-72 bg-ds-bg border-r border-ds-border flex flex-col shadow-xl transition-transform duration-300 ease-in-out ${open ? "translate-x-0" : "-translate-x-full"}`}>
+      <div className={`lg:hidden fixed top-0 left-0 bottom-0 z-60 w-72 bg-ds-bg border-r border-ds-border flex flex-col shadow-xl transition-transform duration-300 ease-in-out ${open ? "translate-x-0" : "-translate-x-full"}`}>
         <div className="p-5 border-b border-ds-border flex items-center justify-between">
           <Link href="/dashboard" className="flex items-center gap-2" onClick={() => setOpen(false)}>
-            <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-indigo-600 to-violet-600 flex items-center justify-center">
+            <div className="w-8 h-8 rounded-lg bg-linear-to-br from-indigo-600 to-violet-600 flex items-center justify-center">
               <span className="text-ink font-semibold text-sm">D</span>
             </div>
             <span className="font-semibold text-ink">Deviso</span>
@@ -127,7 +127,7 @@ export function MobileNav({ initials, userName, userEmail, isMember = false, isC
 
         <div className="p-4 border-t border-ds-border space-y-2">
           <div className="flex items-center gap-3 p-2 rounded-lg">
-            <div className="w-8 h-8 rounded-full bg-indigo-500/20 text-indigo-400 font-semibold text-sm flex items-center justify-center flex-shrink-0">{initials}</div>
+            <div className="w-8 h-8 rounded-full bg-indigo-500/20 text-indigo-400 font-semibold text-sm flex items-center justify-center shrink-0">{initials}</div>
             <div className="flex-1 min-w-0">
               <div className="text-sm font-medium text-ink truncate">{userName || "Mon compte"}</div>
               <div className="text-xs text-gray-500 truncate">{userEmail}</div>

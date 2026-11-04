@@ -101,10 +101,10 @@ export function DemoBanner() {
     // Les marges négatives annulent le rembourrage de <main> pour que le
     // bandeau aille d'un bord à l'autre au lieu de flotter comme une carte.
     // `top-14` sur mobile : la barre de navigation fixe occupe déjà cette hauteur.
-    <div className="bandeau-demo sticky top-14 z-20 -mx-4 sm:-mx-6 lg:-mx-10 -mt-4 lg:-mt-6 mb-4 lg:mb-6 px-4 sm:px-6 lg:px-10 py-2.5 bg-amber-500/10 border-b border-amber-500/20 backdrop-blur-sm">
+    <div className="bandeau-demo sticky top-14 z-20 -mx-4 sm:-mx-6 lg:-mx-10 -mt-4 lg:-mt-6 mb-4 lg:mb-6 px-4 sm:px-6 lg:px-10 py-2.5 bg-amber-500/10 border-b border-amber-500/20 backdrop-blur-xs">
       <div className="flex items-center justify-between gap-3 flex-wrap">
         <span className="flex items-center gap-2 text-xs sm:text-sm text-amber-400 font-medium min-w-0">
-          <span className="text-[10px] font-bold bg-amber-500/20 border border-amber-500/30 px-1.5 py-0.5 rounded shrink-0">
+          <span className="text-[10px] font-bold bg-amber-500/20 border border-amber-500/30 px-1.5 py-0.5 rounded-sm shrink-0">
             Démo
           </span>
           <span className="truncate">Données fictives, rien n&apos;est conservé</span>

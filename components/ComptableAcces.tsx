@@ -125,7 +125,7 @@ export function ComptableAcces() {
             value={code}
             onChange={(e) => setCode(e.target.value.toUpperCase())}
             placeholder="XXXX-XXXX"
-            className="flex-1 rounded-lg border border-ds-border bg-ds-elevated px-3 py-2 text-sm font-mono tracking-widest text-ink placeholder-gray-500 focus:border-indigo-500 focus:outline-none"
+            className="flex-1 rounded-lg border border-ds-border bg-ds-elevated px-3 py-2 text-sm font-mono tracking-widest text-ink placeholder-gray-500 focus:border-indigo-500 focus:outline-hidden"
           />
           <button
             type="button"

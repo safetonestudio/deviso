@@ -91,7 +91,7 @@ export function TjmSimulator({ defaultTjm = 350, defaultJours = 15 }: TjmSimulat
               step={10}
               value={tjm}
               onChange={(e) => handleTjm(e.target.value)}
-              className="w-full bg-gray-900/80 border border-ds-border rounded-xl px-4 py-3 text-ink text-lg font-semibold focus:outline-none focus:border-indigo-500 tabular-nums"
+              className="w-full bg-gray-900/80 border border-ds-border rounded-xl px-4 py-3 text-ink text-lg font-semibold focus:outline-hidden focus:border-indigo-500 tabular-nums"
             />
           </div>
         ) : (
@@ -106,7 +106,7 @@ export function TjmSimulator({ defaultTjm = 350, defaultJours = 15 }: TjmSimulat
               step={100}
               value={netCible}
               onChange={(e) => handleNet(e.target.value)}
-              className="w-full bg-gray-900/80 border border-ds-border rounded-xl px-4 py-3 text-ink text-lg font-semibold focus:outline-none focus:border-indigo-500 tabular-nums"
+              className="w-full bg-gray-900/80 border border-ds-border rounded-xl px-4 py-3 text-ink text-lg font-semibold focus:outline-hidden focus:border-indigo-500 tabular-nums"
             />
           </div>
         )}

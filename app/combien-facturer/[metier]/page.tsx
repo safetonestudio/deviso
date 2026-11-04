@@ -125,10 +125,10 @@ export default async function MetierTarifsPage({ params }: Props) {
       <DonneesStructurees donnees={jsonLd} />
 
       {/* Navbar */}
-      <nav className="sticky top-0 z-40 bg-ds-bg/90 backdrop-blur-xl border-b border-ink/[0.06]">
+      <nav className="sticky top-0 z-40 bg-ds-bg/90 backdrop-blur-xl border-b border-ink/6">
         <div className="max-w-5xl mx-auto px-4 sm:px-6 h-14 flex items-center justify-between">
           <Link href="/" className="flex items-center gap-2">
-            <div className="w-7 h-7 rounded-lg bg-gradient-to-br from-indigo-600 to-violet-600 flex items-center justify-center">
+            <div className="w-7 h-7 rounded-lg bg-linear-to-br from-indigo-600 to-violet-600 flex items-center justify-center">
               <span className="text-ink font-semibold text-xs">D</span>
             </div>
             <span className="font-semibold text-base text-ink">Deviso</span>

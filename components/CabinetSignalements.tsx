@@ -63,7 +63,7 @@ export function CabinetSignalements({ clientId, initiaux }: { clientId: string; 
           rows={3}
           maxLength={1000}
           placeholder="Ex. : la facture 2026-012 n'a pas de SIREN client, pouvez-vous le compléter ?"
-          className="w-full bg-ds-bg border border-ds-border rounded-lg px-3 py-2 text-sm text-ink placeholder:text-gray-600 focus:outline-none focus:border-indigo-500 resize-y"
+          className="w-full bg-ds-bg border border-ds-border rounded-lg px-3 py-2 text-sm text-ink placeholder:text-gray-600 focus:outline-hidden focus:border-indigo-500 resize-y"
         />
         <div className="mt-2 flex items-center justify-between gap-3">
           {erreur ? <span className="text-xs text-red-400">{erreur}</span> : <span />}
@@ -92,7 +92,7 @@ export function CabinetSignalements({ clientId, initiaux }: { clientId: string; 
                 {s.statut === "traite" ? "Traité" : "Ouvert"}
               </span>
               <div className="min-w-0 flex-1">
-                <p className="text-sm text-gray-200 whitespace-pre-wrap break-words">{s.message}</p>
+                <p className="text-sm text-gray-200 whitespace-pre-wrap wrap-break-word">{s.message}</p>
                 <p className="text-xs text-gray-500 mt-1">{horodatage(s.created_at)}</p>
               </div>
             </li>

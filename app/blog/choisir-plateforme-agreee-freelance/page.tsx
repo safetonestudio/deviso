@@ -35,16 +35,16 @@ export default function ChoisirPlateformeAgreeePage() {
     <div className="min-h-screen bg-site">
       <DonneesStructurees donnees={jsonLdArticle(SLUG, FAQ)} />
 
-      <div className="fixed top-0 left-0 right-0 bg-indigo-950/95 backdrop-blur-sm border-b border-indigo-500/20 py-2 px-4 text-center text-sm" style={{ zIndex: 60 }}>
+      <div className="fixed top-0 left-0 right-0 bg-indigo-950/95 backdrop-blur-xs border-b border-indigo-500/20 py-2 px-4 text-center text-sm" style={{ zIndex: 60 }}>
         <span className="text-indigo-300 font-semibold">Réforme 2026&nbsp;:</span>
         <span className="text-gray-300 ml-1.5">PPF abandonné · Seules les PDP privées subsistent.&nbsp;</span>
         <span className="text-indigo-400 font-medium">Deviso est raccordé à une Plateforme Agréée (Super PDP) et émet et reçoit déjà vos factures électroniques.</span>
       </div>
 
-      <nav className="fixed top-9 left-0 right-0 z-50 bg-ds-bg/80 backdrop-blur-xl border-b border-ink/[0.06]">
+      <nav className="fixed top-9 left-0 right-0 z-50 bg-ds-bg/80 backdrop-blur-xl border-b border-ink/6">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
           <Link href="/" className="flex items-center gap-2">
-            <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-indigo-600 to-violet-600 flex items-center justify-center">
+            <div className="w-8 h-8 rounded-lg bg-linear-to-br from-indigo-600 to-violet-600 flex items-center justify-center">
               <span className="text-ink font-semibold text-sm">D</span>
             </div>
             <span className="font-semibold text-lg text-ink">Deviso</span>

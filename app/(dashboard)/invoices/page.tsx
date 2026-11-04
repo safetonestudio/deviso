@@ -257,7 +257,7 @@ export default function InvoicesPage() {
   const isPro = canName(plan, "csvRecap");
   const canRecurring = canName(plan, "recurring");
 
-  const inputCls = "w-full bg-ds-elevated border border-ds-border rounded-lg px-3 py-2 text-sm text-ink placeholder-gray-500 focus:outline-none focus:border-indigo-500";
+  const inputCls = "w-full bg-ds-elevated border border-ds-border rounded-lg px-3 py-2 text-sm text-ink placeholder-gray-500 focus:outline-hidden focus:border-indigo-500";
 
   return (
     <div className="w-full">
@@ -274,7 +274,7 @@ export default function InvoicesPage() {
               <select
                 value={exportYear}
                 onChange={(e) => setExportYear(Number(e.target.value))}
-                className="text-sm text-gray-300 px-2 py-2 bg-ds-bg border-none outline-none cursor-pointer"
+                className="text-sm text-gray-300 px-2 py-2 bg-ds-bg border-none outline-hidden cursor-pointer"
               >
                 {Array.from({ length: 4 }, (_, i) => new Date().getFullYear() - i).map((y) => (
                   <option key={y} value={y}>{y}</option>
@@ -501,13 +501,13 @@ export default function InvoicesPage() {
                               <input
                                 value={item.quantity}
                                 onChange={(e) => updateRItem(i, "quantity", Number(e.target.value))}
-                                className="w-16 bg-ds-elevated border border-ds-border rounded-lg px-2 py-2 text-sm text-ink text-center focus:outline-none focus:border-indigo-500"
+                                className="w-16 bg-ds-elevated border border-ds-border rounded-lg px-2 py-2 text-sm text-ink text-center focus:outline-hidden focus:border-indigo-500"
                                 type="number" min={1}
                               />
                               <input
                                 value={item.unit_price}
                                 onChange={(e) => updateRItem(i, "unit_price", Number(e.target.value))}
-                                className="w-24 bg-ds-elevated border border-ds-border rounded-lg px-2 py-2 text-sm text-ink text-right focus:outline-none focus:border-indigo-500"
+                                className="w-24 bg-ds-elevated border border-ds-border rounded-lg px-2 py-2 text-sm text-ink text-right focus:outline-hidden focus:border-indigo-500"
                                 type="number" min={0} placeholder="Prix HT"
                               />
                               {rItems.length > 1 && (

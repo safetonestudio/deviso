@@ -27,7 +27,7 @@ export function BarreRecherche({
         value={value}
         onChange={(e) => onChange(e.target.value)}
         placeholder={placeholder}
-        className="w-full bg-ds-surface border border-ds-border shadow-sm rounded-lg pl-9 pr-3 py-2.5 text-sm text-ink placeholder:text-gray-500 focus:outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/30 transition-colors"
+        className="w-full bg-ds-surface border border-ds-border shadow-xs rounded-lg pl-9 pr-3 py-2.5 text-sm text-ink placeholder:text-gray-500 focus:outline-hidden focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/30 transition-colors"
       />
     </div>
   );

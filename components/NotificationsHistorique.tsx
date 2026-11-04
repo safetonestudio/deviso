@@ -61,7 +61,7 @@ export function NotificationsHistorique() {
                 <span className={`mt-1.5 w-2 h-2 rounded-full shrink-0 ${n.read ? "bg-transparent" : "bg-indigo-500"}`} />
                 <div className="min-w-0 flex-1">
                   <p className={`text-sm ${n.read ? "text-gray-400" : "text-ink font-semibold"}`}>{n.title}</p>
-                  {n.body && <p className="text-[13px] text-gray-400 mt-0.5 break-words">{n.body}</p>}
+                  {n.body && <p className="text-[13px] text-gray-400 mt-0.5 wrap-break-word">{n.body}</p>}
                 </div>
                 <span className="text-xs text-gray-400 shrink-0">{quand(n.created_at)}</span>
               </div>

@@ -313,7 +313,7 @@ export default function NewProposalPage() {
   const fmt = (n: number) =>
     new Intl.NumberFormat("fr-FR", { style: "currency", currency: "EUR" }).format(n);
 
-  const inputCls = "w-full text-sm px-3 py-2 rounded-lg border border-ds-border bg-ds-elevated text-ink focus:outline-none focus:ring-1 focus:ring-brand-400 placeholder:text-gray-600";
+  const inputCls = "w-full text-sm px-3 py-2 rounded-lg border border-ds-border bg-ds-elevated text-ink focus:outline-hidden focus:ring-1 focus:ring-brand-400 placeholder:text-gray-600";
 
   return (
     <div className="max-w-3xl mx-auto">
@@ -412,7 +412,7 @@ export default function NewProposalPage() {
               onChange={(e) => setBrief(e.target.value)}
               rows={5}
               placeholder="Décris ici ton projet, la prestation, le client, le budget approximatif et le délai..."
-              className="w-full px-4 py-3 rounded-xl border border-ds-border bg-ds-elevated text-ink placeholder:text-gray-600 focus:outline-none focus:ring-1 focus:ring-indigo-500/30 focus:border-indigo-500 text-sm transition resize-none"
+              className="w-full px-4 py-3 rounded-xl border border-ds-border bg-ds-elevated text-ink placeholder:text-gray-600 focus:outline-hidden focus:ring-1 focus:ring-indigo-500/30 focus:border-indigo-500 text-sm transition resize-none"
             />
             {catalog.length > 0 && (
               <p className="text-xs text-indigo-400/70 mt-3 flex items-center gap-1.5">
@@ -450,7 +450,7 @@ export default function NewProposalPage() {
                   value={generated.title}
                   onChange={(e) => setGenerated({ ...generated, title: e.target.value })}
                   placeholder="Titre du devis"
-                  className="font-semibold text-ink text-lg bg-transparent border-b border-transparent hover:border-ds-border focus:border-indigo-500 focus:outline-none w-full placeholder:text-gray-600"
+                  className="font-semibold text-ink text-lg bg-transparent border-b border-transparent hover:border-ds-border focus:border-indigo-500 focus:outline-hidden w-full placeholder:text-gray-600"
                 />
                 <p className="text-gray-500 text-sm mt-0.5">Modifie le titre et les lignes si nécessaire</p>
               </div>
@@ -574,7 +574,7 @@ export default function NewProposalPage() {
                 <select aria-label="Régime TVA"
                   value={generated.tva_rate}
                   onChange={(e) => updateTvaRate(parseFloat(e.target.value))}
-                  className="w-full border border-ds-border rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-indigo-500/30 focus:border-indigo-500 bg-ds-elevated text-ink"
+                  className="w-full border border-ds-border rounded-lg px-3 py-2 text-sm focus:outline-hidden focus:ring-1 focus:ring-indigo-500/30 focus:border-indigo-500 bg-ds-elevated text-ink"
                 >
                   {TVA_OPTIONS.map((opt) => (
                     <option key={opt.rate} value={opt.rate}>{opt.label}</option>
@@ -652,7 +652,7 @@ export default function NewProposalPage() {
                   }
                 }}
                 placeholder="Ex : 'Réduis à 3 500€ max', 'Ajoute une clause de révisions illimitées 1 mois'..."
-                className="flex-1 text-sm px-3 py-2.5 rounded-xl border border-ds-border bg-ds-elevated text-ink placeholder:text-gray-600 focus:outline-none focus:ring-1 focus:ring-indigo-500/30 focus:border-indigo-500 transition"
+                className="flex-1 text-sm px-3 py-2.5 rounded-xl border border-ds-border bg-ds-elevated text-ink placeholder:text-gray-600 focus:outline-hidden focus:ring-1 focus:ring-indigo-500/30 focus:border-indigo-500 transition"
               />
               <button
                 onClick={handleRefine}
@@ -750,7 +750,7 @@ export default function NewProposalPage() {
 
           <div className="flex gap-3">
             <button onClick={() => setStep("review")} className="flex-1 border border-ds-border text-gray-300 font-semibold py-3 rounded-xl hover:bg-ds-elevated transition-all">← Retour</button>
-            <button onClick={handleSave} disabled={saving} className="flex-grow bg-indigo-600 text-ink font-semibold py-3 rounded-xl hover:bg-indigo-700 disabled:opacity-60 transition-all flex items-center justify-center gap-2">
+            <button onClick={handleSave} disabled={saving} className="grow bg-indigo-600 text-ink font-semibold py-3 rounded-xl hover:bg-indigo-700 disabled:opacity-60 transition-all flex items-center justify-center gap-2">
               {saving ? <><span className="w-4 h-4 border-2 border-ink/30 border-t-white rounded-full spinner" />Sauvegarde...</> : (<><Save size={18} className="shrink-0" />Enregistrer le devis</>)}
             </button>
           </div>
@@ -760,7 +760,7 @@ export default function NewProposalPage() {
       {/* ── Modal sélecteur de durée (taux horaire) ── */}
       {pendingHourlyItem && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-          <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={() => setPendingHourlyItem(null)} />
+          <div className="absolute inset-0 bg-black/60 backdrop-blur-xs" onClick={() => setPendingHourlyItem(null)} />
           <div className="relative bg-ds-surface border border-violet-500/30 rounded-xl p-6 w-full max-w-sm shadow-2xl">
             <div className="flex items-center gap-2 mb-1">
               <Clock size={15} className="text-violet-400" />
@@ -776,7 +776,7 @@ export default function NewProposalPage() {
                 <select aria-label="Heures"
                   value={durationHours}
                   onChange={(e) => setDurationHours(parseInt(e.target.value))}
-                  className="w-full px-3 py-2 rounded-lg bg-ds-bg border border-ds-border text-sm text-ink focus:outline-none focus:border-violet-500 focus:ring-1 focus:ring-violet-500/30"
+                  className="w-full px-3 py-2 rounded-lg bg-ds-bg border border-ds-border text-sm text-ink focus:outline-hidden focus:border-violet-500 focus:ring-1 focus:ring-violet-500/30"
                 >
                   {Array.from({ length: 24 }, (_, i) => (
                     <option key={i} value={i}>{i}h</option>
@@ -788,7 +788,7 @@ export default function NewProposalPage() {
                 <select aria-label="Minutes"
                   value={durationMinutes}
                   onChange={(e) => setDurationMinutes(parseInt(e.target.value))}
-                  className="w-full px-3 py-2 rounded-lg bg-ds-bg border border-ds-border text-sm text-ink focus:outline-none focus:border-violet-500 focus:ring-1 focus:ring-violet-500/30"
+                  className="w-full px-3 py-2 rounded-lg bg-ds-bg border border-ds-border text-sm text-ink focus:outline-hidden focus:border-violet-500 focus:ring-1 focus:ring-violet-500/30"
                 >
                   {[0, 15, 30, 45].map((m) => (
                     <option key={m} value={m}>{m === 0 ? "00 min" : `${m} min`}</option>

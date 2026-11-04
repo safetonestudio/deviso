@@ -66,10 +66,10 @@ export default function ConformitePage() {
       <DonneesStructurees donnees={jsonLd} />
 
       {/* ── Navbar ── */}
-      <nav className="fixed top-0 left-0 right-0 z-50 bg-ds-bg/80 backdrop-blur-xl border-b border-ink/[0.06]">
+      <nav className="fixed top-0 left-0 right-0 z-50 bg-ds-bg/80 backdrop-blur-xl border-b border-ink/6">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
           <Link href="/" aria-label="Deviso" className="flex items-center gap-2">
-            <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-indigo-600 to-violet-600 flex items-center justify-center">
+            <div className="w-8 h-8 rounded-lg bg-linear-to-br from-indigo-600 to-violet-600 flex items-center justify-center">
               <span className="text-ink font-semibold text-sm">D</span>
             </div>
             <span className="font-semibold text-lg text-ink">Deviso</span>
@@ -268,7 +268,7 @@ export default function ConformitePage() {
                 <div className="bg-ds-surface border border-ds-border rounded-xl p-5">
                   <div className="flex flex-wrap items-center justify-between gap-2 mb-1">
                     <span className="text-sm font-semibold text-gray-300">Émettre</span>
-                    <span className="text-[10px] font-semibold bg-ink/[0.06] text-gray-400 rounded-full px-2 py-0.5">
+                    <span className="text-[10px] font-semibold bg-ink/6 text-gray-400 rounded-full px-2 py-0.5">
                       1<sup>er</sup> septembre 2027
                     </span>
                   </div>

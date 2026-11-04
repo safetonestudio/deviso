@@ -32,7 +32,7 @@ export default async function CabinetLayout({ children }: { children: ReactNode 
                 <span className="text-ink font-display font-bold text-[15px]">D</span>
               </div>
               <span className="font-display font-bold text-[19px] tracking-tight text-ink">Deviso</span>
-              <span className="text-[10px] font-bold bg-indigo-500/15 text-indigo-300 border border-indigo-500/30 px-1.5 py-0.5 rounded">
+              <span className="text-[10px] font-bold bg-indigo-500/15 text-indigo-300 border border-indigo-500/30 px-1.5 py-0.5 rounded-sm">
                 Cabinet
               </span>
             </a>

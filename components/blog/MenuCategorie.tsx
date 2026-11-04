@@ -62,7 +62,7 @@ export function MenuCategorie({
         </div>
         <span
           aria-hidden
-          className="text-gray-600 flex-shrink-0 mt-1 text-xl transition-transform duration-200 group-open:rotate-90"
+          className="text-gray-600 shrink-0 mt-1 text-xl transition-transform duration-200 group-open:rotate-90"
         >
           →
         </span>
@@ -77,7 +77,7 @@ export function MenuCategorie({
               href={`/blog/${art.slug}`}
               className="flex items-center gap-4 px-6 py-4 hover:bg-ds-elevated transition-colors group/item"
             >
-              <span className="flex-shrink-0 w-8 flex justify-center text-indigo-400">
+              <span className="shrink-0 w-8 flex justify-center text-indigo-400">
                 <Icone size={18} />
               </span>
               <div className="flex-1 min-w-0">
@@ -86,12 +86,12 @@ export function MenuCategorie({
                 </p>
                 <p className="text-gray-600 text-xs mt-0.5">{art.carte.resume}</p>
               </div>
-              <span className="text-xs text-gray-400 flex-shrink-0 whitespace-nowrap">
+              <span className="text-xs text-gray-400 shrink-0 whitespace-nowrap">
                 {art.dureeLecture} min
               </span>
               <span
                 aria-hidden
-                className="text-gray-700 group-hover/item:text-gray-400 transition-colors flex-shrink-0 text-sm"
+                className="text-gray-700 group-hover/item:text-gray-400 transition-colors shrink-0 text-sm"
               >
                 →
               </span>

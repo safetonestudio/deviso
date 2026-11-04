@@ -58,10 +58,10 @@ export default function Page() {
       <DonneesStructurees donnees={jsonLdArticle(SLUG, FAQ)} />
 
       {/* ── Navbar ── */}
-      <nav className="fixed top-0 left-0 right-0 z-50 bg-ds-bg/80 backdrop-blur-xl border-b border-ink/[0.06]">
+      <nav className="fixed top-0 left-0 right-0 z-50 bg-ds-bg/80 backdrop-blur-xl border-b border-ink/6">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
           <Link href="/" aria-label="Deviso" className="flex items-center gap-2">
-            <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-indigo-600 to-violet-600 flex items-center justify-center">
+            <div className="w-8 h-8 rounded-lg bg-linear-to-br from-indigo-600 to-violet-600 flex items-center justify-center">
               <span className="text-ink font-semibold text-sm">D</span>
             </div>
             <span className="font-semibold text-lg text-ink">Deviso</span>
@@ -172,7 +172,7 @@ export default function Page() {
               </p>
 
               <div className="overflow-x-auto -mx-4 px-4 sm:mx-0 sm:px-0">
-                <table className="w-full text-left border-collapse min-w-[34rem]">
+                <table className="w-full text-left border-collapse min-w-136">
                   <thead>
                     <tr className="border-b border-ds-border">
                       <th className="py-3 pr-4 text-xs font-semibold text-gray-400 uppercase tracking-wider">
@@ -323,7 +323,7 @@ export default function Page() {
                   },
                 ].map((item, i) => (
                   <li key={item.q} className="flex gap-4">
-                    <span className="flex-shrink-0 w-7 h-7 rounded-full bg-indigo-500/15 border border-indigo-500/30 text-indigo-400 text-sm font-semibold flex items-center justify-center mt-0.5">
+                    <span className="shrink-0 w-7 h-7 rounded-full bg-indigo-500/15 border border-indigo-500/30 text-indigo-400 text-sm font-semibold flex items-center justify-center mt-0.5">
                       {i + 1}
                     </span>
                     <div>

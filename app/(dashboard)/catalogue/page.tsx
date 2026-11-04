@@ -35,7 +35,7 @@ export default function CataloguePage() {
   const [editId, setEditId] = useState<string | null>(null);
   const [saving, setSaving] = useState(false);
 
-  const inputCls = "w-full px-3 py-2 rounded-lg bg-ds-bg border border-ds-border text-sm focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500/30 text-ink placeholder:text-gray-600";
+  const inputCls = "w-full px-3 py-2 rounded-lg bg-ds-bg border border-ds-border text-sm focus:outline-hidden focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500/30 text-ink placeholder:text-gray-600";
 
   useEffect(() => {
     fetch("/api/catalog").then((r) => r.json()).then((catalogData) => {

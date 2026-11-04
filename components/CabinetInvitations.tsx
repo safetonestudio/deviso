@@ -89,7 +89,7 @@ export function CabinetInvitations() {
           value={libelle}
           onChange={(e) => setLibelle(e.target.value)}
           placeholder="Nom du client (optionnel)"
-          className="flex-1 min-w-[200px] bg-ds-bg border border-ds-border rounded-lg px-3 py-2 text-sm text-ink placeholder-gray-600 focus:outline-none focus:border-indigo-500"
+          className="flex-1 min-w-[200px] bg-ds-bg border border-ds-border rounded-lg px-3 py-2 text-sm text-ink placeholder-gray-600 focus:outline-hidden focus:border-indigo-500"
         />
         <button
           onClick={generer}

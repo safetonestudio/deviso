@@ -8,7 +8,7 @@ export function NavbarMobile() {
   return (
     <>
       <button
-        className="md:hidden p-2 rounded-lg text-gray-400 hover:text-ink hover:bg-ink/[0.06] transition-colors"
+        className="md:hidden p-2 rounded-lg text-gray-400 hover:text-ink hover:bg-ink/6 transition-colors"
         onClick={() => setOpen(!open)}
         aria-label={open ? "Fermer le menu" : "Ouvrir le menu"}
         aria-expanded={open}
@@ -25,40 +25,40 @@ export function NavbarMobile() {
       </button>
 
       {open && (
-        <div className="absolute top-full left-0 right-0 bg-[#0D0D0E]/95 backdrop-blur-xl border-b border-ink/[0.06] shadow-2xl md:hidden z-50">
+        <div className="absolute top-full left-0 right-0 bg-[#0D0D0E]/95 backdrop-blur-xl border-b border-ink/6 shadow-2xl md:hidden z-50">
           <div className="px-4 py-4 flex flex-col gap-1">
             <a
               href="#fonctionnalites"
               onClick={() => setOpen(false)}
-              className="px-3 py-2.5 text-sm font-medium text-gray-300 hover:text-ink hover:bg-ink/[0.06] rounded-lg transition-colors"
+              className="px-3 py-2.5 text-sm font-medium text-gray-300 hover:text-ink hover:bg-ink/6 rounded-lg transition-colors"
             >
               Fonctionnalités
             </a>
             <a
               href="#comment"
               onClick={() => setOpen(false)}
-              className="px-3 py-2.5 text-sm font-medium text-gray-300 hover:text-ink hover:bg-ink/[0.06] rounded-lg transition-colors"
+              className="px-3 py-2.5 text-sm font-medium text-gray-300 hover:text-ink hover:bg-ink/6 rounded-lg transition-colors"
             >
               Comment ça marche
             </a>
             <a
               href="#tarifs"
               onClick={() => setOpen(false)}
-              className="px-3 py-2.5 text-sm font-medium text-gray-300 hover:text-ink hover:bg-ink/[0.06] rounded-lg transition-colors"
+              className="px-3 py-2.5 text-sm font-medium text-gray-300 hover:text-ink hover:bg-ink/6 rounded-lg transition-colors"
             >
               Tarifs
             </a>
             <Link
               href="/experts-comptables"
               onClick={() => setOpen(false)}
-              className="px-3 py-2.5 text-sm font-medium text-gray-300 hover:text-ink hover:bg-ink/[0.06] rounded-lg transition-colors"
+              className="px-3 py-2.5 text-sm font-medium text-gray-300 hover:text-ink hover:bg-ink/6 rounded-lg transition-colors"
             >
               Experts-comptables
             </Link>
             <Link
               href="/blog"
               onClick={() => setOpen(false)}
-              className="px-3 py-2.5 text-sm font-medium text-gray-300 hover:text-ink hover:bg-ink/[0.06] rounded-lg transition-colors"
+              className="px-3 py-2.5 text-sm font-medium text-gray-300 hover:text-ink hover:bg-ink/6 rounded-lg transition-colors"
             >
               Blog
             </Link>
@@ -66,7 +66,7 @@ export function NavbarMobile() {
             <Link
               href="/login"
               onClick={() => setOpen(false)}
-              className="px-3 py-2.5 text-sm font-medium text-gray-400 hover:text-ink hover:bg-ink/[0.06] rounded-lg transition-colors"
+              className="px-3 py-2.5 text-sm font-medium text-gray-400 hover:text-ink hover:bg-ink/6 rounded-lg transition-colors"
             >
               Connexion
             </Link>

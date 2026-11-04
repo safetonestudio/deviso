@@ -226,7 +226,7 @@ export default function PriseEnMainPage() {
           <button
             type="button"
             onClick={() => toggle(!enabled)}
-            className={`relative inline-flex h-7 w-12 shrink-0 items-center rounded-full border-2 transition-colors duration-200 focus:outline-none ${
+            className={`relative inline-flex h-7 w-12 shrink-0 items-center rounded-full border-2 transition-colors duration-200 focus:outline-hidden ${
               enabled
                 ? "bg-indigo-600 border-indigo-600"
                 : "bg-ds-elevated border-ds-border"

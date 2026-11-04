@@ -46,7 +46,7 @@ export async function SignalementsClient({ workspaceId }: { workspaceId: string 
                 <span className="text-ink font-semibold">{nom}</span>, ton expert-comptable ·{" "}
                 <span className="text-amber-400 font-semibold">À traiter</span>
               </p>
-              <p className="text-[15px] text-ink mt-1 whitespace-pre-wrap break-words">{s.message}</p>
+              <p className="text-[15px] text-ink mt-1 whitespace-pre-wrap wrap-break-word">{s.message}</p>
             </div>
             <div className="col-span-2 sm:col-span-1 flex gap-2 sm:justify-end">
               <SignalementAcquitter id={s.id} />

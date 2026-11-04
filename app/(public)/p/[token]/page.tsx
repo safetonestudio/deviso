@@ -174,7 +174,7 @@ export default function PublicProposalPage() {
                     value={signerName}
                     onChange={(e) => setSignerName(e.target.value)}
                     placeholder="Jean Martin"
-                    className="w-full border border-slate-200 rounded-xl px-4 py-3 text-slate-900 placeholder:text-slate-400 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500/30 focus:border-indigo-500"
+                    className="w-full border border-slate-200 rounded-xl px-4 py-3 text-slate-900 placeholder:text-slate-400 text-sm focus:outline-hidden focus:ring-2 focus:ring-indigo-500/30 focus:border-indigo-500"
                   />
                 </div>
 
@@ -216,7 +216,7 @@ export default function PublicProposalPage() {
                   <button
                     onClick={() => handleAction("sign")}
                     disabled={acting || !canSign}
-                    className="flex-grow bg-indigo-600 text-ink font-semibold py-3 px-8 rounded-xl hover:bg-indigo-700 disabled:opacity-40 disabled:cursor-not-allowed transition-colors text-sm"
+                    className="grow bg-indigo-600 text-ink font-semibold py-3 px-8 rounded-xl hover:bg-indigo-700 disabled:opacity-40 disabled:cursor-not-allowed transition-colors text-sm"
                   >
                     <span className="inline-flex items-center justify-center gap-2">{!acting && <PenLine size={17} className="shrink-0" />}{acting ? "Enregistrement…" : "Signer le devis"}</span>
                   </button>
@@ -249,7 +249,7 @@ export default function PublicProposalPage() {
                   <button
                     onClick={() => handleAction("sign")}
                     disabled={acting}
-                    className="flex-2 flex-grow bg-indigo-600 text-ink font-semibold py-3 px-8 rounded-xl hover:bg-indigo-700 disabled:opacity-50 transition-colors"
+                    className="flex-2 grow bg-indigo-600 text-ink font-semibold py-3 px-8 rounded-xl hover:bg-indigo-700 disabled:opacity-50 transition-colors"
                   >
                     <span className="inline-flex items-center justify-center gap-2">{!acting && <PenLine size={17} className="shrink-0" />}{acting ? "Enregistrement…" : "Accepter et signer"}</span>
                   </button>

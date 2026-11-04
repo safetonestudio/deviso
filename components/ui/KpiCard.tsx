@@ -53,7 +53,7 @@ export function KpiCard({ label, value, trend, point = "neutre", delta, classNam
   return (
     <div className={`carte p-5 flex flex-col gap-2.5 min-w-0 ${className}`}>
       <div className="text-[14px] font-medium text-gray-400">{label}</div>
-      <div className="font-display text-[28px] leading-none font-bold text-ink tabular-nums tracking-tight break-words">
+      <div className="font-display text-[28px] leading-none font-bold text-ink tabular-nums tracking-tight wrap-break-word">
         {nombre}
         {euro && <span className="text-[0.55em] text-gray-400 font-semibold ml-0.5">€</span>}
       </div>

@@ -78,7 +78,7 @@ export function CaUrssafWidget({ monthlyHT, currentMonth, currentYear, echeances
           value={mode}
           onChange={(e) => setMode(e.target.value as "trimestre" | "mensuel")}
           aria-label="Période du récapitulatif"
-          className="shrink-0 rounded-lg border border-ds-border bg-ds-elevated text-gray-300 text-xs font-medium px-3 py-1.5 cursor-pointer focus:outline-none focus:ring-2 focus:ring-indigo-500/40"
+          className="shrink-0 rounded-lg border border-ds-border bg-ds-elevated text-gray-300 text-xs font-medium px-3 py-1.5 cursor-pointer focus:outline-hidden focus:ring-2 focus:ring-indigo-500/40"
         >
           <option value="trimestre">Trimestriel</option>
           <option value="mensuel">Mensuel</option>

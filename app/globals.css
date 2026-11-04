@@ -4,9 +4,399 @@
    par notre CSP, ralentirait le rendu et enverrait l'IP de chaque visiteur
    à Google — incompatible avec nos engagements RGPD. */
 
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import 'tailwindcss';
+
+@custom-variant dark (&:is(.dark *));
+
+@theme {
+  --color-gray-50: rgb(var(--n-50, 249 250 251));
+  --color-gray-100: rgb(var(--n-100, 243 244 246));
+  --color-gray-200: rgb(var(--n-200, 229 231 235));
+  --color-gray-300: rgb(var(--n-300, 209 213 219));
+  --color-gray-400: rgb(var(--n-400, 156 163 175));
+  --color-gray-500: rgb(var(--n-500, 156 163 175));
+  --color-gray-600: rgb(var(--n-600, 156 163 175));
+  --color-gray-700: rgb(var(--n-700, 55 65 81));
+  --color-gray-800: rgb(var(--n-800, 31 41 55));
+  --color-gray-900: rgb(var(--n-900, 17 24 39));
+  --color-gray-950: rgb(var(--n-950, 3 7 18));
+
+  --color-slate-50: rgb(var(--n-50, 248 250 252));
+  --color-slate-100: rgb(var(--n-100, 241 245 249));
+  --color-slate-200: rgb(var(--n-200, 226 232 240));
+  --color-slate-300: rgb(var(--n-300, 203 213 225));
+  --color-slate-400: rgb(var(--n-400, 148 163 184));
+  --color-slate-500: rgb(var(--n-500, 100 116 139));
+  --color-slate-600: rgb(var(--n-600, 71 85 105));
+  --color-slate-700: rgb(var(--n-700, 51 65 85));
+  --color-slate-800: rgb(var(--n-800, 30 41 59));
+  --color-slate-900: rgb(var(--n-900, 15 23 42));
+  --color-slate-950: rgb(var(--n-950, 2 6 23));
+
+  --color-zinc-50: rgb(var(--n-50, 250 250 250));
+  --color-zinc-100: rgb(var(--n-100, 244 244 245));
+  --color-zinc-200: rgb(var(--n-200, 228 228 231));
+  --color-zinc-300: rgb(var(--n-300, 212 212 216));
+  --color-zinc-400: rgb(var(--n-400, 161 161 170));
+  --color-zinc-500: rgb(var(--n-500, 113 113 122));
+  --color-zinc-600: rgb(var(--n-600, 82 82 91));
+  --color-zinc-700: rgb(var(--n-700, 63 63 70));
+  --color-zinc-800: rgb(var(--n-800, 39 39 42));
+  --color-zinc-900: rgb(var(--n-900, 24 24 27));
+  --color-zinc-950: rgb(var(--n-950, 9 9 11));
+
+  --color-neutral-50: rgb(var(--n-50, 250 250 250));
+  --color-neutral-100: rgb(var(--n-100, 245 245 245));
+  --color-neutral-200: rgb(var(--n-200, 229 229 229));
+  --color-neutral-300: rgb(var(--n-300, 212 212 212));
+  --color-neutral-400: rgb(var(--n-400, 163 163 163));
+  --color-neutral-500: rgb(var(--n-500, 115 115 115));
+  --color-neutral-600: rgb(var(--n-600, 82 82 82));
+  --color-neutral-700: rgb(var(--n-700, 64 64 64));
+  --color-neutral-800: rgb(var(--n-800, 38 38 38));
+  --color-neutral-900: rgb(var(--n-900, 23 23 23));
+  --color-neutral-950: rgb(var(--n-950, 10 10 10));
+
+  --color-stone-50: rgb(var(--n-50, 250 250 249));
+  --color-stone-100: rgb(var(--n-100, 245 245 244));
+  --color-stone-200: rgb(var(--n-200, 231 229 228));
+  --color-stone-300: rgb(var(--n-300, 214 211 209));
+  --color-stone-400: rgb(var(--n-400, 168 162 158));
+  --color-stone-500: rgb(var(--n-500, 120 113 108));
+  --color-stone-600: rgb(var(--n-600, 87 83 78));
+  --color-stone-700: rgb(var(--n-700, 68 64 60));
+  --color-stone-800: rgb(var(--n-800, 41 37 36));
+  --color-stone-900: rgb(var(--n-900, 28 25 23));
+  --color-stone-950: rgb(var(--n-950, 12 10 9));
+
+  --color-indigo-50: rgb(var(--acc-50, 238 242 255));
+  --color-indigo-100: rgb(var(--acc-100, 224 231 255));
+  --color-indigo-200: rgb(var(--acc-200, 199 210 254));
+  --color-indigo-300: rgb(var(--acc-300, 165 180 252));
+  --color-indigo-400: rgb(var(--acc-400, 129 140 248));
+  --color-indigo-500: rgb(var(--acc-500, 99 102 241));
+  --color-indigo-600: rgb(var(--acc-600, 79 70 229));
+  --color-indigo-700: rgb(var(--acc-700, 67 56 202));
+  --color-indigo-800: rgb(var(--acc-800, 55 48 163));
+  --color-indigo-900: rgb(var(--acc-900, 49 46 129));
+  --color-indigo-950: rgb(var(--acc-950, 30 27 75));
+
+  --color-violet-50: rgb(var(--acc-50, 245 243 255));
+  --color-violet-100: rgb(var(--acc-100, 237 233 254));
+  --color-violet-200: rgb(var(--acc-200, 221 214 254));
+  --color-violet-300: rgb(var(--acc-300, 196 181 253));
+  --color-violet-400: rgb(var(--acc-400, 167 139 250));
+  --color-violet-500: rgb(var(--acc-500, 139 92 246));
+  --color-violet-600: rgb(var(--acc-600, 124 58 237));
+  --color-violet-700: rgb(var(--acc-700, 109 40 217));
+  --color-violet-800: rgb(var(--acc-800, 91 33 182));
+  --color-violet-900: rgb(var(--acc-900, 76 29 149));
+  --color-violet-950: rgb(var(--acc-950, 46 16 101));
+
+  --color-purple-50: rgb(var(--acc-50, 250 245 255));
+  --color-purple-100: rgb(var(--acc-100, 243 232 255));
+  --color-purple-200: rgb(var(--acc-200, 233 213 255));
+  --color-purple-300: rgb(var(--acc-300, 216 180 254));
+  --color-purple-400: rgb(var(--acc-400, 192 132 252));
+  --color-purple-500: rgb(var(--acc-500, 168 85 247));
+  --color-purple-600: rgb(var(--acc-600, 147 51 234));
+  --color-purple-700: rgb(var(--acc-700, 126 34 206));
+  --color-purple-800: rgb(var(--acc-800, 107 33 168));
+  --color-purple-900: rgb(var(--acc-900, 88 28 135));
+  --color-purple-950: rgb(var(--acc-950, 59 7 100));
+
+  --color-fuchsia-50: rgb(var(--acc-50, 253 244 255));
+  --color-fuchsia-100: rgb(var(--acc-100, 250 232 255));
+  --color-fuchsia-200: rgb(var(--acc-200, 245 208 254));
+  --color-fuchsia-300: rgb(var(--acc-300, 240 171 252));
+  --color-fuchsia-400: rgb(var(--acc-400, 232 121 249));
+  --color-fuchsia-500: rgb(var(--acc-500, 217 70 239));
+  --color-fuchsia-600: rgb(var(--acc-600, 192 38 211));
+  --color-fuchsia-700: rgb(var(--acc-700, 162 28 175));
+  --color-fuchsia-800: rgb(var(--acc-800, 134 25 143));
+  --color-fuchsia-900: rgb(var(--acc-900, 112 26 117));
+  --color-fuchsia-950: rgb(var(--acc-950, 74 4 78));
+
+  --color-emerald-50: rgb(var(--acc-50, 236 253 245));
+  --color-emerald-100: rgb(var(--acc-100, 209 250 229));
+  --color-emerald-200: rgb(var(--acc-200, 167 243 208));
+  --color-emerald-300: rgb(var(--acc-300, 110 231 183));
+  --color-emerald-400: rgb(var(--acc-400, 52 211 153));
+  --color-emerald-500: rgb(var(--acc-500, 16 185 129));
+  --color-emerald-600: rgb(var(--acc-600, 5 150 105));
+  --color-emerald-700: rgb(var(--acc-700, 4 120 87));
+  --color-emerald-800: rgb(var(--acc-800, 6 95 70));
+  --color-emerald-900: rgb(var(--acc-900, 6 78 59));
+  --color-emerald-950: rgb(var(--acc-950, 2 44 34));
+
+  --color-green-50: rgb(var(--acc-50, 240 253 244));
+  --color-green-100: rgb(var(--acc-100, 220 252 231));
+  --color-green-200: rgb(var(--acc-200, 187 247 208));
+  --color-green-300: rgb(var(--acc-300, 134 239 172));
+  --color-green-400: rgb(var(--acc-400, 74 222 128));
+  --color-green-500: rgb(var(--acc-500, 34 197 94));
+  --color-green-600: rgb(var(--acc-600, 22 163 74));
+  --color-green-700: rgb(var(--acc-700, 21 128 61));
+  --color-green-800: rgb(var(--acc-800, 22 101 52));
+  --color-green-900: rgb(var(--acc-900, 20 83 45));
+  --color-green-950: rgb(var(--acc-950, 5 46 22));
+
+  --color-teal-50: rgb(var(--acc-50, 240 253 250));
+  --color-teal-100: rgb(var(--acc-100, 204 251 241));
+  --color-teal-200: rgb(var(--acc-200, 153 246 228));
+  --color-teal-300: rgb(var(--acc-300, 94 234 212));
+  --color-teal-400: rgb(var(--acc-400, 45 212 191));
+  --color-teal-500: rgb(var(--acc-500, 20 184 166));
+  --color-teal-600: rgb(var(--acc-600, 13 148 136));
+  --color-teal-700: rgb(var(--acc-700, 15 118 110));
+  --color-teal-800: rgb(var(--acc-800, 17 94 89));
+  --color-teal-900: rgb(var(--acc-900, 19 78 74));
+  --color-teal-950: rgb(var(--acc-950, 4 47 46));
+
+  --color-lime-50: rgb(var(--acc-50, 247 254 231));
+  --color-lime-100: rgb(var(--acc-100, 236 252 203));
+  --color-lime-200: rgb(var(--acc-200, 217 249 157));
+  --color-lime-300: rgb(var(--acc-300, 190 242 100));
+  --color-lime-400: rgb(var(--acc-400, 163 230 53));
+  --color-lime-500: rgb(var(--acc-500, 132 204 22));
+  --color-lime-600: rgb(var(--acc-600, 101 163 13));
+  --color-lime-700: rgb(var(--acc-700, 77 124 15));
+  --color-lime-800: rgb(var(--acc-800, 63 98 18));
+  --color-lime-900: rgb(var(--acc-900, 54 83 20));
+  --color-lime-950: rgb(var(--acc-950, 26 46 5));
+
+  --color-brand-50: rgb(var(--acc-50, 238 242 255));
+  --color-brand-100: rgb(var(--acc-100, 224 231 255));
+  --color-brand-200: rgb(var(--acc-200, 199 210 254));
+  --color-brand-300: rgb(var(--acc-300, 165 180 252));
+  --color-brand-400: rgb(var(--acc-400, 129 140 248));
+  --color-brand-500: rgb(var(--acc-500, 99 102 241));
+  --color-brand-600: rgb(var(--acc-600, 79 70 229));
+  --color-brand-700: rgb(var(--acc-700, 67 56 202));
+  --color-brand-800: rgb(var(--acc-800, 55 48 163));
+  --color-brand-900: rgb(var(--acc-900, 49 46 129));
+  --color-brand-950: rgb(var(--acc-950, 30 27 75));
+
+  --color-amber-50: rgb(var(--warn-50, 255 251 235));
+  --color-amber-100: rgb(var(--warn-100, 254 243 199));
+  --color-amber-200: rgb(var(--warn-200, 253 230 138));
+  --color-amber-300: rgb(var(--warn-300, 252 211 77));
+  --color-amber-400: rgb(var(--warn-400, 251 191 36));
+  --color-amber-500: rgb(var(--warn-500, 245 158 11));
+  --color-amber-600: rgb(var(--warn-600, 217 119 6));
+  --color-amber-700: rgb(var(--warn-700, 180 83 9));
+  --color-amber-800: rgb(var(--warn-800, 146 64 14));
+  --color-amber-900: rgb(var(--warn-900, 120 53 15));
+  --color-amber-950: rgb(var(--warn-950, 69 26 3));
+
+  --color-yellow-50: rgb(var(--warn-50, 254 252 232));
+  --color-yellow-100: rgb(var(--warn-100, 254 249 195));
+  --color-yellow-200: rgb(var(--warn-200, 254 240 138));
+  --color-yellow-300: rgb(var(--warn-300, 253 224 71));
+  --color-yellow-400: rgb(var(--warn-400, 250 204 21));
+  --color-yellow-500: rgb(var(--warn-500, 234 179 8));
+  --color-yellow-600: rgb(var(--warn-600, 202 138 4));
+  --color-yellow-700: rgb(var(--warn-700, 161 98 7));
+  --color-yellow-800: rgb(var(--warn-800, 133 77 14));
+  --color-yellow-900: rgb(var(--warn-900, 113 63 18));
+  --color-yellow-950: rgb(var(--warn-950, 66 32 6));
+
+  --color-orange-50: rgb(var(--warn-50, 255 247 237));
+  --color-orange-100: rgb(var(--warn-100, 255 237 213));
+  --color-orange-200: rgb(var(--warn-200, 254 215 170));
+  --color-orange-300: rgb(var(--warn-300, 253 186 116));
+  --color-orange-400: rgb(var(--warn-400, 251 146 60));
+  --color-orange-500: rgb(var(--warn-500, 249 115 22));
+  --color-orange-600: rgb(var(--warn-600, 234 88 12));
+  --color-orange-700: rgb(var(--warn-700, 194 65 12));
+  --color-orange-800: rgb(var(--warn-800, 154 52 18));
+  --color-orange-900: rgb(var(--warn-900, 124 45 18));
+  --color-orange-950: rgb(var(--warn-950, 67 20 7));
+
+  --color-red-50: rgb(var(--dng-50, 254 242 242));
+  --color-red-100: rgb(var(--dng-100, 254 226 226));
+  --color-red-200: rgb(var(--dng-200, 254 202 202));
+  --color-red-300: rgb(var(--dng-300, 252 165 165));
+  --color-red-400: rgb(var(--dng-400, 248 113 113));
+  --color-red-500: rgb(var(--dng-500, 239 68 68));
+  --color-red-600: rgb(var(--dng-600, 220 38 38));
+  --color-red-700: rgb(var(--dng-700, 185 28 28));
+  --color-red-800: rgb(var(--dng-800, 153 27 27));
+  --color-red-900: rgb(var(--dng-900, 127 29 29));
+  --color-red-950: rgb(var(--dng-950, 69 10 10));
+
+  --color-rose-50: rgb(var(--dng-50, 255 241 242));
+  --color-rose-100: rgb(var(--dng-100, 255 228 230));
+  --color-rose-200: rgb(var(--dng-200, 254 205 211));
+  --color-rose-300: rgb(var(--dng-300, 253 164 175));
+  --color-rose-400: rgb(var(--dng-400, 251 113 133));
+  --color-rose-500: rgb(var(--dng-500, 244 63 94));
+  --color-rose-600: rgb(var(--dng-600, 225 29 72));
+  --color-rose-700: rgb(var(--dng-700, 190 18 60));
+  --color-rose-800: rgb(var(--dng-800, 159 18 57));
+  --color-rose-900: rgb(var(--dng-900, 136 19 55));
+  --color-rose-950: rgb(var(--dng-950, 76 5 25));
+
+  --color-pink-50: rgb(var(--dng-50, 253 242 248));
+  --color-pink-100: rgb(var(--dng-100, 252 231 243));
+  --color-pink-200: rgb(var(--dng-200, 251 207 232));
+  --color-pink-300: rgb(var(--dng-300, 249 168 212));
+  --color-pink-400: rgb(var(--dng-400, 244 114 182));
+  --color-pink-500: rgb(var(--dng-500, 236 72 153));
+  --color-pink-600: rgb(var(--dng-600, 219 39 119));
+  --color-pink-700: rgb(var(--dng-700, 190 24 93));
+  --color-pink-800: rgb(var(--dng-800, 157 23 77));
+  --color-pink-900: rgb(var(--dng-900, 131 24 67));
+  --color-pink-950: rgb(var(--dng-950, 80 7 36));
+
+  --color-blue-50: rgb(var(--inf-50, 239 246 255));
+  --color-blue-100: rgb(var(--inf-100, 219 234 254));
+  --color-blue-200: rgb(var(--inf-200, 191 219 254));
+  --color-blue-300: rgb(var(--inf-300, 147 197 253));
+  --color-blue-400: rgb(var(--inf-400, 96 165 250));
+  --color-blue-500: rgb(var(--inf-500, 59 130 246));
+  --color-blue-600: rgb(var(--inf-600, 37 99 235));
+  --color-blue-700: rgb(var(--inf-700, 29 78 216));
+  --color-blue-800: rgb(var(--inf-800, 30 64 175));
+  --color-blue-900: rgb(var(--inf-900, 30 58 138));
+  --color-blue-950: rgb(var(--inf-950, 23 37 84));
+
+  --color-sky-50: rgb(var(--inf-50, 240 249 255));
+  --color-sky-100: rgb(var(--inf-100, 224 242 254));
+  --color-sky-200: rgb(var(--inf-200, 186 230 253));
+  --color-sky-300: rgb(var(--inf-300, 125 211 252));
+  --color-sky-400: rgb(var(--inf-400, 56 189 248));
+  --color-sky-500: rgb(var(--inf-500, 14 165 233));
+  --color-sky-600: rgb(var(--inf-600, 2 132 199));
+  --color-sky-700: rgb(var(--inf-700, 3 105 161));
+  --color-sky-800: rgb(var(--inf-800, 7 89 133));
+  --color-sky-900: rgb(var(--inf-900, 12 74 110));
+  --color-sky-950: rgb(var(--inf-950, 8 47 73));
+
+  --color-cyan-50: rgb(var(--inf-50, 236 254 255));
+  --color-cyan-100: rgb(var(--inf-100, 207 250 254));
+  --color-cyan-200: rgb(var(--inf-200, 165 243 252));
+  --color-cyan-300: rgb(var(--inf-300, 103 232 249));
+  --color-cyan-400: rgb(var(--inf-400, 34 211 238));
+  --color-cyan-500: rgb(var(--inf-500, 6 182 212));
+  --color-cyan-600: rgb(var(--inf-600, 8 145 178));
+  --color-cyan-700: rgb(var(--inf-700, 14 116 144));
+  --color-cyan-800: rgb(var(--inf-800, 21 94 117));
+  --color-cyan-900: rgb(var(--inf-900, 22 78 99));
+  --color-cyan-950: rgb(var(--inf-950, 8 51 68));
+
+  --color-ink: rgb(var(--ink, 255 255 255));
+  --color-on-accent: rgb(var(--on-accent, 255 255 255));
+
+  --color-ds-bg: var(--ds-bg);
+  --color-ds-surface: var(--ds-surface);
+  --color-ds-elevated: var(--ds-elevated);
+  --color-ds-border: var(--ds-border);
+
+  --font-sans: var(--font-app, var(--font-inter)), Inter, system-ui, sans-serif;
+  --font-display:
+    var(--font-display, var(--font-app, var(--font-inter))), system-ui,
+    sans-serif;
+
+  --shadow-ds-sm: var(--ds-shadow-sm);
+  --shadow-ds-card: var(--ds-shadow-card);
+
+  --animate-fade-in: fadeIn 0.5s ease-in-out;
+  --animate-slide-up: slideUp 0.6s ease-out;
+  --animate-gradient: gradient 8s ease infinite;
+
+  @keyframes fadeIn {
+    0% {
+      opacity: 0;
+    }
+    100% {
+      opacity: 1;
+    }
+  }
+  @keyframes slideUp {
+    0% {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+    100% {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+  @keyframes gradient {
+    0%,
+    100% {
+      background-position: 0% 50%;
+    }
+    50% {
+      background-position: 100% 50%;
+    }
+  }
+}
+
+/*
+  The default border color has changed to `currentcolor` in Tailwind CSS v4,
+  so we've added these compatibility styles to make sure everything still
+  looks the same as it did with Tailwind CSS v3.
+
+  If we ever want to remove these styles, we need to add an explicit border
+  color utility to any element that depends on these defaults.
+*/
+@layer base {
+  *,
+  ::after,
+  ::before,
+  ::backdrop,
+  ::file-selector-button {
+    border-color: var(--color-gray-200, currentcolor);
+  }
+}
+
+@utility gradient-text {
+  @apply bg-linear-to-r from-indigo-400 to-violet-400 bg-clip-text text-transparent;
+}
+
+@utility gradient-bg {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+}
+
+/* Carte : la surface de base de l'app (fond, bordure, rayon, relief) en un
+   seul endroit. Les 170 blocs qui la redessinaient a la main y sont relies. */
+
+@utility carte {
+  background-color: var(--ds-surface);
+  border: 1px solid var(--ds-border);
+  border-radius: 14px;
+  box-shadow: var(--ds-shadow-card);
+}
+
+@utility carte-lg {
+  border-radius: 18px;
+}
+
+@utility titre-page {
+  /* Titre et sous-titre de page : une seule echelle pour toute l'app. Quatre
+     tailles cohabitaient (24, 30, 38, 44 px), d'ou un rendu disparate d'une
+     page a l'autre (retour Selim 02/11). Le tableau de bord, page d'accueil,
+     garde son titre plus grand. Garde : check:cadres. */
+  font-size: 30px;
+  line-height: 1.1;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  color: rgb(var(--ink, 15 23 42));
+  @media (min-width: 640px) {
+    font-size: 38px;
+  }
+}
+
+@utility sous-titre-page {
+  font-size: 15px;
+  margin-top: 8px;
+  color: rgb(var(--n-400, 148 163 184));
+  @media (min-width: 640px) {
+    font-size: 16px;
+  }
+}
 
 @layer base {
   :root {
@@ -35,47 +425,6 @@
     font-family: 'Inter', system-ui, sans-serif;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
-  }
-}
-
-@layer utilities {
-  .gradient-text {
-    @apply bg-gradient-to-r from-indigo-400 to-violet-400 bg-clip-text text-transparent;
-  }
-  .gradient-bg {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  }
-}
-
-/* Carte : la surface de base de l'app (fond, bordure, rayon, relief) en un
-   seul endroit. Les 170 blocs qui la redessinaient a la main y sont relies. */
-@layer components {
-  .carte {
-    background-color: var(--ds-surface);
-    border: 1px solid var(--ds-border);
-    border-radius: 14px;
-    box-shadow: var(--ds-shadow-card);
-  }
-  .carte-lg { border-radius: 18px; }
-  /* Titre et sous-titre de page : une seule echelle pour toute l'app. Quatre
-     tailles cohabitaient (24, 30, 38, 44 px), d'ou un rendu disparate d'une
-     page a l'autre (retour Selim 02/11). Le tableau de bord, page d'accueil,
-     garde son titre plus grand. Garde : check:cadres. */
-  .titre-page {
-    font-size: 30px;
-    line-height: 1.1;
-    font-weight: 700;
-    letter-spacing: -0.02em;
-    color: rgb(var(--ink, 15 23 42));
-  }
-  .sous-titre-page {
-    font-size: 15px;
-    margin-top: 8px;
-    color: rgb(var(--n-400, 148 163 184));
-  }
-  @media (min-width: 640px) {
-    .titre-page { font-size: 38px; }
-    .sous-titre-page { font-size: 16px; }
   }
 }
 

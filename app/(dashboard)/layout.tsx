@@ -198,7 +198,7 @@ export default async function DashboardLayout({ children }: { children: React.Re
               </div>
               <span className="font-display font-bold text-[19px] tracking-tight text-ink">Deviso</span>
               {isDemo && (
-                <span className="ml-1 text-[10px] font-bold bg-amber-500/20 text-amber-400 border border-amber-500/30 px-1.5 py-0.5 rounded">
+                <span className="ml-1 text-[10px] font-bold bg-amber-500/20 text-amber-400 border border-amber-500/30 px-1.5 py-0.5 rounded-sm">
                   Démo
                 </span>
               )}
@@ -249,7 +249,7 @@ export default async function DashboardLayout({ children }: { children: React.Re
         <main className="flex-1 lg:ml-64 min-w-0">
           {/* Barre du haut (ordinateur) : date du jour, notifications, theme.
               Sur mobile, MobileNav porte deja sa propre barre avec la cloche. */}
-          <div className="barre-haut hidden lg:flex sticky top-0 z-30 h-14 items-center justify-between gap-4 px-10 bg-ds-bg/85 backdrop-blur border-b border-ds-border">
+          <div className="barre-haut hidden lg:flex sticky top-0 z-30 h-14 items-center justify-between gap-4 px-10 bg-ds-bg/85 backdrop-blur-sm border-b border-ds-border">
             <span className="text-sm text-gray-400 first-letter:uppercase">
               {new Date().toLocaleDateString("fr-FR", { weekday: "long", day: "numeric", month: "long", timeZone: "Europe/Paris" })}
             </span>
@@ -257,7 +257,7 @@ export default async function DashboardLayout({ children }: { children: React.Re
               <NotificationBell placement="topbar" />
             </div>
           </div>
-          <div className="p-4 sm:px-6 lg:px-10 lg:py-6 pt-[4.5rem]">
+          <div className="p-4 sm:px-6 lg:px-10 lg:py-6 pt-18">
           <SessionGuard />
           {synchroniserPdp && <SuperPdpSync />}
           {/* Bandeau de démo : un seul, en haut du contenu, sur toutes les

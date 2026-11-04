@@ -24,7 +24,7 @@ const ALIGN = {
 export function EnteteListe({ gridCols, colonnes }: { gridCols: string; colonnes: Colonne[] }) {
   return (
     <div
-      className="grid gap-4 items-center px-5 py-3 mb-2.5 rounded-xl bg-ds-elevated border border-ds-border shadow-sm text-[11px] font-semibold uppercase tracking-[0.1em] text-gray-400"
+      className="grid gap-4 items-center px-5 py-3 mb-2.5 rounded-xl bg-ds-elevated border border-ds-border shadow-xs text-[11px] font-semibold uppercase tracking-widest text-gray-400"
       style={{ gridTemplateColumns: gridCols }}
     >
       {colonnes.map((c) => (
@@ -50,7 +50,7 @@ export function LigneListe({
   return (
     <Link
       href={href}
-      className="grid gap-4 items-center px-5 py-3.5 carte shadow-sm transition-all duration-150 hover:border-indigo-500/50 hover:shadow-md hover:bg-ds-elevated/40"
+      className="grid gap-4 items-center px-5 py-3.5 carte shadow-xs transition-all duration-150 hover:border-indigo-500/50 hover:shadow-md hover:bg-ds-elevated/40"
       style={{ gridTemplateColumns: gridCols }}
     >
       {cells.map((cell, i) => (

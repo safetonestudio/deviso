@@ -13,7 +13,7 @@ import type { AchatInternational } from "@/lib/superpdp-achats";
  */
 
 const champ =
-  "w-full bg-ds-bg border border-ds-border text-ink rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-indigo-500 placeholder:text-gray-600";
+  "w-full bg-ds-bg border border-ds-border text-ink rounded-lg px-3 py-2 text-sm focus:outline-hidden focus:border-indigo-500 placeholder:text-gray-600";
 const etiquette = "block text-xs font-medium text-gray-400 mb-1.5";
 
 export function CorrigerAchat({ achat }: { achat: AchatInternational }) {
