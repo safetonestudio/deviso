@@ -143,6 +143,11 @@ TypeScript 7, ESLint 10, uuid 14. @types/node seulement s'il correspond au Node 
 
 - Décision Selim (04/11) : l'animation ne concerne QUE le site public, pas la web app.
 
+- Direction exprimée par Selim (04/11) : site simple et aéré, thématique nature, mode jour et mode
+  nuit comme dans l'app. Aucun des six sites montrés (Linear, Stripe, Qonto, Pennylane, Mercury,
+  Raycast) ne lui plaît. Attention : le fond de forêt a été abandonné plus tôt (voir Décisions) ;
+  ici la nature est une ambiance (palette, matières, illustrations), pas un fond de forêt.
+
 ## Points ouverts
 
 - Aperçu fiscal en HTTP 500 sur la production (test SuperPDP) : à examiner.
