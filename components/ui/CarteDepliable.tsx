@@ -83,13 +83,13 @@ export function CarteDepliable({
 }) {
   return (
     <details className="group carte overflow-hidden shadow-xs transition-colors hover:border-gray-600 open:border-indigo-500/40 open:shadow-md">
-      <summary className="flex items-center gap-4 px-4 py-3.5 cursor-pointer list-none [&::-webkit-details-marker]:hidden hover:bg-ds-elevated/40 transition-colors">
-        <div className="min-w-0 max-w-[55%]">
+      <summary className="grid grid-cols-[minmax(0,1fr)_auto_auto] items-center gap-x-3 gap-y-2 sm:flex sm:gap-4 px-4 py-3.5 cursor-pointer list-none [&::-webkit-details-marker]:hidden hover:bg-ds-elevated/40 transition-colors">
+        <div className="min-w-0 sm:max-w-[55%]">
           <span className="text-ink font-medium truncate block">{titre}</span>
           {sousTitre && <div className="text-xs mt-0.5">{sousTitre}</div>}
         </div>
-        <div className="shrink-0 flex flex-wrap items-center gap-2">{pastilles}</div>
-        <div className="flex-1" />
+        {pastilles != null && <div className="order-last col-span-3 flex flex-wrap items-center gap-2 sm:order-none sm:col-auto sm:shrink-0">{pastilles}</div>}
+        <div className="hidden sm:block sm:flex-1" />
         <span className="text-ink font-semibold whitespace-nowrap shrink-0 tabular-nums">{montant}</span>
         <svg
           className="w-4 h-4 shrink-0 text-gray-400 transition-transform group-open:rotate-180"

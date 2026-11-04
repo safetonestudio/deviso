@@ -121,7 +121,7 @@ export function NotificationBell({ placement = "sidebar" }: Props) {
         className={
           placement === "entete"
             ? "relative w-10 h-10 grid place-items-center rounded-xl border border-ds-border text-gray-400 hover:text-ink hover:border-gray-500 transition-colors"
-            : "relative p-1.5 rounded-lg text-gray-500 hover:text-ink hover:bg-ds-elevated transition-colors"
+            : "relative p-2.5 rounded-lg text-gray-500 hover:text-ink hover:bg-ds-elevated transition-colors"
         }
         aria-label="Notifications"
       >

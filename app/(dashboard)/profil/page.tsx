@@ -81,6 +81,30 @@ const PARAM_CORE = ["logo", "identite", "statut-tva", "legal", "documents"];
 // accordeons fermes.
 function ParametresNav({ actif, onSelect }: { actif: string; onSelect: (id: string) => void }) {
   return (
+    <>
+    {/* Sur téléphone le menu latéral n'existe pas : un sélecteur donne accès aux
+        mêmes réglages (audit mobile 04/11 : onze réglages étaient injoignables). */}
+    <div className="lg:hidden">
+      <label htmlFor="param-section" className="block text-sm text-gray-500 mb-2">
+        Réglage affiché
+      </label>
+      <select
+        id="param-section"
+        value={actif}
+        onChange={(e) => onSelect(e.target.value)}
+        className="w-full bg-ds-surface border border-ds-border text-ink rounded-lg px-3 py-3 text-base focus:outline-hidden focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500/30"
+      >
+        {PARAM_SECTIONS.map((groupe) => (
+          <optgroup key={groupe.titre} label={groupe.titre}>
+            {groupe.liens.map((l) => (
+              <option key={l.id} value={l.id}>
+                {l.label}
+              </option>
+            ))}
+          </optgroup>
+        ))}
+      </select>
+    </div>
     <nav className="hidden lg:block lg:self-start lg:sticky lg:top-[88px] space-y-7 text-[15px]">
       {PARAM_SECTIONS.map((groupe) => {
         const Icone = groupe.icone;
@@ -115,6 +139,7 @@ function ParametresNav({ actif, onSelect }: { actif: string; onSelect: (id: stri
         );
       })}
     </nav>
+    </>
   );
 }
 
@@ -462,7 +487,7 @@ Les présentes CGV sont soumises au droit français. Tout litige relève de la c
         <p className="sous-titre-page">Ces informations apparaîtront automatiquement sur tes devis et factures.</p>
       </div>
 
-      <div className="grid lg:grid-cols-[260px_minmax(0,1fr)] gap-14">
+      <div className="grid lg:grid-cols-[260px_minmax(0,1fr)] gap-8 lg:gap-14">
         <ParametresNav actif={vue} onSelect={setVue} />
         <div className="min-w-0 max-w-[880px] space-y-6">
 

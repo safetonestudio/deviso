@@ -67,7 +67,7 @@ export function MobileNav({ initials, userName, userEmail, isMember = false, isC
     <>
       <div className="lg:hidden fixed top-0 left-0 right-0 z-50 bg-ds-bg border-b border-ds-border flex items-center justify-between px-4 h-14">
         <div className="flex items-center gap-2.5">
-          <Link href="/dashboard" className="flex items-center gap-2">
+          <Link href="/dashboard" className="flex items-center gap-2 min-h-10">
             <div className="w-7 h-7 rounded-[7px] bg-indigo-600 flex items-center justify-center">
               <span className="text-ink font-display font-bold text-[15px]">D</span>
             </div>
@@ -93,7 +93,7 @@ export function MobileNav({ initials, userName, userEmail, isMember = false, isC
             </div>
             <span className="font-semibold text-ink">Deviso</span>
           </Link>
-          <button onClick={() => setOpen(false)} className="p-1.5 rounded-lg text-gray-500 hover:text-gray-300 hover:bg-ds-elevated transition-colors" aria-label="Fermer">
+          <button onClick={() => setOpen(false)} className="p-2.5 -m-1 rounded-lg text-gray-500 hover:text-gray-300 hover:bg-ds-elevated transition-colors" aria-label="Fermer">
             <X size={18} />
           </button>
         </div>
