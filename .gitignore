@@ -61,3 +61,8 @@ graphify-out/
 # logs de build et de guards (jamais versionnes)
 *.log
 blogout.txt
+
+# Outils de design (binaire telecharge par impeccable, dossiers de travail)
+.claude/skills/impeccable/scripts/bin/
+.impeccable/
+.playwright-mcp/
