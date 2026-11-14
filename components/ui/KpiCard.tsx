@@ -35,7 +35,7 @@ interface KpiCardProps {
  */
 const POINT = {
   alerte: "bg-amber-500",
-  info: "bg-sky-400",
+  info: "bg-gray-400",
   bon: "bg-emerald-500",
   neutre: "bg-gray-400",
 } as const;
@@ -53,7 +53,7 @@ export function KpiCard({ label, value, icon: Icon, trend, point = "neutre", del
   const pastilleDelta = delta && (
     <span
       className={`inline-flex shrink-0 items-center gap-0.5 text-xs font-semibold px-1.5 py-0.5 rounded-md ${
-        delta.positive ? "bg-emerald-500/10 text-emerald-400" : "bg-red-500/10 text-red-400"
+        delta.positive ? "bg-emerald-500/10 text-emerald-400" : "bg-ds-elevated text-gray-300 border border-ds-border"
       }`}
     >
       {delta.positive ? <ArrowUpRight size={12} aria-hidden="true" /> : <ArrowDownRight size={12} aria-hidden="true" />}
@@ -78,7 +78,7 @@ export function KpiCard({ label, value, icon: Icon, trend, point = "neutre", del
         </span>
         {pastilleDelta}
       </div>
-      {visuel}
+      {visuel && <div className="mt-auto pt-1">{visuel}</div>}
       {trend && (
         <div className="flex items-start sm:items-center gap-2 text-[13px] text-gray-400 min-w-0">
           <span className={`w-1.5 h-1.5 rounded-full shrink-0 mt-1.5 sm:mt-0 ${POINT[point]}`} />

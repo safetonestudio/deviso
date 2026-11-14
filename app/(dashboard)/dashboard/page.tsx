@@ -25,15 +25,15 @@ import { Receipt, FileText, ArrowRight, Plus, Wallet, Hourglass, CircleCheck, Fi
 
 const PROPOSAL_STATUS: Record<string, { label: string; color: string }> = {
   draft:    { label: "Brouillon",  color: "bg-ds-elevated text-gray-400" },
-  sent:     { label: "Envoyé",     color: "bg-blue-500/10 text-blue-400" },
-  viewed:   { label: "Consulté",   color: "bg-amber-500/10 text-amber-400" },
+  sent:     { label: "Envoyé",     color: "bg-ds-elevated text-ink" },
+  viewed:   { label: "Consulté",   color: "bg-indigo-500/10 text-indigo-400" },
   signed:   { label: "Signé",      color: "bg-emerald-500/10 text-emerald-400" },
   declined: { label: "Refusé",     color: "bg-red-500/10 text-red-400" },
 };
 
 const INVOICE_STATUS: Record<string, { label: string; color: string }> = {
   draft:     { label: "Brouillon",  color: "bg-ds-elevated text-gray-400" },
-  sent:      { label: "Envoyée",    color: "bg-blue-500/10 text-blue-400" },
+  sent:      { label: "Envoyée",    color: "bg-ds-elevated text-ink" },
   paid:      { label: "Payée",      color: "bg-emerald-500/10 text-emerald-400" },
   cancelled: { label: "Annulée",    color: "bg-red-500/10 text-red-400" },
 };
@@ -239,6 +239,7 @@ export default async function DashboardPage() {
   const invoicedProposalIds = new Set(inv.filter((i) => i.proposal_id).map((i) => i.proposal_id));
   const toInvoice           = proposals.filter((p) => p.status === "signed" && !invoicedProposalIds.has(p.id));
   const toInvoiceAmount     = toInvoice.reduce((s, p) => s + p.total_ttc, 0);
+  const devisSignes         = proposals.filter((p) => p.status === "signed").length;
 
 
   // ── Listes récentes ───────────────────────────────────────────────────────
@@ -347,40 +348,45 @@ export default async function DashboardPage() {
               description={`Devis en attente : ${devisConsultes} consulté(s), ${pendingProposals.length - devisConsultes} envoyé(s) non ouvert(s)`}
               parts={[
                 { valeur: devisConsultes, classe: "bg-indigo-500", libelle: `Consulté${devisConsultes > 1 ? "s" : ""} ${devisConsultes}` },
-                { valeur: pendingProposals.length - devisConsultes, classe: "bg-sky-400", libelle: `Non ouvert${pendingProposals.length - devisConsultes > 1 ? "s" : ""} ${pendingProposals.length - devisConsultes}` },
+                { valeur: pendingProposals.length - devisConsultes, classe: "bg-gray-400", libelle: `Non ouvert${pendingProposals.length - devisConsultes > 1 ? "s" : ""} ${pendingProposals.length - devisConsultes}` },
               ]}
             />
           ) : undefined}
           label="Devis en attente"
           value={fmt(pendingProposals.length > 0 ? totalDevisEnAttente : 0)}
-          point="info"
-          trend={pendingProposals.length > 0
-            ? `${pendingProposals.length} devis, plus ancien ${oldestDevisAge} j`
-            : "Aucun devis en cours"}
+          point="neutre"
+          trend={pendingProposals.length > 0 ? undefined : "Aucun devis en cours"}
         />
         <KpiCard
           dense
           href="/livre-recettes"
           icon={CircleCheck}
           delta={deltaMois ?? undefined}
-          visuel={<Courbe valeurs={sixDerniersMois} description="Encaissements hors taxes des derniers mois de l'année" />}
+          visuel={<Courbe valeurs={sixDerniersMois} description="Encaissements hors taxes des derniers mois de l'année" legende={`${sixDerniersMois.length} derniers mois`} />}
           label="Encaissé ce mois"
           value={fmt(caThisMonth)}
           point="bon"
-          trend={facturéThisMonth > caThisMonth
-            ? `Facturé : ${fmt(facturéThisMonth)}`
-            : new Date().toLocaleDateString("fr-FR", { month: "long" })}
+          trend={sixDerniersMois.length >= 2 && Math.max(...sixDerniersMois) > 0
+            ? undefined
+            : facturéThisMonth > caThisMonth ? `Facturé : ${fmt(facturéThisMonth)}` : new Date().toLocaleDateString("fr-FR", { month: "long" })}
         />
         <KpiCard
           dense
           href="/proposals"
           icon={FileSignature}
+          visuel={devisSignes > 0 ? (
+            <BarreParts
+              description={`Devis signés : ${devisSignes - toInvoice.length} facturé(s), ${toInvoice.length} à facturer`}
+              parts={[
+                { valeur: devisSignes - toInvoice.length, classe: "bg-indigo-500", libelle: `Facturé${devisSignes - toInvoice.length > 1 ? "s" : ""} ${devisSignes - toInvoice.length}` },
+                { valeur: toInvoice.length, classe: "bg-gray-400", libelle: `À facturer ${toInvoice.length}` },
+              ]}
+            />
+          ) : undefined}
           label="Signés à facturer"
           value={fmt(toInvoice.length > 0 ? toInvoiceAmount : 0)}
           point="neutre"
-          trend={toInvoice.length > 0
-            ? `${toInvoice.length} devis prêt${toInvoice.length > 1 ? "s" : ""}`
-            : "Tout est facturé"}
+          trend={devisSignes > 0 ? undefined : "Aucun devis signé"}
         />
       </div>
 

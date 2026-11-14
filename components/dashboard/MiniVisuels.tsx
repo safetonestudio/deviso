@@ -30,7 +30,7 @@ export function BarreParts({ parts, description }: { parts: Part[]; description:
 }
 
 /** Courbe miniature d'une serie (ex. six derniers mois encaisses). */
-export function Courbe({ valeurs, description }: { valeurs: number[]; description: string }) {
+export function Courbe({ valeurs, description, legende }: { valeurs: number[]; description: string; legende?: string }) {
   const max = Math.max(...valeurs, 0);
   if (valeurs.length < 2 || max <= 0) return null;
   const L = 120;
@@ -38,13 +38,14 @@ export function Courbe({ valeurs, description }: { valeurs: number[]; descriptio
   const pas = L / (valeurs.length - 1);
   const pts = valeurs.map((v, i) => [i * pas, H - 3 - (v / max) * (H - 8)] as const);
   const ligne = pts.map(([x, y], i) => `${i ? "L" : "M"}${x.toFixed(1)} ${y.toFixed(1)}`).join(" ");
-  const [dx, dy] = pts[pts.length - 1];
   return (
-    <svg viewBox={`0 0 ${L} ${H}`} preserveAspectRatio="none" className="w-full h-8 text-indigo-500 overflow-visible" role="img" aria-label={description}>
+    <div>
+    <svg viewBox={`0 0 ${L} ${H}`} preserveAspectRatio="none" className="w-full h-6 text-indigo-500 overflow-visible" role="img" aria-label={description}>
       <path d={`${ligne} L${L} ${H} L0 ${H} Z`} fill="currentColor" opacity="0.14" />
       <path d={ligne} fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" vectorEffect="non-scaling-stroke" />
-      <circle cx={dx} cy={dy} r="2.5" fill="currentColor" />
     </svg>
+    {legende && <div className="mt-2 text-[12px] text-gray-400">{legende}</div>}
+    </div>
   );
 }
 

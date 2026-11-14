@@ -12,8 +12,8 @@ export function SidebarNav({ isMember = false, isComptable = false }: { isMember
         if (estSection(item)) {
           if (!sectionVisible(i, NAVIGATION, isMember, isComptable)) return null;
           return (
-            <div key={i} className="pt-4 pb-1">
-              <p className="px-3 text-[11px] font-semibold text-gray-400 opacity-80">
+            <div key={i} className="pt-5 pb-1.5">
+              <p className="px-3 text-[11px] font-medium text-gray-400">
                 {item.section}
               </p>
             </div>
@@ -30,7 +30,7 @@ export function SidebarNav({ isMember = false, isComptable = false }: { isMember
             <Link
               key={item.href}
               href={item.href}
-              className={`flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-semibold transition-colors ${
+              className={`flex items-center gap-2.5 px-3 py-[7px] rounded-lg text-[13.5px] font-semibold transition-colors ${
                 active
                   ? "bg-indigo-600 text-ink"
                   : "text-indigo-400 hover:bg-indigo-500/10"
@@ -47,16 +47,16 @@ export function SidebarNav({ isMember = false, isComptable = false }: { isMember
             key={item.href}
             href={item.href}
             data-tour={TOUR_TARGETS[item.href]}
-            className={`flex items-center gap-3 px-3 py-2 rounded-lg text-sm transition-colors ${
+            className={`relative flex items-center gap-2.5 px-3 py-[7px] rounded-lg text-[13.5px] transition-colors ${
               active
-                ? "bg-indigo-500/10 text-indigo-400 font-semibold"
+                ? "lien-actif bg-ds-elevated text-ink font-semibold"
                 : "text-gray-400 font-medium hover:text-ink hover:bg-ds-elevated"
             }`}
           >
-            <Icon size={16} className="shrink-0" />
+            <Icon size={15} className={`shrink-0 ${active ? "text-indigo-400" : ""}`} />
             <span className="flex-1">{item.label}</span>
             {item.pro && !isMember && (
-              <span className="text-[10px] font-semibold px-1.5 py-0.5 rounded-md bg-indigo-500/10 text-indigo-400 border border-indigo-500/20">
+              <span className="text-[10px] font-medium text-gray-400">
                 Pro
               </span>
             )}

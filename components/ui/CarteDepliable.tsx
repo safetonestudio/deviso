@@ -24,7 +24,7 @@ export function Puce({ ton, texte }: { ton: Ton; texte: string }) {
         : "bg-ds-elevated text-gray-300 border-ds-border";
   return (
     <span
-      className={`inline-flex items-center px-2.5 py-1 rounded-full border text-xs font-medium whitespace-nowrap ${couleur}`}
+      className={`inline-flex items-center px-2.5 py-0.5 rounded-full border text-xs font-medium whitespace-nowrap ${couleur}`}
     >
       {texte}
     </span>
@@ -35,7 +35,7 @@ export function Puce({ ton, texte }: { ton: Ton; texte: string }) {
 export function PuceCouleur({ classe, texte }: { classe: string; texte: string }) {
   return (
     <span
-      className={`inline-flex items-center px-2.5 py-1 rounded-full border text-xs font-medium whitespace-nowrap ${classe}`}
+      className={`inline-flex items-center px-2.5 py-0.5 rounded-full border text-xs font-medium whitespace-nowrap ${classe}`}
     >
       {texte}
     </span>
@@ -83,8 +83,8 @@ export function CarteDepliable({
 }) {
   return (
     <details className="group carte overflow-hidden shadow-xs transition-colors hover:border-gray-600 open:border-indigo-500/40 open:shadow-md">
-      <summary className="grid grid-cols-[minmax(0,1fr)_auto_auto] items-center gap-x-3 gap-y-2 sm:flex sm:gap-4 px-4 py-3.5 cursor-pointer list-none [&::-webkit-details-marker]:hidden hover:bg-ds-elevated/40 transition-colors">
-        <div className="min-w-0 sm:max-w-[55%]">
+      <summary className="grid grid-cols-[minmax(0,1fr)_auto_auto] items-center gap-x-3 gap-y-2 sm:flex sm:gap-4 px-4 py-3 cursor-pointer list-none [&::-webkit-details-marker]:hidden hover:bg-ds-elevated/40 transition-colors">
+        <div className="min-w-0 sm:w-[42%] sm:shrink-0">
           <span className="text-ink font-medium break-words sm:truncate block">{titre}</span>
           {sousTitre && <div className="text-xs mt-0.5">{sousTitre}</div>}
         </div>
@@ -103,5 +103,24 @@ export function CarteDepliable({
       </summary>
       <div className="px-4 pb-4 pt-1 bg-ds-bg">{children}</div>
     </details>
+  );
+}
+
+/**
+ * Cadre unique pour une liste de cartes depliables : ligne d'en-tetes alignee
+ * sur les colonnes des cartes (titre 42 %, pastilles, montant a droite), puis
+ * les lignes separees par un filet. Les en-tetes sont masques sur telephone,
+ * ou les cartes s'empilent.
+ */
+export function ListeTableau({ colonnes, children }: { colonnes: [string, string, string]; children: ReactNode }) {
+  return (
+    <div className="liste-tableau carte overflow-hidden">
+      <div className="hidden sm:flex items-center gap-4 px-4 py-2 bg-ds-elevated border-b border-ds-border text-[12px] font-medium text-gray-400">
+        <span className="w-[42%] shrink-0">{colonnes[0]}</span>
+        <span className="flex-1">{colonnes[1]}</span>
+        <span className="pr-8">{colonnes[2]}</span>
+      </div>
+      {children}
+    </div>
   );
 }
