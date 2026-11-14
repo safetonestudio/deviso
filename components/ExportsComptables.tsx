@@ -19,12 +19,12 @@ export function ExportsComptables({ annee }: { annee: number | string }) {
   const courant = exports.find((e) => e.id === choix) ?? exports[0];
 
   return (
-    <div className="flex flex-col sm:flex-row sm:items-center gap-2 mt-3">
+    <div className="flex flex-col sm:flex-row sm:items-center gap-2 w-full sm:w-auto">
       <select
         aria-label="Type d'export"
         value={choix}
         onChange={(e) => setChoix(e.target.value)}
-        className="w-full sm:w-auto sm:min-w-[280px] bg-ds-bg border border-ds-border text-ink rounded-lg px-3 py-2 text-sm focus:outline-hidden focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500/30"
+        className="w-full sm:w-auto sm:min-w-[250px] bg-ds-bg border border-ds-border text-ink rounded-lg px-3 py-2 text-sm focus:outline-hidden focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500/30"
       >
         {exports.map((e) => (
           <option key={e.id} value={e.id}>

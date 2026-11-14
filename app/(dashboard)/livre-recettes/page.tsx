@@ -1,5 +1,4 @@
 import type { Metadata } from "next";
-import { Fragment } from "react";
 import Link from "next/link";
 import { ExportsComptables } from "@/components/ExportsComptables";
 import { redirect } from "next/navigation";
@@ -9,7 +8,6 @@ import { getWorkspaceUserId, getWorkspaceProfile } from "@/lib/workspace";
 import { estTitulaire, estComptable } from "@/lib/droits";
 import { can } from "@/lib/plans";
 import { getPlan } from "@/lib/stripe";
-import { TuileSynthese, PuceCouleur } from "@/components/ui/CarteDepliable";
 import { lireFacturesPayees, lignesRecettes, totauxParCategorie, MODES_REGLEMENT, type LigneRecette } from "@/lib/recettes";
 
 export const metadata: Metadata = { title: "Livre des recettes" };
@@ -23,6 +21,17 @@ const eur = (n: number) =>
 const jour = (d: string) =>
   new Date(d + "T12:00:00").toLocaleDateString("fr-FR", { day: "2-digit", month: "2-digit", year: "numeric" });
 
+/** Tuile de synthese du livre : libelle, montant, precision. */
+function Tuile({ libelle, valeur, detail }: { libelle: string; valeur: string; detail: string }) {
+  return (
+    <div className="carte px-4 py-3.5 min-w-0">
+      <p className="text-[13px] font-medium text-gray-300 break-words">{libelle}</p>
+      <p className="text-[22px] leading-tight font-semibold text-ink tabular-nums mt-1.5 break-words">{valeur}</p>
+      <p className="text-xs text-gray-400 mt-1">{detail}</p>
+    </div>
+  );
+}
+
 /**
  * Livre des recettes du micro-entrepreneur, tenu automatiquement.
  *
@@ -34,9 +43,9 @@ const jour = (d: string) =>
  *
  * Reserve au titulaire : c'est la comptabilite de l'entreprise.
  *
- * Habillage aligne sur la finition des pages a donnees (Factures recues,
- * Declarations) : tuiles de synthese partagees (TuileSynthese), pastilles
- * partagees (PuceCouleur) et tableau en relief. Le livre reste volontairement
+ * Mise en page (15/11/2026, retour Selim « bordelique ») : une rangee de quatre
+ * tuiles, puis un seul bloc registre qui porte son export, ses colonnes a
+ * largeur fixe et un en-tete par mois avec ses totaux. Le livre reste volontairement
  * un VRAI tableau, pas des cartes depliables : c'est un registre comptable
  * chronologique qui doit se lire et se controler ligne a ligne.
  */
@@ -95,12 +104,13 @@ export default async function LivreRecettes({ searchParams }: { searchParams: Pr
           </p>
         </div>
         {autorise && (
-          <div className="flex items-center gap-2">
+          <div className="inline-flex items-center gap-0.5 p-1 rounded-lg border border-ds-border bg-ds-surface" role="group" aria-label="Année du livre">
             {annees.map((a) => (
               <Link
                 key={a}
                 href={`/livre-recettes?annee=${a}`}
-                className={`text-sm px-3 py-1.5 rounded-lg border transition-colors ${a === annee ? "border-indigo-500 text-ink" : "border-ds-border text-gray-400 hover:text-ink hover:bg-ds-elevated/40"}`}
+                aria-current={a === annee ? "page" : undefined}
+                className={`text-sm px-3 py-1.5 rounded-md tabular-nums transition-colors ${a === annee ? "bg-ds-elevated text-ink font-semibold" : "text-gray-400 hover:text-ink"}`}
               >
                 {a}
               </Link>
@@ -128,43 +138,17 @@ export default async function LivreRecettes({ searchParams }: { searchParams: Pr
         </section>
       ) : (
         <>
-          {/* Bandeau de synthèse : la lecture d'un coup d'œil, avant le détail. */}
-          <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 mb-6">
-            <TuileSynthese libelle={`Encaissé ${annee} (HT)`} valeur={eur(totalHt)} />
-            <TuileSynthese libelle={`Encaissé ${annee} (TTC)`} valeur={eur(totalTtc)} />
-            <TuileSynthese libelle="Encaissements" valeur={String(lignes.length)} />
+          {/* Synthèse : une seule rangée. Les deux totaux, puis la répartition
+              services / biens que la déclaration demande séparément. */}
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
+            <Tuile libelle={`Encaissé ${annee}, hors taxes`} valeur={eur(totalHt)} detail={`${lignes.length} encaissement${lignes.length > 1 ? "s" : ""}`} />
+            <Tuile libelle={`Encaissé ${annee}, TTC`} valeur={eur(totalTtc)} detail="TVA comprise" />
+            <Tuile libelle="Prestations de services, HT" valeur={eur(parCategorie.services.ht)} detail={`${parCategorie.services.nb} encaissement${parCategorie.services.nb > 1 ? "s" : ""}`} />
+            <Tuile libelle="Ventes de biens, HT" valeur={eur(parCategorie.biens.ht)} detail={`${parCategorie.biens.nb} encaissement${parCategorie.biens.nb > 1 ? "s" : ""}`} />
           </div>
-
-          <div className="carte p-4 mb-6">
-            <h2 className="text-ink font-semibold text-sm">Répartition pour la déclaration</h2>
-            <p className="text-xs text-gray-400 mt-0.5">
-              Le CA micro se déclare séparément : prestations de services et ventes de biens n&apos;ont pas le même abattement ni le même seuil.
-            </p>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mt-3">
-              <div className="bg-ds-bg border border-ds-border rounded-lg p-3">
-                <div className="flex items-center gap-2">
-                  <PuceCouleur classe="border-violet-500/30 bg-violet-500/10 text-violet-300" texte="Services" />
-                  <p className="text-xs text-gray-400">Prestations de services (HT)</p>
-                </div>
-                <p className="text-lg font-semibold text-ink tabular-nums mt-1.5">{eur(parCategorie.services.ht)}</p>
-                <p className="text-xs text-gray-500 mt-0.5">{parCategorie.services.nb} encaissement{parCategorie.services.nb > 1 ? "s" : ""}</p>
-              </div>
-              <div className="bg-ds-bg border border-ds-border rounded-lg p-3">
-                <div className="flex items-center gap-2">
-                  <PuceCouleur classe="border-sky-500/30 bg-sky-500/10 text-sky-300" texte="Biens" />
-                  <p className="text-xs text-gray-400">Ventes de biens (HT)</p>
-                </div>
-                <p className="text-lg font-semibold text-ink tabular-nums mt-1.5">{eur(parCategorie.biens.ht)}</p>
-                <p className="text-xs text-gray-500 mt-0.5">{parCategorie.biens.nb} encaissement{parCategorie.biens.nb > 1 ? "s" : ""}</p>
-              </div>
-            </div>
-          </div>
-
-          <div className="carte p-4 mb-6">
-            <h2 className="text-ink font-semibold text-sm">Exports comptables {annee}</h2>
-            <p className="text-xs text-gray-400 mt-0.5">À transmettre à votre comptable ou à conserver en cas de contrôle.</p>
-            <ExportsComptables annee={annee} />
-          </div>
+          <p className="text-xs text-gray-400 mt-2 mb-6">
+            Services et biens se déclarent séparément : ils n&apos;ont ni le même abattement ni le même seuil.
+          </p>
 
           {(sansDate > 0 || sansMode > 0) && (
             <div className="bg-amber-500/10 border border-amber-500/30 rounded-xl p-4 mb-6 text-sm text-amber-400">
@@ -189,54 +173,77 @@ export default async function LivreRecettes({ searchParams }: { searchParams: Pr
             </section>
           ) : (
             <div className="carte overflow-hidden">
+              {/* Barre d'outils du registre : ce qu'on regarde, et l'export. */}
+              <div className="flex flex-wrap items-center justify-between gap-3 px-4 py-3 border-b border-ds-border">
+                <div>
+                  <h2 className="text-[15px] font-semibold text-ink">Registre {annee}</h2>
+                  <p className="text-xs text-gray-400">Dans l&apos;ordre des encaissements, total par mois.</p>
+                </div>
+                <ExportsComptables annee={annee} />
+              </div>
               <div className="overflow-x-auto">
-                <table className="w-full text-sm">
+                <table className="w-full min-w-[920px] table-fixed text-sm">
+                  <colgroup>
+                    <col className="w-[112px]" />
+                    <col className="w-[128px]" />
+                    <col className="w-[19%]" />
+                    <col />
+                    <col className="w-[104px]" />
+                    <col className="w-[120px]" />
+                    <col className="w-[128px]" />
+                    <col className="w-[150px]" />
+                  </colgroup>
                   <thead>
-                    <tr className="bg-ds-elevated border-b border-ds-border text-left">
-                      <th className="px-4 py-3 text-xs font-semibold text-gray-400 whitespace-nowrap">Encaissé le</th>
-                      <th className="px-4 py-3 text-xs font-semibold text-gray-400 whitespace-nowrap">Facture</th>
-                      <th className="px-4 py-3 text-xs font-semibold text-gray-400">Client</th>
-                      <th className="px-4 py-3 text-xs font-semibold text-gray-400">Catégorie</th>
-                      <th className="px-4 py-3 text-xs font-semibold text-gray-400">Nature</th>
-                      <th className="px-4 py-3 text-xs font-semibold text-gray-400 text-right whitespace-nowrap">HT</th>
-                      <th className="px-4 py-3 text-xs font-semibold text-gray-400 text-right whitespace-nowrap">Encaissé (TTC)</th>
-                      <th className="px-4 py-3 text-xs font-semibold text-gray-400 whitespace-nowrap">Règlement</th>
+                    <tr className="bg-ds-elevated border-b border-ds-border text-left text-xs font-medium text-gray-400">
+                      <th className="px-4 py-2.5 font-medium">Encaissé le</th>
+                      <th className="px-4 py-2.5 font-medium">Facture</th>
+                      <th className="px-4 py-2.5 font-medium">Client</th>
+                      <th className="px-4 py-2.5 font-medium">Nature</th>
+                      <th className="px-4 py-2.5 font-medium">Catégorie</th>
+                      <th className="px-4 py-2.5 font-medium text-right">HT</th>
+                      <th className="px-4 py-2.5 font-medium text-right">Encaissé TTC</th>
+                      <th className="px-4 py-2.5 font-medium">Règlement</th>
                     </tr>
                   </thead>
-                  <tbody>
-                    {parMois.map((m) => (
-                      <Fragment key={m.nom}>
-                        {m.lignes.map((l) => (
-                          <tr key={l.id} className="border-b border-ds-border align-top hover:bg-ds-elevated/40 transition-colors">
-                            <td className="px-4 py-3 text-gray-300 whitespace-nowrap">
-                              {jour(l.date)}
-                              {l.dateEstimee && <span className="block text-xs text-amber-400">date d&apos;émission</span>}
-                            </td>
-                            <td className="px-4 py-3 text-gray-300 whitespace-nowrap font-mono text-xs">{l.numero}</td>
-                            <td className="px-4 py-3 text-ink">{l.client}</td>
-                            <td className="px-4 py-3 whitespace-nowrap">
-                              <PuceCouleur
-                                classe={l.categorie === "biens" ? "border-sky-500/30 bg-sky-500/10 text-sky-300" : "border-violet-500/30 bg-violet-500/10 text-violet-300"}
-                                texte={l.categorie === "biens" ? "Biens" : "Services"}
-                              />
-                            </td>
-                            <td className="px-4 py-3 text-gray-400 max-w-88">{l.nature}</td>
-                            <td className="px-4 py-3 text-gray-300 text-right tabular-nums whitespace-nowrap">{eur(l.ht)}</td>
-                            <td className="px-4 py-3 text-ink text-right tabular-nums whitespace-nowrap font-medium">{eur(l.ttc)}</td>
-                            <td className="px-4 py-3 text-gray-400 whitespace-nowrap">
-                              {l.mode ? MODES_REGLEMENT[l.mode] : <span className="text-amber-400">non renseigné</span>}
-                            </td>
-                          </tr>
-                        ))}
-                        <tr className="border-b border-ds-border bg-ds-elevated/40">
-                          <td colSpan={5} className="px-4 py-2 text-xs font-semibold text-gray-400">Total {m.nom.toLowerCase()}</td>
-                          <td className="px-4 py-2 text-right text-xs font-semibold text-gray-300 tabular-nums">{eur(m.ht)}</td>
-                          <td className="px-4 py-2 text-right text-xs font-semibold text-ink tabular-nums">{eur(m.ttc)}</td>
-                          <td />
+                  {parMois.map((m) => (
+                    <tbody key={m.nom}>
+                      {/* En-tête de mois : le nom et ses totaux, avant ses lignes. */}
+                      <tr className="bg-ds-bg border-b border-ds-border">
+                        <th colSpan={5} scope="rowgroup" className="px-4 py-2 text-left text-[13px] font-semibold text-ink">
+                          {m.nom}
+                          <span className="ml-2 font-normal text-gray-400">{m.lignes.length} encaissement{m.lignes.length > 1 ? "s" : ""}</span>
+                        </th>
+                        <td className="px-4 py-2 text-right text-[13px] font-semibold text-ink tabular-nums whitespace-nowrap">{eur(m.ht)}</td>
+                        <td className="px-4 py-2 text-right text-[13px] font-semibold text-ink tabular-nums whitespace-nowrap">{eur(m.ttc)}</td>
+                        <td />
+                      </tr>
+                      {m.lignes.map((l) => (
+                        <tr key={l.id} className="border-b border-ds-border align-top hover:bg-ds-elevated/40 transition-colors">
+                          <td className="px-4 py-2.5 text-gray-300 whitespace-nowrap">
+                            {jour(l.date)}
+                            {l.dateEstimee && <span className="block text-xs text-amber-400">date d&apos;émission</span>}
+                          </td>
+                          <td className="px-4 py-2.5 text-gray-300 whitespace-nowrap font-mono text-xs leading-5">{l.numero}</td>
+                          <td className="px-4 py-2.5 text-ink truncate" title={l.client}>{l.client}</td>
+                          <td className="px-4 py-2.5 text-gray-400"><span className="line-clamp-2" title={l.nature}>{l.nature}</span></td>
+                          <td className="px-4 py-2.5 text-gray-300 whitespace-nowrap">{l.categorie === "biens" ? "Biens" : "Services"}</td>
+                          <td className="px-4 py-2.5 text-gray-300 text-right tabular-nums whitespace-nowrap">{eur(l.ht)}</td>
+                          <td className="px-4 py-2.5 text-ink text-right tabular-nums whitespace-nowrap font-medium">{eur(l.ttc)}</td>
+                          <td className="px-4 py-2.5 text-gray-400 truncate" title={l.mode ? MODES_REGLEMENT[l.mode] : undefined}>
+                            {l.mode ? MODES_REGLEMENT[l.mode] : <span className="text-amber-400">non renseigné</span>}
+                          </td>
                         </tr>
-                      </Fragment>
-                    ))}
-                  </tbody>
+                      ))}
+                    </tbody>
+                  ))}
+                  <tfoot>
+                    <tr className="bg-ds-elevated">
+                      <th colSpan={5} scope="row" className="px-4 py-3 text-left text-sm font-semibold text-ink">Total {annee}</th>
+                      <td className="px-4 py-3 text-right text-sm font-semibold text-ink tabular-nums whitespace-nowrap">{eur(totalHt)}</td>
+                      <td className="px-4 py-3 text-right text-sm font-semibold text-ink tabular-nums whitespace-nowrap">{eur(totalTtc)}</td>
+                      <td />
+                    </tr>
+                  </tfoot>
                 </table>
               </div>
             </div>

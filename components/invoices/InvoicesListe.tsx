@@ -6,7 +6,7 @@ import { BarreRecherche } from "@/components/ui/BarreRecherche";
 import type { Invoice } from "@/types";
 import { etatPdp } from "@/lib/superpdp-etat-facture";
 import { phraseManques } from "@/lib/superpdp-precontrole";
-import { CarteDepliable, ListeTableau, PuceCouleur, TuileSynthese, Champ } from "@/components/ui/CarteDepliable";
+import { CarteDepliable, PuceCouleur, TuileSynthese, Champ } from "@/components/ui/CarteDepliable";
 
 const STATUT: Record<string, { label: string; classe: string }> = {
   draft: { label: "Brouillon", classe: "bg-ds-elevated text-gray-300 border-ds-border" },
@@ -81,9 +81,7 @@ export function InvoicesListe({
         <BarreRecherche value={q} onChange={setQ} placeholder="Rechercher une facture, un client..." />
       </div>
 
-      <div className="mt-4">
-        {liste.length > 0 && (
-        <ListeTableau colonnes={["Client", "Statut", "Montant TTC"]}>
+      <div className="space-y-2.5 mt-4">
         {liste.map((inv) => {
           const s = STATUT[inv.status] ?? { label: inv.status, classe: "bg-ds-elevated text-gray-300 border-ds-border" };
           const e = raccordePdp ? etatPdp(inv, sandboxPdp) : null;
@@ -162,8 +160,6 @@ export function InvoicesListe({
             </CarteDepliable>
           );
         })}
-        </ListeTableau>
-        )}
 
         {liste.length === 0 && (
           <p className="text-sm text-gray-500 text-center py-10">Aucun résultat pour « {q} ».</p>

@@ -105,22 +105,3 @@ export function CarteDepliable({
     </details>
   );
 }
-
-/**
- * Cadre unique pour une liste de cartes depliables : ligne d'en-tetes alignee
- * sur les colonnes des cartes (titre 42 %, pastilles, montant a droite), puis
- * les lignes separees par un filet. Les en-tetes sont masques sur telephone,
- * ou les cartes s'empilent.
- */
-export function ListeTableau({ colonnes, children }: { colonnes: [string, string, string]; children: ReactNode }) {
-  return (
-    <div className="liste-tableau carte overflow-hidden">
-      <div className="hidden sm:flex items-center gap-4 px-4 py-2 bg-ds-elevated border-b border-ds-border text-[12px] font-medium text-gray-400">
-        <span className="w-[42%] shrink-0">{colonnes[0]}</span>
-        <span className="flex-1">{colonnes[1]}</span>
-        <span className="pr-8">{colonnes[2]}</span>
-      </div>
-      {children}
-    </div>
-  );
-}

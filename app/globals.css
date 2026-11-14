@@ -558,13 +558,6 @@
   content: ""; position: absolute; left: 0; top: 7px; bottom: 7px; width: 3px;
   border-radius: 0 3px 3px 0; background-color: rgb(var(--acc-500));
 }
-/* Liste en tableau : les cartes depliables d'une meme liste partagent un seul
-   cadre, separees par un filet, sous une ligne d'en-tetes. */
-.liste-tableau > details.carte {
-  border: 0; border-radius: 0; box-shadow: none;
-  border-bottom: 1px solid var(--ds-border);
-}
-.liste-tableau > details.carte:last-of-type { border-bottom: 0; }
 
 ::-webkit-scrollbar { width: 5px; }
 ::-webkit-scrollbar-track { background: #080808; }
