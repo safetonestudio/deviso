@@ -13,6 +13,7 @@ import { SignalementsClient } from "@/components/SignalementsClient";
 import { caMensuelHt as calculerCaMensuelHt, encaisseTtcDuMois, lignesRecettes, totauxParCategorie, type FactureRecette } from "@/lib/recettes";
 import { jaugeFranchise } from "@/lib/seuils-micro";
 import { HeroCa } from "@/components/dashboard/HeroCa";
+import { BarreParts, Courbe } from "@/components/dashboard/MiniVisuels";
 import { CaMensuelBarres } from "@/components/dashboard/CaMensuelBarres";
 import { EcheanceCarte } from "@/components/dashboard/EcheanceCarte";
 import { EcheanceTvaCarte } from "@/components/dashboard/EcheanceTvaCarte";
@@ -112,6 +113,7 @@ export default async function DashboardPage() {
   // ── KPI 2 : Devis en attente ──────────────────────────────────────────────
   const pendingProposals    = proposals.filter((p) => ["sent", "viewed"].includes(p.status));
   const totalDevisEnAttente = pendingProposals.reduce((s, p) => s + p.total_ttc, 0);
+  const devisConsultes      = pendingProposals.filter((p) => p.status === "viewed").length;
   const oldestDevisAge      = pendingProposals.length > 0
     ? Math.max(...pendingProposals.map((p) => daysSince(p.created_at)))
     : 0;
@@ -212,6 +214,9 @@ export default async function DashboardPage() {
     inv as unknown as FactureRecette[],
     `${anneeCourante}-${String(now.getMonth() + 1).padStart(2, "0")}`
   );
+  // Courbe de la tuile : les mois ecoules de l'annee (six au plus), meme
+  // serie que le graphique en dessous.
+  const sixDerniersMois = caMensuelHt.slice(Math.max(0, now.getMonth() - 5), now.getMonth() + 1);
   // Evolution par rapport au mois precedent, meme source et meme base (TTC
   // encaisse). Pas de pastille sans mois de comparaison : un pourcentage sur
   // zero ne veut rien dire.
@@ -319,15 +324,33 @@ export default async function DashboardPage() {
           dense
           href="/invoices"
           icon={Wallet}
+          visuel={caToCollect > 0 ? (
+            <BarreParts
+              description={`Encours : ${fmt(caToCollect - overdueAmount)} à jour, ${fmt(overdueAmount)} en retard`}
+              parts={[
+                { valeur: caToCollect - overdueAmount, classe: "bg-indigo-500", libelle: `À jour ${fmt(caToCollect - overdueAmount)}` },
+                { valeur: overdueAmount, classe: "bg-amber-500", libelle: `En retard ${fmt(overdueAmount)}` },
+              ]}
+            />
+          ) : undefined}
           label="Encours à encaisser"
           value={fmt(caToCollect)}
           point={overdueAmount > 0 ? "alerte" : "neutre"}
-          trend={overdueAmount > 0 ? `dont ${fmt(overdueAmount)} en retard` : sentInvoices.length > 0 ? `${sentInvoices.length} facture${sentInvoices.length > 1 ? "s" : ""} envoyée${sentInvoices.length > 1 ? "s" : ""}` : "Aucune en attente"}
+          trend={caToCollect > 0 ? undefined : sentInvoices.length > 0 ? `${sentInvoices.length} facture${sentInvoices.length > 1 ? "s" : ""} envoyée${sentInvoices.length > 1 ? "s" : ""}` : "Aucune en attente"}
         />
         <KpiCard
           dense
           href="/proposals"
           icon={Hourglass}
+          visuel={pendingProposals.length > 0 ? (
+            <BarreParts
+              description={`Devis en attente : ${devisConsultes} consulté(s), ${pendingProposals.length - devisConsultes} envoyé(s) non ouvert(s)`}
+              parts={[
+                { valeur: devisConsultes, classe: "bg-indigo-500", libelle: `Consulté${devisConsultes > 1 ? "s" : ""} ${devisConsultes}` },
+                { valeur: pendingProposals.length - devisConsultes, classe: "bg-sky-400", libelle: `Non ouvert${pendingProposals.length - devisConsultes > 1 ? "s" : ""} ${pendingProposals.length - devisConsultes}` },
+              ]}
+            />
+          ) : undefined}
           label="Devis en attente"
           value={fmt(pendingProposals.length > 0 ? totalDevisEnAttente : 0)}
           point="info"
@@ -340,6 +363,7 @@ export default async function DashboardPage() {
           href="/livre-recettes"
           icon={CircleCheck}
           delta={deltaMois ?? undefined}
+          visuel={<Courbe valeurs={sixDerniersMois} description="Encaissements hors taxes des derniers mois de l'année" />}
           label="Encaissé ce mois"
           value={fmt(caThisMonth)}
           point="bon"

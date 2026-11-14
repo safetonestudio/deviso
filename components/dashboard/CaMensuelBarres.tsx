@@ -56,7 +56,7 @@ export function CaMensuelBarres({ mensuelHt, moisCourant, annee }: { mensuelHt: 
         </p>
       ) : (
         <>
-          <div className="flex gap-3 mt-4 flex-1 min-h-[168px]">
+          <div className="flex gap-3 mt-4 flex-1 min-h-[188px]">
             {/* Echelle */}
             <div className="flex flex-col justify-between text-[11px] text-gray-400 tabular-nums text-right pb-6 shrink-0" aria-hidden="true">
               <span>{nombre.format(plafond)}</span>
@@ -106,11 +106,18 @@ export function CaMensuelBarres({ mensuelHt, moisCourant, annee }: { mensuelHt: 
                     >
                       <span className="w-full flex-1 flex items-end justify-center">
                         <span
-                          className={`block w-full max-w-[34px] rounded-t-[5px] rounded-b-[2px] transition-colors ${
-                            courant ? "bg-indigo-500" : survole ? "bg-indigo-500/45" : "bg-indigo-500/20"
+                          className={`relative block w-full max-w-[38px] rounded-t-[7px] rounded-b-[2px] ${
+                            courant ? "barre-ca-courant" : survole ? "barre-ca-survol" : "barre-ca"
                           }`}
                           style={{ height: `${h}%` }}
-                        />
+                        >
+                          {survole && (
+                            <span className="bulle-graphique absolute bottom-full left-1/2 -translate-x-1/2 mb-2 px-2.5 py-1.5 rounded-lg whitespace-nowrap text-left z-10 pointer-events-none">
+                              <span className="block text-[11px] text-gray-400 capitalize">{MOIS[i]}</span>
+                              <span className="block text-[13px] font-semibold text-ink tabular-nums">{euros(v)}</span>
+                            </span>
+                          )}
+                        </span>
                       </span>
                       <span className={`h-4 text-[11px] leading-4 ${courant || survole ? "text-ink font-semibold" : futur ? "text-gray-500" : "text-gray-400"}`}>
                         {initiale}

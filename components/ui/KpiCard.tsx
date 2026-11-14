@@ -1,3 +1,4 @@
+import type { ReactNode } from "react";
 import Link from "next/link";
 import { LucideIcon, ArrowUpRight, ArrowDownRight } from "lucide-react";
 
@@ -18,6 +19,8 @@ interface KpiCardProps {
       plus petit, icone, evolution en pastille. Les autres pages gardent le
       rendu d'origine tant que le pilote n'est pas valide. */
   dense?: boolean;
+  /** Petit visuel sous le chiffre (courbe, barre repartie). Variante dense. */
+  visuel?: ReactNode;
 }
 
 /**
@@ -44,7 +47,7 @@ function montant(value: string | number) {
   return m ? { nombre: m[1], euro: true } : { nombre: v, euro: false };
 }
 
-export function KpiCard({ label, value, icon: Icon, trend, point = "neutre", delta, className = "", href, dense = false }: KpiCardProps) {
+export function KpiCard({ label, value, icon: Icon, trend, point = "neutre", delta, className = "", href, dense = false, visuel }: KpiCardProps) {
   const { nombre, euro } = montant(value);
 
   const pastilleDelta = delta && (
@@ -63,18 +66,19 @@ export function KpiCard({ label, value, icon: Icon, trend, point = "neutre", del
       <div className="flex items-center justify-between gap-2">
         <div className="text-[13px] font-medium text-gray-300 min-w-0 break-words">{label}</div>
         {Icon && (
-          <span className="shrink-0 w-7 h-7 rounded-lg bg-ds-elevated border border-ds-border flex items-center justify-center text-gray-400">
-            <Icon size={14} aria-hidden="true" />
+          <span className="puce-icone shrink-0 w-8 h-8 rounded-lg flex items-center justify-center">
+            <Icon size={15} aria-hidden="true" />
           </span>
         )}
       </div>
       <div className="flex items-baseline flex-wrap gap-x-2 gap-y-1">
-        <span className="text-[24px] leading-none font-semibold text-ink tabular-nums tracking-tight">
+        <span className="text-[26px] leading-none font-semibold text-ink tabular-nums tracking-tight">
           {nombre}
           {euro && <span className="text-[0.6em] text-gray-400 font-medium ml-1">€</span>}
         </span>
         {pastilleDelta}
       </div>
+      {visuel}
       {trend && (
         <div className="flex items-start sm:items-center gap-2 text-[13px] text-gray-400 min-w-0">
           <span className={`w-1.5 h-1.5 rounded-full shrink-0 mt-1.5 sm:mt-0 ${POINT[point]}`} />
@@ -106,7 +110,7 @@ export function KpiCard({ label, value, icon: Icon, trend, point = "neutre", del
       <Link
         href={href}
         aria-label={`${label} : ${String(value)}`}
-        className={`${classes} hover:border-indigo-500/40 focus-visible:outline-2 focus-visible:outline-indigo-500 transition-colors`}
+        className={`${classes} carte-cliquable focus-visible:outline-2 focus-visible:outline-indigo-500`}
       >
         {contenu}
       </Link>

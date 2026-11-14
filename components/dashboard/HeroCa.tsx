@@ -1,4 +1,5 @@
 import type { JaugeFranchise } from "@/lib/seuils-micro";
+import { Anneau } from "@/components/dashboard/MiniVisuels";
 
 const nombre = new Intl.NumberFormat("fr-FR", { maximumFractionDigits: 0 });
 const euros = (n: number) => `${nombre.format(Math.round(n))} €`;
@@ -25,13 +26,13 @@ type Props = {
 export function HeroCa({ annee, caAnneeHt, caTrimestreHt, trimestre, caMoisTtc, jauge, tvaTrimestre = null }: Props) {
   const pct = jauge ? Math.min(100, Math.round(jauge.ratio * 100)) : 0;
   const etat = !jauge ? null : jauge.ratio >= 1 ? "depasse" : jauge.ratio >= 0.85 ? "proche" : "ok";
-  const remplissage = etat === "depasse" ? "bg-red-600" : etat === "proche" ? "bg-amber-500" : "bg-indigo-600";
+  const anneau = etat === "depasse" ? "text-red-500" : etat === "proche" ? "text-amber-500" : "text-indigo-500";
 
   return (
-    <section className="carte p-5 sm:p-6 grid gap-6 lg:grid-cols-[1.15fr_1fr] items-center">
+    <section className="carte carte-heros p-5 sm:p-7 grid gap-6 lg:grid-cols-[1.15fr_1fr] items-center">
       <div className="min-w-0">
         <div className="text-[13px] font-medium text-gray-300">Chiffre d&apos;affaires encaissé, {annee}</div>
-        <div className="font-semibold text-ink leading-none tracking-[-0.02em] text-[36px] sm:text-[44px] mt-2 mb-3 tabular-nums wrap-break-word">
+        <div className="font-semibold text-ink leading-none tracking-[-0.02em] text-[40px] sm:text-[52px] mt-2 mb-3 tabular-nums wrap-break-word">
           {nombre.format(Math.round(caAnneeHt))}
           <span className="text-[0.5em] text-gray-400 font-medium ml-1.5">€</span>
         </div>
@@ -42,40 +43,27 @@ export function HeroCa({ annee, caAnneeHt, caTrimestreHt, trimestre, caMoisTtc, 
       </div>
 
       {jauge ? (
-        <div className="flex flex-col gap-2.5 min-w-0">
-          <div className="flex justify-between gap-3 text-[13px] text-gray-400">
-            <span>
+        <div className="flex items-center gap-5 min-w-0 lg:justify-end">
+          <Anneau pct={pct} classe={anneau} description="Part du seuil de franchise de TVA atteinte" />
+          <div className="min-w-0 flex flex-col gap-1.5">
+            <div className="text-[13px] font-medium text-gray-300">
               Seuil de franchise TVA{jauge.categorie === "services" ? ", prestations" : ""}
-            </span>
-            <span className="text-ink font-semibold">{euros(jauge.seuil)}</span>
+            </div>
+            <div className="text-[20px] leading-none font-semibold text-ink tabular-nums">{euros(jauge.seuil)}</div>
+            <p className="text-[13px] text-gray-400 max-w-[260px]">
+              {etat === "depasse" ? (
+                <span className="text-red-400 font-semibold">
+                  Seuil dépassé : tes factures doivent maintenant porter la TVA.
+                </span>
+              ) : (
+                <>
+                  Il te reste{" "}
+                  <span className={`font-bold ${etat === "proche" ? "text-amber-400" : "text-indigo-400"}`}>{euros(jauge.reste)}</span>{" "}
+                  avant de devoir facturer la TVA.
+                </>
+              )}
+            </p>
           </div>
-          <div
-            className="relative h-2 rounded-full bg-ds-elevated border border-ds-border overflow-hidden"
-            role="progressbar"
-            aria-valuenow={pct}
-            aria-valuemin={0}
-            aria-valuemax={100}
-            aria-label="Part du seuil de franchise de TVA atteinte"
-          >
-            <div className={`jauge-remplir absolute inset-y-0 left-0 rounded-full ${remplissage}`} style={{ width: `${pct}%` }} />
-          </div>
-          <div className="flex justify-between text-[13px] text-gray-400">
-            <span>0 €</span>
-            <span>{pct} % atteint</span>
-          </div>
-          <p className="text-[13px] text-gray-400">
-            {etat === "depasse" ? (
-              <span className="text-red-400 font-semibold">
-                Seuil dépassé : tes factures doivent maintenant porter la TVA.
-              </span>
-            ) : (
-              <>
-                Il te reste{" "}
-                <span className={`font-bold ${etat === "proche" ? "text-amber-400" : "text-indigo-400"}`}>{euros(jauge.reste)}</span>{" "}
-                avant de devoir facturer la TVA.
-              </>
-            )}
-          </p>
         </div>
       ) : (
         <div className="grid grid-cols-2 gap-3">

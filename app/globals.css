@@ -520,6 +520,40 @@
 .jauge-remplir { transform-origin: left center; animation: remplir 1.1s cubic-bezier(.2,.7,.2,1) 0.15s both; }
 @media (prefers-reduced-motion: reduce) { .jauge-remplir { animation: none; } }
 
+/* Relief et matieres des widgets (14/11/2026). Couleurs tirees des variables
+   de theme : clair et sombre suivent sans surcharge. */
+.carte-cliquable { transition: box-shadow 0.15s ease, transform 0.15s ease, border-color 0.15s ease; }
+.carte-cliquable:hover, .carte-cliquable:focus-visible {
+  box-shadow: var(--ds-shadow-leve);
+  transform: translateY(-2px);
+  border-color: rgb(var(--acc-500) / 0.35);
+}
+@media (prefers-reduced-motion: reduce) { .carte-cliquable:hover, .carte-cliquable:focus-visible { transform: none; } }
+.carte-heros {
+  background-image:
+    radial-gradient(110% 140% at 0% 0%, rgb(var(--acc-500) / 0.16), transparent 58%),
+    radial-gradient(70% 120% at 100% 100%, rgb(var(--acc-500) / 0.07), transparent 60%);
+  box-shadow: var(--ds-shadow-leve);
+}
+.puce-icone {
+  background-image: linear-gradient(180deg, rgb(var(--acc-500) / 0.2), rgb(var(--acc-500) / 0.08));
+  border: 1px solid rgb(var(--acc-500) / 0.28);
+  color: rgb(var(--acc-400));
+  box-shadow: inset 0 1px 0 rgb(255 255 255 / 0.12), 0 1px 2px rgb(var(--acc-600) / 0.18);
+}
+.barre-ca { background-image: linear-gradient(180deg, rgb(var(--acc-500) / 0.42), rgb(var(--acc-500) / 0.16)); }
+.barre-ca-survol { background-image: linear-gradient(180deg, rgb(var(--acc-500) / 0.7), rgb(var(--acc-500) / 0.35)); }
+.barre-ca-courant {
+  background-image: linear-gradient(180deg, rgb(var(--acc-400)), rgb(var(--acc-600)));
+  box-shadow: inset 0 1px 0 rgb(255 255 255 / 0.25), 0 6px 14px -3px rgb(var(--acc-500) / 0.5);
+}
+.bulle-graphique {
+  background-color: var(--ds-elevated);
+  border: 1px solid var(--ds-border);
+  box-shadow: var(--ds-shadow-leve);
+}
+.piste-jauge { box-shadow: inset 0 1px 2px rgb(0 0 0 / 0.18); }
+
 ::-webkit-scrollbar { width: 5px; }
 ::-webkit-scrollbar-track { background: #080808; }
 ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.12); border-radius: 4px; }
@@ -613,7 +647,8 @@
   --ds-bg: #0E1512; --ds-surface: #16201B; --ds-elevated: #1D2822;
   --ds-border: rgba(255, 255, 255, 0.09);
   --ds-shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.4);
-  --ds-shadow-card: 0 1px 2px rgba(0, 0, 0, 0.35), 0 4px 16px rgba(0, 0, 0, 0.25);
+  --ds-shadow-card: inset 0 1px 0 rgba(255, 255, 255, 0.07), 0 1px 2px rgba(0, 0, 0, 0.5), 0 10px 28px -6px rgba(0, 0, 0, 0.55);
+  --ds-shadow-leve: inset 0 1px 0 rgba(255, 255, 255, 0.1), 0 2px 4px rgba(0, 0, 0, 0.5), 0 20px 44px -8px rgba(0, 0, 0, 0.7);
   --urgency-high-bg: #2A1714; --urgency-medium-bg: #2A1E14; --urgency-ok-bg: #12241B;
   --ink: 231 237 232; --on-accent: 255 255 255;
   --n-50: 243 246 243; --n-100: 231 237 232; --n-200: 211 220 214; --n-300: 182 194 187; --n-400: 147 162 154; --n-500: 128 142 134;
@@ -631,7 +666,8 @@
   --ds-bg: #EDEFE9; --ds-surface: #FFFFFF; --ds-elevated: #F5F6F1;
   --ds-border: #E1E4DB;
   --ds-shadow-sm: 0 1px 2px rgba(22, 33, 28, 0.05);
-  --ds-shadow-card: 0 1px 2px rgba(22, 33, 28, 0.05), 0 6px 20px rgba(22, 33, 28, 0.06);
+  --ds-shadow-card: 0 0 0 1px rgba(22, 33, 28, 0.02), 0 1px 2px rgba(22, 33, 28, 0.06), 0 3px 6px -1px rgba(22, 33, 28, 0.06), 0 14px 32px -8px rgba(22, 33, 28, 0.14);
+  --ds-shadow-leve: 0 0 0 1px rgba(22, 33, 28, 0.03), 0 2px 4px rgba(22, 33, 28, 0.07), 0 8px 14px -2px rgba(22, 33, 28, 0.08), 0 24px 48px -10px rgba(22, 33, 28, 0.2);
   --urgency-high-bg: #F8E6E3; --urgency-medium-bg: #F2E4D9; --urgency-ok-bg: #DCEDE3;
   --ink: 22 33 28; --on-accent: 255 255 255;
   --n-50: 18 26 22; --n-100: 28 39 34; --n-200: 38 50 44; --n-300: 54 67 60; --n-400: 91 102 95; --n-500: 91 102 95;
