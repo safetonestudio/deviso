@@ -28,14 +28,14 @@ export function HeroCa({ annee, caAnneeHt, caTrimestreHt, trimestre, caMoisTtc, 
   const remplissage = etat === "depasse" ? "bg-red-600" : etat === "proche" ? "bg-amber-500" : "bg-indigo-600";
 
   return (
-    <section className="carte p-7 sm:p-9 grid gap-8 lg:grid-cols-[1.15fr_1fr] items-center">
+    <section className="carte p-5 sm:p-6 grid gap-6 lg:grid-cols-[1.15fr_1fr] items-center">
       <div className="min-w-0">
-        <div className="text-[13px] font-semibold text-gray-400">Chiffre d&apos;affaires encaissé, {annee}</div>
-        <div className="font-display font-bold text-ink leading-none tracking-[-0.03em] text-[52px] sm:text-[76px] mt-3 mb-4 wrap-break-word">
+        <div className="text-[13px] font-medium text-gray-300">Chiffre d&apos;affaires encaissé, {annee}</div>
+        <div className="font-semibold text-ink leading-none tracking-[-0.02em] text-[36px] sm:text-[44px] mt-2 mb-3 tabular-nums wrap-break-word">
           {nombre.format(Math.round(caAnneeHt))}
-          <span className="text-[0.5em] text-gray-400 font-semibold ml-1.5">€</span>
+          <span className="text-[0.5em] text-gray-400 font-medium ml-1.5">€</span>
         </div>
-        <p className="text-sm text-gray-400">
+        <p className="text-[13px] text-gray-400">
           Base encaissement, comme ton livre des recettes.{" "}
           <span className="text-ink font-semibold">{euros(caTrimestreHt)}</span> encaissés ce trimestre.
         </p>
@@ -50,7 +50,7 @@ export function HeroCa({ annee, caAnneeHt, caTrimestreHt, trimestre, caMoisTtc, 
             <span className="text-ink font-semibold">{euros(jauge.seuil)}</span>
           </div>
           <div
-            className="relative h-3 rounded-full bg-ds-elevated border border-ds-border overflow-hidden"
+            className="relative h-2 rounded-full bg-ds-elevated border border-ds-border overflow-hidden"
             role="progressbar"
             aria-valuenow={pct}
             aria-valuemin={0}
@@ -79,14 +79,14 @@ export function HeroCa({ annee, caAnneeHt, caTrimestreHt, trimestre, caMoisTtc, 
         </div>
       ) : (
         <div className="grid grid-cols-2 gap-3">
-          <div className="rounded-xl bg-ds-elevated p-4">
+          <div className="rounded-lg bg-ds-elevated p-4">
             <div className="text-[13px] text-gray-400">Encaissé ce mois</div>
-            <div className="font-display text-2xl font-bold text-ink mt-1">{euros(caMoisTtc)}</div>
+            <div className="text-xl font-semibold text-ink mt-1 tabular-nums">{euros(caMoisTtc)}</div>
             <div className="text-xs text-gray-400 mt-1">TTC</div>
           </div>
-          <div className="rounded-xl bg-ds-elevated p-4">
+          <div className="rounded-lg bg-ds-elevated p-4">
             <div className="text-[13px] text-gray-400">TVA perçue ce trimestre</div>
-            <div className="font-display text-2xl font-bold text-ink mt-1">{euros(tvaTrimestre ?? 0)}</div>
+            <div className="text-xl font-semibold text-ink mt-1 tabular-nums">{euros(tvaTrimestre ?? 0)}</div>
             <div className="text-xs text-gray-400 mt-1">sur tes encaissements</div>
           </div>
         </div>

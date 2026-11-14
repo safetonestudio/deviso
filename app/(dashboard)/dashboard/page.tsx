@@ -20,7 +20,7 @@ import { StatutAPreciser } from "@/components/dashboard/StatutAPreciser";
 import { vueTableauDeBord, prochaineDeclarationTva } from "@/lib/statut-entreprise";
 import { echeanceDossier } from "@/lib/cabinet-tva-calendrier";
 import type { FactureCabinet } from "@/lib/cabinet-dossiers";
-import { Receipt, FileText, ArrowRight, Plus } from "lucide-react";
+import { Receipt, FileText, ArrowRight, Plus, Wallet, Hourglass, CircleCheck, FileSignature } from "lucide-react";
 
 const PROPOSAL_STATUS: Record<string, { label: string; color: string }> = {
   draft:    { label: "Brouillon",  color: "bg-ds-elevated text-gray-400" },
@@ -212,6 +212,20 @@ export default async function DashboardPage() {
     inv as unknown as FactureRecette[],
     `${anneeCourante}-${String(now.getMonth() + 1).padStart(2, "0")}`
   );
+  // Evolution par rapport au mois precedent, meme source et meme base (TTC
+  // encaisse). Pas de pastille sans mois de comparaison : un pourcentage sur
+  // zero ne veut rien dire.
+  const moisPrecedent = new Date(now.getFullYear(), now.getMonth() - 1, 1);
+  const caMoisPrecedent = encaisseTtcDuMois(
+    inv as unknown as FactureRecette[],
+    `${moisPrecedent.getFullYear()}-${String(moisPrecedent.getMonth() + 1).padStart(2, "0")}`
+  );
+  const deltaMois = caMoisPrecedent > 0
+    ? (() => {
+        const pct = Math.round(((caThisMonth - caMoisPrecedent) / caMoisPrecedent) * 100);
+        return { value: `${Math.abs(pct)} % vs ${moisPrecedent.toLocaleDateString("fr-FR", { month: "short" })}`, positive: pct >= 0 };
+      })()
+    : null;
   const facturéThisMonth = inv
     .filter((i) => i.status !== "cancelled" && i.status !== "draft" && i.created_at >= monthStart)
     .reduce((s, i) => s + signeCa(i) * i.total_ttc, 0);
@@ -228,37 +242,37 @@ export default async function DashboardPage() {
 
   return (
     <>
-    <div className="space-y-6 w-full">
+    <div className="space-y-4 sm:space-y-5 w-full">
 
       <GuidedTourBanner pageKey="dashboard" />
 
       {/* ── En-tete : titre, actions, cloche et theme sur une ligne ── */}
-      <div className="en-tete-page flex items-start justify-between gap-4 flex-wrap">
+      <div className="en-tete-page flex items-center justify-between gap-4 flex-wrap">
         <div>
-          <h1 className="text-[34px] sm:text-[44px] font-bold text-ink tracking-tight leading-[1.05]">
+          <h1 className="text-[24px] sm:text-[28px] font-semibold text-ink tracking-tight leading-[1.15]">
             {isMember ? "Mon activité" : "Tableau de bord"}
           </h1>
-          <p className="text-[15px] sm:text-[17px] text-gray-400 mt-2">
+          <p className="text-[14px] text-gray-400 mt-1">
             {isMember ? "Tes devis et factures personnels" : "Vue d'ensemble de ton activité"}
           </p>
         </div>
-        <div className="flex items-center gap-2.5 flex-wrap sm:mt-3">
+        <div className="flex items-center gap-2 flex-wrap">
           <Link
             href="/proposals/new"
             className={
               isPaid
-                ? "flex items-center gap-2 border border-ds-border bg-ds-surface hover:bg-ds-elevated text-ink font-semibold px-5 h-11 rounded-xl transition-colors text-[15px]"
-                : "flex items-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-ink font-semibold px-5 h-11 rounded-xl transition-colors text-[15px]"
+                ? "flex items-center gap-2 border border-ds-border bg-ds-surface hover:bg-ds-elevated text-ink font-semibold px-4 h-10 rounded-lg transition-colors text-sm"
+                : "flex items-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-ink font-semibold px-4 h-10 rounded-lg transition-colors text-sm"
             }
           >
-            <Plus size={17} /> Nouveau devis
+            <Plus size={16} /> Nouveau devis
           </Link>
           {isPaid && (
             <Link
               href="/invoices/new"
-              className="flex items-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-ink font-semibold px-5 h-11 rounded-xl transition-colors text-[15px]"
+              className="flex items-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-ink font-semibold px-4 h-10 rounded-lg transition-colors text-sm"
             >
-              <FileText size={17} /> Nouvelle facture
+              <FileText size={16} /> Nouvelle facture
             </Link>
           )}
           <ActionsGlobales />
@@ -300,14 +314,20 @@ export default async function DashboardPage() {
       )}
 
       {/* ── Indicateurs ── */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-5">
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
         <KpiCard
+          dense
+          href="/invoices"
+          icon={Wallet}
           label="Encours à encaisser"
           value={fmt(caToCollect)}
           point={overdueAmount > 0 ? "alerte" : "neutre"}
           trend={overdueAmount > 0 ? `dont ${fmt(overdueAmount)} en retard` : sentInvoices.length > 0 ? `${sentInvoices.length} facture${sentInvoices.length > 1 ? "s" : ""} envoyée${sentInvoices.length > 1 ? "s" : ""}` : "Aucune en attente"}
         />
         <KpiCard
+          dense
+          href="/proposals"
+          icon={Hourglass}
           label="Devis en attente"
           value={fmt(pendingProposals.length > 0 ? totalDevisEnAttente : 0)}
           point="info"
@@ -316,6 +336,10 @@ export default async function DashboardPage() {
             : "Aucun devis en cours"}
         />
         <KpiCard
+          dense
+          href="/livre-recettes"
+          icon={CircleCheck}
+          delta={deltaMois ?? undefined}
           label="Encaissé ce mois"
           value={fmt(caThisMonth)}
           point="bon"
@@ -324,6 +348,9 @@ export default async function DashboardPage() {
             : new Date().toLocaleDateString("fr-FR", { month: "long" })}
         />
         <KpiCard
+          dense
+          href="/proposals"
+          icon={FileSignature}
           label="Signés à facturer"
           value={fmt(toInvoice.length > 0 ? toInvoiceAmount : 0)}
           point="neutre"
@@ -335,14 +362,14 @@ export default async function DashboardPage() {
 
       {/* ── CA mois par mois et prochaine echeance ── */}
       {!isMember && (
-        <div className="grid gap-5 lg:grid-cols-3 items-stretch">
+        <div className="grid gap-4 lg:grid-cols-3 items-stretch">
           {/* Sans echeance applicable (ni URSSAF ni TVA), pas de carte de
               remplacement : le graphique prend toute la largeur. */}
           <div className={`${colonneEcheances ? "lg:col-span-2" : "lg:col-span-3"} min-w-0`}>
             <CaMensuelBarres mensuelHt={caMensuelHt} moisCourant={now.getMonth()} annee={anneeCourante} />
           </div>
           {colonneEcheances && (
-            <div className="flex flex-col gap-5 min-w-0">
+            <div className="flex flex-col gap-4 min-w-0">
               {echeanceDepot && <EcheanceCarte
                 echeance={echeanceDepot}
                 trimestre={currentQuarter + 1}
@@ -358,17 +385,14 @@ export default async function DashboardPage() {
       )}
 
       {/* ── Activité récente : devis + factures ── */}
-      <div className={`grid gap-5 ${isPaid ? "lg:grid-cols-2" : ""}`}>
+      <div className={`grid gap-4 ${isPaid ? "lg:grid-cols-2" : ""}`}>
 
         {/* Devis récents */}
         <div className="carte overflow-hidden">
-          <div className="px-6 pt-5 pb-3 flex items-end justify-between gap-3">
-              <div>
-                <h2 className="text-[20px] font-semibold text-ink">Devis récents</h2>
-                <p className="text-[14px] text-gray-400">Les quatre derniers</p>
-              </div>
-            <Link href="/proposals" className="text-xs text-gray-500 hover:text-gray-300 transition-colors flex items-center gap-1">
-              Voir tout <ArrowRight size={11} />
+          <div className="px-5 pt-4 pb-3 flex items-center justify-between gap-3">
+            <h2 className="text-[15px] font-semibold text-ink">Devis récents</h2>
+            <Link href="/proposals" className="text-[13px] font-medium text-gray-300 hover:text-ink transition-colors flex items-center gap-1 min-h-9">
+              Voir tout <ArrowRight size={13} />
             </Link>
           </div>
 
@@ -389,7 +413,11 @@ export default async function DashboardPage() {
               />
             </div>
           ) : (
-            <div className="divide-y divide-ds-border">
+            <>
+              <div className="hidden sm:grid grid-cols-[minmax(0,1fr)_minmax(110px,30%)_100px] gap-3 px-5 py-2 border-y border-ds-border bg-ds-elevated text-[12px] font-medium text-gray-400">
+                <span>Devis</span><span>Statut</span><span className="text-right">Montant TTC</span>
+              </div>
+              <div className="divide-y divide-ds-border">
               {recentProposals.map((proposal) => {
                 const s   = PROPOSAL_STATUS[proposal.status] ?? PROPOSAL_STATUS.draft;
                 const age = daysSince(proposal.created_at);
@@ -397,7 +425,7 @@ export default async function DashboardPage() {
                   <Link
                     key={proposal.id}
                     href={`/proposals/${proposal.id}`}
-                    className="grid grid-cols-[minmax(0,1fr)_auto_auto] sm:grid-cols-[minmax(0,1fr)_minmax(110px,30%)_100px] items-center gap-3 mx-6 py-4 hover:opacity-80 transition-opacity group"
+                    className="grid grid-cols-[minmax(0,1fr)_auto_auto] sm:grid-cols-[minmax(0,1fr)_minmax(110px,30%)_100px] items-center gap-3 px-5 py-3 hover:bg-ds-elevated focus-visible:bg-ds-elevated transition-colors group"
                   >
                     <div className="flex-1 min-w-0">
                       <div className="font-semibold text-ink text-sm break-words sm:truncate">
@@ -412,26 +440,24 @@ export default async function DashboardPage() {
                       </div>
                     </div>
                     <div className="contents">
-                      <span className={`justify-self-start text-[13px] font-semibold px-3 py-1 rounded-full ${s.color}`}>{s.label}</span>
-                      <span className="font-display font-semibold text-ink text-[15px] tabular-nums text-right justify-self-end">{fmt(proposal.total_ttc)}</span>
+                      <span className={`justify-self-start text-[12px] font-semibold px-2.5 py-0.5 rounded-full ${s.color}`}>{s.label}</span>
+                      <span className="font-semibold text-ink text-sm tabular-nums text-right justify-self-end">{fmt(proposal.total_ttc)}</span>
                     </div>
                   </Link>
                 );
               })}
             </div>
+            </>
           )}
         </div>
 
         {/* Factures récentes (Solo+) */}
         {isPaid && (
           <div className="carte overflow-hidden lg:order-first">
-            <div className="px-6 pt-5 pb-3 flex items-end justify-between gap-3">
-              <div>
-                <h2 className="text-[20px] font-semibold text-ink">Factures récentes</h2>
-                <p className="text-[14px] text-gray-400">Les quatre dernières</p>
-              </div>
-              <Link href="/invoices" className="text-xs text-gray-500 hover:text-gray-300 transition-colors flex items-center gap-1">
-                Voir tout <ArrowRight size={11} />
+            <div className="px-5 pt-4 pb-3 flex items-center justify-between gap-3">
+              <h2 className="text-[15px] font-semibold text-ink">Factures récentes</h2>
+              <Link href="/invoices" className="text-[13px] font-medium text-gray-300 hover:text-ink transition-colors flex items-center gap-1 min-h-9">
+                Voir tout <ArrowRight size={13} />
               </Link>
             </div>
 
@@ -452,6 +478,10 @@ export default async function DashboardPage() {
                 />
               </div>
             ) : (
+              <>
+              <div className="hidden sm:grid grid-cols-[minmax(0,1fr)_minmax(110px,30%)_100px] gap-3 px-5 py-2 border-y border-ds-border bg-ds-elevated text-[12px] font-medium text-gray-400">
+                <span>Client</span><span>Statut</span><span className="text-right">Montant TTC</span>
+              </div>
               <div className="divide-y divide-ds-border">
                 {recentInvoices.map((invoice) => {
                   const s         = INVOICE_STATUS[invoice.status] ?? INVOICE_STATUS.draft;
@@ -460,7 +490,7 @@ export default async function DashboardPage() {
                     <Link
                       key={invoice.id}
                       href={`/invoices/${invoice.id}`}
-                      className="grid grid-cols-[minmax(0,1fr)_auto_auto] sm:grid-cols-[minmax(0,1fr)_minmax(110px,30%)_100px] items-center gap-3 mx-6 py-4 hover:opacity-80 transition-opacity group"
+                      className="grid grid-cols-[minmax(0,1fr)_auto_auto] sm:grid-cols-[minmax(0,1fr)_minmax(110px,30%)_100px] items-center gap-3 px-5 py-3 hover:bg-ds-elevated focus-visible:bg-ds-elevated transition-colors group"
                     >
                       <div className="flex-1 min-w-0">
                         <div className="font-semibold text-ink text-sm break-words sm:truncate">
@@ -476,15 +506,16 @@ export default async function DashboardPage() {
                         </div>
                       </div>
                       <div className="contents">
-                        <span className={`justify-self-start text-[13px] font-semibold px-3 py-1 rounded-full ${isOverdue ? "bg-amber-500/10 text-amber-400" : s.color}`}>
+                        <span className={`justify-self-start text-[12px] font-semibold px-2.5 py-0.5 rounded-full ${isOverdue ? "bg-amber-500/10 text-amber-400" : s.color}`}>
                           {isOverdue ? "En retard" : s.label}
                         </span>
-                        <span className="font-display font-semibold text-ink text-[15px] tabular-nums text-right justify-self-end">{fmt(invoice.total_ttc)}</span>
+                        <span className="font-semibold text-ink text-sm tabular-nums text-right justify-self-end">{fmt(invoice.total_ttc)}</span>
                       </div>
                     </Link>
                   );
                 })}
               </div>
+              </>
             )}
           </div>
         )}

@@ -32,28 +32,28 @@ export function EcheanceCarte({
   const anneeEcheance = trimestre === 4 ? annee + 1 : annee;
 
   return (
-    <section className="carte p-6 flex flex-col gap-4 min-w-0 h-full">
+    <section className="carte p-5 flex flex-col gap-3 min-w-0 h-full">
       <div>
-        <h2 className="text-[20px] font-semibold text-ink">Prochaine échéance</h2>
-        <p className="text-[14px] text-gray-400">Déclaration URSSAF, {trimestre}e trimestre</p>
+        <h2 className="text-[15px] font-semibold text-ink">Prochaine échéance</h2>
+        <p className="text-[13px] text-gray-400">Déclaration URSSAF, {trimestre}e trimestre</p>
       </div>
 
       <div className="flex items-baseline gap-2.5">
-        <span className="font-display text-[38px] leading-none font-bold text-ink">{jour}</span>
-        <span className="text-[17px] font-semibold text-gray-400">
+        <span className="text-[28px] leading-none font-semibold text-ink tabular-nums">{jour}</span>
+        <span className="text-[15px] font-medium text-gray-300">
           {reste.join(" ")} {anneeEcheance}
         </span>
       </div>
 
-      <div className="divide-y divide-ds-border border-y border-ds-border text-[15px]">
-        <div className="flex items-center justify-between gap-3 py-4">
+      <div className="divide-y divide-ds-border border-y border-ds-border text-[14px]">
+        <div className="flex items-center justify-between gap-3 py-3">
           <span className="text-gray-400">CA du trimestre à ce jour</span>
-          <span className="font-display font-semibold text-ink">{euros(caTrimestreHt)}</span>
+          <span className="font-semibold text-ink tabular-nums">{euros(caTrimestreHt)}</span>
         </div>
-        <div className="flex items-center justify-between gap-3 py-4">
+        <div className="flex items-center justify-between gap-3 py-3">
           <span className="text-gray-400">Cotisations estimées{acre && cotisations !== null ? ", hors ACRE" : ""}</span>
           {cotisations !== null ? (
-            <span className="font-display font-semibold text-ink">{euros(cotisations)}</span>
+            <span className="font-semibold text-ink tabular-nums">{euros(cotisations)}</span>
           ) : (
             <Link href="/declarations" className="text-indigo-400 font-semibold hover:underline">
               Préciser mon activité
@@ -62,7 +62,7 @@ export function EcheanceCarte({
         </div>
       </div>
 
-      <p className="text-[14px] text-gray-400 bg-ds-elevated rounded-xl px-4 py-3.5">
+      <p className="text-[13px] text-gray-400 bg-ds-elevated rounded-lg px-3.5 py-3 mt-auto">
         Montants prêts à reporter. Deviso les calcule depuis tes encaissements, tu n&apos;as plus qu&apos;à déclarer.
       </p>
     </section>

@@ -26,10 +26,10 @@ export function EcheanceTvaCarte({
   enCours: boolean;
 }) {
   return (
-    <section className="carte p-6 flex flex-col gap-4 min-w-0 h-full">
+    <section className="carte p-5 flex flex-col gap-3 min-w-0 h-full">
       <div>
-        <h2 className="text-[20px] font-semibold text-ink">Prochaine échéance</h2>
-        <p className="text-[14px] text-gray-400">
+        <h2 className="text-[15px] font-semibold text-ink">Prochaine échéance</h2>
+        <p className="text-[13px] text-gray-400">
           {formulaire ? `Déclaration de TVA (${formulaire}), ${periode}` : "Déclaration de TVA"}
         </p>
       </div>
@@ -37,27 +37,27 @@ export function EcheanceTvaCarte({
       {formulaire ? (
         <>
           <div className="flex items-baseline gap-2.5">
-            <span className="text-[17px] font-semibold text-gray-400">À déposer</span>
-            <span className="font-display text-[26px] leading-none font-bold text-ink">{depot}</span>
+            <span className="text-[15px] font-medium text-gray-300">À déposer</span>
+            <span className="text-[24px] leading-none font-semibold text-ink tabular-nums">{depot}</span>
           </div>
 
-          <div className="divide-y divide-ds-border border-y border-ds-border text-[15px]">
-            <div className="flex items-center justify-between gap-3 py-4">
+          <div className="divide-y divide-ds-border border-y border-ds-border text-[14px]">
+            <div className="flex items-center justify-between gap-3 py-3">
               <span className="text-gray-400">Base HT{enCours ? " à ce jour" : ""}</span>
-              <span className="font-display font-semibold text-ink">{euros(baseHt)}</span>
+              <span className="font-semibold text-ink tabular-nums">{euros(baseHt)}</span>
             </div>
-            <div className="flex items-center justify-between gap-3 py-4">
+            <div className="flex items-center justify-between gap-3 py-3">
               <span className="text-gray-400">TVA collectée{enCours ? " à ce jour" : ""}</span>
-              <span className="font-display font-semibold text-ink">{euros(tva)}</span>
+              <span className="font-semibold text-ink tabular-nums">{euros(tva)}</span>
             </div>
           </div>
 
-          <p className="text-[14px] text-gray-400 bg-ds-elevated rounded-xl px-4 py-3.5">
+          <p className="text-[13px] text-gray-400 bg-ds-elevated rounded-lg px-3.5 py-3 mt-auto">
             TVA facturée à tes clients sur la période. La TVA de tes achats vient en déduction lors de la déclaration.
           </p>
         </>
       ) : (
-        <p className="text-[15px] text-gray-400">
+        <p className="text-[14px] text-gray-400">
           Indique si tu déclares ta TVA chaque mois, chaque trimestre ou une fois par an pour voir ta prochaine échéance.{" "}
           <Link href="/profil" className="text-indigo-400 font-semibold hover:underline">Préciser ma périodicité</Link>
         </p>
