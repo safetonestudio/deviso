@@ -184,14 +184,14 @@ export default async function LivreRecettes({ searchParams }: { searchParams: Pr
               <div className="overflow-x-auto">
                 <table className="w-full min-w-[920px] table-fixed text-sm">
                   <colgroup>
-                    <col className="w-[112px]" />
-                    <col className="w-[128px]" />
-                    <col className="w-[19%]" />
-                    <col />
                     <col className="w-[104px]" />
                     <col className="w-[120px]" />
-                    <col className="w-[128px]" />
-                    <col className="w-[150px]" />
+                    <col className="w-[16%]" />
+                    <col />
+                    <col className="w-[92px]" />
+                    <col className="w-[112px]" />
+                    <col className="w-[120px]" />
+                    <col className="w-[132px]" />
                   </colgroup>
                   <thead>
                     <tr className="bg-ds-elevated border-b border-ds-border text-left text-xs font-medium text-gray-400">
