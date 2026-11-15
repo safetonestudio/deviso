@@ -2,12 +2,11 @@ import Link from "next/link";
 import { SiteFooter } from "@/components/SiteFooter";
 import type { Metadata } from "next";
 import { DemoButton } from "@/components/landing/DemoButton";
-import Image from "next/image";
 import { Apparitions } from "@/components/landing/Apparitions";
 import { DemoAnimee } from "@/components/landing/DemoAnimee";
 import { SlideFonctionnalites } from "@/components/landing/SlideFonctionnalites";
 import { TarifsTable } from "@/components/landing/TarifsTable";
-import { DashboardThemeProvider, ThemeToggleIcone } from "@/components/DashboardTheme";
+import { ModeNuit } from "@/components/landing/ModeNuit";
 import { policesApp } from "@/app/polices-app";
 
 export const metadata: Metadata = {
@@ -109,25 +108,6 @@ const LIENS = [
   ["/blog", "Blog"],
 ] as const;
 
-/** Une vraie capture de l'application, dans le thème du visiteur. */
-function Capture({ nom, alt, priority = false, className = "", style }: { nom: string; alt: string; priority?: boolean; className?: string; style?: React.CSSProperties }) {
-  return (
-    <>
-      <Image src={`/landing/${nom}-clair.jpg`} alt={alt} width={2880} height={1800} priority={priority} quality={90} sizes="(min-width: 1800px) 3400px, (min-width: 1024px) 1700px, 100vw" className={`capture-clair ${className}`} style={style} />
-      <Image src={`/landing/${nom}-sombre.jpg`} alt="" aria-hidden="true" width={2880} height={1800} priority={priority} quality={90} sizes="(min-width: 1800px) 3400px, (min-width: 1024px) 1700px, 100vw" className={`capture-sombre ${className}`} style={style} />
-    </>
-  );
-}
-
-/** Petite étiquette flottante posée sur une capture. */
-function Etiquette({ children, className = "" }: { children: React.ReactNode; className?: string }) {
-  return (
-    <div className={`absolute z-10 rounded-xl bg-ds-surface border border-ds-border shadow-ds-leve px-4 py-3 text-[14px] font-semibold text-ink ${className}`}>
-      {children}
-    </div>
-  );
-}
-
 /** Le même devis à trois moments de sa vie. */
 function CarteDevis({ etat, detail, ton }: { etat: string; detail: string; ton: "neutre" | "vert" | "plein" }) {
   const pastille =
@@ -147,7 +127,10 @@ function CarteDevis({ etat, detail, ton }: { etat: string; detail: string; ton: 
 
 export default function LandingPage() {
   return (
-    <DashboardThemeProvider className={`${policesApp} page-pleine min-h-screen bg-ds-bg text-ink`}>
+    <div className={`ds-app ${policesApp} page-pleine min-h-screen bg-ds-bg text-ink`}>
+      {/* Mode nuit uniquement : retire le thème clair avant le premier affichage. */}
+      <script dangerouslySetInnerHTML={{ __html: 'document.documentElement.classList.remove("light")' }} />
+      <ModeNuit />
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
       <Apparitions />
 
@@ -164,7 +147,6 @@ export default function LandingPage() {
             ))}
           </nav>
           <div className="flex items-center gap-2">
-            <ThemeToggleIcone />
             <Link href="/login" className="hidden sm:inline-flex items-center h-10 px-4 rounded-lg text-[15px] font-semibold text-ink hover:bg-ds-elevated transition-colors">Connexion</Link>
             <Link href="/signup?plan=solo" className="hidden sm:inline-flex items-center h-10 px-5 rounded-lg bg-indigo-600 hover:bg-indigo-700 text-on-accent text-[15px] font-semibold transition-colors">Essayer gratuitement</Link>
             <details className="lg:hidden relative">
@@ -331,6 +313,6 @@ export default function LandingPage() {
       </main>
 
       <SiteFooter />
-    </DashboardThemeProvider>
+    </div>
   );
 }

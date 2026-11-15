@@ -562,10 +562,6 @@
 @media (min-width: 2500px) { .page-pleine { zoom: 1.52; } }
 @media (min-width: 3000px) { .page-pleine { zoom: 1.85; } }
 @media (min-width: 3600px) { .page-pleine { zoom: 2.25; } }
-/* Page d'accueil : la capture du produit suit le theme du visiteur. */
-.capture-sombre { display: none; }
-html:not(.light) .capture-clair { display: none; }
-html:not(.light) .capture-sombre { display: block; }
 /* Lueur verte tres douce derriere le haut de page. */
 .halo-accueil {
   background-image:

@@ -11,7 +11,7 @@ import Image from "next/image";
  * moins d'animations.
  *
  * Les écrans sont de vraies captures de l'application (compte de démo), en
- * clair et en sombre : on affiche celle du thème courant.
+ * mode nuit comme le reste de la page.
  */
 const DIAPOS = [
   { cle: "nouveau", titre: "Devis par IA en 30 secondes", texte: "Tu décris ta mission, l'IA rédige le devis complet, chiffré, prêt à envoyer.", alt: "L'écran Nouveau devis de Deviso : tu décris ton projet, l'IA génère le devis" },
@@ -121,8 +121,7 @@ export function SlideFonctionnalites() {
                 aria-hidden={i !== actif}
                 className={`absolute inset-0 transition-all duration-500 ease-out ${i === actif ? "opacity-100 scale-100" : "opacity-0 scale-[1.015]"}`}
               >
-                <Image src={`/landing/${d.cle}-clair.jpg`} alt={i === actif ? d.alt : ""} fill sizes="(min-width: 1800px) 1900px, (min-width: 1024px) 1100px, 100vw" quality={90} className="capture-clair object-cover object-top" />
-                <Image src={`/landing/${d.cle}-sombre.jpg`} alt="" fill sizes="(min-width: 1800px) 1900px, (min-width: 1024px) 1100px, 100vw" quality={90} className="capture-sombre object-cover object-top" />
+                <Image src={`/landing/${d.cle}-sombre.jpg`} alt={i === actif ? d.alt : ""} fill sizes="(min-width: 1800px) 1900px, (min-width: 1024px) 1100px, 100vw" quality={90} className="object-cover object-top" />
               </div>
             ))}
           </div>
