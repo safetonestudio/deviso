@@ -111,8 +111,8 @@ const LIENS = [
 function Capture({ nom, alt, priority = false, className = "", style }: { nom: string; alt: string; priority?: boolean; className?: string; style?: React.CSSProperties }) {
   return (
     <>
-      <Image src={`/landing/${nom}-clair.jpg`} alt={alt} width={2160} height={1350} priority={priority} sizes="(min-width: 1024px) 1500px, 100vw" className={`capture-clair ${className}`} style={style} />
-      <Image src={`/landing/${nom}-sombre.jpg`} alt="" aria-hidden="true" width={2160} height={1350} priority={priority} sizes="(min-width: 1024px) 1500px, 100vw" className={`capture-sombre ${className}`} style={style} />
+      <Image src={`/landing/${nom}-clair.jpg`} alt={alt} width={2880} height={1800} priority={priority} quality={90} sizes="(min-width: 1800px) 3400px, (min-width: 1024px) 1700px, 100vw" className={`capture-clair ${className}`} style={style} />
+      <Image src={`/landing/${nom}-sombre.jpg`} alt="" aria-hidden="true" width={2880} height={1800} priority={priority} quality={90} sizes="(min-width: 1800px) 3400px, (min-width: 1024px) 1700px, 100vw" className={`capture-sombre ${className}`} style={style} />
     </>
   );
 }

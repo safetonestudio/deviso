@@ -38,6 +38,8 @@ const nextConfig: NextConfig = {
   // Erreurs TypeScript corrigées le 13/07/2026, le build est strict désormais.
   typescript: { ignoreBuildErrors: false },
   images: {
+    // 90 : captures du produit sur la page d'accueil (texte fin, pas de bavure).
+    qualities: [75, 90],
     remotePatterns: [
       { protocol: "https", hostname: "**.supabase.co" },
     ],
