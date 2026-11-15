@@ -5,13 +5,12 @@ import Image from "next/image";
 
 /**
  * Fonctionnalités de la page d'accueil, en une seule section qui défile :
- * une liste à gauche, un seul grand écran du produit à droite. L'écran change
- * tout seul toutes les 6 secondes, ou au clic. Le défilement automatique
- * s'arrête au survol, au clavier, après un clic, et si le visiteur a demandé
- * moins d'animations.
+ * une liste à gauche (élément actif marqué d'un trait vert qui se remplit),
+ * un seul grand écran du produit à droite, posé à plat sur une surface.
+ * L'écran change toutes les 6 secondes, ou au clic. Le défilement s'arrête
+ * au survol, après un clic, et si le visiteur a demandé moins d'animations.
  *
- * Les écrans sont de vraies captures de l'application (compte de démo), en
- * mode nuit comme le reste de la page.
+ * Les écrans sont de vraies captures de l'application (compte de démo).
  */
 const DIAPOS = [
   { cle: "nouveau", titre: "Devis par IA en 30 secondes", texte: "Tu décris ta mission, l'IA rédige le devis complet, chiffré, prêt à envoyer.", alt: "L'écran Nouveau devis de Deviso : tu décris ton projet, l'IA génère le devis" },
@@ -31,8 +30,6 @@ export function SlideFonctionnalites() {
   const [cycle, setCycle] = useState(0);
   const zone = useRef<HTMLDivElement>(null);
 
-  // Défilement automatique : seulement si les animations sont permises et
-  // quand la section est à l'écran.
   useEffect(() => {
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
     const el = zone.current;
@@ -62,48 +59,44 @@ export function SlideFonctionnalites() {
   return (
     <div
       ref={zone}
-      className="grid grid-cols-1 gap-8 lg:gap-12 lg:grid-cols-12 items-center"
+      className="grid grid-cols-1 gap-10 lg:gap-16 lg:grid-cols-12 items-center"
       onMouseEnter={() => setPause(true)}
       onMouseLeave={() => setPause(false)}
     >
       {/* ── La liste ── */}
-      <div className="min-w-0 lg:col-span-4 order-2 lg:order-1" role="tablist" aria-label="Fonctionnalités de Deviso">
-        <div className="flex lg:flex-col gap-2 overflow-x-auto lg:overflow-visible -mx-5 px-5 sm:mx-0 sm:px-0 pb-1 lg:pb-0 [scrollbar-width:none]">
-          {DIAPOS.map((d, i) => {
-            const sel = i === actif;
-            return (
-              <button
-                key={d.cle}
-                type="button"
-                role="tab"
-                id={`onglet-${d.cle}`}
-                aria-selected={sel}
-                aria-controls="ecran-fonctionnalite"
-                onClick={() => choisir(i)}
-                className={`relative shrink-0 lg:shrink text-left rounded-xl border px-4 py-3 lg:px-5 lg:py-4 transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-500 ${
-                  sel ? "bg-ds-surface border-ds-border shadow-ds-card" : "border-transparent hover:bg-ds-surface/60"
-                }`}
-              >
-                <span className={`block text-[16px] lg:text-[18px] font-semibold tracking-[-0.01em] whitespace-nowrap lg:whitespace-normal ${sel ? "text-ink" : "text-gray-400"}`}>
-                  {d.titre}
-                </span>
-                <span className={`hidden lg:block overflow-hidden transition-all duration-300 ${sel ? "max-h-24 mt-1.5 opacity-100" : "max-h-0 opacity-0"}`}>
-                  <span className="block text-[15px] leading-relaxed text-gray-300">{d.texte}</span>
-                </span>
+      <div className="min-w-0 lg:col-span-4 order-2 lg:order-1" role="tablist" aria-label="Fonctionnalités de Deviso" aria-orientation="vertical">
+        {DIAPOS.map((d, i) => {
+          const sel = i === actif;
+          return (
+            <button
+              key={d.cle}
+              type="button"
+              role="tab"
+              id={`onglet-${d.cle}`}
+              aria-selected={sel}
+              aria-controls="ecran-fonctionnalite"
+              onClick={() => choisir(i)}
+              className="group relative block w-full text-left pl-6 py-3.5 rounded-md focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-500"
+            >
+              {/* Repère vertical : sombre, puis vert qui se remplit sur l'élément actif. */}
+              <span className="absolute left-0 top-3.5 bottom-3.5 w-[3px] rounded-full bg-ds-surface overflow-hidden" aria-hidden="true">
                 {sel && (
-                  <span className="hidden lg:block absolute left-5 right-5 bottom-0 h-0.5 rounded-full overflow-hidden bg-ds-border" aria-hidden="true">
-                    <span
-                      key={`${actif}-${cycle}`}
-                      className={`block h-full bg-indigo-500 ${enCours ? "barre-diapo" : ""}`}
-                      style={{ width: enCours ? undefined : "0%", animationDuration: `${DUREE}ms` }}
-                    />
-                  </span>
+                  <span
+                    key={`${actif}-${cycle}`}
+                    className={`block w-full bg-indigo-500 ${enCours ? "barre-diapo" : "h-full"}`}
+                    style={enCours ? { animationDuration: `${DUREE}ms` } : undefined}
+                  />
                 )}
-              </button>
-            );
-          })}
-        </div>
-        <p className="lg:hidden mt-4 text-[16px] leading-relaxed text-gray-300">{DIAPOS[actif].texte}</p>
+              </span>
+              <span className={`block text-[20px] leading-snug font-semibold tracking-[-0.015em] transition-colors ${sel ? "text-ink" : "text-gray-500 group-hover:text-gray-300"}`}>
+                {d.titre}
+              </span>
+              <span className={`block overflow-hidden transition-all duration-300 ${sel ? "max-h-28 mt-2 opacity-100" : "max-h-0 opacity-0"}`}>
+                <span className="block text-[17px] leading-relaxed text-gray-300">{d.texte}</span>
+              </span>
+            </button>
+          );
+        })}
       </div>
 
       {/* ── L'écran ── */}
@@ -112,16 +105,16 @@ export function SlideFonctionnalites() {
           id="ecran-fonctionnalite"
           role="tabpanel"
           aria-labelledby={`onglet-${DIAPOS[actif].cle}`}
-          className="relative rounded-2xl border border-ds-border bg-ds-elevated p-2 sm:p-3 shadow-ds-leve"
+          className="rounded-lg bg-ds-surface p-2 sm:p-4"
         >
-          <div className="relative aspect-[16/10] rounded-xl overflow-hidden bg-ds-surface">
+          <div className="relative aspect-[16/10] rounded-md overflow-hidden bg-ds-elevated">
             {DIAPOS.map((d, i) => (
               <div
                 key={d.cle}
                 aria-hidden={i !== actif}
-                className={`absolute inset-0 transition-all duration-500 ease-out ${i === actif ? "opacity-100 scale-100" : "opacity-0 scale-[1.015]"}`}
+                className={`absolute inset-0 transition-opacity duration-500 ease-out ${i === actif ? "opacity-100" : "opacity-0"}`}
               >
-                <Image src={`/landing/${d.cle}-sombre.jpg`} alt={i === actif ? d.alt : ""} fill sizes="(min-width: 1800px) 1900px, (min-width: 1024px) 1100px, 100vw" quality={90} className="object-cover object-top" />
+                <Image src={`/landing/${d.cle}-sombre.jpg`} alt={i === actif ? d.alt : ""} fill sizes="(min-width: 1800px) 1700px, (min-width: 1024px) 900px, 100vw" quality={90} className="object-cover object-top" />
               </div>
             ))}
           </div>

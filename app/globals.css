@@ -562,20 +562,14 @@
 @media (min-width: 2500px) { .page-pleine { zoom: 1.52; } }
 @media (min-width: 3000px) { .page-pleine { zoom: 1.85; } }
 @media (min-width: 3600px) { .page-pleine { zoom: 2.25; } }
-/* Lueur verte tres douce derriere le haut de page. */
-.halo-accueil {
-  background-image:
-    radial-gradient(60% 55% at 78% 0%, rgb(var(--acc-500) / 0.16), transparent 70%),
-    radial-gradient(45% 40% at 8% 12%, rgb(var(--acc-500) / 0.08), transparent 70%);
-}
-/* La capture du haut de page se fond dans la surface au lieu d'etre coupee net. */
-.fondu-bas { background-image: linear-gradient(to bottom, transparent, var(--ds-surface)); }
 /* Curseur de saisie de la demonstration du haut de page. */
 .curseur-demo { display: inline-block; width: 2px; height: 1.1em; margin-left: 2px; vertical-align: -0.18em; background-color: rgb(var(--acc-500)); animation: clignote 1s steps(2, start) infinite; }
 @keyframes clignote { to { visibility: hidden; } }
 /* Barre de progression de l'onglet actif dans la section qui defile. */
-.barre-diapo { width: 0%; animation-name: remplir-diapo; animation-timing-function: linear; animation-fill-mode: forwards; }
-@keyframes remplir-diapo { from { width: 0%; } to { width: 100%; } }
+.barre-diapo { height: 0%; animation-name: remplir-diapo; animation-timing-function: linear; animation-fill-mode: forwards; }
+@keyframes remplir-diapo { from { height: 0%; } to { height: 100%; } }
+/* Page d'accueil : une seule police (Hanken Grotesk), titres compris. */
+.ds-app.accueil h1, .ds-app.accueil h2, .ds-app.accueil h3 { font-family: var(--font-app), ui-sans-serif, system-ui, sans-serif; }
 /* Apparition des blocs au defilement (site public seulement). Sans script ou
    avec « reduire les animations », tout reste visible. */
 @media (scripting: enabled) and (prefers-reduced-motion: no-preference) {

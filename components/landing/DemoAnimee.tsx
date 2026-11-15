@@ -80,7 +80,7 @@ export function DemoAnimee() {
       setLettres(0);
       setNbLignes(0);
       setEtape(0);
-    }, 1400);
+    }, 3500);
     return () => window.clearTimeout(t);
   }, []);
 
@@ -132,9 +132,9 @@ export function DemoAnimee() {
         : { texte: "Brouillon", classe: "bg-ds-elevated text-gray-300" };
 
   return (
-    <div className="rounded-2xl sm:rounded-3xl border border-ds-border bg-ds-surface shadow-ds-leve overflow-hidden grid lg:grid-cols-[5fr_7fr]">
+    <div data-ui className="rounded-lg bg-ds-surface overflow-hidden grid lg:grid-cols-[5fr_7fr]">
       {/* ── Le brief ── */}
-      <div className="p-6 sm:p-8 lg:p-10 bg-ds-elevated border-b lg:border-b-0 lg:border-r border-ds-border flex flex-col">
+      <div className="p-6 sm:p-8 lg:p-10 bg-ds-elevated flex flex-col">
         <div className="flex flex-wrap gap-2" role="group" aria-label="Choisir un métier pour la démonstration">
           {EXEMPLES.map((e, i) => (
             <button
@@ -142,8 +142,8 @@ export function DemoAnimee() {
               type="button"
               onClick={() => choisir(i)}
               aria-pressed={i === choix}
-              className={`h-10 px-4 rounded-lg text-[14px] font-semibold border transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-500 ${
-                i === choix ? "bg-ds-surface border-indigo-500 text-ink shadow-ds-sm" : "bg-transparent border-ds-border text-gray-300 hover:text-ink"
+              className={`h-10 px-4 rounded-md text-[14px] font-semibold transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-500 ${
+                i === choix ? "bg-ink text-(color:--ds-bg)" : "bg-ds-surface text-gray-300 hover:text-ink"
               }`}
             >
               {e.metier}
@@ -152,21 +152,21 @@ export function DemoAnimee() {
         </div>
 
         <div className="mt-6 text-[14px] font-medium text-gray-400">Décris ton projet</div>
-        <div className="mt-2 rounded-xl bg-ds-surface border border-ds-border p-4 sm:p-5 min-h-[168px] sm:min-h-[150px] text-[16px] leading-relaxed text-ink" aria-live="off">
+        <div className="mt-2 rounded-md bg-ds-surface p-4 sm:p-5 min-h-[168px] sm:min-h-[150px] text-[17px] leading-relaxed text-ink" aria-live="off">
           {ex.brief.slice(0, lettres)}
           {anime && etape === 0 && <span className="curseur-demo" aria-hidden="true" />}
         </div>
 
         <div
-          className={`mt-4 h-12 rounded-xl flex items-center justify-center gap-2 text-[15px] font-semibold transition-colors ${
-            etape === 0 ? "bg-indigo-600/40 text-on-accent" : "bg-indigo-600 text-on-accent shadow-ds-card"
+          className={`mt-4 h-12 rounded-md flex items-center justify-center gap-2 text-[17px] font-semibold transition-colors ${
+            etape === 0 ? "bg-indigo-600/40 text-on-accent" : "bg-indigo-600 text-on-accent"
           }`}
           aria-hidden="true"
         >
           <Sparkles size={16} />
           {etape === 1 ? "Rédaction en cours…" : "Générer le devis"}
         </div>
-        <div className="mt-3 h-1.5 rounded-full bg-ds-surface border border-ds-border overflow-hidden" aria-hidden="true">
+        <div className="mt-3 h-1 rounded-full bg-ds-surface overflow-hidden" aria-hidden="true">
           <div
             className="h-full rounded-full bg-indigo-500 transition-[width] ease-out"
             style={{ width: etape === 0 ? "0%" : "100%", transitionDuration: etape === 1 ? "1000ms" : "0ms" }}
@@ -179,22 +179,28 @@ export function DemoAnimee() {
       <div className="p-6 sm:p-8 lg:p-10 flex flex-col">
         <div className="flex items-start justify-between gap-3">
           <div className="min-w-0">
-            <div className="text-[13px] font-medium text-gray-400">Devis</div>
-            <div className="text-[20px] font-semibold tracking-[-0.01em] text-ink">{ex.numero}</div>
+            <div className="text-[24px] font-semibold tracking-[-0.02em] text-ink">Devis {ex.numero}</div>
             <div className="text-[14px] text-gray-400 mt-0.5 break-words">{ex.client}</div>
           </div>
-          <span className={`shrink-0 text-[13px] font-semibold px-3 py-1 rounded-full transition-colors ${statut.classe}`}>{statut.texte}</span>
+          <span className={`shrink-0 text-[14px] font-semibold px-3 py-1 rounded-full transition-colors ${statut.classe}`}>{statut.texte}</span>
         </div>
 
-        <div className="mt-6 min-h-[212px]">
-          <div className="grid grid-cols-[1fr_auto] gap-x-4 pb-2 border-b border-ds-border text-[13px] font-medium text-gray-400">
+        <div className="relative mt-6 min-h-[212px]">
+          {etape <= 1 && nbLignes === 0 && (
+            <div className="absolute inset-0 top-10 grid place-items-center text-center" aria-hidden="true">
+              <p className="text-[17px] text-gray-400">
+                {etape === 0 ? "Le devis se rédige dès que tu cliques sur Générer." : "Rédaction des lignes, des prix et des conditions…"}
+              </p>
+            </div>
+          )}
+          <div className="grid grid-cols-[1fr_auto] gap-x-4 pb-2 border-b border-ds-border text-[14px] font-medium text-gray-400">
             <span>Prestation</span>
             <span>Montant HT</span>
           </div>
           {ex.lignes.map(([libelle, montant], i) => (
             <div
               key={libelle}
-              className={`grid grid-cols-[1fr_auto] gap-x-4 py-3 border-b border-ds-border text-[15px] transition-all duration-500 ${
+              className={`grid grid-cols-[1fr_auto] gap-x-4 py-3 border-b border-ds-border text-[17px] transition-all duration-500 ${
                 i < nbLignes ? "opacity-100 translate-y-0" : "opacity-0 translate-y-2"
               }`}
             >
@@ -206,17 +212,17 @@ export function DemoAnimee() {
 
         <div className={`mt-4 flex items-end justify-between gap-4 transition-opacity duration-500 ${nbLignes >= ex.lignes.length ? "opacity-100" : "opacity-0"}`}>
           <div>
-            <div className="text-[14px] font-semibold text-ink">Total hors taxes</div>
-            <div className="text-[13px] text-gray-400">TVA non applicable, article 293 B du CGI</div>
+            <div className="text-[17px] font-semibold text-ink">Total hors taxes</div>
+            <div className="text-[14px] text-gray-400">TVA non applicable, article 293 B du CGI</div>
           </div>
-          <div className="text-[clamp(30px,2.6vw,40px)] leading-none font-semibold tracking-[-0.02em] tabular-nums text-ink whitespace-nowrap">{euros(total)}</div>
+          <div className="text-[clamp(32px,2.8vw,44px)] leading-none font-semibold tracking-[-0.03em] tabular-nums text-ink whitespace-nowrap">{euros(total)}</div>
         </div>
 
-        <div className={`mt-6 rounded-xl border px-4 py-3.5 flex items-center gap-3 transition-all duration-500 ${etape >= 4 ? "opacity-100 translate-y-0 bg-indigo-500/10 border-indigo-500/40" : "opacity-0 translate-y-2 border-transparent"}`}>
+        <div className={`mt-6 rounded-md px-4 py-3.5 flex items-center gap-3 transition-all duration-500 ${etape >= 4 ? "opacity-100 translate-y-0 bg-indigo-500/15" : "opacity-0 translate-y-2"}`}>
           <span className="shrink-0 w-7 h-7 rounded-full bg-indigo-600 text-on-accent grid place-items-center" aria-hidden="true">
             <Check size={15} strokeWidth={3} />
           </span>
-          <span className="text-[15px] text-ink">
+          <span className="text-[17px] text-ink">
             <strong className="font-semibold">Signé par le client</strong> depuis son téléphone. Tu es notifié à l&apos;instant.
           </span>
         </div>

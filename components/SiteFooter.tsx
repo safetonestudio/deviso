@@ -23,7 +23,7 @@ import { METIERS_LANDING } from "@/lib/blog/metiers";
  */
 export function SiteFooter() {
   return (
-    <footer className="border-t border-zinc-900 py-12 px-4 sm:px-6 text-gray-400">
+    <footer className="py-16 px-4 sm:px-6 text-gray-400">
       <div className="max-w-6xl mx-auto">
         <div className="flex flex-col md:flex-row justify-between items-start gap-8 mb-10">
           <div>
@@ -91,7 +91,7 @@ export function SiteFooter() {
           </div>
         </div>
 
-        <div className="border-t border-zinc-900 pt-6 text-xs text-center">
+        <div className="pt-10 text-sm text-center">
           © {new Date().getFullYear()} Deviso. Fait avec{" "}
           <Heart size={12} className="inline-block align-[-1px] fill-current text-red-500" aria-label="amour" /> en France.
         </div>
