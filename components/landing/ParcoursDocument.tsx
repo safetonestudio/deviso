@@ -20,7 +20,7 @@ const ETAPES: Etape[] = [
   { titre: "Ton client signe en ligne.", texte: "Il reçoit un lien, ouvre le devis sur son téléphone et signe. Tu es prévenu à l'instant.", vue: "signe" },
   { titre: "Un clic, et c'est une facture.", texte: "Le devis signé devient une facture Factur-X conforme, transmise par une plateforme agréée.", vue: "facture" },
   { titre: "Deviso relance, tu encaisses.", texte: "Sans réponse, ton client est relancé à 3, 7 ou 14 jours. Le paiement reçu, la facture passe en payée.", vue: "paye" },
-  { titre: "Ta déclaration est prête.", texte: "Ton chiffre d'affaires du trimestre est calculé à partir de tes encaissements, prêt à reporter à l'URSSAF.", vue: "urssaf" },
+  { titre: "Tes déclarations sont prêtes.", texte: "Chiffre d'affaires, TVA collectée, échéances : tout est calculé à partir de tes encaissements, selon ton statut.", vue: "urssaf" },
 ];
 
 const BRIEF = "Refonte du site vitrine d'un cabinet d'avocats à Lyon : cinq pages, formulaire de contact, mise en ligne. Délai de trois semaines.";
@@ -61,28 +61,32 @@ function Brief() {
   );
 }
 
-function Urssaf() {
+/** Les déclarations : chiffre d'affaires, TVA et échéance, quel que soit le statut. */
+function Declarations() {
   return (
     <div data-ui className="rounded-[10px] bg-ds-surface p-6 sm:p-8">
-      <div className="text-[14px] font-medium text-gray-400">Chiffre d&apos;affaires encaissé, 4e trimestre</div>
+      <div className="text-[14px] font-medium text-gray-400">Chiffre d&apos;affaires encaissé, 4e trimestre, hors taxes</div>
       <div className="mt-2 text-[clamp(40px,5vw,64px)] leading-none font-semibold tracking-[-0.04em] tabular-nums text-ink">6 200 €</div>
       <div className="mt-6 grid grid-cols-2 gap-2 text-[14px]">
-        <div className="rounded-md bg-ds-elevated p-4">
-          <div className="text-gray-400">Cotisations estimées</div>
-          <div className="mt-1 text-[20px] font-semibold tabular-nums text-ink">1 587 €</div>
+        <div className="rounded-md bg-blue-500/15 p-4">
+          <div className="text-blue-300">TVA collectée</div>
+          <div className="mt-1 text-[20px] font-semibold tabular-nums text-ink">1 240 €</div>
         </div>
-        <div className="rounded-md bg-ds-elevated p-4">
-          <div className="text-gray-400">À déclarer avant le</div>
-          <div className="mt-1 text-[20px] font-semibold tabular-nums text-ink">31 janvier</div>
+        <div className="rounded-md bg-amber-500/15 p-4">
+          <div className="text-amber-300">Déclaration de TVA</div>
+          <div className="mt-1 text-[20px] font-semibold text-ink">En janvier</div>
         </div>
       </div>
+      <p className="mt-5 text-[14px] leading-relaxed text-gray-400">
+        Entreprise individuelle ou société, au réel ou en micro : les échéances et les montants suivent ton statut.
+      </p>
     </div>
   );
 }
 
 function Visuel({ vue }: { vue: Vue }) {
   if (vue === "brief") return <Brief />;
-  if (vue === "urssaf") return <Urssaf />;
+  if (vue === "urssaf") return <Declarations />;
   return <DocumentDevis etat={vue} />;
 }
 
@@ -155,7 +159,7 @@ export function ParcoursDocument({ intro }: { intro: ReactNode }) {
             </div>
             <div aria-hidden={vue !== "urssaf"} className={`absolute inset-0 flex items-center transition-[opacity,visibility] duration-500 ${vue === "urssaf" ? "opacity-100 visible" : "opacity-0 invisible pointer-events-none"}`}>
               <div className="w-full">
-                <Urssaf />
+                <Declarations />
               </div>
             </div>
           </div>

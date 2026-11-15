@@ -10,9 +10,9 @@ import { ModeNuit } from "@/components/landing/ModeNuit";
 import { policesApp } from "@/app/polices-app";
 
 export const metadata: Metadata = {
-  title: "Deviso, Logiciel devis et facturation pour freelances français",
+  title: "Deviso, logiciel de devis et factures pour indépendants et petites entreprises",
   description:
-    "Créez vos devis en 30 secondes avec l'IA, facturez en Factur-X (norme 2026) via une plateforme agréée, relances automatiques, suivi du CA URSSAF. Essai gratuit 14 jours.",
+    "Créez vos devis en 30 secondes avec l'IA, facturez en Factur-X (norme 2026) via une plateforme agréée, relances automatiques, chiffre d'affaires, TVA et échéances suivis pour vous. Essai gratuit 14 jours.",
   alternates: {
     canonical: "https://getdeviso.fr",
   },
@@ -29,7 +29,7 @@ const jsonLd = {
   operatingSystem: "Web",
   url: "https://getdeviso.fr",
   description:
-    "Logiciel de devis et facturation pour freelances et petites équipes en France. Devis IA, Factur-X, relances automatiques.",
+    "Logiciel de devis et facturation pour les indépendants et les petites entreprises en France. Devis IA, Factur-X, relances automatiques.",
   offers: [
     { "@type": "Offer", name: "Solo", price: "18", priceCurrency: "EUR", billingIncrement: "P1M" },
     { "@type": "Offer", name: "Pro", price: "34", priceCurrency: "EUR", billingIncrement: "P1M" },
@@ -40,13 +40,13 @@ const jsonLd = {
     "Facturation électronique Factur-X",
     "Émission et réception de factures via une plateforme agréée (Super PDP)",
     "Conformité droit français",
-    "Suivi du chiffre d'affaires URSSAF",
+    "Suivi du chiffre d'affaires, de la TVA et des échéances",
     "Relances automatiques",
   ],
   inLanguage: "fr",
   audience: {
     "@type": "Audience",
-    audienceType: "Freelances et petites équipes en France",
+    audienceType: "Indépendants et petites entreprises en France",
   },
 };
 
@@ -124,7 +124,7 @@ export default function LandingPage() {
                 </h1>
                 <p className={`mt-6 max-w-[44ch] ${LEAD}`}>
                   Décris ta mission en quelques mots, au clavier ou à la voix. L&apos;IA rédige un devis complet et chiffré à partir de
-                  ton catalogue ; la signature, la facture Factur-X et ta déclaration suivent.
+                  ton catalogue ; la signature, la facture Factur-X et tes déclarations suivent.
                 </p>
                 <div className="mt-8 flex flex-col sm:flex-row gap-3">
                   <DemoButton className={`w-full sm:w-auto ${BOUTON_PLEIN}`} />
@@ -149,7 +149,7 @@ export default function LandingPage() {
 
         {/* ── Réforme 2026 ── */}
         <section className={`${CADRE} ${SECTION}`} aria-labelledby="titre-reforme">
-          <div className="reveal rounded-lg bg-indigo-600 text-on-accent px-6 py-12 sm:px-12 sm:py-16 lg:px-16 lg:py-20 grid gap-8 lg:grid-cols-12 lg:items-end">
+          <div className="reveal rounded-lg bg-blue-800 text-ink px-6 py-12 sm:px-12 sm:py-16 lg:px-16 lg:py-20 grid gap-8 lg:grid-cols-12 lg:items-end">
             <div className="lg:col-span-8">
               <h2 id="titre-reforme" className="text-[clamp(32px,3.4vw,52px)] leading-[1.06] font-semibold tracking-[-0.035em]">Prêt pour la réforme 2026.</h2>
               <p className="mt-5 text-[17px] sm:text-[20px] leading-relaxed max-w-[56ch]">
@@ -161,7 +161,7 @@ export default function LandingPage() {
               <Link href="/conformite" className={`${BOUTON} bg-ink text-(color:--ds-bg) hover:opacity-90`}>Comprendre la réforme</Link>
             </div>
             <ul className="lg:col-span-12 flex flex-wrap gap-x-8 gap-y-2 pt-8 text-[17px] font-semibold">
-              {["Factur-X", "EN 16931", "PDF/A-3", "Plateforme agréée Super PDP", "Chorus Pro", "URSSAF"].map((n) => (
+              {["Factur-X", "EN 16931", "PDF/A-3", "Plateforme agréée Super PDP", "Chorus Pro", "Export FEC"].map((n) => (
                 <li key={n}>{n}</li>
               ))}
             </ul>

@@ -16,6 +16,16 @@ const GRIS = "#5A6460";
 const FILET = "#E3E5DF";
 const VERT = "#0F7A55";
 
+/** Statuts aux couleurs de l'application : brouillon gris, envoyé bleu,
+    signé vert, transmise bleu, payée vert plein. */
+const STATUT: Record<EtatDocument, { texte: string; fond: string; encre: string }> = {
+  devis: { texte: "Brouillon", fond: "#E9ECE8", encre: "#4B5550" },
+  envoye: { texte: "Envoyé", fond: "#E1EBF2", encre: "#2F556C" },
+  signe: { texte: "Signé", fond: "#E1F0E7", encre: "#0C6B4C" },
+  facture: { texte: "Transmise", fond: "#E1EBF2", encre: "#2F556C" },
+  paye: { texte: "Payée", fond: "#0F7A55", encre: "#FFFFFF" },
+};
+
 const LIGNES: [string, string, number][] = [
   ["Audit et arborescence", "1 forfait", 500],
   ["Maquettes des cinq pages", "5 pages", 1400],
@@ -59,6 +69,12 @@ export function DocumentDevis({ etat, className = "" }: { etat: EtatDocument; cl
             <div className="tabular-nums" style={{ color: GRIS, fontSize: "0.85em", marginTop: "0.35em" }}>
               {facture ? "FAC-2026-031, émise le 15/11/2026" : "DEV-2026-048, du 13/11/2026"}
             </div>
+            <span
+              className="inline-block font-semibold transition-colors duration-500"
+              style={{ marginTop: "0.6em", padding: "0.25em 0.8em", borderRadius: "999px", fontSize: "0.8em", backgroundColor: STATUT[etat].fond, color: STATUT[etat].encre }}
+            >
+              {STATUT[etat].texte}
+            </span>
           </div>
         </div>
 

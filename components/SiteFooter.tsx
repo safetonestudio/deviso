@@ -34,7 +34,7 @@ export function SiteFooter() {
               <span className="font-semibold text-ink">Deviso</span>
             </div>
             <p className="text-sm max-w-xs leading-relaxed">
-              Du devis à la facture Factur-X, pour les freelances et petites équipes en France. 🇫🇷
+              Du devis à la facture Factur-X, pour les indépendants et les petites entreprises en France. 🇫🇷
             </p>
           </div>
 

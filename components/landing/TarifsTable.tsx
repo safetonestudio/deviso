@@ -32,7 +32,7 @@ export function TarifsTable() {
   const formules = [
     {
       nom: "Solo",
-      pour: "Pour le freelance qui veut une image pro et zéro admin.",
+      pour: "Pour travailler seul, avec une image pro et zéro administratif.",
       prix: annuel ? "14,40" : "18",
       note: annuel ? "Facturé 172,80 € par an" : "Sans engagement",
       lien: "/signup?plan=solo",
@@ -41,7 +41,7 @@ export function TarifsTable() {
     },
     {
       nom: "Pro",
-      pour: "Pour le freelance pro et les petits studios jusqu'à 5 personnes.",
+      pour: "Pour les petites entreprises et les équipes jusqu'à 5 personnes.",
       prix: annuel ? "27,20" : "34",
       note: annuel ? "Facturé 326,40 € par an" : "Sans engagement",
       lien: "/signup?plan=pro",
@@ -101,7 +101,7 @@ export function TarifsTable() {
 
             <Link
               href={f.lien}
-              className={`mt-10 ${BOUTON} ${f.plein ? "bg-indigo-600 hover:bg-indigo-700 text-on-accent" : "bg-ds-elevated hover:bg-ds-bg text-ink"}`}
+              className={`mt-10 ${BOUTON} bg-indigo-600 hover:bg-indigo-700 text-on-accent`}
             >
               Essayer {f.nom} 14 jours gratuitement
             </Link>

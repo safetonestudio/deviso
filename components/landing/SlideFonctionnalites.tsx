@@ -13,12 +13,12 @@ import Image from "next/image";
  * Les écrans sont de vraies captures de l'application (compte de démo).
  */
 const DIAPOS = [
-  { cle: "nouveau", titre: "Devis par IA en 30 secondes", texte: "Tu décris ta mission, l'IA rédige le devis complet, chiffré, prêt à envoyer.", alt: "L'écran Nouveau devis de Deviso : tu décris ton projet, l'IA génère le devis" },
-  { cle: "signature", titre: "Signature électronique", texte: "Ton client ouvre le devis sur son téléphone et signe en quelques secondes.", alt: "Un devis tel que le client le reçoit, prêt à être signé en ligne" },
-  { cle: "relances", titre: "Relances automatiques", texte: "Après 3, 7 ou 14 jours sans réponse, Deviso relance ton client à ta place.", alt: "Les actions requises dans Deviso : factures en retard et devis sans réponse à relancer" },
-  { cle: "factures", titre: "Factur-X et plateforme agréée", texte: "Factures conformes à la réforme 2026, émises et reçues via une plateforme agréée.", alt: "La liste des factures dans Deviso, avec leur statut et leur montant" },
-  { cle: "tableau", titre: "Chiffre d'affaires URSSAF", texte: "Ton CA du mois et du trimestre, prêt à déclarer, sans calculer.", alt: "Le tableau de bord de Deviso : chiffre d'affaires encaissé, seuil de TVA, échéance URSSAF" },
-  { cle: "catalogue", titre: "Catalogue et suivi du temps", texte: "Tes prestations réutilisables en un clic, à l'heure ou au forfait.", alt: "Le catalogue de prestations de Deviso" },
+  { cle: "nouveau", teinte: "bg-indigo-500", titre: "Devis par IA en 30 secondes", texte: "Tu décris ta mission, l'IA rédige le devis complet, chiffré, prêt à envoyer.", alt: "L'écran Nouveau devis de Deviso : tu décris ton projet, l'IA génère le devis" },
+  { cle: "signature", teinte: "bg-blue-400", titre: "Signature électronique", texte: "Ton client ouvre le devis sur son téléphone et signe en quelques secondes.", alt: "Un devis tel que le client le reçoit, prêt à être signé en ligne" },
+  { cle: "relances", teinte: "bg-amber-400", titre: "Relances automatiques", texte: "Après 3, 7 ou 14 jours sans réponse, Deviso relance ton client à ta place.", alt: "Les actions requises dans Deviso : factures en retard et devis sans réponse à relancer" },
+  { cle: "factures", teinte: "bg-indigo-500", titre: "Factur-X et plateforme agréée", texte: "Factures conformes à la réforme 2026, émises et reçues via une plateforme agréée.", alt: "La liste des factures dans Deviso, avec leur statut et leur montant" },
+  { cle: "tableau", teinte: "bg-blue-400", titre: "Chiffre d'affaires et déclarations", texte: "Ton chiffre d'affaires, ta TVA et tes échéances, calculés selon ton statut.", alt: "Le tableau de bord de Deviso : chiffre d'affaires encaissé, TVA et prochaine échéance" },
+  { cle: "catalogue", teinte: "bg-amber-400", titre: "Catalogue et suivi du temps", texte: "Tes prestations réutilisables en un clic, à l'heure ou au forfait.", alt: "Le catalogue de prestations de Deviso" },
 ] as const;
 
 const DUREE = 6000;
@@ -83,7 +83,7 @@ export function SlideFonctionnalites() {
                 {sel && (
                   <span
                     key={`${actif}-${cycle}`}
-                    className={`block w-full bg-indigo-500 ${enCours ? "barre-diapo" : "h-full"}`}
+                    className={`block w-full ${d.teinte} ${enCours ? "barre-diapo" : "h-full"}`}
                     style={enCours ? { animationDuration: `${DUREE}ms` } : undefined}
                   />
                 )}
