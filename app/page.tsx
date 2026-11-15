@@ -5,6 +5,7 @@ import { DemoButton } from "@/components/landing/DemoButton";
 import Image from "next/image";
 import { Apparitions } from "@/components/landing/Apparitions";
 import { DemoAnimee } from "@/components/landing/DemoAnimee";
+import { SlideFonctionnalites } from "@/components/landing/SlideFonctionnalites";
 import { TarifsTable } from "@/components/landing/TarifsTable";
 import { DashboardThemeProvider, ThemeToggleIcone } from "@/components/DashboardTheme";
 import { policesApp } from "@/app/polices-app";
@@ -251,50 +252,8 @@ export default function LandingPage() {
             <p className="mt-4 text-[19px] leading-relaxed text-gray-300">Tout ce que tes concurrents font à la main, Deviso le fait automatiquement.</p>
           </div>
 
-          <div className="mt-10 grid gap-5 lg:grid-cols-12">
-            {/* Devis par IA : la seule carte qui montre une capture */}
-            <article className={`reveal ${CARTE} lg:col-span-7 lg:row-span-2 flex flex-col`}>
-              <div className="p-7 sm:p-8">
-                <h3 className="text-[22px] font-semibold tracking-[-0.02em] text-ink">{features[0].title}</h3>
-                <p className="mt-2.5 text-[16px] leading-relaxed text-gray-300 max-w-[56ch]">{features[0].desc}</p>
-              </div>
-              <div className="relative mt-auto h-[240px] sm:h-[280px] ml-7 sm:ml-8 rounded-tl-xl border-l border-t border-ds-border overflow-hidden shadow-ds-card">
-                <Capture nom="devis" alt="Un devis rédigé dans Deviso, avec ses lignes, ses prix et ses conditions" className="absolute max-w-none w-[1500px] h-auto" style={{ left: -300, top: -210 }} />
-              </div>
-              <Etiquette className="hidden sm:block bottom-6 right-6">Rédigé en 30 secondes</Etiquette>
-            </article>
-
-            {/* Signature */}
-            <article className={`reveal ${CARTE} lg:col-span-5 p-7 sm:p-8`}>
-              <div className="flex items-start justify-between gap-4">
-                <h3 className="text-[22px] font-semibold tracking-[-0.02em] text-ink">{features[1].title}</h3>
-                <svg viewBox="0 0 260 90" aria-hidden="true" className="shrink-0 w-28 -mt-2 text-indigo-500" fill="none" stroke="currentColor" strokeWidth="5" strokeLinecap="round" strokeLinejoin="round">
-                  <path d="M8 62c14-30 26-46 34-44 10 3-12 52-2 54 10 2 22-40 34-38 9 2-6 30 4 32 12 2 20-28 32-26 8 2-2 22 8 22 14 0 26-30 40-30 10 0 4 24 16 24 16 0 30-18 78-22" />
-                </svg>
-              </div>
-              <p className="mt-2.5 text-[16px] leading-relaxed text-gray-300">{features[1].desc}</p>
-            </article>
-
-            {/* Relances */}
-            <article className={`reveal ${CARTE} lg:col-span-5 p-7 sm:p-8`}>
-              <div className="flex items-start justify-between gap-4">
-                <h3 className="text-[22px] font-semibold tracking-[-0.02em] text-ink">{features[2].title}</h3>
-                <div className="shrink-0 flex gap-1.5 text-[13px] font-semibold tabular-nums" aria-hidden="true">
-                  <span className="px-2 py-1 rounded-md bg-ds-elevated border border-ds-border text-gray-300">J+3</span>
-                  <span className="px-2 py-1 rounded-md bg-indigo-600 text-on-accent">J+7</span>
-                  <span className="px-2 py-1 rounded-md bg-ds-elevated border border-ds-border text-gray-300">J+14</span>
-                </div>
-              </div>
-              <p className="mt-2.5 text-[16px] leading-relaxed text-gray-300">{features[2].desc}</p>
-            </article>
-
-            {/* Factur-X, URSSAF, temps et catalogue : trois cartes de texte */}
-            {[3, 4, 5].map((i) => (
-              <article key={features[i].title} className={`reveal ${CARTE} lg:col-span-4 p-7 sm:p-8`}>
-                <h3 className="text-[22px] font-semibold tracking-[-0.02em] text-ink">{features[i].title}</h3>
-                <p className="mt-2.5 text-[16px] leading-relaxed text-gray-300">{features[i].desc}</p>
-              </article>
-            ))}
+          <div className="mt-10 sm:mt-12">
+            <SlideFonctionnalites />
           </div>
         </section>
 

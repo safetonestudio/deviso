@@ -577,6 +577,9 @@ html:not(.light) .capture-sombre { display: block; }
 /* Curseur de saisie de la demonstration du haut de page. */
 .curseur-demo { display: inline-block; width: 2px; height: 1.1em; margin-left: 2px; vertical-align: -0.18em; background-color: rgb(var(--acc-500)); animation: clignote 1s steps(2, start) infinite; }
 @keyframes clignote { to { visibility: hidden; } }
+/* Barre de progression de l'onglet actif dans la section qui defile. */
+.barre-diapo { width: 0%; animation-name: remplir-diapo; animation-timing-function: linear; animation-fill-mode: forwards; }
+@keyframes remplir-diapo { from { width: 0%; } to { width: 100%; } }
 /* Apparition des blocs au defilement (site public seulement). Sans script ou
    avec « reduire les animations », tout reste visible. */
 @media (scripting: enabled) and (prefers-reduced-motion: no-preference) {

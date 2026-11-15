@@ -14,8 +14,8 @@ import { planFeatures, proOnlyFeatures } from "@/lib/plans";
 const COMMUNES = planFeatures("solo");
 const PRO_SEUL = proOnlyFeatures();
 /** Les premières lignes de la liste Solo, visibles sans déplier. */
-const EN_AVANT = COMMUNES.slice(0, 7);
-const LE_RESTE = COMMUNES.slice(7);
+const EN_AVANT = COMMUNES.slice(0, 4);
+const LE_RESTE = COMMUNES.slice(4);
 
 function Ligne({ children }: { children: React.ReactNode }) {
   return (
@@ -82,7 +82,7 @@ export function TarifsTable() {
         </div>
       </div>
 
-      <div className="mt-10 grid gap-5 lg:grid-cols-2 items-start">
+      <div className="mt-10 grid gap-5 lg:grid-cols-2 items-stretch">
         {formules.map((f) => (
           <div
             key={f.nom}
@@ -112,7 +112,7 @@ export function TarifsTable() {
             </Link>
             <p className="mt-3 text-center text-[14px] text-gray-400">Sans carte bancaire</p>
 
-            <div className="mt-8 pt-8 border-t border-ds-border">
+            <div className="mt-8 pt-8 border-t border-ds-border flex-1">
               {f.nom === "Solo" ? (
                 <ul className="space-y-3.5">
                   {EN_AVANT.map((x) => (
@@ -121,7 +121,7 @@ export function TarifsTable() {
                 </ul>
               ) : (
                 <ul className="space-y-3.5">
-                  <Ligne><strong className="font-semibold">Tout ce que contient Solo</strong></Ligne>
+                  <Ligne><strong className="font-semibold">Tout Solo, et en plus :</strong></Ligne>
                   {PRO_SEUL.map((x) => (
                     <Ligne key={x}>{x}</Ligne>
                   ))}
