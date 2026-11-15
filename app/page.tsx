@@ -181,7 +181,7 @@ export default function LandingPage() {
         {/* ── Haut de page : le titre, puis le vrai produit en grand ── */}
         <section className="relative overflow-hidden">
           <div aria-hidden="true" className="halo-accueil absolute inset-x-0 top-0 h-[900px] pointer-events-none" />
-          <div className={`${CADRE} relative pt-16 sm:pt-24`}>
+          <div className={`${CADRE} relative pt-12 sm:pt-16`}>
             <h1 className="text-[clamp(36px,5.4vw,84px)] leading-[1.03] font-bold tracking-[-0.04em] text-ink max-w-[1100px]">
               Ton devis complet, rédigé en 30&nbsp;secondes.
             </h1>
@@ -201,17 +201,18 @@ export default function LandingPage() {
               </div>
             </div>
 
-            <div className="reveal relative mt-14 sm:mt-20">
+            <div className="reveal relative mt-12 sm:mt-14">
               <Etiquette className="hidden md:block -top-6 left-10">
                 <span className="block text-[12px] font-medium text-gray-400">Devis signé par le client</span>
                 Refonte e-commerce, 4 600 €
               </Etiquette>
-              <Etiquette className="hidden md:block top-1/3 -right-3 lg:-right-6">
+              <Etiquette className="hidden md:block top-1/2 -right-3 lg:-right-6">
                 <span className="block text-[12px] font-medium text-gray-400">Facture Factur-X</span>
                 Encaissée, 1 800 €
               </Etiquette>
-              <div className="rounded-t-2xl sm:rounded-t-3xl border border-b-0 border-ds-border bg-ds-surface shadow-ds-leve overflow-hidden">
+              <div className="relative rounded-t-2xl sm:rounded-t-3xl border border-b-0 border-ds-border bg-ds-surface shadow-ds-leve overflow-hidden max-h-[300px] sm:max-h-[440px] lg:max-h-[560px]">
                 <Capture nom="tableau" alt="Le tableau de bord de Deviso : chiffre d'affaires encaissé, seuil de TVA, devis en attente et prochaine échéance URSSAF" priority className="w-full h-auto block" />
+                <div aria-hidden="true" className="fondu-bas absolute inset-x-0 bottom-0 h-28 pointer-events-none" />
               </div>
             </div>
           </div>
@@ -228,12 +229,12 @@ export default function LandingPage() {
         </section>
 
         {/* ── Comment ça marche ── */}
-        <section id="comment" className={`${CADRE} pt-24 sm:pt-36 scroll-mt-20`}>
+        <section id="comment" className={`${CADRE} pt-16 sm:pt-24 scroll-mt-20`}>
           <div className="reveal max-w-[860px]">
             <h2 className={H2}>Comment ça marche</h2>
             <p className="mt-4 text-[19px] leading-relaxed text-gray-300">De la description à la facture signée en trois étapes.</p>
           </div>
-          <ol className="mt-12 grid gap-6 lg:grid-cols-3">
+          <ol className="mt-10 grid gap-5 lg:grid-cols-3">
             {steps.map((step, i) => {
               const carte = [
                 { etat: "Brouillon", detail: "Rédigé par l'IA, à relire", ton: "neutre" as const },
@@ -241,7 +242,7 @@ export default function LandingPage() {
                 { etat: "Payée", detail: "Facture Factur-X, encaissée le 02/12", ton: "plein" as const },
               ][i];
               return (
-                <li key={step.title} className="reveal rounded-2xl bg-ds-elevated border border-ds-border p-6 sm:p-8 flex flex-col gap-8" style={{ transitionDelay: `${i * 90}ms` }}>
+                <li key={step.title} className="reveal rounded-2xl bg-ds-elevated border border-ds-border p-6 sm:p-7 flex flex-col gap-6" style={{ transitionDelay: `${i * 90}ms` }}>
                   <CarteDevis {...carte} />
                   <div>
                     <h3 className="text-[22px] leading-snug font-semibold tracking-[-0.02em] text-ink">{step.title}</h3>
@@ -254,104 +255,64 @@ export default function LandingPage() {
         </section>
 
         {/* ── Fonctionnalités : une carte, une vraie capture ── */}
-        <section id="fonctionnalites" className={`${CADRE} pt-24 sm:pt-36 scroll-mt-20`}>
+        <section id="fonctionnalites" className={`${CADRE} pt-16 sm:pt-24 scroll-mt-20`}>
           <div className="reveal max-w-[860px]">
             <h2 className={H2}>Tout ce dont tu as besoin</h2>
             <p className="mt-4 text-[19px] leading-relaxed text-gray-300">Tout ce que tes concurrents font à la main, Deviso le fait automatiquement.</p>
           </div>
 
-          <div className="mt-12 grid gap-6 lg:grid-cols-12">
-            {/* Devis par IA */}
-            <article className={`reveal ${CARTE} lg:col-span-7 flex flex-col`}>
-              <div className="p-7 sm:p-9">
-                <h3 className="text-[24px] font-semibold tracking-[-0.02em] text-ink">{features[0].title}</h3>
-                <p className="mt-3 text-[16px] leading-relaxed text-gray-300 max-w-[56ch]">{features[0].desc}</p>
+          <div className="mt-10 grid gap-5 lg:grid-cols-12">
+            {/* Devis par IA : la seule carte qui montre une capture */}
+            <article className={`reveal ${CARTE} lg:col-span-7 lg:row-span-2 flex flex-col`}>
+              <div className="p-7 sm:p-8">
+                <h3 className="text-[22px] font-semibold tracking-[-0.02em] text-ink">{features[0].title}</h3>
+                <p className="mt-2.5 text-[16px] leading-relaxed text-gray-300 max-w-[56ch]">{features[0].desc}</p>
               </div>
-              <div className="relative mt-auto h-[300px] sm:h-[360px] ml-7 sm:ml-9 rounded-tl-xl border-l border-t border-ds-border overflow-hidden shadow-ds-card">
+              <div className="relative mt-auto h-[240px] sm:h-[280px] ml-7 sm:ml-8 rounded-tl-xl border-l border-t border-ds-border overflow-hidden shadow-ds-card">
                 <Capture nom="devis" alt="Un devis rédigé dans Deviso, avec ses lignes, ses prix et ses conditions" className="absolute max-w-none w-[1500px] h-auto" style={{ left: -300, top: -210 }} />
               </div>
-              <Etiquette className="hidden sm:block bottom-8 right-8">Rédigé en 30 secondes</Etiquette>
+              <Etiquette className="hidden sm:block bottom-6 right-6">Rédigé en 30 secondes</Etiquette>
             </article>
 
             {/* Signature */}
-            <article className={`reveal ${CARTE} lg:col-span-5 flex flex-col`}>
-              <div className="p-7 sm:p-9">
-                <h3 className="text-[24px] font-semibold tracking-[-0.02em] text-ink">{features[1].title}</h3>
-                <p className="mt-3 text-[16px] leading-relaxed text-gray-300">{features[1].desc}</p>
-              </div>
-              <div className="mt-auto mx-7 sm:mx-9 mb-7 sm:mb-9 rounded-xl bg-ds-elevated border border-ds-border p-6">
-                <svg viewBox="0 0 260 90" aria-hidden="true" className="w-full max-w-[320px] text-ink" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
+            <article className={`reveal ${CARTE} lg:col-span-5 p-7 sm:p-8`}>
+              <div className="flex items-start justify-between gap-4">
+                <h3 className="text-[22px] font-semibold tracking-[-0.02em] text-ink">{features[1].title}</h3>
+                <svg viewBox="0 0 260 90" aria-hidden="true" className="shrink-0 w-28 -mt-2 text-indigo-500" fill="none" stroke="currentColor" strokeWidth="5" strokeLinecap="round" strokeLinejoin="round">
                   <path d="M8 62c14-30 26-46 34-44 10 3-12 52-2 54 10 2 22-40 34-38 9 2-6 30 4 32 12 2 20-28 32-26 8 2-2 22 8 22 14 0 26-30 40-30 10 0 4 24 16 24 16 0 30-18 78-22" />
                 </svg>
-                <div className="mt-3 flex items-center gap-2 text-[14px] font-semibold text-indigo-400">
-                  <span className="w-2 h-2 rounded-full bg-indigo-500" aria-hidden="true" />
-                  Signé le 14/11/2026 à 10 h 42
-                </div>
               </div>
+              <p className="mt-2.5 text-[16px] leading-relaxed text-gray-300">{features[1].desc}</p>
             </article>
 
             {/* Relances */}
-            <article className={`reveal ${CARTE} lg:col-span-5 flex flex-col`}>
-              <div className="p-7 sm:p-9">
-                <h3 className="text-[24px] font-semibold tracking-[-0.02em] text-ink">{features[2].title}</h3>
-                <p className="mt-3 text-[16px] leading-relaxed text-gray-300">{features[2].desc}</p>
+            <article className={`reveal ${CARTE} lg:col-span-5 p-7 sm:p-8`}>
+              <div className="flex items-start justify-between gap-4">
+                <h3 className="text-[22px] font-semibold tracking-[-0.02em] text-ink">{features[2].title}</h3>
+                <div className="shrink-0 flex gap-1.5 text-[13px] font-semibold tabular-nums" aria-hidden="true">
+                  <span className="px-2 py-1 rounded-md bg-ds-elevated border border-ds-border text-gray-300">J+3</span>
+                  <span className="px-2 py-1 rounded-md bg-indigo-600 text-on-accent">J+7</span>
+                  <span className="px-2 py-1 rounded-md bg-ds-elevated border border-ds-border text-gray-300">J+14</span>
+                </div>
               </div>
-              <div className="mt-auto mx-7 sm:mx-9 mb-7 sm:mb-9 grid grid-cols-3 gap-3" aria-hidden="true">
-                {[["J+3", "Premier rappel", false], ["J+7", "Relance", true], ["J+14", "Dernier rappel", false]].map(([j, nom, actif]) => (
-                  <div key={j as string} className={`rounded-xl border p-4 ${actif ? "bg-indigo-600 border-transparent text-on-accent shadow-ds-card" : "bg-ds-elevated border-ds-border"}`}>
-                    <div className={`text-[26px] leading-none font-semibold tabular-nums ${actif ? "" : "text-ink"}`}>{j}</div>
-                    <div className={`mt-2 text-[13px] ${actif ? "" : "text-gray-400"}`}>{nom}</div>
-                  </div>
-                ))}
-              </div>
+              <p className="mt-2.5 text-[16px] leading-relaxed text-gray-300">{features[2].desc}</p>
             </article>
 
-            {/* Factur-X et Plateforme Agréée */}
-            <article className={`reveal ${CARTE} lg:col-span-7 flex flex-col`}>
-              <div className="p-7 sm:p-9">
-                <h3 className="text-[24px] font-semibold tracking-[-0.02em] text-ink">{features[3].title}</h3>
-                <p className="mt-3 text-[16px] leading-relaxed text-gray-300 max-w-[60ch]">{features[3].desc}</p>
-              </div>
-              <div className="relative mt-auto h-[280px] sm:h-[320px] ml-7 sm:ml-9 rounded-tl-xl border-l border-t border-ds-border overflow-hidden shadow-ds-card">
-                <Capture nom="factures" alt="La liste des factures dans Deviso, avec leur statut et leur montant" className="absolute max-w-none w-[1500px] h-auto" style={{ left: -290, top: -300 }} />
-              </div>
-              <Etiquette className="hidden sm:block bottom-8 right-8">Factur-X, norme EN 16931</Etiquette>
-            </article>
-
-            {/* URSSAF */}
-            <article className={`reveal ${CARTE} lg:col-span-7 flex flex-col`}>
-              <div className="p-7 sm:p-9">
-                <h3 className="text-[24px] font-semibold tracking-[-0.02em] text-ink">{features[4].title}</h3>
-                <p className="mt-3 text-[16px] leading-relaxed text-gray-300 max-w-[56ch]">{features[4].desc}</p>
-              </div>
-              <div className="relative mt-auto h-[280px] sm:h-[320px] ml-7 sm:ml-9 rounded-tl-xl border-l border-t border-ds-border overflow-hidden shadow-ds-card">
-                <Capture nom="tableau" alt="Le chiffre d'affaires mois par mois et la prochaine échéance URSSAF dans Deviso" className="absolute max-w-none w-[1500px] h-auto" style={{ left: -290, top: -630 }} />
-              </div>
-            </article>
-
-            {/* Temps et catalogue */}
-            <article className={`reveal ${CARTE} lg:col-span-5 flex flex-col`}>
-              <div className="p-7 sm:p-9">
-                <h3 className="text-[24px] font-semibold tracking-[-0.02em] text-ink">{features[5].title}</h3>
-                <p className="mt-3 text-[16px] leading-relaxed text-gray-300">{features[5].desc}</p>
-              </div>
-              <div className="mt-auto mx-7 sm:mx-9 mb-7 sm:mb-9 space-y-3" aria-hidden="true">
-                {[["Atelier, la journée", "1 200 €"], ["Maquette, la page", "280 €"], ["Conseil, l'heure", "90 €"]].map(([nom, prix], i) => (
-                  <div key={nom} className={`flex items-center justify-between gap-3 rounded-xl border px-4 py-3.5 ${i === 0 ? "bg-ds-surface border-indigo-500/50 shadow-ds-card" : "bg-ds-elevated border-ds-border"}`}>
-                    <span className="text-[15px] font-medium text-ink">{nom}</span>
-                    <span className="text-[15px] font-semibold tabular-nums text-ink">{prix}</span>
-                  </div>
-                ))}
-              </div>
-            </article>
+            {/* Factur-X, URSSAF, temps et catalogue : trois cartes de texte */}
+            {[3, 4, 5].map((i) => (
+              <article key={features[i].title} className={`reveal ${CARTE} lg:col-span-4 p-7 sm:p-8`}>
+                <h3 className="text-[22px] font-semibold tracking-[-0.02em] text-ink">{features[i].title}</h3>
+                <p className="mt-2.5 text-[16px] leading-relaxed text-gray-300">{features[i].desc}</p>
+              </article>
+            ))}
           </div>
         </section>
 
         {/* ── Réforme 2026 : la bande verte ── */}
-        <section className={`${CADRE} pt-24 sm:pt-36`}>
-          <div className="reveal rounded-3xl bg-indigo-600 text-on-accent p-8 sm:p-14 lg:p-20 grid gap-10 lg:grid-cols-12 items-end shadow-ds-leve">
+        <section className={`${CADRE} pt-16 sm:pt-24`}>
+          <div className="reveal rounded-3xl bg-indigo-600 text-on-accent p-8 sm:p-10 lg:p-14 grid gap-8 lg:grid-cols-12 items-end shadow-ds-leve">
             <div className="lg:col-span-8">
-              <h2 className="text-[clamp(30px,3.6vw,54px)] leading-[1.05] font-semibold tracking-[-0.03em]">
+              <h2 className="text-[clamp(26px,2.8vw,42px)] leading-[1.08] font-semibold tracking-[-0.03em]">
                 Réforme 2026 : la facturation électronique entre entreprises devient obligatoire.
               </h2>
               <p className="mt-5 text-[19px] leading-relaxed max-w-[52ch]">Deviso génère du Factur-X et s&apos;appuie sur une plateforme agréée.</p>
@@ -368,11 +329,11 @@ export default function LandingPage() {
             Remplace d'anciens témoignages fictifs : sur un produit encore en
             pré-lancement, sans clients réels, on dit la vérité. À remplacer
             par de vrais témoignages, avec accord, quand il y en aura. */}
-        <section className={`${CADRE} pt-24 sm:pt-36`} aria-labelledby="titre-fondateur">
+        <section className={`${CADRE} pt-16 sm:pt-24`} aria-labelledby="titre-fondateur">
           <div className="reveal grid gap-10 lg:grid-cols-12">
             <h2 id="titre-fondateur" className={`${H2} lg:col-span-4`}>Le mot du fondateur</h2>
             <div className="lg:col-span-8">
-              <p className="text-[clamp(20px,1.9vw,28px)] leading-[1.45] tracking-[-0.01em] text-ink">
+              <p className="text-[clamp(19px,1.6vw,24px)] leading-[1.45] tracking-[-0.01em] text-ink">
                 J&apos;ai créé Deviso parce que je perdais trop de temps sur mes propres devis et factures, et parce que la réforme
                 de la facturation électronique arrivait sans outil vraiment simple pour les indépendants et les petites structures.
               </p>
@@ -392,7 +353,7 @@ export default function LandingPage() {
         </section>
 
         {/* ── Tarifs ── */}
-        <section id="tarifs" className={`${CADRE} pt-24 sm:pt-36 scroll-mt-20`}>
+        <section id="tarifs" className={`${CADRE} pt-16 sm:pt-24 scroll-mt-20`}>
           <div className="reveal">
             <TarifsTable />
           </div>
@@ -405,8 +366,8 @@ export default function LandingPage() {
         </section>
 
         {/* ── Dernière action ── */}
-        <section className={`${CADRE} py-24 sm:py-36`} aria-labelledby="titre-action">
-          <div className="reveal rounded-3xl bg-ds-surface border border-ds-border shadow-ds-leve p-8 sm:p-14 lg:p-20 text-center">
+        <section className={`${CADRE} py-16 sm:py-24`} aria-labelledby="titre-action">
+          <div className="reveal rounded-3xl bg-ds-surface border border-ds-border shadow-ds-leve p-8 sm:p-12 lg:p-14 text-center">
             <h2 id="titre-action" className={`${H2} mx-auto max-w-[20ch]`}>Prêt à envoyer ton prochain devis en 30 secondes ?</h2>
             <p className="mt-5 text-[19px] text-gray-300">Rejoins les freelances et petites équipes qui gèrent leur facturation avec Deviso.</p>
             <div className="mt-8 flex flex-col sm:flex-row items-center justify-center gap-3">

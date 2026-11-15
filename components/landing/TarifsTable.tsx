@@ -82,7 +82,7 @@ export function TarifsTable() {
         </div>
       </div>
 
-      <div className="mt-12 grid gap-6 lg:grid-cols-2">
+      <div className="mt-10 grid gap-5 lg:grid-cols-2 items-start">
         {formules.map((f) => (
           <div
             key={f.nom}

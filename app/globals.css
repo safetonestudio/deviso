@@ -572,6 +572,8 @@ html:not(.light) .capture-sombre { display: block; }
     radial-gradient(60% 55% at 78% 0%, rgb(var(--acc-500) / 0.16), transparent 70%),
     radial-gradient(45% 40% at 8% 12%, rgb(var(--acc-500) / 0.08), transparent 70%);
 }
+/* La capture du haut de page se fond dans la surface au lieu d'etre coupee net. */
+.fondu-bas { background-image: linear-gradient(to bottom, transparent, var(--ds-surface)); }
 /* Apparition des blocs au defilement (site public seulement). Sans script ou
    avec « reduire les animations », tout reste visible. */
 @media (scripting: enabled) and (prefers-reduced-motion: no-preference) {
