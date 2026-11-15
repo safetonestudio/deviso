@@ -26,11 +26,11 @@ export function TarifsTable() {
   ];
 
   return (
-    <div className="rounded-lg bg-ds-surface overflow-hidden">
+    <div className="rounded-2xl bg-ds-surface border border-ds-border shadow-ds-card overflow-hidden">
       <div className="flex flex-wrap items-end justify-between gap-4 p-5 sm:p-8">
         <div>
-          <h2 className="text-[clamp(32px,4vw,60px)] leading-[1.02] font-semibold tracking-[-0.03em] text-ink">Tarifs simples</h2>
-          <p className="mt-3 text-[17px] text-ink">14 jours gratuits, sans carte bancaire, sans engagement.</p>
+          <h2 className="text-[clamp(30px,3.6vw,54px)] leading-[1.05] font-semibold tracking-[-0.03em] text-ink">Tarifs simples</h2>
+          <p className="mt-3 text-[19px] text-gray-300">14 jours gratuits, sans carte bancaire, sans engagement.</p>
         </div>
         <div className="inline-flex gap-1 p-1 rounded-lg bg-ds-elevated" role="group" aria-label="Périodicité de facturation">
           <button

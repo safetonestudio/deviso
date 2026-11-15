@@ -562,6 +562,22 @@
 @media (min-width: 2500px) { .page-pleine { zoom: 1.52; } }
 @media (min-width: 3000px) { .page-pleine { zoom: 1.85; } }
 @media (min-width: 3600px) { .page-pleine { zoom: 2.25; } }
+/* Page d'accueil : la capture du produit suit le theme du visiteur. */
+.capture-sombre { display: none; }
+html:not(.light) .capture-clair { display: none; }
+html:not(.light) .capture-sombre { display: block; }
+/* Lueur verte tres douce derriere le haut de page. */
+.halo-accueil {
+  background-image:
+    radial-gradient(60% 55% at 78% 0%, rgb(var(--acc-500) / 0.16), transparent 70%),
+    radial-gradient(45% 40% at 8% 12%, rgb(var(--acc-500) / 0.08), transparent 70%);
+}
+/* Apparition des blocs au defilement (site public seulement). Sans script ou
+   avec « reduire les animations », tout reste visible. */
+@media (scripting: enabled) and (prefers-reduced-motion: no-preference) {
+  .reveal { opacity: 0; transform: translateY(22px); transition: opacity 0.7s cubic-bezier(.2,.7,.2,1), transform 0.7s cubic-bezier(.2,.7,.2,1); }
+  .reveal.vu { opacity: 1; transform: none; }
+}
 /* Barre laterale : repere vert a gauche du lien actif. */
 .lien-actif::before {
   content: ""; position: absolute; left: 0; top: 7px; bottom: 7px; width: 3px;
