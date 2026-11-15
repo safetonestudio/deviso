@@ -574,6 +574,9 @@ html:not(.light) .capture-sombre { display: block; }
 }
 /* La capture du haut de page se fond dans la surface au lieu d'etre coupee net. */
 .fondu-bas { background-image: linear-gradient(to bottom, transparent, var(--ds-surface)); }
+/* Curseur de saisie de la demonstration du haut de page. */
+.curseur-demo { display: inline-block; width: 2px; height: 1.1em; margin-left: 2px; vertical-align: -0.18em; background-color: rgb(var(--acc-500)); animation: clignote 1s steps(2, start) infinite; }
+@keyframes clignote { to { visibility: hidden; } }
 /* Apparition des blocs au defilement (site public seulement). Sans script ou
    avec « reduire les animations », tout reste visible. */
 @media (scripting: enabled) and (prefers-reduced-motion: no-preference) {

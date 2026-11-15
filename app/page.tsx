@@ -4,6 +4,7 @@ import type { Metadata } from "next";
 import { DemoButton } from "@/components/landing/DemoButton";
 import Image from "next/image";
 import { Apparitions } from "@/components/landing/Apparitions";
+import { DemoAnimee } from "@/components/landing/DemoAnimee";
 import { TarifsTable } from "@/components/landing/TarifsTable";
 import { DashboardThemeProvider, ThemeToggleIcone } from "@/components/DashboardTheme";
 import { policesApp } from "@/app/polices-app";
@@ -201,19 +202,8 @@ export default function LandingPage() {
               </div>
             </div>
 
-            <div className="reveal relative mt-12 sm:mt-14">
-              <Etiquette className="hidden md:block -top-6 left-10">
-                <span className="block text-[12px] font-medium text-gray-400">Devis signé par le client</span>
-                Refonte e-commerce, 4 600 €
-              </Etiquette>
-              <Etiquette className="hidden md:block top-1/2 -right-3 lg:-right-6">
-                <span className="block text-[12px] font-medium text-gray-400">Facture Factur-X</span>
-                Encaissée, 1 800 €
-              </Etiquette>
-              <div className="relative rounded-t-2xl sm:rounded-t-3xl border border-b-0 border-ds-border bg-ds-surface shadow-ds-leve overflow-hidden max-h-[300px] sm:max-h-[440px] lg:max-h-[560px]">
-                <Capture nom="tableau" alt="Le tableau de bord de Deviso : chiffre d'affaires encaissé, seuil de TVA, devis en attente et prochaine échéance URSSAF" priority className="w-full h-auto block" />
-                <div aria-hidden="true" className="fondu-bas absolute inset-x-0 bottom-0 h-28 pointer-events-none" />
-              </div>
+            <div className="relative mt-12 sm:mt-14 pb-16 sm:pb-24">
+              <DemoAnimee />
             </div>
           </div>
         </section>
