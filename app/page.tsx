@@ -182,11 +182,11 @@ export default function LandingPage() {
         {/* ── Haut de page : le titre, puis le vrai produit en grand ── */}
         <section className="relative overflow-hidden">
           <div aria-hidden="true" className="halo-accueil absolute inset-x-0 top-0 h-[900px] pointer-events-none" />
-          <div className={`${CADRE} relative pt-12 sm:pt-16`}>
-            <h1 className="text-[clamp(36px,5.4vw,84px)] leading-[1.03] font-bold tracking-[-0.04em] text-ink max-w-[1100px]">
+          <div className={`${CADRE} relative pt-10 sm:pt-12`}>
+            <h1 className="text-[clamp(34px,4.6vw,70px)] leading-[1.04] font-bold tracking-[-0.04em] text-ink max-w-[1100px]">
               Ton devis complet, rédigé en 30&nbsp;secondes.
             </h1>
-            <div className="mt-8 flex flex-col lg:flex-row lg:items-end lg:justify-between gap-8">
+            <div className="mt-6 flex flex-col lg:flex-row lg:items-end lg:justify-between gap-6">
               <p className="text-[clamp(17px,1.35vw,21px)] leading-relaxed text-gray-300 max-w-[56ch]">
                 Tu écris ton projet en quelques mots, l&apos;IA rédige un devis complet, chiffré et personnalisé, prêt à envoyer.
                 Signature, Factur-X, relances et suivi URSSAF suivent, conformes à la réforme 2026.
@@ -202,7 +202,7 @@ export default function LandingPage() {
               </div>
             </div>
 
-            <div className="relative mt-12 sm:mt-14 pb-16 sm:pb-24">
+            <div className="relative mt-9 sm:mt-10 pb-16 sm:pb-24">
               <DemoAnimee />
             </div>
           </div>
