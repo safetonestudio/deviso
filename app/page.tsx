@@ -1,11 +1,11 @@
 import Link from "next/link";
 import { SiteFooter } from "@/components/SiteFooter";
 import type { Metadata } from "next";
-import { NavbarMobile } from "@/components/NavbarMobile";
 import { DemoButton } from "@/components/landing/DemoButton";
-import { WaitlistButton } from "@/components/landing/WaitlistButton";
-import { PricingSection } from "@/components/landing/PricingSection";
-import { Zap, PenLine, Bell, FileText, BarChart3, Timer, type LucideIcon } from "lucide-react";
+import { DevisVivant } from "@/components/landing/DevisVivant";
+import { TarifsTable } from "@/components/landing/TarifsTable";
+import { DashboardThemeProvider, ThemeToggleIcone } from "@/components/DashboardTheme";
+import { policesApp } from "@/app/polices-app";
 
 export const metadata: Metadata = {
   title: "Deviso, Logiciel devis et facturation pour freelances français",
@@ -50,32 +50,26 @@ const jsonLd = {
 
 const features = [
   {
-    icon: Zap as LucideIcon,
     title: "Devis par IA en 30 secondes",
     desc: "Tu décris ta mission en quelques phrases. L'IA génère un devis complet, chiffré, structuré, prêt à envoyer. Aucun logiciel concurrent ne fait ça.",
   },
   {
-    icon: PenLine as LucideIcon,
     title: "Signature électronique",
     desc: "Ton client reçoit un lien sécurisé, ouvre le devis sur son téléphone et signe en quelques secondes. Tu es notifié instantanément.",
   },
   {
-    icon: Bell as LucideIcon,
     title: "Relances automatiques",
     desc: "Après 3, 7 ou 14 jours sans réponse, Deviso relance ton client à ta place. Tu configures le délai et le message, Deviso s'occupe du reste.",
   },
   {
-    icon: FileText as LucideIcon,
     title: "Factur-X & Plateforme Agréée",
     desc: "Factures au format Factur-X (norme EN 16931), émises et reçues via Super PDP, la plateforme agréée. Suivi du cycle de vie de chaque facture, refus compris. Dépôt Chorus Pro pour le secteur public, sans quitter Deviso.",
   },
   {
-    icon: BarChart3 as LucideIcon,
     title: "Widget CA URSSAF",
     desc: "Ton chiffre d'affaires mensuel et trimestriel affiché en temps réel dans le tableau de bord. Tu sais exactement quoi déclarer, sans calculer.",
   },
   {
-    icon: Timer as LucideIcon,
     title: "Suivi du temps & catalogue",
     desc: "Facture à l'heure ou au forfait. Catalogue de prestations réutilisable en un clic, avec sélecteur de durée directement dans le devis.",
   },
@@ -83,275 +77,351 @@ const features = [
 
 const steps = [
   {
-    num: "01",
     title: "Tu décris, l'IA génère",
     desc: "Quelques phrases sur ta mission. En 30 secondes, un devis complet avec les lignes, les prix et les conditions. Tu ajustes, tu envoies.",
   },
   {
-    num: "02",
     title: "Ton client reçoit et signe",
     desc: "Il reçoit un lien sécurisé, ouvre le devis depuis son téléphone, signe en quelques secondes. Tu reçois une notification dès qu'il a signé.",
   },
   {
-    num: "03",
     title: "Tu factures, tu encaisses, tu déclares",
     desc: "1 clic pour convertir en facture Factur-X conforme. Ton CA s'actualise en temps réel. Si ça traîne, Deviso relance ton client à ta place.",
   },
 ];
 
 
-export default function LandingPage() {
+/* La page est une planche de tuiles pleines, serrees, sur le papier de l'app :
+   memes couleurs, memes polices, meme vert. Chaque tuile porte une chose vraie
+   (un devis, une signature, un chiffre, un tarif). Pas de degrade, pas de
+   contour, pas d'ombre : les surfaces se distinguent par leur ton. */
+const TUILE = "rounded-lg p-5 sm:p-7";
+const H2 = "text-[clamp(32px,4vw,60px)] leading-[1.02] font-semibold tracking-[-0.03em]";
+const LIENS = [
+  ["#fonctionnalites", "Fonctionnalités"],
+  ["#comment", "Comment ça marche"],
+  ["#tarifs", "Tarifs"],
+  ["/experts-comptables", "Experts-comptables"],
+  ["/blog", "Blog"],
+] as const;
+
+/** Le meme devis, a trois moments de sa vie : la carte du produit. */
+function CarteDevis({ etat, detail, ton }: { etat: string; detail: string; ton: "neutre" | "vert" | "plein" }) {
+  const pastille =
+    ton === "plein" ? "bg-indigo-600 text-on-accent" : ton === "vert" ? "bg-indigo-500/10 text-indigo-700" : "bg-gray-200 text-gray-700";
   return (
-    <div className="min-h-screen bg-site">
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
-      />
-
-      {/* ── Bandeau réforme 2026 ── */}
-      <div className="fixed top-0 left-0 right-0 bg-indigo-950/95 backdrop-blur-xs border-b border-indigo-500/20 py-2 px-4 text-center text-xs sm:text-sm" style={{ zIndex: 60 }}>
-        <span className="text-indigo-300 font-semibold">Réforme 2026&nbsp;:</span>
-        <span className="text-gray-300 ml-1.5 hidden sm:inline">La facturation électronique B2B devient obligatoire en France.&nbsp;</span>
-        <span className="text-indigo-400 font-medium">Deviso génère du Factur-X et s&apos;appuie sur une plateforme agréée.</span>
-        <a href="/conformite" className="ml-2 text-indigo-300 hover:text-ink font-semibold transition-colors underline underline-offset-2 hidden sm:inline">En savoir plus →</a>
+    <div data-ui className="ds-papier w-full max-w-[280px] rounded-lg p-4" style={{ backgroundColor: "#FFFFFF", color: "rgb(22 33 28)" }}>
+      <div className="flex items-center justify-between gap-2">
+        <span className="text-[14px] font-semibold">DEV-2026-048</span>
+        <span className={`text-[13px] font-semibold px-2.5 py-0.5 rounded-full ${pastille}`}>{etat}</span>
       </div>
+      <div className="text-[13px] text-gray-500 mt-1">Cabinet Durand et Associés</div>
+      <div className="mt-3 text-[24px] leading-none font-semibold tabular-nums">4 500 €</div>
+      <div className="mt-2 text-[13px] text-gray-500">{detail}</div>
+    </div>
+  );
+}
 
-      {/* ── Navbar ── */}
-      <nav className="fixed left-0 right-0 z-50 bg-ds-bg/90 backdrop-blur-xl border-b border-ink/6" style={{ top: "36px" }}>
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 h-14 flex items-center justify-between">
-          <Link href="/" aria-label="Deviso" className="flex items-center gap-2">
-            <div className="w-7 h-7 rounded-lg bg-linear-to-br/srgb from-indigo-600 to-violet-600 flex items-center justify-center">
-              <span className="text-ink font-semibold text-xs">D</span>
-            </div>
-            <span className="font-semibold text-base text-ink">Deviso</span>
+export default function LandingPage() {
+  const annee = new Date().getFullYear();
+  return (
+    <DashboardThemeProvider className={`${policesApp} min-h-screen bg-ds-bg text-ink`}>
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
+
+      <div className="mx-auto max-w-[1680px] px-2 sm:px-3 pb-3 overflow-x-clip">
+        {/* ── Barre : le nom, quelques liens, une action ── */}
+        <header className="flex items-center justify-between gap-4 h-16 px-3 sm:px-4">
+          <Link href="/" className="text-[22px] font-bold tracking-[-0.02em] text-ink" style={{ fontFamily: "var(--font-display)" }}>
+            Deviso
           </Link>
-          <div className="hidden md:flex items-center gap-7 text-sm font-medium">
-            <a href="#fonctionnalites" className="text-gray-400 hover:text-ink transition-colors">Fonctionnalités</a>
-            <a href="#comment" className="text-gray-400 hover:text-ink transition-colors">Comment ça marche</a>
-            <a href="#tarifs" className="text-gray-400 hover:text-ink transition-colors">Tarifs</a>
-            <Link href="/experts-comptables" className="text-gray-400 hover:text-ink transition-colors">Experts-comptables</Link>
-            <Link href="/blog" className="text-gray-400 hover:text-ink transition-colors">Blog</Link>
-          </div>
-          <div className="hidden md:flex items-center gap-3">
-            <Link href="/login" className="text-sm font-medium text-gray-400 hover:text-ink transition-colors">
+          <nav className="hidden lg:flex items-center gap-7 text-[15px] font-medium" aria-label="Navigation principale">
+            {LIENS.map(([href, nom]) => (
+              <Link key={href} href={href} className="text-ink hover:text-indigo-600 transition-colors">
+                {nom}
+              </Link>
+            ))}
+          </nav>
+          <div className="flex items-center gap-2">
+            <ThemeToggleIcone />
+            <Link href="/login" className="hidden sm:inline-flex items-center h-11 px-4 rounded-lg text-[15px] font-semibold text-ink hover:bg-ds-surface transition-colors">
               Connexion
             </Link>
-            <WaitlistButton
-              plan="solo"
-              label="Essayer gratuitement"
-              className="bg-white text-black text-sm font-semibold px-4 py-1.5 rounded-lg hover:bg-zinc-100 transition-colors"
-            />
-          </div>
-          <NavbarMobile />
-        </div>
-      </nav>
-
-      {/* ── Hero ── */}
-      <section className="relative pt-44 sm:pt-40 pb-20 px-4 sm:px-6 overflow-hidden">
-        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[700px] h-[500px] bg-indigo-600/10 blur-[120px] rounded-full pointer-events-none" />
-        <div className="max-w-4xl mx-auto text-center relative">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-medium bg-ink/5 text-gray-400 border border-ink/8 mb-6">
-            <span className="w-1.5 h-1.5 rounded-full bg-indigo-400 animate-pulse" />
-            <span>Conforme réforme facturation 2026</span>
-          </div>
-
-          <h1 className="text-4xl sm:text-5xl md:text-6xl font-semibold text-ink leading-tight tracking-tight mb-5">
-            Décris ta mission,{" "}
-            <span className="bg-linear-to-r/srgb from-indigo-400 to-violet-400 bg-clip-text text-transparent">
-              ton devis complet est rédigé en 30 secondes.
-            </span>
-          </h1>
-
-          <p className="text-lg text-gray-400 max-w-xl mx-auto mb-10 leading-relaxed">
-            Tu écris ton projet en quelques mots, l&apos;IA rédige un devis complet, chiffré et personnalisé, prêt à envoyer.{" "}
-            <span className="text-gray-300">Signature, Factur-X, relances et suivi URSSAF suivent, conformes à la réforme 2026.</span>
-          </p>
-
-          <div className="flex flex-col sm:flex-row items-center justify-center gap-3 mb-5">
-            <DemoButton className="w-full sm:w-auto bg-white text-black font-semibold px-7 py-3 rounded-lg text-base transition-all hover:bg-zinc-100" />
-            <WaitlistButton
-              plan="solo"
-              label="Essayer gratuitement 14 jours →"
-              className="w-full sm:w-auto text-gray-300 font-medium px-7 py-3 rounded-lg text-base border border-ink/10 hover:bg-ink/4 transition-all text-center"
-            />
-          </div>
-
-          <p className="text-xs text-gray-400">
-            Démo instantanée · 14 jours gratuits · Sans carte bancaire
-          </p>
-        </div>
-
-        {/* Mockup */}
-        <div className="max-w-3xl mx-auto mt-14">
-          <div className="bg-[#111111] rounded-xl border border-ink/8 shadow-2xl overflow-hidden">
-            <div className="flex items-center gap-1.5 px-4 py-3 bg-[#1A1A1A] border-b border-ink/6">
-              <div className="w-2.5 h-2.5 rounded-full bg-ink/10" />
-              <div className="w-2.5 h-2.5 rounded-full bg-ink/10" />
-              <div className="w-2.5 h-2.5 rounded-full bg-ink/10" />
-              <div className="flex-1 mx-4 bg-ink/6 rounded-md px-3 py-1 text-xs text-gray-500">
-                app.getdeviso.fr/proposals/new
+            <Link href="/signup?plan=solo" className="hidden sm:inline-flex items-center h-11 px-5 rounded-lg bg-ink text-(color:--ds-bg) text-[15px] font-semibold hover:opacity-90 transition-opacity">
+              Essayer gratuitement
+            </Link>
+            <details className="lg:hidden relative">
+              <summary className="list-none [&::-webkit-details-marker]:hidden h-11 px-4 rounded-lg bg-ds-surface text-[15px] font-semibold text-ink flex items-center cursor-pointer">
+                Menu
+              </summary>
+              <div className="absolute right-0 top-full mt-2 z-50 w-64 rounded-lg bg-ds-surface p-2 shadow-ds-card">
+                {[...LIENS, ["/login", "Connexion"] as const, ["/signup?plan=solo", "Essayer gratuitement"] as const].map(([href, nom]) => (
+                  <Link key={href} href={href} className="block px-3 py-3 rounded-lg text-[16px] font-medium text-ink hover:bg-ds-elevated">
+                    {nom}
+                  </Link>
+                ))}
               </div>
-            </div>
-            <div className="p-6 text-ink">
-              <div className="mb-3 text-xs text-gray-400 font-medium uppercase tracking-wider">
-                Décris ton projet
-              </div>
-              <div className="bg-ink/4 rounded-lg p-4 border border-ink/6 mb-4">
-                <p className="text-gray-400 text-sm leading-relaxed">
-                  Refonte complète du site vitrine d&apos;un cabinet d&apos;avocats
-                  spécialisé en droit des affaires à Lyon. Design moderne,
-                  responsive, avec formulaire de contact et page d&apos;équipe.
-                  Budget client : 4 500€, délai 3 semaines.
+            </details>
+          </div>
+        </header>
+
+        <main>
+          {/* ── Premier écran : la promesse, le devis vivant, l'essai, la réforme ── */}
+          <section className="grid grid-cols-1 lg:grid-cols-12 gap-2">
+            <div className={`${TUILE} bg-ds-surface lg:col-span-7 lg:row-span-2 flex flex-col justify-between gap-10 lg:min-h-[440px]`}>
+              <h1 className="text-[clamp(30px,4.4vw,76px)] leading-[1] font-bold tracking-[-0.04em] text-ink">
+                Ton devis complet, rédigé en 30 secondes.
+              </h1>
+              <div>
+                <p className="text-[clamp(18px,1.5vw,22px)] leading-relaxed text-ink max-w-[52ch]">
+                  Tu écris ton projet en quelques mots, l&apos;IA rédige un devis complet, chiffré et personnalisé, prêt à envoyer.
+                  Signature, Factur-X, relances et suivi URSSAF suivent, conformes à la réforme 2026.
                 </p>
-              </div>
-              <div className="flex items-center gap-3 mb-5">
-                <div className="flex-1 h-9 bg-indigo-600 rounded-lg flex items-center justify-center text-sm font-semibold">
-                  <span className="inline-flex items-center gap-1.5"><Zap size={16} className="shrink-0" />Générer le devis</span>
+                <div className="mt-7 flex flex-col sm:flex-row sm:items-start gap-2">
+                  <DemoButton className="w-full sm:w-auto h-13 px-7 rounded-lg bg-indigo-600 hover:bg-indigo-700 text-on-accent text-[17px] font-semibold transition-colors" />
+                  <Link href="/signup?plan=solo" className="inline-flex items-center justify-center h-13 px-7 rounded-lg bg-ds-elevated hover:bg-ds-bg text-ink text-[17px] font-semibold transition-colors">
+                    Essayer gratuitement 14 jours
+                  </Link>
                 </div>
-              </div>
-              <div className="bg-white rounded-xl p-4">
-                <div className="flex justify-between items-start mb-3">
-                  <div>
-                    <div className="font-semibold text-sm text-gray-900">Devis n°2026-047</div>
-                    <div className="text-xs text-gray-500 mt-0.5">Cabinet Durand &amp; Associés • Lyon</div>
-                  </div>
-                  <div className="text-xs bg-amber-50 text-amber-700 px-2 py-0.5 rounded-full font-medium">
-                    Brouillon
-                  </div>
-                </div>
-                <div className="space-y-1.5 text-xs">
-                  {[
-                    ["Audit UX et benchmark concurrentiel", "500€"],
-                    ["Maquettes et design UI (5 pages)", "1 400€"],
-                    ["Intégration WordPress + responsive", "1 800€"],
-                    ["Formulaire de contact + RGPD", "400€"],
-                    ["Mise en ligne et formation", "400€"],
-                  ].map(([desc, price]) => (
-                    <div key={desc} className="flex justify-between py-1.5 border-b border-gray-100">
-                      <span className="text-gray-600 truncate mr-4">{desc}</span>
-                      <span className="font-semibold text-gray-900 shrink-0">{price}</span>
-                    </div>
-                  ))}
-                  <div className="flex justify-between pt-2 font-semibold">
-                    <span className="text-gray-900">Total TTC (TVA 20%)</span>
-                    <span className="text-indigo-600">5 400€</span>
-                  </div>
-                </div>
+                <p className="mt-4 text-[15px] text-gray-400">Démo instantanée, 14 jours gratuits, sans carte bancaire.</p>
               </div>
             </div>
-          </div>
-        </div>
-      </section>
 
-      {/* ── Comment ça marche ── */}
-      <section id="comment" className="py-20 px-4 sm:px-6">
-        <div className="max-w-5xl mx-auto">
-          <div className="text-center mb-14">
-            <h2 className="text-3xl sm:text-4xl font-semibold text-ink mb-3 tracking-tight">
-              Comment ça marche
-            </h2>
-            <p className="text-gray-500">De la description à la facture signée en trois étapes.</p>
-          </div>
-          <div className="grid md:grid-cols-3 gap-6">
-            {steps.map((step) => (
-              <div key={step.num} className="carte-site rounded-xl p-6">
-                <div className="text-xs font-semibold text-indigo-400 mb-3 tabular-nums">{step.num}</div>
-                <h3 className="text-base font-semibold text-ink mb-2">{step.title}</h3>
-                <p className="text-gray-500 text-sm leading-relaxed">{step.desc}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
+            <div className={`${TUILE} bg-indigo-950 lg:col-span-5 lg:row-span-3`}>
+              <DevisVivant />
+            </div>
 
-      {/* ── Fonctionnalités ── */}
-      <section id="fonctionnalites" className="py-20 px-4 sm:px-6">
-        <div className="max-w-5xl mx-auto">
-          <div className="text-center mb-14">
-            <h2 className="text-3xl sm:text-4xl font-semibold text-ink mb-3 tracking-tight">
-              Tout ce dont tu as besoin
-            </h2>
-            <p className="text-gray-500 max-w-xl mx-auto">
-              Tout ce que tes concurrents font à la main, Deviso le fait automatiquement.
-            </p>
-          </div>
-          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
-            {features.map((f) => (
-              <div
-                key={f.title}
-                className="carte-site rounded-xl p-5"
-              >
-                <div className="mb-3 text-indigo-400" aria-hidden="true"><f.icon size={20} /></div>
-                <h3 className="text-sm font-semibold text-ink mb-1.5">{f.title}</h3>
-                <p className="text-gray-500 text-sm leading-relaxed">{f.desc}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
+            <Link href="/conformite" className={`${TUILE} bg-ink text-(color:--ds-bg) lg:col-span-4 flex flex-col justify-between gap-6 hover:opacity-95 transition-opacity`}>
+              <p className="text-[clamp(20px,1.7vw,26px)] leading-snug font-semibold">
+                Réforme 2026 : la facturation électronique entre entreprises devient obligatoire en France.
+              </p>
+              <span className="text-[16px] font-semibold underline underline-offset-4">Ce que ça change pour toi</span>
+            </Link>
 
-      {/* ── Mot du fondateur ──
-          Remplace d'anciens témoignages fictifs (personnes et avis inventés,
-          notés 5 étoiles) : sur un produit encore en pré-lancement, sans
-          clients réels, les présenter comme authentiques est une pratique
-          trompeuse. On dit la vérité, un produit jeune, un fondateur
-          joignable, ce qui inspire davantage confiance qu'une preuve sociale
-          fabriquée. À remplacer par de vrais témoignages, avec accord, quand
-          il y en aura. */}
-      <section className="py-20 px-4 sm:px-6">
-        <div className="max-w-2xl mx-auto">
-          <div className="carte-site rounded-xl p-8 sm:p-10">
-            <p className="text-indigo-400 text-xs font-semibold uppercase tracking-wide mb-4">Le mot du fondateur</p>
-            <p className="text-gray-300 text-base leading-relaxed mb-4">
-              J&apos;ai créé Deviso parce que je perdais trop de temps sur mes propres devis et
-              factures, et parce que la réforme de la facturation électronique arrivait sans outil
-              vraiment simple pour les indépendants et les petites structures.
-            </p>
-            <p className="text-gray-400 text-sm leading-relaxed mb-6">
-              Deviso est encore jeune : je le développe et l&apos;éprouve avec soin avant de l&apos;ouvrir
-              largement. Si vous l&apos;essayez maintenant, votre retour façonne directement ce qu&apos;il
-              devient, écrivez-moi, je lis tout.
-            </p>
-            <div className="flex items-center gap-3">
-              <div className="w-9 h-9 rounded-full bg-ink/[0.07] text-gray-300 font-semibold text-xs flex items-center justify-center shrink-0">
-                SA
+            <div className={`${TUILE} bg-indigo-600 text-on-accent lg:col-span-3 flex flex-col justify-between gap-6`}>
+              <p className="text-[clamp(20px,1.7vw,26px)] leading-snug font-semibold">
+                Deviso génère du Factur-X et s&apos;appuie sur une plateforme agréée.
+              </p>
+              <span className="text-[16px]">Rien à installer, rien à paramétrer.</span>
+            </div>
+          </section>
+
+          {/* ── Comment ça marche : la même carte, trois champs ── */}
+          <section id="comment" className="mt-24 sm:mt-36 scroll-mt-6">
+            <div className="px-3 sm:px-4 mb-6 grid lg:grid-cols-12 gap-4 items-end">
+              <h2 className={`${H2} text-ink lg:col-span-6`}>Comment ça marche</h2>
+              <p className="text-[18px] text-ink lg:col-span-6">De la description à la facture signée en trois étapes.</p>
+            </div>
+            <ol className="grid lg:grid-cols-3 rounded-lg overflow-hidden">
+              {steps.map((step, i) => {
+                const fond = ["bg-ds-elevated text-ink", "bg-indigo-950 text-ink", "bg-indigo-600 text-on-accent"][i];
+                const carte = [
+                  { etat: "Brouillon", detail: "Rédigé par l'IA, à relire", ton: "neutre" as const },
+                  { etat: "Signé", detail: "Signé le 14/11/2026 à 10 h 42", ton: "vert" as const },
+                  { etat: "Payée", detail: "Facture Factur-X, encaissée le 02/12", ton: "plein" as const },
+                ][i];
+                return (
+                  <li key={step.title} className={`${fond} p-5 sm:p-8 flex flex-col gap-10 lg:min-h-[520px]`}>
+                    <CarteDevis {...carte} />
+                    <div className="mt-auto">
+                      <h3 className="text-[clamp(22px,2vw,30px)] leading-tight font-semibold tracking-[-0.02em]">{step.title}</h3>
+                      <p className="mt-3 text-[17px] leading-relaxed">{step.desc}</p>
+                    </div>
+                  </li>
+                );
+              })}
+            </ol>
+          </section>
+
+          {/* ── Fonctionnalités : gros plans sur le produit ── */}
+          <section id="fonctionnalites" className="mt-24 sm:mt-36 scroll-mt-6 grid grid-cols-1 md:grid-cols-6 lg:grid-cols-12 gap-2">
+            <div className={`${TUILE} bg-ink text-(color:--ds-bg) md:col-span-6 lg:col-span-6 flex flex-col justify-between gap-8 lg:min-h-[260px]`}>
+              <h2 className={H2}>Tout ce dont tu as besoin</h2>
+              <p className="text-[18px] max-w-[44ch]">Tout ce que tes concurrents font à la main, Deviso le fait automatiquement.</p>
+            </div>
+
+            {/* Devis par IA */}
+            <article className={`${TUILE} bg-indigo-950 md:col-span-6 lg:col-span-6 lg:row-span-2 overflow-hidden flex flex-col justify-between gap-8`}>
+              <div data-ui aria-hidden="true" className="-mr-16 sm:-mr-24 text-[clamp(34px,5.4vw,84px)]">
+                <div className="rounded-[0.35em] bg-ds-surface p-[0.5em] text-[0.42em] leading-snug text-gray-400">
+                  Refonte du site vitrine d&apos;un cabinet d&apos;avocats à Lyon, cinq pages, délai de trois semaines
+                </div>
+                <div className="mt-[0.3em] inline-flex items-center rounded-[0.3em] bg-indigo-600 text-on-accent font-semibold px-[0.7em] py-[0.35em] whitespace-nowrap">
+                  Générer le devis
+                </div>
               </div>
               <div>
-                <div className="text-ink font-medium text-sm">S. Albert</div>
-                <div className="text-gray-600 text-xs">Fondateur de Deviso</div>
+                <h3 className="text-[22px] font-semibold text-ink">{features[0].title}</h3>
+                <p className="mt-2 text-[16px] leading-relaxed text-ink max-w-[58ch]">{features[0].desc}</p>
+              </div>
+            </article>
+
+            {/* Signature */}
+            <article className={`${TUILE} bg-ds-surface md:col-span-3 lg:col-span-3 overflow-hidden flex flex-col justify-between gap-8`}>
+              <div data-ui aria-hidden="true">
+                <svg viewBox="0 0 260 90" className="w-[120%] max-w-none text-ink" fill="none" stroke="currentColor" strokeWidth="3.5" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M8 62c14-30 26-46 34-44 10 3-12 52-2 54 10 2 22-40 34-38 9 2-6 30 4 32 12 2 20-28 32-26 8 2-2 22 8 22 14 0 26-30 40-30 10 0 4 24 16 24 16 0 30-18 78-22" />
+                </svg>
+                <div className="mt-2 text-[15px] font-semibold text-indigo-600">Signé le 14/11/2026 à 10 h 42</div>
+              </div>
+              <div>
+                <h3 className="text-[22px] font-semibold text-ink">{features[1].title}</h3>
+                <p className="mt-2 text-[16px] leading-relaxed text-ink">{features[1].desc}</p>
+              </div>
+            </article>
+
+            {/* Relances */}
+            <article className={`${TUILE} bg-ds-elevated md:col-span-3 lg:col-span-3 overflow-hidden flex flex-col justify-between gap-8`}>
+              <div data-ui aria-hidden="true" className="flex gap-2 -mr-20 text-[clamp(30px,3.4vw,52px)] font-semibold tabular-nums whitespace-nowrap">
+                <span className="rounded-[0.25em] bg-ds-surface text-ink px-[0.4em] py-[0.15em]">J+3</span>
+                <span className="rounded-[0.25em] bg-indigo-600 text-on-accent px-[0.4em] py-[0.15em]">J+7</span>
+                <span className="rounded-[0.25em] bg-ds-surface text-ink px-[0.4em] py-[0.15em]">J+14</span>
+              </div>
+              <div>
+                <h3 className="text-[22px] font-semibold text-ink">{features[2].title}</h3>
+                <p className="mt-2 text-[16px] leading-relaxed text-ink">{features[2].desc}</p>
+              </div>
+            </article>
+
+            {/* Factur-X et Plateforme Agréée */}
+            <article className={`${TUILE} bg-indigo-600 text-on-accent md:col-span-6 lg:col-span-5 overflow-hidden flex flex-col justify-between gap-8`}>
+              <div data-ui aria-hidden="true" className="flex gap-2 -mr-24 text-[clamp(26px,3vw,46px)] font-semibold whitespace-nowrap">
+                <span className="rounded-[0.25em] bg-ds-surface text-gray-50 px-[0.45em] py-[0.2em]">Déposée</span>
+                <span className="rounded-[0.25em] bg-ds-surface text-gray-50 px-[0.45em] py-[0.2em]">Reçue</span>
+                <span className="rounded-[0.25em] bg-indigo-950 text-gray-50 px-[0.45em] py-[0.2em]">Encaissée</span>
+              </div>
+              <div>
+                <h3 className="text-[22px] font-semibold">{features[3].title}</h3>
+                <p className="mt-2 text-[16px] leading-relaxed max-w-[62ch]">{features[3].desc}</p>
+              </div>
+            </article>
+
+            {/* URSSAF */}
+            <article className={`${TUILE} bg-ds-surface md:col-span-3 lg:col-span-3 overflow-hidden flex flex-col justify-between gap-8`}>
+              <div data-ui aria-hidden="true">
+                <div className="text-[15px] text-gray-400">CA du trimestre à ce jour</div>
+                <div className="text-[clamp(56px,6.4vw,104px)] leading-none font-semibold tracking-[-0.04em] tabular-nums text-ink whitespace-nowrap">
+                  6 200 €
+                </div>
+              </div>
+              <div>
+                <h3 className="text-[22px] font-semibold text-ink">{features[4].title}</h3>
+                <p className="mt-2 text-[16px] leading-relaxed text-ink max-w-[58ch]">{features[4].desc}</p>
+              </div>
+            </article>
+
+            {/* Temps et catalogue */}
+            <article className={`${TUILE} bg-indigo-950 md:col-span-3 lg:col-span-4 overflow-hidden flex flex-col justify-between gap-8`}>
+              <div data-ui aria-hidden="true" className="flex flex-col items-start gap-3 -mr-20 whitespace-nowrap">
+                <span className="text-[clamp(56px,6.4vw,104px)] leading-none font-semibold tracking-[-0.04em] tabular-nums text-ink">2 h 30</span>
+                <span className="rounded-lg bg-ds-surface text-ink text-[16px] font-semibold px-3 py-2">Atelier, la journée : 1 200 €</span>
+              </div>
+              <div>
+                <h3 className="text-[22px] font-semibold text-ink">{features[5].title}</h3>
+                <p className="mt-2 text-[16px] leading-relaxed text-ink max-w-[58ch]">{features[5].desc}</p>
+              </div>
+            </article>
+          </section>
+
+          {/* ── Conformité : les noms, en grand ── */}
+          <section className="mt-24 sm:mt-36 grid grid-cols-2 lg:grid-cols-4 gap-2" aria-labelledby="titre-conformite">
+            <div className={`${TUILE} bg-indigo-600 text-on-accent col-span-2 lg:min-h-[220px] flex flex-col justify-between gap-6`}>
+              <h2 id="titre-conformite" className={H2}>Conforme à la réforme 2026</h2>
+              <Link href="/conformite" className="text-[16px] font-semibold underline underline-offset-4">Lire le détail de la conformité</Link>
+            </div>
+            {[
+              ["Factur-X", "Le format de chaque facture émise."],
+              ["EN 16931", "La norme européenne suivie."],
+              ["PDF/A-3", "Le format d'archivage des PDF."],
+              ["Super PDP", "La plateforme agréée, pour émettre et recevoir."],
+              ["Chorus Pro", "Le dépôt pour le secteur public."],
+              ["URSSAF", "Un chiffre d'affaires prêt à déclarer."],
+            ].map(([nom, ligne], i) => (
+              <div key={nom} className={`${TUILE} ${i % 3 === 1 ? "bg-ds-elevated" : "bg-ds-surface"} lg:min-h-[220px] flex flex-col justify-between gap-6`}>
+                <div className="text-[clamp(24px,2.4vw,34px)] leading-none font-bold tracking-[-0.02em] text-ink" style={{ fontFamily: "var(--font-display)" }}>{nom}</div>
+                <p className="text-[16px] text-ink">{ligne}</p>
+              </div>
+            ))}
+          </section>
+
+          {/* ── Le mot du fondateur ──
+              Remplace d'anciens témoignages fictifs : sur un produit encore en
+              pré-lancement, sans clients réels, on dit la vérité. À remplacer
+              par de vrais témoignages, avec accord, quand il y en aura. */}
+          <section className="mt-24 sm:mt-36" aria-labelledby="titre-fondateur">
+            <div className="px-3 sm:px-4 grid lg:grid-cols-12 gap-4">
+              <h2 id="titre-fondateur" className={`${H2} text-ink lg:col-span-5`}>Le mot du fondateur</h2>
+              <p className="text-[clamp(19px,1.6vw,22px)] leading-relaxed text-ink lg:col-span-7">
+                J&apos;ai créé Deviso parce que je perdais trop de temps sur mes propres devis et factures, et parce que la réforme
+                de la facturation électronique arrivait sans outil vraiment simple pour les indépendants et les petites structures.
+              </p>
+            </div>
+            <div className="mt-10 grid grid-cols-1 lg:grid-cols-12 gap-2">
+              <div className={`${TUILE} bg-ds-surface lg:col-span-8 flex flex-col justify-between gap-8`}>
+                <p className="text-[clamp(18px,1.5vw,21px)] leading-relaxed text-ink max-w-[62ch]">
+                  Deviso est encore jeune : je le développe et l&apos;éprouve avec soin avant de l&apos;ouvrir largement. Si vous
+                  l&apos;essayez maintenant, votre retour façonne directement ce qu&apos;il devient, écrivez-moi, je lis tout.
+                </p>
+                <div>
+                  <div className="text-[20px] font-semibold text-ink">S. Albert</div>
+                  <div className="text-[16px] text-gray-400">Fondateur de Deviso</div>
+                </div>
+              </div>
+              <dl className={`${TUILE} bg-indigo-950 lg:col-span-4 grid grid-cols-2 gap-x-6 gap-y-7 content-between`}>
+                {[
+                  ["Essai", "14 jours gratuits, sans carte"],
+                  ["Résiliation", "En un clic"],
+                  ["Données", "Chiffrées, hébergées en Europe"],
+                  ["Support", "Par chat, inclus"],
+                ].map(([quoi, valeur]) => (
+                  <div key={quoi}>
+                    <dt className="text-[15px] text-gray-400">{quoi}</dt>
+                    <dd className="mt-1 text-[18px] leading-snug font-semibold text-ink">{valeur}</dd>
+                  </div>
+                ))}
+              </dl>
+            </div>
+          </section>
+
+          {/* ── Tarifs ── */}
+          <section id="tarifs" className="mt-24 sm:mt-36 scroll-mt-6">
+            <TarifsTable />
+          </section>
+
+          {/* ── L'action : une rangée de la planche ── */}
+          <section className="mt-24 sm:mt-36 grid grid-cols-1 lg:grid-cols-12 gap-2" aria-labelledby="titre-action">
+            <div aria-hidden="true" className="hidden lg:block rounded-lg bg-indigo-950 lg:col-span-2 -ml-6" />
+            <div className={`${TUILE} sm:p-10 bg-indigo-600 text-on-accent lg:col-span-8 lg:min-h-[360px] flex flex-col justify-center gap-5`}>
+              <h2 id="titre-action" className="text-[clamp(30px,3.2vw,48px)] leading-[1.05] font-semibold tracking-[-0.03em] max-w-[20ch]">
+                Prêt à envoyer ton prochain devis en 30 secondes ?
+              </h2>
+              <p className="text-[18px] max-w-[52ch]">Rejoins les freelances et petites équipes qui gèrent leur facturation avec Deviso.</p>
+              <div>
+                <Link href="/signup?plan=solo" className="inline-flex items-center h-13 px-7 rounded-lg bg-ds-surface text-gray-50 text-[17px] font-semibold hover:bg-ds-elevated transition-colors">
+                  Commencer l&apos;essai gratuit
+                </Link>
+                <p className="mt-4 text-[15px]">14 jours gratuits, sans carte bancaire, résiliable à tout moment.</p>
               </div>
             </div>
+            <div aria-hidden="true" className="hidden lg:block rounded-lg bg-ink lg:col-span-2 -mr-6" />
+          </section>
+
+          {/* ── Le nom, construit en grand ── */}
+          <div aria-hidden="true" className="mt-24 sm:mt-36 flex items-end gap-1 h-[22svh] sm:h-[34svh] overflow-hidden">
+            {"DEVISO".split("").map((lettre, i) => {
+              const h = ["100%", "72%", "88%", "64%", "94%", "78%"][i];
+              const fond = ["bg-ink text-(color:--ds-bg)", "bg-indigo-600 text-on-accent", "bg-ds-surface text-ink", "bg-indigo-950 text-ink", "bg-ink text-(color:--ds-bg)", "bg-indigo-600 text-on-accent"][i];
+              return (
+                <div key={i} className={`${fond} flex-1 rounded-lg flex items-end justify-center overflow-hidden`} style={{ height: h }}>
+                  <span className="font-bold leading-[0.8] text-[clamp(64px,15vw,260px)]" style={{ fontFamily: "var(--font-display)" }}>{lettre}</span>
+                </div>
+              );
+            })}
           </div>
-        </div>
-      </section>
+        </main>
+      </div>
 
-      {/* ── Tarifs ── */}
-      <PricingSection />
-
-      {/* ── CTA Final ── */}
-      <section className="py-20 px-4 sm:px-6">
-        <div className="max-w-2xl mx-auto">
-          <div className="carte-site rounded-xl p-12 text-center">
-            <h2 className="text-2xl sm:text-3xl font-semibold text-ink mb-3 tracking-tight">
-              Prêt à envoyer ton prochain devis en 30 secondes ?
-            </h2>
-            <p className="text-gray-500 mb-8">
-              Rejoins les freelances et petites équipes qui gèrent leur facturation avec Deviso.
-            </p>
-            <Link
-              href="/signup?plan=solo"
-              className="inline-block bg-white text-black font-semibold px-8 py-3 rounded-lg hover:bg-zinc-100 transition-all text-sm"
-            >
-              Commencer l'essai gratuit →
-            </Link>
-            <p className="text-gray-600 text-xs mt-4">14 jours gratuits · Sans carte bancaire · Résiliable à tout moment</p>
-          </div>
-        </div>
-      </section>
-
-      {/* ── Footer ── */}
       <SiteFooter />
-
-    </div>
+      <p className="sr-only">Deviso {annee}</p>
+    </DashboardThemeProvider>
   );
 }
