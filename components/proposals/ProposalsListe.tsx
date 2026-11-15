@@ -18,7 +18,7 @@ function fmt(n: number) {
 }
 function jour(v: string | null) {
   if (!v) return "-";
-  return new Date(v).toLocaleDateString("fr-FR");
+  return new Date(v).toLocaleDateString("fr-FR", { timeZone: "Europe/Paris" });
 }
 
 export function ProposalsListe({ proposals }: { proposals: Proposal[] }) {

@@ -43,7 +43,7 @@ export function ProposalTableRows({ proposals }: { proposals: Proposal[] }) {
               </span>
             </td>
             <td className="px-5 py-4 text-sm text-gray-500">
-              {new Date(proposal.created_at).toLocaleDateString("fr-FR")}
+              {new Date(proposal.created_at).toLocaleDateString("fr-FR", { timeZone: "Europe/Paris" })}
             </td>
           </tr>
         );

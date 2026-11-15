@@ -61,7 +61,7 @@ export function SyncButton({ derniere }: { derniere: string | null }) {
       <p className="text-xs text-gray-600 mt-1.5">
         {message ??
           (derniere
-            ? `Dernière vérification à ${new Date(derniere).toLocaleTimeString("fr-FR", { hour: "2-digit", minute: "2-digit" })}`
+            ? `Dernière vérification à ${new Date(derniere).toLocaleTimeString("fr-FR", { hour: "2-digit", minute: "2-digit", timeZone: "Europe/Paris" })}`
             : "Jamais vérifié")}
       </p>
     </div>
