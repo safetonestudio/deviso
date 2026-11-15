@@ -553,6 +553,15 @@
   box-shadow: var(--ds-shadow-leve);
 }
 .piste-jauge { box-shadow: inset 0 1px 2px rgb(0 0 0 / 0.18); }
+/* Page publique en pleine largeur : sur un grand ecran (2K, 4K), la page est
+   agrandie d'un bloc au lieu de rester une colonne etroite au milieu de
+   marges vides (retour Selim 15/11, ecran de 2560 px). */
+@media (min-width: 1800px) { .page-pleine { zoom: 1.12; } }
+@media (min-width: 2000px) { .page-pleine { zoom: 1.25; } }
+@media (min-width: 2300px) { .page-pleine { zoom: 1.4; } }
+@media (min-width: 2500px) { .page-pleine { zoom: 1.52; } }
+@media (min-width: 3000px) { .page-pleine { zoom: 1.85; } }
+@media (min-width: 3600px) { .page-pleine { zoom: 2.25; } }
 /* Barre laterale : repere vert a gauche du lien actif. */
 .lien-actif::before {
   content: ""; position: absolute; left: 0; top: 7px; bottom: 7px; width: 3px;

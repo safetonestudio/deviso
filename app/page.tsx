@@ -125,10 +125,10 @@ function CarteDevis({ etat, detail, ton }: { etat: string; detail: string; ton: 
 export default function LandingPage() {
   const annee = new Date().getFullYear();
   return (
-    <DashboardThemeProvider className={`${policesApp} min-h-screen bg-ds-bg text-ink`}>
+    <DashboardThemeProvider className={`${policesApp} page-pleine min-h-screen bg-ds-bg text-ink`}>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
 
-      <div className="mx-auto max-w-[1680px] px-2 sm:px-3 pb-3 overflow-x-clip">
+      <div className="px-2 sm:px-3 pb-3 overflow-x-clip">
         {/* ── Barre : le nom, quelques liens, une action ── */}
         <header className="flex items-center justify-between gap-4 h-16 px-3 sm:px-4">
           <Link href="/" className="text-[22px] font-bold tracking-[-0.02em] text-ink" style={{ fontFamily: "var(--font-display)" }}>
