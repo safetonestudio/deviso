@@ -264,7 +264,7 @@ export function SuperPdpCard() {
                   ? ligne?.etat === "joignable"
                     ? "Vous pouvez recevoir des factures électroniques."
                     : ligne?.etat === "programmee"
-                      ? `Votre ligne de réception s'ouvre le ${new Date(ligne.aPartirDu).toLocaleDateString("fr-FR")}.`
+                      ? `Votre ligne de réception s'ouvre le ${new Date(ligne.aPartirDu).toLocaleDateString("fr-FR", { timeZone: "Europe/Paris" })}.`
                       : ligne?.etat === "en_cours"
                         ? "Votre ligne de réception est en cours d'ouverture."
                         : ligne?.etat === "en_erreur"

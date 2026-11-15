@@ -12,7 +12,7 @@ type Notification = {
 };
 
 const quand = (iso: string) =>
-  new Date(iso).toLocaleDateString("fr-FR", { day: "numeric", month: "long", hour: "2-digit", minute: "2-digit" });
+  new Date(iso).toLocaleDateString("fr-FR", { timeZone: "Europe/Paris", day: "numeric", month: "long", hour: "2-digit", minute: "2-digit" });
 
 /** Historique des notifications (signatures, refus, paiements...), meme source que la cloche. */
 export function NotificationsHistorique() {

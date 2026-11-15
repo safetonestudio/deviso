@@ -25,7 +25,7 @@ function fmt(n: number) {
   return new Intl.NumberFormat("fr-FR", { style: "currency", currency: "EUR" }).format(n);
 }
 function fmtDate(d: string | null) {
-  return d ? new Date(d).toLocaleDateString("fr-FR") : "-";
+  return d ? new Date(d).toLocaleDateString("fr-FR", { timeZone: "Europe/Paris" }) : "-";
 }
 
 interface Props {

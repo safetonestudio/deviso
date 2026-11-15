@@ -23,7 +23,7 @@ function fmt(n: number) {
 }
 
 function fmtDate(d: string) {
-  return new Date(d).toLocaleDateString("fr-FR", { year: "numeric", month: "long", day: "numeric" });
+  return new Date(d).toLocaleDateString("fr-FR", { timeZone: "Europe/Paris", year: "numeric", month: "long", day: "numeric" });
 }
 
 /** Affiche "2h15" pour les lignes horaires (unit === "heure"), sinon le nombre brut */
@@ -201,7 +201,7 @@ function CgvSection({ cgvText, p }: { cgvText: string; p: ReturnType<typeof pale
 function SignatureBlock({ proposal, p }: { proposal: Proposal; p: ReturnType<typeof palette> }) {
   if (!proposal.signer_name) return null;
   const signedAt = proposal.signed_at
-    ? new Date(proposal.signed_at).toLocaleDateString("fr-FR", {
+    ? new Date(proposal.signed_at).toLocaleDateString("fr-FR", { timeZone: "Europe/Paris",
         day: "2-digit",
         month: "long",
         year: "numeric",
@@ -271,7 +271,7 @@ function ClassicTemplate({ proposal, profile, color, showBranding, p, cgvText }:
           <div className={`text-sm ${p.text500} mt-2`}>{fmtDate(proposal.created_at)}</div>
           {proposal.valid_until && (
             <div className={`text-sm ${p.text500}`}>
-              Valable jusqu&apos;au {new Date(proposal.valid_until).toLocaleDateString("fr-FR")}
+              Valable jusqu&apos;au {new Date(proposal.valid_until).toLocaleDateString("fr-FR", { timeZone: "Europe/Paris" })}
             </div>
           )}
         </div>
@@ -327,7 +327,7 @@ function ModernTemplate({ proposal, profile, color, showBranding, p, cgvText }: 
             <div className="text-xs opacity-70">Émis le {fmtDate(proposal.created_at)}</div>
             {proposal.valid_until && (
               <div className="text-xs opacity-70">
-                Valable jusqu&apos;au {new Date(proposal.valid_until).toLocaleDateString("fr-FR")}
+                Valable jusqu&apos;au {new Date(proposal.valid_until).toLocaleDateString("fr-FR", { timeZone: "Europe/Paris" })}
               </div>
             )}
           </div>
@@ -400,7 +400,7 @@ function EpureTemplate({ proposal, profile, color, showBranding, p, cgvText }: {
           )}
           {proposal.valid_until && (
             <div className={`text-xs ${p.text300}`}>
-              Valable jusqu&apos;au {new Date(proposal.valid_until).toLocaleDateString("fr-FR")}
+              Valable jusqu&apos;au {new Date(proposal.valid_until).toLocaleDateString("fr-FR", { timeZone: "Europe/Paris" })}
             </div>
           )}
         </div>

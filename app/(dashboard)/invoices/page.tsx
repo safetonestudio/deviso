@@ -22,7 +22,7 @@ function fmt(n: number) {
   return new Intl.NumberFormat("fr-FR", { style: "currency", currency: "EUR" }).format(n);
 }
 function fmtDate(d: string) {
-  return new Date(d).toLocaleDateString("fr-FR");
+  return new Date(d).toLocaleDateString("fr-FR", { timeZone: "Europe/Paris" });
 }
 
 type RecurringInvoice = {

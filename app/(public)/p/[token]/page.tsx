@@ -133,7 +133,7 @@ export default function PublicProposalPage() {
               <p className="font-semibold text-green-800">Devis signé</p>
               <p className="text-green-600 text-sm">
                 Merci{proposal.signer_name ? `, ${proposal.signer_name}` : ""} ! Votre accord a bien été enregistré
-                {proposal.signed_at ? ` le ${new Date(proposal.signed_at).toLocaleDateString("fr-FR", { day: "2-digit", month: "long", year: "numeric" })} à ${new Date(proposal.signed_at).toLocaleTimeString("fr-FR", { hour: "2-digit", minute: "2-digit" })}` : ""}.
+                {proposal.signed_at ? ` le ${new Date(proposal.signed_at).toLocaleDateString("fr-FR", { timeZone: "Europe/Paris", day: "2-digit", month: "long", year: "numeric" })} à ${new Date(proposal.signed_at).toLocaleTimeString("fr-FR", { timeZone: "Europe/Paris", hour: "2-digit", minute: "2-digit" })}` : ""}.
               </p>
             </div>
           </div>

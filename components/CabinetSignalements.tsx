@@ -10,7 +10,7 @@ type Signalement = {
   created_at: string;
 };
 
-const horodatage = (iso: string) => new Date(iso).toLocaleString("fr-FR", { dateStyle: "short", timeStyle: "short" });
+const horodatage = (iso: string) => new Date(iso).toLocaleString("fr-FR", { timeZone: "Europe/Paris", dateStyle: "short", timeStyle: "short" });
 
 /**
  * Signalements au client, cote cabinet (fiche dossier). Le comptable pointe une

@@ -63,7 +63,7 @@ function fmt(n: number) {
 }
 
 function fmtDate(d: string) {
-  return new Date(d).toLocaleDateString("fr-FR", {
+  return new Date(d).toLocaleDateString("fr-FR", { timeZone: "Europe/Paris",
     day: "2-digit", month: "short", year: "numeric",
   });
 }
