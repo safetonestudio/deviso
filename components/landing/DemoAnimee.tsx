@@ -185,19 +185,18 @@ export function DemoAnimee() {
           <span className={`shrink-0 text-[14px] font-semibold px-3 py-1 rounded-full transition-colors ${statut.classe}`}>{statut.texte}</span>
         </div>
 
-        <div className="relative mt-6 min-h-[212px]">
-          {etape <= 1 && nbLignes === 0 && (
-            <div className="absolute inset-0 top-10 grid place-items-center text-center" aria-hidden="true">
-              <p className="text-[17px] text-gray-400">
-                {etape === 0 ? "Le devis se rédige dès que tu cliques sur Générer." : "Rédaction des lignes, des prix et des conditions…"}
-              </p>
-            </div>
-          )}
+        <div className="mt-6 min-h-[212px]">
           <div className="grid grid-cols-[1fr_auto] gap-x-4 pb-2 border-b border-ds-border text-[14px] font-medium text-gray-400">
             <span>Prestation</span>
             <span>Montant HT</span>
           </div>
-          {ex.lignes.map(([libelle, montant], i) => (
+          {/* Pendant la saisie, une phrase d'attente remplace les lignes ; elles
+              ne sont montées qu'à la rédaction, pour arriver une à une. */}
+          {etape <= 1 ? (
+            <p className="pt-16 text-center text-[17px] text-gray-400" aria-hidden="true">
+              {etape === 0 ? "Le devis se rédige dès que tu cliques sur Générer." : "Rédaction des lignes, des prix et des conditions…"}
+            </p>
+          ) : ex.lignes.map(([libelle, montant], i) => (
             <div
               key={libelle}
               className={`grid grid-cols-[1fr_auto] gap-x-4 py-3 border-b border-ds-border text-[17px] transition-all duration-500 ${
