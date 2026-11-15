@@ -62,12 +62,12 @@ export function SlideFonctionnalites() {
   return (
     <div
       ref={zone}
-      className="grid gap-8 lg:gap-12 lg:grid-cols-12 items-center"
+      className="grid grid-cols-1 gap-8 lg:gap-12 lg:grid-cols-12 items-center"
       onMouseEnter={() => setPause(true)}
       onMouseLeave={() => setPause(false)}
     >
       {/* ── La liste ── */}
-      <div className="lg:col-span-4 order-2 lg:order-1" role="tablist" aria-label="Fonctionnalités de Deviso">
+      <div className="min-w-0 lg:col-span-4 order-2 lg:order-1" role="tablist" aria-label="Fonctionnalités de Deviso">
         <div className="flex lg:flex-col gap-2 overflow-x-auto lg:overflow-visible -mx-5 px-5 sm:mx-0 sm:px-0 pb-1 lg:pb-0 [scrollbar-width:none]">
           {DIAPOS.map((d, i) => {
             const sel = i === actif;
@@ -107,7 +107,7 @@ export function SlideFonctionnalites() {
       </div>
 
       {/* ── L'écran ── */}
-      <div className="lg:col-span-8 order-1 lg:order-2">
+      <div className="min-w-0 lg:col-span-8 order-1 lg:order-2">
         <div
           id="ecran-fonctionnalite"
           role="tabpanel"
