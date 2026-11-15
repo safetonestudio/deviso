@@ -106,8 +106,10 @@ export function ParcoursDocument() {
 
       {/* Ordinateur : le document, fixe, qui change d'état. */}
       <div className="hidden lg:block lg:col-span-7">
-        <div className="sticky top-[88px] h-[calc(100vh-112px)] flex items-center justify-center">
-          <div className="relative w-full" style={{ maxWidth: "calc((100vh - 150px) * 0.74)" }}>
+        {/* Les hauteurs sont divisées par l'agrandissement des grands écrans
+            (--zoom, voir globals.css), sinon le document dépasse de la fenêtre. */}
+        <div className="sticky top-[88px] flex items-center justify-center" style={{ height: "calc(100vh / var(--zoom, 1) - 112px)" }}>
+          <div className="relative w-full" style={{ maxWidth: "calc((100vh / var(--zoom, 1) - 150px) * 0.74)" }}>
             <div className={`transition-opacity duration-500 ${vue === "brief" || vue === "urssaf" ? "opacity-0" : "opacity-100"}`}>
               <DocumentDevis etat={vue === "brief" ? "devis" : vue === "urssaf" ? "paye" : vue} />
             </div>
