@@ -3,7 +3,8 @@ import { SiteFooter } from "@/components/SiteFooter";
 import type { Metadata } from "next";
 import { DemoButton } from "@/components/landing/DemoButton";
 import { Apparitions } from "@/components/landing/Apparitions";
-import { DemoAnimee } from "@/components/landing/DemoAnimee";
+import { DocumentDevis } from "@/components/landing/DocumentDevis";
+import { ParcoursDocument } from "@/components/landing/ParcoursDocument";
 import { SlideFonctionnalites } from "@/components/landing/SlideFonctionnalites";
 import { TarifsTable } from "@/components/landing/TarifsTable";
 import { ModeNuit } from "@/components/landing/ModeNuit";
@@ -50,56 +51,15 @@ const jsonLd = {
   },
 };
 
-const features = [
-  {
-    title: "Devis par IA en 30 secondes",
-    desc: "Tu décris ta mission en quelques phrases. L'IA génère un devis complet, chiffré, structuré, prêt à envoyer. Aucun logiciel concurrent ne fait ça.",
-  },
-  {
-    title: "Signature électronique",
-    desc: "Ton client reçoit un lien sécurisé, ouvre le devis sur son téléphone et signe en quelques secondes. Tu es notifié instantanément.",
-  },
-  {
-    title: "Relances automatiques",
-    desc: "Après 3, 7 ou 14 jours sans réponse, Deviso relance ton client à ta place. Tu configures le délai et le message, Deviso s'occupe du reste.",
-  },
-  {
-    title: "Factur-X & Plateforme Agréée",
-    desc: "Factures au format Factur-X (norme EN 16931), émises et reçues via Super PDP, la plateforme agréée. Suivi du cycle de vie de chaque facture, refus compris. Dépôt Chorus Pro pour le secteur public, sans quitter Deviso.",
-  },
-  {
-    title: "Widget CA URSSAF",
-    desc: "Ton chiffre d'affaires mensuel et trimestriel affiché en temps réel dans le tableau de bord. Tu sais exactement quoi déclarer, sans calculer.",
-  },
-  {
-    title: "Suivi du temps & catalogue",
-    desc: "Facture à l'heure ou au forfait. Catalogue de prestations réutilisable en un clic, avec sélecteur de durée directement dans le devis.",
-  },
-];
-
-const steps = [
-  {
-    title: "Tu décris, l'IA génère",
-    desc: "Quelques phrases sur ta mission. En 30 secondes, un devis complet avec les lignes, les prix et les conditions. Tu ajustes, tu envoies.",
-  },
-  {
-    title: "Ton client reçoit et signe",
-    desc: "Il reçoit un lien sécurisé, ouvre le devis depuis son téléphone, signe en quelques secondes. Tu reçois une notification dès qu'il a signé.",
-  },
-  {
-    title: "Tu factures, tu encaisses, tu déclares",
-    desc: "1 clic pour convertir en facture Factur-X conforme. Ton CA s'actualise en temps réel. Si ça traîne, Deviso relance ton client à ta place.",
-  },
-];
-
-
-/* Page d'accueil, refonte du 16/11/2026.
-   Système : une police (Hanken Grotesk) en graisse moyenne ; six tailles
-   (14, 17, 20, 24, titre de section, titre principal) ; angles de 8 à 10 px ;
-   aucune ombre ni bordure décorative, les surfaces se distinguent par leur
-   ton (fond, surface, surface relevée) ; un seul accent, le vert. Grands
-   espaces entre sections. Références étudiées : Attio, Vercel, Ramp, Stripe,
-   Plain, Clerk, Resend, Raycast. */
+/* Page d'accueil, refonte du 16/11/2026, deuxième version.
+   Idée : ce que Deviso produit, c'est un document. La page est construite
+   autour d'un seul devis, composé comme une pièce imprimée, qui vit son
+   parcours au fil du défilement (brief, devis, signature, facture, paiement,
+   déclaration). L'application elle-même vient ensuite, en second plan.
+   Système : une police (Hanken Grotesk) en graisse moyenne ; peu de tailles ;
+   angles de 8 à 10 px ; aucune ombre ni contour décoratif ; surfaces
+   distinguées par leur ton ; un seul accent, le vert ; la feuille claire est
+   le seul élément clair de la page. */
 const CADRE = "mx-auto w-full max-w-[1400px] px-5 sm:px-8 lg:px-12";
 const SECTION = "pt-28 sm:pt-36 lg:pt-44";
 const H2 = "text-[clamp(32px,3.4vw,52px)] leading-[1.06] font-semibold tracking-[-0.035em] text-ink";
@@ -108,29 +68,12 @@ const BOUTON = "inline-flex items-center justify-center h-12 px-6 rounded-md tex
 const BOUTON_PLEIN = `${BOUTON} bg-indigo-600 hover:bg-indigo-700 text-on-accent`;
 const BOUTON_DOUX = `${BOUTON} bg-ds-surface hover:bg-ds-elevated text-ink`;
 const LIENS = [
+  ["#parcours", "Comment ça marche"],
   ["#fonctionnalites", "Fonctionnalités"],
-  ["#comment", "Comment ça marche"],
   ["#tarifs", "Tarifs"],
   ["/experts-comptables", "Experts-comptables"],
   ["/blog", "Blog"],
 ] as const;
-
-/** Le même devis à trois moments de sa vie : un fragment du produit. */
-function CarteDevis({ etat, detail, ton }: { etat: string; detail: string; ton: "neutre" | "vert" | "plein" }) {
-  const pastille =
-    ton === "plein" ? "bg-indigo-600 text-on-accent" : ton === "vert" ? "bg-indigo-500/15 text-indigo-400" : "bg-ds-surface text-gray-300";
-  return (
-    <div data-ui className="rounded-md bg-ds-elevated p-5">
-      <div className="flex items-center justify-between gap-2">
-        <span className="text-[14px] font-semibold text-ink">DEV-2026-048</span>
-        <span className={`text-[14px] font-semibold px-2.5 py-0.5 rounded-full ${pastille}`}>{etat}</span>
-      </div>
-      <div className="mt-1 text-[14px] text-gray-400">Cabinet Durand et Associés</div>
-      <div className="mt-5 text-[24px] leading-none font-semibold tabular-nums text-ink">4 500 €</div>
-      <div className="mt-2 text-[14px] text-gray-400">{detail}</div>
-    </div>
-  );
-}
 
 export default function LandingPage() {
   return (
@@ -169,85 +112,55 @@ export default function LandingPage() {
       </header>
 
       <main>
-        {/* ── Haut de page ── */}
-        <section className={`${CADRE} pt-16 sm:pt-24 lg:pt-28`}>
-          <div className="grid gap-8 lg:grid-cols-12 lg:items-end">
-            <h1 className="lg:col-span-7 text-[clamp(36px,5.4vw,84px)] leading-[1.02] font-semibold tracking-[-0.045em] text-ink">
+        {/* ── Haut de page : la promesse, puis la pièce elle-même ── */}
+        <section className="overflow-hidden">
+          <div className={`${CADRE} pt-14 sm:pt-20 lg:pt-20 text-center`}>
+            <h1 className="mx-auto max-w-[14ch] text-[clamp(40px,6.2vw,100px)] leading-[1.0] font-semibold tracking-[-0.05em] text-ink">
               Ton devis rédigé en 30&nbsp;secondes.
             </h1>
-            <div className="lg:col-span-5 lg:pb-2">
-              <p className={LEAD}>
-                Décris ta mission en quelques mots, l&apos;IA rédige un devis complet et chiffré, prêt à signer. Factures Factur-X,
-                relances et suivi URSSAF suivent, conformes à la réforme 2026.
-              </p>
-              <div className="mt-8 flex flex-col sm:flex-row gap-3">
-                <DemoButton className={`w-full sm:w-auto ${BOUTON_PLEIN}`} />
-                <Link href="/signup?plan=solo" className={BOUTON_DOUX}>Essayer 14 jours gratuitement</Link>
-              </div>
-              <p className="mt-4 text-[14px] text-gray-400">Démo instantanée, sans carte bancaire.</p>
+            <p className={`mx-auto mt-7 max-w-[54ch] ${LEAD}`}>
+              Décris ta mission en quelques mots, l&apos;IA rédige un devis complet et chiffré. Ton client signe en ligne, la facture
+              Factur-X suit, ton chiffre d&apos;affaires se déclare tout seul.
+            </p>
+            <div className="mt-9 flex flex-col sm:flex-row justify-center gap-3">
+              <DemoButton className={`w-full sm:w-auto ${BOUTON_PLEIN}`} />
+              <Link href="/signup?plan=solo" className={BOUTON_DOUX}>Essayer 14 jours gratuitement</Link>
             </div>
-          </div>
-          <div className="mt-14 sm:mt-20">
-            <DemoAnimee />
+            <p className="mt-4 text-[14px] text-gray-400">Démo instantanée, sans carte bancaire.</p>
+
+            {/* La pièce, posée sur la page et coupée par le bas, comme une feuille qui dépasse. */}
+            <div className="reveal mx-auto mt-14 sm:mt-16 w-full max-w-[880px] h-[300px] sm:h-[480px] lg:h-[560px] overflow-hidden text-left">
+              <DocumentDevis etat="signe" />
+            </div>
           </div>
         </section>
 
-        {/* ── Conformité ── */}
-        <section className={`${CADRE} pt-20 sm:pt-28`} aria-labelledby="titre-conformite">
-          <div className="grid gap-8 lg:grid-cols-12 items-start">
-            <div className="lg:col-span-4">
-              <h2 id="titre-conformite" className="text-[24px] leading-snug font-semibold tracking-[-0.02em] text-ink">Conforme à la réforme 2026</h2>
-              <p className="mt-2 text-[17px] leading-relaxed text-gray-300">Les formats et les raccordements exigés, déjà en place.</p>
-            </div>
-            <dl className="lg:col-span-8 grid grid-cols-2 sm:grid-cols-3 gap-2">
-              {[
-                ["Factur-X", "Chaque facture émise"],
-                ["EN 16931", "La norme européenne"],
-                ["PDF/A-3", "L'archivage des PDF"],
-                ["Super PDP", "Plateforme agréée"],
-                ["Chorus Pro", "Le secteur public"],
-                ["URSSAF", "Un CA prêt à déclarer"],
-              ].map(([nom, ligne]) => (
-                <div key={nom} className="rounded-md bg-ds-surface px-5 py-4">
-                  <dt className="text-[17px] font-semibold text-ink">{nom}</dt>
-                  <dd className="mt-0.5 text-[14px] text-gray-400">{ligne}</dd>
-                </div>
-              ))}
-            </dl>
+        {/* ── Conformité, en une ligne ── */}
+        <div className="bg-ds-surface">
+          <div className={`${CADRE} py-7 flex flex-wrap items-baseline gap-x-10 gap-y-3`}>
+            <span className="text-[14px] text-gray-400">Conforme à la réforme 2026</span>
+            {["Factur-X", "EN 16931", "PDF/A-3", "Plateforme agréée Super PDP", "Chorus Pro", "URSSAF"].map((n) => (
+              <span key={n} className="text-[17px] font-semibold tracking-[-0.01em] text-ink">{n}</span>
+            ))}
           </div>
-        </section>
+        </div>
 
-        {/* ── Comment ça marche ── */}
-        <section id="comment" className={`${CADRE} ${SECTION} scroll-mt-20`}>
+        {/* ── Le parcours d'un devis ── */}
+        <section id="parcours" className={`${CADRE} ${SECTION} scroll-mt-20`} aria-labelledby="titre-parcours">
           <div className="reveal max-w-[760px]">
-            <h2 className={H2}>Du brief à l&apos;encaissement.</h2>
-            <p className={`mt-5 ${LEAD}`}>Trois étapes, sans changer d&apos;outil.</p>
+            <h2 id="titre-parcours" className={H2}>Du brief à l&apos;encaissement.</h2>
+            <p className={`mt-5 ${LEAD}`}>Un seul document, de la première ligne au paiement. Fais défiler pour le suivre.</p>
           </div>
-          <ol className="mt-12 sm:mt-16 grid gap-2 lg:grid-cols-3">
-            {steps.map((step, i) => {
-              const carte = [
-                { etat: "Brouillon", detail: "Rédigé par l'IA, à relire", ton: "neutre" as const },
-                { etat: "Signé", detail: "Signé le 14/11/2026 à 10 h 42", ton: "vert" as const },
-                { etat: "Payée", detail: "Facture Factur-X, encaissée le 02/12", ton: "plein" as const },
-              ][i];
-              return (
-                <li key={step.title} className="reveal rounded-lg bg-ds-surface p-6 sm:p-8 flex flex-col gap-8" style={{ transitionDelay: `${i * 80}ms` }}>
-                  <CarteDevis {...carte} />
-                  <div>
-                    <h3 className="text-[24px] leading-snug font-semibold tracking-[-0.02em] text-ink">{step.title}</h3>
-                    <p className="mt-3 text-[17px] leading-relaxed text-gray-300">{step.desc}</p>
-                  </div>
-                </li>
-              );
-            })}
-          </ol>
+          <div className="mt-6 lg:mt-0">
+            <ParcoursDocument />
+          </div>
         </section>
 
-        {/* ── Fonctionnalités ── */}
+        {/* ── L'application ── */}
         <section id="fonctionnalites" className={`${CADRE} ${SECTION} scroll-mt-20`}>
           <div className="reveal max-w-[760px]">
-            <h2 className={H2}>Toute ta gestion, au même endroit.</h2>
-            <p className={`mt-5 ${LEAD}`}>Ce que tes concurrents font à la main, Deviso le fait pour toi.</p>
+            <h2 className={H2}>Et tout le reste, dans ton espace.</h2>
+            <p className={`mt-5 ${LEAD}`}>Les écrans de Deviso, tels que tu les utiliseras chaque jour.</p>
           </div>
           <div className="mt-12 sm:mt-16">
             <SlideFonctionnalites />
@@ -302,16 +215,19 @@ export default function LandingPage() {
           <TarifsTable />
         </section>
 
-        {/* ── Dernière action ── */}
+        {/* ── Dernière action : la feuille, en grand, et l'essai ── */}
         <section className={`${CADRE} ${SECTION} pb-28 sm:pb-36`} aria-labelledby="titre-action">
-          <div className="reveal rounded-lg bg-ds-surface px-6 py-12 sm:px-12 sm:py-16 lg:px-16 lg:py-20 grid gap-8 lg:grid-cols-12 lg:items-end">
-            <div className="lg:col-span-7">
+          <div className="reveal rounded-lg bg-ds-surface overflow-hidden grid lg:grid-cols-12 lg:items-center">
+            <div className="lg:col-span-6 px-6 py-12 sm:px-12 sm:py-16 lg:pl-16 lg:pr-4 lg:py-20">
               <h2 id="titre-action" className={H2}>Ton prochain devis, en 30 secondes.</h2>
               <p className={`mt-5 ${LEAD}`}>Essai gratuit de 14 jours, sans carte bancaire, résiliable à tout moment.</p>
+              <div className="mt-8 flex flex-col sm:flex-row gap-3">
+                <Link href="/signup?plan=solo" className={BOUTON_PLEIN}>Commencer l&apos;essai</Link>
+                <DemoButton className={`w-full sm:w-auto ${BOUTON} bg-ds-elevated hover:bg-ds-bg text-ink`} />
+              </div>
             </div>
-            <div className="lg:col-span-5 flex flex-col sm:flex-row lg:justify-end gap-3">
-              <Link href="/signup?plan=solo" className={BOUTON_PLEIN}>Commencer l&apos;essai</Link>
-              <DemoButton className={`w-full sm:w-auto ${BOUTON} bg-ds-elevated hover:bg-ds-bg text-ink`} />
+            <div className="hidden lg:block lg:col-span-6 self-end px-16 pt-16 h-[440px] overflow-hidden">
+              <DocumentDevis etat="paye" />
             </div>
           </div>
         </section>
