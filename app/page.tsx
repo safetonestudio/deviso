@@ -3,7 +3,6 @@ import { SiteFooter } from "@/components/SiteFooter";
 import type { Metadata } from "next";
 import { DemoButton } from "@/components/landing/DemoButton";
 import { Apparitions } from "@/components/landing/Apparitions";
-import { DocumentDevis } from "@/components/landing/DocumentDevis";
 import { ParcoursDocument } from "@/components/landing/ParcoursDocument";
 import { SlideFonctionnalites } from "@/components/landing/SlideFonctionnalites";
 import { TarifsTable } from "@/components/landing/TarifsTable";
@@ -112,48 +111,29 @@ export default function LandingPage() {
       </header>
 
       <main>
-        {/* ── Haut de page : la promesse, puis la pièce elle-même ── */}
-        <section className="overflow-hidden">
-          <div className={`${CADRE} pt-14 sm:pt-20 lg:pt-20 text-center`}>
-            <h1 className="mx-auto max-w-[14ch] text-[clamp(40px,6.2vw,100px)] leading-[1.0] font-semibold tracking-[-0.05em] text-ink">
-              Ton devis rédigé en 30&nbsp;secondes.
-            </h1>
-            <p className={`mx-auto mt-7 max-w-[54ch] ${LEAD}`}>
-              Décris ta mission en quelques mots, l&apos;IA rédige un devis complet et chiffré. Ton client signe en ligne, la facture
-              Factur-X suit, ton chiffre d&apos;affaires se déclare tout seul.
-            </p>
-            <div className="mt-9 flex flex-col sm:flex-row justify-center gap-3">
-              <DemoButton className={`w-full sm:w-auto ${BOUTON_PLEIN}`} />
-              <Link href="/signup?plan=solo" className={BOUTON_DOUX}>Essayer 14 jours gratuitement</Link>
-            </div>
-            <p className="mt-4 text-[14px] text-gray-400">Démo instantanée, sans carte bancaire.</p>
-
-            {/* La pièce, posée sur la page et coupée par le bas, comme une feuille qui dépasse. */}
-            <div className="reveal mx-auto mt-14 sm:mt-16 w-full max-w-[880px] h-[300px] sm:h-[480px] lg:h-[560px] overflow-hidden text-left">
-              <DocumentDevis etat="signe" />
-            </div>
-          </div>
-        </section>
-
-        {/* ── Conformité, en une ligne ── */}
-        <div className="bg-ds-surface">
-          <div className={`${CADRE} py-7 flex flex-wrap items-baseline gap-x-10 gap-y-3`}>
-            <span className="text-[14px] text-gray-400">Conforme à la réforme 2026</span>
-            {["Factur-X", "EN 16931", "PDF/A-3", "Plateforme agréée Super PDP", "Chorus Pro", "URSSAF"].map((n) => (
-              <span key={n} className="text-[17px] font-semibold tracking-[-0.01em] text-ink">{n}</span>
-            ))}
-          </div>
-        </div>
-
-        {/* ── Le parcours d'un devis ── */}
-        <section id="parcours" className={`${CADRE} ${SECTION} scroll-mt-20`} aria-labelledby="titre-parcours">
-          <div className="reveal max-w-[760px]">
-            <h2 id="titre-parcours" className={H2}>Du brief à l&apos;encaissement.</h2>
-            <p className={`mt-5 ${LEAD}`}>Un seul document, de la première ligne au paiement. Fais défiler pour le suivre.</p>
-          </div>
-          <div className="mt-6 lg:mt-0">
-            <ParcoursDocument />
-          </div>
+        {/* ── Haut de page et parcours d'un devis, en une seule histoire ──
+            La promesse à gauche, le brief qui s'écrit à droite ; en faisant
+            défiler, le même emplacement montre le devis, la signature, la
+            facture, le paiement, puis la déclaration. */}
+        <section id="parcours" className={`${CADRE} scroll-mt-20`}>
+          <ParcoursDocument
+            intro={
+              <div>
+                <h1 className="text-[clamp(40px,4.2vw,62px)] leading-[1.03] font-semibold tracking-[-0.045em] text-ink">
+                  Ton devis rédigé en 30&nbsp;secondes.
+                </h1>
+                <p className={`mt-6 max-w-[44ch] ${LEAD}`}>
+                  Décris ta mission en quelques mots, au clavier ou à la voix. L&apos;IA rédige un devis complet et chiffré à partir de
+                  ton catalogue ; la signature, la facture Factur-X et ta déclaration suivent.
+                </p>
+                <div className="mt-8 flex flex-col sm:flex-row gap-3">
+                  <DemoButton className={`w-full sm:w-auto ${BOUTON_PLEIN}`} />
+                  <Link href="/signup?plan=solo" className={BOUTON_DOUX}>Essayer 14 jours gratuitement</Link>
+                </div>
+                <p className="mt-4 text-[14px] text-gray-400">Démo instantanée, sans carte bancaire.</p>
+              </div>
+            }
+          />
         </section>
 
         {/* ── L'application ── */}
@@ -180,6 +160,11 @@ export default function LandingPage() {
             <div className="lg:col-span-4 lg:text-right">
               <Link href="/conformite" className={`${BOUTON} bg-ink text-(color:--ds-bg) hover:opacity-90`}>Comprendre la réforme</Link>
             </div>
+            <ul className="lg:col-span-12 flex flex-wrap gap-x-8 gap-y-2 pt-8 text-[17px] font-semibold">
+              {["Factur-X", "EN 16931", "PDF/A-3", "Plateforme agréée Super PDP", "Chorus Pro", "URSSAF"].map((n) => (
+                <li key={n}>{n}</li>
+              ))}
+            </ul>
           </div>
         </section>
 
@@ -215,19 +200,16 @@ export default function LandingPage() {
           <TarifsTable />
         </section>
 
-        {/* ── Dernière action : la feuille, en grand, et l'essai ── */}
+        {/* ── Dernière action ── */}
         <section className={`${CADRE} ${SECTION} pb-28 sm:pb-36`} aria-labelledby="titre-action">
-          <div className="reveal rounded-lg bg-ds-surface overflow-hidden grid lg:grid-cols-12 lg:items-center">
-            <div className="lg:col-span-6 px-6 py-12 sm:px-12 sm:py-16 lg:pl-16 lg:pr-4 lg:py-20">
+          <div className="reveal rounded-lg bg-ds-surface px-6 py-14 sm:px-12 sm:py-20 lg:px-16 lg:py-24 grid gap-8 lg:grid-cols-12 lg:items-end">
+            <div className="lg:col-span-7">
               <h2 id="titre-action" className={H2}>Ton prochain devis, en 30 secondes.</h2>
               <p className={`mt-5 ${LEAD}`}>Essai gratuit de 14 jours, sans carte bancaire, résiliable à tout moment.</p>
-              <div className="mt-8 flex flex-col sm:flex-row gap-3">
-                <Link href="/signup?plan=solo" className={BOUTON_PLEIN}>Commencer l&apos;essai</Link>
-                <DemoButton className={`w-full sm:w-auto ${BOUTON} bg-ds-elevated hover:bg-ds-bg text-ink`} />
-              </div>
             </div>
-            <div className="hidden lg:block lg:col-span-6 self-end px-16 pt-16 h-[440px] overflow-hidden">
-              <DocumentDevis etat="paye" />
+            <div className="lg:col-span-5 flex flex-col sm:flex-row lg:justify-end gap-3">
+              <Link href="/signup?plan=solo" className={BOUTON_PLEIN}>Commencer l&apos;essai</Link>
+              <DemoButton className={`w-full sm:w-auto ${BOUTON} bg-ds-elevated hover:bg-ds-bg text-ink`} />
             </div>
           </div>
         </section>
