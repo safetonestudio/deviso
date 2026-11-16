@@ -3,7 +3,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import { Check } from "lucide-react";
-import { planFeatures, proOnlyFeatures } from "@/lib/plans";
+import { FEATURES, planFeatures, proOnlyFeatures } from "@/lib/plans";
 
 /**
  * Tarifs de la page d'accueil : deux formules côte à côte, sur deux surfaces
@@ -13,6 +13,23 @@ import { planFeatures, proOnlyFeatures } from "@/lib/plans";
  */
 const COMMUNES = planFeatures("solo");
 const PRO_SEUL = proOnlyFeatures();
+
+/** La liste commune, en familles. Chaque libellé vient de lib/plans.ts ; une
+    fonction vendue qui n'est rangée nulle part tombe dans la dernière famille,
+    pour qu'aucune ne disparaisse de la vitrine. */
+const FAMILLES_IDS: [string, string[]][] = [
+  ["Devis et signature", ["aiQuotes", "catalog", "signature", "subdomain", "accentColor", "noBranding"]],
+  ["Factures conformes 2026", ["facturX", "plateformeAgreee", "recurring", "chorusPro", "international", "facturesAnglais"]],
+  ["Suivi et relances", ["remindersCustom", "urssafWidget", "crm", "livreRecettes"]],
+  ["Ton comptable et tes exports", ["accesComptable", "fecExport", "csvRecap", "historyUnlimited"]],
+];
+const libelle = (id: string) => FEATURES.find((f) => f.id === id)?.label;
+const FAMILLES = FAMILLES_IDS.map(([titre, ids]) => ({
+  titre,
+  lignes: ids.map(libelle).filter((x): x is string => !!x && COMMUNES.includes(x)),
+}));
+const RANGEES = new Set(FAMILLES.flatMap((f) => f.lignes));
+FAMILLES[FAMILLES.length - 1].lignes.push(...COMMUNES.filter((x) => !RANGEES.has(x)));
 const NB = "\u00a0";
 
 const BOUTON = "inline-flex items-center justify-center h-12 rounded-lg text-[17px] font-semibold transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-500";
@@ -53,7 +70,7 @@ export function TarifsTable() {
       <div className="reveal flex flex-wrap items-end justify-between gap-8">
         <div className="max-w-[760px]">
           <h2 className="text-[clamp(30px,2.9vw,46px)] leading-[1.08] font-semibold tracking-[-0.035em] text-ink">Deux formules, une seule différence : l&apos;équipe.</h2>
-          <p className="mt-5 text-[17px] sm:text-[20px] leading-relaxed text-gray-300">14 jours gratuits, sans carte bancaire, sans engagement.</p>
+          <p className="mt-5 text-[17px] sm:text-[20px] leading-relaxed text-gray-300">14 jours d&apos;essai complet, puis tu choisis.</p>
         </div>
         <div className="inline-flex gap-1 p-1 rounded-lg bg-ds-surface" role="group" aria-label="Périodicité de facturation">
           {[
@@ -95,7 +112,7 @@ export function TarifsTable() {
 
             <Link
               href={f.lien}
-              className={`mt-10 ${BOUTON} bg-indigo-600 hover:bg-indigo-700 text-on-accent`}
+              className={`mt-10 ${BOUTON} bg-indigo-600 hover:bg-indigo-700 hover:brightness-110 text-on-accent`}
             >
               Essayer {f.nom} gratuitement
             </Link>
@@ -104,12 +121,19 @@ export function TarifsTable() {
       </div>
 
       <div className="reveal mt-6 rounded-xl bg-ds-surface px-7 py-8 sm:px-10 sm:py-10">
-        <h3 className="text-[17px] font-semibold text-ink">Compris dans les deux formules</h3>
-        <ul className="mt-6 grid gap-x-10 gap-y-3.5 sm:grid-cols-2 lg:grid-cols-3">
-          {COMMUNES.map((x) => (
-            <Ligne key={x}>{x}</Ligne>
+        <h3 className="text-[20px] font-semibold tracking-[-0.015em] text-ink">Compris dans les deux formules</h3>
+        <div className="mt-8 grid gap-x-10 gap-y-8 sm:grid-cols-2 xl:grid-cols-4">
+          {FAMILLES.map((f) => (
+            <div key={f.titre}>
+              <h4 className="text-[14px] font-semibold text-gray-400">{f.titre}</h4>
+              <ul className="mt-4 space-y-3">
+                {f.lignes.map((x) => (
+                  <Ligne key={x}>{x}</Ligne>
+                ))}
+              </ul>
+            </div>
           ))}
-        </ul>
+        </div>
       </div>
     </div>
   );

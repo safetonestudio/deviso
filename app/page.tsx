@@ -66,8 +66,8 @@ const SECTION = "pt-28 sm:pt-36 lg:pt-44";
 const H2 = "text-[clamp(30px,2.9vw,46px)] leading-[1.08] font-semibold tracking-[-0.035em] text-ink";
 const LEAD = "text-[17px] sm:text-[20px] leading-relaxed text-gray-300";
 const BOUTON = "inline-flex items-center justify-center h-12 px-6 rounded-lg text-[17px] font-semibold transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-500";
-const BOUTON_PLEIN = `${BOUTON} bg-indigo-600 hover:bg-indigo-700 text-on-accent`;
-const BOUTON_DOUX = `${BOUTON} bg-ds-surface hover:bg-ink/10 text-ink`;
+const BOUTON_PLEIN = `${BOUTON} bg-indigo-600 hover:bg-indigo-700 hover:brightness-110 text-on-accent`;
+const BOUTON_DOUX = `${BOUTON} border border-ink/15 hover:border-ink/30 hover:bg-ink/5 text-ink`;
 const LIENS = [
   ["#parcours", "Comment ça marche"],
   ["#fonctionnalites", "Fonctionnalités"],
@@ -99,7 +99,7 @@ export default function LandingPage() {
           </nav>
           <div className="flex items-center gap-2">
             <Link href="/login" className="hidden sm:inline-flex items-center h-10 px-4 rounded-lg text-[14px] font-semibold text-gray-300 hover:text-ink transition-colors">Connexion</Link>
-            <Link href="/signup" className="hidden sm:inline-flex items-center h-10 px-4 rounded-lg bg-ds-surface hover:bg-ink/10 text-ink text-[14px] font-semibold transition-colors">Essayer gratuitement</Link>
+            <Link href="/signup" className="inline-flex items-center h-10 px-4 rounded-lg bg-indigo-600 hover:bg-indigo-700 hover:brightness-110 text-on-accent text-[14px] font-semibold transition-colors"><span className="sm:hidden">Essayer</span><span className="hidden sm:inline">Essayer gratuitement</span></Link>
             <details className="lg:hidden relative">
               <summary className="list-none [&::-webkit-details-marker]:hidden h-10 px-4 rounded-lg bg-ds-surface text-[14px] font-semibold text-ink flex items-center cursor-pointer">Menu</summary>
               <div className="absolute right-0 top-full mt-2 z-50 w-64 rounded-xl bg-ds-elevated p-2 shadow-ds-leve">
@@ -121,33 +121,33 @@ export default function LandingPage() {
           <ParcoursDocument
             intro={
               <div>
-                <h1 className="text-[clamp(42px,4.1vw,66px)] leading-[1.02] font-semibold tracking-[-0.045em] text-ink">
-                  Devis et factures,<br className="hidden lg:block" /> du premier mot<br className="hidden lg:block" /> au paiement.
+                <h1 className="text-[clamp(40px,3.5vw,58px)] leading-[1.04] font-semibold tracking-[-0.04em] text-ink">
+                  Tes devis rédigés,<br className="hidden lg:block" /> tes factures conformes,<br className="hidden lg:block" /> tes relances envoyées.
                 </h1>
-                <p className={`mt-6 max-w-[46ch] ${LEAD}`}>
-                  Pour les indépendants et les petites entreprises, en micro, au réel ou en société. L&apos;IA rédige ton devis en
-                  30&nbsp;secondes. Ton client signe en ligne, la facture part conforme à la réforme 2026, les relances se font seules.
+                <p className={`mt-6 max-w-[48ch] ${LEAD}`}>
+                  Pour les indépendants et les petites entreprises, en micro, au réel ou en société. Décris ta mission&nbsp;: Deviso
+                  rédige le devis en 30&nbsp;secondes, le fait signer, transmet la facture par une plateforme agréée et relance ton client.
                 </p>
                 <div className="mt-8 flex flex-col sm:flex-row gap-3">
-                  <DemoButton className={`w-full sm:w-auto ${BOUTON_PLEIN}`} />
-                  <Link href="/signup" className={BOUTON_DOUX}>Essayer 14 jours gratuitement</Link>
+                  <Link href="/signup" className={BOUTON_PLEIN}>Essayer 14 jours gratuitement</Link>
+                  <DemoButton className={`w-full sm:w-auto ${BOUTON_DOUX}`} />
                 </div>
-                <p className="mt-4 text-[14px] text-gray-400">La démo s&apos;ouvre en un clic, sans inscription ni carte bancaire.</p>
+                <p className="mt-4 text-[14px] text-gray-400">Sans carte bancaire. La démo s&apos;ouvre en un clic, sans inscription.</p>
               </div>
             }
           />
         </section>
 
         {/* ── Pourquoi Deviso, face aux outils gratuits ── */}
-        <section id="pourquoi" className={`${CADRE} pt-20 sm:pt-28 lg:pt-32 scroll-mt-20`} aria-labelledby="titre-pourquoi">
+        <section id="pourquoi" className={`${CADRE} ${SECTION} scroll-mt-20`} aria-labelledby="titre-pourquoi">
           <PourquoiDeviso titre={H2} />
         </section>
 
         {/* ── L'application : ce que le parcours ne montre pas ── */}
         <section id="fonctionnalites" className={`${CADRE} ${SECTION} scroll-mt-20`}>
           <div className="reveal max-w-[760px]">
-            <h2 className={H2}>Le reste de ton activité, au même endroit.</h2>
-            <p className={`mt-5 ${LEAD}`}>Ton tableau de bord, tes factures, celles de tes fournisseurs, ton équipe et ton catalogue&nbsp;: de vrais écrans de Deviso.</p>
+            <h2 className={H2}>Tout le reste, sans changer d&apos;outil.</h2>
+            <p className={`mt-5 ${LEAD}`}>L&apos;application telle qu&apos;elle est, pas une maquette&nbsp;: ton tableau de bord, tes factures, celles de tes fournisseurs, ton équipe et ton catalogue.</p>
           </div>
           <div className="mt-12 sm:mt-16">
             <SlideFonctionnalites />
@@ -161,16 +161,16 @@ export default function LandingPage() {
               <h2 id="titre-reforme" className="text-[clamp(30px,2.9vw,46px)] leading-[1.08] font-semibold tracking-[-0.035em]">Prêt pour la réforme 2026.</h2>
               <p className="mt-5 text-[17px] sm:text-[20px] leading-relaxed max-w-[56ch]">
                 Les factures entre entreprises deviennent électroniques en France, en passant par une plateforme agréée. Deviso
-                s&apos;en charge dès aujourd&apos;hui, sans rien à installer ni abonnement en plus.
+                s&apos;en charge dès aujourd&apos;hui&nbsp;: tu n&apos;as rien à installer.
               </p>
-            </div>
-            <div className="lg:col-span-4 lg:text-right">
-              <Link href="/conformite" className={`${BOUTON} bg-ink text-(color:--ds-bg) hover:opacity-90`}>Comprendre la réforme</Link>
+              <Link href="/conformite" className="mt-6 inline-flex items-center gap-2 text-[17px] font-semibold underline decoration-ink/40 underline-offset-4 hover:decoration-ink transition-colors">
+                Comprendre la réforme <span aria-hidden="true">→</span>
+              </Link>
             </div>
             <ul className="lg:col-span-12 grid gap-6 sm:grid-cols-3 pt-8">
               {[
-                ["Le bon format", "Chaque facture est un Factur-X, lisible par toi et par les logiciels de ton client."],
-                ["La transmission incluse", "Elle part par Super PDP, plateforme agréée par l'État, sans abonnement en plus."],
+                ["Le format officiel", "Chaque facture est un Factur-X : un PDF lisible par ton client, qui porte aussi les données lues par les logiciels."],
+                ["La transmission faite pour toi", "Elle part par Super PDP, plateforme agréée par l'État, raccordée en quelques clics depuis Deviso."],
                 ["Le secteur public aussi", "Tes factures aux administrations sont déposées sur Chorus Pro."],
               ].map(([t, d]) => (
                 <li key={t}>
@@ -187,17 +187,15 @@ export default function LandingPage() {
             pré-lancement, sans clients réels, on dit la vérité. À remplacer
             par de vrais témoignages, avec accord, quand il y en aura. */}
         <section className={`${CADRE} ${SECTION}`} aria-labelledby="titre-fondateur">
-          <div className="reveal grid gap-10 lg:grid-cols-12">
-            <h2 id="titre-fondateur" className={`${H2} lg:col-span-4`}>Un fondateur qui te répond.</h2>
-            <div className="lg:col-span-8">
+          <div className="reveal grid gap-10 lg:grid-cols-12 lg:gap-16">
+            <h2 id="titre-fondateur" className={`${H2} lg:col-span-5`}>Un fondateur qui te répond.</h2>
+            <div className="lg:col-span-7">
               <p className="text-[20px] sm:text-[24px] leading-[1.5] tracking-[-0.01em] text-ink">
                 J&apos;ai créé Deviso parce que je perdais trop de temps sur mes propres devis et factures, et parce que la réforme
                 de la facturation électronique arrivait sans outil vraiment simple pour les indépendants et les petites entreprises.
               </p>
               <p className="mt-6 text-[17px] leading-relaxed text-gray-300 max-w-[62ch]">
-                Chaque facture est vérifiée avant de partir vers la plateforme agréée. Et si tu
-                l&apos;adoptes maintenant, tu me parles directement&nbsp;: j&apos;écris le produit, je lis chaque message et j&apos;y
-                réponds moi-même.
+                Je lis chaque message et j&apos;y réponds moi-même. Écris-moi avant même de t&apos;inscrire.
               </p>
               <div className="mt-8">
                 <div className="text-[17px] font-semibold text-ink">Selim Albert, fondateur</div>
@@ -219,14 +217,14 @@ export default function LandingPage() {
 
         {/* ── Dernière action ── */}
         <section className={`${CADRE} ${SECTION} pb-16 sm:pb-20`} aria-labelledby="titre-action">
-          <div className="reveal rounded-xl bg-ds-surface px-6 py-14 sm:px-12 sm:py-20 lg:px-16 lg:py-24 grid gap-8 lg:grid-cols-12 lg:items-end">
+          <div className="reveal rounded-xl bg-ds-surface px-6 py-14 sm:px-12 sm:py-20 lg:px-16 lg:py-24 grid gap-8 lg:grid-cols-12 lg:items-center">
             <div className="lg:col-span-7">
               <h2 id="titre-action" className={H2}>Essaie Deviso sur ton prochain devis.</h2>
               <p className={`mt-5 ${LEAD}`}>Essai gratuit de 14 jours, sans carte bancaire, résiliable à tout moment.</p>
             </div>
             <div className="lg:col-span-5 flex flex-col sm:flex-row lg:justify-end gap-3">
-              <DemoButton className={`w-full sm:w-auto ${BOUTON_PLEIN}`} />
-              <Link href="/signup" className={`${BOUTON} bg-ds-elevated hover:bg-ink/10 text-ink`}>Essayer 14 jours gratuitement</Link>
+              <Link href="/signup" className={BOUTON_PLEIN}>Essayer 14 jours gratuitement</Link>
+              <DemoButton className={`w-full sm:w-auto ${BOUTON_DOUX}`} />
             </div>
           </div>
         </section>

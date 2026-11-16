@@ -36,7 +36,7 @@ const HT = LIGNES.reduce((s, l) => s + l[2], 0);
 const TVA = Math.round(HT * 0.2);
 const euros = (n: number) => `${new Intl.NumberFormat("fr-FR").format(n)},00 €`;
 
-export function DocumentDevis({ etat, className = "" }: { etat: EtatDocument; className?: string }) {
+export function DocumentDevis({ etat, compact = false, className = "" }: { etat: EtatDocument; compact?: boolean; className?: string }) {
   const facture = etat === "facture" || etat === "paye";
   const signe = etat === "signe" || facture;
 
@@ -51,7 +51,7 @@ export function DocumentDevis({ etat, className = "" }: { etat: EtatDocument; cl
             : `Devis DEV-2026-048 pour le Cabinet Lefèvre Avocats, 5 400 € TTC${signe ? ", signé par le client" : ""}`
         }
         className="relative rounded-[0.6em] overflow-hidden"
-        style={{ backgroundColor: PAPIER, color: ENCRE, fontSize: "max(7px, 2.35cqw)", padding: "3.2em 3.4em 3em" }}
+        style={{ backgroundColor: PAPIER, color: ENCRE, fontSize: "max(10.5px, 2.35cqw)", padding: "clamp(1.4em, 7.5cqw, 3.2em) clamp(1.2em, 8cqw, 3.4em) clamp(1.3em, 7cqw, 3em)" }}
       >
         {/* En-tête : émetteur et pièce */}
         <div className="flex items-start justify-between" style={{ gap: "2em" }}>
@@ -78,6 +78,7 @@ export function DocumentDevis({ etat, className = "" }: { etat: EtatDocument; cl
           </div>
         </div>
 
+        {!compact && (<>
         {/* Parties */}
         <div className="grid grid-cols-2" style={{ gap: "2em", marginTop: "2.6em", lineHeight: 1.45 }}>
           <div style={{ fontSize: "0.85em", color: GRIS }}>
@@ -118,8 +119,10 @@ export function DocumentDevis({ etat, className = "" }: { etat: EtatDocument; cl
           </tbody>
         </table>
 
+        </>)}
+
         {/* Totaux, et à leur gauche le tampon de paiement */}
-        <div className="flex items-center justify-between" style={{ marginTop: "1.4em", gap: "2em" }}>
+        <div className="flex items-center justify-between" style={{ marginTop: compact ? "2.2em" : "1.4em", gap: "2em" }}>
         <div
           aria-hidden="true"
           className="font-semibold tracking-[0.06em] text-center shrink-0"
@@ -159,7 +162,7 @@ export function DocumentDevis({ etat, className = "" }: { etat: EtatDocument; cl
               </svg>
               <div className="absolute left-0 right-0 bottom-0" style={{ borderBottom: `1px solid ${FILET}` }} />
             </div>
-            <div className="whitespace-nowrap" style={{ marginTop: "0.4em", opacity: signe ? 1 : 0, transition: "opacity 0.6s ease" }}>Signé par Pierre Lefèvre le 21/10/2026 à 10 h 42</div>
+            <div style={{ marginTop: "0.4em", opacity: signe ? 1 : 0, transition: "opacity 0.6s ease" }}>Signé par Pierre Lefèvre le 21/10/2026 à 10 h 42</div>
           </div>
           <div className="text-right" style={{ fontSize: "0.82em", lineHeight: 1.45 }}>
             <div style={{ opacity: facture ? 1 : 0, transition: "opacity 0.6s ease" }}>

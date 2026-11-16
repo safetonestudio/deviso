@@ -5,20 +5,12 @@
  */
 const QUESTIONS = [
   {
-    q: "Faut-il une carte bancaire pour essayer ?",
-    r: "Non. L'essai dure 14 jours, avec toutes les fonctions de la formule choisie, sans carte bancaire. La démo, elle, s'ouvre en un clic, sans inscription.",
-  },
-  {
     q: "Que se passe-t-il à la fin de l'essai ?",
     r: "Rien n'est débité sans ta carte. Si tu n'en enregistres pas, l'abonnement ne démarre pas, et tu peux toujours revenir t'abonner plus tard.",
   },
   {
     q: "Puis-je récupérer mes données ?",
     r: "Oui, à tout moment. Tes factures restent téléchargeables en PDF Factur-X, et tu exportes ta comptabilité au format FEC et en CSV.",
-  },
-  {
-    q: "Puis-je arrêter quand je veux ?",
-    r: "Oui, sans engagement. Tu résilies depuis ton espace, et l'accès reste ouvert jusqu'à la fin de la période déjà payée.",
   },
   {
     q: "Deviso convient-il à mon statut ?",

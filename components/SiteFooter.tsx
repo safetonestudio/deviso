@@ -33,7 +33,7 @@ export function SiteFooter() {
               <span className="font-semibold text-ink">Deviso</span>
             </div>
             <p className="text-sm max-w-xs leading-relaxed">
-              Du devis à la facture Factur-X, pour les indépendants et les petites entreprises en France.
+              Devis, factures conformes 2026 et relances, pour les indépendants et les petites entreprises en France.
             </p>
           </div>
 
@@ -57,7 +57,7 @@ export function SiteFooter() {
                 <li><Link href="/combien-facturer" className="inline-block py-2.5 sm:py-0.5 hover:text-gray-300 transition-colors">Combien facturer</Link></li>
                 <li>
                   <Link href="/blog/facturation-electronique-2026" className="inline-block py-2.5 sm:py-0.5 hover:text-gray-300 transition-colors">
-                    Réforme 2026
+                    Guide de la facture électronique
                   </Link>
                 </li>
                 <li>
@@ -69,7 +69,7 @@ export function SiteFooter() {
             </div>
 
             <div>
-              <div className="text-ink font-semibold mb-3">Métiers</div>
+              <div className="text-ink font-semibold mb-3">Exemples de métiers</div>
               <ul className="sm:space-y-1.5">
                 {METIERS_LANDING.map((m) => (
                   <li key={m.landing}>

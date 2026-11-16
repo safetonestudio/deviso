@@ -58,12 +58,12 @@ export function SlideFonctionnalites() {
   return (
     <div
       ref={zone}
-      className="grid grid-cols-1 gap-10 lg:gap-16 lg:grid-cols-12 items-center"
+      className="grid grid-cols-1 gap-10 lg:gap-16 lg:grid-cols-12 items-start"
       onMouseEnter={() => setPause(true)}
       onMouseLeave={() => setPause(false)}
     >
       {/* ── La liste ── */}
-      <div className="min-w-0 lg:col-span-4 order-2 lg:order-1" role="tablist" aria-label="Fonctionnalités de Deviso" aria-orientation="vertical">
+      <div className="min-w-0 lg:col-span-5 order-2 lg:order-1" role="tablist" aria-label="Fonctionnalités de Deviso" aria-orientation="vertical">
         {DIAPOS.map((d, i) => {
           const sel = i === actif;
           return (
@@ -87,15 +87,15 @@ export function SlideFonctionnalites() {
                   />
                 )}
               </span>
-              <span className={`block text-[20px] leading-snug font-semibold tracking-[-0.015em] transition-colors ${sel ? "text-ink" : "text-gray-500 group-hover:text-gray-300"}`}>
+              <span className={`block text-[20px] leading-snug font-semibold tracking-[-0.015em] transition-colors ${sel ? "text-ink" : "text-gray-400 group-hover:text-ink"}`}>
                 {d.titre}
               </span>
               <span className={`block overflow-hidden transition-all duration-300 ${sel ? "max-h-28 mt-2 opacity-100" : "max-h-0 opacity-0"}`}>
                 <span className="block text-[17px] leading-relaxed text-gray-300">{d.texte}</span>
               </span>
               {sel && (
-                <span className="lg:hidden mt-4 block relative aspect-[16/10] rounded-lg overflow-hidden bg-ds-elevated">
-                  <Image src={`/landing/ecran-${d.cle}.jpg`} alt={d.alt} fill sizes="100vw" quality={90} className="object-cover object-top" />
+                <span className="lg:hidden mt-4 block relative aspect-[4/3] rounded-lg overflow-hidden bg-ds-elevated">
+                  <Image src={`/landing/ecran-${d.cle}-mobile.jpg`} alt={d.alt} fill sizes="100vw" quality={90} className="object-cover object-top" />
                   <span className="absolute inset-x-0 bottom-0 h-10 bg-linear-to-t from-ds-bg to-transparent" aria-hidden="true" />
                 </span>
               )}
@@ -105,7 +105,7 @@ export function SlideFonctionnalites() {
       </div>
 
       {/* ── L'écran ── */}
-      <div className="hidden lg:block min-w-0 lg:col-span-8 order-1 lg:order-2">
+      <div className="hidden lg:block min-w-0 lg:col-span-7 order-1 lg:order-2">
         <div
           id="ecran-fonctionnalite"
           role="tabpanel"
@@ -119,7 +119,7 @@ export function SlideFonctionnalites() {
                 aria-hidden={i !== actif}
                 className={`absolute inset-0 transition-opacity duration-500 ease-out ${i === actif ? "opacity-100" : "opacity-0"}`}
               >
-                <Image src={`/landing/ecran-${d.cle}.jpg`} alt={i === actif ? d.alt : ""} fill sizes="(min-width: 1024px) 62vw, 100vw" quality={90} className="object-cover object-top" />
+                <Image src={`/landing/ecran-${d.cle}.jpg`} alt={i === actif ? d.alt : ""} fill sizes="(min-width: 1024px) 56vw, 100vw" quality={90} className="object-cover object-top" />
               </div>
             ))}
             <div className="absolute inset-x-0 bottom-0 h-20 bg-linear-to-t from-ds-surface to-transparent pointer-events-none" aria-hidden="true" />
