@@ -13,12 +13,11 @@ import Image from "next/image";
  * Les écrans sont de vraies captures de l'application (compte de démo).
  */
 const DIAPOS = [
-  { cle: "nouveau", teinte: "bg-indigo-500", titre: "Devis par IA en 30 secondes", texte: "Tu décris ta mission, l'IA rédige le devis complet, chiffré, prêt à envoyer.", alt: "L'écran Nouveau devis de Deviso : tu décris ton projet, l'IA génère le devis" },
-  { cle: "signature", teinte: "bg-blue-400", titre: "Signature électronique", texte: "Ton client ouvre le devis sur son téléphone et signe en quelques secondes.", alt: "Un devis tel que le client le reçoit, prêt à être signé en ligne" },
-  { cle: "relances", teinte: "bg-amber-400", titre: "Relances automatiques", texte: "Après 3, 7 ou 14 jours sans réponse, Deviso relance ton client à ta place.", alt: "Les actions requises dans Deviso : factures en retard et devis sans réponse à relancer" },
-  { cle: "factures", teinte: "bg-indigo-500", titre: "Factur-X et plateforme agréée", texte: "Factures conformes à la réforme 2026, émises et reçues via une plateforme agréée.", alt: "La liste des factures dans Deviso, avec leur statut et leur montant" },
-  { cle: "tableau", teinte: "bg-blue-400", titre: "Chiffre d'affaires et déclarations", texte: "Ton chiffre d'affaires, ta TVA et tes échéances, calculés selon ton statut.", alt: "Le tableau de bord de Deviso : chiffre d'affaires encaissé, TVA et prochaine échéance" },
-  { cle: "catalogue", teinte: "bg-amber-400", titre: "Catalogue et suivi du temps", texte: "Tes prestations réutilisables en un clic, à l'heure ou au forfait.", alt: "Le catalogue de prestations de Deviso" },
+  { cle: "tableau", titre: "Ton tableau de bord", texte: "Chiffre d'affaires encaissé, seuils, échéances et messages de ton comptable, en un coup d'œil.", alt: "Le tableau de bord de Deviso : message de l'expert-comptable, chiffre d'affaires encaissé et seuil de TVA" },
+  { cle: "factures", titre: "Toutes tes factures", texte: "Encaissé, en attente, à transmettre : chaque facture et son statut, avec l'export FEC à portée de clic.", alt: "La liste des factures de Deviso, avec les totaux encaissés et en attente" },
+  { cle: "recues", titre: "Les factures de tes fournisseurs", texte: "Elles arrivent d'elles-mêmes par la plateforme agréée. Tu les retrouves au même endroit, et tu en refuses une en un clic.", alt: "Les factures reçues des fournisseurs dans Deviso, avec leur échéance et leur statut" },
+  { cle: "equipe", titre: "Ton équipe", texte: "Chaque collaborateur a ses droits ; tu suis les devis de chacun et tu valides avant envoi.", alt: "L'écran Équipe de Deviso : chiffre d'affaires, devis en cours et taux de signature par membre" },
+  { cle: "catalogue", titre: "Ton catalogue", texte: "Tes prestations et tes prix, réutilisables en un clic, à l'heure ou au forfait. L'IA s'en sert pour chiffrer.", alt: "Le catalogue de prestations de Deviso" },
 ] as const;
 
 const DUREE = 6000;
@@ -76,14 +75,14 @@ export function SlideFonctionnalites() {
               aria-selected={sel}
               aria-controls="ecran-fonctionnalite"
               onClick={() => choisir(i)}
-              className="group relative block w-full text-left pl-6 py-3.5 rounded-md focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-500"
+              className="group relative block w-full text-left pl-6 py-3.5 rounded-lg focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-500"
             >
               {/* Repère vertical : sombre, puis vert qui se remplit sur l'élément actif. */}
               <span className="absolute left-0 top-3.5 bottom-3.5 w-[3px] rounded-full bg-ds-surface overflow-hidden" aria-hidden="true">
                 {sel && (
                   <span
                     key={`${actif}-${cycle}`}
-                    className={`block w-full ${d.teinte} ${enCours ? "barre-diapo" : "h-full"}`}
+                    className={`block w-full bg-indigo-500 ${enCours ? "barre-diapo" : "h-full"}`}
                     style={enCours ? { animationDuration: `${DUREE}ms` } : undefined}
                   />
                 )}
@@ -94,29 +93,36 @@ export function SlideFonctionnalites() {
               <span className={`block overflow-hidden transition-all duration-300 ${sel ? "max-h-28 mt-2 opacity-100" : "max-h-0 opacity-0"}`}>
                 <span className="block text-[17px] leading-relaxed text-gray-300">{d.texte}</span>
               </span>
+              {sel && (
+                <span className="lg:hidden mt-4 block relative aspect-[16/10] rounded-lg overflow-hidden bg-ds-elevated">
+                  <Image src={`/landing/ecran-${d.cle}.jpg`} alt={d.alt} fill sizes="100vw" quality={90} className="object-cover object-top" />
+                  <span className="absolute inset-x-0 bottom-0 h-10 bg-linear-to-t from-ds-bg to-transparent" aria-hidden="true" />
+                </span>
+              )}
             </button>
           );
         })}
       </div>
 
       {/* ── L'écran ── */}
-      <div className="min-w-0 lg:col-span-8 order-1 lg:order-2">
+      <div className="hidden lg:block min-w-0 lg:col-span-8 order-1 lg:order-2">
         <div
           id="ecran-fonctionnalite"
           role="tabpanel"
           aria-labelledby={`onglet-${DIAPOS[actif].cle}`}
-          className="rounded-lg bg-ds-surface p-2 sm:p-4"
+          className="rounded-xl bg-ds-surface p-2 sm:p-3"
         >
-          <div className="relative aspect-[16/10] rounded-md overflow-hidden bg-ds-elevated">
+          <div className="relative aspect-[16/10] rounded-lg overflow-hidden bg-ds-elevated">
             {DIAPOS.map((d, i) => (
               <div
                 key={d.cle}
                 aria-hidden={i !== actif}
                 className={`absolute inset-0 transition-opacity duration-500 ease-out ${i === actif ? "opacity-100" : "opacity-0"}`}
               >
-                <Image src={`/landing/${d.cle}-sombre.jpg`} alt={i === actif ? d.alt : ""} fill sizes="(min-width: 1800px) 1700px, (min-width: 1024px) 900px, 100vw" quality={90} className="object-cover object-top" />
+                <Image src={`/landing/ecran-${d.cle}.jpg`} alt={i === actif ? d.alt : ""} fill sizes="(min-width: 1024px) 62vw, 100vw" quality={90} className="object-cover object-top" />
               </div>
             ))}
+            <div className="absolute inset-x-0 bottom-0 h-20 bg-linear-to-t from-ds-surface to-transparent pointer-events-none" aria-hidden="true" />
           </div>
         </div>
       </div>

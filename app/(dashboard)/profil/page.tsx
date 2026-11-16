@@ -1097,7 +1097,7 @@ Les présentes CGV sont soumises au droit français. Tout litige relève de la c
       <SectionRepliable
         id="comptable"
         titre="Expert-comptable"
-        sousTitre="Donnez un acces gratuit en lecture seule a votre comptable (devis, factures, exports FEC). Il n'occupe aucun siege."
+        sousTitre="Donne un accès gratuit en lecture seule à ton comptable (devis, factures, exports FEC). Il n'occupe aucune place dans ton équipe."
       >
         <ComptableAcces />
       </SectionRepliable>

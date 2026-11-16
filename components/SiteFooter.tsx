@@ -1,5 +1,4 @@
 import Link from "next/link";
-import { Heart } from "lucide-react";
 import { METIERS_LANDING } from "@/lib/blog/metiers";
 
 /**
@@ -23,46 +22,46 @@ import { METIERS_LANDING } from "@/lib/blog/metiers";
  */
 export function SiteFooter() {
   return (
-    <footer className="py-16 px-4 sm:px-6 text-gray-400">
-      <div className="max-w-6xl mx-auto">
+    <footer className="py-16 text-gray-400">
+      <div className="mx-auto w-full max-w-[1400px] px-5 sm:px-8 lg:px-12">
         <div className="flex flex-col md:flex-row justify-between items-start gap-8 mb-10">
           <div>
             <div className="flex items-center gap-2 mb-3">
-              <div className="w-7 h-7 rounded-md bg-linear-to-br/srgb from-indigo-600 to-violet-600 flex items-center justify-center">
-                <span className="text-ink font-semibold text-xs">D</span>
+              <div className="w-7 h-7 rounded-md bg-indigo-600 flex items-center justify-center">
+                <span className="text-on-accent font-semibold text-xs">D</span>
               </div>
               <span className="font-semibold text-ink">Deviso</span>
             </div>
             <p className="text-sm max-w-xs leading-relaxed">
-              Du devis à la facture Factur-X, pour les indépendants et les petites entreprises en France. 🇫🇷
+              Du devis à la facture Factur-X, pour les indépendants et les petites entreprises en France.
             </p>
           </div>
 
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-8 text-sm">
             <div>
               <div className="text-ink font-semibold mb-3">Produit</div>
-              <ul className="space-y-2">
-                <li><Link href="/#fonctionnalites" className="hover:text-gray-300 transition-colors">Fonctionnalités</Link></li>
-                <li><Link href="/#tarifs" className="hover:text-gray-300 transition-colors">Tarifs</Link></li>
-                <li><Link href="/experts-comptables" className="hover:text-gray-300 transition-colors">Experts-comptables</Link></li>
-                <li><Link href="/login" className="hover:text-gray-300 transition-colors">Connexion</Link></li>
+              <ul className="sm:space-y-1.5">
+                <li><Link href="/#fonctionnalites" className="inline-block py-2.5 sm:py-0.5 hover:text-gray-300 transition-colors">Fonctionnalités</Link></li>
+                <li><Link href="/#tarifs" className="inline-block py-2.5 sm:py-0.5 hover:text-gray-300 transition-colors">Tarifs</Link></li>
+                <li><Link href="/experts-comptables" className="inline-block py-2.5 sm:py-0.5 hover:text-gray-300 transition-colors">Experts-comptables</Link></li>
+                <li><Link href="/login" className="inline-block py-2.5 sm:py-0.5 hover:text-gray-300 transition-colors">Connexion</Link></li>
               </ul>
             </div>
 
             <div>
               <div className="text-ink font-semibold mb-3">Ressources</div>
-              <ul className="space-y-2">
-                <li><Link href="/conformite" className="hover:text-gray-300 transition-colors">Conformité 2026</Link></li>
-                <li><Link href="/a-propos" className="hover:text-gray-300 transition-colors">À propos</Link></li>
-                <li><Link href="/blog" className="hover:text-gray-300 transition-colors">Guides et blog</Link></li>
-                <li><Link href="/combien-facturer" className="hover:text-gray-300 transition-colors">Combien facturer</Link></li>
+              <ul className="sm:space-y-1.5">
+                <li><Link href="/conformite" className="inline-block py-2.5 sm:py-0.5 hover:text-gray-300 transition-colors">Conformité 2026</Link></li>
+                <li><Link href="/a-propos" className="inline-block py-2.5 sm:py-0.5 hover:text-gray-300 transition-colors">À propos</Link></li>
+                <li><Link href="/blog" className="inline-block py-2.5 sm:py-0.5 hover:text-gray-300 transition-colors">Guides et blog</Link></li>
+                <li><Link href="/combien-facturer" className="inline-block py-2.5 sm:py-0.5 hover:text-gray-300 transition-colors">Combien facturer</Link></li>
                 <li>
-                  <Link href="/blog/facturation-electronique-2026" className="hover:text-gray-300 transition-colors">
+                  <Link href="/blog/facturation-electronique-2026" className="inline-block py-2.5 sm:py-0.5 hover:text-gray-300 transition-colors">
                     Réforme 2026
                   </Link>
                 </li>
                 <li>
-                  <Link href="/blog/clauses-devis-freelance" className="hover:text-gray-300 transition-colors">
+                  <Link href="/blog/clauses-devis-freelance" className="inline-block py-2.5 sm:py-0.5 hover:text-gray-300 transition-colors">
                     Clauses d&apos;un devis
                   </Link>
                 </li>
@@ -71,10 +70,10 @@ export function SiteFooter() {
 
             <div>
               <div className="text-ink font-semibold mb-3">Métiers</div>
-              <ul className="space-y-2">
+              <ul className="sm:space-y-1.5">
                 {METIERS_LANDING.map((m) => (
                   <li key={m.landing}>
-                    <Link href={m.landing} className="hover:text-gray-300 transition-colors">{m.label}</Link>
+                    <Link href={m.landing} className="inline-block py-2.5 sm:py-0.5 hover:text-gray-300 transition-colors">{m.label}</Link>
                   </li>
                 ))}
               </ul>
@@ -82,18 +81,17 @@ export function SiteFooter() {
 
             <div>
               <div className="text-ink font-semibold mb-3">Légal</div>
-              <ul className="space-y-2">
-                <li><Link href="/cgu" className="hover:text-gray-300 transition-colors">CGU</Link></li>
-                <li><Link href="/confidentialite" className="hover:text-gray-300 transition-colors">Confidentialité</Link></li>
-                <li><Link href="/mentions-legales" className="hover:text-gray-300 transition-colors">Mentions légales</Link></li>
+              <ul className="sm:space-y-1.5">
+                <li><Link href="/cgu" className="inline-block py-2.5 sm:py-0.5 hover:text-gray-300 transition-colors">CGU</Link></li>
+                <li><Link href="/confidentialite" className="inline-block py-2.5 sm:py-0.5 hover:text-gray-300 transition-colors">Confidentialité</Link></li>
+                <li><Link href="/mentions-legales" className="inline-block py-2.5 sm:py-0.5 hover:text-gray-300 transition-colors">Mentions légales</Link></li>
               </ul>
             </div>
           </div>
         </div>
 
-        <div className="pt-10 text-sm text-center">
-          © {new Date().getFullYear()} Deviso. Fait avec{" "}
-          <Heart size={12} className="inline-block align-[-1px] fill-current text-red-500" aria-label="amour" /> en France.
+        <div className="pt-10 text-sm">
+          © {new Date().getFullYear()} Deviso, conçu en France.
         </div>
       </div>
     </footer>

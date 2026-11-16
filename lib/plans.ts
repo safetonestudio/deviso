@@ -37,13 +37,14 @@ export const FEATURES: Feature[] = [
   { id: "signature",      label: "Signature électronique client",                  plans: ["solo", "pro"], show: true },
   { id: "facturX",        label: "Factures Factur-X multi-taux, conformes réforme 2026", plans: ["solo", "pro"], show: true },
   { id: "plateformeAgreee", label: "Raccordement à une plateforme agréée et e-reporting", plans: ["solo", "pro"], show: true },
+  { id: "accesComptable",  label: "Accès gratuit pour ton expert-comptable, en lecture seule", plans: ["solo", "pro"], show: true },
   { id: "international",   label: "Ventes et achats internationaux conformes",       plans: ["solo", "pro"], show: true },
-  { id: "facturesAnglais", label: "Factures en anglais pour vos clients étrangers",  plans: ["solo", "pro"], show: true },
+  { id: "facturesAnglais", label: "Factures en anglais pour tes clients étrangers",  plans: ["solo", "pro"], show: true },
   { id: "recurring",      label: "Factures récurrentes, acompte et solde",         plans: ["solo", "pro"], show: true },
   { id: "chorusPro",      label: "Dépôt Chorus Pro B2G (marchés publics)",         plans: ["solo", "pro"], show: true },
   { id: "urssafWidget",   label: "Chiffre d'affaires, TVA et échéances suivis",         plans: ["solo", "pro"], show: true },
   { id: "fecExport",      label: "Export comptable FEC",                           plans: ["solo", "pro"], show: true },
-  { id: "noBranding",     label: "Sans branding Deviso sur vos documents",         plans: ["solo", "pro"], show: true },
+  { id: "noBranding",     label: "Aucune mention Deviso sur tes documents",         plans: ["solo", "pro"], show: true },
   { id: "historyUnlimited", label: "Historique et exports illimités",              plans: ["solo", "pro"], show: true },
   // Masquée tant que l'habilitation URSSAF n'est pas obtenue (route en 404).
   { id: "teledeclarationUrssaf", label: "Déclaration de CA à l'URSSAF depuis Deviso", plans: ["solo", "pro"], show: false },
@@ -52,11 +53,11 @@ export const FEATURES: Feature[] = [
   // Uniquement Pro : la gestion d'equipe. Tout le reste est inclus des Solo.
   { id: "remindersCustom", label: "Relances automatiques programmables",                      plans: ["solo", "pro"], show: true },
   { id: "csvRecap",        label: "Exports CSV et récap mensuel pour le comptable",           plans: ["solo", "pro"], show: true },
-  { id: "crm",             label: "CRM Clients & Revenus + Analytics",                        plans: ["solo", "pro"], show: true },
-  { id: "team",            label: "Gestion d'équipe, rôles et validation devis",              plans: ["pro"], show: true },
+  { id: "crm",             label: "Suivi des clients et des revenus",                        plans: ["solo", "pro"], show: true },
+  { id: "team",            label: "Gestion d'équipe, rôles et validation des devis",              plans: ["pro"], show: true },
   { id: "catalog",         label: "Catalogue prestations : forfaits & suivi du temps",        plans: ["solo", "pro"], show: true },
-  { id: "subdomain",       label: "Sous-domaine de partage (votremarque.getdeviso.fr)",       plans: ["solo", "pro"], show: true },
-  { id: "accentColor",     label: "Couleur d'accent sur vos PDF",                             plans: ["solo", "pro"], show: true },
+  { id: "subdomain",       label: "Adresse de partage à ton nom (tonnom.getdeviso.fr)",       plans: ["solo", "pro"], show: true },
+  { id: "accentColor",     label: "Couleur de ta marque sur tes PDF",                             plans: ["solo", "pro"], show: true },
 
   // Droits internes, appliqués par l'application mais non vendus sur une
   // ligne de carte (pas de doublon avec les lignes commerciales ci-dessus).

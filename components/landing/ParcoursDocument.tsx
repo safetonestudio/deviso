@@ -16,11 +16,11 @@ type Vue = "brief" | EtatDocument | "urssaf";
 type Etape = { titre: string; texte: string; vue: Vue };
 
 const ETAPES: Etape[] = [
-  { titre: "Le devis est rédigé, au centime près.", texte: "Lignes, quantités, prix, TVA et mentions obligatoires : tout est rédigé à partir de ton catalogue. Tu relis, tu ajustes, tu envoies.", vue: "devis" },
+  { titre: "Le devis est chiffré, au centime près.", texte: "Lignes, quantités, prix, TVA et mentions obligatoires : tout est rédigé à partir de ton catalogue. Tu relis, tu ajustes, tu envoies.", vue: "devis" },
   { titre: "Ton client signe en ligne.", texte: "Il reçoit un lien, ouvre le devis sur son téléphone et signe. Tu es prévenu à l'instant.", vue: "signe" },
   { titre: "Un clic, et c'est une facture.", texte: "Le devis signé devient une facture Factur-X conforme, transmise par une plateforme agréée.", vue: "facture" },
   { titre: "Deviso relance, tu encaisses.", texte: "Sans réponse, ton client est relancé à 3, 7 ou 14 jours. Le paiement reçu, la facture passe en payée.", vue: "paye" },
-  { titre: "Tes déclarations sont prêtes.", texte: "Chiffre d'affaires, TVA collectée, échéances : tout est calculé à partir de tes encaissements, selon ton statut.", vue: "urssaf" },
+  { titre: "Tes déclarations sont prêtes.", texte: "Chiffre d'affaires, TVA collectée, échéances : tout est calculé à partir de tes encaissements, selon ton statut.", vue: "urssaf" },
 ];
 
 const BRIEF = "Refonte du site vitrine d'un cabinet d'avocats à Lyon : cinq pages, formulaire de contact, mise en ligne. Délai de trois semaines.";
@@ -47,16 +47,20 @@ function Brief() {
   }, []);
 
   return (
-    <div data-ui className="rounded-[10px] bg-ds-surface p-6 sm:p-8">
+    <div data-ui className="rounded-xl bg-ds-surface p-6 sm:p-8">
       <div className="text-[14px] font-medium text-gray-400">Décris ton projet</div>
-      <p className="mt-3 min-h-[9.5em] sm:min-h-[8em] rounded-md bg-ds-elevated p-5 text-[17px] sm:text-[20px] leading-relaxed text-ink">
+      <p className="mt-3 min-h-[9.5em] sm:min-h-[8em] rounded-lg bg-ds-elevated p-5 text-[17px] sm:text-[20px] leading-relaxed text-ink">
         {BRIEF.slice(0, n)}
         {!ecrit && <span className="curseur-demo" aria-hidden="true" />}
       </p>
-      <div className={`mt-4 h-12 rounded-md grid place-items-center text-[17px] font-semibold transition-colors duration-500 ${ecrit ? "bg-indigo-600 text-on-accent" : "bg-indigo-600/35 text-on-accent"}`}>
+      <button
+        type="button"
+        onClick={() => document.querySelector('[data-i="1"]')?.scrollIntoView({ behavior: "smooth", block: "center" })}
+        className={`mt-4 w-full h-12 rounded-lg grid place-items-center text-[17px] font-semibold transition-colors duration-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-500 ${ecrit ? "bg-indigo-500/15 hover:bg-indigo-500/25 text-indigo-300" : "bg-indigo-500/10 text-indigo-300/60"}`}
+      >
         Générer le devis
-      </div>
-      <p className="mt-4 text-[14px] text-gray-400">Fais défiler : voici ce que Deviso en fait.</p>
+      </button>
+      <p className="mt-4 text-[14px] text-gray-400">Clique, ou fais défiler, pour voir le devis rédigé.</p>
     </div>
   );
 }
@@ -64,21 +68,21 @@ function Brief() {
 /** Les déclarations : chiffre d'affaires, TVA et échéance, quel que soit le statut. */
 function Declarations() {
   return (
-    <div data-ui className="rounded-[10px] bg-ds-surface p-6 sm:p-8">
-      <div className="text-[14px] font-medium text-gray-400">Chiffre d&apos;affaires encaissé, 4e trimestre, hors taxes</div>
-      <div className="mt-2 text-[clamp(40px,5vw,64px)] leading-none font-semibold tracking-[-0.04em] tabular-nums text-ink">6 200 €</div>
+    <div data-ui className="rounded-xl bg-ds-surface p-6 sm:p-8 shadow-ds-leve">
+      <div className="text-[14px] font-medium text-gray-400">Chiffre d&apos;affaires encaissé, 4ᵉ trimestre, hors taxes</div>
+      <div className="mt-2 text-[clamp(40px,5vw,64px)] leading-none font-semibold tracking-[-0.04em] tabular-nums text-ink">18 400 €</div>
       <div className="mt-6 grid grid-cols-2 gap-2 text-[14px]">
-        <div className="rounded-md bg-blue-500/15 p-4">
+        <div className="rounded-lg bg-blue-500/15 p-4">
           <div className="text-blue-300">TVA collectée</div>
-          <div className="mt-1 text-[20px] font-semibold tabular-nums text-ink">1 240 €</div>
+          <div className="mt-1 text-[20px] font-semibold tabular-nums text-ink">3 680 €</div>
         </div>
-        <div className="rounded-md bg-amber-500/15 p-4">
+        <div className="rounded-lg bg-amber-500/15 p-4">
           <div className="text-amber-300">Déclaration de TVA</div>
           <div className="mt-1 text-[20px] font-semibold text-ink">En janvier</div>
         </div>
       </div>
       <p className="mt-5 text-[14px] leading-relaxed text-gray-400">
-        Entreprise individuelle ou société, au réel ou en micro : les échéances et les montants suivent ton statut.
+        Entreprise individuelle ou société, au réel ou en micro : les échéances et les montants suivent ton statut.
       </p>
     </div>
   );
@@ -116,9 +120,10 @@ export function ParcoursDocument({ intro }: { intro: ReactNode }) {
 
   return (
     <div className="grid grid-cols-1 lg:grid-cols-12 lg:gap-16">
+      <h2 className="sr-only">Comment ça marche</h2>
       <ol className="lg:col-span-5">
         {/* Le haut de page : la promesse, et sur téléphone le brief dessous. */}
-        <li ref={enregistrer(0)} data-i={0} className="pt-12 pb-16 sm:pt-16 lg:py-0 lg:min-h-(--haut-ecran) flex flex-col justify-center" style={{ ["--haut-ecran" as string]: "calc(100vh / var(--zoom, 1) - 72px)" }}>
+        <li ref={enregistrer(0)} data-i={0} className="pt-12 pb-16 sm:pt-16 lg:py-0 lg:min-h-(--haut-ecran) flex flex-col justify-center" style={{ ["--haut-ecran" as string]: "calc(88vh / var(--zoom, 1) - 72px)" }}>
           {intro}
           <div className="mt-10 lg:hidden">
             <Brief />
@@ -133,12 +138,18 @@ export function ParcoursDocument({ intro }: { intro: ReactNode }) {
                 <h3 className="text-[clamp(26px,2.4vw,36px)] leading-[1.12] font-semibold tracking-[-0.03em] text-ink">{e.titre}</h3>
                 <p className="mt-4 text-[17px] sm:text-[20px] leading-relaxed text-gray-300 max-w-[42ch]">{e.texte}</p>
               </div>
-              {/* Téléphone : le visuel des étapes clés seulement. */}
-              {e.vue !== "signe" && e.vue !== "facture" && (
-                <div className="mt-8 lg:hidden">
+              {/* Téléphone : chaque étape montre ce qui change. Le devis entier
+                  une fois ; ensuite, le bas du document (signature, facture,
+                  tampon), puis la carte des déclarations. */}
+              <div className="mt-8 lg:hidden">
+                {e.vue === "devis" || e.vue === "urssaf" ? (
                   <Visuel vue={e.vue} />
-                </div>
-              )}
+                ) : (
+                  <div className="flex flex-col justify-end h-[50vw] overflow-hidden rounded-[0.6em]" aria-hidden="true">
+                    <DocumentDevis etat={e.vue as EtatDocument} />
+                  </div>
+                )}
+              </div>
             </li>
           );
         })}
@@ -147,9 +158,9 @@ export function ParcoursDocument({ intro }: { intro: ReactNode }) {
       {/* Ordinateur : le visuel, fixe, qui change à chaque étape. Les hauteurs
           sont divisées par l'agrandissement des grands écrans (--zoom). */}
       <div className="hidden lg:block lg:col-span-7">
-        <div className="sticky top-[88px] flex items-center justify-center" style={{ height: "calc(100vh / var(--zoom, 1) - 112px)" }}>
+        <div className="sticky top-[88px] flex items-center justify-end" style={{ height: "calc(100vh / var(--zoom, 1) - 112px)" }}>
           <div className="relative w-full" style={{ maxWidth: "calc((100vh / var(--zoom, 1) - 150px) * 0.74)" }}>
-            <div aria-hidden={vue === "brief" || vue === "urssaf"} className={`transition-[opacity,visibility] duration-500 ${vue === "brief" || vue === "urssaf" ? "opacity-0 invisible" : "opacity-100 visible"}`}>
+            <div aria-hidden={vue === "brief" || vue === "urssaf"} className={`transition-[opacity,visibility,filter] duration-500 ${vue === "brief" ? "opacity-0 invisible" : vue === "urssaf" ? "opacity-20 blur-[3px] visible" : "opacity-100 visible"}`}>
               <DocumentDevis etat={vue === "brief" ? "devis" : vue === "urssaf" ? "paye" : vue} />
             </div>
             <div aria-hidden={vue !== "brief"} className={`absolute inset-0 flex items-center transition-[opacity,visibility] duration-500 ${vue === "brief" ? "opacity-100 visible" : "opacity-0 invisible pointer-events-none"}`}>
@@ -157,8 +168,8 @@ export function ParcoursDocument({ intro }: { intro: ReactNode }) {
                 <Brief />
               </div>
             </div>
-            <div aria-hidden={vue !== "urssaf"} className={`absolute inset-0 flex items-center transition-[opacity,visibility] duration-500 ${vue === "urssaf" ? "opacity-100 visible" : "opacity-0 invisible pointer-events-none"}`}>
-              <div className="w-full">
+            <div aria-hidden={vue !== "urssaf"} className={`absolute inset-0 flex items-center justify-center transition-[opacity,visibility,transform] duration-500 ${vue === "urssaf" ? "opacity-100 visible translate-y-0" : "opacity-0 invisible translate-y-4 pointer-events-none"}`}>
+              <div className="w-[88%]">
                 <Declarations />
               </div>
             </div>

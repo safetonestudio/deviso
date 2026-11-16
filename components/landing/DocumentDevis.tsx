@@ -47,10 +47,10 @@ export function DocumentDevis({ etat, className = "" }: { etat: EtatDocument; cl
         role="img"
         aria-label={
           facture
-            ? `Facture FAC-2026-031 pour le Cabinet Durand et Associés, 5 400 € TTC${etat === "paye" ? ", payée" : ""}`
-            : `Devis DEV-2026-048 pour le Cabinet Durand et Associés, 5 400 € TTC${signe ? ", signé par le client" : ""}`
+            ? `Facture FAC-2026-031 pour le Cabinet Lefèvre Avocats, 5 400 € TTC${etat === "paye" ? ", payée après une relance" : ""}`
+            : `Devis DEV-2026-048 pour le Cabinet Lefèvre Avocats, 5 400 € TTC${signe ? ", signé par le client" : ""}`
         }
-        className="relative rounded-[0.5em] overflow-hidden"
+        className="relative rounded-[0.6em] overflow-hidden"
         style={{ backgroundColor: PAPIER, color: ENCRE, fontSize: "max(7px, 2.35cqw)", padding: "3.2em 3.4em 3em" }}
       >
         {/* En-tête : émetteur et pièce */}
@@ -67,7 +67,7 @@ export function DocumentDevis({ etat, className = "" }: { etat: EtatDocument; cl
           <div className="text-right" style={{ lineHeight: 1.35 }}>
             <div className="font-semibold tracking-[0.04em]" style={{ fontSize: "1.45em", lineHeight: 1.05 }}>{facture ? "FACTURE" : "DEVIS"}</div>
             <div className="tabular-nums" style={{ color: GRIS, fontSize: "0.85em", marginTop: "0.35em" }}>
-              {facture ? "FAC-2026-031, émise le 15/11/2026" : "DEV-2026-048, du 13/11/2026"}
+              {facture ? "FAC-2026-031, émise le 03/11/2026" : "DEV-2026-048, du 20/10/2026"}
             </div>
             <span
               className="inline-block font-semibold transition-colors duration-500"
@@ -88,7 +88,7 @@ export function DocumentDevis({ etat, className = "" }: { etat: EtatDocument; cl
           </div>
           <div style={{ fontSize: "0.85em", color: GRIS }}>
             <div style={{ fontSize: "0.9em", marginBottom: "0.2em" }}>Adressé à</div>
-            <div style={{ color: ENCRE, fontWeight: 600, fontSize: "1.1em" }}>Cabinet Durand et Associés</div>
+            <div style={{ color: ENCRE, fontWeight: 600, fontSize: "1.1em" }}>Cabinet Lefèvre Avocats</div>
             8 place Bellecour, 69002 Lyon
           </div>
         </div>
@@ -137,7 +137,7 @@ export function DocumentDevis({ etat, className = "" }: { etat: EtatDocument; cl
           }}
         >
           PAYÉE
-          <div className="font-medium tracking-normal" style={{ fontSize: "0.62em" }}>le 02/12/2026, par virement</div>
+          <div className="font-medium tracking-normal" style={{ fontSize: "0.62em" }}>le 12/11/2026, après une relance</div>
         </div>
         <div className="tabular-nums" style={{ width: "48%", fontSize: "0.92em" }}>
           <div className="flex justify-between" style={{ color: GRIS, padding: "0.25em 0" }}><span>Total HT</span><span>{euros(HT)}</span></div>
@@ -159,12 +159,12 @@ export function DocumentDevis({ etat, className = "" }: { etat: EtatDocument; cl
               </svg>
               <div className="absolute left-0 right-0 bottom-0" style={{ borderBottom: `1px solid ${FILET}` }} />
             </div>
-            <div className="whitespace-nowrap" style={{ marginTop: "0.4em", opacity: signe ? 1 : 0, transition: "opacity 0.6s ease" }}>Signé par Pierre Bernard le 14/11/2026 à 10 h 42</div>
+            <div className="whitespace-nowrap" style={{ marginTop: "0.4em", opacity: signe ? 1 : 0, transition: "opacity 0.6s ease" }}>Signé par Pierre Lefèvre le 21/10/2026 à 10 h 42</div>
           </div>
           <div className="text-right" style={{ fontSize: "0.82em", lineHeight: 1.45 }}>
             <div style={{ opacity: facture ? 1 : 0, transition: "opacity 0.6s ease" }}>
               <span className="inline-block font-semibold" style={{ padding: "0.3em 0.7em", borderRadius: "0.4em", backgroundColor: "#E4F1EA", color: VERT }}>Factur-X, EN 16931</span>
-              <div style={{ color: GRIS, marginTop: "0.5em" }}>Transmise par une plateforme agréée</div>
+              <div style={{ color: GRIS, marginTop: "0.5em" }}>Transmise par une plateforme agréée</div>
             </div>
           </div>
         </div>

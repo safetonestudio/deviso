@@ -13,9 +13,9 @@ import { planFeatures, proOnlyFeatures } from "@/lib/plans";
  */
 const COMMUNES = planFeatures("solo");
 const PRO_SEUL = proOnlyFeatures();
-const EN_AVANT = COMMUNES.slice(0, 4);
+const NB = "\u00a0";
 
-const BOUTON = "inline-flex items-center justify-center h-12 rounded-md text-[17px] font-semibold transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-500";
+const BOUTON = "inline-flex items-center justify-center h-12 rounded-lg text-[17px] font-semibold transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-500";
 
 function Ligne({ children }: { children: React.ReactNode }) {
   return (
@@ -32,21 +32,19 @@ export function TarifsTable() {
   const formules = [
     {
       nom: "Solo",
-      pour: "Pour travailler seul, avec une image pro et zéro administratif.",
+      pour: "Pour travailler seul, avec des documents soignés et ta gestion à jour.",
       prix: annuel ? "14,40" : "18",
-      note: annuel ? "Facturé 172,80 € par an" : "Sans engagement",
+      note: annuel ? "Facturé 172,80 € HT par an, soit 207,36 € TTC" : "Sans engagement, soit 21,60 € TTC",
       lien: "/signup?plan=solo",
-      plein: true,
-      lignes: EN_AVANT,
+      lignes: ["Toutes les fonctions de Deviso", "1 utilisateur" + NB + ": toi", "Ton expert-comptable invité gratuitement"],
     },
     {
       nom: "Pro",
-      pour: "Pour les petites entreprises et les équipes jusqu'à 5 personnes.",
+      pour: "Pour les petites entreprises qui travaillent à plusieurs.",
       prix: annuel ? "27,20" : "34",
-      note: annuel ? "Facturé 326,40 € par an" : "Sans engagement",
+      note: annuel ? "Facturé 326,40 € HT par an, soit 391,68 € TTC" : "Sans engagement, soit 40,80 € TTC",
       lien: "/signup?plan=pro",
-      plein: false,
-      lignes: ["Tout Solo, et en plus :", ...PRO_SEUL, "3 utilisateurs inclus, puis 5 € par utilisateur supplémentaire"],
+      lignes: ["Toutes les fonctions de Deviso", "3 utilisateurs inclus" + NB + ": toi et 2 collaborateurs, puis 5 € HT par mois et par personne", ...PRO_SEUL],
     },
   ];
 
@@ -54,10 +52,10 @@ export function TarifsTable() {
     <div>
       <div className="reveal flex flex-wrap items-end justify-between gap-8">
         <div className="max-w-[760px]">
-          <h2 className="text-[clamp(32px,3.4vw,52px)] leading-[1.06] font-semibold tracking-[-0.035em] text-ink">Tarifs simples</h2>
+          <h2 className="text-[clamp(30px,2.9vw,46px)] leading-[1.08] font-semibold tracking-[-0.035em] text-ink">Deux formules, une seule différence : l&apos;équipe.</h2>
           <p className="mt-5 text-[17px] sm:text-[20px] leading-relaxed text-gray-300">14 jours gratuits, sans carte bancaire, sans engagement.</p>
         </div>
-        <div className="inline-flex gap-1 p-1 rounded-md bg-ds-surface" role="group" aria-label="Périodicité de facturation">
+        <div className="inline-flex gap-1 p-1 rounded-lg bg-ds-surface" role="group" aria-label="Périodicité de facturation">
           {[
             { libelle: "Mensuel", valeur: false },
             { libelle: "Annuel, 20 % de moins", valeur: true },
@@ -67,7 +65,7 @@ export function TarifsTable() {
               type="button"
               onClick={() => setAnnuel(o.valeur)}
               aria-pressed={annuel === o.valeur}
-              className={`h-10 px-4 rounded-[6px] text-[14px] font-semibold transition-colors ${
+              className={`h-10 px-4 rounded-md text-[14px] font-semibold transition-colors ${
                 annuel === o.valeur ? "bg-ds-elevated text-ink" : "text-gray-400 hover:text-ink"
               }`}
             >
@@ -77,9 +75,9 @@ export function TarifsTable() {
         </div>
       </div>
 
-      <div className="mt-12 sm:mt-16 grid gap-2 lg:grid-cols-2 items-stretch">
+      <div className="mt-12 sm:mt-16 grid gap-6 lg:grid-cols-2 items-stretch">
         {formules.map((f) => (
-          <div key={f.nom} className="reveal rounded-lg bg-ds-surface p-7 sm:p-10 flex flex-col">
+          <div key={f.nom} className="reveal rounded-xl bg-ds-surface p-7 sm:p-10 flex flex-col">
             <h3 className="text-[24px] font-semibold tracking-[-0.02em] text-ink">{f.nom}</h3>
             <p className="mt-2 text-[17px] leading-relaxed text-gray-300 max-w-[40ch]">{f.pour}</p>
 
@@ -90,36 +88,29 @@ export function TarifsTable() {
             <p className="mt-2 text-[14px] text-gray-400">{f.note}</p>
 
             <ul className="mt-8 space-y-3.5 flex-1">
-              {f.lignes.map((x, i) =>
-                f.nom === "Pro" && i === 0 ? (
-                  <li key={x} className="text-[17px] font-semibold text-ink">{x}</li>
-                ) : (
-                  <Ligne key={x}>{x}</Ligne>
-                )
-              )}
+              {f.lignes.map((x) => (
+                <Ligne key={x}>{x}</Ligne>
+              ))}
             </ul>
 
             <Link
               href={f.lien}
               className={`mt-10 ${BOUTON} bg-indigo-600 hover:bg-indigo-700 text-on-accent`}
             >
-              Essayer {f.nom} 14 jours gratuitement
+              Essayer {f.nom} gratuitement
             </Link>
           </div>
         ))}
       </div>
 
-      <details className="group mt-2 rounded-lg bg-ds-surface">
-        <summary className="list-none [&::-webkit-details-marker]:hidden cursor-pointer flex items-center justify-between gap-4 px-7 sm:px-10 py-6 text-[17px] font-semibold text-ink">
-          Tout ce qui est compris dans les deux formules
-          <span className="shrink-0 text-[24px] leading-none text-gray-400 transition-transform group-open:rotate-45" aria-hidden="true">+</span>
-        </summary>
-        <ul className="px-7 sm:px-10 pb-10 grid gap-x-10 gap-y-3.5 sm:grid-cols-2 lg:grid-cols-3">
+      <div className="reveal mt-6 rounded-xl bg-ds-surface px-7 py-8 sm:px-10 sm:py-10">
+        <h3 className="text-[17px] font-semibold text-ink">Compris dans les deux formules</h3>
+        <ul className="mt-6 grid gap-x-10 gap-y-3.5 sm:grid-cols-2 lg:grid-cols-3">
           {COMMUNES.map((x) => (
             <Ligne key={x}>{x}</Ligne>
           ))}
         </ul>
-      </details>
+      </div>
     </div>
   );
 }
