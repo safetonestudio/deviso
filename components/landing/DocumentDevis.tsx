@@ -142,7 +142,7 @@ export function DocumentDevis({ etat, compact = false, className = "" }: { etat:
           }}
         >
           PAYÉE
-          <div className="font-medium tracking-normal" style={{ fontSize: "0.62em" }}>le 14/11/2026, après une relance</div>
+          <div className="font-medium tracking-normal" style={{ fontSize: "0.78em" }}>le 14/11/2026, après une relance</div>
         </div>
         <div className="tabular-nums" style={{ width: "48%", fontSize: "0.92em" }}>
           <div className="flex justify-between" style={{ color: GRIS, padding: "0.25em 0" }}><span>Total HT</span><span>{euros(HT)}</span></div>
@@ -220,10 +220,10 @@ export function FeuilleChiffres() {
             <div className="font-semibold" style={{ fontSize: "1.5em", marginTop: "0.2em" }}>En décembre</div>
           </div>
         </div>
-        <div className="mt-auto grid grid-cols-3 items-end" style={{ gap: "1.6em", height: "18em", paddingTop: "1em" }} aria-hidden="true">
+        <div className="mt-auto grid grid-cols-3 items-end" style={{ gap: "1.6em", height: "21em", paddingTop: "1em" }} aria-hidden="true">
           {MOIS.map(([mois, m]) => (
             <div key={mois} className="flex flex-col items-center h-full justify-end" style={{ gap: "0.5em" }}>
-              <div className="w-full" style={{ height: `${(Number(m) / 8400) * 80}%`, backgroundColor: VERT, opacity: 0.85, borderRadius: "0.3em 0.3em 0 0" }} />
+              <div className="w-full" style={{ height: `${(Number(m) / 8400) * 92}%`, backgroundColor: VERT, opacity: 0.85, borderRadius: "0.3em 0.3em 0 0" }} />
               <div className="text-center tabular-nums" style={{ fontSize: "0.9em", lineHeight: 1.35 }}><div style={{ color: ENCRE, fontWeight: 600 }}>{new Intl.NumberFormat("fr-FR").format(Number(m))}{NNB}€</div><div style={{ color: GRIS }}>{ABREGE[mois]}</div></div>
             </div>
           ))}

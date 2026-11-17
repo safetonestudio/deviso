@@ -148,8 +148,8 @@ export default function LandingPage() {
         {/* ── L'application : ce que le parcours ne montre pas ── */}
         <section id="fonctionnalites" className={`${CADRE} ${SECTION} scroll-mt-20`}>
           <div className="reveal max-w-[760px]">
-            <h2 className={H2}>Où en est ton activité, sans ouvrir un tableur.</h2>
-            <p className={`mt-5 ${LEAD}`}>Ventes, achats et catalogue au même endroit, à jour à chaque encaissement.</p>
+            <h2 className={H2}>Tes ventes, tes achats et tes prix, au même endroit.</h2>
+            <p className={`mt-5 ${LEAD}`}>Tout se met à jour à chaque encaissement, sans tableur.</p>
           </div>
           <div className="mt-12 sm:mt-16">
             <SlideFonctionnalites />
@@ -180,10 +180,9 @@ export default function LandingPage() {
                 </li>
               ))}
             </ol>
-            <ul className="lg:col-span-12 grid gap-6 sm:grid-cols-3 pt-8">
+            <ul className="lg:col-span-12 grid gap-6 sm:grid-cols-2 lg:grid-cols-3 pt-8">
               {[
                 ["Le format officiel", "Chaque facture est un Factur-X : un PDF lisible par ton client, qui porte aussi les données lues par les logiciels."],
-                ["La transmission faite pour toi", "Elle part par Super PDP, plateforme agréée par l'État. Tu l'actives une fois, depuis Deviso."],
                 ["Le secteur public aussi", "Tes factures aux administrations sont déposées pour toi sur Chorus Pro, le portail de l'État."],
               ].map(([t, d]) => (
                 <li key={t}>

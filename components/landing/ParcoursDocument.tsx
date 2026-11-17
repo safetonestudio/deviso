@@ -66,7 +66,7 @@ function Brief({ plein = false }: { plein?: boolean }) {
             <li
               key={l}
               className="flex justify-between gap-4 border-b border-ds-border pb-2.5 transition-[opacity,transform] duration-500"
-              style={{ opacity: ecrit ? 1 : 0, transform: ecrit ? "none" : "translateY(6px)", transitionDelay: ecrit ? `${150 + k * 180}ms` : "0ms" }}
+              style={{ opacity: ecrit ? 1 : 0.14, transitionDelay: ecrit ? `${150 + k * 180}ms` : "0ms" }}
             >
               <span className="text-gray-300">{l}</span>
               <span className="text-ink">{m}</span>
@@ -74,14 +74,14 @@ function Brief({ plein = false }: { plein?: boolean }) {
           ))}
           <li
             className="flex justify-between gap-4 text-gray-400 transition-opacity duration-500"
-            style={{ opacity: ecrit ? 1 : 0, transitionDelay: ecrit ? "800ms" : "0ms" }}
+            style={{ opacity: ecrit ? 1 : 0.14, transitionDelay: ecrit ? "800ms" : "0ms" }}
           >
-            <span>Total HT, puis TVA 20{"\u00a0"}%</span>
+            <span>Total HT + TVA 20{"\u00a0"}%</span>
             <span className="whitespace-nowrap">4 500,00{"\u202f"}€ + 900,00{"\u202f"}€</span>
           </li>
           <li
             className="flex justify-between gap-4 pt-1 font-semibold transition-opacity duration-500"
-            style={{ opacity: ecrit ? 1 : 0, transitionDelay: ecrit ? "900ms" : "0ms" }}
+            style={{ opacity: ecrit ? 1 : 0.14, transitionDelay: ecrit ? "900ms" : "0ms" }}
           >
             <span className="text-ink">Total TTC</span>
             <span className="text-ink whitespace-nowrap">5 400,00{"\u202f"}€</span>
@@ -119,7 +119,12 @@ export function ParcoursDocument({ intro }: { intro: ReactNode }) {
       },
       { rootMargin: "-45% 0px -45% 0px" }
     );
-    blocs.current.forEach((el) => el && obs.observe(el));
+    blocs.current.forEach((el) => {
+      if (!el) return;
+      const cible = el.querySelector<HTMLElement>("[data-cible]") ?? el;
+      cible.dataset.i = el.dataset.i;
+      obs.observe(cible);
+    });
     return () => obs.disconnect();
   }, []);
 
@@ -135,7 +140,7 @@ export function ParcoursDocument({ intro }: { intro: ReactNode }) {
       <ol className="lg:col-span-5 lg:pb-[42vh]">
         {/* Le haut de page : la promesse, et sur téléphone le brief dessous. */}
         <li ref={enregistrer(0)} data-i={0} className="pt-12 pb-16 sm:pt-16 lg:py-0 lg:min-h-(--haut-ecran) flex flex-col justify-center" style={{ ["--haut-ecran" as string]: "calc(100vh / var(--zoom, 1) - 80px)" }}>
-          <div className="relative z-10 xl:w-[122%]">{intro}</div>
+          <div data-cible className="relative z-10 xl:w-[122%]">{intro}</div>
           <div className="mt-10 lg:hidden">
             <Brief />
           </div>
@@ -145,7 +150,7 @@ export function ParcoursDocument({ intro }: { intro: ReactNode }) {
           const i = k + 1;
           return (
             <li key={e.titre} id={i === 1 ? "etapes" : undefined} ref={enregistrer(i)} data-i={i} className="scroll-mt-40 py-10 lg:py-0 lg:min-h-(--haut-etape) flex flex-col justify-center" style={{ ["--haut-etape" as string]: "calc(64vh / var(--zoom, 1))" }}>
-              <div className={`transition-opacity duration-500 ${i === actif ? "lg:opacity-100" : "lg:opacity-35"}`}>
+              <div data-cible className={`transition-opacity duration-500 ${i === actif ? "lg:opacity-100" : "lg:opacity-35"}`}>
                 <div className="mb-3 text-[14px] font-medium text-gray-500 tabular-nums">Étape {i} sur {ETAPES.length}</div>
                 <h3 className="text-[clamp(24px,2vw,30px)] leading-[1.15] font-semibold tracking-[-0.025em] text-ink">{e.titre}</h3>
                 <p className="mt-4 text-[17px] sm:text-[20px] leading-relaxed text-gray-300 max-w-[42ch]">{e.texte}</p>

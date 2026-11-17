@@ -53,7 +53,7 @@ export function TarifsTable() {
       prix: annuel ? "14,40" : "18",
       note: annuel ? "Facturé 172,80 € HT par an, soit 207,36 € TTC" : "Sans engagement, soit 21,60 € TTC",
       lien: "/signup?plan=solo",
-      lignes: ["Toutes les fonctions, sans limite", "1 utilisateur" + NB + ": toi"],
+      lignes: ["Toutes les fonctions, hors gestion d'équipe", "1 utilisateur" + NB + ": toi"],
     },
     {
       nom: "Pro",

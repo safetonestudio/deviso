@@ -6,7 +6,7 @@
 const QUESTIONS = [
   {
     q: "Que se passe-t-il à la fin de l'essai ?",
-    r: "Rien n'est débité sans ta carte. Si tu n'en enregistres pas, l'abonnement ne démarre pas, et tu peux toujours revenir t'abonner plus tard.",
+    r: "Aucun prélèvement : tant que tu n'enregistres pas de carte, l'abonnement ne démarre pas. Tu peux t'abonner plus tard, quand tu veux.",
   },
   {
     q: "Puis-je récupérer mes données ?",
@@ -21,8 +21,8 @@ const QUESTIONS = [
     r: "Oui, gratuitement et sans occuper de place dans ton équipe. Il consulte tout en lecture seule et récupère l'export FEC lui-même.",
   },
   {
-    q: "Qu'est-ce qui change avec la réforme de 2026 ?",
-    r: "Depuis septembre 2026, toute entreprise doit pouvoir recevoir des factures électroniques ; les petites entreprises et les indépendants devront aussi les émettre en septembre 2027. Deviso fait déjà les deux, plateforme comprise : rien à installer ni à payer en plus.",
+    q: "Puis-je facturer en anglais ou à l'étranger ?",
+    r: "Oui. Tes factures peuvent être rédigées en anglais pour tes clients étrangers, et tes ventes comme tes achats à l'international suivent les règles de TVA qui s'appliquent.",
   },
   {
     q: "Quelle différence entre Solo et Pro ?",

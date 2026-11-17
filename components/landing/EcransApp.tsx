@@ -92,7 +92,7 @@ function Factures() {
     <>
       <Entete titre="Factures" sous="Chaque facture et son statut" />
       <div className="mt-[1.2em] grid grid-cols-2 @[420px]:grid-cols-3 gap-[0.6em] [&>*:last-child]:col-span-2 @[420px]:[&>*:last-child]:col-span-1">
-        <Tuile label="Encaissé" valeur={`64 300${P}`} />
+        <Tuile label="Encaissé en 2026, HT" valeur={`64 300${P}`} />
         <Tuile label="En attente" valeur={`7 200${P}`} />
         <Tuile label="Relancées" valeur="1" ton="ambre" />
       </div>
@@ -118,6 +118,7 @@ function Recues() {
       <div className="mt-[0.8em] grid gap-[0.45em]">
         <Ligne a="Hébergement Cloud FR" b="Échéance le 14/12" c={<Puce ton="ambre">À vérifier</Puce>} d={`106,80${P}`} />
         <Ligne a="Imprimerie Gutenberg" b="Échéance le 10/12" c={<Puce ton="bleu">Reçue</Puce>} d={`576,00${P}`} />
+        <Ligne a="Assurance Pro Atlantique" b="Réglée le 05/11" c={<Puce ton="vert">Payée</Puce>} d={`234,00${P}`} />
         <Ligne a="Fournitures Léon" b="Montant contesté" c={<Puce ton="gris">Refusée</Puce>} d={`1 488,00${P}`} />
       </div>
     </>
