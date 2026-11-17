@@ -197,7 +197,7 @@ export function FeuilleChiffres() {
       <div
         data-ui
         role="img"
-        aria-label="Chiffres du 3e trimestre : 18 400 € de chiffre d'affaires encaissé, 3 680 € de TVA collectée, prochaine déclaration de TVA en décembre"
+        aria-label="Chiffres du 3e trimestre : 18 400 € de chiffre d'affaires encaissé, 3 680 € de TVA collectée, déclaration de TVA prête en octobre"
         className="rounded-[0.6em] flex flex-col lg:aspect-[555/696]"
         style={{ backgroundColor: PAPIER, color: ENCRE, fontSize: "max(10.5px, 2.35cqw)", padding: "clamp(1.4em, 7.5cqw, 3.2em) clamp(1.2em, 8cqw, 3.4em)" }}
       >
@@ -216,8 +216,8 @@ export function FeuilleChiffres() {
             <div className="font-semibold tabular-nums" style={{ fontSize: "1.5em", marginTop: "0.2em" }}>3 680 €</div>
           </div>
           <div style={{ backgroundColor: "#F6EBD9", borderRadius: "0.5em", padding: "1em 1.1em" }}>
-            <div style={{ color: "#7A4E12", fontSize: "0.85em" }}>Prochaine déclaration de TVA</div>
-            <div className="font-semibold" style={{ fontSize: "1.5em", marginTop: "0.2em" }}>En décembre</div>
+            <div style={{ color: "#7A4E12", fontSize: "0.85em" }}>Déclaration de TVA</div>
+            <div className="font-semibold" style={{ fontSize: "1.5em", marginTop: "0.2em" }}>Prête en octobre</div>
           </div>
         </div>
         <div className="mt-auto grid grid-cols-3 items-end" style={{ gap: "1.6em", height: "21em", paddingTop: "1em" }} aria-hidden="true">
@@ -249,8 +249,8 @@ export function ApercuChiffres() {
           <div className="font-semibold tabular-nums">3 680{NB}€</div>
         </div>
         <div className="rounded-lg px-3 py-2.5" style={{ backgroundColor: "#F6EBD9" }}>
-          <div className="text-[13px]" style={{ color: "#7A4E12" }}>Prochaine déclaration</div>
-          <div className="font-semibold">En décembre</div>
+          <div className="text-[13px]" style={{ color: "#7A4E12" }}>Déclaration de TVA</div>
+          <div className="font-semibold">Prête en octobre</div>
         </div>
       </div>
     </div>

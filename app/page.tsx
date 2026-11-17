@@ -100,8 +100,9 @@ export default function LandingPage() {
           <div className="flex items-center justify-end gap-2">
             <Link href="/login" className="hidden sm:inline-flex items-center h-10 px-4 rounded-lg text-[14px] font-semibold text-gray-300 hover:text-ink transition-colors">Connexion</Link>
             <Link href="/signup" className="inline-flex items-center h-10 px-4 rounded-lg bg-indigo-600 hover:bg-indigo-700 text-on-accent text-[14px] font-semibold transition-colors"><span className="sm:hidden">Essai gratuit</span><span className="hidden sm:inline">Essayer 14 jours gratuitement</span></Link>
-            <details className="lg:hidden relative">
-              <summary className="list-none [&::-webkit-details-marker]:hidden h-10 px-4 rounded-lg bg-ds-surface text-[14px] font-semibold text-ink flex items-center cursor-pointer">Menu</summary>
+            <details className="group lg:hidden relative">
+              <summary className="list-none [&::-webkit-details-marker]:hidden h-10 px-4 rounded-lg bg-ds-surface text-[14px] font-semibold text-ink flex items-center cursor-pointer"><span className="group-open:hidden">Menu</span><span className="hidden group-open:inline">Fermer</span></summary>
+              <div aria-hidden="true" className="fixed inset-x-0 top-16 sm:top-[72px] bottom-0 bg-ds-bg opacity-80" />
               <div className="absolute right-0 top-full mt-2 z-50 w-64 rounded-xl bg-ds-elevated p-2 shadow-ds-leve">
                 {[...LIENS, ["/login", "Connexion"] as const].map(([href, nom]) => (
                   <Link key={href} href={href} className="block px-3 py-3 rounded-lg text-[17px] font-medium text-ink hover:bg-ds-surface">{nom}</Link>
@@ -149,7 +150,7 @@ export default function LandingPage() {
         <section id="fonctionnalites" className={`${CADRE} ${SECTION} scroll-mt-20`}>
           <div className="reveal max-w-[760px]">
             <h2 className={H2}>Tes ventes, tes achats et tes prix, au même endroit.</h2>
-            <p className={`mt-5 ${LEAD}`}>Ce que tu vends, ce que tu achètes et tes prix, sans un seul tableur.</p>
+            <p className={`mt-5 ${LEAD}`}>Tes factures, celles de tes fournisseurs et ton catalogue se répondent&nbsp;: rien à ressaisir, rien à recopier dans un tableur.</p>
           </div>
           <div className="mt-12 sm:mt-16">
             <SlideFonctionnalites />
@@ -232,7 +233,7 @@ export default function LandingPage() {
           <div className="reveal rounded-xl bg-ds-surface px-6 py-14 sm:px-12 sm:py-20 lg:px-16 lg:py-24 grid gap-8 lg:grid-cols-12 lg:items-center">
             <div className="lg:col-span-7">
               <h2 id="titre-action" className={H2}>Essaie Deviso sur ton prochain devis.</h2>
-              <p className={`mt-5 ${LEAD}`}>Essai gratuit de 14 jours, sans carte bancaire, résiliable à tout moment.</p>
+              <p className={`mt-5 ${LEAD}`}>Essai gratuit de 14 jours, sans carte bancaire. Rien ne se déclenche à la fin.</p>
             </div>
             <div className="lg:col-span-5 flex flex-col sm:flex-row lg:justify-end gap-3">
               <Link href="/signup" className={BOUTON_PLEIN}>Essayer 14 jours gratuitement</Link>

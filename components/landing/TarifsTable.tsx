@@ -83,7 +83,7 @@ export function TarifsTable() {
               onClick={() => setAnnuel(o.valeur)}
               aria-pressed={annuel === o.valeur}
               className={`h-10 px-4 rounded-md text-[14px] font-semibold transition-colors ${
-                annuel === o.valeur ? "bg-ds-elevated text-ink" : "text-gray-400 hover:text-ink"
+                annuel === o.valeur ? "bg-ink/15 text-ink" : "text-gray-400 hover:text-ink"
               }`}
             >
               {o.libelle}

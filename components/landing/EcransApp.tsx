@@ -43,9 +43,9 @@ function Tuile({ label, valeur, ton }: { label: string; valeur: string; ton?: Pa
 
 function Ligne({ a, b, c, d }: { a: string; b: string; c: React.ReactNode; d: string }) {
   return (
-    <div className="flex items-center justify-between gap-[1em] rounded-[0.6em] bg-ds-elevated px-[1em] py-[0.75em]">
+    <div className="min-w-0 w-full flex items-center justify-between gap-[1em] rounded-[0.6em] bg-ds-elevated px-[1em] py-[0.75em]">
       <div className="min-w-0">
-        <div className="text-ink font-medium truncate">{a}</div>
+        <div className="text-ink font-medium @[420px]:truncate">{a}</div>
         <div className="text-[0.85em] text-gray-400 tabular-nums truncate">{b}</div>
       </div>
       <div className="flex flex-col-reverse items-end gap-[0.3em] @[420px]:flex-row @[420px]:items-center @[420px]:gap-[0.8em] shrink-0">
@@ -78,7 +78,7 @@ function Tableau() {
       <div className="mt-[0.8em] grid grid-cols-1 @[420px]:grid-cols-3 gap-[0.45em] @[420px]:gap-[0.6em]">
         <Tuile label="À encaisser" valeur={`7 200${P}`} />
         <Tuile label="Devis en attente" valeur={`3 200${P}`} />
-        <Tuile label="TVA à déclarer" valeur="En décembre" ton="ambre" />
+        <Tuile label="Prochaine TVA" valeur="En janvier" ton="ambre" />
       </div>
       <div className="mt-[0.8em] grid gap-[0.45em]">
         <Ligne a="Cabinet Lefèvre Avocats" b="Payée le 14/11" c={<Puce ton="vert">Payée</Puce>} d={`5 400,00${P}`} />
@@ -133,6 +133,7 @@ function Catalogue() {
         <Ligne a="Audit et arborescence" b="Utilisé dans 9 devis" c={<Puce ton="gris">Forfait</Puce>} d={`500,00${P}`} />
         <Ligne a="Maquette d'une page" b="Utilisé dans 14 devis" c={<Puce ton="gris">À la page</Puce>} d={`280,00${P}`} />
         <Ligne a="Intégration et adaptation mobile" b="Utilisé dans 8 devis" c={<Puce ton="gris">Forfait</Puce>} d={`1 800,00${P}`} />
+        <Ligne a="Atelier de prise en main" b="Utilisé dans 3 devis" c={<Puce ton="gris">À la journée</Puce>} d={`450,00${P}`} />
         <Ligne a="Formulaire de contact et RGPD" b="Utilisé dans 6 devis" c={<Puce ton="gris">Forfait</Puce>} d={`800,00${P}`} />
       </div>
     </>
