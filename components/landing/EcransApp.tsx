@@ -62,7 +62,7 @@ function Tableau() {
       <Entete titre="Tableau de bord" sous="Lundi 16 novembre" />
       <div className="mt-[1.2em] rounded-[0.6em] bg-ds-elevated px-[1em] py-[0.85em]">
         <div className="text-[0.85em] text-gray-400">Cabinet Martel, ton expert-comptable</div>
-        <div className="mt-[0.2em] text-ink">Il manque le justificatif de la facture FAC-2026-027. Peux-tu l&apos;ajouter&nbsp;?</div>
+        <div className="mt-[0.2em] text-ink">Le paiement de FAC-2026-027 n&apos;est pas pointé. Tu l&apos;as bien reçu&nbsp;?</div>
       </div>
       <div className="mt-[0.8em] rounded-[0.6em] bg-indigo-500/10 px-[1.1em] py-[1em]">
         <div className="text-[0.85em] text-gray-300">Chiffre d&apos;affaires encaissé, 2026</div>
@@ -76,7 +76,7 @@ function Tableau() {
         </div>
       </div>
       <div className="mt-[0.8em] grid grid-cols-1 @[420px]:grid-cols-3 gap-[0.45em] @[420px]:gap-[0.6em]">
-        <Tuile label="À encaisser" valeur={`7 200${P}`} />
+        <Tuile label="À encaisser, TTC" valeur={`7 200${P}`} />
         <Tuile label="Devis en attente" valeur={`3 200${P}`} />
         <Tuile label="Prochaine TVA" valeur="En janvier" ton="ambre" />
       </div>
@@ -93,7 +93,7 @@ function Factures() {
       <Entete titre="Factures" sous="Chaque facture et son statut" />
       <div className="mt-[1.2em] grid grid-cols-1 @[420px]:grid-cols-3 gap-[0.45em] @[420px]:gap-[0.6em]">
         <Tuile label="Encaissé 2026, HT" valeur={`64 300${P}`} />
-        <Tuile label="En attente" valeur={`7 200${P}`} />
+        <Tuile label="En attente, TTC" valeur={`7 200${P}`} />
         <Tuile label="Relancées" valeur="1" ton="ambre" />
       </div>
       <div className="mt-[0.8em] grid gap-[0.45em]">
@@ -116,8 +116,8 @@ function Recues() {
         <Tuile label="À vérifier" valeur="1" ton="ambre" />
       </div>
       <div className="mt-[0.8em] grid gap-[0.45em]">
-        <Ligne a="Hébergement Cloud FR" b="Échéance le 14/12" c={<Puce ton="ambre">À vérifier</Puce>} d={`106,80${P}`} />
         <Ligne a="Imprimerie Gutenberg" b="Échéance le 10/12" c={<Puce ton="bleu">Reçue</Puce>} d={`576,00${P}`} />
+        <Ligne a="Hébergement Cloud FR" b="Échéance le 14/12" c={<Puce ton="ambre">À vérifier</Puce>} d={`106,80${P}`} />
         <Ligne a="Assurance Pro Atlantique" b="Réglée le 05/11" c={<Puce ton="vert">Payée</Puce>} d={`234,00${P}`} />
         <Ligne a="Fournitures Léon" b="Montant contesté" c={<Puce ton="gris">Refusée</Puce>} d={`1 488,00${P}`} />
       </div>

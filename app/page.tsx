@@ -7,6 +7,7 @@ import { ParcoursDocument } from "@/components/landing/ParcoursDocument";
 import { SlideFonctionnalites } from "@/components/landing/SlideFonctionnalites";
 import { PourquoiDeviso } from "@/components/landing/PourquoiDeviso";
 import { FaqAccueil } from "@/components/landing/FaqAccueil";
+import { MenuMobile } from "@/components/landing/MenuMobile";
 import { TarifsTable } from "@/components/landing/TarifsTable";
 import { ModeNuit } from "@/components/landing/ModeNuit";
 import { policesApp } from "@/app/polices-app";
@@ -100,15 +101,7 @@ export default function LandingPage() {
           <div className="flex items-center justify-end gap-2">
             <Link href="/login" className="hidden sm:inline-flex items-center h-10 px-4 rounded-lg text-[14px] font-semibold text-gray-300 hover:text-ink transition-colors">Connexion</Link>
             <Link href="/signup" className="inline-flex items-center h-10 px-4 rounded-lg bg-indigo-600 hover:bg-indigo-700 text-on-accent text-[14px] font-semibold transition-colors"><span className="sm:hidden">Essai gratuit</span><span className="hidden sm:inline">Essayer 14 jours gratuitement</span></Link>
-            <details className="group lg:hidden relative">
-              <summary className="list-none [&::-webkit-details-marker]:hidden h-10 px-4 rounded-lg bg-ds-surface text-[14px] font-semibold text-ink flex items-center cursor-pointer"><span className="group-open:hidden">Menu</span><span className="hidden group-open:inline">Fermer</span></summary>
-              <div aria-hidden="true" className="fixed inset-x-0 top-16 sm:top-[72px] bottom-0 bg-ds-bg opacity-80" />
-              <div className="absolute right-0 top-full mt-2 z-50 w-64 rounded-xl bg-ds-elevated p-2 shadow-ds-leve">
-                {[...LIENS, ["/login", "Connexion"] as const].map(([href, nom]) => (
-                  <Link key={href} href={href} className="block px-3 py-3 rounded-lg text-[17px] font-medium text-ink hover:bg-ds-surface">{nom}</Link>
-                ))}
-              </div>
-            </details>
+            <MenuMobile liens={[...LIENS, ["/login", "Connexion"] as const]} />
           </div>
         </div>
       </header>
@@ -163,8 +156,8 @@ export default function LandingPage() {
             <div className="lg:col-span-8">
               <h2 id="titre-reforme" className="text-[clamp(28px,2.6vw,40px)] leading-[1.1] font-semibold tracking-[-0.035em]">La facture électronique, déjà en place.</h2>
               <p className="mt-5 text-[17px] sm:text-[20px] leading-relaxed max-w-[56ch]">
-                Toute entreprise doit désormais pouvoir recevoir des factures électroniques, et les petites entreprises devront
-                aussi les émettre. Avec Deviso, tu es prêt aux deux dates, sans rien installer.
+                Deviso reçoit déjà les factures électroniques de tes fournisseurs et émet les tiennes par la plateforme agréée.
+                Quand ton tour viendra, tu n&apos;auras rien à changer.
               </p>
               <Link href="/conformite" className="mt-6 inline-flex items-center gap-2 text-[17px] font-semibold underline decoration-ink/40 underline-offset-4 hover:decoration-ink transition-colors">
                 Comprendre la réforme <span aria-hidden="true">→</span>
@@ -181,7 +174,7 @@ export default function LandingPage() {
                 ))}
               </ul>
             </div>
-            <ol className="lg:col-span-4 lg:col-start-9 grid gap-4 self-start" aria-label="Calendrier de la réforme">
+            <ol className="lg:col-span-4 lg:col-start-9 grid gap-4 self-center" aria-label="Calendrier de la réforme">
               {[
                 ["Septembre 2026", "Toute entreprise doit pouvoir recevoir des factures électroniques."],
                 ["Septembre 2027", "Les petites entreprises et les indépendants doivent aussi les émettre."],

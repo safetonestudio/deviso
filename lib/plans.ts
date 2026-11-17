@@ -42,7 +42,7 @@ export const FEATURES: Feature[] = [
   { id: "facturesAnglais", label: "Factures en anglais pour tes clients étrangers",  plans: ["solo", "pro"], show: true },
   { id: "recurring",      label: "Factures récurrentes, acompte et solde",         plans: ["solo", "pro"], show: true },
   { id: "chorusPro",      label: "Factures aux administrations, déposées sur Chorus Pro",         plans: ["solo", "pro"], show: true },
-  { id: "urssafWidget",   label: "Chiffre d'affaires, TVA et échéances suivis",         plans: ["solo", "pro"], show: true },
+  { id: "urssafWidget",   label: "Suivi du chiffre d'affaires, de la TVA et des échéances",         plans: ["solo", "pro"], show: true },
   { id: "fecExport",      label: "Export comptable officiel (FEC)",                           plans: ["solo", "pro"], show: true },
   { id: "noBranding",     label: "Aucune mention Deviso sur tes documents",         plans: ["solo", "pro"], show: true },
   { id: "historyUnlimited", label: "Historique et exports illimités",              plans: ["solo", "pro"], show: true },

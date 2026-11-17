@@ -30,7 +30,7 @@ const LIGNES_BRIEF: [string, string][] = [
   ["Formulaire de contact et RGPD", "800,00\u00a0€"],
 ];
 
-const BRIEF = "Refonte du site vitrine d'un cabinet d'avocats à Lyon : cinq pages, formulaire de contact, mise en ligne. Délai de trois semaines.";
+const BRIEF = "Refonte du site vitrine d'un cabinet d'avocats à Lyon\u00a0: cinq pages, formulaire de contact, mise en ligne. Délai de trois semaines.";
 
 /** Le brief, qui s'écrit une fois au chargement (immobile si animations réduites). */
 function Brief({ plein = false }: { plein?: boolean }) {
