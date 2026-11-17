@@ -69,13 +69,13 @@ export function TarifsTable() {
     <div>
       <div className="reveal flex flex-wrap items-end justify-between gap-8">
         <div className="max-w-[760px]">
-          <h2 className="text-[clamp(30px,2.9vw,46px)] leading-[1.08] font-semibold tracking-[-0.035em] text-ink">Deux formules, une seule différence : l&apos;équipe.</h2>
+          <h2 className="text-[clamp(28px,2.6vw,40px)] leading-[1.1] font-semibold tracking-[-0.035em] text-ink">Deux formules, une seule différence : l&apos;équipe.</h2>
           <p className="mt-5 text-[17px] sm:text-[20px] leading-relaxed text-gray-300">14 jours d&apos;essai complet, puis tu choisis.</p>
         </div>
         <div className="grid grid-cols-2 w-full sm:w-auto sm:inline-grid gap-1 p-1 rounded-lg bg-ds-surface" role="group" aria-label="Périodicité de facturation">
           {[
             { libelle: "Mensuel", valeur: false },
-            { libelle: "Annuel, 20 % de moins", valeur: true },
+            { libelle: "Annuel, −20 %", valeur: true },
           ].map((o) => (
             <button
               key={o.libelle}

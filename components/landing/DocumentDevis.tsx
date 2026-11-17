@@ -35,7 +35,7 @@ const LIGNES: [string, string, number][] = [
 ];
 const HT = LIGNES.reduce((s, l) => s + l[2], 0);
 const TVA = Math.round(HT * 0.2);
-const euros = (n: number) => `${new Intl.NumberFormat("fr-FR").format(n)},00 €`;
+const euros = (n: number) => `${new Intl.NumberFormat("fr-FR").format(n)},00\u202f€`;
 
 export function DocumentDevis({ etat, compact = false, className = "" }: { etat: EtatDocument; compact?: boolean; className?: string }) {
   const facture = etat === "facture" || etat === "paye";
@@ -185,6 +185,8 @@ export function DocumentDevis({ etat, compact = false, className = "" }: { etat:
   );
 }
 
+const MOIS: [string, number][] = [["Juillet", 5900], ["Août", 4100], ["Septembre", 8400]];
+
 /** Feuille des chiffres : même papier, même gabarit que le document, pour que
     la dernière étape ne change pas d'échelle. */
 export function FeuilleChiffres() {
@@ -193,14 +195,14 @@ export function FeuilleChiffres() {
       <div
         data-ui
         role="img"
-        aria-label="Chiffres du 4e trimestre : 18 400 € de chiffre d'affaires encaissé, 3 680 € de TVA collectée, déclaration de TVA de décembre à déposer en janvier"
-        className="rounded-[0.6em] flex flex-col aspect-[555/696]"
+        aria-label="Chiffres du 3e trimestre : 18 400 € de chiffre d'affaires encaissé, 3 680 € de TVA collectée, prochaine déclaration de TVA en décembre"
+        className="rounded-[0.6em] flex flex-col lg:aspect-[555/696]"
         style={{ backgroundColor: PAPIER, color: ENCRE, fontSize: "max(10.5px, 2.35cqw)", padding: "clamp(1.4em, 7.5cqw, 3.2em) clamp(1.2em, 8cqw, 3.4em)" }}
       >
         <div className="flex items-start justify-between" style={{ gap: "2em" }}>
           <div style={{ lineHeight: 1.35 }}>
             <div className="font-semibold" style={{ fontSize: "1.05em" }}>Studio Durand</div>
-            <div style={{ color: GRIS, fontSize: "0.85em" }}>4ᵉ trimestre 2026</div>
+            <div style={{ color: GRIS, fontSize: "0.85em" }}>3ᵉ trimestre 2026</div>
           </div>
           <div className="font-semibold tracking-[0.04em]" style={{ fontSize: "1.45em", lineHeight: 1.05 }}>CHIFFRES</div>
         </div>
@@ -212,13 +214,13 @@ export function FeuilleChiffres() {
             <div className="font-semibold tabular-nums" style={{ fontSize: "1.5em", marginTop: "0.2em" }}>3 680 €</div>
           </div>
           <div style={{ backgroundColor: "#F6EBD9", borderRadius: "0.5em", padding: "1em 1.1em" }}>
-            <div style={{ color: "#7A4E12", fontSize: "0.85em" }}>Déclaration de TVA</div>
-            <div className="font-semibold" style={{ fontSize: "1.5em", marginTop: "0.2em" }}>En janvier</div>
+            <div style={{ color: "#7A4E12", fontSize: "0.85em" }}>Prochaine déclaration de TVA</div>
+            <div className="font-semibold" style={{ fontSize: "1.5em", marginTop: "0.2em" }}>En décembre</div>
           </div>
         </div>
         <table className="w-full tabular-nums" style={{ marginTop: "2.4em", borderCollapse: "collapse", fontSize: "0.92em" }}>
           <tbody>
-            {[["Octobre", 6100], ["Novembre", 5900], ["Décembre", 6400]].map(([mois, m]) => (
+            {MOIS.map(([mois, m]) => (
               <tr key={mois}>
                 <td style={{ padding: "0.7em 0", borderBottom: `1px solid ${FILET}`, color: GRIS }}>{mois}</td>
                 <td className="text-right font-medium" style={{ padding: "0.7em 0", borderBottom: `1px solid ${FILET}` }}>{euros(Number(m))}</td>
@@ -226,8 +228,13 @@ export function FeuilleChiffres() {
             ))}
           </tbody>
         </table>
-        <div className="mt-auto" style={{ borderTop: `1px solid ${FILET}`, paddingTop: "1em", color: GRIS, fontSize: "0.85em", lineHeight: 1.5 }}>
-          Calculé à partir de tes encaissements, selon ton statut.
+        <div className="mt-auto grid grid-cols-3 items-end" style={{ gap: "1.2em", height: "6.5em", paddingTop: "1.6em" }} aria-hidden="true">
+          {MOIS.map(([mois, m]) => (
+            <div key={mois} className="flex flex-col items-center" style={{ gap: "0.4em" }}>
+              <div className="w-full" style={{ height: `${(Number(m) / 8400) * 4}em`, backgroundColor: VERT, opacity: 0.85, borderRadius: "0.3em 0.3em 0 0" }} />
+              <div style={{ color: GRIS, fontSize: "0.8em" }}>{String(mois).slice(0, 4)}.</div>
+            </div>
+          ))}
         </div>
       </div>
     </div>
@@ -252,7 +259,7 @@ export function ApercuEtat({ etat }: { etat: EtatDocument }) {
         {etat === "devis" && (
           <div className="w-full space-y-1.5 tabular-nums">
             {LIGNES.map(([l, , m]) => (
-              <div key={l} className="flex justify-between gap-3"><span>{l}</span><span>{euros(m)}</span></div>
+              <div key={l} className="flex justify-between gap-3"><span>{l}</span><span className="whitespace-nowrap">{euros(m)}</span></div>
             ))}
           </div>
         )}
@@ -279,15 +286,19 @@ export function ApercuEtat({ etat }: { etat: EtatDocument }) {
         {etat !== "devis" && (
           <div className="text-right tabular-nums">
             <div className="text-[13px]" style={{ color: GRIS }}>Total TTC</div>
-            <div className="font-semibold text-[17px]">{euros(HT + TVA)}</div>
+            <div className="font-semibold text-[17px] whitespace-nowrap">{euros(HT + TVA)}</div>
           </div>
         )}
       </div>
-      {etat === "devis" && (
-        <div className="mt-3 pt-3 flex justify-between font-semibold tabular-nums" style={{ borderTop: `1.5px solid ${ENCRE}` }}>
-          <span>Total TTC</span><span>{euros(HT + TVA)}</span>
+      {etat === "devis" && (<>
+        <div className="mt-3 space-y-1 tabular-nums text-[13px]" style={{ color: GRIS }}>
+          <div className="flex justify-between"><span>Total HT</span><span className="whitespace-nowrap">{euros(HT)}</span></div>
+          <div className="flex justify-between"><span>TVA 20{NB}%</span><span className="whitespace-nowrap">{euros(TVA)}</span></div>
         </div>
-      )}
+        <div className="mt-2 pt-2 flex justify-between font-semibold tabular-nums" style={{ borderTop: `1.5px solid ${ENCRE}` }}>
+          <span>Total TTC</span><span className="whitespace-nowrap">{euros(HT + TVA)}</span>
+        </div>
+      </>)}
     </div>
   );
 }

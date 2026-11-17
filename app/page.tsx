@@ -14,7 +14,7 @@ import { policesApp } from "@/app/polices-app";
 export const metadata: Metadata = {
   title: "Deviso, logiciel de devis et factures pour indépendants et petites entreprises",
   description:
-    "Créez vos devis en 30 secondes avec l'IA, facturez en Factur-X (norme 2026) via une plateforme agréée, relances automatiques, chiffre d'affaires, TVA et échéances suivis pour vous. Essai gratuit 14 jours.",
+    "Tes devis rédigés en 30 secondes, tes factures conformes 2026 envoyées par une plateforme agréée comprise dans l'abonnement, tes relances automatiques. Pour indépendants et petites entreprises. Essai gratuit 14 jours, sans carte.",
   alternates: {
     canonical: "https://getdeviso.fr",
   },
@@ -86,7 +86,7 @@ export default function LandingPage() {
       <Apparitions />
 
       {/* ── Barre ── */}
-      <header className="sticky top-0 z-40 bg-ds-bg">
+      <header className="sticky top-0 z-40 bg-ds-bg border-b border-ink/5">
         <div className={`${CADRE} grid grid-cols-[1fr_auto] lg:grid-cols-[1fr_auto_1fr] items-center gap-4 h-16 sm:h-[72px]`}>
           <Link href="/" aria-label="Deviso, accueil" className="flex items-center gap-2.5">
             <span className="w-7 h-7 rounded-md bg-indigo-600 text-on-accent grid place-items-center font-semibold text-[14px]" aria-hidden="true">D</span>
@@ -122,14 +122,14 @@ export default function LandingPage() {
             intro={
               <div>
                 <h1 className="text-[clamp(29px,4.1vw,64px)] leading-[1.04] font-semibold tracking-[-0.04em] text-ink">
-                  <span className="block">Tes devis rédigés,</span>
-                  <span className="block">tes factures conformes,</span>
-                  <span className="block">tes relances envoyées.</span>
+                  <span className="block xl:whitespace-nowrap">Tes devis rédigés,</span>
+                  <span className="block xl:whitespace-nowrap">tes factures conformes,</span>
+                  <span className="block xl:whitespace-nowrap">tes relances envoyées.</span>
                 </h1>
                 <p className={`mt-6 max-w-[48ch] ${LEAD}`}>
-                  Pour les indépendants et les petites entreprises, en micro, au réel ou en société. Deviso rédige tes devis en
-                  30&nbsp;secondes, les fait signer et relance tes clients. Tes factures partent par une plateforme agréée par
-                  l&apos;État, comprise dans l&apos;abonnement.
+                  Pour les indépendants et les petites entreprises, de la micro à la société. Deviso rédige tes devis, les fait
+                  signer et relance tes clients. Tes factures partent par une plateforme agréée par l&apos;État, déjà comprise dans
+                  l&apos;abonnement&nbsp;: rien à brancher, rien à payer en plus.
                 </p>
                 <div className="mt-8 flex flex-col sm:flex-row gap-3">
                   <Link href="/signup" className={BOUTON_PLEIN}>Essayer 14 jours gratuitement</Link>
@@ -149,8 +149,8 @@ export default function LandingPage() {
         {/* ── L'application : ce que le parcours ne montre pas ── */}
         <section id="fonctionnalites" className={`${CADRE} ${SECTION} scroll-mt-20`}>
           <div className="reveal max-w-[760px]">
-            <h2 className={H2}>Toute ta gestion, au même endroit.</h2>
-            <p className={`mt-5 ${LEAD}`}>L&apos;application telle qu&apos;elle est, pas une maquette&nbsp;: ton tableau de bord, tes factures, celles de tes fournisseurs et ton catalogue.</p>
+            <h2 className={H2}>Ce que tu ouvres chaque matin.</h2>
+            <p className={`mt-5 ${LEAD}`}>Ce que tu as encaissé, ce qui t&apos;attend, ce que tes fournisseurs t&apos;ont envoyé, et le catalogue dont l&apos;IA se sert pour chiffrer.</p>
           </div>
           <div className="mt-12 sm:mt-16">
             <SlideFonctionnalites />
@@ -184,7 +184,7 @@ export default function LandingPage() {
             <ul className="lg:col-span-12 grid gap-6 sm:grid-cols-3 pt-8">
               {[
                 ["Le format officiel", "Chaque facture est un Factur-X : un PDF lisible par ton client, qui porte aussi les données lues par les logiciels."],
-                ["La transmission faite pour toi", "Elle part par Super PDP, plateforme agréée par l'État, comprise dans ton abonnement. Tu l'actives une fois, depuis Deviso."],
+                ["La transmission faite pour toi", "Elle part par Super PDP, plateforme agréée par l'État. Tu l'actives une fois, depuis Deviso."],
                 ["Le secteur public aussi", "Tes factures aux administrations sont déposées pour toi sur Chorus Pro, le portail de l'État."],
               ].map(([t, d]) => (
                 <li key={t}>

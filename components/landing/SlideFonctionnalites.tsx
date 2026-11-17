@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import Image from "next/image";
+import { EcranApp } from "@/components/landing/EcransApp";
 
 /**
  * Fonctionnalités de la page d'accueil, en une seule section qui défile :
@@ -10,11 +10,12 @@ import Image from "next/image";
  * L'écran change toutes les 6 secondes, ou au clic. Le défilement s'arrête
  * au survol, après un clic, et si le visiteur a demandé moins d'animations.
  *
- * Les écrans sont de vraies captures de l'application (compte de démo).
+ * Les écrans sont des aperçus composés en HTML (components/landing/EcransApp),
+ * lisibles à toute taille et cohérents avec le parcours.
  */
 const DIAPOS = [
-  { cle: "tableau", titre: "Ton tableau de bord", texte: "Chiffre d'affaires encaissé, seuils, échéances et messages de ton comptable, en un coup d'œil.", alt: "Le tableau de bord de Deviso : message de l'expert-comptable, chiffre d'affaires encaissé et seuil de TVA" },
-  { cle: "factures", titre: "Toutes tes factures", texte: "Encaissé, en attente, à transmettre : chaque facture et son statut, avec l'export FEC à portée de clic.", alt: "La liste des factures de Deviso, avec les totaux encaissés et en attente" },
+  { cle: "tableau", titre: "Ton tableau de bord", texte: "Ce que tu as encaissé, ce qui t'attend et les messages de ton comptable, en un coup d'œil.", alt: "Le tableau de bord de Deviso : message de l'expert-comptable, chiffre d'affaires encaissé et seuil de TVA" },
+  { cle: "factures", titre: "Toutes tes factures", texte: "Encaissé, en attente, relancé : chaque facture et son statut, et l'export pour ton comptable en un clic.", alt: "La liste des factures de Deviso, avec les totaux encaissés et en attente" },
   { cle: "recues", titre: "Les factures de tes fournisseurs", texte: "Elles arrivent d'elles-mêmes par la plateforme agréée. Tu les retrouves au même endroit, et tu en refuses une en un clic.", alt: "Les factures reçues des fournisseurs dans Deviso, avec leur échéance et leur statut" },
   { cle: "catalogue", titre: "Ton catalogue", texte: "Tes prestations et tes prix, réutilisables en un clic, à l'heure ou au forfait. L'IA s'en sert pour chiffrer.", alt: "Le catalogue de prestations de Deviso" },
 ] as const;
@@ -66,8 +67,8 @@ export function SlideFonctionnalites() {
         {DIAPOS.map((d, i) => {
           const sel = i === actif;
           return (
+            <div key={d.cle}>
             <button
-              key={d.cle}
               type="button"
               role="tab"
               id={`onglet-${d.cle}`}
@@ -92,13 +93,16 @@ export function SlideFonctionnalites() {
               <span className={`block overflow-hidden transition-all duration-300 ${sel ? "max-h-28 mt-2 opacity-100" : "max-h-0 opacity-0"}`}>
                 <span className="block text-[17px] leading-relaxed text-gray-300">{d.texte}</span>
               </span>
-              {sel && (
-                <span className="lg:hidden mt-4 block relative aspect-[4/3] rounded-lg overflow-hidden bg-ds-elevated">
-                  <Image src={`/landing/ecran-${d.cle}-mobile.jpg`} alt={d.alt} fill sizes="100vw" quality={90} className="object-cover object-top" />
-                  <span className="absolute inset-x-0 bottom-0 h-10 bg-linear-to-t from-ds-bg to-transparent" aria-hidden="true" />
-                </span>
-              )}
             </button>
+            {/* Téléphone : l'aperçu s'ouvre sous l'onglet choisi. */}
+            {sel && (
+              <div role="img" aria-label={d.alt} className="lg:hidden mt-2 mb-4 rounded-xl bg-ds-surface p-1.5">
+                <div className="rounded-lg bg-ds-bg">
+                  <EcranApp cle={d.cle} />
+                </div>
+              </div>
+            )}
+            </div>
           );
         })}
       </div>
@@ -111,17 +115,18 @@ export function SlideFonctionnalites() {
           aria-labelledby={`onglet-${DIAPOS[actif].cle}`}
           className="rounded-xl bg-ds-surface p-2 sm:p-3"
         >
-          <div className="relative aspect-[16/10] rounded-lg overflow-hidden bg-ds-elevated">
+          <div className="relative aspect-[16/10] rounded-lg overflow-hidden bg-ds-bg">
             {DIAPOS.map((d, i) => (
               <div
                 key={d.cle}
                 aria-hidden={i !== actif}
                 className={`absolute inset-0 transition-opacity duration-500 ease-out ${i === actif ? "opacity-100" : "opacity-0"}`}
               >
-                <Image src={`/landing/ecran-${d.cle}.jpg`} alt={i === actif ? d.alt : ""} fill sizes="(min-width: 1024px) 56vw, 100vw" quality={90} className="object-cover object-top" />
+                <div role="img" aria-label={d.alt} className="h-full">
+                  <EcranApp cle={d.cle} />
+                </div>
               </div>
             ))}
-            <div className="absolute inset-x-0 bottom-0 h-20 bg-linear-to-t from-ds-surface to-transparent pointer-events-none" aria-hidden="true" />
           </div>
         </div>
       </div>

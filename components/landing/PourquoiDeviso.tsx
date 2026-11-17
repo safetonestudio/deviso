@@ -19,8 +19,8 @@ const RAISONS = [
   },
   {
     filet: "bg-amber-400",
-    titre: "Tes déclarations préparées.",
-    texte: "Chiffre d'affaires, TVA et échéances, calculés selon ton statut. Tu sais quoi déclarer, et quand.",
+    titre: "Tes clients relancés sans toi.",
+    texte: "Devis sans réponse, facture en retard : Deviso écrit à ton client à 3, 7 ou 14 jours, avec ton nom en expéditeur. Tu n'as plus à courir après ton argent.",
   },
 ];
 
@@ -29,10 +29,10 @@ export function PourquoiDeviso({ titre }: { titre: string }) {
     <div>
       <div className="reveal max-w-[760px]">
         <h2 id="titre-pourquoi" className={titre}>
-          Ce qu&apos;un outil gratuit ne fait pas.
+          Ce qu&apos;un outil gratuit te laisse sur les bras.
         </h2>
         <p className="mt-5 text-[17px] sm:text-[20px] leading-relaxed text-gray-300">
-          Faire une facture, beaucoup d&apos;outils le savent. Deviso s&apos;occupe aussi de ce qu&apos;il y a autour.
+          Faire une facture, n&apos;importe quel outil le sait. Deviso prend aussi en charge ce qui vient autour&nbsp;: la plateforme agréée, ton comptable, tes relances.
         </p>
       </div>
       <ul className="mt-12 sm:mt-16 grid gap-10 md:grid-cols-3 md:gap-8">

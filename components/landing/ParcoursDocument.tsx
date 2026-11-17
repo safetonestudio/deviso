@@ -19,15 +19,15 @@ const ETAPES: Etape[] = [
   { titre: "Ton devis, rédigé et chiffré pour toi.", texte: "Lignes, quantités, prix, TVA et mentions obligatoires : tout part de ton catalogue. Tu relis, tu ajustes, tu envoies.", vue: "devis" },
   { titre: "Ton client signe en ligne.", texte: "Il reçoit un lien, ouvre le devis sur son téléphone et signe. Tu es prévenu à l'instant.", vue: "signe" },
   { titre: "Un clic, et c'est une facture.", texte: "Le devis signé devient une facture au format électronique officiel, envoyée pour toi par une plateforme agréée par l'État.", vue: "facture" },
-  { titre: "Deviso relance, tu encaisses.", texte: "Sans réponse, ton client est relancé à 3, 7 ou 14 jours. Le virement arrivé, tu marques la facture payée en un clic.", vue: "paye" },
+  { titre: "Deviso relance, tu encaisses.", texte: "Facture impayée à l'échéance ? Deviso relance ton client 3, 7 ou 14 jours après, comme tu l'as choisi. Le virement arrivé, tu marques la facture payée en un clic.", vue: "paye" },
   { titre: "Tes chiffres pour déclarer, déjà calculés.", texte: "Chiffre d'affaires, TVA collectée, échéances : tout est calculé à partir de tes encaissements, selon ton statut.", vue: "urssaf" },
 ];
 
 const LIGNES_BRIEF: [string, string][] = [
-  ["Audit et arborescence", "500,00 €"],
-  ["Maquettes des cinq pages", "1 400,00 €"],
-  ["Intégration et adaptation mobile", "1 800,00 €"],
-  ["Formulaire de contact et RGPD", "800,00 €"],
+  ["Audit et arborescence", "500,00\u202f€"],
+  ["Maquettes des cinq pages", "1 400,00\u202f€"],
+  ["Intégration et adaptation mobile", "1 800,00\u202f€"],
+  ["Formulaire de contact et RGPD", "800,00\u202f€"],
 ];
 
 const BRIEF = "Refonte du site vitrine d'un cabinet d'avocats à Lyon : cinq pages, formulaire de contact, mise en ligne. Délai de trois semaines.";
@@ -73,11 +73,18 @@ function Brief({ plein = false }: { plein?: boolean }) {
             </li>
           ))}
           <li
+            className="flex justify-between gap-4 text-gray-400 transition-opacity duration-500"
+            style={{ opacity: ecrit ? 1 : 0, transitionDelay: ecrit ? "800ms" : "0ms" }}
+          >
+            <span>Total HT, puis TVA 20{"\u00a0"}%</span>
+            <span className="whitespace-nowrap">4 500,00{"\u202f"}€ + 900,00{"\u202f"}€</span>
+          </li>
+          <li
             className="flex justify-between gap-4 pt-1 font-semibold transition-opacity duration-500"
             style={{ opacity: ecrit ? 1 : 0, transitionDelay: ecrit ? "900ms" : "0ms" }}
           >
             <span className="text-ink">Total TTC</span>
-            <span className="text-ink">5 400,00 €</span>
+            <span className="text-ink whitespace-nowrap">5 400,00{"\u202f"}€</span>
           </li>
         </ul>
       )}
@@ -92,29 +99,9 @@ function Brief({ plein = false }: { plein?: boolean }) {
   );
 }
 
-/** Les déclarations : chiffre d'affaires, TVA et échéance, quel que soit le statut. */
-function Declarations() {
-  return (
-    <div data-ui className="rounded-xl bg-ds-surface p-6 sm:p-8 shadow-ds-leve">
-      <div className="text-[14px] font-medium text-gray-400">Chiffre d&apos;affaires encaissé, 4ᵉ trimestre, hors taxes</div>
-      <div className="mt-2 text-[clamp(40px,5vw,64px)] leading-none font-semibold tracking-[-0.04em] tabular-nums text-ink">18 400 €</div>
-      <div className="mt-6 grid grid-cols-2 gap-2 text-[14px]">
-        <div className="rounded-lg bg-blue-500/15 p-4">
-          <div className="text-blue-300">TVA collectée</div>
-          <div className="mt-1 text-[20px] font-semibold tabular-nums text-ink">3 680 €</div>
-        </div>
-        <div className="rounded-lg bg-amber-500/15 p-4">
-          <div className="text-amber-300">Déclaration de TVA de décembre</div>
-          <div className="mt-1 text-[20px] font-semibold text-ink">En janvier</div>
-        </div>
-      </div>
-    </div>
-  );
-}
-
 function Visuel({ vue }: { vue: Vue }) {
   if (vue === "brief") return <Brief />;
-  if (vue === "urssaf") return <Declarations />;
+  if (vue === "urssaf") return <FeuilleChiffres />;
   return <DocumentDevis etat={vue} />;
 }
 
@@ -145,7 +132,7 @@ export function ParcoursDocument({ intro }: { intro: ReactNode }) {
   return (
     <div className="grid grid-cols-1 lg:grid-cols-12 lg:gap-16">
       <h2 className="sr-only">Comment ça marche</h2>
-      <ol className="lg:col-span-5 lg:pb-56">
+      <ol className="lg:col-span-5 lg:pb-[42vh]">
         {/* Le haut de page : la promesse, et sur téléphone le brief dessous. */}
         <li ref={enregistrer(0)} data-i={0} className="pt-12 pb-16 sm:pt-16 lg:py-0 lg:min-h-(--haut-ecran) flex flex-col justify-center" style={{ ["--haut-ecran" as string]: "calc(100vh / var(--zoom, 1) - 80px)" }}>
           <div className="relative z-10 xl:w-[122%]">{intro}</div>
@@ -159,6 +146,7 @@ export function ParcoursDocument({ intro }: { intro: ReactNode }) {
           return (
             <li key={e.titre} id={i === 1 ? "etapes" : undefined} ref={enregistrer(i)} data-i={i} className="scroll-mt-40 py-10 lg:py-0 lg:min-h-(--haut-etape) flex flex-col justify-center" style={{ ["--haut-etape" as string]: "calc(64vh / var(--zoom, 1))" }}>
               <div className={`transition-opacity duration-500 ${i === actif ? "lg:opacity-100" : "lg:opacity-35"}`}>
+                <div className="mb-3 text-[14px] font-medium text-gray-500 tabular-nums">Étape {i} sur {ETAPES.length}</div>
                 <h3 className="text-[clamp(24px,2vw,30px)] leading-[1.15] font-semibold tracking-[-0.025em] text-ink">{e.titre}</h3>
                 <p className="mt-4 text-[17px] sm:text-[20px] leading-relaxed text-gray-300 max-w-[42ch]">{e.texte}</p>
               </div>
