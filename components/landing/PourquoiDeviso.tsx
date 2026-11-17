@@ -1,38 +1,38 @@
 /**
  * La question que se pose tout visiteur : pourquoi payer, quand des outils
- * de facturation gratuits existent ? Trois différences, chacune vérifiable
- * dans le produit : transmission par plateforme agréée comprise dans
- * l'abonnement, devis rédigé à partir du catalogue, relances automatiques.
- * Chaque raison porte la couleur de son sens (bleu : réforme, vert : action,
- * ambre : échéance), sous forme d'un filet en tête de colonne.
+ * de facturation gratuits existent ? Trois différences que le parcours
+ * au-dessus ne montre pas, chacune vérifiable dans le produit : plateforme
+ * agréée comprise dans l'abonnement, accès comptable gratuit en lecture
+ * seule, chiffres de déclaration calculés selon le statut. Chaque raison porte
+ * la couleur de son sens (bleu : réforme, vert : action, ambre : échéance).
  */
 const RAISONS = [
   {
     filet: "bg-blue-400",
     titre: "La réforme, réglée.",
-    texte: "Deviso se raccorde pour toi à une plateforme agréée par l'État, et tes factures partent par elle. Avec un outil gratuit, c'est à toi d'en trouver une et de la brancher.",
+    texte: "Tes factures partent par une plateforme agréée par l'État, comprise dans ton abonnement. Avec la plupart des outils gratuits, il te faut en choisir une, souvent payante, et la relier toi-même.",
   },
   {
     filet: "bg-indigo-500",
-    titre: "Le devis s'écrit à ta place.",
-    texte: "Tu décris la mission en une phrase, Deviso la chiffre avec tes prix. Tu relis et tu envoies, sans repartir d'une page blanche.",
+    titre: "Ton comptable branché.",
+    texte: "Il consulte tes devis, tes factures et tes exports en lecture seule, sans frais. Plus de fichiers à lui envoyer chaque mois.",
   },
   {
     filet: "bg-amber-400",
-    titre: "Tes relances partent seules.",
-    texte: "À 3, 7 ou 14 jours sans réponse, ton client reçoit un rappel poli. Tu n'écris plus le message gêné de fin de mois.",
+    titre: "Tes déclarations préparées.",
+    texte: "Chiffre d'affaires, TVA et échéances, calculés selon ton statut. Tu sais quoi déclarer, et quand.",
   },
 ];
 
 export function PourquoiDeviso({ titre }: { titre: string }) {
   return (
     <div>
-      <div className="reveal grid gap-6 lg:grid-cols-12 lg:gap-16 lg:items-end">
-        <h2 id="titre-pourquoi" className={`lg:col-span-5 ${titre}`}>
+      <div className="reveal max-w-[760px]">
+        <h2 id="titre-pourquoi" className={titre}>
           Ce qu&apos;un outil gratuit ne fait pas.
         </h2>
-        <p className="lg:col-span-7 text-[17px] sm:text-[20px] leading-relaxed text-gray-300 max-w-[48ch]">
-          Faire une facture, beaucoup d&apos;outils le savent. Deviso s&apos;occupe aussi de ce qu&apos;il y a avant et après.
+        <p className="mt-5 text-[17px] sm:text-[20px] leading-relaxed text-gray-300">
+          Faire une facture, beaucoup d&apos;outils le savent. Deviso s&apos;occupe aussi de ce qu&apos;il y a autour.
         </p>
       </div>
       <ul className="mt-12 sm:mt-16 grid gap-10 md:grid-cols-3 md:gap-8">

@@ -63,13 +63,13 @@ const jsonLd = {
    le seul élément clair de la page. */
 const CADRE = "mx-auto w-full max-w-[1400px] px-5 sm:px-8 lg:px-12";
 const SECTION = "pt-28 sm:pt-36 lg:pt-44";
-const H2 = "text-[clamp(30px,2.9vw,46px)] leading-[1.08] font-semibold tracking-[-0.035em] text-ink";
+const H2 = "text-[clamp(28px,2.6vw,40px)] leading-[1.1] font-semibold tracking-[-0.035em] text-ink";
 const LEAD = "text-[17px] sm:text-[20px] leading-relaxed text-gray-300";
 const BOUTON = "inline-flex items-center justify-center h-12 px-6 rounded-lg text-[17px] font-semibold transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-500";
-const BOUTON_PLEIN = `${BOUTON} bg-indigo-600 hover:bg-indigo-700 hover:brightness-110 text-on-accent`;
+const BOUTON_PLEIN = `${BOUTON} bg-indigo-600 hover:bg-indigo-700 text-on-accent`;
 const BOUTON_DOUX = `${BOUTON} border border-ink/15 hover:border-ink/30 hover:bg-ink/5 text-ink`;
 const LIENS = [
-  ["#parcours", "Comment ça marche"],
+  ["#etapes", "Comment ça marche"],
   ["#fonctionnalites", "Fonctionnalités"],
   ["#tarifs", "Tarifs"],
   ["/experts-comptables", "Experts-comptables"],
@@ -87,7 +87,7 @@ export default function LandingPage() {
 
       {/* ── Barre ── */}
       <header className="sticky top-0 z-40 bg-ds-bg">
-        <div className={`${CADRE} flex items-center justify-between gap-4 h-16 sm:h-[72px]`}>
+        <div className={`${CADRE} grid grid-cols-[1fr_auto] lg:grid-cols-[1fr_auto_1fr] items-center gap-4 h-16 sm:h-[72px]`}>
           <Link href="/" aria-label="Deviso, accueil" className="flex items-center gap-2.5">
             <span className="w-7 h-7 rounded-md bg-indigo-600 text-on-accent grid place-items-center font-semibold text-[14px]" aria-hidden="true">D</span>
             <span className="text-[20px] font-semibold tracking-[-0.02em] text-ink">Deviso</span>
@@ -97,9 +97,9 @@ export default function LandingPage() {
               <Link key={href} href={href} className="text-gray-400 hover:text-ink transition-colors">{nom}</Link>
             ))}
           </nav>
-          <div className="flex items-center gap-2">
+          <div className="flex items-center justify-end gap-2">
             <Link href="/login" className="hidden sm:inline-flex items-center h-10 px-4 rounded-lg text-[14px] font-semibold text-gray-300 hover:text-ink transition-colors">Connexion</Link>
-            <Link href="/signup" className="inline-flex items-center h-10 px-4 rounded-lg bg-indigo-600 hover:bg-indigo-700 hover:brightness-110 text-on-accent text-[14px] font-semibold transition-colors"><span className="sm:hidden">Essayer</span><span className="hidden sm:inline">Essayer gratuitement</span></Link>
+            <Link href="/signup" className="inline-flex items-center h-10 px-4 rounded-lg bg-indigo-600 hover:bg-indigo-700 text-on-accent text-[14px] font-semibold transition-colors"><span className="sm:hidden">Essai gratuit</span><span className="hidden sm:inline">Essayer gratuitement</span></Link>
             <details className="lg:hidden relative">
               <summary className="list-none [&::-webkit-details-marker]:hidden h-10 px-4 rounded-lg bg-ds-surface text-[14px] font-semibold text-ink flex items-center cursor-pointer">Menu</summary>
               <div className="absolute right-0 top-full mt-2 z-50 w-64 rounded-xl bg-ds-elevated p-2 shadow-ds-leve">
@@ -121,12 +121,15 @@ export default function LandingPage() {
           <ParcoursDocument
             intro={
               <div>
-                <h1 className="text-[clamp(40px,3.5vw,58px)] leading-[1.04] font-semibold tracking-[-0.04em] text-ink">
-                  Tes devis rédigés,<br className="hidden lg:block" /> tes factures conformes,<br className="hidden lg:block" /> tes relances envoyées.
+                <h1 className="text-[clamp(29px,4.1vw,64px)] leading-[1.04] font-semibold tracking-[-0.04em] text-ink">
+                  <span className="block">Tes devis rédigés,</span>
+                  <span className="block">tes factures conformes,</span>
+                  <span className="block">tes relances envoyées.</span>
                 </h1>
                 <p className={`mt-6 max-w-[48ch] ${LEAD}`}>
-                  Pour les indépendants et les petites entreprises, en micro, au réel ou en société. Décris ta mission&nbsp;: Deviso
-                  rédige le devis en 30&nbsp;secondes, le fait signer, transmet la facture par une plateforme agréée et relance ton client.
+                  Pour les indépendants et les petites entreprises, en micro, au réel ou en société. Deviso rédige tes devis en
+                  30&nbsp;secondes, les fait signer et relance tes clients. Tes factures partent par une plateforme agréée par
+                  l&apos;État, comprise dans l&apos;abonnement.
                 </p>
                 <div className="mt-8 flex flex-col sm:flex-row gap-3">
                   <Link href="/signup" className={BOUTON_PLEIN}>Essayer 14 jours gratuitement</Link>
@@ -146,8 +149,8 @@ export default function LandingPage() {
         {/* ── L'application : ce que le parcours ne montre pas ── */}
         <section id="fonctionnalites" className={`${CADRE} ${SECTION} scroll-mt-20`}>
           <div className="reveal max-w-[760px]">
-            <h2 className={H2}>Tout le reste, sans changer d&apos;outil.</h2>
-            <p className={`mt-5 ${LEAD}`}>L&apos;application telle qu&apos;elle est, pas une maquette&nbsp;: ton tableau de bord, tes factures, celles de tes fournisseurs, ton équipe et ton catalogue.</p>
+            <h2 className={H2}>Toute ta gestion, au même endroit.</h2>
+            <p className={`mt-5 ${LEAD}`}>L&apos;application telle qu&apos;elle est, pas une maquette&nbsp;: ton tableau de bord, tes factures, celles de tes fournisseurs et ton catalogue.</p>
           </div>
           <div className="mt-12 sm:mt-16">
             <SlideFonctionnalites />
@@ -158,20 +161,31 @@ export default function LandingPage() {
         <section className={`${CADRE} ${SECTION}`} aria-labelledby="titre-reforme">
           <div className="reveal rounded-xl bg-blue-800 text-ink px-6 py-12 sm:px-12 sm:py-16 lg:px-16 lg:py-20 grid gap-8 lg:grid-cols-12 lg:items-end">
             <div className="lg:col-span-8">
-              <h2 id="titre-reforme" className="text-[clamp(30px,2.9vw,46px)] leading-[1.08] font-semibold tracking-[-0.035em]">Prêt pour la réforme 2026.</h2>
+              <h2 id="titre-reforme" className="text-[clamp(28px,2.6vw,40px)] leading-[1.1] font-semibold tracking-[-0.035em]">La facture électronique, déjà en place.</h2>
               <p className="mt-5 text-[17px] sm:text-[20px] leading-relaxed max-w-[56ch]">
-                Les factures entre entreprises deviennent électroniques en France, en passant par une plateforme agréée. Deviso
-                s&apos;en charge dès aujourd&apos;hui&nbsp;: tu n&apos;as rien à installer.
+                Toute entreprise doit désormais pouvoir recevoir des factures électroniques, et les petites entreprises devront
+                aussi les émettre. Deviso fait déjà les deux&nbsp;: tu n&apos;as rien à installer.
               </p>
               <Link href="/conformite" className="mt-6 inline-flex items-center gap-2 text-[17px] font-semibold underline decoration-ink/40 underline-offset-4 hover:decoration-ink transition-colors">
                 Comprendre la réforme <span aria-hidden="true">→</span>
               </Link>
             </div>
+            <ol className="lg:col-span-4 lg:col-start-9 grid gap-4 self-start" aria-label="Calendrier de la réforme">
+              {[
+                ["Septembre 2026", "Toute entreprise doit pouvoir recevoir des factures électroniques."],
+                ["Septembre 2027", "Les petites entreprises et les indépendants doivent aussi les émettre."],
+              ].map(([d, t]) => (
+                <li key={d} className="rounded-lg bg-ink/10 px-5 py-4">
+                  <div className="text-[14px] font-semibold text-blue-200">{d}</div>
+                  <div className="mt-1 text-[17px] leading-snug">{t}</div>
+                </li>
+              ))}
+            </ol>
             <ul className="lg:col-span-12 grid gap-6 sm:grid-cols-3 pt-8">
               {[
                 ["Le format officiel", "Chaque facture est un Factur-X : un PDF lisible par ton client, qui porte aussi les données lues par les logiciels."],
-                ["La transmission faite pour toi", "Elle part par Super PDP, plateforme agréée par l'État, raccordée en quelques clics depuis Deviso."],
-                ["Le secteur public aussi", "Tes factures aux administrations sont déposées sur Chorus Pro."],
+                ["La transmission faite pour toi", "Elle part par Super PDP, plateforme agréée par l'État, comprise dans ton abonnement. Tu l'actives une fois, depuis Deviso."],
+                ["Le secteur public aussi", "Tes factures aux administrations sont déposées pour toi sur Chorus Pro, le portail de l'État."],
               ].map(([t, d]) => (
                 <li key={t}>
                   <div className="text-[17px] font-semibold">{t}</div>

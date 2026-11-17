@@ -22,7 +22,7 @@ const QUESTIONS = [
   },
   {
     q: "Qu'est-ce qui change avec la réforme de 2026 ?",
-    r: "Les factures entre entreprises devront être électroniques et passer par une plateforme agréée. Deviso produit déjà des factures Factur-X et les transmet pour toi : tu n'as rien à installer.",
+    r: "Depuis septembre 2026, toute entreprise doit pouvoir recevoir des factures électroniques ; les petites entreprises et les indépendants devront aussi les émettre en septembre 2027. Deviso fait déjà les deux, plateforme comprise : rien à installer ni à payer en plus.",
   },
   {
     q: "Quelle différence entre Solo et Pro ?",

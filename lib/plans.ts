@@ -35,15 +35,15 @@ export const FEATURES: Feature[] = [
   // Socle vendu sur la carte Solo (et inclus dans Pro).
   { id: "aiQuotes",       label: "Devis rédigés pour toi, sans limite",              plans: ["solo", "pro"], show: true },
   { id: "signature",      label: "Signature électronique client",                  plans: ["solo", "pro"], show: true },
-  { id: "facturX",        label: "Factures conformes 2026, plusieurs taux de TVA par facture", plans: ["solo", "pro"], show: true },
-  { id: "plateformeAgreee", label: "Transmission par une plateforme agréée, e‑reporting compris", plans: ["solo", "pro"], show: true },
+  { id: "facturX",        label: "Plusieurs taux de TVA sur une même facture", plans: ["solo", "pro"], show: true },
+  { id: "plateformeAgreee", label: "Transmission par une plateforme agréée, données envoyées à l'État comprises", plans: ["solo", "pro"], show: true },
   { id: "accesComptable",  label: "Accès gratuit pour ton expert-comptable, en lecture seule", plans: ["solo", "pro"], show: true },
   { id: "international",   label: "Ventes et achats internationaux conformes",       plans: ["solo", "pro"], show: true },
   { id: "facturesAnglais", label: "Factures en anglais pour tes clients étrangers",  plans: ["solo", "pro"], show: true },
   { id: "recurring",      label: "Factures récurrentes, acompte et solde",         plans: ["solo", "pro"], show: true },
   { id: "chorusPro",      label: "Factures aux administrations, déposées sur Chorus Pro",         plans: ["solo", "pro"], show: true },
   { id: "urssafWidget",   label: "Chiffre d'affaires, TVA et échéances suivis",         plans: ["solo", "pro"], show: true },
-  { id: "fecExport",      label: "Export pour ton comptable (fichier FEC)",                           plans: ["solo", "pro"], show: true },
+  { id: "fecExport",      label: "Export comptable officiel (FEC)",                           plans: ["solo", "pro"], show: true },
   { id: "noBranding",     label: "Aucune mention Deviso sur tes documents",         plans: ["solo", "pro"], show: true },
   { id: "historyUnlimited", label: "Historique et exports illimités",              plans: ["solo", "pro"], show: true },
   // Masquée tant que l'habilitation URSSAF n'est pas obtenue (route en 404).

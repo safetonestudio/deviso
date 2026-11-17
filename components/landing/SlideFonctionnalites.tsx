@@ -16,7 +16,6 @@ const DIAPOS = [
   { cle: "tableau", titre: "Ton tableau de bord", texte: "Chiffre d'affaires encaissé, seuils, échéances et messages de ton comptable, en un coup d'œil.", alt: "Le tableau de bord de Deviso : message de l'expert-comptable, chiffre d'affaires encaissé et seuil de TVA" },
   { cle: "factures", titre: "Toutes tes factures", texte: "Encaissé, en attente, à transmettre : chaque facture et son statut, avec l'export FEC à portée de clic.", alt: "La liste des factures de Deviso, avec les totaux encaissés et en attente" },
   { cle: "recues", titre: "Les factures de tes fournisseurs", texte: "Elles arrivent d'elles-mêmes par la plateforme agréée. Tu les retrouves au même endroit, et tu en refuses une en un clic.", alt: "Les factures reçues des fournisseurs dans Deviso, avec leur échéance et leur statut" },
-  { cle: "equipe", titre: "Ton équipe", texte: "Chaque collaborateur a ses droits ; tu suis les devis de chacun et tu valides avant envoi.", alt: "L'écran Équipe de Deviso : chiffre d'affaires, devis en cours et taux de signature par membre" },
   { cle: "catalogue", titre: "Ton catalogue", texte: "Tes prestations et tes prix, réutilisables en un clic, à l'heure ou au forfait. L'IA s'en sert pour chiffrer.", alt: "Le catalogue de prestations de Deviso" },
 ] as const;
 

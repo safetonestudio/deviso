@@ -53,7 +53,7 @@ export function TarifsTable() {
       prix: annuel ? "14,40" : "18",
       note: annuel ? "Facturé 172,80 € HT par an, soit 207,36 € TTC" : "Sans engagement, soit 21,60 € TTC",
       lien: "/signup?plan=solo",
-      lignes: ["Toutes les fonctions de Deviso", "1 utilisateur" + NB + ": toi", "Ton expert-comptable invité gratuitement"],
+      lignes: ["Toutes les fonctions, sans limite", "1 utilisateur" + NB + ": toi"],
     },
     {
       nom: "Pro",
@@ -61,7 +61,7 @@ export function TarifsTable() {
       prix: annuel ? "27,20" : "34",
       note: annuel ? "Facturé 326,40 € HT par an, soit 391,68 € TTC" : "Sans engagement, soit 40,80 € TTC",
       lien: "/signup?plan=pro",
-      lignes: ["Toutes les fonctions de Deviso", "3 utilisateurs inclus" + NB + ": toi et 2 collaborateurs, puis 5 € HT par mois et par personne", ...PRO_SEUL],
+      lignes: ["Toutes les fonctions, sans limite", "3 utilisateurs inclus" + NB + ": toi et 2 collaborateurs, puis 5 € HT par mois et par personne", ...PRO_SEUL],
     },
   ];
 
@@ -72,7 +72,7 @@ export function TarifsTable() {
           <h2 className="text-[clamp(30px,2.9vw,46px)] leading-[1.08] font-semibold tracking-[-0.035em] text-ink">Deux formules, une seule différence : l&apos;équipe.</h2>
           <p className="mt-5 text-[17px] sm:text-[20px] leading-relaxed text-gray-300">14 jours d&apos;essai complet, puis tu choisis.</p>
         </div>
-        <div className="inline-flex gap-1 p-1 rounded-lg bg-ds-surface" role="group" aria-label="Périodicité de facturation">
+        <div className="grid grid-cols-2 w-full sm:w-auto sm:inline-grid gap-1 p-1 rounded-lg bg-ds-surface" role="group" aria-label="Périodicité de facturation">
           {[
             { libelle: "Mensuel", valeur: false },
             { libelle: "Annuel, 20 % de moins", valeur: true },
@@ -112,7 +112,7 @@ export function TarifsTable() {
 
             <Link
               href={f.lien}
-              className={`mt-10 ${BOUTON} bg-indigo-600 hover:bg-indigo-700 hover:brightness-110 text-on-accent`}
+              className={`mt-10 ${BOUTON} bg-indigo-600 hover:bg-indigo-700 text-on-accent`}
             >
               Essayer {f.nom} gratuitement
             </Link>

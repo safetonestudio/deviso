@@ -15,6 +15,7 @@ const ENCRE = "#16211C";
 const GRIS = "#5A6460";
 const FILET = "#E3E5DF";
 const VERT = "#0F7A55";
+const NB = "\u00a0";
 
 /** Statuts aux couleurs de l'application : brouillon gris, envoyé bleu,
     signé vert, transmise bleu, payée vert plein. */
@@ -155,6 +156,12 @@ export function DocumentDevis({ etat, compact = false, className = "" }: { etat:
         {/* Pied : signature du client, puis conformité de la facture */}
         <div className="grid grid-cols-[1.6fr_1fr] items-end" style={{ gap: "2em", marginTop: "2.4em" }}>
           <div style={{ fontSize: "0.82em", color: GRIS, lineHeight: 1.45 }}>
+            {facture ? (
+              <div style={{ lineHeight: 1.5 }}>
+                <div>Échéance</div>
+                <div className="tabular-nums" style={{ color: ENCRE, fontWeight: 600, fontSize: "1.15em" }}>10/11/2026, par virement</div>
+              </div>
+            ) : (<>
             <div style={{ marginBottom: "0.4em" }}>Bon pour accord</div>
             <div className="relative" style={{ height: "3.2em" }}>
               <svg viewBox="0 0 260 90" aria-hidden="true" className="absolute left-0 bottom-0 h-full" fill="none" stroke={ENCRE} strokeWidth="4" strokeLinecap="round" strokeLinejoin="round" style={{ opacity: signe ? 1 : 0, transition: "opacity 0.6s ease" }}>
@@ -163,16 +170,124 @@ export function DocumentDevis({ etat, compact = false, className = "" }: { etat:
               <div className="absolute left-0 right-0 bottom-0" style={{ borderBottom: `1px solid ${FILET}` }} />
             </div>
             <div style={{ marginTop: "0.4em", opacity: signe ? 1 : 0, transition: "opacity 0.6s ease" }}>Signé par Pierre Lefèvre le 21/10/2026 à 10 h 42</div>
+            </>)}
           </div>
           <div className="text-right" style={{ fontSize: "0.82em", lineHeight: 1.45 }}>
             <div style={{ opacity: facture ? 1 : 0, transition: "opacity 0.6s ease" }}>
-              <span className="inline-block font-semibold" style={{ padding: "0.3em 0.7em", borderRadius: "0.4em", backgroundColor: "#E4F1EA", color: VERT }}>Factur-X, EN 16931</span>
+              <span className="inline-block font-semibold" style={{ padding: "0.3em 0.7em", borderRadius: "0.4em", backgroundColor: "#E4F1EA", color: VERT }}>Facture électronique conforme</span>
               <div style={{ color: GRIS, marginTop: "0.5em" }}>Transmise par une plateforme agréée</div>
             </div>
           </div>
         </div>
 
       </div>
+    </div>
+  );
+}
+
+/** Feuille des chiffres : même papier, même gabarit que le document, pour que
+    la dernière étape ne change pas d'échelle. */
+export function FeuilleChiffres() {
+  return (
+    <div className="@container w-full">
+      <div
+        data-ui
+        role="img"
+        aria-label="Chiffres du 4e trimestre : 18 400 € de chiffre d'affaires encaissé, 3 680 € de TVA collectée, déclaration de TVA de décembre à déposer en janvier"
+        className="rounded-[0.6em] flex flex-col aspect-[555/696]"
+        style={{ backgroundColor: PAPIER, color: ENCRE, fontSize: "max(10.5px, 2.35cqw)", padding: "clamp(1.4em, 7.5cqw, 3.2em) clamp(1.2em, 8cqw, 3.4em)" }}
+      >
+        <div className="flex items-start justify-between" style={{ gap: "2em" }}>
+          <div style={{ lineHeight: 1.35 }}>
+            <div className="font-semibold" style={{ fontSize: "1.05em" }}>Studio Durand</div>
+            <div style={{ color: GRIS, fontSize: "0.85em" }}>4ᵉ trimestre 2026</div>
+          </div>
+          <div className="font-semibold tracking-[0.04em]" style={{ fontSize: "1.45em", lineHeight: 1.05 }}>CHIFFRES</div>
+        </div>
+        <div style={{ marginTop: "3em", color: GRIS, fontSize: "0.9em" }}>Chiffre d&apos;affaires encaissé, hors taxes</div>
+        <div className="font-semibold tabular-nums" style={{ fontSize: "3.6em", lineHeight: 1.05, letterSpacing: "-0.03em", marginTop: "0.15em" }}>18 400 €</div>
+        <div className="grid grid-cols-2" style={{ gap: "0.8em", marginTop: "2.2em" }}>
+          <div style={{ backgroundColor: "#E1EBF2", borderRadius: "0.5em", padding: "1em 1.1em" }}>
+            <div style={{ color: "#2F556C", fontSize: "0.85em" }}>TVA collectée</div>
+            <div className="font-semibold tabular-nums" style={{ fontSize: "1.5em", marginTop: "0.2em" }}>3 680 €</div>
+          </div>
+          <div style={{ backgroundColor: "#F6EBD9", borderRadius: "0.5em", padding: "1em 1.1em" }}>
+            <div style={{ color: "#7A4E12", fontSize: "0.85em" }}>Déclaration de TVA</div>
+            <div className="font-semibold" style={{ fontSize: "1.5em", marginTop: "0.2em" }}>En janvier</div>
+          </div>
+        </div>
+        <table className="w-full tabular-nums" style={{ marginTop: "2.4em", borderCollapse: "collapse", fontSize: "0.92em" }}>
+          <tbody>
+            {[["Octobre", 6100], ["Novembre", 5900], ["Décembre", 6400]].map(([mois, m]) => (
+              <tr key={mois}>
+                <td style={{ padding: "0.7em 0", borderBottom: `1px solid ${FILET}`, color: GRIS }}>{mois}</td>
+                <td className="text-right font-medium" style={{ padding: "0.7em 0", borderBottom: `1px solid ${FILET}` }}>{euros(Number(m))}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+        <div className="mt-auto" style={{ borderTop: `1px solid ${FILET}`, paddingTop: "1em", color: GRIS, fontSize: "0.85em", lineHeight: 1.5 }}>
+          Calculé à partir de tes encaissements, selon ton statut.
+        </div>
+      </div>
+    </div>
+  );
+}
+
+/** Téléphone : ce qui change à chaque étape, à taille de lecture. */
+export function ApercuEtat({ etat }: { etat: EtatDocument }) {
+  const facture = etat === "facture" || etat === "paye";
+  return (
+    <div data-ui className="rounded-xl p-5 text-[15px]" style={{ backgroundColor: PAPIER, color: ENCRE }}>
+      <div className="flex items-center justify-between gap-4">
+        <div>
+          <div className="font-semibold tracking-[0.04em] text-[17px]">{facture ? "FACTURE" : "DEVIS"}</div>
+          <div className="tabular-nums text-[13px]" style={{ color: GRIS }}>{facture ? "FAC-2026-031" : "DEV-2026-048"}, Cabinet Lefèvre Avocats</div>
+        </div>
+        <span className="shrink-0 rounded-full px-3 py-1 text-[13px] font-semibold" style={{ backgroundColor: STATUT[etat].fond, color: STATUT[etat].encre }}>
+          {STATUT[etat].texte}
+        </span>
+      </div>
+      <div className="mt-4 pt-4 flex items-end justify-between gap-4" style={{ borderTop: `1px solid ${FILET}` }}>
+        {etat === "devis" && (
+          <div className="w-full space-y-1.5 tabular-nums">
+            {LIGNES.map(([l, , m]) => (
+              <div key={l} className="flex justify-between gap-3"><span>{l}</span><span>{euros(m)}</span></div>
+            ))}
+          </div>
+        )}
+        {etat === "signe" && (
+          <div>
+            <svg viewBox="0 0 260 90" aria-hidden="true" className="h-10" fill="none" stroke={ENCRE} strokeWidth="4" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M8 62c14-30 26-46 34-44 10 3-12 52-2 54 10 2 22-40 34-38 9 2-6 30 4 32 12 2 20-28 32-26 8 2-2 22 8 22 14 0 26-30 40-30 10 0 4 24 16 24 16 0 30-18 78-22" />
+            </svg>
+            <div className="mt-1 text-[13px]" style={{ color: GRIS }}>Signé par Pierre Lefèvre, le 21/10/2026</div>
+          </div>
+        )}
+        {etat === "facture" && (
+          <div>
+            <span className="inline-block rounded-md px-2.5 py-1 text-[13px] font-semibold" style={{ backgroundColor: "#E4F1EA", color: VERT }}>Facture électronique conforme</span>
+            <div className="mt-1.5 text-[13px]" style={{ color: GRIS }}>Transmise par une plateforme{NB}agréée</div>
+          </div>
+        )}
+        {etat === "paye" && (
+          <div className="font-semibold tracking-[0.06em] text-center -rotate-6 rounded-md px-3 py-1.5" style={{ border: `2px solid ${VERT}`, color: VERT }}>
+            PAYÉE
+            <div className="font-medium tracking-normal text-[11px]">le 12/11/2026, après une relance</div>
+          </div>
+        )}
+        {etat !== "devis" && (
+          <div className="text-right tabular-nums">
+            <div className="text-[13px]" style={{ color: GRIS }}>Total TTC</div>
+            <div className="font-semibold text-[17px]">{euros(HT + TVA)}</div>
+          </div>
+        )}
+      </div>
+      {etat === "devis" && (
+        <div className="mt-3 pt-3 flex justify-between font-semibold tabular-nums" style={{ borderTop: `1.5px solid ${ENCRE}` }}>
+          <span>Total TTC</span><span>{euros(HT + TVA)}</span>
+        </div>
+      )}
     </div>
   );
 }
