@@ -570,7 +570,7 @@
 @keyframes remplir-diapo { from { height: 0%; } to { height: 100%; } }
 /* Page d'accueil : une seule police (Hanken Grotesk), titres compris. */
 .ds-app.accueil h1, .ds-app.accueil h2, .ds-app.accueil h3 { font-family: var(--font-app), ui-sans-serif, system-ui, sans-serif; text-wrap: balance; }
-.ds-app.accueil p, .ds-app.accueil summary { text-wrap: pretty; }
+.ds-app.accueil p { text-wrap: pretty; }
 /* Le rebond du défilement montre le fond de la page, pas le noir du site. */
 html:has(.ds-app.accueil), body:has(.ds-app.accueil) { background-color: #0E1512; }
 /* La signature du client se trace quand le devis passe a l'etat signe. */

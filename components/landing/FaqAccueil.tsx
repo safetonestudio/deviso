@@ -6,7 +6,7 @@
 const QUESTIONS = [
   {
     q: "Que se passe-t-il à la fin de l'essai ?",
-    r: "Aucun prélèvement : tant que tu n'enregistres pas de carte, l'abonnement ne démarre pas. Tu peux t'abonner plus tard, quand tu veux.",
+    r: "Aucun prélèvement : sans carte enregistrée, l'abonnement ne démarre pas et l'accès à ton espace s'arrête. Tu peux t'abonner plus tard, quand tu veux.",
   },
   {
     q: "Puis-je récupérer mes données ?",
@@ -25,8 +25,8 @@ const QUESTIONS = [
     r: "Oui. Tes factures peuvent être rédigées en anglais pour tes clients étrangers, et tes ventes comme tes achats à l'international suivent les règles de TVA qui s'appliquent.",
   },
   {
-    q: "Quelle différence entre Solo et Pro ?",
-    r: "Uniquement l'équipe. Solo est fait pour travailler seul ; Pro ajoute des collaborateurs, avec des rôles et la validation des devis : 3 utilisateurs inclus, puis 5 € HT par mois et par personne.",
+    q: "Mes clients ont-ils besoin d'un compte pour signer ?",
+    r: "Non. Ils reçoivent un lien, ouvrent le devis sur leur téléphone ou leur ordinateur et signent, sans rien installer ni créer de compte.",
   },
 ];
 

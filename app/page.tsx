@@ -63,7 +63,7 @@ const jsonLd = {
    le seul élément clair de la page. */
 const CADRE = "mx-auto w-full max-w-[1400px] px-5 sm:px-8 lg:px-12";
 const SECTION = "pt-28 sm:pt-36 lg:pt-44";
-const H2 = "text-[clamp(28px,2.6vw,40px)] leading-[1.1] font-semibold tracking-[-0.035em] text-ink";
+const H2 = "text-[clamp(26px,2.6vw,40px)] leading-[1.1] font-semibold tracking-[-0.035em] text-ink";
 const LEAD = "text-[17px] sm:text-[20px] leading-relaxed text-gray-300";
 const BOUTON = "inline-flex items-center justify-center h-12 px-6 rounded-lg text-[17px] font-semibold transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-500";
 const BOUTON_PLEIN = `${BOUTON} bg-indigo-600 hover:bg-indigo-700 text-on-accent`;
@@ -121,14 +121,14 @@ export default function LandingPage() {
           <ParcoursDocument
             intro={
               <div>
-                <h1 className="text-[clamp(29px,4.1vw,64px)] leading-[1.04] font-semibold tracking-[-0.04em] text-ink">
+                <h1 className="text-[clamp(31px,4.1vw,64px)] leading-[1.04] font-semibold tracking-[-0.04em] text-ink">
                   <span className="block xl:whitespace-nowrap">Tes devis rédigés,</span>
                   <span className="block xl:whitespace-nowrap">tes factures conformes,</span>
                   <span className="block xl:whitespace-nowrap">tes relances envoyées.</span>
                 </h1>
                 <p className={`mt-6 max-w-[48ch] ${LEAD}`}>
-                  Pour les indépendants et les petites entreprises, de la micro à la société. La plateforme agréée par l&apos;État
-                  est comprise dans l&apos;abonnement&nbsp;: tes factures électroniques partent sans rien brancher ni payer en plus.
+                  Pour les indépendants et les petites entreprises, de la micro à la société. La plateforme agréée est
+                  comprise&nbsp;: tes factures électroniques partent sans rien brancher ni payer en plus.
                 </p>
                 <div className="mt-8 flex flex-col sm:flex-row gap-3">
                   <Link href="/signup" className={BOUTON_PLEIN}>Essayer 14 jours gratuitement</Link>
@@ -149,7 +149,7 @@ export default function LandingPage() {
         <section id="fonctionnalites" className={`${CADRE} ${SECTION} scroll-mt-20`}>
           <div className="reveal max-w-[760px]">
             <h2 className={H2}>Tes ventes, tes achats et tes prix, au même endroit.</h2>
-            <p className={`mt-5 ${LEAD}`}>Tout se met à jour à chaque encaissement, sans tableur.</p>
+            <p className={`mt-5 ${LEAD}`}>Ce que tu vends, ce que tu achètes et tes prix, sans un seul tableur.</p>
           </div>
           <div className="mt-12 sm:mt-16">
             <SlideFonctionnalites />
@@ -158,16 +158,27 @@ export default function LandingPage() {
 
         {/* ── Réforme 2026 ── */}
         <section className={`${CADRE} ${SECTION}`} aria-labelledby="titre-reforme">
-          <div className="reveal rounded-xl bg-blue-800 text-ink px-6 py-12 sm:px-12 sm:py-16 lg:px-16 lg:py-20 grid gap-8 lg:grid-cols-12 lg:items-end">
+          <div className="reveal rounded-xl bg-blue-800 text-ink px-6 py-12 sm:px-12 sm:py-16 lg:px-16 lg:py-20 grid gap-8 lg:grid-cols-12 lg:items-start">
             <div className="lg:col-span-8">
               <h2 id="titre-reforme" className="text-[clamp(28px,2.6vw,40px)] leading-[1.1] font-semibold tracking-[-0.035em]">La facture électronique, déjà en place.</h2>
               <p className="mt-5 text-[17px] sm:text-[20px] leading-relaxed max-w-[56ch]">
                 Toute entreprise doit désormais pouvoir recevoir des factures électroniques, et les petites entreprises devront
-                aussi les émettre. Deviso fait déjà les deux&nbsp;: tu n&apos;as rien à installer.
+                aussi les émettre. Avec Deviso, tu es prêt aux deux dates, sans rien installer.
               </p>
               <Link href="/conformite" className="mt-6 inline-flex items-center gap-2 text-[17px] font-semibold underline decoration-ink/40 underline-offset-4 hover:decoration-ink transition-colors">
                 Comprendre la réforme <span aria-hidden="true">→</span>
               </Link>
+              <ul className="mt-10 grid gap-6 sm:grid-cols-2">
+                {[
+                  ["Le format officiel", "Chaque facture est un Factur-X : un PDF lisible par ton client, qui porte aussi les données lues par les logiciels."],
+                  ["Le secteur public aussi", "Tes factures aux administrations sont déposées pour toi sur Chorus Pro, le portail de l'État."],
+                ].map(([t, d]) => (
+                  <li key={t}>
+                    <div className="text-[17px] font-semibold">{t}</div>
+                    <p className="mt-1.5 text-[17px] leading-relaxed text-ink/75">{d}</p>
+                  </li>
+                ))}
+              </ul>
             </div>
             <ol className="lg:col-span-4 lg:col-start-9 grid gap-4 self-start" aria-label="Calendrier de la réforme">
               {[
@@ -180,17 +191,6 @@ export default function LandingPage() {
                 </li>
               ))}
             </ol>
-            <ul className="lg:col-span-12 grid gap-6 sm:grid-cols-2 lg:grid-cols-3 pt-8">
-              {[
-                ["Le format officiel", "Chaque facture est un Factur-X : un PDF lisible par ton client, qui porte aussi les données lues par les logiciels."],
-                ["Le secteur public aussi", "Tes factures aux administrations sont déposées pour toi sur Chorus Pro, le portail de l'État."],
-              ].map(([t, d]) => (
-                <li key={t}>
-                  <div className="text-[17px] font-semibold">{t}</div>
-                  <p className="mt-1.5 text-[17px] leading-relaxed text-ink/75">{d}</p>
-                </li>
-              ))}
-            </ul>
           </div>
         </section>
 

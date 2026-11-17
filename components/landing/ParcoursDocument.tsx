@@ -24,10 +24,10 @@ const ETAPES: Etape[] = [
 ];
 
 const LIGNES_BRIEF: [string, string][] = [
-  ["Audit et arborescence", "500,00\u202f€"],
-  ["Maquettes des cinq pages", "1 400,00\u202f€"],
-  ["Intégration et adaptation mobile", "1 800,00\u202f€"],
-  ["Formulaire de contact et RGPD", "800,00\u202f€"],
+  ["Audit et arborescence", "500,00\u00a0€"],
+  ["Maquettes des cinq pages", "1 400,00\u00a0€"],
+  ["Intégration et adaptation mobile", "1 800,00\u00a0€"],
+  ["Formulaire de contact et RGPD", "800,00\u00a0€"],
 ];
 
 const BRIEF = "Refonte du site vitrine d'un cabinet d'avocats à Lyon : cinq pages, formulaire de contact, mise en ligne. Délai de trois semaines.";
@@ -77,14 +77,14 @@ function Brief({ plein = false }: { plein?: boolean }) {
             style={{ opacity: ecrit ? 1 : 0.14, transitionDelay: ecrit ? "800ms" : "0ms" }}
           >
             <span>Total HT + TVA 20{"\u00a0"}%</span>
-            <span className="whitespace-nowrap">4 500,00{"\u202f"}€ + 900,00{"\u202f"}€</span>
+            <span className="whitespace-nowrap">4 500,00{"\u00a0"}€ + 900,00{"\u00a0"}€</span>
           </li>
           <li
             className="flex justify-between gap-4 pt-1 font-semibold transition-opacity duration-500"
             style={{ opacity: ecrit ? 1 : 0.14, transitionDelay: ecrit ? "900ms" : "0ms" }}
           >
             <span className="text-ink">Total TTC</span>
-            <span className="text-ink whitespace-nowrap">5 400,00{"\u202f"}€</span>
+            <span className="text-ink whitespace-nowrap">5 400,00{"\u00a0"}€</span>
           </li>
         </ul>
       )}

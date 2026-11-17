@@ -36,7 +36,7 @@ const LIGNES: [string, string, number][] = [
 ];
 const HT = LIGNES.reduce((s, l) => s + l[2], 0);
 const TVA = Math.round(HT * 0.2);
-const euros = (n: number) => `${new Intl.NumberFormat("fr-FR").format(n)},00\u202f€`;
+const euros = (n: number) => `${new Intl.NumberFormat("fr-FR").format(n)},00\u00a0€`;
 
 export function DocumentDevis({ etat, compact = false, className = "" }: { etat: EtatDocument; compact?: boolean; className?: string }) {
   const facture = etat === "facture" || etat === "paye";
@@ -204,7 +204,7 @@ export function FeuilleChiffres() {
         <div className="flex items-start justify-between" style={{ gap: "2em" }}>
           <div style={{ lineHeight: 1.35 }}>
             <div className="font-semibold" style={{ fontSize: "1.05em" }}>Studio Durand</div>
-            <div style={{ color: GRIS, fontSize: "0.85em" }}>3ᵉ trimestre 2026</div>
+            <div style={{ color: GRIS, fontSize: "0.85em" }}>Trimestre clos, juillet à septembre 2026</div>
           </div>
           <div className="font-semibold tracking-[0.04em]" style={{ fontSize: "1.45em", lineHeight: 1.05 }}>CHIFFRES</div>
         </div>
@@ -224,7 +224,7 @@ export function FeuilleChiffres() {
           {MOIS.map(([mois, m]) => (
             <div key={mois} className="flex flex-col items-center h-full justify-end" style={{ gap: "0.5em" }}>
               <div className="w-full" style={{ height: `${(Number(m) / 8400) * 92}%`, backgroundColor: VERT, opacity: 0.85, borderRadius: "0.3em 0.3em 0 0" }} />
-              <div className="text-center tabular-nums" style={{ fontSize: "0.9em", lineHeight: 1.35 }}><div style={{ color: ENCRE, fontWeight: 600 }}>{new Intl.NumberFormat("fr-FR").format(Number(m))}{NNB}€</div><div style={{ color: GRIS }}>{ABREGE[mois]}</div></div>
+              <div className="text-center tabular-nums" style={{ fontSize: "0.9em", lineHeight: 1.35 }}><div style={{ color: ENCRE, fontWeight: 600 }}>{new Intl.NumberFormat("fr-FR").format(Number(m))}{NB}€</div><div style={{ color: GRIS }}>{ABREGE[mois]}</div></div>
             </div>
           ))}
         </div>
@@ -242,11 +242,11 @@ export function ApercuChiffres() {
         <div className="text-[13px]" style={{ color: GRIS }}>3ᵉ trimestre 2026</div>
       </div>
       <div className="mt-4 text-[13px]" style={{ color: GRIS }}>Chiffre d&apos;affaires encaissé, hors taxes</div>
-      <div className="text-[34px] leading-tight font-semibold tabular-nums tracking-[-0.03em]">18{NNB}400{NNB}€</div>
+      <div className="text-[34px] leading-tight font-semibold tabular-nums tracking-[-0.03em]">18 400{NB}€</div>
       <div className="mt-4 grid grid-cols-2 gap-2">
         <div className="rounded-lg px-3 py-2.5" style={{ backgroundColor: "#E1EBF2" }}>
           <div className="text-[13px]" style={{ color: "#2F556C" }}>TVA collectée</div>
-          <div className="font-semibold tabular-nums">3{NNB}680{NNB}€</div>
+          <div className="font-semibold tabular-nums">3 680{NB}€</div>
         </div>
         <div className="rounded-lg px-3 py-2.5" style={{ backgroundColor: "#F6EBD9" }}>
           <div className="text-[13px]" style={{ color: "#7A4E12" }}>Prochaine déclaration</div>
@@ -265,7 +265,8 @@ export function ApercuEtat({ etat }: { etat: EtatDocument }) {
       <div className="flex items-center justify-between gap-4">
         <div>
           <div className="font-semibold tracking-[0.04em] text-[17px]">{facture ? "FACTURE" : "DEVIS"}</div>
-          <div className="tabular-nums text-[13px]" style={{ color: GRIS }}>{facture ? "FAC-2026-031" : "DEV-2026-048"}, Cabinet Lefèvre Avocats</div>
+          <div className="tabular-nums text-[13px]" style={{ color: GRIS }}>{facture ? "FAC-2026-031" : "DEV-2026-048"}</div>
+          <div className="text-[13px]" style={{ color: GRIS }}>Cabinet Lefèvre Avocats</div>
         </div>
         <span className="shrink-0 rounded-full px-3 py-1 text-[13px] font-semibold" style={{ backgroundColor: STATUT[etat].fond, color: STATUT[etat].encre }}>
           {STATUT[etat].texte}
@@ -284,7 +285,7 @@ export function ApercuEtat({ etat }: { etat: EtatDocument }) {
             <svg viewBox="0 0 260 90" aria-hidden="true" className="h-10" fill="none" stroke={ENCRE} strokeWidth="4" strokeLinecap="round" strokeLinejoin="round">
               <path d="M8 62c14-30 26-46 34-44 10 3-12 52-2 54 10 2 22-40 34-38 9 2-6 30 4 32 12 2 20-28 32-26 8 2-2 22 8 22 14 0 26-30 40-30 10 0 4 24 16 24 16 0 30-18 78-22" />
             </svg>
-            <div className="mt-1 text-[13px]" style={{ color: GRIS }}>Signé par Pierre Lefèvre, le 21/10/2026</div>
+            <div className="mt-1 text-[13px]" style={{ color: GRIS }}>Signé le 21/10/2026 par Pierre Lefèvre</div>
           </div>
         )}
         {etat === "facture" && (

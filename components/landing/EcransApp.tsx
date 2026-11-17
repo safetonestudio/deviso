@@ -9,7 +9,7 @@
  */
 export type CleEcran = "tableau" | "factures" | "recues" | "catalogue";
 
-const P = " €"; // espace fine insécable avant l'euro
+const P = "\u00a0€"; // espace insécable avant l'euro, comme dans le reste de la page
 
 type Pastille = "vert" | "bleu" | "ambre" | "gris";
 const PASTILLE: Record<Pastille, string> = {
@@ -34,9 +34,9 @@ function Entete({ titre, sous }: { titre: string; sous: string }) {
 
 function Tuile({ label, valeur, ton }: { label: string; valeur: string; ton?: Pastille }) {
   return (
-    <div className="rounded-[0.6em] bg-ds-elevated px-[1em] py-[0.85em] min-w-0">
-      <div className="text-[0.85em] text-gray-400 truncate">{label}</div>
-      <div className={`mt-[0.25em] text-[1.35em] font-semibold tabular-nums whitespace-nowrap ${ton === "ambre" ? "text-amber-300" : "text-ink"}`}>{valeur}</div>
+    <div className="rounded-[0.6em] bg-ds-elevated px-[1em] py-[0.85em] min-w-0 flex items-baseline justify-between gap-[1em] @[420px]:block">
+      <div className="text-[0.85em] text-gray-400 @[420px]:truncate">{label}</div>
+      <div className={`@[420px]:mt-[0.25em] text-[1.35em] font-semibold tabular-nums whitespace-nowrap ${ton === "ambre" ? "text-amber-300" : "text-ink"}`}>{valeur}</div>
     </div>
   );
 }
@@ -75,7 +75,7 @@ function Tableau() {
           </div>
         </div>
       </div>
-      <div className="mt-[0.8em] grid grid-cols-2 @[420px]:grid-cols-3 gap-[0.6em] [&>*:last-child]:col-span-2 @[420px]:[&>*:last-child]:col-span-1">
+      <div className="mt-[0.8em] grid grid-cols-1 @[420px]:grid-cols-3 gap-[0.45em] @[420px]:gap-[0.6em]">
         <Tuile label="À encaisser" valeur={`7 200${P}`} />
         <Tuile label="Devis en attente" valeur={`3 200${P}`} />
         <Tuile label="TVA à déclarer" valeur="En décembre" ton="ambre" />
@@ -91,8 +91,8 @@ function Factures() {
   return (
     <>
       <Entete titre="Factures" sous="Chaque facture et son statut" />
-      <div className="mt-[1.2em] grid grid-cols-2 @[420px]:grid-cols-3 gap-[0.6em] [&>*:last-child]:col-span-2 @[420px]:[&>*:last-child]:col-span-1">
-        <Tuile label="Encaissé en 2026, HT" valeur={`64 300${P}`} />
+      <div className="mt-[1.2em] grid grid-cols-1 @[420px]:grid-cols-3 gap-[0.45em] @[420px]:gap-[0.6em]">
+        <Tuile label="Encaissé 2026, HT" valeur={`64 300${P}`} />
         <Tuile label="En attente" valeur={`7 200${P}`} />
         <Tuile label="Relancées" valeur="1" ton="ambre" />
       </div>
@@ -110,7 +110,7 @@ function Recues() {
   return (
     <>
       <Entete titre="Factures reçues" sous="Arrivées par la plateforme agréée" />
-      <div className="mt-[1.2em] grid grid-cols-2 @[420px]:grid-cols-3 gap-[0.6em] [&>*:last-child]:col-span-2 @[420px]:[&>*:last-child]:col-span-1">
+      <div className="mt-[1.2em] grid grid-cols-1 @[420px]:grid-cols-3 gap-[0.45em] @[420px]:gap-[0.6em]">
         <Tuile label="À payer" valeur={`682,80${P}`} />
         <Tuile label="En retard" valeur="0" />
         <Tuile label="À vérifier" valeur="1" ton="ambre" />
@@ -134,7 +134,6 @@ function Catalogue() {
         <Ligne a="Maquette d'une page" b="Utilisé dans 14 devis" c={<Puce ton="gris">À la page</Puce>} d={`280,00${P}`} />
         <Ligne a="Intégration et adaptation mobile" b="Utilisé dans 8 devis" c={<Puce ton="gris">Forfait</Puce>} d={`1 800,00${P}`} />
         <Ligne a="Formulaire de contact et RGPD" b="Utilisé dans 6 devis" c={<Puce ton="gris">Forfait</Puce>} d={`800,00${P}`} />
-        <Ligne a="Journée de développement" b="Utilisé dans 11 devis" c={<Puce ton="gris">À la journée</Puce>} d={`450,00${P}`} />
       </div>
     </>
   );
