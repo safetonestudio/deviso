@@ -20,7 +20,7 @@ const RAISONS = [
   {
     filet: "bg-amber-400",
     titre: "Tes clients relancés sans toi.",
-    texte: "Devis sans réponse, facture en retard : Deviso écrit à ton client à 3, 7 ou 14 jours, avec ton nom en expéditeur. Tu n'as plus à courir après ton argent.",
+    texte: "Devis sans réponse, facture en retard : Deviso écrit à ton client à ta place, avec ton nom en expéditeur. Tu n'as plus à courir après ton argent.",
   },
 ];
 

@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState, type ReactNode } from "react";
-import { ApercuEtat, DocumentDevis, FeuilleChiffres, type EtatDocument } from "@/components/landing/DocumentDevis";
+import { ApercuChiffres, ApercuEtat, DocumentDevis, FeuilleChiffres, type EtatDocument } from "@/components/landing/DocumentDevis";
 
 /**
  * Le haut de page et le parcours d'un devis, en une seule histoire.
@@ -16,9 +16,9 @@ type Vue = "brief" | EtatDocument | "urssaf";
 type Etape = { titre: string; texte: string; vue: Vue };
 
 const ETAPES: Etape[] = [
-  { titre: "Ton devis, rédigé et chiffré pour toi.", texte: "Lignes, quantités, prix, TVA et mentions obligatoires : tout part de ton catalogue. Tu relis, tu ajustes, tu envoies.", vue: "devis" },
+  { titre: "Ton devis, rédigé et chiffré pour toi.", texte: "Tu décris la mission en une phrase ; l'IA la chiffre à partir de ton catalogue, avec la TVA et les mentions obligatoires. Tu relis, tu ajustes, tu envoies.", vue: "devis" },
   { titre: "Ton client signe en ligne.", texte: "Il reçoit un lien, ouvre le devis sur son téléphone et signe. Tu es prévenu à l'instant.", vue: "signe" },
-  { titre: "Un clic, et c'est une facture.", texte: "Le devis signé devient une facture au format électronique officiel, envoyée pour toi par une plateforme agréée par l'État.", vue: "facture" },
+  { titre: "Un clic, et c'est une facture.", texte: "Le devis signé devient une facture électronique officielle, transmise pour toi.", vue: "facture" },
   { titre: "Deviso relance, tu encaisses.", texte: "Facture impayée à l'échéance ? Deviso relance ton client 3, 7 ou 14 jours après, comme tu l'as choisi. Le virement arrivé, tu marques la facture payée en un clic.", vue: "paye" },
   { titre: "Tes chiffres pour déclarer, déjà calculés.", texte: "Chiffre d'affaires, TVA collectée, échéances : tout est calculé à partir de tes encaissements, selon ton statut.", vue: "urssaf" },
 ];
@@ -54,14 +54,14 @@ function Brief({ plein = false }: { plein?: boolean }) {
   }, []);
 
   return (
-    <div data-ui className={`rounded-xl bg-ds-surface p-6 sm:p-8 lg:p-9 ${plein ? "h-full flex flex-col" : ""}`}>
+    <div data-ui className="rounded-xl bg-ds-surface p-6 sm:p-8 lg:p-9">
       <div className="text-[14px] font-medium text-gray-400">Décris ta mission</div>
       <p className={`mt-3 min-h-[9.5em] sm:min-h-[8em] rounded-lg bg-ds-elevated p-5 text-[17px] sm:text-[20px] leading-relaxed text-ink`}>
         {BRIEF.slice(0, n)}
         {!ecrit && <span className="curseur-demo" aria-hidden="true" />}
       </p>
       {plein && (
-        <ul className="mt-5 flex-1 space-y-2.5 text-[15px] tabular-nums" aria-label="Lignes proposées par Deviso">
+        <ul className="mt-5 space-y-2.5 text-[15px] tabular-nums" aria-label="Lignes proposées par Deviso">
           {LIGNES_BRIEF.map(([l, m], k) => (
             <li
               key={l}
@@ -101,7 +101,7 @@ function Brief({ plein = false }: { plein?: boolean }) {
 
 function Visuel({ vue }: { vue: Vue }) {
   if (vue === "brief") return <Brief />;
-  if (vue === "urssaf") return <FeuilleChiffres />;
+  if (vue === "urssaf") return <ApercuChiffres />;
   return <DocumentDevis etat={vue} />;
 }
 
@@ -169,8 +169,8 @@ export function ParcoursDocument({ intro }: { intro: ReactNode }) {
             <div aria-hidden={vue === "brief"} className={`transition-[opacity,visibility,transform] duration-500 ${vue === "brief" ? "opacity-0 invisible" : "opacity-100 visible"}`}>
               {vue === "urssaf" ? <FeuilleChiffres /> : <DocumentDevis etat={vue === "brief" ? "devis" : vue} />}
             </div>
-            <div aria-hidden={vue !== "brief"} className={`absolute inset-0 flex transition-[opacity,visibility] duration-500 ${vue === "brief" ? "opacity-100 visible" : "opacity-0 invisible pointer-events-none"}`}>
-              <div className="w-full h-full">
+            <div aria-hidden={vue !== "brief"} className={`absolute inset-0 flex items-center transition-[opacity,visibility] duration-500 ${vue === "brief" ? "opacity-100 visible" : "opacity-0 invisible pointer-events-none"}`}>
+              <div className="w-full">
                 <Brief plein />
               </div>
             </div>

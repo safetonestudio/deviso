@@ -62,8 +62,21 @@ export function SlideFonctionnalites() {
       onMouseEnter={() => setPause(true)}
       onMouseLeave={() => setPause(false)}
     >
-      {/* ── La liste ── */}
-      <div className="min-w-0 lg:col-span-5 order-2 lg:order-1" role="tablist" aria-label="Fonctionnalités de Deviso" aria-orientation="vertical">
+      {/* ── Téléphone : les aperçus à la suite, sans onglets (rien ne saute). ── */}
+      <div className="lg:hidden grid gap-12">
+        {DIAPOS.map((d) => (
+          <div key={d.cle}>
+            <h3 className="text-[20px] leading-snug font-semibold tracking-[-0.015em] text-ink">{d.titre}</h3>
+            <p className="mt-2 text-[17px] leading-relaxed text-gray-300">{d.texte}</p>
+            <div role="img" aria-label={d.alt} className="mt-5 rounded-xl bg-ds-bg ring-1 ring-ink/10">
+              <EcranApp cle={d.cle} />
+            </div>
+          </div>
+        ))}
+      </div>
+
+      {/* ── Ordinateur : la liste ── */}
+      <div className="hidden lg:block min-w-0 lg:col-span-5" role="tablist" aria-label="Fonctionnalités de Deviso" aria-orientation="vertical">
         {DIAPOS.map((d, i) => {
           const sel = i === actif;
           return (
@@ -94,33 +107,26 @@ export function SlideFonctionnalites() {
                 <span className="block text-[17px] leading-relaxed text-gray-300">{d.texte}</span>
               </span>
             </button>
-            {/* Téléphone : l'aperçu s'ouvre sous l'onglet choisi. */}
-            {sel && (
-              <div role="img" aria-label={d.alt} className="lg:hidden mt-2 mb-4 rounded-xl bg-ds-surface p-1.5">
-                <div className="rounded-lg bg-ds-bg">
-                  <EcranApp cle={d.cle} />
-                </div>
-              </div>
-            )}
             </div>
           );
         })}
       </div>
 
       {/* ── L'écran ── */}
-      <div className="hidden lg:block min-w-0 lg:col-span-7 order-1 lg:order-2">
+      <div className="hidden lg:block min-w-0 lg:col-span-7">
         <div
           id="ecran-fonctionnalite"
           role="tabpanel"
           aria-labelledby={`onglet-${DIAPOS[actif].cle}`}
-          className="rounded-xl bg-ds-surface p-2 sm:p-3"
+          className="rounded-xl bg-ds-bg ring-1 ring-ink/10"
         >
-          <div className="relative aspect-[16/10] rounded-lg overflow-hidden bg-ds-bg">
+          {/* Tous les aperçus dans la même case : la hauteur est celle du plus grand. */}
+          <div className="grid">
             {DIAPOS.map((d, i) => (
               <div
                 key={d.cle}
                 aria-hidden={i !== actif}
-                className={`absolute inset-0 transition-opacity duration-500 ease-out ${i === actif ? "opacity-100" : "opacity-0"}`}
+                className={`[grid-area:1/1] transition-opacity duration-500 ease-out ${i === actif ? "opacity-100" : "opacity-0 invisible"}`}
               >
                 <div role="img" aria-label={d.alt} className="h-full">
                   <EcranApp cle={d.cle} />

@@ -48,8 +48,8 @@ function Ligne({ a, b, c, d }: { a: string; b: string; c: React.ReactNode; d: st
         <div className="text-ink font-medium truncate">{a}</div>
         <div className="text-[0.85em] text-gray-400 tabular-nums truncate">{b}</div>
       </div>
-      <div className="flex items-center gap-[0.8em] shrink-0">
-        <span className="hidden @[420px]:inline">{c}</span>
+      <div className="flex flex-col-reverse items-end gap-[0.3em] @[420px]:flex-row @[420px]:items-center @[420px]:gap-[0.8em] shrink-0">
+        <span>{c}</span>
         <span className="text-ink font-semibold tabular-nums whitespace-nowrap">{d}</span>
       </div>
     </div>
@@ -76,9 +76,12 @@ function Tableau() {
         </div>
       </div>
       <div className="mt-[0.8em] grid grid-cols-2 @[420px]:grid-cols-3 gap-[0.6em] [&>*:last-child]:col-span-2 @[420px]:[&>*:last-child]:col-span-1">
-        <Tuile label="À encaisser" valeur={`5 400${P}`} />
+        <Tuile label="À encaisser" valeur={`7 200${P}`} />
         <Tuile label="Devis en attente" valeur={`3 200${P}`} />
         <Tuile label="TVA à déclarer" valeur="En décembre" ton="ambre" />
+      </div>
+      <div className="mt-[0.8em] grid gap-[0.45em]">
+        <Ligne a="Cabinet Lefèvre Avocats" b="Payée le 14/11" c={<Puce ton="vert">Payée</Puce>} d={`5 400,00${P}`} />
       </div>
     </>
   );
@@ -90,7 +93,7 @@ function Factures() {
       <Entete titre="Factures" sous="Chaque facture et son statut" />
       <div className="mt-[1.2em] grid grid-cols-2 @[420px]:grid-cols-3 gap-[0.6em] [&>*:last-child]:col-span-2 @[420px]:[&>*:last-child]:col-span-1">
         <Tuile label="Encaissé" valeur={`64 300${P}`} />
-        <Tuile label="En attente" valeur={`5 400${P}`} />
+        <Tuile label="En attente" valeur={`7 200${P}`} />
         <Tuile label="Relancées" valeur="1" ton="ambre" />
       </div>
       <div className="mt-[0.8em] grid gap-[0.45em]">
@@ -113,7 +116,7 @@ function Recues() {
         <Tuile label="À vérifier" valeur="1" ton="ambre" />
       </div>
       <div className="mt-[0.8em] grid gap-[0.45em]">
-        <Ligne a="Hébergement Cloud FR" b="Échéance le 14/12" c={<Puce ton="bleu">Reçue</Puce>} d={`106,80${P}`} />
+        <Ligne a="Hébergement Cloud FR" b="Échéance le 14/12" c={<Puce ton="ambre">À vérifier</Puce>} d={`106,80${P}`} />
         <Ligne a="Imprimerie Gutenberg" b="Échéance le 10/12" c={<Puce ton="bleu">Reçue</Puce>} d={`576,00${P}`} />
         <Ligne a="Fournitures Léon" b="Montant contesté" c={<Puce ton="gris">Refusée</Puce>} d={`1 488,00${P}`} />
       </div>
@@ -126,11 +129,11 @@ function Catalogue() {
     <>
       <Entete titre="Catalogue" sous="Tes prestations et tes prix" />
       <div className="mt-[1.2em] grid gap-[0.45em]">
-        <Ligne a="Audit et arborescence" b="Forfait" c={<Puce ton="gris">Forfait</Puce>} d={`500,00${P}`} />
-        <Ligne a="Maquette d'une page" b="À la page" c={<Puce ton="gris">À la page</Puce>} d={`280,00${P}`} />
-        <Ligne a="Intégration et adaptation mobile" b="Forfait" c={<Puce ton="gris">Forfait</Puce>} d={`1 800,00${P}`} />
-        <Ligne a="Formulaire de contact et RGPD" b="Forfait" c={<Puce ton="gris">Forfait</Puce>} d={`800,00${P}`} />
-        <Ligne a="Journée de développement" b="À la journée" c={<Puce ton="gris">À la journée</Puce>} d={`450,00${P}`} />
+        <Ligne a="Audit et arborescence" b="Utilisé dans 9 devis" c={<Puce ton="gris">Forfait</Puce>} d={`500,00${P}`} />
+        <Ligne a="Maquette d'une page" b="Utilisé dans 14 devis" c={<Puce ton="gris">À la page</Puce>} d={`280,00${P}`} />
+        <Ligne a="Intégration et adaptation mobile" b="Utilisé dans 8 devis" c={<Puce ton="gris">Forfait</Puce>} d={`1 800,00${P}`} />
+        <Ligne a="Formulaire de contact et RGPD" b="Utilisé dans 6 devis" c={<Puce ton="gris">Forfait</Puce>} d={`800,00${P}`} />
+        <Ligne a="Journée de développement" b="Utilisé dans 11 devis" c={<Puce ton="gris">À la journée</Puce>} d={`450,00${P}`} />
       </div>
     </>
   );
@@ -142,7 +145,7 @@ export function EcranApp({ cle }: { cle: CleEcran }) {
   const Vue = VUES[cle];
   return (
     <div className="@container w-full h-full">
-      <div data-ui className="h-full text-[max(13px,2.05cqw)] leading-snug p-[1.4em]">
+      <div data-ui className="h-full text-[max(15px,2.05cqw)] leading-snug p-[1.4em]">
         <Vue />
       </div>
     </div>

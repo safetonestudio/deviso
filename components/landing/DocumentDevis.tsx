@@ -16,6 +16,7 @@ const GRIS = "#5A6460";
 const FILET = "#E3E5DF";
 const VERT = "#0F7A55";
 const NB = "\u00a0";
+const NNB = "\u202f";
 
 /** Statuts aux couleurs de l'application : brouillon gris, envoyé bleu,
     signé vert, transmise bleu, payée vert plein. */
@@ -51,7 +52,7 @@ export function DocumentDevis({ etat, compact = false, className = "" }: { etat:
             ? `Facture FAC-2026-031 pour le Cabinet Lefèvre Avocats, 5 400 € TTC${etat === "paye" ? ", payée après une relance" : ""}`
             : `Devis DEV-2026-048 pour le Cabinet Lefèvre Avocats, 5 400 € TTC${signe ? ", signé par le client" : ""}`
         }
-        className="relative rounded-[0.6em] overflow-hidden"
+        className="relative rounded-[0.6em] overflow-hidden flex flex-col lg:aspect-[555/696]"
         style={{ backgroundColor: PAPIER, color: ENCRE, fontSize: "max(10.5px, 2.35cqw)", padding: "clamp(1.4em, 7.5cqw, 3.2em) clamp(1.2em, 8cqw, 3.4em) clamp(1.3em, 7cqw, 3em)" }}
       >
         {/* En-tête : émetteur et pièce */}
@@ -141,7 +142,7 @@ export function DocumentDevis({ etat, compact = false, className = "" }: { etat:
           }}
         >
           PAYÉE
-          <div className="font-medium tracking-normal" style={{ fontSize: "0.62em" }}>le 12/11/2026, après une relance</div>
+          <div className="font-medium tracking-normal" style={{ fontSize: "0.62em" }}>le 14/11/2026, après une relance</div>
         </div>
         <div className="tabular-nums" style={{ width: "48%", fontSize: "0.92em" }}>
           <div className="flex justify-between" style={{ color: GRIS, padding: "0.25em 0" }}><span>Total HT</span><span>{euros(HT)}</span></div>
@@ -154,7 +155,7 @@ export function DocumentDevis({ etat, compact = false, className = "" }: { etat:
         </div>
 
         {/* Pied : signature du client, puis conformité de la facture */}
-        <div className="grid grid-cols-[1.6fr_1fr] items-end" style={{ gap: "2em", marginTop: "2.4em" }}>
+        <div className="grid grid-cols-[1.6fr_1fr] items-end mt-auto" style={{ gap: "2em", paddingTop: "2.4em" }}>
           <div style={{ fontSize: "0.82em", color: GRIS, lineHeight: 1.45 }}>
             {facture ? (
               <div style={{ lineHeight: 1.5 }}>
@@ -186,6 +187,7 @@ export function DocumentDevis({ etat, compact = false, className = "" }: { etat:
 }
 
 const MOIS: [string, number][] = [["Juillet", 5900], ["Août", 4100], ["Septembre", 8400]];
+const ABREGE: Record<string, string> = { Juillet: "Juil.", Août: "Août", Septembre: "Sept." };
 
 /** Feuille des chiffres : même papier, même gabarit que le document, pour que
     la dernière étape ne change pas d'échelle. */
@@ -218,23 +220,37 @@ export function FeuilleChiffres() {
             <div className="font-semibold" style={{ fontSize: "1.5em", marginTop: "0.2em" }}>En décembre</div>
           </div>
         </div>
-        <table className="w-full tabular-nums" style={{ marginTop: "2.4em", borderCollapse: "collapse", fontSize: "0.92em" }}>
-          <tbody>
-            {MOIS.map(([mois, m]) => (
-              <tr key={mois}>
-                <td style={{ padding: "0.7em 0", borderBottom: `1px solid ${FILET}`, color: GRIS }}>{mois}</td>
-                <td className="text-right font-medium" style={{ padding: "0.7em 0", borderBottom: `1px solid ${FILET}` }}>{euros(Number(m))}</td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-        <div className="mt-auto grid grid-cols-3 items-end" style={{ gap: "1.2em", height: "6.5em", paddingTop: "1.6em" }} aria-hidden="true">
+        <div className="mt-auto grid grid-cols-3 items-end" style={{ gap: "1.6em", height: "18em", paddingTop: "1em" }} aria-hidden="true">
           {MOIS.map(([mois, m]) => (
-            <div key={mois} className="flex flex-col items-center" style={{ gap: "0.4em" }}>
-              <div className="w-full" style={{ height: `${(Number(m) / 8400) * 4}em`, backgroundColor: VERT, opacity: 0.85, borderRadius: "0.3em 0.3em 0 0" }} />
-              <div style={{ color: GRIS, fontSize: "0.8em" }}>{String(mois).slice(0, 4)}.</div>
+            <div key={mois} className="flex flex-col items-center h-full justify-end" style={{ gap: "0.5em" }}>
+              <div className="w-full" style={{ height: `${(Number(m) / 8400) * 80}%`, backgroundColor: VERT, opacity: 0.85, borderRadius: "0.3em 0.3em 0 0" }} />
+              <div className="text-center tabular-nums" style={{ fontSize: "0.9em", lineHeight: 1.35 }}><div style={{ color: ENCRE, fontWeight: 600 }}>{new Intl.NumberFormat("fr-FR").format(Number(m))}{NNB}€</div><div style={{ color: GRIS }}>{ABREGE[mois]}</div></div>
             </div>
           ))}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+/** Téléphone : la feuille des chiffres à taille de lecture. */
+export function ApercuChiffres() {
+  return (
+    <div data-ui className="rounded-xl p-5 text-[15px]" style={{ backgroundColor: PAPIER, color: ENCRE }}>
+      <div className="flex items-baseline justify-between gap-4">
+        <div className="font-semibold tracking-[0.04em] text-[17px]">CHIFFRES</div>
+        <div className="text-[13px]" style={{ color: GRIS }}>3ᵉ trimestre 2026</div>
+      </div>
+      <div className="mt-4 text-[13px]" style={{ color: GRIS }}>Chiffre d&apos;affaires encaissé, hors taxes</div>
+      <div className="text-[34px] leading-tight font-semibold tabular-nums tracking-[-0.03em]">18{NNB}400{NNB}€</div>
+      <div className="mt-4 grid grid-cols-2 gap-2">
+        <div className="rounded-lg px-3 py-2.5" style={{ backgroundColor: "#E1EBF2" }}>
+          <div className="text-[13px]" style={{ color: "#2F556C" }}>TVA collectée</div>
+          <div className="font-semibold tabular-nums">3{NNB}680{NNB}€</div>
+        </div>
+        <div className="rounded-lg px-3 py-2.5" style={{ backgroundColor: "#F6EBD9" }}>
+          <div className="text-[13px]" style={{ color: "#7A4E12" }}>Prochaine déclaration</div>
+          <div className="font-semibold">En décembre</div>
         </div>
       </div>
     </div>
@@ -280,7 +296,7 @@ export function ApercuEtat({ etat }: { etat: EtatDocument }) {
         {etat === "paye" && (
           <div className="font-semibold tracking-[0.06em] text-center -rotate-6 rounded-md px-3 py-1.5" style={{ border: `2px solid ${VERT}`, color: VERT }}>
             PAYÉE
-            <div className="font-medium tracking-normal text-[11px]">le 12/11/2026, après une relance</div>
+            <div className="font-medium tracking-normal text-[12px]">le 14/11/2026, après une relance</div>
           </div>
         )}
         {etat !== "devis" && (

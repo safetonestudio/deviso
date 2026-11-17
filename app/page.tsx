@@ -99,11 +99,11 @@ export default function LandingPage() {
           </nav>
           <div className="flex items-center justify-end gap-2">
             <Link href="/login" className="hidden sm:inline-flex items-center h-10 px-4 rounded-lg text-[14px] font-semibold text-gray-300 hover:text-ink transition-colors">Connexion</Link>
-            <Link href="/signup" className="inline-flex items-center h-10 px-4 rounded-lg bg-indigo-600 hover:bg-indigo-700 text-on-accent text-[14px] font-semibold transition-colors"><span className="sm:hidden">Essai gratuit</span><span className="hidden sm:inline">Essayer gratuitement</span></Link>
+            <Link href="/signup" className="inline-flex items-center h-10 px-4 rounded-lg bg-indigo-600 hover:bg-indigo-700 text-on-accent text-[14px] font-semibold transition-colors"><span className="sm:hidden">Essai gratuit</span><span className="hidden sm:inline">Essayer 14 jours gratuitement</span></Link>
             <details className="lg:hidden relative">
               <summary className="list-none [&::-webkit-details-marker]:hidden h-10 px-4 rounded-lg bg-ds-surface text-[14px] font-semibold text-ink flex items-center cursor-pointer">Menu</summary>
               <div className="absolute right-0 top-full mt-2 z-50 w-64 rounded-xl bg-ds-elevated p-2 shadow-ds-leve">
-                {[...LIENS, ["/login", "Connexion"] as const, ["/signup", "Essayer gratuitement"] as const].map(([href, nom]) => (
+                {[...LIENS, ["/login", "Connexion"] as const].map(([href, nom]) => (
                   <Link key={href} href={href} className="block px-3 py-3 rounded-lg text-[17px] font-medium text-ink hover:bg-ds-surface">{nom}</Link>
                 ))}
               </div>
@@ -127,9 +127,8 @@ export default function LandingPage() {
                   <span className="block xl:whitespace-nowrap">tes relances envoyées.</span>
                 </h1>
                 <p className={`mt-6 max-w-[48ch] ${LEAD}`}>
-                  Pour les indépendants et les petites entreprises, de la micro à la société. Deviso rédige tes devis, les fait
-                  signer et relance tes clients. Tes factures partent par une plateforme agréée par l&apos;État, déjà comprise dans
-                  l&apos;abonnement&nbsp;: rien à brancher, rien à payer en plus.
+                  Pour les indépendants et les petites entreprises, de la micro à la société. La plateforme agréée par l&apos;État
+                  est comprise dans l&apos;abonnement&nbsp;: tes factures électroniques partent sans rien brancher ni payer en plus.
                 </p>
                 <div className="mt-8 flex flex-col sm:flex-row gap-3">
                   <Link href="/signup" className={BOUTON_PLEIN}>Essayer 14 jours gratuitement</Link>
@@ -149,8 +148,8 @@ export default function LandingPage() {
         {/* ── L'application : ce que le parcours ne montre pas ── */}
         <section id="fonctionnalites" className={`${CADRE} ${SECTION} scroll-mt-20`}>
           <div className="reveal max-w-[760px]">
-            <h2 className={H2}>Ce que tu ouvres chaque matin.</h2>
-            <p className={`mt-5 ${LEAD}`}>Ce que tu as encaissé, ce qui t&apos;attend, ce que tes fournisseurs t&apos;ont envoyé, et le catalogue dont l&apos;IA se sert pour chiffrer.</p>
+            <h2 className={H2}>Où en est ton activité, sans ouvrir un tableur.</h2>
+            <p className={`mt-5 ${LEAD}`}>Ventes, achats et catalogue au même endroit, à jour à chaque encaissement.</p>
           </div>
           <div className="mt-12 sm:mt-16">
             <SlideFonctionnalites />
