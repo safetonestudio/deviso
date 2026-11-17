@@ -1,8 +1,7 @@
+import { PageSite, CADRE_LECTURE, SECTION, H1, H2, LEAD, BOUTON_PLEIN, BOUTON_DOUX } from "@/components/site/PageSite";
+import { DemoButton } from "@/components/landing/DemoButton";
 import type { Metadata } from "next";
 import Link from "next/link";
-import { NavbarMobile } from "@/components/NavbarMobile";
-import { WaitlistButton } from "@/components/landing/WaitlistButton";
-import { SiteFooter } from "@/components/SiteFooter";
 import { DonneesStructurees } from "@/components/DonneesStructurees";
 import { SITE, articlesDe } from "@/lib/blog/registre";
 import { AUTEUR, AUTEUR_JSONLD } from "@/lib/blog/auteur";
@@ -63,58 +62,34 @@ export default function AProposPage() {
   const reforme = articlesDe("reforme");
 
   return (
-    <div className="min-h-screen bg-site">
+    <PageSite>
       <DonneesStructurees donnees={jsonLd} />
 
-      <nav className="fixed top-0 left-0 right-0 z-50 bg-ds-bg/80 backdrop-blur-xl border-b border-ink/6">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
-          <Link href="/" aria-label="Deviso" className="flex items-center gap-2">
-            <div className="w-8 h-8 rounded-lg bg-linear-to-br/srgb from-indigo-600 to-violet-600 flex items-center justify-center">
-              <span className="text-ink font-semibold text-sm">D</span>
-            </div>
-            <span className="font-semibold text-lg text-ink">Deviso</span>
-          </Link>
-          <div className="hidden md:flex items-center gap-8 text-sm font-medium">
-            <Link href="/blog" className="text-gray-400 hover:text-ink transition-colors">Blog</Link>
-            <Link href="/conformite" className="text-gray-400 hover:text-ink transition-colors">Conformité</Link>
-            <Link href="/#tarifs" className="text-gray-400 hover:text-ink transition-colors">Tarifs</Link>
-          </div>
-          <div className="hidden md:flex items-center gap-3">
-            <Link href="/login" className="text-sm font-medium text-gray-400 hover:text-ink transition-colors">Connexion</Link>
-            <WaitlistButton
-              plan="free"
-              label="Essayer gratuitement"
-              className="bg-white text-black text-sm font-semibold px-4 py-2 rounded-lg hover:bg-zinc-100 transition-colors"
-            />
-          </div>
-          <NavbarMobile />
-        </div>
-      </nav>
 
-      <main className="pt-28 pb-20 px-4 sm:px-6">
-        <div className="max-w-3xl mx-auto">
+      <main className={`${CADRE_LECTURE} ${SECTION} pb-24`}>
+        <div>
 
-          <nav aria-label="Fil d'Ariane" className="flex items-center gap-2 text-xs text-gray-500 mb-8">
+          <nav aria-label="Fil d'Ariane" className="flex items-center gap-2 text-sm text-gray-500 mb-10">
             <Link href="/" className="hover:text-gray-300 transition-colors">Accueil</Link>
             <span>/</span>
             <span className="text-gray-400">À propos</span>
           </nav>
 
-          <div className="mb-10">
-            <h1 className="text-3xl sm:text-4xl font-semibold text-ink leading-tight mb-4">
+          <div className="mb-16">
+            <h1 className={`${H1} mb-6`}>
               Qui écrit sur ce site
             </h1>
-            <p className="text-lg text-gray-400 leading-relaxed">
+            <p className={LEAD}>
               {AUTEUR.resume}
             </p>
           </div>
 
-          <div className="space-y-10 text-sm text-gray-300 leading-relaxed">
+          <div className="space-y-16 text-[16px] text-gray-300 leading-relaxed">
 
-            <section className="bg-ds-surface border border-ds-border rounded-2xl p-6">
+            <section className="rounded-xl bg-ds-surface p-6">
               <div className="flex items-center gap-4 mb-5">
-                <div className="w-14 h-14 rounded-full bg-linear-to-br/srgb from-indigo-600 to-violet-600 flex items-center justify-center shrink-0">
-                  <span className="text-ink font-semibold text-lg">SA</span>
+                <div className="w-14 h-14 rounded-full bg-indigo-600 flex items-center justify-center shrink-0">
+                  <span className="text-on-accent font-semibold text-lg">SA</span>
                 </div>
                 <div>
                   <p className="text-ink font-semibold text-base">{AUTEUR.nom}</p>
@@ -132,7 +107,7 @@ export default function AProposPage() {
             </section>
 
             <section>
-              <h2 className="text-xl font-semibold text-ink mb-4">Pourquoi ce blog existe</h2>
+              <h2 className={`${H2} mb-6`}>Pourquoi ce blog existe</h2>
               <p className="mb-4">
                 En construisant Deviso, j&apos;ai dû lire les textes de la réforme de facturation électronique
                 dans le détail, parce qu&apos;on ne peut pas implémenter un cycle de vie de facture à partir
@@ -161,7 +136,7 @@ export default function AProposPage() {
             </section>
 
             <section>
-              <h2 className="text-xl font-semibold text-ink mb-4">Comment je travaille</h2>
+              <h2 className={`${H2} mb-6`}>Comment je travaille</h2>
               <div className="space-y-4">
                 {[
                   {
@@ -185,7 +160,7 @@ export default function AProposPage() {
                       "Une partie de l'écosystème autour de cette réforme vit de l'angoisse qu'elle provoque. Les délais réels sont souvent plus confortables qu'on ne le dit, et je préfère l'écrire.",
                   },
                 ].map(({ titre, texte }) => (
-                  <div key={titre} className="bg-ds-surface border border-ds-border rounded-xl p-5">
+                  <div key={titre} className="rounded-xl bg-ds-surface p-5">
                     <p className="text-ink font-medium mb-1">{titre}</p>
                     <p className="text-gray-400">{texte}</p>
                   </div>
@@ -194,16 +169,16 @@ export default function AProposPage() {
             </section>
 
             <section>
-              <h2 className="text-xl font-semibold text-ink mb-4">Les guides sur la réforme</h2>
+              <h2 className={`${H2} mb-6`}>Les guides sur la réforme</h2>
               <div className="space-y-2">
                 {reforme.map((a) => (
                   <Link
                     key={a.slug}
                     href={`/blog/${a.slug}`}
-                    className="flex items-center justify-between gap-4 bg-ds-surface border border-ds-border rounded-xl px-5 py-4 hover:border-indigo-500/40 transition-all group"
+                    className="flex items-center justify-between gap-4 rounded-xl bg-ds-surface px-5 py-4 hover:bg-ds-elevated transition-colors group"
                   >
                     <div className="min-w-0">
-                      <p className="text-ink text-sm font-medium group-hover:text-indigo-200 transition-colors">
+                      <p className="text-ink text-[15px] font-medium group-hover:text-indigo-200 transition-colors">
                         {a.carte.titre}
                       </p>
                       <p className="text-gray-500 text-xs mt-0.5">{a.carte.resume}</p>
@@ -222,8 +197,8 @@ export default function AProposPage() {
               </p>
             </section>
 
-            <section className="pt-8">
-              <h2 className="text-xl font-semibold text-ink mb-3">Une erreur, une question, un désaccord</h2>
+            <section>
+              <h2 className={`${H2} mb-4`}>Une erreur, une question, un désaccord</h2>
               <p className="text-gray-400">
                 Écrivez à{" "}
                 <a href="mailto:support@getdeviso.fr" className="text-indigo-400 hover:text-indigo-300 transition-colors">
@@ -233,11 +208,19 @@ export default function AProposPage() {
                 le genre de message le plus utile que je puisse recevoir.
               </p>
             </section>
+
+            <section className="rounded-xl bg-ds-surface p-6 sm:p-8">
+              <h2 className={`${H2} mb-4`}>Essayer Deviso</h2>
+              <p className="text-gray-400 mb-6">Essai gratuit de 14 jours, sans carte bancaire.</p>
+              <div className="flex flex-col sm:flex-row gap-3">
+                <Link href="/signup" className={`w-full sm:w-auto ${BOUTON_PLEIN}`}>Essayer 14 jours gratuitement</Link>
+                <DemoButton className={`w-full sm:w-auto ${BOUTON_DOUX}`} />
+              </div>
+            </section>
           </div>
         </div>
       </main>
 
-      <SiteFooter />
-    </div>
+          </PageSite>
   );
 }

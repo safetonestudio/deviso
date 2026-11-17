@@ -1,12 +1,11 @@
+import { PageSite, CADRE_LECTURE, SECTION, H1, H2, LEAD, BOUTON_PLEIN, BOUTON_DOUX } from "@/components/site/PageSite";
+import { DemoButton } from "@/components/landing/DemoButton";
 import type { Metadata } from "next";
 import Link from "next/link";
-import { NavbarMobile } from "@/components/NavbarMobile";
-import { WaitlistButton } from "@/components/landing/WaitlistButton";
-import { SiteFooter } from "@/components/SiteFooter";
 import { DonneesStructurees } from "@/components/DonneesStructurees";
 import { SITE } from "@/lib/blog/registre";
 import { jsonLdFilDAriane } from "@/lib/blog/meta";
-import { CircleCheck, ExternalLink, ShieldCheck, TriangleAlert } from "lucide-react";
+import { CircleCheck, ExternalLink, TriangleAlert } from "lucide-react";
 
 /**
  * Ce que Deviso est, au sens de la réforme, écrit noir sur blanc.
@@ -62,53 +61,24 @@ const QUESTIONS = [
 
 export default function ConformitePage() {
   return (
-    <div className="min-h-screen bg-site">
+    <PageSite>
       <DonneesStructurees donnees={jsonLd} />
 
-      {/* ── Navbar ── */}
-      <nav className="fixed top-0 left-0 right-0 z-50 bg-ds-bg/80 backdrop-blur-xl border-b border-ink/6">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
-          <Link href="/" aria-label="Deviso" className="flex items-center gap-2">
-            <div className="w-8 h-8 rounded-lg bg-linear-to-br/srgb from-indigo-600 to-violet-600 flex items-center justify-center">
-              <span className="text-ink font-semibold text-sm">D</span>
-            </div>
-            <span className="font-semibold text-lg text-ink">Deviso</span>
-          </Link>
-          <div className="hidden md:flex items-center gap-8 text-sm font-medium">
-            <Link href="/blog" className="text-gray-400 hover:text-ink transition-colors">Blog</Link>
-            <Link href="/#fonctionnalites" className="text-gray-400 hover:text-ink transition-colors">Fonctionnalités</Link>
-            <Link href="/#tarifs" className="text-gray-400 hover:text-ink transition-colors">Tarifs</Link>
-          </div>
-          <div className="hidden md:flex items-center gap-3">
-            <Link href="/login" className="text-sm font-medium text-gray-400 hover:text-ink transition-colors">Connexion</Link>
-            <WaitlistButton
-              plan="free"
-              label="Essayer gratuitement"
-              className="bg-white text-black text-sm font-semibold px-4 py-2 rounded-lg hover:bg-zinc-100 transition-colors"
-            />
-          </div>
-          <NavbarMobile />
-        </div>
-      </nav>
 
-      <main className="pt-28 pb-20 px-4 sm:px-6">
-        <div className="max-w-3xl mx-auto">
+      <main className={`${CADRE_LECTURE} ${SECTION} pb-24`}>
+        <div>
 
-          <nav aria-label="Fil d'Ariane" className="flex items-center gap-2 text-xs text-gray-500 mb-8">
+          <nav aria-label="Fil d'Ariane" className="flex items-center gap-2 text-sm text-gray-500 mb-10">
             <Link href="/" className="hover:text-gray-300 transition-colors">Accueil</Link>
             <span>/</span>
             <span className="text-gray-400">Conformité</span>
           </nav>
 
-          <div className="mb-10">
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-semibold bg-emerald-500/10 text-emerald-300 border border-emerald-500/20 mb-4">
-              <ShieldCheck size={13} className="shrink-0" />
-              Réforme de facturation électronique
-            </div>
-            <h1 className="text-3xl sm:text-4xl font-semibold text-ink leading-tight mb-4">
+          <div className="mb-16">
+            <h1 className={`${H1} mb-6`}>
               Ce que Deviso est, au sens de la réforme
             </h1>
-            <p className="text-lg text-gray-400 leading-relaxed">
+            <p className={LEAD}>
               La réponse en une phrase : Deviso est une <strong className="text-ink">solution compatible</strong>,
               adossée à <strong className="text-ink">Super PDP</strong>, qui est la plateforme agréée. Le reste
               de cette page explique pourquoi cette distinction compte, et comment la vérifier sans nous faire
@@ -116,11 +86,11 @@ export default function ConformitePage() {
             </p>
           </div>
 
-          <div className="space-y-10 text-sm text-gray-300 leading-relaxed">
+          <div className="space-y-16 text-[16px] text-gray-300 leading-relaxed">
 
             {/* ── 1. La distinction ── */}
             <section>
-              <h2 className="text-xl font-semibold text-ink mb-4">
+              <h2 className={`${H2} mb-6`}>
                 Plateforme agréée, solution compatible : ce n&apos;est pas du vocabulaire marketing
               </h2>
               <p className="mb-4">
@@ -136,8 +106,8 @@ export default function ConformitePage() {
                 conforme ? », tout le monde répond oui. C&apos;est : <strong className="text-ink">« êtes-vous
                 agréé, ou adossé à qui ? »</strong>
               </p>
-              <div className="bg-ds-surface border border-ds-border rounded-xl p-5">
-                <p className="text-xs text-gray-500 font-medium uppercase tracking-wider mb-3">
+              <div className="rounded-xl bg-ds-surface p-5">
+                <p className="text-[15px] text-ink font-semibold mb-3">
                   Ce que ça change pour vous, concrètement
                 </p>
                 <p className="text-gray-400">
@@ -151,14 +121,14 @@ export default function ConformitePage() {
 
             {/* ── 2. Les trois questions ── */}
             <section>
-              <h2 className="text-xl font-semibold text-ink mb-4">
+              <h2 className={`${H2} mb-6`}>
                 Les trois questions, et nos réponses
               </h2>
               <div className="space-y-4">
                 {QUESTIONS.map(({ q, r }) => (
-                  <div key={q} className="bg-ds-surface border border-ds-border rounded-xl p-5">
+                  <div key={q} className="rounded-xl bg-ds-surface p-5">
                     <p className="font-semibold text-ink mb-2 flex items-start gap-2">
-                      <CircleCheck size={16} className="shrink-0 mt-0.5 text-emerald-400" />
+                      <CircleCheck size={16} className="shrink-0 mt-0.5 text-indigo-400" />
                       {q}
                     </p>
                     <p className="text-gray-400 pl-6">{r}</p>
@@ -169,7 +139,7 @@ export default function ConformitePage() {
 
             {/* ── 3. Vérifier soi-même ── */}
             <section>
-              <h2 className="text-xl font-semibold text-ink mb-4">Vérifiez-le vous-même</h2>
+              <h2 className={`${H2} mb-6`}>Vérifiez-le vous-même</h2>
               <p className="mb-4">
                 La liste des plateformes agréées est publiée par la DGFiP et téléchargeable. Elle se
                 présente en <strong className="text-ink">deux fichiers</strong>, et la nuance a son
@@ -181,12 +151,12 @@ export default function ConformitePage() {
                 restent à passer. Ce sont les intitulés exacts employés par la DGFiP, c&apos;est sous ces
                 mots que vous les retrouverez.
               </p>
-              <div className="bg-[#191830] border border-indigo-500/30 rounded-xl p-5 mb-4">
+              <div className="rounded-xl bg-blue-500/10 p-5 mb-4">
                 <a
                   href="https://www.impots.gouv.fr/je-consulte-la-liste-des-plateformes-agreees"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="inline-flex items-center gap-2 text-indigo-300 hover:text-indigo-200 font-medium transition-colors"
+                  className="inline-flex items-center gap-2 text-blue-300 hover:text-blue-200 font-medium transition-colors"
                 >
                   La liste officielle des plateformes agréées, sur impots.gouv.fr
                   <ExternalLink size={14} className="shrink-0" />
@@ -198,7 +168,7 @@ export default function ConformitePage() {
                   compte.
                 </p>
               </div>
-              <div className="flex gap-3 bg-[#241d11] border border-amber-500/25 rounded-xl p-5">
+              <div className="flex gap-3 rounded-xl bg-amber-500/10 p-5">
                 <TriangleAlert size={18} className="shrink-0 mt-0.5 text-amber-400" />
                 <div>
                   <p className="font-semibold text-ink mb-1">Méfiez-vous des comparateurs</p>
@@ -214,24 +184,24 @@ export default function ConformitePage() {
 
             {/* ── 4. Ce que Deviso fait déjà, et ce qu'il ne fait pas ── */}
             <section>
-              <h2 className="text-xl font-semibold text-ink mb-4">
+              <h2 className={`${H2} mb-6`}>
                 Ce que Deviso fait déjà, et ce qu&apos;il ne fait pas
               </h2>
               <div className="grid sm:grid-cols-2 gap-4">
-                <div className="bg-[#14211a] border border-emerald-500/20 rounded-xl p-5">
-                  <p className="text-xs font-semibold text-emerald-300 uppercase tracking-wider mb-3">
+                <div className="rounded-xl bg-ds-surface p-5">
+                  <p className="text-[15px] font-semibold text-ink mb-3">
                     Fait
                   </p>
                   <ul className="space-y-2 text-gray-300">
-                    <li className="flex gap-2"><span className="text-emerald-400 shrink-0">→</span> <span>Génère vos factures au format <strong className="text-ink">Factur-X</strong> conforme à la norme européenne EN 16931</span></li>
-                    <li className="flex gap-2"><span className="text-emerald-400 shrink-0">→</span> <span>Se connecte à Super PDP pour <strong className="text-ink">déposer</strong> vos factures et <strong className="text-ink">recevoir</strong> celles de vos fournisseurs</span></li>
-                    <li className="flex gap-2"><span className="text-emerald-400 shrink-0">→</span> <span>Suit le <strong className="text-ink">cycle de vie</strong> de chaque facture déposée, y compris les refus et les rejets, et vous dit quoi faire</span></li>
-                    <li className="flex gap-2"><span className="text-emerald-400 shrink-0">→</span> Gère la mention d&apos;exonération correcte si vous êtes en franchise de TVA (art. 293 B du CGI)</li>
-                    <li className="flex gap-2"><span className="text-emerald-400 shrink-0">→</span> Numérote vos factures de façon continue, comme l&apos;exige l&apos;article 242 nonies A du CGI</li>
+                    <li className="flex gap-2"><span className="text-indigo-400 shrink-0">→</span> <span>Génère vos factures au format <strong className="text-ink">Factur-X</strong> conforme à la norme européenne EN 16931</span></li>
+                    <li className="flex gap-2"><span className="text-indigo-400 shrink-0">→</span> <span>Se connecte à Super PDP pour <strong className="text-ink">déposer</strong> vos factures et <strong className="text-ink">recevoir</strong> celles de vos fournisseurs</span></li>
+                    <li className="flex gap-2"><span className="text-indigo-400 shrink-0">→</span> <span>Suit le <strong className="text-ink">cycle de vie</strong> de chaque facture déposée, y compris les refus et les rejets, et vous dit quoi faire</span></li>
+                    <li className="flex gap-2"><span className="text-indigo-400 shrink-0">→</span> Gère la mention d&apos;exonération correcte si vous êtes en franchise de TVA (art. 293 B du CGI)</li>
+                    <li className="flex gap-2"><span className="text-indigo-400 shrink-0">→</span> Numérote vos factures de façon continue, comme l&apos;exige l&apos;article 242 nonies A du CGI</li>
                   </ul>
                 </div>
-                <div className="bg-ds-surface border border-ds-border rounded-xl p-5">
-                  <p className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-3">
+                <div className="rounded-xl bg-ds-surface p-5">
+                  <p className="text-[15px] font-semibold text-ink mb-3">
                     Ne fait pas
                   </p>
                   <ul className="space-y-2 text-gray-400">
@@ -246,16 +216,16 @@ export default function ConformitePage() {
 
             {/* ── 5. Où vous en êtes, vous ── */}
             <section>
-              <h2 className="text-xl font-semibold text-ink mb-4">Et vous, où en êtes-vous ?</h2>
+              <h2 className={`${H2} mb-6`}>Et vous, où en êtes-vous ?</h2>
               <p className="mb-4">
                 Deux obligations, deux dates, et les confondre est la source de presque toute la confusion sur
                 le sujet.
               </p>
               <div className="space-y-3">
-                <div className="bg-[#241d11] border border-amber-500/25 rounded-xl p-5">
+                <div className="rounded-xl bg-amber-500/10 p-5">
                   <div className="flex flex-wrap items-center justify-between gap-2 mb-1">
                     <span className="text-sm font-semibold text-amber-300">Recevoir</span>
-                    <span className="text-[10px] font-semibold bg-amber-500/20 text-amber-400 rounded-full px-2 py-0.5">
+                    <span className="text-xs font-semibold text-amber-300">
                       Déjà obligatoire
                     </span>
                   </div>
@@ -265,10 +235,10 @@ export default function ConformitePage() {
                     régime, micro-entrepreneurs et franchise en base comprises.
                   </p>
                 </div>
-                <div className="bg-ds-surface border border-ds-border rounded-xl p-5">
+                <div className="rounded-xl bg-ds-surface p-5">
                   <div className="flex flex-wrap items-center justify-between gap-2 mb-1">
                     <span className="text-sm font-semibold text-gray-300">Émettre</span>
-                    <span className="text-[10px] font-semibold bg-ink/6 text-gray-400 rounded-full px-2 py-0.5">
+                    <span className="text-xs font-semibold text-gray-400">
                       1<sup>er</sup> septembre 2027
                     </span>
                   </div>
@@ -280,11 +250,11 @@ export default function ConformitePage() {
               </div>
               <p className="mt-4">
                 Le détail est dans{" "}
-                <Link href="/blog/facturation-electronique-2026" className="text-indigo-400 hover:text-indigo-300 transition-colors">
+                <Link href="/blog/facturation-electronique-2026" className="text-blue-400 hover:text-blue-300 transition-colors">
                   notre guide de la réforme
                 </Link>
                 , et le cas du micro-entrepreneur dans{" "}
-                <Link href="/blog/reforme-facturation-micro-entrepreneur" className="text-indigo-400 hover:text-indigo-300 transition-colors">
+                <Link href="/blog/reforme-facturation-micro-entrepreneur" className="text-blue-400 hover:text-blue-300 transition-colors">
                   celui qui lui est consacré
                 </Link>
                 .
@@ -292,8 +262,8 @@ export default function ConformitePage() {
             </section>
 
             {/* ── 6. Une question ── */}
-            <section className="pt-8">
-              <h2 className="text-xl font-semibold text-ink mb-3">Une question sur tout ça ?</h2>
+            <section>
+              <h2 className={`${H2} mb-4`}>Une question sur tout ça ?</h2>
               <p className="text-gray-400">
                 Écrivez à{" "}
                 <a href="mailto:support@getdeviso.fr" className="text-indigo-400 hover:text-indigo-300 transition-colors">
@@ -303,11 +273,19 @@ export default function ConformitePage() {
                 précisément plutôt que d&apos;être classés « statut non communiqué ».
               </p>
             </section>
+
+            <section className="rounded-xl bg-ds-surface p-6 sm:p-8">
+              <h2 className={`${H2} mb-4`}>Essayer Deviso</h2>
+              <p className="text-gray-400 mb-6">Essai gratuit de 14 jours, sans carte bancaire.</p>
+              <div className="flex flex-col sm:flex-row gap-3">
+                <Link href="/signup" className={`w-full sm:w-auto ${BOUTON_PLEIN}`}>Essayer 14 jours gratuitement</Link>
+                <DemoButton className={`w-full sm:w-auto ${BOUTON_DOUX}`} />
+              </div>
+            </section>
           </div>
         </div>
       </main>
 
-      <SiteFooter />
-    </div>
+          </PageSite>
   );
 }

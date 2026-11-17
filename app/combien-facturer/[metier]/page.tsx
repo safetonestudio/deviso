@@ -1,5 +1,6 @@
+import { PageSite, CADRE, SECTION, H1, H2, LEAD, BOUTON_PLEIN, BOUTON_DOUX } from "@/components/site/PageSite";
+import { DemoButton } from "@/components/landing/DemoButton";
 import type { Metadata } from "next";
-import { SiteFooter } from "@/components/SiteFooter";
 import { DonneesStructurees } from "@/components/DonneesStructurees";
 import { SITE } from "@/lib/blog/registre";
 import { metierDeLanding } from "@/lib/blog/metiers";
@@ -52,25 +53,13 @@ function TjmBadge({
   highlight?: boolean;
 }) {
   return (
-    <div
-      className={`rounded-2xl p-5 border ${
-        highlight
-          ? "border-indigo-500/40 bg-[#191830]"
-          : "border-ds-border bg-ds-surface"
-      }`}
-    >
-      <p
-        className={`text-xs font-semibold uppercase tracking-wider mb-1 ${
-          highlight ? "text-indigo-400" : "text-gray-500"
-        }`}
-      >
-        {label}
+    <div className="rounded-xl bg-ds-surface p-5">
+      <p className={`text-[14px] font-medium mb-1 ${highlight ? "text-indigo-400" : "text-gray-400"}`}>{label}</p>
+      <p className={`text-[22px] sm:text-[28px] font-semibold tabular-nums ${highlight ? "text-indigo-300" : "text-ink"}`}>
+        {min}–{max}&nbsp;€
       </p>
-      <p className={`text-2xl font-bold tabular-nums ${highlight ? "text-indigo-200" : "text-gray-300"}`}>
-        {min}–{max} €
-      </p>
-      <p className="text-xs text-gray-500 mt-1">/jour · HT</p>
-      <p className="text-[11px] text-gray-600 mt-2">{level}</p>
+      <p className="text-[13px] text-gray-400 mt-1">/jour · HT</p>
+      <p className="text-[13px] text-gray-400 mt-2">{level}</p>
     </div>
   );
 }
@@ -121,267 +110,196 @@ export default async function MetierTarifsPage({ params }: Props) {
   const otherMetiers = TARIFS_DATA.filter((m) => m.slug !== data.slug).slice(0, 5);
 
   return (
-    <div className="min-h-screen bg-site text-ink">
+    <PageSite>
       <DonneesStructurees donnees={jsonLd} />
 
-      {/* Navbar */}
-      <nav className="sticky top-0 z-40 bg-ds-bg/90 backdrop-blur-xl border-b border-ink/6">
-        <div className="max-w-5xl mx-auto px-4 sm:px-6 h-14 flex items-center justify-between">
-          <Link href="/" className="flex items-center gap-2">
-            <div className="w-7 h-7 rounded-lg bg-linear-to-br/srgb from-indigo-600 to-violet-600 flex items-center justify-center">
-              <span className="text-ink font-semibold text-xs">D</span>
-            </div>
-            <span className="font-semibold text-base text-ink">Deviso</span>
-          </Link>
-          <div className="flex items-center gap-4 text-sm">
-            <Link href="/combien-facturer" className="text-gray-400 hover:text-ink transition-colors hidden sm:block">
-              Tous les metiers
-            </Link>
-            <Link href="/login" className="text-gray-400 hover:text-ink transition-colors">Connexion</Link>
-            <Link
-              href="/login"
-              className="bg-indigo-600 hover:bg-indigo-700 text-ink text-sm font-semibold px-4 py-2 rounded-lg transition-colors"
-            >
-              Essai gratuit
-            </Link>
-          </div>
-        </div>
-      </nav>
-
-      <div className="max-w-5xl mx-auto px-4 sm:px-6 py-10 space-y-14">
-
-        {/* Breadcrumb */}
-        <nav className="flex items-center gap-2 text-xs text-gray-500">
-          <Link href="/" className="hover:text-gray-300 transition-colors">Accueil</Link>
+      {/* Introduction */}
+      <section className={`${CADRE} pt-10 sm:pt-14`}>
+        <nav className="flex flex-wrap items-center gap-2 text-[14px] text-gray-400 mb-8">
+          <Link href="/" className="hover:text-ink transition-colors">Accueil</Link>
           <span>/</span>
-          <Link href="/combien-facturer" className="hover:text-gray-300 transition-colors">Tarifs freelance</Link>
+          <Link href="/combien-facturer" className="hover:text-ink transition-colors">Tarifs freelance</Link>
           <span>/</span>
-          <span className="text-gray-400">{data.name}</span>
+          <span className="text-gray-300">{data.name}</span>
         </nav>
-
-        {/* Hero + TJM grid */}
-        <div className="space-y-8">
-          <div>
-            <div className="inline-flex items-center gap-2 text-xs font-semibold text-indigo-400 bg-indigo-500/10 border border-indigo-500/20 rounded-full px-3 py-1 mb-4">
-              Baromètre Malt 2026 · URSSAF
+        <div className="grid lg:grid-cols-12 gap-10 lg:gap-14 items-start">
+          <div className="lg:col-span-5">
+            <p className="text-[15px] font-medium text-blue-400 mb-4">Baromètre Malt 2026 · URSSAF</p>
+            <h1 className={H1}>{data.title}</h1>
+            <p className={`${LEAD} mt-6`}>{data.description}</p>
+          </div>
+          <div className="lg:col-span-7">
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+              <TjmBadge level="0–2 ans d'expérience" label="Junior" min={data.tjm.junior.min} max={data.tjm.junior.max} />
+              <TjmBadge level="2–5 ans d'expérience" label="Confirmé" min={data.tjm.confirme.min} max={data.tjm.confirme.max} highlight />
+              <TjmBadge level="5+ ans d'expérience" label="Senior" min={data.tjm.senior.min} max={data.tjm.senior.max} />
             </div>
-            <h1 className="text-3xl sm:text-4xl font-bold text-ink leading-tight mb-3">
-              {data.title}
-            </h1>
-            <p className="text-base text-gray-400 leading-relaxed max-w-2xl">{data.description}</p>
-          </div>
-
-          <div className="grid grid-cols-3 gap-3 sm:gap-4">
-            <TjmBadge
-              level="0–2 ans d'expérience"
-              label="Junior"
-              min={data.tjm.junior.min}
-              max={data.tjm.junior.max}
-            />
-            <TjmBadge
-              level="2–5 ans d'expérience"
-              label="Confirmé"
-              min={data.tjm.confirme.min}
-              max={data.tjm.confirme.max}
-              highlight
-            />
-            <TjmBadge
-              level="5+ ans d'expérience"
-              label="Senior"
-              min={data.tjm.senior.min}
-              max={data.tjm.senior.max}
-            />
-          </div>
-
-          <div className="text-xs text-gray-400 flex items-center gap-2">
-            <span>Source : Malt Baromètre 2026 · Tarifs HT, en €/jour · Marché français · Mis à jour juillet 2026</span>
+            <p className="text-[14px] text-gray-400 mt-4">
+              Source&nbsp;: Malt Baromètre 2026 · Tarifs HT, en €/jour · Marché français · Mis à jour juillet 2026
+            </p>
           </div>
         </div>
+      </section>
 
-        {/* Simulateur */}
-        <section className="grid lg:grid-cols-2 gap-8 items-start">
-          <div>
-            <h2 className="text-xl font-bold text-ink mb-3">
-              Simulez votre revenu net
-            </h2>
-            <p className="text-sm text-gray-400 leading-relaxed mb-4">
+      {/* Simulateur */}
+      <section className={`${CADRE} ${SECTION}`}>
+        <div className="grid lg:grid-cols-12 gap-10 lg:gap-14 items-start">
+          <div className="lg:col-span-5">
+            <h2 className={H2}>Simulez votre revenu net</h2>
+            <p className="text-[16px] text-gray-300 leading-relaxed mt-5 mb-6">
               En <strong className="text-ink">micro-BNC</strong> (régime standard pour les{" "}
               {data.label}s), vous versez{" "}
-              <strong className="text-ink">{pctCotisations} % de cotisations URSSAF</strong> sur votre
+              <strong className="text-ink">{pctCotisations}&nbsp;% de cotisations URSSAF</strong> sur votre
               CA. Le simulateur ci-contre calcule votre revenu net mensuel avant impôt, ou le TJM à
               atteindre pour un revenu cible.
             </p>
-            <div className="bg-ds-surface border border-ds-border rounded-xl p-4 space-y-2 text-sm">
-              <div className="flex justify-between">
-                <span className="text-gray-500">Jours facturables estimés</span>
+            <div className="rounded-xl bg-ds-surface p-5 space-y-3 text-[15px]">
+              <div className="flex justify-between gap-4">
+                <span className="text-gray-300">Jours facturables estimés</span>
                 <span className="font-semibold text-ink">{data.joursFacturables} j/mois</span>
               </div>
-              <div className="flex justify-between">
-                <span className="text-gray-500">TJM médian ({data.name} confirmé)</span>
-                <span className="font-semibold text-indigo-300">{defaultTjm} €/j</span>
+              <div className="flex justify-between gap-4">
+                <span className="text-gray-300">TJM médian ({data.name} confirmé)</span>
+                <span className="font-semibold text-indigo-300">{defaultTjm}&nbsp;€/j</span>
               </div>
-              <div className="flex justify-between pt-2 mt-2">
-                <span className="text-gray-500">Revenu net estimé / mois</span>
-                <span className="font-semibold text-emerald-400">
-                  {netMensuel.toLocaleString("fr-FR", { maximumFractionDigits: 0 })} €
+              <div className="flex justify-between gap-4 pt-3 border-t border-ink/10">
+                <span className="text-gray-300">Revenu net estimé / mois</span>
+                <span className="font-semibold text-indigo-400">
+                  {netMensuel.toLocaleString("fr-FR", { maximumFractionDigits: 0 })}&nbsp;€
                 </span>
               </div>
             </div>
           </div>
-          <TjmSimulator defaultTjm={defaultTjm} defaultJours={data.joursFacturables} />
-        </section>
+          <div className="lg:col-span-7">
+            <TjmSimulator defaultTjm={defaultTjm} defaultJours={data.joursFacturables} />
+          </div>
+        </div>
+      </section>
 
-        {/* Spécialités */}
-        <section>
-          <h2 className="text-xl font-bold text-ink mb-2">
-            Spécialités qui augmentent le TJM
-          </h2>
-          <p className="text-sm text-gray-500 mb-5">
-            Par rapport au TJM moyen d&apos;un {data.label} confirmé ({defaultTjm} €/j).
-          </p>
-          <div className="grid sm:grid-cols-2 gap-3">
+      {/* Spécialités */}
+      <section className={`${CADRE} ${SECTION}`}>
+        <div className="grid lg:grid-cols-12 gap-10 lg:gap-14">
+          <div className="lg:col-span-5">
+            <h2 className={H2}>Spécialités qui augmentent le TJM</h2>
+            <p className="text-[16px] text-gray-300 mt-4 leading-relaxed">
+              Par rapport au TJM moyen d&apos;un {data.label} confirmé ({defaultTjm}&nbsp;€/j).
+            </p>
+          </div>
+          <div className="lg:col-span-7 grid sm:grid-cols-2 gap-4">
             {data.specialites.map((s) => {
               const premium = Math.round(defaultTjm * (1 + s.premium / 100));
               return (
-                <div
-                  key={s.label}
-                  className="flex items-center justify-between gap-4 bg-ds-surface border border-ds-border rounded-xl px-4 py-3"
-                >
-                  <span className="text-sm text-gray-300">{s.label}</span>
+                <div key={s.label} className="flex items-center justify-between gap-4 rounded-xl bg-ds-surface px-5 py-4">
+                  <span className="text-[15px] text-gray-300">{s.label}</span>
                   <div className="text-right shrink-0">
-                    <span className="text-sm font-semibold text-emerald-400">~{premium} €/j</span>
-                    <span className="text-xs text-emerald-500/70 ml-1.5">+{s.premium} %</span>
+                    <span className="text-[15px] font-semibold text-indigo-400">~{premium}&nbsp;€/j</span>
+                    <span className="text-[13px] text-gray-400 ml-1.5">+{s.premium}&nbsp;%</span>
                   </div>
                 </div>
               );
             })}
           </div>
-        </section>
+        </div>
+      </section>
 
-        {/* Erreurs de tarification */}
-        <section className="bg-ds-surface border border-ds-border rounded-2xl p-6 sm:p-8">
-          <h2 className="text-xl font-bold text-ink mb-5">
-            Erreurs de tarification à éviter
-          </h2>
-          <ul className="space-y-4">
+      {/* Erreurs de tarification */}
+      <section className={`${CADRE} ${SECTION}`}>
+        <div className="grid lg:grid-cols-12 gap-10 lg:gap-14">
+          <div className="lg:col-span-5">
+            <h2 className={H2}>Erreurs de tarification à éviter</h2>
+          </div>
+          <ul className="lg:col-span-7 grid gap-4">
             {data.erreurs.map((e) => (
-              <li key={e} className="flex gap-3 text-sm text-gray-400">
-                <span className="text-red-400 shrink-0 font-bold mt-0.5">x</span>
-                <span>{e}</span>
+              <li key={e} className="rounded-xl bg-ds-surface p-5 text-[15px] text-gray-300 leading-relaxed">
+                {e}
               </li>
             ))}
           </ul>
-        </section>
+        </div>
+      </section>
 
-        {/* Deviso CTA */}
-        <section className="rounded-2xl border border-indigo-500/20 bg-[#191830] p-6 sm:p-8 flex flex-col sm:flex-row gap-6 items-center">
-          <div className="flex-1">
-            <h2 className="text-lg font-bold text-ink mb-2">
-              Creez vos devis de {data.label} en 30 secondes
-            </h2>
-            <p className="text-sm text-gray-400 leading-relaxed">
-              Deviso genere un devis complet par IA a partir d&apos;une description de mission, avec vos
+      {/* Deviso */}
+      <section className={`${CADRE} ${SECTION}`}>
+        <div className="rounded-xl bg-ds-surface p-8 sm:p-12 grid lg:grid-cols-12 gap-8 items-center">
+          <div className="lg:col-span-7">
+            <h2 className={H2}>Créez vos devis de {data.label} en 30 secondes</h2>
+            <p className="text-[16px] text-gray-300 leading-relaxed mt-4">
+              Deviso génère un devis complet par IA à partir d&apos;une description de mission, avec vos
               lignes de prestation, votre TJM et vos conditions de paiement. Le client signe
-              electroniquement, la facture Factur-X est emise en 1 clic.
+              électroniquement, la facture Factur-X est émise en 1 clic.
             </p>
           </div>
-          <div className="shrink-0">
-            <Link
-              href="/login"
-              className="inline-flex items-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-ink font-semibold px-5 py-3 rounded-xl transition-colors text-sm whitespace-nowrap"
-            >
-              Essai gratuit 14 jours
-            </Link>
-            <Link
-              href={data.landingHref}
-              className="block text-center text-xs text-gray-500 hover:text-gray-300 mt-2 transition-colors"
-            >
+          <div className="lg:col-span-5 flex flex-col sm:flex-row lg:flex-col gap-3 lg:items-start">
+            <Link href="/signup" className={`w-full sm:w-auto ${BOUTON_PLEIN}`}>Essayer 14 jours gratuitement</Link>
+            <DemoButton className={`w-full sm:w-auto ${BOUTON_DOUX}`} />
+            <Link href={data.landingHref} className="text-[14px] text-indigo-400 hover:text-indigo-300 transition-colors">
               Voir Deviso pour les {data.label}s
             </Link>
           </div>
+        </div>
+      </section>
+
+      {/* Le guide du même métier : arête du triangle landing / guide / tarifs */}
+      {guide && (
+        <section className={`${CADRE} ${SECTION}`}>
+          <div className="grid lg:grid-cols-12 gap-10 lg:gap-14">
+            <div className="lg:col-span-5">
+              <p className="text-[15px] font-medium text-blue-400 mb-4">Guide pratique</p>
+              <h2 className={H2}>
+                Savoir quoi facturer, c&apos;est une chose. Savoir l&apos;écrire sur un devis, c&apos;en est une autre.
+              </h2>
+            </div>
+            <div className="lg:col-span-7 rounded-xl bg-ds-surface p-6 self-start">
+              <p className="text-[16px] text-gray-300 leading-relaxed mb-4">
+                Mentions obligatoires, exemple chiffré, clauses qui protègent des révisions sans fin
+                et des impayés, erreurs les plus fréquentes.
+              </p>
+              <Link href={guide.href} className="text-indigo-400 hover:text-indigo-300 font-medium text-[15px] transition-colors">
+                Lire le guide du devis {data.label} →
+              </Link>
+            </div>
+          </div>
         </section>
+      )}
 
-        {/* ── Le guide du même métier ──
-            Cette page pointait vers la landing produit, mais pas vers l'article
-            qui, lui, pointait ici. Une arête manquante sur un triangle de trois
-            pages qui visent le même sujet. ── */}
-        {guide && (
-          <section className="bg-ds-surface border border-ds-border rounded-2xl p-6">
-            <p className="text-xs text-gray-500 font-medium uppercase tracking-wider mb-2">
-              Guide pratique
-            </p>
-            <h2 className="text-lg font-semibold text-ink mb-2">
-              Savoir quoi facturer, c&apos;est une chose. Savoir l&apos;écrire sur un devis, c&apos;en est
-              une autre.
-            </h2>
-            <p className="text-sm text-gray-400 leading-relaxed mb-4">
-              Mentions obligatoires, exemple chiffré, clauses qui protègent des révisions sans fin
-              et des impayés, erreurs les plus fréquentes.
-            </p>
-            <Link
-              href={guide.href}
-              className="inline-flex items-center gap-2 text-indigo-400 hover:text-indigo-300 font-medium text-sm transition-colors"
-            >
-              Lire le guide du devis {data.label} →
-            </Link>
-          </section>
-        )}
-
-        {/* FAQ */}
-        <section>
-          <h2 className="text-xl font-bold text-ink mb-6">
-            Questions frequentes sur les tarifs {data.label}
-          </h2>
-          <div className="space-y-5">
+      {/* FAQ */}
+      <section className={`${CADRE} ${SECTION}`}>
+        <div className="grid lg:grid-cols-12 gap-10 lg:gap-14">
+          <div className="lg:col-span-5">
+            <h2 className={H2}>Questions fréquentes sur les tarifs {data.label}</h2>
+          </div>
+          <div className="lg:col-span-7 grid gap-4">
             {data.faq.map(({ q, a }) => (
-              <div key={q} className="border-b border-ds-border pb-5 last:border-0">
-                <h3 className="text-sm font-semibold text-ink mb-2">{q}</h3>
-                <p className="text-sm text-gray-400 leading-relaxed">{a}</p>
+              <div key={q} className="rounded-xl bg-ds-surface p-6">
+                <h3 className="text-[17px] font-semibold text-ink mb-2">{q}</h3>
+                <p className="text-[15px] text-gray-300 leading-relaxed">{a}</p>
               </div>
             ))}
           </div>
-        </section>
+        </div>
+      </section>
 
-        {/* Cross-links metiers */}
-        <section>
-          <h2 className="text-lg font-bold text-ink mb-4">TJM d&apos;autres metiers freelance</h2>
-          <div className="flex flex-wrap gap-2">
-            {otherMetiers.map((m) => (
-              <Link
-                key={m.slug}
-                href={`/combien-facturer/${m.slug}`}
-                className="text-xs font-medium px-3 py-1.5 rounded-lg bg-ds-surface border border-ds-border text-gray-400 hover:text-ink hover:border-indigo-500/40 transition-all"
-              >
-                TJM {m.label}
-              </Link>
-            ))}
+      {/* Autres métiers */}
+      <section className={`${CADRE} ${SECTION} pb-20`}>
+        <h2 className="text-[20px] font-semibold text-ink mb-5">TJM d&apos;autres métiers freelance</h2>
+        <div className="flex flex-wrap gap-2">
+          {otherMetiers.map((m) => (
             <Link
-              href="/combien-facturer"
-              className="text-xs font-medium px-3 py-1.5 rounded-lg bg-ds-surface border border-ds-border text-indigo-400 hover:text-indigo-300 hover:border-indigo-500/40 transition-all"
+              key={m.slug}
+              href={`/combien-facturer/${m.slug}`}
+              className="text-[14px] font-medium px-4 py-2 rounded-lg bg-ds-surface text-gray-300 hover:text-ink hover:bg-ds-elevated transition-colors"
             >
-              Tous les metiers
+              TJM {m.label}
             </Link>
-          </div>
-        </section>
-
-        {/* Footer */}
-        <nav aria-label="Naviguer" className="pt-6 pb-2 text-xs text-gray-400 flex flex-wrap gap-4">
-          <Link href="/" className="hover:text-gray-500 transition-colors">Accueil</Link>
-          <Link href="/combien-facturer" className="hover:text-gray-500 transition-colors">Tarifs freelance</Link>
-          <Link href={data.landingHref} className="hover:text-gray-500 transition-colors">
-            Devis {data.label}
+          ))}
+          <Link
+            href="/combien-facturer"
+            className="text-[14px] font-medium px-4 py-2 rounded-lg bg-ds-surface text-indigo-400 hover:text-indigo-300 hover:bg-ds-elevated transition-colors"
+          >
+            Tous les métiers
           </Link>
-          <Link href="/blog" className="hover:text-gray-500 transition-colors">Blog</Link>
-          <Link href="/login" className="hover:text-gray-500 transition-colors">
-            Connexion
-          </Link>
-          <Link href="/mentions-legales" className="hover:text-gray-500 transition-colors">
-            Mentions légales
-          </Link>
-        </nav>
-      </div>
-
-      <SiteFooter />
-    </div>
+        </div>
+      </section>
+    </PageSite>
   );
 }

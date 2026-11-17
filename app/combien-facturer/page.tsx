@@ -1,5 +1,6 @@
+import { PageSite, CADRE, SECTION, H1, H2, LEAD, BOUTON_PLEIN, BOUTON_DOUX } from "@/components/site/PageSite";
+import { DemoButton } from "@/components/landing/DemoButton";
 import type { Metadata } from "next";
-import { SiteFooter } from "@/components/SiteFooter";
 import { DonneesStructurees } from "@/components/DonneesStructurees";
 import { SITE } from "@/lib/blog/registre";
 import Link from "next/link";
@@ -79,165 +80,132 @@ const jsonLd = {
 
 export default function CombienFacturerPage() {
   return (
-    <div className="min-h-screen bg-site text-ink">
+    <PageSite>
       <DonneesStructurees donnees={jsonLd} />
 
-      {/* ── Navbar ── */}
-      <nav className="sticky top-0 z-40 bg-ds-bg/90 backdrop-blur-xl border-b border-ink/6">
-        <div className="max-w-5xl mx-auto px-4 sm:px-6 h-14 flex items-center justify-between">
-          <Link href="/" className="flex items-center gap-2">
-            <div className="w-7 h-7 rounded-lg bg-linear-to-br/srgb from-indigo-600 to-violet-600 flex items-center justify-center">
-              <span className="text-ink font-semibold text-xs">D</span>
-            </div>
-            <span className="font-semibold text-base text-ink">Deviso</span>
-          </Link>
-          <div className="flex items-center gap-4 text-sm">
-            <Link href="/blog" className="text-gray-400 hover:text-ink transition-colors hidden sm:block">Blog</Link>
-            <Link href="/login" className="text-gray-400 hover:text-ink transition-colors">Connexion</Link>
-            <Link
-              href="/login"
-              className="bg-indigo-600 hover:bg-indigo-700 text-ink text-sm font-semibold px-4 py-2 rounded-lg transition-colors"
-            >
-              Essai gratuit
-            </Link>
-          </div>
-        </div>
-      </nav>
-
-      <div className="max-w-5xl mx-auto px-4 sm:px-6 py-12 space-y-16">
-
-        {/* ── Hero ── */}
+      {/* Introduction */}
+      <section className={`${CADRE} pt-14 sm:pt-20`}>
         <div className="max-w-3xl">
-          <div className="inline-flex items-center gap-2 text-xs font-semibold text-indigo-400 bg-indigo-500/10 border border-indigo-500/20 rounded-full px-3 py-1 mb-4">
-            Baromètre Malt 2026 · Données URSSAF
-          </div>
-          <h1 className="text-4xl sm:text-5xl font-bold text-ink leading-tight mb-4">
-            Combien facturer en freelance ?
-          </h1>
-          <p className="text-lg text-gray-400 leading-relaxed">
+          <p className="text-[15px] font-medium text-blue-400 mb-4">Baromètre Malt 2026 · Données URSSAF</p>
+          <h1 className={H1}>Combien facturer en freelance&nbsp;?</h1>
+          <p className={`${LEAD} mt-6`}>
             TJM par métier, calcul de revenu net et simulateur interactif. Des données de marché réelles
             pour fixer votre tarif journalier avec confiance.
           </p>
         </div>
+      </section>
 
-        {/* ── Grille TJM par métier ── */}
-        <section>
-          <h2 className="text-2xl font-bold text-ink mb-2">TJM par métier en 2026</h2>
-          <p className="text-sm text-gray-500 mb-6">
-            Fourchettes junior / confirmé / senior. Cliquez sur un métier pour le détail complet.
-          </p>
-
-          <div className="overflow-x-auto">
-            <table className="w-full text-sm border-collapse">
+      {/* Grille TJM par métier */}
+      <section className={`${CADRE} ${SECTION}`}>
+        <div className="grid lg:grid-cols-12 gap-10 lg:gap-14">
+          <div className="lg:col-span-4">
+            <h2 className={H2}>TJM par métier en 2026</h2>
+            <p className="text-[16px] text-gray-300 mt-4 leading-relaxed">
+              Fourchettes junior / confirmé / senior. Cliquez sur un métier pour le détail complet.
+            </p>
+            <p className="text-[14px] text-gray-400 mt-4">Sources&nbsp;: Malt Baromètre 2026, URSSAF. Tarifs hors TVA, en €/jour.</p>
+          </div>
+          <div className="lg:col-span-8 rounded-xl bg-ds-surface p-3 sm:p-6 overflow-x-auto">
+            <table className="w-full text-[13px] sm:text-[15px] border-collapse">
               <thead>
-                <tr className="border-b border-ds-border">
-                  <th className="text-left text-xs font-semibold text-gray-500 uppercase tracking-wider pb-3 pr-4">Métier</th>
-                  <th className="text-right text-xs font-semibold text-gray-500 uppercase tracking-wider pb-3 px-4">Junior<br /><span className="font-normal normal-case tracking-normal">0–2 ans</span></th>
-                  <th className="text-right text-xs font-semibold text-indigo-400 uppercase tracking-wider pb-3 px-4">Confirmé<br /><span className="font-normal normal-case tracking-normal">2–5 ans</span></th>
-                  <th className="text-right text-xs font-semibold text-gray-500 uppercase tracking-wider pb-3 pl-4">Senior<br /><span className="font-normal normal-case tracking-normal">5+ ans</span></th>
+                <tr className="border-b border-ink/10">
+                  <th className="text-left text-[14px] font-medium text-gray-400 pb-3 pr-4">Métier</th>
+                  <th className="text-right text-[14px] font-medium text-gray-400 pb-3 px-1.5 sm:px-3">Junior<br /><span className="font-normal">0–2 ans</span></th>
+                  <th className="text-right text-[14px] font-medium text-indigo-400 pb-3 px-1.5 sm:px-3">Confirmé<br /><span className="font-normal">2–5 ans</span></th>
+                  <th className="text-right text-[14px] font-medium text-gray-400 pb-3 pl-1.5 sm:pl-3">Senior<br /><span className="font-normal">5+ ans</span></th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-ds-border">
+              <tbody className="divide-y divide-ink/10">
                 {TARIFS_DATA.map((m) => (
-                  <tr key={m.slug} className="group hover:bg-ds-surface transition-colors">
-                    <td className="py-3 pr-4">
-                      <Link
-                        href={`/combien-facturer/${m.slug}`}
-                        className="font-medium text-ink group-hover:text-indigo-300 transition-colors"
-                      >
+                  <tr key={m.slug} className="group hover:bg-ds-elevated transition-colors">
+                    <td className="py-3 pr-2 sm:pr-4">
+                      <Link href={`/combien-facturer/${m.slug}`} className="font-medium text-ink group-hover:text-indigo-300 transition-colors">
                         {m.name}
                       </Link>
                     </td>
-                    <td className="py-3 px-4 text-right text-gray-400 tabular-nums">
-                      {m.tjm.junior.min}–{m.tjm.junior.max} €
-                    </td>
-                    <td className="py-3 px-4 text-right text-indigo-300 font-semibold tabular-nums">
-                      {m.tjm.confirme.min}–{m.tjm.confirme.max} €
-                    </td>
-                    <td className="py-3 pl-4 text-right text-gray-400 tabular-nums">
-                      {m.tjm.senior.min}–{m.tjm.senior.max} €
-                    </td>
+                    <td className="py-3 px-1.5 sm:px-3 text-right text-gray-300 tabular-nums whitespace-nowrap">{m.tjm.junior.min}–{m.tjm.junior.max}&nbsp;€</td>
+                    <td className="py-3 px-1.5 sm:px-3 text-right text-indigo-300 font-semibold tabular-nums whitespace-nowrap">{m.tjm.confirme.min}–{m.tjm.confirme.max}&nbsp;€</td>
+                    <td className="py-3 pl-1.5 sm:pl-3 text-right text-gray-300 tabular-nums whitespace-nowrap">{m.tjm.senior.min}–{m.tjm.senior.max}&nbsp;€</td>
                   </tr>
                 ))}
               </tbody>
             </table>
           </div>
-          <p className="text-xs text-gray-400 mt-3">
-            Sources : Malt Baromètre 2026, URSSAF. Tarifs hors TVA, en €/jour.
-          </p>
-        </section>
+        </div>
+      </section>
 
-        {/* ── Simulateur général ── */}
-        <section className="grid lg:grid-cols-2 gap-8 items-start">
-          <div>
-            <h2 className="text-2xl font-bold text-ink mb-3">
-              De votre TJM à votre revenu net
-            </h2>
-            <p className="text-gray-400 leading-relaxed mb-4">
+      {/* Simulateur général */}
+      <section className={`${CADRE} ${SECTION}`}>
+        <div className="grid lg:grid-cols-12 gap-10 lg:gap-14 items-start">
+          <div className="lg:col-span-5">
+            <h2 className={H2}>De votre TJM à votre revenu net</h2>
+            <p className="text-[16px] text-gray-300 leading-relaxed mt-5 mb-6">
               En <strong className="text-ink">micro-BNC</strong> (régime le plus courant pour les
               prestations intellectuelles), vous versez{" "}
-              <strong className="text-ink">{PCT} % de cotisations URSSAF</strong> sur votre chiffre
+              <strong className="text-ink">{PCT}&nbsp;% de cotisations URSSAF</strong> sur votre chiffre
               d&apos;affaires (
-              {(TAUX_COTISATIONS_BNC_CIPAV * 100).toLocaleString("fr-FR", { maximumFractionDigits: 1 })} % si
+              {(TAUX_COTISATIONS_BNC_CIPAV * 100).toLocaleString("fr-FR", { maximumFractionDigits: 1 })}&nbsp;% si
               vous relevez de la Cipav). Le reste est votre revenu net avant impôt sur le revenu.
             </p>
-            <div className="space-y-3 text-sm text-gray-400">
-              <div className="flex items-start gap-3">
-                <span className="text-indigo-400 font-mono font-bold mt-0.5">1</span>
+            <div className="space-y-3 text-[15px] text-gray-300">
+              <div className="flex items-start gap-3 rounded-lg bg-ds-surface p-4">
+                <span className="text-indigo-400 font-semibold">1</span>
                 <p><strong className="text-ink">TJM × jours facturables</strong> = CA mensuel (comptez ~15 j/mois en moyenne)</p>
               </div>
-              <div className="flex items-start gap-3">
-                <span className="text-indigo-400 font-mono font-bold mt-0.5">2</span>
-                <p><strong className="text-ink">CA × {PCT} %</strong> = cotisations URSSAF à payer chaque trimestre</p>
+              <div className="flex items-start gap-3 rounded-lg bg-ds-surface p-4">
+                <span className="text-indigo-400 font-semibold">2</span>
+                <p><strong className="text-ink">CA × {PCT}&nbsp;%</strong> = cotisations URSSAF à payer chaque trimestre</p>
               </div>
-              <div className="flex items-start gap-3">
-                <span className="text-indigo-400 font-mono font-bold mt-0.5">3</span>
-                <p><strong className="text-ink">CA − cotisations</strong> = revenu net avant IR (entre 15 et 30 % selon votre tranche)</p>
+              <div className="flex items-start gap-3 rounded-lg bg-ds-surface p-4">
+                <span className="text-indigo-400 font-semibold">3</span>
+                <p><strong className="text-ink">CA − cotisations</strong> = revenu net avant IR (entre 15 et 30&nbsp;% selon votre tranche)</p>
               </div>
             </div>
           </div>
-          <TjmSimulator defaultTjm={420} defaultJours={15} />
-        </section>
+          <div className="lg:col-span-7">
+            <TjmSimulator defaultTjm={420} defaultJours={15} />
+          </div>
+        </div>
+      </section>
 
-        {/* ── Pages par métier ── */}
-        <section>
-          <h2 className="text-2xl font-bold text-ink mb-2">Données détaillées par métier</h2>
-          <p className="text-sm text-gray-500 mb-6">
+      {/* Pages par métier */}
+      <section className={`${CADRE} ${SECTION}`}>
+        <div className="max-w-2xl">
+          <h2 className={H2}>Données détaillées par métier</h2>
+          <p className="text-[16px] text-gray-300 mt-4 leading-relaxed">
             TJM par spécialité, erreurs de pricing à éviter, FAQ et simulateur spécifique à chaque profession.
           </p>
-          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-3">
-            {TARIFS_DATA.map((m) => {
-              const mediane = Math.round((m.tjm.confirme.min + m.tjm.confirme.max) / 2);
-              return (
-                <Link
-                  key={m.slug}
-                  href={`/combien-facturer/${m.slug}`}
-                  className="group flex items-center justify-between gap-3 bg-ds-surface hover:bg-ds-elevated border border-ds-border rounded-xl px-4 py-3.5 transition-all"
-                >
-                  <div>
-                    <p className="text-sm font-medium text-ink group-hover:text-indigo-300 transition-colors">
-                      {m.name}
-                    </p>
-                    <p className="text-xs text-gray-500 mt-0.5">
-                      {m.tjm.junior.min}–{m.tjm.senior.max} €/j
-                    </p>
-                  </div>
-                  <div className="text-right">
-                    <p className="text-sm font-semibold text-indigo-400 tabular-nums">~{mediane} €</p>
-                    <p className="text-[10px] text-gray-600">médiane</p>
-                  </div>
-                </Link>
-              );
-            })}
-          </div>
-        </section>
+        </div>
+        <div className="mt-10 grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
+          {TARIFS_DATA.map((m) => {
+            const mediane = Math.round((m.tjm.confirme.min + m.tjm.confirme.max) / 2);
+            return (
+              <Link
+                key={m.slug}
+                href={`/combien-facturer/${m.slug}`}
+                className="group flex items-center justify-between gap-3 rounded-xl bg-ds-surface hover:bg-ds-elevated px-5 py-4 transition-colors"
+              >
+                <div>
+                  <p className="text-[16px] font-medium text-ink group-hover:text-indigo-300 transition-colors">{m.name}</p>
+                  <p className="text-[14px] text-gray-400 mt-0.5">{m.tjm.junior.min}–{m.tjm.senior.max}&nbsp;€/j</p>
+                </div>
+                <div className="text-right">
+                  <p className="text-[16px] font-semibold text-indigo-400 tabular-nums">~{mediane}&nbsp;€</p>
+                  <p className="text-[13px] text-gray-400">médiane</p>
+                </div>
+              </Link>
+            );
+          })}
+        </div>
+      </section>
 
-        {/* ── Erreurs communes ── */}
-        <section className="bg-ds-surface border border-ds-border rounded-2xl p-8">
-          <h2 className="text-xl font-bold text-ink mb-6">
-            Les erreurs universelles de pricing en freelance
-          </h2>
-          <div className="grid sm:grid-cols-2 gap-4 text-sm text-gray-400">
+      {/* Erreurs communes */}
+      <section className={`${CADRE} ${SECTION}`}>
+        <div className="grid lg:grid-cols-12 gap-10 lg:gap-14">
+          <div className="lg:col-span-5">
+            <h2 className={H2}>Les erreurs universelles de pricing en freelance</h2>
+          </div>
+          <div className="lg:col-span-7 grid sm:grid-cols-2 gap-4">
             {[
               {
                 t: "Facturer son temps, pas sa valeur",
@@ -256,61 +224,42 @@ export default function CombienFacturerPage() {
                 d: "Un TJM de 500 € représente ~62 €/h. Un tarif horaire de 50 €/h n'est pas équivalent : il nie l'aspect projet et la préparation en amont.",
               },
             ].map(({ t, d }) => (
-              <div key={t} className="flex gap-3">
-                <span className="text-red-400 shrink-0 mt-0.5">×</span>
-                <div>
-                  <p className="font-medium text-ink mb-1">{t}</p>
-                  <p>{d}</p>
-                </div>
+              <div key={t} className="rounded-xl bg-ds-surface p-6">
+                <p className="font-semibold text-ink mb-2 text-[17px]">{t}</p>
+                <p className="text-[15px] text-gray-300 leading-relaxed">{d}</p>
               </div>
             ))}
           </div>
-        </section>
+        </div>
+      </section>
 
-        {/* ── CTA ── */}
-        <section className="text-center py-4">
-          <h2 className="text-2xl font-bold text-ink mb-3">
-            Vos devis et factures en 30 secondes
-          </h2>
-          <p className="text-gray-400 mb-6 max-w-xl mx-auto text-sm leading-relaxed">
-            Une fois votre TJM défini, Deviso génère vos devis par IA, les envoie avec e-signature et
-            transforme les devis signés en factures Factur-X en 1 clic.
-          </p>
-          <Link
-            href="/login"
-            className="inline-flex items-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-ink font-semibold px-6 py-3 rounded-xl transition-colors text-sm"
-          >
-            Essayer Deviso gratuitement 14 jours →
-          </Link>
-        </section>
-
-        {/* ── Footer métiers ── */}
-        <nav aria-label="Tous les TJM par métier" className="pt-8 pb-4">
-          <div className="flex flex-wrap gap-x-6 gap-y-2 text-xs text-gray-500">
-            {TARIFS_DATA.map((m) => (
-              <Link
-                key={m.slug}
-                href={`/combien-facturer/${m.slug}`}
-                className="hover:text-gray-300 transition-colors"
-              >
-                TJM {m.label}
-              </Link>
-            ))}
+      {/* Appel final */}
+      <section className={`${CADRE} ${SECTION}`}>
+        <div className="rounded-xl bg-ds-surface p-8 sm:p-12 grid lg:grid-cols-12 gap-8 items-center">
+          <div className="lg:col-span-7">
+            <h2 className={H2}>Vos devis et factures en 30 secondes</h2>
+            <p className={`${LEAD} mt-4`}>
+              Une fois votre TJM défini, Deviso génère vos devis par IA, les envoie avec e-signature et
+              transforme les devis signés en factures Factur-X en 1 clic.
+            </p>
           </div>
-          <p className="text-xs text-gray-400 mt-4">
-            © {new Date().getFullYear()} Deviso ·{" "}
-            <Link href="/" className="hover:text-gray-500 transition-colors">Accueil</Link>
-            {" · "}
-            <Link href="/blog" className="hover:text-gray-500 transition-colors">Blog</Link>
-            {" · "}
-            <Link href="/login" className="hover:text-gray-500 transition-colors">Connexion</Link>
-            {" · "}
-            <Link href="/mentions-legales" className="hover:text-gray-500 transition-colors">Mentions légales</Link>
-          </p>
-        </nav>
-      </div>
+          <div className="lg:col-span-5 flex flex-col sm:flex-row lg:flex-col gap-3 lg:items-start">
+            <Link href="/signup" className={`w-full sm:w-auto ${BOUTON_PLEIN}`}>Essayer 14 jours gratuitement</Link>
+            <DemoButton className={`w-full sm:w-auto ${BOUTON_DOUX}`} />
+          </div>
+        </div>
+      </section>
 
-      <SiteFooter />
-    </div>
+      {/* Tous les métiers */}
+      <nav aria-label="Tous les TJM par métier" className={`${CADRE} ${SECTION} pb-20`}>
+        <div className="flex flex-wrap gap-x-6 gap-y-2 text-[14px] text-gray-400">
+          {TARIFS_DATA.map((m) => (
+            <Link key={m.slug} href={`/combien-facturer/${m.slug}`} className="hover:text-ink transition-colors">
+              TJM {m.label}
+            </Link>
+          ))}
+        </div>
+      </nav>
+    </PageSite>
   );
 }

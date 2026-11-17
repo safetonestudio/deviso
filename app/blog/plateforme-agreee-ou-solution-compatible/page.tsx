@@ -1,7 +1,6 @@
+import { PageSite, CADRE_LECTURE } from "@/components/site/PageSite";
+import { H1_ARTICLE, H2_ARTICLE, CORPS, LIEN, CARTE, CARTE_LIEN, ENCADRE } from "@/components/blog/styles";
 import Link from "next/link";
-import { NavbarMobile } from "@/components/NavbarMobile";
-import { WaitlistButton } from "@/components/landing/WaitlistButton";
-import { SiteFooter } from "@/components/SiteFooter";
 import { Signature } from "@/components/blog/Signature";
 import { DonneesStructurees } from "@/components/DonneesStructurees";
 import { jsonLdArticle, metadonneesArticle, suggestionsDeLecture } from "@/lib/blog/meta";
@@ -54,37 +53,12 @@ export default function Page() {
   const lectures = suggestionsDeLecture(SLUG);
 
   return (
-    <div className="min-h-screen bg-site">
+    <PageSite actif="/blog">
       <DonneesStructurees donnees={jsonLdArticle(SLUG, FAQ)} />
 
-      {/* ── Navbar ── */}
-      <nav className="fixed top-0 left-0 right-0 z-50 bg-ds-bg/80 backdrop-blur-xl border-b border-ink/6">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
-          <Link href="/" aria-label="Deviso" className="flex items-center gap-2">
-            <div className="w-8 h-8 rounded-lg bg-linear-to-br/srgb from-indigo-600 to-violet-600 flex items-center justify-center">
-              <span className="text-ink font-semibold text-sm">D</span>
-            </div>
-            <span className="font-semibold text-lg text-ink">Deviso</span>
-          </Link>
-          <div className="hidden md:flex items-center gap-8 text-sm font-medium">
-            <Link href="/blog" className="text-ink font-semibold">Blog</Link>
-            <Link href="/conformite" className="text-gray-400 hover:text-ink transition-colors">Conformité</Link>
-            <Link href="/#tarifs" className="text-gray-400 hover:text-ink transition-colors">Tarifs</Link>
-          </div>
-          <div className="hidden md:flex items-center gap-3">
-            <Link href="/login" className="text-sm font-medium text-gray-400 hover:text-ink transition-colors">Connexion</Link>
-            <WaitlistButton
-              plan="free"
-              label="Essayer gratuitement"
-              className="bg-white text-black text-sm font-semibold px-4 py-2 rounded-lg hover:bg-zinc-100 transition-colors"
-            />
-          </div>
-          <NavbarMobile />
-        </div>
-      </nav>
 
-      <article className="pt-28 pb-20 px-4 sm:px-6">
-        <div className="max-w-3xl mx-auto">
+      <article className="pt-12 sm:pt-16 pb-24">
+        <div className={CADRE_LECTURE}>
 
           <nav aria-label="Fil d'Ariane" className="flex items-center gap-2 text-xs text-gray-500 mb-8">
             <Link href="/" className="hover:text-gray-300 transition-colors">Accueil</Link>
@@ -96,7 +70,7 @@ export default function Page() {
 
           <div className="mb-10">
             <div className="flex flex-wrap items-center gap-3 mb-4">
-              <span className="text-xs px-2.5 py-1 rounded-full bg-amber-500/10 text-amber-300 border border-amber-500/20 font-medium">
+              <span className="text-sm font-medium text-indigo-300">
                 Plateforme agréée
               </span>
               <span className="text-xs text-gray-400">
@@ -105,8 +79,8 @@ export default function Page() {
                 {a.dureeLecture} min
               </span>
             </div>
-            <h1 className="text-3xl sm:text-4xl font-semibold text-ink leading-tight mb-4">{a.h1}</h1>
-            <p className="text-lg text-gray-400 leading-relaxed">
+            <h1 className={`${H1_ARTICLE} mb-5`}>{a.h1}</h1>
+            <p className="text-[19px] text-gray-300 leading-relaxed">
               Vous comparez deux logiciels de facturation. L&apos;un affiche « plateforme agréée », l&apos;autre
               « conforme à la réforme 2026 ». Ce n&apos;est pas une nuance de vocabulaire commercial : les deux
               n&apos;ont pas les mêmes droits, et la distinction est écrite noir sur blanc par l&apos;administration
@@ -114,11 +88,11 @@ export default function Page() {
             </p>
           </div>
 
-          <div className="space-y-10 text-sm text-gray-300 leading-relaxed">
+          <div className={`space-y-14 ${CORPS}`}>
 
             {/* ── La réponse tout de suite ── */}
-            <section className="bg-[#191830] border border-indigo-500/30 rounded-2xl p-6">
-              <p className="text-xs font-semibold text-indigo-400 uppercase tracking-wider mb-3">
+            <section className={`${ENCADRE.info} p-6`}>
+              <p className="text-sm font-semibold text-sky-300 mb-3">
                 La réponse en trois lignes
               </p>
               <ul className="space-y-2">
@@ -150,7 +124,7 @@ export default function Page() {
 
             {/* ── 1. Les définitions officielles ── */}
             <section>
-              <h2 className="text-xl font-semibold text-ink mb-4">
+              <h2 className={H2_ARTICLE}>
                 Les définitions officielles, et pourquoi elles sont contraignantes
               </h2>
               <p className="mb-4">
@@ -175,13 +149,13 @@ export default function Page() {
                 <table className="w-full text-left border-collapse min-w-136">
                   <thead>
                     <tr className="border-b border-ds-border">
-                      <th className="py-3 pr-4 text-xs font-semibold text-gray-400 uppercase tracking-wider">
+                      <th className="py-3 pr-4 text-sm font-semibold text-gray-400">
                         Peut…
                       </th>
-                      <th className="py-3 px-3 text-xs font-semibold text-emerald-300 uppercase tracking-wider whitespace-nowrap">
+                      <th className="py-3 px-3 text-sm font-semibold text-emerald-300 whitespace-nowrap">
                         Plateforme agréée
                       </th>
-                      <th className="py-3 pl-3 text-xs font-semibold text-gray-400 uppercase tracking-wider whitespace-nowrap">
+                      <th className="py-3 pl-3 text-sm font-semibold text-gray-400 whitespace-nowrap">
                         Solution compatible
                       </th>
                     </tr>
@@ -205,12 +179,12 @@ export default function Page() {
 
             {/* ── 2. Ce que ça change vraiment ── */}
             <section>
-              <h2 className="text-xl font-semibold text-ink mb-4">
+              <h2 className={H2_ARTICLE}>
                 Ce que ça change pour vous, et ce que ça ne change pas
               </h2>
               <div className="grid sm:grid-cols-2 gap-4">
-                <div className="bg-ds-surface border border-ds-border rounded-xl p-5">
-                  <p className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-3">
+                <div className={`${CARTE} p-5`}>
+                  <p className="text-sm font-semibold text-gray-400 mb-3">
                     Ce que ça ne change pas
                   </p>
                   <p className="text-gray-400">
@@ -220,8 +194,8 @@ export default function Page() {
                     moins conforme qu&apos;une plateforme agréée.
                   </p>
                 </div>
-                <div className="bg-[#241d11] border border-amber-500/25 rounded-xl p-5">
-                  <p className="text-xs font-semibold text-amber-300 uppercase tracking-wider mb-3">
+                <div className={`${ENCADRE.alerte} p-5`}>
+                  <p className="text-sm font-semibold text-amber-300 mb-3">
                     Ce que ça change
                   </p>
                   <p className="text-gray-300">
@@ -236,13 +210,13 @@ export default function Page() {
 
             {/* ── 3. Vérifier ── */}
             <section>
-              <h2 className="text-xl font-semibold text-ink mb-4">Comment vérifier, en deux minutes</h2>
+              <h2 className={H2_ARTICLE}>Comment vérifier, en deux minutes</h2>
               <p className="mb-4">
                 La liste est publique. Et elle est <strong className="text-ink">double</strong>, ce qui est la
                 subtilité que presque aucun comparatif ne mentionne :
               </p>
               <div className="space-y-3 mb-5">
-                <div className="bg-ds-surface border border-emerald-500/20 rounded-xl p-5">
+                <div className="bg-ds-surface border-l-[3px] border-indigo-400 rounded-xl p-5">
                   <p className="text-ink font-medium mb-1">Immatriculation définitive</p>
                   <p className="text-gray-400">
                     La liste des opérateurs <em>satisfaisant à l&apos;ensemble des conditions, incluant les tests
@@ -250,7 +224,7 @@ export default function Page() {
                     réussis.
                   </p>
                 </div>
-                <div className="bg-ds-surface border border-ds-border rounded-xl p-5">
+                <div className={`${CARTE} p-5`}>
                   <p className="text-ink font-medium mb-1">Immatriculation sous réserve</p>
                   <p className="text-gray-400">
                     La liste des opérateurs <em>ayant déposé un dossier complet et conforme et en attente de leur
@@ -259,7 +233,7 @@ export default function Page() {
                   </p>
                 </div>
               </div>
-              <div className="bg-[#191830] border border-indigo-500/30 rounded-xl p-5">
+              <div className="bg-ds-surface border-l-[3px] border-sky-400 rounded-xl p-5">
                 <a
                   href="https://www.impots.gouv.fr/je-consulte-la-liste-des-plateformes-agreees"
                   target="_blank"
@@ -278,7 +252,7 @@ export default function Page() {
 
             {/* ── 4. L'avertissement sur les comparateurs ── */}
             <section>
-              <div className="flex gap-3 bg-[#241d11] border border-amber-500/25 rounded-xl p-5">
+              <div className={`flex gap-3 ${ENCADRE.alerte} p-5`}>
                 <TriangleAlert size={18} className="shrink-0 mt-0.5 text-amber-400" />
                 <div>
                   <p className="font-semibold text-ink mb-1">
@@ -298,7 +272,7 @@ export default function Page() {
 
             {/* ── 5. Les trois questions ── */}
             <section>
-              <h2 className="text-xl font-semibold text-ink mb-4">
+              <h2 className={H2_ARTICLE}>
                 Les trois questions à poser à votre éditeur
               </h2>
               <p className="mb-5">
@@ -323,7 +297,7 @@ export default function Page() {
                   },
                 ].map((item, i) => (
                   <li key={item.q} className="flex gap-4">
-                    <span className="shrink-0 w-7 h-7 rounded-full bg-indigo-500/15 border border-indigo-500/30 text-indigo-400 text-sm font-semibold flex items-center justify-center mt-0.5">
+                    <span className="shrink-0 w-7 h-7 rounded-full bg-indigo-500/15 text-indigo-400 text-sm font-semibold flex items-center justify-center mt-0.5">
                       {i + 1}
                     </span>
                     <div>
@@ -336,8 +310,8 @@ export default function Page() {
             </section>
 
             {/* ── 6. Et Deviso ── */}
-            <section className="bg-ds-surface border border-ds-border rounded-2xl p-6">
-              <p className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-3">
+            <section className={`${ENCADRE.info} p-6`}>
+              <p className="text-sm font-semibold text-gray-500 mb-3">
                 Et nous, pour être clair
               </p>
               <p className="mb-4">
@@ -353,7 +327,7 @@ export default function Page() {
               </p>
               <Link
                 href="/conformite"
-                className="inline-flex items-center gap-2 text-indigo-400 hover:text-indigo-300 font-medium transition-colors"
+                className={`inline-flex items-center gap-2 font-medium ${LIEN}`}
               >
                 <CircleCheck size={16} className="shrink-0" />
                 Notre statut, en détail
@@ -362,10 +336,10 @@ export default function Page() {
 
             {/* ── FAQ ── */}
             <section>
-              <h2 className="text-xl font-semibold text-ink mb-6">Questions fréquentes</h2>
+              <h2 className={H2_ARTICLE}>Questions fréquentes</h2>
               <div className="space-y-4">
                 {FAQ.map(({ q, a: reponse }) => (
-                  <div key={q} className="bg-ds-surface rounded-xl border border-ds-border p-6">
+                  <div key={q} className={`${CARTE} p-6`}>
                     <h3 className="text-ink font-medium mb-3">{q}</h3>
                     <p className="text-gray-400 text-sm leading-relaxed">{reponse}</p>
                   </div>
@@ -375,14 +349,14 @@ export default function Page() {
 
             {/* ── Sources ── */}
             <section>
-              <h2 className="text-xl font-semibold text-ink mb-4">Sources</h2>
+              <h2 className={H2_ARTICLE}>Sources</h2>
               <ul className="space-y-2 text-gray-400">
                 <li>
                   <a
                     href="https://www.impots.gouv.fr/facturation-electronique-et-plateformes-agreees"
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="text-indigo-400 hover:text-indigo-300 transition-colors"
+                    className={LIEN}
                   >
                     impots.gouv.fr, Facturation électronique et plateformes agréées
                   </a>{" "}
@@ -393,7 +367,7 @@ export default function Page() {
                     href="https://www.impots.gouv.fr/je-consulte-la-liste-des-plateformes-agreees"
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="text-indigo-400 hover:text-indigo-300 transition-colors"
+                    className={LIEN}
                   >
                     impots.gouv.fr, Je consulte la liste des plateformes agréées
                   </a>{" "}
@@ -405,13 +379,13 @@ export default function Page() {
             {/* ── À lire ensuite ── */}
             {lectures.length > 0 && (
               <section>
-                <h2 className="text-xl font-semibold text-ink mb-6">À lire ensuite</h2>
+                <h2 className={H2_ARTICLE}>À lire ensuite</h2>
                 <div className="grid gap-4 sm:grid-cols-2">
                   {lectures.map((l) => (
                     <Link
                       key={l.href}
                       href={l.href}
-                      className="group bg-ds-surface border border-ds-border rounded-xl p-5 hover:border-indigo-500/40 transition-all"
+                      className={`group ${CARTE_LIEN} p-5`}
                     >
                       <p className="text-ink font-medium text-sm leading-snug mb-2 group-hover:text-indigo-200 transition-colors">
                         {l.titre}
@@ -429,7 +403,6 @@ export default function Page() {
         </div>
       </article>
 
-      <SiteFooter />
-    </div>
+          </PageSite>
   );
 }

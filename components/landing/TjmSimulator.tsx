@@ -44,22 +44,22 @@ export function TjmSimulator({ defaultTjm = 350, defaultJours = 15 }: TjmSimulat
   }, []);
 
   return (
-    <div className="rounded-2xl border border-indigo-500/20 bg-[#191830] p-6 space-y-6">
+    <div className="rounded-xl bg-ds-surface p-6 space-y-6">
       {/* Header */}
       <div>
         <h3 className="text-base font-semibold text-ink mb-1">Simulateur de revenus</h3>
-        <p className="text-sm text-gray-500">
+        <p className="text-sm text-gray-400">
           Micro-entrepreneur BNC · cotisations {(TAUX_COTISATIONS_BNC * 100).toLocaleString("fr-FR", { minimumFractionDigits: 1 })} %
         </p>
       </div>
 
       {/* Mode toggle */}
-      <div className="flex gap-1 p-1 bg-gray-900/60 rounded-xl border border-ds-border">
+      <div className="flex gap-1 p-1 bg-ds-elevated rounded-lg">
         <button
           onClick={() => setMode("tjm-to-revenu")}
           className={`flex-1 text-xs font-medium py-2 rounded-lg transition-all ${
             mode === "tjm-to-revenu"
-              ? "bg-indigo-600 text-ink"
+              ? "bg-indigo-600 text-on-accent"
               : "text-gray-400 hover:text-gray-200"
           }`}
         >
@@ -69,7 +69,7 @@ export function TjmSimulator({ defaultTjm = 350, defaultJours = 15 }: TjmSimulat
           onClick={() => setMode("revenu-to-tjm")}
           className={`flex-1 text-xs font-medium py-2 rounded-lg transition-all ${
             mode === "revenu-to-tjm"
-              ? "bg-indigo-600 text-ink"
+              ? "bg-indigo-600 text-on-accent"
               : "text-gray-400 hover:text-gray-200"
           }`}
         >
@@ -91,7 +91,7 @@ export function TjmSimulator({ defaultTjm = 350, defaultJours = 15 }: TjmSimulat
               step={10}
               value={tjm}
               onChange={(e) => handleTjm(e.target.value)}
-              className="w-full bg-gray-900/80 border border-ds-border rounded-xl px-4 py-3 text-ink text-lg font-semibold focus:outline-hidden focus:border-indigo-500 tabular-nums"
+              className="w-full bg-ds-elevated border border-ink/10 rounded-lg px-4 py-3 text-ink text-lg font-semibold focus:outline-hidden focus:border-indigo-500 tabular-nums"
             />
           </div>
         ) : (
@@ -106,7 +106,7 @@ export function TjmSimulator({ defaultTjm = 350, defaultJours = 15 }: TjmSimulat
               step={100}
               value={netCible}
               onChange={(e) => handleNet(e.target.value)}
-              className="w-full bg-gray-900/80 border border-ds-border rounded-xl px-4 py-3 text-ink text-lg font-semibold focus:outline-hidden focus:border-indigo-500 tabular-nums"
+              className="w-full bg-ds-elevated border border-ink/10 rounded-lg px-4 py-3 text-ink text-lg font-semibold focus:outline-hidden focus:border-indigo-500 tabular-nums"
             />
           </div>
         )}
@@ -135,39 +135,39 @@ export function TjmSimulator({ defaultTjm = 350, defaultJours = 15 }: TjmSimulat
       {/* Results */}
       {mode === "tjm-to-revenu" ? (
         <div className="grid grid-cols-2 gap-3">
-          <div className="bg-gray-900/60 rounded-xl p-4 border border-ds-border">
-            <p className="text-xs text-gray-500 mb-1">CA mensuel</p>
+          <div className="bg-ds-elevated rounded-lg p-4">
+            <p className="text-xs text-gray-400 mb-1">CA mensuel</p>
             <p className="text-xl font-bold text-ink tabular-nums">{fmt(r1.caMensuel)}</p>
           </div>
-          <div className="bg-gray-900/60 rounded-xl p-4 border border-ds-border">
-            <p className="text-xs text-gray-500 mb-1">Cotisations URSSAF</p>
-            <p className="text-xl font-bold text-red-400 tabular-nums">−{fmt(r1.urssaf)}</p>
+          <div className="bg-ds-elevated rounded-lg p-4">
+            <p className="text-xs text-gray-400 mb-1">Cotisations URSSAF</p>
+            <p className="text-xl font-bold text-amber-400 tabular-nums">−{fmt(r1.urssaf)}</p>
           </div>
-          <div className="bg-indigo-600/10 rounded-xl p-4 border border-indigo-500/30 col-span-2">
+          <div className="bg-ds-elevated rounded-lg p-4 col-span-2">
             <p className="text-xs text-indigo-300 mb-1">Revenu net / mois (avant impôt)</p>
             <p className="text-3xl font-bold text-indigo-300 tabular-nums">{fmt(r1.netAvantIr)}</p>
-            <p className="text-xs text-gray-500 mt-1.5">≈ {fmt(r1.caAnnuel)} de CA/an</p>
+            <p className="text-xs text-gray-400 mt-1.5">≈ {fmt(r1.caAnnuel)} de CA/an</p>
           </div>
         </div>
       ) : (
         <div className="grid grid-cols-2 gap-3">
-          <div className="bg-indigo-600/10 rounded-xl p-4 border border-indigo-500/30 col-span-2">
+          <div className="bg-ds-elevated rounded-lg p-4 col-span-2">
             <p className="text-xs text-indigo-300 mb-1">TJM à facturer</p>
             <p className="text-3xl font-bold text-indigo-300 tabular-nums">{fmt(r2.tjmRequis)}<span className="text-base font-normal">/j</span></p>
           </div>
-          <div className="bg-gray-900/60 rounded-xl p-4 border border-ds-border">
-            <p className="text-xs text-gray-500 mb-1">CA mensuel requis</p>
+          <div className="bg-ds-elevated rounded-lg p-4">
+            <p className="text-xs text-gray-400 mb-1">CA mensuel requis</p>
             <p className="text-xl font-bold text-ink tabular-nums">{fmt(r2.caMensuelRequis)}</p>
           </div>
-          <div className="bg-gray-900/60 rounded-xl p-4 border border-ds-border">
-            <p className="text-xs text-gray-500 mb-1">Cotisations URSSAF</p>
-            <p className="text-xl font-bold text-red-400 tabular-nums">−{fmt(r2.urssaf)}</p>
+          <div className="bg-ds-elevated rounded-lg p-4">
+            <p className="text-xs text-gray-400 mb-1">Cotisations URSSAF</p>
+            <p className="text-xl font-bold text-amber-400 tabular-nums">−{fmt(r2.urssaf)}</p>
           </div>
         </div>
       )}
 
       {/* Note */}
-      <p className="text-[11px] text-gray-600 leading-relaxed">
+      <p className="text-[12px] text-gray-400 leading-relaxed">
         Calcul indicatif en micro-BNC au régime général ({(TAUX_COTISATIONS_BNC * 100).toLocaleString("fr-FR", { minimumFractionDigits: 1 })} % de cotisations sociales ; {(TAUX_COTISATIONS_BNC_CIPAV * 100).toLocaleString("fr-FR", { minimumFractionDigits: 1 })} % si vous êtes affilié à la Cipav). Ne comprend pas l&apos;impôt sur le revenu
         (variable selon votre situation), la CFE (~500 €/an) ni les frais professionnels.
         Au-delà de 77&nbsp;700 €/CA annuel, passez en EURL ou SASU à l&apos;IS.

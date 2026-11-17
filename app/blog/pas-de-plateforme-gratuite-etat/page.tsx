@@ -1,7 +1,6 @@
+import { PageSite, CADRE_LECTURE } from "@/components/site/PageSite";
+import { H1_ARTICLE, H2_ARTICLE, CORPS, LIEN, CARTE, CARTE_LIEN, ENCADRE } from "@/components/blog/styles";
 import Link from "next/link";
-import { NavbarMobile } from "@/components/NavbarMobile";
-import { WaitlistButton } from "@/components/landing/WaitlistButton";
-import { SiteFooter } from "@/components/SiteFooter";
 import { Signature } from "@/components/blog/Signature";
 import { DonneesStructurees } from "@/components/DonneesStructurees";
 import { jsonLdArticle, metadonneesArticle, suggestionsDeLecture } from "@/lib/blog/meta";
@@ -44,37 +43,12 @@ export default function Page() {
   const lectures = suggestionsDeLecture(SLUG);
 
   return (
-    <div className="min-h-screen bg-site">
+    <PageSite actif="/blog">
       <DonneesStructurees donnees={jsonLdArticle(SLUG, FAQ)} />
 
-      {/* Navbar */}
-      <nav className="fixed top-0 left-0 right-0 z-50 bg-ds-bg/80 backdrop-blur-xl border-b border-ink/6">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
-          <Link href="/" aria-label="Deviso" className="flex items-center gap-2">
-            <div className="w-8 h-8 rounded-lg bg-linear-to-br/srgb from-indigo-600 to-violet-600 flex items-center justify-center">
-              <span className="text-ink font-semibold text-sm">D</span>
-            </div>
-            <span className="font-semibold text-lg text-ink">Deviso</span>
-          </Link>
-          <div className="hidden md:flex items-center gap-8 text-sm font-medium">
-            <Link href="/blog" className="text-ink font-semibold">Blog</Link>
-            <Link href="/conformite" className="text-gray-400 hover:text-ink transition-colors">Conformité</Link>
-            <Link href="/#tarifs" className="text-gray-400 hover:text-ink transition-colors">Tarifs</Link>
-          </div>
-          <div className="hidden md:flex items-center gap-3">
-            <Link href="/login" className="text-sm font-medium text-gray-400 hover:text-ink transition-colors">Connexion</Link>
-            <WaitlistButton
-              plan="free"
-              label="Essayer gratuitement"
-              className="bg-white text-black text-sm font-semibold px-4 py-2 rounded-lg hover:bg-zinc-100 transition-colors"
-            />
-          </div>
-          <NavbarMobile />
-        </div>
-      </nav>
 
-      <article className="pt-28 pb-20 px-4 sm:px-6">
-        <div className="max-w-3xl mx-auto">
+      <article className="pt-12 sm:pt-16 pb-24">
+        <div className={CADRE_LECTURE}>
 
           <nav aria-label="Fil d'Ariane" className="flex items-center gap-2 text-xs text-gray-500 mb-8">
             <Link href="/" className="hover:text-gray-300 transition-colors">Accueil</Link>
@@ -86,7 +60,7 @@ export default function Page() {
 
           <div className="mb-10">
             <div className="flex flex-wrap items-center gap-3 mb-4">
-              <span className="text-xs px-2.5 py-1 rounded-full bg-amber-500/10 text-amber-300 border border-amber-500/20 font-medium">
+              <span className="text-sm font-medium text-indigo-300">
                 Réforme 2026
               </span>
               <span className="text-xs text-gray-400">
@@ -95,19 +69,19 @@ export default function Page() {
                 {a.dureeLecture} min
               </span>
             </div>
-            <h1 className="text-3xl sm:text-4xl font-semibold text-ink leading-tight mb-4">{a.h1}</h1>
-            <p className="text-lg text-gray-400 leading-relaxed">
+            <h1 className={`${H1_ARTICLE} mb-5`}>{a.h1}</h1>
+            <p className="text-[19px] text-gray-300 leading-relaxed">
               Vous cherchez la plateforme gratuite que l&apos;État devait fournir pour vos factures. C&apos;est
               une recherche légitime : cette plateforme a existé, sur le papier. Elle n&apos;existe plus. Voici
               son histoire, ce qu&apos;il en reste, et comment vous mettre en règle sans payer trop cher.
             </p>
           </div>
 
-          <div className="space-y-10 text-sm text-gray-300 leading-relaxed">
+          <div className={`space-y-14 ${CORPS}`}>
 
             {/* La reponse tout de suite */}
-            <section className="bg-[#191830] border border-indigo-500/30 rounded-2xl p-6">
-              <p className="text-xs font-semibold text-indigo-400 uppercase tracking-wider mb-3">
+            <section className={`${ENCADRE.info} p-6`}>
+              <p className="text-sm font-semibold text-sky-300 mb-3">
                 La réponse en trois lignes
               </p>
               <ul className="space-y-2">
@@ -138,7 +112,7 @@ export default function Page() {
 
             {/* 1. Ce que le portail devait etre */}
             <section>
-              <h2 className="text-xl font-semibold text-ink mb-4">
+              <h2 className={H2_ARTICLE}>
                 Ce que le portail public devait être
               </h2>
               <p className="mb-4">
@@ -157,7 +131,7 @@ export default function Page() {
 
             {/* 2. Ce qu'il est devenu */}
             <section>
-              <h2 className="text-xl font-semibold text-ink mb-4">
+              <h2 className={H2_ARTICLE}>
                 Ce qu&apos;il est devenu, et pourquoi
               </h2>
               <p className="mb-4">
@@ -184,7 +158,7 @@ export default function Page() {
 
             {/* 3. Ce que ca change */}
             <section>
-              <h2 className="text-xl font-semibold text-ink mb-4">
+              <h2 className={H2_ARTICLE}>
                 Ce que ça change concrètement pour vous
               </h2>
               <p className="mb-4">
@@ -193,7 +167,7 @@ export default function Page() {
                 agréée, pour émettre et recevoir ses factures. Ce n&apos;est plus une option parmi d&apos;autres,
                 c&apos;est le seul chemin.
               </p>
-              <div className="flex gap-3 bg-ds-surface border border-ds-border rounded-xl p-5">
+              <div className="flex gap-3 bg-ds-surface rounded-xl p-5">
                 <CircleCheck size={18} className="shrink-0 mt-0.5 text-emerald-400" />
                 <p className="text-gray-300">
                   La bonne nouvelle : « passer par un opérateur privé » ne veut pas dire « payer cher ». La
@@ -206,7 +180,7 @@ export default function Page() {
 
             {/* 4. Ce qui existe gratuitement */}
             <section>
-              <h2 className="text-xl font-semibold text-ink mb-4">
+              <h2 className={H2_ARTICLE}>
                 Ce qui existe gratuitement, malgré tout
               </h2>
               <p className="mb-4">
@@ -243,7 +217,7 @@ export default function Page() {
 
             {/* 5. Ne pas trop payer */}
             <section>
-              <h2 className="text-xl font-semibold text-ink mb-4">
+              <h2 className={H2_ARTICLE}>
                 Comment ne pas payer trop cher
               </h2>
               <ol className="space-y-4">
@@ -262,7 +236,7 @@ export default function Page() {
                   },
                 ].map((item, i) => (
                   <li key={item.t} className="flex gap-4">
-                    <span className="shrink-0 w-7 h-7 rounded-full bg-indigo-500/15 border border-indigo-500/30 text-indigo-400 text-sm font-semibold flex items-center justify-center mt-0.5">
+                    <span className="shrink-0 w-7 h-7 rounded-full bg-indigo-500/15 text-indigo-400 text-sm font-semibold flex items-center justify-center mt-0.5">
                       {i + 1}
                     </span>
                     <div>
@@ -276,7 +250,7 @@ export default function Page() {
                 Sur ce dernier point, la distinction entre une plateforme agréée et une simple solution compatible
                 mérite deux minutes de lecture, parce que c&apos;est elle qui décide de ce qu&apos;un outil a le
                 droit de faire.{" "}
-                <Link href="/blog/plateforme-agreee-ou-solution-compatible" className="text-indigo-400 hover:text-indigo-300 transition-colors">
+                <Link href="/blog/plateforme-agreee-ou-solution-compatible" className={LIEN}>
                   Plateforme agréée ou solution compatible : la différence
                 </Link>
                 .
@@ -285,7 +259,7 @@ export default function Page() {
 
             {/* 6. Attention aux pages qui vendent la peur */}
             <section>
-              <div className="flex gap-3 bg-[#241d11] border border-amber-500/25 rounded-xl p-5">
+              <div className={`flex gap-3 ${ENCADRE.alerte} p-5`}>
                 <TriangleAlert size={18} className="shrink-0 mt-0.5 text-amber-400" />
                 <div>
                   <p className="font-semibold text-ink mb-1">
@@ -302,8 +276,8 @@ export default function Page() {
             </section>
 
             {/* Et Deviso */}
-            <section className="bg-ds-surface border border-ds-border rounded-2xl p-6">
-              <p className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-3">
+            <section className={`${ENCADRE.info} p-6`}>
+              <p className="text-sm font-semibold text-gray-500 mb-3">
                 Et nous, pour être clair
               </p>
               <p className="mb-4">
@@ -314,7 +288,7 @@ export default function Page() {
               </p>
               <Link
                 href="/conformite"
-                className="inline-flex items-center gap-2 text-indigo-400 hover:text-indigo-300 font-medium transition-colors"
+                className={`inline-flex items-center gap-2 font-medium ${LIEN}`}
               >
                 <CircleCheck size={16} className="shrink-0" />
                 Notre statut, en détail
@@ -323,10 +297,10 @@ export default function Page() {
 
             {/* FAQ */}
             <section>
-              <h2 className="text-xl font-semibold text-ink mb-6">Questions fréquentes</h2>
+              <h2 className={H2_ARTICLE}>Questions fréquentes</h2>
               <div className="space-y-4">
                 {FAQ.map(({ q, a: reponse }) => (
-                  <div key={q} className="bg-ds-surface rounded-xl border border-ds-border p-6">
+                  <div key={q} className={`${CARTE} p-6`}>
                     <h3 className="text-ink font-medium mb-3">{q}</h3>
                     <p className="text-gray-400 text-sm leading-relaxed">{reponse}</p>
                   </div>
@@ -336,14 +310,14 @@ export default function Page() {
 
             {/* Sources */}
             <section>
-              <h2 className="text-xl font-semibold text-ink mb-4">Sources</h2>
+              <h2 className={H2_ARTICLE}>Sources</h2>
               <ul className="space-y-2 text-gray-400">
                 <li>
                   <a
                     href="https://www.economie.gouv.fr/actualites/facturation-electronique-entre-entreprises-coup-denvoi-de-la-reforme"
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="text-indigo-400 hover:text-indigo-300 transition-colors"
+                    className={LIEN}
                   >
                     economie.gouv.fr, Coup d&apos;envoi de la réforme
                   </a>{" "}
@@ -354,7 +328,7 @@ export default function Page() {
                     href="https://www.impots.gouv.fr/facturation-electronique-et-plateformes-agreees"
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="text-indigo-400 hover:text-indigo-300 transition-colors"
+                    className={LIEN}
                   >
                     impots.gouv.fr, Facturation électronique et plateformes agréées
                   </a>{" "}
@@ -365,7 +339,7 @@ export default function Page() {
                     href="https://kpmg.com/av/fr/avocats/eclairages/2024/10/facturation-electronique-le-schema-initialement-prevu-est-modifie.html"
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="text-indigo-400 hover:text-indigo-300 transition-colors inline-flex items-center gap-1"
+                    className={`${LIEN} inline-flex items-center gap-1`}
                   >
                     KPMG Avocats, Le schéma initialement prévu est modifié (octobre 2024)
                     <ExternalLink size={13} className="shrink-0" />
@@ -378,13 +352,13 @@ export default function Page() {
             {/* A lire ensuite */}
             {lectures.length > 0 && (
               <section>
-                <h2 className="text-xl font-semibold text-ink mb-6">À lire ensuite</h2>
+                <h2 className={H2_ARTICLE}>À lire ensuite</h2>
                 <div className="grid gap-4 sm:grid-cols-2">
                   {lectures.map((l) => (
                     <Link
                       key={l.href}
                       href={l.href}
-                      className="group bg-ds-surface border border-ds-border rounded-xl p-5 hover:border-indigo-500/40 transition-all"
+                      className={`group ${CARTE_LIEN} p-5`}
                     >
                       <p className="text-ink font-medium text-sm leading-snug mb-2 group-hover:text-indigo-200 transition-colors">
                         {l.titre}
@@ -402,7 +376,6 @@ export default function Page() {
         </div>
       </article>
 
-      <SiteFooter />
-    </div>
+          </PageSite>
   );
 }

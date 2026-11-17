@@ -1,4 +1,5 @@
-﻿import type { Metadata } from "next";
+﻿import { PageSite, CADRE_LECTURE, SECTION, H1 } from "@/components/site/PageSite";
+import type { Metadata } from "next";
 import Link from "next/link";
 
 export const metadata: Metadata = {
@@ -10,22 +11,14 @@ export const metadata: Metadata = {
 
 export default function MentionsLegalesPage() {
   return (
-    <div className="min-h-screen bg-site">
-      <nav className="border-b border-ds-border px-4 sm:px-6 h-14 flex items-center">
-        <Link href="/" className="flex items-center gap-2">
-          <div className="w-7 h-7 rounded-md bg-indigo-600 flex items-center justify-center">
-            <span className="text-ink font-semibold text-xs">D</span>
-          </div>
-          <span className="font-semibold text-ink">Deviso</span>
-        </Link>
-      </nav>
+    <PageSite>
 
-      <main className="max-w-3xl mx-auto px-4 sm:px-6 py-12">
-        <h1 className="text-3xl font-semibold text-ink mb-2">Mentions légales</h1>
-        <p className="text-gray-500 text-sm mb-10">Dernière mise à jour : juin 2026</p>
+      <main className={`${CADRE_LECTURE} ${SECTION} pb-24`}>
+        <h1 className={`${H1} mb-3`}>Mentions légales</h1>
+        <p className="text-gray-500 text-sm mb-14">Dernière mise à jour : juin 2026</p>
 
-        <section className="mb-8">
-          <h2 className="text-xl font-semibold text-ink mb-3">Éditeur du site</h2>
+        <section className="mb-10">
+          <h2 className="text-[22px] leading-snug font-semibold tracking-[-0.02em] text-ink mb-3">Éditeur du site</h2>
           <p className="text-gray-400 leading-relaxed">
             Le site <strong>getdeviso.fr</strong> est édité par :<br /><br />
             <strong>SafeTone Studio</strong><br />
@@ -37,15 +30,15 @@ export default function MentionsLegalesPage() {
           </p>
         </section>
 
-        <section className="mb-8">
-          <h2 className="text-xl font-semibold text-ink mb-3">Directeur de la publication</h2>
+        <section className="mb-10">
+          <h2 className="text-[22px] leading-snug font-semibold tracking-[-0.02em] text-ink mb-3">Directeur de la publication</h2>
           <p className="text-gray-400 leading-relaxed">
             Le directeur de la publication est Selim Berrabah, fondateur de SafeTone Studio.
           </p>
         </section>
 
-        <section className="mb-8">
-          <h2 className="text-xl font-semibold text-ink mb-3">Hébergement</h2>
+        <section className="mb-10">
+          <h2 className="text-[22px] leading-snug font-semibold tracking-[-0.02em] text-ink mb-3">Hébergement</h2>
           <p className="text-gray-400 leading-relaxed">
             Le site est hébergé par :<br /><br />
             <strong>Vercel Inc.</strong><br />
@@ -55,8 +48,8 @@ export default function MentionsLegalesPage() {
           </p>
         </section>
 
-        <section className="mb-8">
-          <h2 className="text-xl font-semibold text-ink mb-3">Propriété intellectuelle</h2>
+        <section className="mb-10">
+          <h2 className="text-[22px] leading-snug font-semibold tracking-[-0.02em] text-ink mb-3">Propriété intellectuelle</h2>
           <p className="text-gray-400 leading-relaxed">
             L&apos;ensemble des contenus présents sur ce site (textes, images, logo, interface) sont la propriété exclusive
             de SafeTone Studio et sont protégés par les lois françaises et internationales relatives à la propriété intellectuelle.
@@ -64,16 +57,16 @@ export default function MentionsLegalesPage() {
           </p>
         </section>
 
-        <section className="mb-8">
-          <h2 className="text-xl font-semibold text-ink mb-3">Données personnelles</h2>
+        <section className="mb-10">
+          <h2 className="text-[22px] leading-snug font-semibold tracking-[-0.02em] text-ink mb-3">Données personnelles</h2>
           <p className="text-gray-400 leading-relaxed">
             Pour toute information relative au traitement de vos données personnelles, consultez notre{" "}
             <Link href="/confidentialite" className="text-indigo-400 hover:underline">politique de confidentialité</Link>.
           </p>
         </section>
 
-        <section className="mb-8">
-          <h2 className="text-xl font-semibold text-ink mb-3">Droit applicable</h2>
+        <section className="mb-10">
+          <h2 className="text-[22px] leading-snug font-semibold tracking-[-0.02em] text-ink mb-3">Droit applicable</h2>
           <p className="text-gray-400 leading-relaxed">
             Les présentes mentions légales sont soumises au droit français.
             En cas de litige, les tribunaux français seront seuls compétents.
@@ -84,6 +77,6 @@ export default function MentionsLegalesPage() {
           <Link href="/" className="hover:text-ink transition-colors">← Retour à l&apos;accueil</Link>
         </div>
       </main>
-    </div>
+    </PageSite>
   );
 }

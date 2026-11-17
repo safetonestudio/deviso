@@ -1,10 +1,9 @@
+import { PageSite, CADRE_LECTURE, BOUTON_PLEIN } from "@/components/site/PageSite";
+import { H1_ARTICLE, H2_ARTICLE, CORPS, CARTE } from "@/components/blog/styles";
 import { DonneesStructurees } from "@/components/DonneesStructurees";
-import { SiteFooter } from "@/components/SiteFooter";
 import { Signature } from "@/components/blog/Signature";
 import { jsonLdArticle, metadonneesArticle } from "@/lib/blog/meta";
 import Link from "next/link";
-import { NavbarMobile } from "@/components/NavbarMobile";
-import { WaitlistButton } from "@/components/landing/WaitlistButton";
 
 const SLUG = "fixer-ses-tarifs-freelance";
 
@@ -37,38 +36,13 @@ const metierLinks = [
 
 export default function Page() {
   return (
-    <div className="min-h-screen bg-site">
+    <PageSite actif="/blog">
       <DonneesStructurees donnees={jsonLdArticle(SLUG, FAQ)} />
 
-      <div className="fixed top-0 left-0 right-0 bg-indigo-950/95 backdrop-blur-xs border-b border-indigo-500/20 py-2 px-4 text-center text-sm" style={{ zIndex: 60 }}>
-        <span className="text-indigo-300 font-semibold">Réforme 2026&nbsp;:</span>
-        <span className="text-gray-300 ml-1.5">La facturation électronique B2B devient obligatoire.&nbsp;</span>
-        <span className="text-indigo-400 font-medium">Deviso est déjà conforme Factur-X.</span>
-      </div>
 
-      <nav className="fixed top-9 left-0 right-0 z-50 bg-ds-bg/80 backdrop-blur-xl border-b border-ink/6">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
-          <Link href="/" aria-label="Deviso" className="flex items-center gap-2">
-            <div className="w-8 h-8 rounded-lg bg-linear-to-br/srgb from-indigo-600 to-violet-600 flex items-center justify-center">
-              <span className="text-ink font-semibold text-sm">D</span>
-            </div>
-            <span className="font-semibold text-lg text-ink">Deviso</span>
-          </Link>
-          <div className="hidden md:flex items-center gap-8 text-sm font-medium">
-            <Link href="/blog" className="text-ink font-semibold">Blog</Link>
-            <Link href="/#fonctionnalites" className="text-gray-400 hover:text-ink transition-colors">Fonctionnalités</Link>
-            <Link href="/#tarifs" className="text-gray-400 hover:text-ink transition-colors">Tarifs</Link>
-          </div>
-          <div className="hidden md:flex items-center gap-3">
-            <Link href="/login" className="text-sm font-medium text-gray-400 hover:text-ink transition-colors">Connexion</Link>
-            <WaitlistButton plan="free" label="Essayer gratuitement" className="bg-white text-black text-sm font-semibold px-4 py-2 rounded-lg hover:bg-zinc-100 transition-colors" />
-          </div>
-          <NavbarMobile />
-        </div>
-      </nav>
 
-      <article className="pt-36 pb-20 px-4 sm:px-6">
-        <div className="max-w-3xl mx-auto">
+      <article className="pt-12 sm:pt-16 pb-24">
+        <div className={CADRE_LECTURE}>
 
           <nav className="flex items-center gap-2 text-xs text-gray-400 mb-8">
             <Link href="/" className="hover:text-gray-400">Accueil</Link>
@@ -80,24 +54,24 @@ export default function Page() {
 
           <div className="mb-10">
             <div className="flex items-center gap-3 mb-4">
-              <span className="text-xs px-2.5 py-1 rounded-full bg-emerald-500/10 text-emerald-300 border border-emerald-500/20 font-medium">Problèmes freelance</span>
+              <span className="text-sm font-medium text-indigo-300">Problèmes freelance</span>
               <span className="text-xs text-gray-400">29 juin 2026 · 7 min</span>
             </div>
-            <h1 className="text-3xl sm:text-4xl font-semibold text-ink leading-tight mb-4">
+            <h1 className={`${H1_ARTICLE} mb-5`}>
               Comment fixer ses tarifs en freelance : TJM, méthodes et erreurs à éviter
             </h1>
-            <p className="text-lg text-gray-400 leading-relaxed">
+            <p className="text-[19px] text-gray-300 leading-relaxed">
               Sous-facturer, c&apos;est travailler pour rien. Sur-facturer sans le prouver, c&apos;est perdre des clients. La vérité : il existe une méthode rationnelle pour trouver le bon tarif, et elle n&apos;a rien à voir avec ce que pratique le voisin.
             </p>
           </div>
 
-          <div className="space-y-10 text-sm text-gray-300 leading-relaxed">
+          <div className={`space-y-14 ${CORPS}`}>
 
             <section>
-              <h2 className="text-xl font-semibold text-ink mb-5">Les 3 méthodes pour calculer son TJM</h2>
+              <h2 className={H2_ARTICLE}>Les 3 méthodes pour calculer son TJM</h2>
 
               <div className="space-y-6">
-                <div className="bg-ds-surface border border-ds-border rounded-xl p-6">
+                <div className={`${CARTE} p-6`}>
                   <div className="flex items-center gap-3 mb-3">
                     <span className="text-indigo-400 font-bold font-mono text-sm">01</span>
                     <h3 className="font-semibold text-ink">La méthode du revenu cible (bottom-up)</h3>
@@ -113,7 +87,7 @@ export default function Page() {
                   <p className="text-xs text-gray-400 mt-3">Ajoutez une marge de 20-30% pour les périodes creuses, les formations, les imprévus. TJM recommandé ici : ~400€/jour.</p>
                 </div>
 
-                <div className="bg-ds-surface border border-ds-border rounded-xl p-6">
+                <div className={`${CARTE} p-6`}>
                   <div className="flex items-center gap-3 mb-3">
                     <span className="text-indigo-400 font-bold font-mono text-sm">02</span>
                     <h3 className="font-semibold text-ink">La méthode du marché (benchmarking)</h3>
@@ -121,7 +95,7 @@ export default function Page() {
                   <p className="text-gray-400 text-sm leading-relaxed">Regardez ce que pratiquent vos pairs avec le même niveau d&apos;expérience dans la même zone géographique. Malt, Crème de la crème, LinkedIn, les profils publics donnent une bonne indication des fourchettes pratiquées. Attention : les tarifs affichés sont souvent des tarifs maximums, pas des moyennes.</p>
                 </div>
 
-                <div className="bg-ds-surface border border-ds-border rounded-xl p-6">
+                <div className={`${CARTE} p-6`}>
                   <div className="flex items-center gap-3 mb-3">
                     <span className="text-indigo-400 font-bold font-mono text-sm">03</span>
                     <h3 className="font-semibold text-ink">La méthode de la valeur délivrée (value-based pricing)</h3>
@@ -133,7 +107,7 @@ export default function Page() {
             </section>
 
             <section>
-              <h2 className="text-xl font-semibold text-ink mb-4">Les erreurs classiques qui font sous-facturer</h2>
+              <h2 className={H2_ARTICLE}>Les erreurs classiques qui font sous-facturer</h2>
 
               <div className="space-y-4">
                 {[
@@ -154,7 +128,7 @@ export default function Page() {
                     desc: "Un client qui choisit un prestataire uniquement sur le prix n'est pas un bon client. Il partira au moindre discount d'un concurrent. À l'inverse, les clients qui vous choisissent pour votre compétence sont fidèles et recommandent. Baisser vos tarifs attire les mauvais clients et éloigne les bons.",
                   },
                 ].map((item) => (
-                  <div key={item.title} className="border border-rose-500/20 bg-rose-500/5 rounded-xl p-5">
+                  <div key={item.title} className="bg-ds-surface border-l-[3px] border-amber-400 rounded-xl p-5">
                     <p className="font-semibold text-ink text-sm mb-2">✗ {item.title}</p>
                     <p className="text-gray-400 text-sm leading-relaxed">{item.desc}</p>
                   </div>
@@ -163,7 +137,7 @@ export default function Page() {
             </section>
 
             <section>
-              <h2 className="text-xl font-semibold text-ink mb-4">Comment augmenter ses tarifs sans perdre ses clients</h2>
+              <h2 className={H2_ARTICLE}>Comment augmenter ses tarifs sans perdre ses clients</h2>
               <p className="mb-4 text-gray-400">L&apos;augmentation de tarifs est inévitable, l&apos;inflation, la progression de vos compétences, et la demande croissante l&apos;exigent. La plupart des freelances repoussent cette conversation indéfiniment. Voici comment l&apos;aborder.</p>
               <div className="space-y-3">
                 {[
@@ -172,7 +146,7 @@ export default function Page() {
                   { tip: "Hausse modérée mais régulière (5 à 10%/an) plutôt qu'une hausse forte tous les 5 ans. C'est plus facile à accepter et reflète mieux la réalité du marché." },
                   { tip: "Un client qui part parce que vous augmentez vos tarifs de 10% était probablement déjà en train de chercher quelqu'un de moins cher. Vous perdez peu." },
                 ].map((item, i) => (
-                  <div key={i} className="flex gap-3 bg-ds-elevated rounded-xl p-4 border border-ds-border">
+                  <div key={i} className={`flex gap-3 ${CARTE} p-4`}>
                     <span className="text-emerald-400 font-bold shrink-0 text-sm">→</span>
                     <p className="text-gray-400 text-sm leading-relaxed">{item.tip}</p>
                   </div>
@@ -181,10 +155,10 @@ export default function Page() {
             </section>
 
             <section>
-              <h2 className="text-xl font-semibold text-ink mb-4">TJM vs forfait : lequel choisir ?</h2>
+              <h2 className={H2_ARTICLE}>TJM vs forfait : lequel choisir ?</h2>
               <p className="mb-4 text-gray-400">Les deux modèles coexistent et chacun a ses avantages.</p>
               <div className="grid grid-cols-2 gap-4">
-                <div className="bg-ds-surface border border-ds-border rounded-xl p-5">
+                <div className={`${CARTE} p-5`}>
                   <p className="font-semibold text-ink text-sm mb-2">TJM (régie)</p>
                   <ul className="text-gray-400 text-xs space-y-1">
                     <li>✓ Adapté aux missions longues ou évolutives</li>
@@ -193,7 +167,7 @@ export default function Page() {
                     <li>✗ Limite votre rentabilité si vous devenez plus rapide</li>
                   </ul>
                 </div>
-                <div className="bg-ds-surface border border-ds-border rounded-xl p-5">
+                <div className={`${CARTE} p-5`}>
                   <p className="font-semibold text-ink text-sm mb-2">Forfait</p>
                   <ul className="text-gray-400 text-xs space-y-1">
                     <li>✓ Rentabilité croissante avec l&apos;expérience</li>
@@ -209,10 +183,10 @@ export default function Page() {
 
           {/* ── Questions fréquentes ── */}
           <section className="mb-12">
-            <h2 className="text-2xl font-semibold text-ink mb-6">Questions fréquentes</h2>
+            <h2 className={H2_ARTICLE}>Questions fréquentes</h2>
             <div className="space-y-4">
               {FAQ.map(({ q, a }) => (
-                <div key={q} className="bg-ds-surface rounded-xl border border-ds-border p-6">
+                <div key={q} className={`${CARTE} p-6`}>
                   <h3 className="text-ink font-medium mb-3">{q}</h3>
                   <p className="text-gray-400 text-sm leading-relaxed">{a}</p>
                 </div>
@@ -221,28 +195,27 @@ export default function Page() {
           </section>
 
           {/* CTA */}
-          <div className="mt-14 bg-linear-to-br/srgb from-indigo-900/40 to-violet-900/20 rounded-2xl border border-indigo-500/20 p-8 text-center">
-            <h2 className="text-2xl font-semibold text-ink mb-3">Facturez au bon prix, présentez-vous comme un pro</h2>
+          <div className={`mt-14 ${CARTE} p-8 sm:p-10`}>
+            <h2 className={H2_ARTICLE}>Facturez au bon prix, présentez-vous comme un pro</h2>
             <p className="text-gray-400 mb-6 max-w-lg mx-auto text-sm leading-relaxed">
               Avec Deviso, vos devis sont générés en 30 secondes, signés électroniquement et relancés automatiquement. Professionnalisme et sérénité, dès le premier contact.
             </p>
-            <WaitlistButton plan="free" label="Générer mon premier devis, gratuit" className="inline-block bg-indigo-600 hover:bg-indigo-700 text-ink font-semibold px-8 py-3 rounded-xl transition-all" />
+            <Link href="/signup" className={BOUTON_PLEIN}>Essayer 14 jours gratuitement</Link>
           </div>
 
           <div className="mt-14 pt-8">
             <p className="text-xs text-gray-400 mb-4">Guides par métier</p>
             <div className="flex flex-wrap gap-2">
               {metierLinks.map((m) => (
-                <Link key={m.href} href={m.href} className="text-xs px-3 py-1.5 rounded-lg bg-ds-surface border border-ds-border text-gray-500 hover:text-gray-300 hover:border-indigo-500/30 transition-all">{m.label}</Link>
+                <Link key={m.href} href={m.href} className="text-sm px-3.5 py-2 rounded-lg bg-ds-surface text-gray-400 hover:text-gray-200 hover:bg-ds-elevated transition-colors">{m.label}</Link>
               ))}
-              <Link href="/blog" className="text-xs px-3 py-1.5 rounded-lg bg-ds-surface border border-ds-border text-indigo-400 hover:text-indigo-300 transition-all">← Tous les articles</Link>
+              <Link href="/blog" className="text-sm px-3.5 py-2 rounded-lg bg-ds-surface text-indigo-400 hover:text-indigo-300 hover:bg-ds-elevated transition-colors">← Tous les articles</Link>
             </div>
           </div>
           <Signature />
         </div>
       </article>
 
-      <SiteFooter />
-    </div>
+          </PageSite>
   );
 }
