@@ -2,6 +2,8 @@ import { PageSite, CADRE, SECTION, H2, LEAD, BOUTON_PLEIN, BOUTON_DOUX } from "@
 import type { Metadata } from "next";
 import { DonneesStructurees } from "@/components/DonneesStructurees";
 import { DemoButton } from "@/components/landing/DemoButton";
+import { OngletsVitrine } from "@/components/landing/OngletsVitrine";
+import { EcranConformite, EcranTva, EcranATraiter, EcranExports, EcranJournal, EcranLectureSeule } from "@/components/landing/EcransCockpit";
 import {
   ShieldCheck,
   CalendarClock,
@@ -94,13 +96,22 @@ const jsonLd = {
   audience: { "@type": "Audience", audienceType: "Experts-comptables en France" },
 };
 
+const ECRANS = [
+  <EcranConformite key="c" />,
+  <EcranTva key="t" />,
+  <EcranATraiter key="a" />,
+  <EcranExports key="e" />,
+  <EcranJournal key="j" />,
+  <EcranLectureSeule key="l" />,
+];
+
 /** Aperçu du cockpit cabinet, composé en HTML (données d'exemple). */
 const PORTEFEUILLE: { client: string; conformite: [string, "vert" | "ambre" | "bleu"]; tva: string; aTraiter: string }[] = [
-  { client: "Studio Durand", conformite: ["Conforme", "vert"], tva: "Prête, décembre", aTraiter: "Aucun" },
-  { client: "Boulangerie Dupont", conformite: ["SIRET à vérifier", "ambre"], tva: "Franchise", aTraiter: "1 anomalie" },
-  { client: "Atelier Morel", conformite: ["Conforme", "vert"], tva: "Prête, 4ᵉ trimestre", aTraiter: "1 impayé échu" },
-  { client: "Garage Petit", conformite: ["Non raccordé", "ambre"], tva: "Prête, décembre", aTraiter: "À raccorder" },
-  { client: "Cabinet Lefèvre", conformite: ["Conforme", "vert"], tva: "Prête, décembre", aTraiter: "Aucun" },
+  { client: "Studio Durand", conformite: ["Conforme", "vert"], tva: "Octobre prête", aTraiter: "1 SIREN manquant" },
+  { client: "Boulangerie Dupont", conformite: ["SIRET à vérifier", "ambre"], tva: "Franchise", aTraiter: "1 trou de numéros" },
+  { client: "Atelier Morel", conformite: ["Conforme", "vert"], tva: "3ᵉ trim. prêt", aTraiter: "1 impayé échu" },
+  { client: "Garage Petit", conformite: ["Non raccordé", "ambre"], tva: "Octobre prête", aTraiter: "1 facture rejetée" },
+  { client: "Cabinet Lefèvre", conformite: ["Conforme", "vert"], tva: "Octobre prête", aTraiter: "Aucun" },
 ];
 const TON = { vert: "bg-indigo-500/15 text-indigo-300", ambre: "bg-amber-500/15 text-amber-300", bleu: "bg-blue-500/15 text-blue-300" };
 
@@ -112,7 +123,7 @@ function ApercuCockpit() {
           <div className="text-[22px] font-semibold tracking-[-0.02em] text-ink">Portefeuille</div>
           <div className="text-gray-400">5 clients suivis, en lecture seule</div>
         </div>
-        <span className="shrink-0 rounded-full px-3 py-1 text-[13px] font-semibold bg-amber-500/15 text-amber-300">3 à traiter</span>
+        <span className="shrink-0 rounded-full px-3 py-1 text-[13px] font-semibold bg-amber-500/15 text-amber-300">4 à traiter</span>
       </div>
       <div className="mt-5 grid gap-1.5">
         <div className="hidden sm:grid grid-cols-[1.3fr_1.05fr_1fr_0.95fr] gap-3 px-3 pb-1 text-[13px] text-gray-500">
@@ -185,24 +196,25 @@ export default function Page() {
 
         {/* ── Le cockpit ── */}
         <section id="cockpit" className={`${CADRE} ${SECTION} scroll-mt-20`}>
-          <div className="grid gap-12 lg:grid-cols-12 lg:gap-16">
-            <div className="reveal lg:col-span-5">
+          <div>
+            <div className="reveal max-w-[760px]">
               <h2 className={H2}>Un cockpit pensé pour un portefeuille.</h2>
               <p className={`mt-5 ${LEAD}`}>
                 Tout ce dont vous avez besoin pour suivre vos clients, dans une seule interface. Gratuit, en lecture seule.
               </p>
             </div>
-            <ul className="lg:col-span-7 grid gap-x-8 gap-y-10 sm:grid-cols-2">
-              {fonctions.map((f) => (
-                <li key={f.titre} className="reveal">
-                  <span className="w-10 h-10 rounded-lg bg-ds-surface grid place-items-center" aria-hidden="true">
-                    <f.icon size={18} className="text-indigo-400" />
-                  </span>
-                  <h3 className="mt-4 text-[20px] leading-[1.3] font-semibold tracking-[-0.015em] text-ink">{f.titre}</h3>
-                  <p className="mt-2 text-[17px] leading-relaxed text-gray-300">{f.desc}</p>
-                </li>
-              ))}
-            </ul>
+          </div>
+          <div className="mt-12 sm:mt-16">
+            <OngletsVitrine
+              nom="cockpit"
+              diapos={fonctions.map((f, i) => ({
+                cle: String(i),
+                titre: f.titre,
+                texte: f.desc,
+                alt: `Aperçu du cockpit cabinet : ${f.titre}`,
+                ecran: ECRANS[i],
+              }))}
+            />
           </div>
         </section>
 
@@ -245,6 +257,19 @@ export default function Page() {
               <a href={CONTACT} className={BOUTON_PLEIN}>Demander une démo</a>
               <DemoButton label="Voir Deviso côté client" className={`w-full sm:w-auto ${BOUTON_DOUX}`} />
             </div>
+            <ol className="lg:col-span-12 mt-4 grid gap-4 sm:grid-cols-3">
+              {[
+                ["1", "20 minutes ensemble", "Je vous montre le cockpit, vous me dites ce qui compte pour votre cabinet."],
+                ["2", "2 ou 3 clients sur Deviso", "Gratuitement et sans engagement, sur les dossiers de votre choix."],
+                ["3", "On construit avec vous", "L'outil évolue selon vos retours de professionnel."],
+              ].map(([n, t, d]) => (
+                <li key={n} className="rounded-lg bg-ds-elevated p-5">
+                  <span className="text-[14px] font-semibold text-indigo-400 tabular-nums">Étape {n}</span>
+                  <div className="mt-2 text-[17px] font-semibold text-ink">{t}</div>
+                  <p className="mt-1 text-[15px] leading-relaxed text-gray-300">{d}</p>
+                </li>
+              ))}
+            </ol>
           </div>
         </section>
       </main>
