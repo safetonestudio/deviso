@@ -58,7 +58,6 @@ export const CATEGORIES = [
       "La réforme est entrée en application le 1er septembre 2026. Ce qui s'applique déjà, ce qui arrive en 2027, les plateformes agréées, l'e-reporting, les amendes réelles.",
     accent: "amber",
     prioritaire: true,
-    ouverteParDefaut: true,
   },
   {
     id: "comptabilite",

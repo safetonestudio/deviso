@@ -84,14 +84,14 @@ const ICONES: Record<string, LucideIcon> = {
 };
 
 export const metadata: Metadata = {
-  title: "Guides devis et facturation pour freelances",
+  title: "Guides pour entreprendre : devis, factures, TVA et réforme 2026",
   description:
-    "Guides pratiques sur la facturation freelance en France : réforme 2026, documents obligatoires, TVA et seuils, devis par métier. Sourcés et datés.",
+    "Guides pratiques pour les indépendants, freelances et petites entreprises en France : réforme 2026, documents obligatoires, TVA et seuils, se faire payer, devis par métier. Sourcés et datés.",
   alternates: { canonical: `${SITE}/blog` },
   openGraph: {
-    title: "Blog Deviso, guides devis et facturation pour freelances",
+    title: "Blog Deviso, guides pour entreprendre en France",
     description:
-      "Réforme 2026, documents du freelance, TVA et obligations, devis par métier. Des guides sourcés, datés et corrigés quand le droit change.",
+      "Réforme 2026, documents, TVA et obligations, se faire payer, devis par métier. Des guides sourcés, datés et corrigés quand le droit change.",
     url: `${SITE}/blog`,
     images: [{ url: `${SITE}/opengraph-image`, width: 1200, height: 630, alt: "Blog Deviso" }],
   },
@@ -107,9 +107,9 @@ const jsonLd = {
     {
       "@type": "CollectionPage",
       "@id": `${SITE}/blog#blog`,
-      name: "Blog Deviso, guides devis et facturation pour freelances",
+      name: "Blog Deviso, guides pour entreprendre en France",
       description:
-        "Guides pratiques sur la facturation freelance en France : réforme 2026, documents obligatoires, TVA et seuils, devis par métier.",
+        "Guides pratiques pour les indépendants, freelances et petites entreprises en France : réforme 2026, documents obligatoires, TVA et seuils, devis par métier.",
       url: `${SITE}/blog`,
       publisher: { "@type": "Organization", name: "Deviso", url: SITE },
       inLanguage: "fr",
@@ -152,13 +152,13 @@ export default function BlogIndex() {
             Guides pratiques
           </div>
           <h1 className="text-4xl sm:text-5xl font-semibold text-ink leading-tight mb-4">
-            Facturation freelance :<br />
+            Entreprendre en France&nbsp;:<br />
             <span className="bg-linear-to-r/srgb from-indigo-400 to-violet-400 bg-clip-text text-transparent">
-              guides par métier
+              les guides pratiques
             </span>
           </h1>
           <p className="text-xl text-gray-400 max-w-2xl leading-relaxed">
-            Mentions obligatoires, exemples concrets et erreurs à éviter, par profession et adapté à la réforme Factur-X 2026.
+            Devis, factures, TVA, réforme 2026, se faire payer&nbsp;: des guides sourcés pour les indépendants et les petites entreprises, quel que soit le statut.
           </p>
         </div>
       </section>
