@@ -170,7 +170,7 @@ export function ParcoursDocument({ intro }: { intro: ReactNode }) {
           sont divisées par l'agrandissement des grands écrans (--zoom). */}
       <div className="hidden lg:block lg:col-span-7">
         <div className="sticky top-[88px] flex items-center justify-end" style={{ height: "calc(100vh / var(--zoom, 1) - 112px)" }}>
-          <div className="relative w-full" style={{ maxWidth: "calc((100vh / var(--zoom, 1) - 150px) * 0.74)" }}>
+          <div className="relative w-full" style={{ maxWidth: "calc((100vh / var(--zoom, 1) - 150px) / 1.35)" }}>
             <div aria-hidden={vue === "brief"} className={`transition-[opacity,visibility,transform] duration-500 ${vue === "brief" ? "opacity-0 invisible" : "opacity-100 visible"}`}>
               {vue === "urssaf" ? <FeuilleChiffres /> : <DocumentDevis etat={vue === "brief" ? "devis" : vue} />}
             </div>
