@@ -13,7 +13,7 @@ import {
   ShieldCheck, Smartphone, Stamp, Target,
   Ban, FileCode, Gavel,
   Briefcase, CalendarDays, ClipboardList, Compass, Landmark, Percent, PiggyBank, Scale, Split, UserCheck,
-  Zap, type LucideIcon,
+  Zap, Clock, ShieldAlert, Building2, type LucideIcon,
 } from "lucide-react";
 
 /**
@@ -81,6 +81,9 @@ const ICONES: Record<string, LucideIcon> = {
   "scope-creep-freelance": Expand,
   "gerer-impayes-freelance": HandCoins,
   "fixer-ses-tarifs-freelance": Calculator,
+  "delais-paiement-penalites-retard": Clock,
+  "fraude-faux-rib-faux-fournisseur": ShieldAlert,
+  "choisir-statut-micro-ei-eurl-sasu": Building2,
 };
 
 export const metadata: Metadata = {

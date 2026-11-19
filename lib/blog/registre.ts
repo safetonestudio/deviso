@@ -1201,6 +1201,55 @@ export const ARTICLES: Article[] = [
     },
     lies: ["clauses-devis-freelance", "scope-creep-freelance"],
   },
+  // ── Articles du 19/11/2026 : sujets d'actualité pour toutes les entreprises ──
+  {
+    slug: "delais-paiement-penalites-retard",
+    categorie: "transverse",
+    titre: "Délais de paiement et pénalités de retard : ce que dit la loi",
+    description:
+      "Entre professionnels : 30 jours par défaut, 60 jours au plus, pénalités automatiques et 40 € par facture en retard. Les règles, les mentions et les recours.",
+    h1: "Délais de paiement et pénalités de retard : ce que dit la loi entre entreprises",
+    publieLe: "2026-11-19",
+    misAJourLe: "2026-11-19",
+    dureeLecture: 7,
+    carte: {
+      titre: "Délais de paiement et pénalités de retard",
+      resume: "30, 60 ou 45 jours fin de mois, pénalités automatiques, 40 € par facture : vos droits face aux retards",
+    },
+    lies: ["gerer-impayes-freelance", "clauses-devis-freelance", "numerotation-factures-freelance"],
+  },
+  {
+    slug: "fraude-faux-rib-faux-fournisseur",
+    categorie: "transverse",
+    titre: "Fraude au faux RIB et au faux fournisseur : s'en protéger",
+    description:
+      "Un faux changement de RIB au nom d'un fournisseur ou d'un client : les signaux d'alerte, le contre-appel, et que faire si le virement est déjà parti.",
+    h1: "Fraude au faux RIB et au faux fournisseur : comment protéger votre entreprise",
+    publieLe: "2026-11-19",
+    misAJourLe: "2026-11-19",
+    dureeLecture: 6,
+    carte: {
+      titre: "Fraude au faux RIB : s'en protéger",
+      resume: "Les signaux d'alerte, la règle du contre-appel, et les bons réflexes si le virement est parti",
+    },
+    lies: ["facturation-electronique-2026", "gerer-impayes-freelance"],
+  },
+  {
+    slug: "choisir-statut-micro-ei-eurl-sasu",
+    categorie: "obligations",
+    titre: "Micro, EI, EURL ou SASU : choisir son statut",
+    description:
+      "Micro-entreprise, entreprise individuelle au réel, EURL ou SASU : impôt, cotisations et protection sociale comparés pour choisir le bon statut.",
+    h1: "Micro-entreprise, EI, EURL ou SASU : quel statut choisir pour votre entreprise",
+    publieLe: "2026-11-19",
+    misAJourLe: "2026-11-19",
+    dureeLecture: 8,
+    carte: {
+      titre: "Micro, EI, EURL ou SASU : choisir son statut",
+      resume: "Impôt, cotisations, protection sociale : les quatre statuts comparés, et comment trancher",
+    },
+    lies: ["micro-ou-reel-quand-basculer", "plafonds-micro-entreprise-2026", "quand-prendre-expert-comptable-micro"],
+  },
 ];
 
 /** Index par slug, construit une fois. */
