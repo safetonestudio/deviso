@@ -189,8 +189,8 @@ export default function PaiementsPage() {
             <Wallet size={20} className="text-emerald-400" />
           </div>
           <div>
-            <h1 className="text-3xl font-semibold text-ink tracking-tight">Paiements clients</h1>
-            <p className="text-gray-500 text-sm mt-1">
+            <h1 className="titre-page">Paiements clients</h1>
+            <p className="sous-titre-page">
               Comment vos clients vous paient, ces infos apparaîtront sur chaque facture envoyée.
             </p>
           </div>

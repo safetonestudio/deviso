@@ -23,7 +23,16 @@ const IGNORE = new Set(["node_modules", ".next", ".git", "public"]);
 const EXTENSIONS = new Set([".ts", ".tsx", ".md", ".mjs"]);
 const CADRATIN = String.fromCharCode(0x2014);
 
-const ignoreDir = (nom) => IGNORE.has(nom) || nom.startsWith("_scratch");
+// Outils tiers installés dans le dépôt (skills Claude : design-taste, motion…,
+// ajoutés le 04/11/2026). Ce ne sont ni le code ni le contenu de Deviso, rien
+// n'en est servi aux visiteurs, et les réécrire reviendrait à modifier des
+// fichiers de fournisseurs que leurs mises à jour écraseraient.
+const DOSSIERS_TIERS = new Set([join(".claude", "skills")]);
+// Fichier régénéré par `next dev` à chaque lancement (non suivi par git).
+const FICHIERS_GENERES = new Set(["AGENTS.md"]);
+
+const ignoreDir = (nom, chemin) =>
+  IGNORE.has(nom) || nom.startsWith("_scratch") || DOSSIERS_TIERS.has(relative(RACINE, chemin));
 
 function fichiers(dir) {
   const out = [];
@@ -31,8 +40,8 @@ function fichiers(dir) {
     const chemin = join(dir, nom);
     const st = statSync(chemin);
     if (st.isDirectory()) {
-      if (!ignoreDir(nom)) out.push(...fichiers(chemin));
-    } else if (EXTENSIONS.has(chemin.slice(chemin.lastIndexOf(".")))) {
+      if (!ignoreDir(nom, chemin)) out.push(...fichiers(chemin));
+    } else if (EXTENSIONS.has(chemin.slice(chemin.lastIndexOf("."))) && !FICHIERS_GENERES.has(relative(RACINE, chemin))) {
       out.push(chemin);
     }
   }

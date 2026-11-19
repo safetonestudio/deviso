@@ -50,9 +50,11 @@ const PAGES = {
   "app/(dashboard)/admin/page.tsx": LISTE,
   "app/(dashboard)/invoices/[id]/page.tsx": LISTE,
   "app/(dashboard)/proposals/[id]/page.tsx": LISTE,
-  "app/(dashboard)/paiements/page.tsx": LISTE,
+  // Paiements et Abonnement sont des formulaires (coordonnées bancaires, choix
+  // de formule) : colonne courte, comme le veut la définition plus haut.
+  "app/(dashboard)/paiements/page.tsx": FORMULAIRE,
   "app/(dashboard)/profil/page.tsx": LISTE,
-  "app/(dashboard)/billing/page.tsx": LISTE,
+  "app/(dashboard)/billing/page.tsx": FORMULAIRE,
 };
 
 /**

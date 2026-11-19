@@ -147,7 +147,7 @@ export default async function LivreRecettes({ searchParams }: { searchParams: Pr
             <Tuile libelle="Ventes de biens, HT" valeur={eur(parCategorie.biens.ht)} detail={`${parCategorie.biens.nb} encaissement${parCategorie.biens.nb > 1 ? "s" : ""}`} />
           </div>
           <p className="text-xs text-gray-400 mt-2 mb-6">
-            Services et biens se déclarent séparément : ils n&apos;ont ni le même abattement ni le même seuil.
+            Répartition pour la déclaration&nbsp;: services et biens se déclarent séparément, ils n&apos;ont ni le même abattement ni le même seuil.
           </p>
 
           {(sansDate > 0 || sansMode > 0) && (
