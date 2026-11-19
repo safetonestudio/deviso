@@ -1,11 +1,11 @@
-import { PageSite, CADRE_LECTURE, BOUTON_PLEIN } from "@/components/site/PageSite";
-import { H1_ARTICLE, H2_ARTICLE, CORPS, LIEN, CARTE, CARTE_LIEN, ENCADRE } from "@/components/blog/styles";
+import { PageSite } from "@/components/site/PageSite";
 import Link from "next/link";
+import { WaitlistButton } from "@/components/landing/WaitlistButton";
 import { Signature } from "@/components/blog/Signature";
 import { DonneesStructurees } from "@/components/DonneesStructurees";
 import { jsonLdArticle, metadonneesArticle, suggestionsDeLecture } from "@/lib/blog/meta";
 import { article } from "@/lib/blog/registre";
-import { categorie } from "@/lib/blog/categories";
+import { ACCENTS, categorie } from "@/lib/blog/categories";
 import { CircleCheck, Info, TriangleAlert } from "lucide-react";
 
 /**
@@ -75,15 +75,15 @@ export interface ArticleLongProps {
 }
 
 const TONS = {
-  info: { cadre: ENCADRE.info, titre: "text-ink", Icone: Info, couleur: "text-sky-400" },
-  alerte: { cadre: ENCADRE.alerte, titre: "text-ink", Icone: TriangleAlert, couleur: "text-amber-400" },
-  succes: { cadre: ENCADRE.conseil, titre: "text-ink", Icone: CircleCheck, couleur: "text-indigo-400" },
+  info: { cadre: "bg-ds-surface border-ds-border", titre: "text-ink", Icone: Info, couleur: "text-indigo-400" },
+  alerte: { cadre: "bg-[#241d11] border-amber-500/25", titre: "text-ink", Icone: TriangleAlert, couleur: "text-amber-400" },
+  succes: { cadre: "bg-[#14211a] border-emerald-500/20", titre: "text-ink", Icone: CircleCheck, couleur: "text-emerald-400" },
 } as const;
 
 const TONS_COLONNE = {
-  positif: ENCADRE.conseil,
-  negatif: ENCADRE.alerte,
-  neutre: CARTE,
+  positif: "bg-[#14211a] border-emerald-500/20",
+  negatif: "bg-[#241417] border-rose-500/20",
+  neutre: "bg-ds-surface border-ds-border",
 } as const;
 
 /**
@@ -116,7 +116,7 @@ function Bloc({ section }: { section: Section }) {
     case "texte":
       return (
         <section>
-          {section.titre && <Riche as="h2" className={H2_ARTICLE} t={section.titre} />}
+          {section.titre && <Riche as="h2" className="text-xl font-semibold text-ink mb-4" t={section.titre} />}
           {section.paragraphes.map((p, i) => (
             <p
               key={i}
@@ -134,11 +134,11 @@ function Bloc({ section }: { section: Section }) {
       const t = TONS[section.ton];
       return (
         <section>
-          <div className={`flex gap-3 p-5 ${t.cadre}`}>
+          <div className={`flex gap-3 border rounded-xl p-5 ${t.cadre}`}>
             <t.Icone size={18} className={`shrink-0 mt-0.5 ${t.couleur}`} />
             <div>
               <Riche as="p" className={`font-semibold mb-1 ${t.titre}`} t={section.titre} />
-              <p className="text-gray-300" dangerouslySetInnerHTML={{ __html: section.texte }} />
+              <p className="text-gray-400" dangerouslySetInnerHTML={{ __html: section.texte }} />
             </div>
           </div>
         </section>
@@ -148,20 +148,20 @@ function Bloc({ section }: { section: Section }) {
     case "liste":
       return (
         <section>
-          {section.titre && <Riche as="h2" className={H2_ARTICLE} t={section.titre} />}
+          {section.titre && <Riche as="h2" className="text-xl font-semibold text-ink mb-4" t={section.titre} />}
           {section.intro && (
-            <p className="mb-6" dangerouslySetInnerHTML={{ __html: section.intro }} />
+            <p className="mb-5" dangerouslySetInnerHTML={{ __html: section.intro }} />
           )}
           {section.numerotee ? (
             <ol className="space-y-4">
               {section.items.map((item, i) => (
                 <li key={item.titre} className="flex gap-4">
-                  <span className="shrink-0 w-7 h-7 rounded-full bg-indigo-500/15 text-indigo-400 text-sm font-semibold flex items-center justify-center mt-0.5">
+                  <span className="shrink-0 w-7 h-7 rounded-full bg-indigo-500/15 border border-indigo-500/30 text-indigo-400 text-sm font-semibold flex items-center justify-center mt-0.5">
                     {i + 1}
                   </span>
                   <div>
                     <Riche as="p" className="text-ink font-medium mb-1" t={item.titre} />
-                    <p className="text-gray-300" dangerouslySetInnerHTML={{ __html: item.texte }} />
+                    <p className="text-gray-400" dangerouslySetInnerHTML={{ __html: item.texte }} />
                   </div>
                 </li>
               ))}
@@ -169,9 +169,9 @@ function Bloc({ section }: { section: Section }) {
           ) : (
             <div className="space-y-3">
               {section.items.map((item) => (
-                <div key={item.titre} className={`${CARTE} p-5`}>
+                <div key={item.titre} className="bg-ds-surface border border-ds-border rounded-xl p-5">
                   <Riche as="p" className="text-ink font-medium mb-1" t={item.titre} />
-                  <p className="text-gray-300" dangerouslySetInnerHTML={{ __html: item.texte }} />
+                  <p className="text-gray-400" dangerouslySetInnerHTML={{ __html: item.texte }} />
                 </div>
               ))}
             </div>
@@ -182,9 +182,9 @@ function Bloc({ section }: { section: Section }) {
     case "tableau":
       return (
         <section>
-          {section.titre && <Riche as="h2" className={H2_ARTICLE} t={section.titre} />}
+          {section.titre && <Riche as="h2" className="text-xl font-semibold text-ink mb-4" t={section.titre} />}
           {section.intro && (
-            <p className="mb-6" dangerouslySetInnerHTML={{ __html: section.intro }} />
+            <p className="mb-5" dangerouslySetInnerHTML={{ __html: section.intro }} />
           )}
           {/* Le tableau défile dans son propre conteneur : la page ne doit
               jamais défiler horizontalement sur mobile. */}
@@ -195,7 +195,7 @@ function Bloc({ section }: { section: Section }) {
                   {section.colonnes.map((c) => (
                     <th
                       key={c}
-                      className="py-3 pr-4 last:pr-0 text-sm font-semibold text-gray-400 align-bottom"
+                      className="py-3 pr-4 last:pr-0 text-xs font-semibold text-gray-400 uppercase tracking-wider align-bottom"
                       dangerouslySetInnerHTML={{ __html: c }}
                     />
                   ))}
@@ -225,16 +225,16 @@ function Bloc({ section }: { section: Section }) {
     case "comparaison":
       return (
         <section>
-          {section.titre && <Riche as="h2" className={H2_ARTICLE} t={section.titre} />}
+          {section.titre && <Riche as="h2" className="text-xl font-semibold text-ink mb-4" t={section.titre} />}
           {section.intro && (
-            <p className="mb-6" dangerouslySetInnerHTML={{ __html: section.intro }} />
+            <p className="mb-5" dangerouslySetInnerHTML={{ __html: section.intro }} />
           )}
           <div className={`grid gap-4 ${section.colonnes.length > 2 ? "sm:grid-cols-3" : "sm:grid-cols-2"}`}>
             {section.colonnes.map((c) => (
-              <div key={c.titre} className={`p-5 ${TONS_COLONNE[c.ton]}`}>
-                <Riche as="p" className="text-sm font-semibold mb-2 text-gray-400" t={c.titre} />
+              <div key={c.titre} className={`border rounded-xl p-5 ${TONS_COLONNE[c.ton]}`}>
+                <Riche as="p" className="text-xs font-semibold uppercase tracking-wider mb-2 text-gray-400" t={c.titre} />
                 {c.sousTitre && <Riche as="p" className="text-ink font-medium mb-2" t={c.sousTitre} />}
-                <p className="text-gray-300" dangerouslySetInnerHTML={{ __html: c.texte }} />
+                <p className="text-gray-400" dangerouslySetInnerHTML={{ __html: c.texte }} />
               </div>
             ))}
           </div>
@@ -244,7 +244,7 @@ function Bloc({ section }: { section: Section }) {
     case "citation":
       return (
         <section>
-          <blockquote className="border-l-[3px] border-indigo-400 pl-5 py-1 text-gray-200 italic">
+          <blockquote className="border-l-2 border-indigo-500/50 pl-5 py-1 text-gray-300 italic">
             <span dangerouslySetInnerHTML={{ __html: section.texte }} />
             {section.source && (
               <footer className="text-xs text-gray-500 not-italic mt-2">, <Riche t={section.source} /></footer>
@@ -258,7 +258,8 @@ function Bloc({ section }: { section: Section }) {
 export function ArticleLong({ slug, chapeau, enBref, sections, faq, sources, cta }: ArticleLongProps) {
   const a = article(slug);
   const cat = categorie(a.categorie);
-    const lectures = suggestionsDeLecture(slug);
+  const accent = ACCENTS[cat.accent];
+  const lectures = suggestionsDeLecture(slug);
 
   const formaterDate = (iso: string) =>
     new Date(iso).toLocaleDateString("fr-FR", { day: "numeric", month: "long", year: "numeric" });
@@ -268,10 +269,10 @@ export function ArticleLong({ slug, chapeau, enBref, sections, faq, sources, cta
       <DonneesStructurees donnees={jsonLdArticle(slug, faq)} />
 
 
-      <article className="pt-12 sm:pt-16 pb-24">
-        <div className={CADRE_LECTURE}>
+      <article className="pt-12 sm:pt-16 pb-20 px-4 sm:px-6">
+        <div className="max-w-3xl mx-auto">
 
-          <nav aria-label="Fil d'Ariane" className="flex items-center gap-2 text-sm text-gray-500 mb-8">
+          <nav aria-label="Fil d'Ariane" className="flex items-center gap-2 text-xs text-gray-500 mb-8">
             <Link href="/" className="hover:text-gray-300 transition-colors">Accueil</Link>
             <span aria-hidden>/</span>
             <Link href="/blog" className="hover:text-gray-300 transition-colors">Blog</Link>
@@ -281,10 +282,10 @@ export function ArticleLong({ slug, chapeau, enBref, sections, faq, sources, cta
 
           <header className="mb-10">
             <div className="flex flex-wrap items-center gap-3 mb-4">
-              <span className="text-sm font-medium text-indigo-300">
+              <span className={`text-xs px-2.5 py-1 rounded-full font-medium border ${accent.badge}`}>
                 {cat.badge}
               </span>
-              <span className="text-sm text-gray-400">
+              <span className="text-xs text-gray-400">
                 {a.misAJourLe !== a.publieLe ? (
                   <>Mis à jour le {formaterDate(a.misAJourLe)}</>
                 ) : (
@@ -294,21 +295,21 @@ export function ArticleLong({ slug, chapeau, enBref, sections, faq, sources, cta
                 {a.dureeLecture} min
               </span>
             </div>
-            <h1 className={`${H1_ARTICLE} mb-5`}>{a.h1}</h1>
-            <p className="text-[19px] leading-relaxed text-gray-300" dangerouslySetInnerHTML={{ __html: chapeau }} />
+            <h1 className="text-3xl sm:text-4xl font-semibold text-ink leading-tight mb-4">{a.h1}</h1>
+            <p className="text-lg text-gray-400 leading-relaxed" dangerouslySetInnerHTML={{ __html: chapeau }} />
           </header>
 
-          <div className={`space-y-14 ${CORPS}`}>
+          <div className="space-y-10 text-sm text-gray-300 leading-relaxed">
 
             {enBref && enBref.length > 0 && (
-              <section className={`${ENCADRE.info} p-6`}>
-                <p className="text-sm font-semibold text-sky-300 mb-3">
-                  La réponse en bref
+              <section className="bg-[#191830] border border-indigo-500/30 rounded-2xl p-6">
+                <p className="text-xs font-semibold text-indigo-400 uppercase tracking-wider mb-3">
+                  L&apos;essentiel
                 </p>
                 <ul className="space-y-2">
                   {enBref.map((item, i) => (
                     <li key={i} className="flex gap-2">
-                      <span aria-hidden className="text-sky-400 shrink-0">→</span>
+                      <span aria-hidden className="text-indigo-400 shrink-0">→</span>
                       <span dangerouslySetInnerHTML={{ __html: item }} />
                     </li>
                   ))}
@@ -321,20 +322,24 @@ export function ArticleLong({ slug, chapeau, enBref, sections, faq, sources, cta
             ))}
 
             {cta && (
-              <section className={`${CARTE} p-8 sm:p-10`}>
-                <Riche as="h2" className={H2_ARTICLE} t={cta.titre} />
-                <Riche as="p" className="text-gray-300 mb-6 max-w-lg" t={cta.texte} />
-                <Link href="/signup" className={BOUTON_PLEIN}>Essayer 14 jours gratuitement</Link>
+              <section className="bg-linear-to-br/srgb from-indigo-900/40 to-violet-900/20 rounded-2xl border border-indigo-500/20 p-8 text-center">
+                <Riche as="h2" className="text-xl font-semibold text-ink mb-3" t={cta.titre} />
+                <Riche as="p" className="text-gray-400 mb-6 max-w-lg mx-auto" t={cta.texte} />
+                <WaitlistButton
+                  plan="free"
+                  label="Essayer gratuitement"
+                  className="bg-indigo-600 hover:bg-indigo-700 text-ink font-semibold px-8 py-3 rounded-xl transition-all shadow-lg shadow-indigo-900/50"
+                />
               </section>
             )}
 
             <section>
-              <h2 className={H2_ARTICLE}>Questions fréquentes</h2>
+              <h2 className="text-xl font-semibold text-ink mb-6">Questions fréquentes</h2>
               <div className="space-y-4">
                 {faq.map(({ q, a: reponse }) => (
-                  <div key={q} className={`${CARTE} p-6`}>
-                    <h3 className="text-ink font-semibold mb-3">{q}</h3>
-                    <p className="text-gray-300 text-[16px] leading-relaxed">{reponse}</p>
+                  <div key={q} className="bg-ds-surface rounded-xl border border-ds-border p-6">
+                    <h3 className="text-ink font-medium mb-3">{q}</h3>
+                    <p className="text-gray-400 text-sm leading-relaxed">{reponse}</p>
                   </div>
                 ))}
               </div>
@@ -342,7 +347,7 @@ export function ArticleLong({ slug, chapeau, enBref, sections, faq, sources, cta
 
             {sources && sources.length > 0 && (
               <section>
-                <h2 className={H2_ARTICLE}>Sources</h2>
+                <h2 className="text-xl font-semibold text-ink mb-4">Sources</h2>
                 <ul className="space-y-2 text-gray-400">
                   {sources.map((s) => (
                     <li key={s.url}>
@@ -350,7 +355,7 @@ export function ArticleLong({ slug, chapeau, enBref, sections, faq, sources, cta
                         href={s.url}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className={LIEN}
+                        className="text-indigo-400 hover:text-indigo-300 transition-colors"
                       >
                         {s.libelle}
                       </a>
@@ -363,19 +368,19 @@ export function ArticleLong({ slug, chapeau, enBref, sections, faq, sources, cta
 
             {lectures.length > 0 && (
               <section>
-                <h2 className={H2_ARTICLE}>À lire ensuite</h2>
+                <h2 className="text-xl font-semibold text-ink mb-6">À lire ensuite</h2>
                 <div className="grid gap-4 sm:grid-cols-2">
                   {lectures.map((l) => (
                     <Link
                       key={l.href}
                       href={l.href}
-                      className={`group ${CARTE_LIEN} p-5`}
+                      className="group bg-ds-surface border border-ds-border rounded-xl p-5 hover:border-indigo-500/40 transition-all"
                     >
-                      <p className="text-ink font-medium leading-snug mb-2">
+                      <p className="text-ink font-medium text-sm leading-snug mb-2 group-hover:text-indigo-200 transition-colors">
                         {l.titre}
                       </p>
-                      <p className="text-gray-400 text-sm leading-relaxed line-clamp-2 mb-3">{l.resume}</p>
-                      <p className="text-gray-500 text-sm">{l.dureeLecture} min de lecture</p>
+                      <p className="text-gray-500 text-xs leading-relaxed line-clamp-2 mb-3">{l.resume}</p>
+                      <p className="text-gray-600 text-xs">{l.dureeLecture} min de lecture</p>
                     </Link>
                   ))}
                 </div>

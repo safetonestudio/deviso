@@ -1,9 +1,9 @@
-import { PageSite, CADRE_LECTURE, BOUTON_PLEIN } from "@/components/site/PageSite";
-import { H1_ARTICLE, H2_ARTICLE, CARTE, ENCADRE } from "@/components/blog/styles";
+import { PageSite } from "@/components/site/PageSite";
 import { DonneesStructurees } from "@/components/DonneesStructurees";
 import { Signature } from "@/components/blog/Signature";
 import { jsonLdArticle, metadonneesArticle } from "@/lib/blog/meta";
 import Link from "next/link";
+import { WaitlistButton } from "@/components/landing/WaitlistButton";
 
 const SLUG = "checklist-reforme-facturation-2026";
 
@@ -116,9 +116,13 @@ export default function ChecklistReforme2026Page() {
     <PageSite actif="/blog">
       <DonneesStructurees donnees={jsonLdArticle(SLUG)} />
 
+      <div className="bg-indigo-950/95 backdrop-blur-xs border-b border-indigo-500/20 py-2 px-4 text-center text-sm">
+        <span className="text-ink font-semibold">1er septembre 2026&nbsp;:</span>
+        <span className="text-gray-300 ml-1.5">Grandes entreprises → e-facturation obligatoire. Toutes → obligation de réception.</span>
+      </div>
 
 
-      <main className={`${CADRE_LECTURE} pt-12 sm:pt-16 pb-24`}>
+      <main className="max-w-3xl mx-auto px-4 sm:px-6 pt-12 sm:pt-16 pb-20">
         <nav className="flex items-center gap-2 text-xs text-gray-400 mb-8">
           <Link href="/" className="hover:text-ink transition-colors">Accueil</Link>
           <span>/</span>
@@ -131,25 +135,25 @@ export default function ChecklistReforme2026Page() {
 
         <div className="mb-10">
           <div className="flex items-center gap-3 mb-4">
-            <span className="text-sm font-medium text-indigo-300">Réforme 2026 · Checklist</span>
+            <span className="text-xs font-semibold text-indigo-400 bg-indigo-500/10 border border-indigo-500/20 rounded-full px-3 py-1">Réforme 2026 · Checklist</span>
             <span className="text-xs text-gray-400">10 min · Mis à jour juillet 2026</span>
           </div>
-          <h1 className={`${H1_ARTICLE} mb-5`}>
+          <h1 className="text-3xl sm:text-4xl font-bold text-ink leading-tight mb-4">
             Checklist réforme facturation 2026 : 7 points à vérifier pour être prêt
           </h1>
-          <p className="text-[19px] text-gray-300 leading-relaxed">
+          <p className="text-lg text-gray-400 leading-relaxed">
             La réforme de la facturation électronique est complexe. Pour éviter de passer à côté d&apos;un point critique, nous avons condensé les actions essentielles en une checklist actionnable, à partager avec votre comptable.
           </p>
         </div>
 
         {/* Score global */}
-        <div className={`mb-10 ${ENCADRE.info} p-6`}>
+        <div className="mb-10 bg-ds-surface border border-ds-border rounded-2xl p-6">
           <div className="flex items-center justify-between mb-4">
             <h2 className="text-base font-semibold text-ink">Votre score de préparation</h2>
             <span className="text-xs text-gray-500">7 points à cocher</span>
           </div>
           <div className="h-2 bg-ds-elevated rounded-full overflow-hidden">
-            <div className="h-full w-0 bg-indigo-500 rounded-full" style={{ width: "0%" }} />
+            <div className="h-full w-0 bg-linear-to-r/srgb from-indigo-600 to-violet-500 rounded-full" style={{ width: "0%" }} />
           </div>
           <p className="text-xs text-gray-400 mt-3 italic">Cochez les points au fur et à mesure dans cet article pour évaluer votre préparation.</p>
         </div>
@@ -167,14 +171,20 @@ export default function ChecklistReforme2026Page() {
           {CHECKLIST.map((item) => (
             <div
               key={item.num}
-              className="rounded-xl bg-ds-surface overflow-hidden"
+              className={`rounded-2xl border overflow-hidden ${
+                item.urgency === "high"
+                  ? "border-red-500/25"
+                  : item.urgency === "medium"
+                  ? "border-amber-500/20"
+                  : "border-ds-border"
+              }`}
             >
               <div
                 className={`px-5 py-4 flex items-start gap-4 ${
                   item.urgency === "high"
-                    ? "bg-ds-surface border-l-[3px] border-amber-400"
+                    ? "bg-[#241717]"
                     : item.urgency === "medium"
-                    ? "bg-ds-surface border-l-[3px] border-amber-400"
+                    ? "bg-[#241d11]"
                     : "bg-ds-surface"
                 }`}
               >
@@ -214,7 +224,7 @@ export default function ChecklistReforme2026Page() {
         {/* Récapitulatif des échéances */}
         <section className="mb-14">
           <h2 className="text-xl font-bold text-ink mb-5">Récapitulatif des échéances</h2>
-          <div className="bg-ds-surface rounded-xl overflow-hidden">
+          <div className="bg-ds-surface border border-ds-border rounded-2xl overflow-hidden">
             <div className="divide-y divide-ds-border text-sm">
               {[
                 { date: "1er sept. 2026", action: "Grandes entreprises : émission e-factures obligatoire", extra: "Toutes entreprises : réception obligatoire" },
@@ -234,8 +244,8 @@ export default function ChecklistReforme2026Page() {
         </section>
 
         {/* Liens cluster */}
-        <div className={`mb-10 ${ENCADRE.info} p-6`}>
-          <p className="text-sm font-semibold text-gray-500 mb-4">Pour aller plus loin</p>
+        <div className="mb-10 bg-ds-surface border border-ds-border rounded-2xl p-6">
+          <p className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-4">Pour aller plus loin</p>
           <div className="space-y-3">
             {[
               { href: "/blog/facturation-electronique-2026", title: "Guide complet réforme facturation électronique 2026" },
@@ -251,12 +261,12 @@ export default function ChecklistReforme2026Page() {
           </div>
         </div>
 
-        <div className={`${CARTE} p-8 sm:p-10 mb-14`}>
-          <h2 className={H2_ARTICLE}>Préparez-vous sans stress avec Deviso</h2>
+        <div className="rounded-2xl bg-[#191830] border border-indigo-500/20 p-8 text-center mb-14">
+          <h2 className="text-xl font-bold text-ink mb-3">Préparez-vous sans stress avec Deviso</h2>
           <p className="text-sm text-gray-400 mb-6 max-w-lg mx-auto">
             Deviso génère déjà des factures Factur-X au profil EN 16931 et, raccordé à une Plateforme Agréée (Super PDP), émet et reçoit déjà vos factures électroniques en conformité avec la réforme. Essayez gratuitement pendant 14 jours, sans carte bancaire.
           </p>
-          <Link href="/signup" className={BOUTON_PLEIN}>Essayer 14 jours gratuitement</Link>
+          <WaitlistButton plan="free" label="Essayer Deviso gratuitement →" className="inline-flex items-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-ink font-semibold px-6 py-3 rounded-xl transition-colors text-sm" />
           <p className="text-xs text-gray-400 mt-3">Factur-X inclus · Plateforme Agréée raccordée · E-reporting géré automatiquement</p>
           <Signature />
         </div>

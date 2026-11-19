@@ -15,20 +15,20 @@ import { AUTEUR } from "@/lib/blog/auteur";
  */
 export function Signature() {
   return (
-    <section className="pt-10 mt-14">
+    <section className="pt-8 mt-12">
       <div className="flex gap-4">
-        <div className="w-11 h-11 rounded-full bg-indigo-600 flex items-center justify-center shrink-0">
-          <span className="text-on-accent font-semibold text-sm">SA</span>
+        <div className="w-11 h-11 rounded-full bg-linear-to-br/srgb from-indigo-600 to-violet-600 flex items-center justify-center shrink-0">
+          <span className="text-ink font-semibold text-sm">SA</span>
         </div>
         <div className="min-w-0">
           <p className="text-ink font-medium text-sm">
             {AUTEUR.nom}
             <span className="text-gray-500 font-normal"> · {AUTEUR.role}</span>
           </p>
-          <p className="text-gray-300 text-[16px] leading-relaxed mt-1">{AUTEUR.resume}</p>
+          <p className="text-gray-400 text-sm leading-relaxed mt-1">{AUTEUR.resume}</p>
           <Link
             href={AUTEUR.urlPage}
-            className="inline-block text-indigo-400 hover:text-indigo-300 hover:underline underline-offset-4 text-sm font-medium mt-2 transition-colors"
+            className="inline-block text-indigo-400 hover:text-indigo-300 text-sm font-medium mt-2 transition-colors"
           >
             Comment je travaille, et comment me signaler une erreur →
           </Link>

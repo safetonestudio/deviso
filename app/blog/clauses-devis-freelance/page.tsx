@@ -1,9 +1,9 @@
-import { PageSite, CADRE_LECTURE, BOUTON_PLEIN } from "@/components/site/PageSite";
-import { H1_ARTICLE, H2_ARTICLE, CARTE } from "@/components/blog/styles";
+import { PageSite } from "@/components/site/PageSite";
 import { DonneesStructurees } from "@/components/DonneesStructurees";
 import { Signature } from "@/components/blog/Signature";
 import { jsonLdArticle, metadonneesArticle } from "@/lib/blog/meta";
 import Link from "next/link";
+import { WaitlistButton } from "@/components/landing/WaitlistButton";
 import { Lightbulb } from "lucide-react";
 
 const SLUG = "clauses-devis-freelance";
@@ -161,27 +161,27 @@ const clauses = [
 ];
 
 const colorMap: Record<string, string> = {
-  indigo: "bg-ds-surface",
-  violet: "bg-ds-surface",
-  blue: "bg-ds-surface",
-  emerald: "bg-ds-surface",
-  amber: "bg-ds-surface",
-  rose: "bg-ds-surface",
-  orange: "bg-ds-surface",
-  slate: "bg-ds-surface",
-  zinc: "bg-ds-surface",
+  indigo: "border-indigo-500/30 bg-indigo-500/5",
+  violet: "border-violet-500/30 bg-violet-500/5",
+  blue: "border-blue-500/30 bg-blue-500/5",
+  emerald: "border-emerald-500/30 bg-emerald-500/5",
+  amber: "border-amber-500/30 bg-amber-500/5",
+  rose: "border-rose-500/30 bg-rose-500/5",
+  orange: "border-orange-500/30 bg-orange-500/5",
+  slate: "border-slate-400/30 bg-slate-500/5",
+  zinc: "border-zinc-400/30 bg-zinc-500/5",
 };
 
 const numColorMap: Record<string, string> = {
   indigo: "text-indigo-400",
-  violet: "text-indigo-400",
-  blue: "text-indigo-400",
-  emerald: "text-indigo-400",
-  amber: "text-indigo-400",
-  rose: "text-indigo-400",
-  orange: "text-indigo-400",
-  slate: "text-indigo-400",
-  zinc: "text-indigo-400",
+  violet: "text-violet-400",
+  blue: "text-blue-400",
+  emerald: "text-emerald-400",
+  amber: "text-amber-400",
+  rose: "text-rose-400",
+  orange: "text-orange-400",
+  slate: "text-slate-400",
+  zinc: "text-zinc-400",
 };
 
 const metierLinks = [
@@ -231,11 +231,17 @@ export default function Page() {
     <PageSite actif="/blog">
       <DonneesStructurees donnees={jsonLdArticle(SLUG, FAQ)} />
 
+      {/* ── Bandeau 2026 ── */}
+      <div className="bg-indigo-950/95 backdrop-blur-xs border-b border-indigo-500/20 py-2 px-4 text-center text-sm">
+        <span className="text-indigo-300 font-semibold">Réforme 2026&nbsp;:</span>
+        <span className="text-gray-300 ml-1.5">La facturation électronique B2B devient obligatoire en France.&nbsp;</span>
+        <span className="text-indigo-400 font-medium">Deviso est déjà conforme Factur-X, sans rien faire de votre côté.</span>
+      </div>
 
 
       {/* ── Article ── */}
-      <article className="pt-12 sm:pt-16 pb-24">
-        <div className={CADRE_LECTURE}>
+      <article className="pt-12 sm:pt-16 pb-20 px-4 sm:px-6">
+        <div className="max-w-3xl mx-auto">
 
           {/* Breadcrumb */}
           <nav className="flex items-center gap-2 text-xs text-gray-400 mb-8">
@@ -249,19 +255,19 @@ export default function Page() {
           {/* Header */}
           <div className="mb-10">
             <div className="flex items-center gap-3 mb-4">
-              <span className="text-sm font-medium text-indigo-300">Guide complet</span>
+              <span className="text-xs px-2.5 py-1 rounded-full bg-indigo-500/10 text-indigo-300 border border-indigo-500/20 font-medium">Guide complet</span>
               <span className="text-xs text-gray-400">29 juin 2026 · 10 min</span>
             </div>
-            <h1 className={`${H1_ARTICLE} mb-5`}>
+            <h1 className="text-3xl sm:text-4xl font-semibold text-ink leading-tight mb-4">
               Les clauses indispensables dans un devis freelance
             </h1>
-            <p className="text-[19px] text-gray-300 leading-relaxed">
+            <p className="text-lg text-gray-400 leading-relaxed">
               Un devis signé est un contrat. Sans les bonnes clauses, il peut se retourner contre vous. Voici les 9 clauses à inclure systématiquement, avec des formulations prêtes à l'emploi.
             </p>
           </div>
 
           {/* Sommaire */}
-          <div className="bg-ds-surface rounded-xl p-6 mb-12">
+          <div className="bg-ds-surface border border-ds-border rounded-2xl p-6 mb-12">
             <p className="text-sm font-semibold text-ink mb-4">Sommaire</p>
             <ol className="space-y-2">
               {clauses.map((c) => (
@@ -301,8 +307,8 @@ export default function Page() {
                 <p className="text-gray-400 leading-relaxed mb-5 text-sm">{clause.desc}</p>
 
                 {/* Formulation */}
-                <div className={`rounded-xl p-5 mb-5 ${colorMap[clause.color]}`}>
-                  <p className="text-sm font-semibold text-gray-500 mb-3">Formulation type</p>
+                <div className={`border rounded-xl p-5 mb-5 ${colorMap[clause.color]}`}>
+                  <p className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-3">Formulation type</p>
                   <p className="text-sm text-gray-200 leading-relaxed italic">&ldquo;{clause.formulation}&rdquo;</p>
                 </div>
 
@@ -314,7 +320,7 @@ export default function Page() {
                       <Link
                         key={p.href}
                         href={p.href}
-                        className="text-xs px-3 py-1.5 rounded-lg bg-ds-elevated text-gray-400 hover:text-indigo-300 hover:bg-ds-elevated transition-all"
+                        className="text-xs px-3 py-1.5 rounded-lg bg-ds-elevated border border-ds-border text-gray-400 hover:text-indigo-300 hover:border-indigo-500/40 transition-all"
                       >
                         {p.label} →
                       </Link>
@@ -323,7 +329,7 @@ export default function Page() {
                 </div>
 
                 {/* Tip */}
-                <div className={`flex gap-3 ${CARTE} p-4`}>
+                <div className="flex gap-3 bg-ds-elevated rounded-xl p-4 border border-ds-border">
                   <Lightbulb size={17} className="text-indigo-400 mt-0.5 shrink-0" />
                   <p className="text-xs text-gray-400 leading-relaxed">{clause.tip}</p>
                 </div>
@@ -332,22 +338,26 @@ export default function Page() {
           </div>
 
           {/* CTA */}
-          <div className="mt-16 bg-ds-surface rounded-xl p-8 sm:p-10">
-            <h2 className={H2_ARTICLE}>
+          <div className="mt-16 bg-linear-to-br/srgb from-indigo-900/40 to-violet-900/20 rounded-2xl border border-indigo-500/20 p-8 text-center">
+            <h2 className="text-2xl font-semibold text-ink mb-3">
               Intégrez ces clauses dans vos devis en 30 secondes
             </h2>
             <p className="text-gray-400 mb-6 max-w-lg mx-auto text-sm leading-relaxed">
               Avec Deviso, décrivez votre mission et l&apos;IA génère un devis complet avec les clauses adaptées à votre métier. Vos clients signent électroniquement, vous êtes protégé juridiquement.
             </p>
-            <Link href="/signup" className={BOUTON_PLEIN}>Essayer 14 jours gratuitement</Link>
+            <WaitlistButton
+              plan="free"
+              label="Générer mon premier devis, gratuit"
+              className="inline-block bg-indigo-600 hover:bg-indigo-700 text-ink font-semibold px-8 py-3 rounded-xl transition-all shadow-lg shadow-indigo-900/50"
+            />
           </div>
 
           {/* FAQ */}
           <div className="mt-16">
-            <h2 className={H2_ARTICLE}>Questions fréquentes</h2>
+            <h2 className="text-xl font-semibold text-ink mb-6">Questions fréquentes</h2>
             <div className="space-y-4">
               {FAQ.map((item) => (
-                <div key={item.q} className={`${CARTE} p-5`}>
+                <div key={item.q} className="bg-ds-surface border border-ds-border rounded-xl p-5">
                   <p className="font-medium text-ink text-sm mb-2">{item.q}</p>
                   <p className="text-gray-400 text-sm leading-relaxed">{item.a}</p>
                 </div>
@@ -363,14 +373,14 @@ export default function Page() {
                 <Link
                   key={m.href}
                   href={m.href}
-                  className="text-sm px-3.5 py-2 rounded-lg bg-ds-surface text-gray-400 hover:text-gray-200 hover:bg-ds-elevated transition-colors"
+                  className="text-xs px-3 py-1.5 rounded-lg bg-ds-surface border border-ds-border text-gray-500 hover:text-gray-300 hover:border-indigo-500/30 transition-all"
                 >
                   {m.label}
                 </Link>
               ))}
               <Link
                 href="/blog"
-                className="text-sm px-3.5 py-2 rounded-lg bg-ds-surface text-indigo-400 hover:text-indigo-300 hover:bg-ds-elevated transition-colors"
+                className="text-xs px-3 py-1.5 rounded-lg bg-ds-surface border border-ds-border text-indigo-400 hover:text-indigo-300 transition-all"
               >
                 ← Tous les articles
               </Link>

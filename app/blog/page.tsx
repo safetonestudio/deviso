@@ -1,6 +1,7 @@
-import { PageSite, CADRE, H1, LEAD, BOUTON_PLEIN } from "@/components/site/PageSite";
+import { PageSite } from "@/components/site/PageSite";
 import type { Metadata } from "next";
 import Link from "next/link";
+import { WaitlistButton } from "@/components/landing/WaitlistButton";
 import { DonneesStructurees } from "@/components/DonneesStructurees";
 import { MenuCategorie } from "@/components/blog/MenuCategorie";
 import { ARTICLES, SITE, articlesDe, urlArticle } from "@/lib/blog/registre";
@@ -134,37 +135,61 @@ export default function BlogIndex() {
   return (
     <PageSite actif="/blog">
       <DonneesStructurees donnees={jsonLd} />
+      {/* ── Bandeau réforme 2026 ── */}
+      <div
+        className="bg-indigo-950/95 backdrop-blur-xs border-b border-indigo-500/20 py-2 px-4 text-center text-sm"
+      >
+        <span className="text-indigo-300 font-semibold">Réforme 2026&nbsp;:</span>
+        <span className="text-gray-300 ml-1.5">La facturation électronique B2B devient obligatoire en France.&nbsp;</span>
+        <span className="text-indigo-400 font-medium">Deviso est déjà conforme Factur-X, sans rien faire de votre côté.</span>
+      </div>
 
-      {/* En-tête éditorial */}
-      <header className={`${CADRE} pt-14 sm:pt-20 pb-14 sm:pb-20`}>
-        <p className="text-[15px] font-medium text-indigo-300 mb-4">Guides pratiques</p>
-        <h1 className={`${H1} max-w-4xl mb-6`}>Facturation freelance : des guides sourcés, par sujet et par métier</h1>
-        <p className={`${LEAD} max-w-2xl`}>
-          Mentions obligatoires, exemples concrets et erreurs à éviter, adaptés à la réforme de la facturation
-          électronique 2026. Chaque guide porte sa date de mise à jour et ses sources.
-        </p>
-      </header>
 
-      {/* Catégories */}
-      <main className={`${CADRE} pb-24`}>
-        <div className="space-y-20 sm:space-y-24">
-          {LISTE_CATEGORIES.map((c) => (
-            <MenuCategorie key={c.id} categorie={c} articles={articlesDe(c.id)} icones={ICONES} />
-          ))}
+      {/* ── Hero ── */}
+      <section className="pt-12 sm:pt-16 pb-16 px-4 sm:px-6">
+        <div className="max-w-4xl mx-auto">
+          <div className="inline-block px-3 py-1 rounded-full text-xs font-semibold bg-indigo-500/10 text-indigo-300 border border-indigo-500/20 mb-4">
+            Guides pratiques
+          </div>
+          <h1 className="text-4xl sm:text-5xl font-semibold text-ink leading-tight mb-4">
+            Facturation freelance :<br />
+            <span className="bg-linear-to-r/srgb from-indigo-400 to-violet-400 bg-clip-text text-transparent">
+              guides par métier
+            </span>
+          </h1>
+          <p className="text-xl text-gray-400 max-w-2xl leading-relaxed">
+            Mentions obligatoires, exemples concrets et erreurs à éviter, par profession et adapté à la réforme Factur-X 2026.
+          </p>
         </div>
+      </section>
 
-        <p className="text-[15px] text-gray-400 mt-16 leading-relaxed max-w-2xl">
-          {ARTICLES.length} guides. Si vous y trouvez une information fausse,{" "}
-          <a href="mailto:support@getdeviso.fr" className="text-indigo-400 hover:text-indigo-300 hover:underline underline-offset-4 transition-colors">
-            dites-le nous
-          </a>
-          {" "}: nous corrigeons et nous datons la correction.
-        </p>
+      {/* ── Articles ── */}
+      <section className="pb-20 px-4 sm:px-6">
+        <div className="max-w-4xl mx-auto">
+          <div className="grid gap-5">
+            {LISTE_CATEGORIES.map((c) => (
+              <MenuCategorie
+                key={c.id}
+                categorie={c}
+                articles={articlesDe(c.id)}
+                icones={ICONES}
+                ouvert={c.ouverteParDefaut}
+              />
+            ))}
+          </div>
 
-        <div className="mt-14">
-          <Link href="/signup" className={BOUTON_PLEIN}>Essayer 14 jours gratuitement</Link>
+          <p className="text-xs text-gray-500 mt-8 leading-relaxed">
+            {ARTICLES.length} guides. Chacun porte sa date de dernière mise à jour et ses sources.
+            Si vous y trouvez une information fausse,{" "}
+            <a href="mailto:support@getdeviso.fr" className="text-indigo-400 hover:text-indigo-300 transition-colors">
+              dites-le nous
+            </a>{" "}
+            : nous corrigeons et nous datons la correction.
+          </p>
         </div>
-      </main>
+      </section>
+
+      
     </PageSite>
   );
 }

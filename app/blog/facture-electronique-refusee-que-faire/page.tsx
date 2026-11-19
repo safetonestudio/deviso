@@ -1,6 +1,6 @@
-import { PageSite, CADRE_LECTURE } from "@/components/site/PageSite";
-import { H1_ARTICLE, H2_ARTICLE, CORPS, LIEN, CARTE, CARTE_LIEN, ENCADRE } from "@/components/blog/styles";
+import { PageSite } from "@/components/site/PageSite";
 import Link from "next/link";
+import { WaitlistButton } from "@/components/landing/WaitlistButton";
 import { Signature } from "@/components/blog/Signature";
 import { DonneesStructurees } from "@/components/DonneesStructurees";
 import { jsonLdArticle, metadonneesArticle, suggestionsDeLecture } from "@/lib/blog/meta";
@@ -97,8 +97,8 @@ export default function Page() {
       <DonneesStructurees donnees={jsonLdArticle(SLUG, FAQ)} />
 
 
-      <article className="pt-12 sm:pt-16 pb-24">
-        <div className={CADRE_LECTURE}>
+      <article className="pt-12 sm:pt-16 pb-20 px-4 sm:px-6">
+        <div className="max-w-3xl mx-auto">
 
           <nav aria-label="Fil d'Ariane" className="flex items-center gap-2 text-xs text-gray-500 mb-8">
             <Link href="/" className="hover:text-gray-300 transition-colors">Accueil</Link>
@@ -110,7 +110,7 @@ export default function Page() {
 
           <div className="mb-10">
             <div className="flex flex-wrap items-center gap-3 mb-4">
-              <span className="text-sm font-medium text-indigo-300">
+              <span className="text-xs px-2.5 py-1 rounded-full bg-rose-500/10 text-rose-300 border border-rose-500/20 font-medium">
                 Cycle de vie
               </span>
               <span className="text-xs text-gray-400">
@@ -119,19 +119,19 @@ export default function Page() {
                 {a.dureeLecture} min
               </span>
             </div>
-            <h1 className={`${H1_ARTICLE} mb-5`}>{a.h1}</h1>
-            <p className="text-[19px] text-gray-300 leading-relaxed">
+            <h1 className="text-3xl sm:text-4xl font-semibold text-ink leading-tight mb-4">{a.h1}</h1>
+            <p className="text-lg text-gray-400 leading-relaxed">
               Une facture électronique ne se contente pas de partir. Elle porte un statut, qui change au fil de
               son traitement, et deux de ces statuts sont des échecs. Ils n&apos;ont ni la même cause, ni le même
               remède, et dans un cas, la bonne réaction est exactement l&apos;inverse de l&apos;intuition.
             </p>
           </div>
 
-          <div className={`space-y-14 ${CORPS}`}>
+          <div className="space-y-10 text-sm text-gray-300 leading-relaxed">
 
             {/* ── La réponse immédiate ── */}
-            <section className={`${ENCADRE.info} p-6`}>
-              <p className="text-sm font-semibold text-sky-300 mb-3">
+            <section className="bg-[#191830] border border-indigo-500/30 rounded-2xl p-6">
+              <p className="text-xs font-semibold text-indigo-400 uppercase tracking-wider mb-3">
                 Si vous êtes pressé
               </p>
               <ul className="space-y-2">
@@ -162,7 +162,7 @@ export default function Page() {
 
             {/* ── 1. Refusée vs rejetée ── */}
             <section>
-              <h2 className={H2_ARTICLE}>
+              <h2 className="text-xl font-semibold text-ink mb-4">
                 Refusée, rejetée : deux mots, deux responsables
               </h2>
               <p className="mb-5">
@@ -172,8 +172,8 @@ export default function Page() {
                 client contestait la livraison.
               </p>
               <div className="grid sm:grid-cols-2 gap-4">
-                <div className="bg-ds-surface border-l-[3px] border-amber-400 rounded-xl p-5">
-                  <p className="text-sm font-semibold text-rose-300 mb-2">
+                <div className="bg-[#241417] border border-rose-500/20 rounded-xl p-5">
+                  <p className="text-xs font-semibold text-rose-300 uppercase tracking-wider mb-2">
                     Refusée · statut 210
                   </p>
                   <p className="text-ink font-medium mb-2">Ça vient de votre client</p>
@@ -187,8 +187,8 @@ export default function Page() {
                     comprenez, et vous parlez à votre client. Le motif est un code, pas une explication.
                   </p>
                 </div>
-                <div className={`${ENCADRE.alerte} p-5`}>
-                  <p className="text-sm font-semibold text-amber-300 mb-2">
+                <div className="bg-[#241d11] border border-amber-500/25 rounded-xl p-5">
+                  <p className="text-xs font-semibold text-amber-300 uppercase tracking-wider mb-2">
                     Rejetée · statut 213
                   </p>
                   <p className="text-ink font-medium mb-2">Ça vient d&apos;une plateforme</p>
@@ -202,7 +202,7 @@ export default function Page() {
                   </p>
                 </div>
               </div>
-              <div className="flex gap-3 bg-ds-surface rounded-xl p-5 mt-4">
+              <div className="flex gap-3 bg-ds-surface border border-ds-border rounded-xl p-5 mt-4">
                 <Info size={18} className="shrink-0 mt-0.5 text-indigo-400" />
                 <p className="text-gray-400">
                   Ces deux statuts sont <strong className="text-ink">obligatoires</strong> dans le cycle de vie
@@ -215,7 +215,7 @@ export default function Page() {
 
             {/* ── 2. Les statuts ── */}
             <section>
-              <h2 className={H2_ARTICLE}>
+              <h2 className="text-xl font-semibold text-ink mb-4">
                 Les statuts que vous verrez passer
               </h2>
               <p className="mb-5">
@@ -230,9 +230,9 @@ export default function Page() {
                 <table className="w-full text-left border-collapse min-w-xl">
                   <thead>
                     <tr className="border-b border-ds-border">
-                      <th className="py-3 pr-3 text-sm font-semibold text-gray-400">Code</th>
-                      <th className="py-3 pr-4 text-sm font-semibold text-gray-400">Libellé</th>
-                      <th className="py-3 text-sm font-semibold text-gray-400">Ce que ça veut dire pour vous</th>
+                      <th className="py-3 pr-3 text-xs font-semibold text-gray-400 uppercase tracking-wider">Code</th>
+                      <th className="py-3 pr-4 text-xs font-semibold text-gray-400 uppercase tracking-wider">Libellé</th>
+                      <th className="py-3 text-xs font-semibold text-gray-400 uppercase tracking-wider">Ce que ça veut dire pour vous</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -240,7 +240,7 @@ export default function Page() {
                       <tr
                         key={s.code}
                         className={`border-b border-ds-border last:border-0 ${
-                          s.code === 210 || s.code === 213 ? "bg-ds-elevated" : ""
+                          s.code === 210 || s.code === 213 ? "bg-rose-950/10" : ""
                         }`}
                       >
                         <td className="py-3 pr-3 align-top tabular-nums text-gray-400">{s.code}</td>
@@ -268,7 +268,7 @@ export default function Page() {
 
             {/* ── 3. Les motifs ── */}
             <section>
-              <h2 className={H2_ARTICLE}>
+              <h2 className="text-xl font-semibold text-ink mb-4">
                 Les treize motifs de refus possibles
               </h2>
               <p className="mb-3">
@@ -284,7 +284,7 @@ export default function Page() {
               </p>
               <div className="space-y-3">
                 {MOTIFS.map((m) => (
-                  <div key={m.code} className={`${CARTE} p-5`}>
+                  <div key={m.code} className="bg-ds-surface border border-ds-border rounded-xl p-5">
                     <div className="flex flex-wrap items-baseline gap-x-3 gap-y-1 mb-2">
                       <code className="text-xs text-indigo-300 bg-indigo-500/10 px-2 py-0.5 rounded-sm">
                         {m.code}
@@ -295,7 +295,7 @@ export default function Page() {
                   </div>
                 ))}
               </div>
-              <div className="flex gap-3 bg-ds-surface border-l-[3px] border-amber-400 rounded-xl p-5 mt-4">
+              <div className="flex gap-3 bg-[#241d11] border border-amber-500/25 rounded-xl p-5 mt-4">
                 <TriangleAlert size={18} className="shrink-0 mt-0.5 text-amber-400" />
                 <div>
                   <p className="font-semibold text-ink mb-1">Le piège de DOUBLE_FACT</p>
@@ -313,7 +313,7 @@ export default function Page() {
 
             {/* ── 4. L'avoir ── */}
             <section>
-              <h2 className={H2_ARTICLE}>
+              <h2 className="text-xl font-semibold text-ink mb-4">
                 L&apos;avoir : pourquoi il ne faut pas le transmettre
               </h2>
               <p className="mb-4">
@@ -343,8 +343,8 @@ export default function Page() {
                 dispositif cherche à éviter.
               </p>
               <div className="grid sm:grid-cols-2 gap-4">
-                <div className={`${ENCADRE.conseil} p-5`}>
-                  <p className="text-sm font-semibold text-emerald-300 mb-3">
+                <div className="bg-[#14211a] border border-emerald-500/20 rounded-xl p-5">
+                  <p className="text-xs font-semibold text-emerald-300 uppercase tracking-wider mb-3">
                     Avoir interne, ne se transmet pas
                   </p>
                   <p className="text-gray-300">
@@ -352,8 +352,8 @@ export default function Page() {
                     <strong className="text-ink">rejetée</strong>. Écriture comptable, point.
                   </p>
                 </div>
-                <div className={`${CARTE} p-5`}>
-                  <p className="text-sm font-semibold text-gray-400 mb-3">
+                <div className="bg-ds-surface border border-ds-border rounded-xl p-5">
+                  <p className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-3">
                     Avoir ordinaire, se transmet
                   </p>
                   <p className="text-gray-400">
@@ -373,7 +373,7 @@ export default function Page() {
 
             {/* ── 5. Quoi faire ── */}
             <section>
-              <h2 className={H2_ARTICLE}>Quoi faire, dans l&apos;ordre</h2>
+              <h2 className="text-xl font-semibold text-ink mb-4">Quoi faire, dans l&apos;ordre</h2>
               <ol className="space-y-4">
                 {[
                   {
@@ -403,7 +403,7 @@ export default function Page() {
                   },
                 ].map((e, i) => (
                   <li key={e.titre} className="flex gap-4">
-                    <span className="shrink-0 w-7 h-7 rounded-full bg-indigo-500/15 text-indigo-400 text-sm font-semibold flex items-center justify-center mt-0.5">
+                    <span className="shrink-0 w-7 h-7 rounded-full bg-indigo-500/15 border border-indigo-500/30 text-indigo-400 text-sm font-semibold flex items-center justify-center mt-0.5">
                       {i + 1}
                     </span>
                     <div>
@@ -417,7 +417,7 @@ export default function Page() {
 
             {/* ── 6. Éviter ── */}
             <section>
-              <h2 className={H2_ARTICLE}>
+              <h2 className="text-xl font-semibold text-ink mb-4">
                 Les trois causes de refus les plus évitables
               </h2>
               <div className="space-y-3">
@@ -438,7 +438,7 @@ export default function Page() {
                       "Une facture dont les lignes ne s'additionnent pas exactement au total est refusable, et c'est d'autant plus rageant que ça ne vient jamais de vous mais de l'outil. Vérifiez une fois, sur une vraie facture, que vos lignes arrondies font bien le total affiché.",
                   },
                 ].map((e) => (
-                  <div key={e.titre} className="flex gap-4 bg-ds-surface rounded-xl p-5">
+                  <div key={e.titre} className="flex gap-4 bg-ds-surface border border-ds-border rounded-xl p-5">
                     <CircleCheck size={16} className="shrink-0 mt-0.5 text-emerald-400" />
                     <div>
                       <p className="text-ink font-medium mb-1">{e.titre}</p>
@@ -451,10 +451,10 @@ export default function Page() {
 
             {/* ── FAQ ── */}
             <section>
-              <h2 className={H2_ARTICLE}>Questions fréquentes</h2>
+              <h2 className="text-xl font-semibold text-ink mb-6">Questions fréquentes</h2>
               <div className="space-y-4">
                 {FAQ.map(({ q, a: reponse }) => (
-                  <div key={q} className={`${CARTE} p-6`}>
+                  <div key={q} className="bg-ds-surface rounded-xl border border-ds-border p-6">
                     <h3 className="text-ink font-medium mb-3">{q}</h3>
                     <p className="text-gray-400 text-sm leading-relaxed">{reponse}</p>
                   </div>
@@ -464,7 +464,7 @@ export default function Page() {
 
             {/* ── Sources ── */}
             <section>
-              <h2 className={H2_ARTICLE}>Sources</h2>
+              <h2 className="text-xl font-semibold text-ink mb-4">Sources</h2>
               <p className="text-gray-400 mb-3">
                 Tout ce qui est écrit ici vient du <strong className="text-ink">dossier de spécifications
                 externes de la facturation électronique, version 3.2</strong>, publié par la DGFiP le 30 avril
@@ -487,7 +487,7 @@ export default function Page() {
                   href="https://www.impots.gouv.fr/facturation-electronique-et-plateformes-agreees"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className={LIEN}
+                  className="text-indigo-400 hover:text-indigo-300 transition-colors"
                 >
                   impots.gouv.fr
                 </a>
@@ -500,13 +500,13 @@ export default function Page() {
             {/* ── À lire ensuite ── */}
             {lectures.length > 0 && (
               <section>
-                <h2 className={H2_ARTICLE}>À lire ensuite</h2>
+                <h2 className="text-xl font-semibold text-ink mb-6">À lire ensuite</h2>
                 <div className="grid gap-4 sm:grid-cols-2">
                   {lectures.map((l) => (
                     <Link
                       key={l.href}
                       href={l.href}
-                      className={`group ${CARTE_LIEN} p-5`}
+                      className="group bg-ds-surface border border-ds-border rounded-xl p-5 hover:border-indigo-500/40 transition-all"
                     >
                       <p className="text-ink font-medium text-sm leading-snug mb-2 group-hover:text-indigo-200 transition-colors">
                         {l.titre}

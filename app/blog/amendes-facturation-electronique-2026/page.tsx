@@ -1,6 +1,6 @@
-import { PageSite, CADRE_LECTURE } from "@/components/site/PageSite";
-import { H1_ARTICLE, H2_ARTICLE, CORPS, LIEN, CARTE, CARTE_LIEN, ENCADRE } from "@/components/blog/styles";
+import { PageSite } from "@/components/site/PageSite";
 import Link from "next/link";
+import { WaitlistButton } from "@/components/landing/WaitlistButton";
 import { Signature } from "@/components/blog/Signature";
 import { DonneesStructurees } from "@/components/DonneesStructurees";
 import { jsonLdArticle, metadonneesArticle, suggestionsDeLecture } from "@/lib/blog/meta";
@@ -66,8 +66,8 @@ export default function Page() {
       <DonneesStructurees donnees={jsonLdArticle(SLUG, FAQ)} />
 
 
-      <article className="pt-12 sm:pt-16 pb-24">
-        <div className={CADRE_LECTURE}>
+      <article className="pt-12 sm:pt-16 pb-20 px-4 sm:px-6">
+        <div className="max-w-3xl mx-auto">
 
           <nav aria-label="Fil d'Ariane" className="flex items-center gap-2 text-xs text-gray-500 mb-8">
             <Link href="/" className="hover:text-gray-300 transition-colors">Accueil</Link>
@@ -79,7 +79,7 @@ export default function Page() {
 
           <div className="mb-10">
             <div className="flex flex-wrap items-center gap-3 mb-4">
-              <span className="text-sm font-medium text-indigo-300">
+              <span className="text-xs px-2.5 py-1 rounded-full bg-amber-500/10 text-amber-300 border border-amber-500/20 font-medium">
                 Réforme 2026
               </span>
               <span className="text-xs text-gray-400">
@@ -88,19 +88,19 @@ export default function Page() {
                 {a.dureeLecture} min
               </span>
             </div>
-            <h1 className={`${H1_ARTICLE} mb-5`}>{a.h1}</h1>
-            <p className="text-[19px] text-gray-300 leading-relaxed">
+            <h1 className="text-3xl sm:text-4xl font-semibold text-ink leading-tight mb-4">{a.h1}</h1>
+            <p className="text-lg text-gray-400 leading-relaxed">
               Vous voulez savoir ce que vous risquez vraiment, pas la version anxiogène ni la version périmée.
               Les montants ont changé au 1<sup>er</sup> septembre 2026, et une grande partie du web affiche
               encore les anciens. Voici les chiffres réels, la tolérance qui compte, et d&apos;où ils sortent.
             </p>
           </div>
 
-          <div className={`space-y-14 ${CORPS}`}>
+          <div className="space-y-10 text-sm text-gray-300 leading-relaxed">
 
             {/* La reponse tout de suite */}
-            <section className={`${ENCADRE.info} p-6`}>
-              <p className="text-sm font-semibold text-sky-300 mb-3">
+            <section className="bg-[#191830] border border-indigo-500/30 rounded-2xl p-6">
+              <p className="text-xs font-semibold text-indigo-400 uppercase tracking-wider mb-3">
                 La réponse en trois lignes
               </p>
               <ul className="space-y-2">
@@ -133,7 +133,7 @@ export default function Page() {
 
             {/* Tableau */}
             <section>
-              <h2 className={H2_ARTICLE}>
+              <h2 className="text-xl font-semibold text-ink mb-4">
                 Le tableau des montants réels
               </h2>
               <p className="mb-5">
@@ -144,13 +144,13 @@ export default function Page() {
                 <table className="w-full text-left border-collapse min-w-136">
                   <thead>
                     <tr className="border-b border-ds-border">
-                      <th className="py-3 pr-4 text-sm font-semibold text-gray-400">
+                      <th className="py-3 pr-4 text-xs font-semibold text-gray-400 uppercase tracking-wider">
                         Manquement
                       </th>
-                      <th className="py-3 px-3 text-sm font-semibold text-amber-300 whitespace-nowrap">
+                      <th className="py-3 px-3 text-xs font-semibold text-amber-300 uppercase tracking-wider whitespace-nowrap">
                         Montant
                       </th>
-                      <th className="py-3 pl-3 text-sm font-semibold text-gray-400 whitespace-nowrap">
+                      <th className="py-3 pl-3 text-xs font-semibold text-gray-400 uppercase tracking-wider whitespace-nowrap">
                         Plafond
                       </th>
                     </tr>
@@ -170,7 +170,7 @@ export default function Page() {
 
             {/* Ce que la LF 2026 a change */}
             <section>
-              <h2 className={H2_ARTICLE}>
+              <h2 className="text-xl font-semibold text-ink mb-4">
                 Ce que la loi de finances 2026 a changé
               </h2>
               <p className="mb-4">
@@ -189,7 +189,7 @@ export default function Page() {
 
             {/* La tolerance */}
             <section>
-              <div className="flex gap-3 bg-ds-surface border-l-[3px] border-indigo-400 rounded-xl p-5">
+              <div className="flex gap-3 bg-[#14211a] border border-emerald-500/25 rounded-xl p-5">
                 <ShieldCheck size={18} className="shrink-0 mt-0.5 text-emerald-400" />
                 <div>
                   <p className="font-semibold text-ink mb-1">
@@ -209,7 +209,7 @@ export default function Page() {
 
             {/* Le plafond */}
             <section>
-              <h2 className={H2_ARTICLE}>
+              <h2 className="text-xl font-semibold text-ink mb-4">
                 Le plafond, et pourquoi il ne rassure pas les petites activités
               </h2>
               <p className="mb-4">
@@ -226,8 +226,8 @@ export default function Page() {
             </section>
 
             {/* Et Deviso */}
-            <section className={`${ENCADRE.info} p-6`}>
-              <p className="text-sm font-semibold text-gray-500 mb-3">
+            <section className="bg-ds-surface border border-ds-border rounded-2xl p-6">
+              <p className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-3">
                 Ce qui rend ces montants théoriques
               </p>
               <p className="mb-4">
@@ -238,7 +238,7 @@ export default function Page() {
               </p>
               <Link
                 href="/conformite"
-                className={`inline-flex items-center gap-2 font-medium ${LIEN}`}
+                className="inline-flex items-center gap-2 text-indigo-400 hover:text-indigo-300 font-medium transition-colors"
               >
                 <CircleCheck size={16} className="shrink-0" />
                 Ce que Deviso fait pour vous, en détail
@@ -247,10 +247,10 @@ export default function Page() {
 
             {/* FAQ */}
             <section>
-              <h2 className={H2_ARTICLE}>Questions fréquentes</h2>
+              <h2 className="text-xl font-semibold text-ink mb-6">Questions fréquentes</h2>
               <div className="space-y-4">
                 {FAQ.map(({ q, a: reponse }) => (
-                  <div key={q} className={`${CARTE} p-6`}>
+                  <div key={q} className="bg-ds-surface rounded-xl border border-ds-border p-6">
                     <h3 className="text-ink font-medium mb-3">{q}</h3>
                     <p className="text-gray-400 text-sm leading-relaxed">{reponse}</p>
                   </div>
@@ -260,14 +260,14 @@ export default function Page() {
 
             {/* Sources */}
             <section>
-              <h2 className={H2_ARTICLE}>Sources</h2>
+              <h2 className="text-xl font-semibold text-ink mb-4">Sources</h2>
               <ul className="space-y-2 text-gray-400">
                 <li>
                   <a
                     href="https://www.legifrance.gouv.fr/eli/loi/2026/2/19/CPPX2524517L/jo/article_123"
                     target="_blank"
                     rel="noopener noreferrer"
-                    className={`${LIEN} inline-flex items-center gap-1`}
+                    className="text-indigo-400 hover:text-indigo-300 transition-colors inline-flex items-center gap-1"
                   >
                     Légifrance, loi n° 2026-103 du 19 février 2026, article 123
                     <ExternalLink size={13} className="shrink-0" />
@@ -279,7 +279,7 @@ export default function Page() {
                     href="https://entreprendre.service-public.gouv.fr/actualites/A18802?lang=fr"
                     target="_blank"
                     rel="noopener noreferrer"
-                    className={LIEN}
+                    className="text-indigo-400 hover:text-indigo-300 transition-colors"
                   >
                     Service-Public Entreprendre, Les sanctions évoluent
                   </a>{" "}
@@ -290,7 +290,7 @@ export default function Page() {
                     href="https://kpmg.com/av/fr/avocats/eclairages/2026/03/facturation-electronique-amenagement-des-obligations-et-renforcement-des-sanctions.html"
                     target="_blank"
                     rel="noopener noreferrer"
-                    className={`${LIEN} inline-flex items-center gap-1`}
+                    className="text-indigo-400 hover:text-indigo-300 transition-colors inline-flex items-center gap-1"
                   >
                     KPMG Avocats, Aménagement des obligations et renforcement des sanctions (mars 2026)
                     <ExternalLink size={13} className="shrink-0" />
@@ -302,13 +302,13 @@ export default function Page() {
             {/* A lire ensuite */}
             {lectures.length > 0 && (
               <section>
-                <h2 className={H2_ARTICLE}>À lire ensuite</h2>
+                <h2 className="text-xl font-semibold text-ink mb-6">À lire ensuite</h2>
                 <div className="grid gap-4 sm:grid-cols-2">
                   {lectures.map((l) => (
                     <Link
                       key={l.href}
                       href={l.href}
-                      className={`group ${CARTE_LIEN} p-5`}
+                      className="group bg-ds-surface border border-ds-border rounded-xl p-5 hover:border-indigo-500/40 transition-all"
                     >
                       <p className="text-ink font-medium text-sm leading-snug mb-2 group-hover:text-indigo-200 transition-colors">
                         {l.titre}
