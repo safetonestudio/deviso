@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createAdminClient } from "@/lib/supabase/admin";
+import { ligneSuperpdp } from "@/lib/facture-recue-fictive";
 import { purgeExpiredDemoAccounts } from "@/lib/demo-cleanup";
 import { JETON_DEMO } from "@/lib/superpdp";
 import { resolveAddress } from "@/lib/address";
@@ -1011,35 +1012,19 @@ async function seedDemoData(userId: string): Promise<string[]> {
       total_without_vat: 1240, total_vat: 248, total_with_vat: 1488, amount_due: 1488,
       last_status_code: "fr:210", received_at: tsAgo(24),
     },
-    // Un acompte puis son solde, tels que la plateforme les livre : le solde
-    // reprend le total et annonce le déjà-versé (BT-113) et l'acompte qu'il
-    // suit (BT-25). Le journal des achats doit solder l'avance et ne pas
-    // déduire deux fois la TVA de l'acompte (lib/achats-export.ts).
-    {
-      id: paId(), user_id: userId, direction: "in", processing_rule: "B2B",
-      number: "MA-2026-AC07", issue_date: daysAgo(30), payment_due_date: daysAgo(23),
-      currency_code: "EUR", seller_name: "Menuiserie Arnaud", buyer_name: "Studio Créatif MD",
-      total_without_vat: 1000, total_vat: 200, total_with_vat: 1200, amount_due: 1200,
-      last_status_code: "fr:212", received_at: tsAgo(30),
-      en_invoice: {
-        number: "MA-2026-AC07", type_code: "386", issue_date: daysAgo(30), currency_code: "EUR",
-        seller: { name: "Menuiserie Arnaud", legal_registration_identifier: { value: "512345675", scheme: "0002" } },
-        totals: { total_without_vat: "1000.00", total_vat_amount: "200.00", total_with_vat: "1200.00", amount_due_for_payment: "1200.00" },
-      },
-    },
-    {
-      id: paId(), user_id: userId, direction: "in", processing_rule: "B2B",
-      number: "MA-2026-0118", issue_date: daysAgo(4), payment_due_date: daysFromNow(26),
-      currency_code: "EUR", seller_name: "Menuiserie Arnaud", buyer_name: "Studio Créatif MD",
-      total_without_vat: 3000, total_vat: 600, total_with_vat: 3600, amount_due: 2400,
-      last_status_code: "fr:200", received_at: tsAgo(4),
-      en_invoice: {
-        number: "MA-2026-0118", type_code: "380", issue_date: daysAgo(4), currency_code: "EUR",
-        seller: { name: "Menuiserie Arnaud", legal_registration_identifier: { value: "512345675", scheme: "0002" } },
-        preceding_invoice_references: [{ reference: "MA-2026-AC07", preceding_invoice_type_code: "386" }],
-        totals: { total_without_vat: "3000.00", total_vat_amount: "600.00", total_with_vat: "3600.00", paid_amount: "1200.00", amount_due_for_payment: "2400.00" },
-      },
-    },
+  ]);
+
+  // Un acompte puis son solde, tels que la plateforme les livre (format
+  // vérifié contre son schéma par le banc d'essai) : le solde reprend le total,
+  // annonce le déjà-versé (BT-113) et cite l'acompte (BT-25). Le journal des
+  // achats doit solder l'avance et ne pas déduire deux fois la TVA.
+  const menuiserie = { nom: "Menuiserie Arnaud", siren: "512345675" };
+  await admin.from("superpdp_invoices").insert([
+    ligneSuperpdp({ numero: "MA-2026-AC07", date: daysAgo(30), fournisseur: menuiserie, type: 386, statut: "fr:212",
+      lignes: [{ libelle: "Acompte 25 % agencement atelier", ht: 1000, taux: 20 }] }, userId, paId(), "Studio Créatif MD"),
+    ligneSuperpdp({ numero: "MA-2026-0118", date: daysAgo(4), fournisseur: menuiserie, type: 380,
+      lignes: [{ libelle: "Agencement atelier, solde", ht: 3000, taux: 20 }], dejaVerse: 1200,
+      precedentes: [{ numero: "MA-2026-AC07", type: 386 }] }, userId, paId(), "Studio Créatif MD"),
   ]);
 
   // Deux factures de la démo déjà transmises à la Plateforme Agréée (badge

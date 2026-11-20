@@ -91,6 +91,21 @@ function cookieFor(tokens) {
   return `sb-${PROJECT_REF}-auth-token=${value}`;
 }
 
+/** Nouveau couple de jetons à partir du refresh token, ou null si le compte n'existe plus. */
+async function renouveler(refreshToken) {
+  if (!refreshToken) return null;
+  let cle;
+  try { cle = secret("NEXT_PUBLIC_SUPABASE_ANON_KEY"); } catch { return null; }
+  const r = await fetch(`https://${PROJECT_REF}.supabase.co/auth/v1/token?grant_type=refresh_token`, {
+    method: "POST",
+    headers: { apikey: cle, "content-type": "application/json" },
+    body: JSON.stringify({ refresh_token: refreshToken }),
+  }).catch(() => null);
+  if (!r || !r.ok) return null;
+  const j = await r.json();
+  return j?.access_token ? { access_token: j.access_token, refresh_token: j.refresh_token } : null;
+}
+
 /** Ouvre une session de démonstration (plan Pro) et renvoie un client HTTP. */
 export async function openSession(label) {
   const cache = lireCache();
@@ -152,6 +167,22 @@ export async function openSession(label) {
   })();
 
   const me = await call("/api/profile");
+  if (me.status !== 200 && !tokens.__renouvele) {
+    // Le jeton d'accès vit une heure, le compte deux (purge). Renouveler le
+    // jeton plutôt que recréer un compte : chaque création compte dans la
+    // limite de dix par heure, que la suite épuisait en une soirée de tests.
+    const neuf = await renouveler(tokens.refresh_token);
+    if (neuf) {
+      const c = lireCache();
+      c[label] = { ...neuf, __renouvele: true };
+      ecrireCache(c);
+      const s = await openSession(label);
+      // Le drapeau ne sert qu'à éviter une boucle dans cet appel.
+      const c2 = lireCache();
+      if (c2[label]) { delete c2[label].__renouvele; ecrireCache(c2); }
+      return s;
+    }
+  }
   if (me.status !== 200) {
     // Le compte a expiré (purge à 2 h) : on vide le cache et on recommence.
     const c = lireCache();
