@@ -1,5 +1,6 @@
 import { createAdminClient } from "@/lib/supabase/admin";
 import type { AchatExport } from "@/lib/exports-comptables";
+import { enFranchise } from "@/lib/statut-entreprise";
 
 /**
  * Les achats d'un dossier pour une année, prêts pour le FEC et Quadra
@@ -183,7 +184,8 @@ export async function chargerAchats(userId: string, annee: string): Promise<Acha
   const aVerifier: string[] = [];
 
   const { data: profil } = await admin.from("profiles").select("tva_regime").eq("id", userId).maybeSingle();
-  const franchise = profil?.tva_regime === "franchise";
+  // Même règle que le tableau de bord : régime absent = franchise.
+  const franchise = enFranchise(profil?.tva_regime);
 
   // ── Factures reçues (fournisseurs français) ─────────────────────────────
   const recues = await toutLire<Recue>((de, a) =>

@@ -280,6 +280,44 @@ if (existsSync(".env.local")) {
   verifier("un compte sans accès ne lit pas les achats du dossier", intrus.status === 404 || intrus.status === 403, `HTTP ${intrus.status}`);
   await admin.from("team_members").delete().eq("owner_id", demo.userId).eq("member_id", cab.userId);
 
+  // ── 6. Tous les régimes d'entreprise, par la route (20/11/2026) ──
+  // Régime de TVA (dont « non renseigné », qui vaut franchise comme partout
+  // ailleurs) × statut juridique (qui ne doit RIEN changer aux écritures).
+  console.log("");
+  console.log("── Acompte / solde pour chaque régime d'entreprise ──────────");
+  const { data: avant } = await admin.from("profiles").select("tva_regime, statut_juridique").eq("id", demo.userId).maybeSingle();
+  const REGIMES = ["franchise", null, "normal", "intermediaire", "reduit", "super_reduit"] as const;
+  const STATUTS = ["micro", "ei_reel", "societe", null] as const;
+  for (const regime of REGIMES) {
+    const franchiseAttendue = regime === null || regime === "franchise";
+    const fichiers = new Set<string>();
+    let ok = true;
+    let detail = "";
+    for (const statut of STATUTS) {
+      await admin.from("profiles").update({ tva_regime: regime, statut_juridique: statut }).eq("id", demo.userId);
+      const r = await fetch(`${base}/api/export/fec?year=2026`, { headers: { cookie: demo.cookie } });
+      const texte = await r.text();
+      const lignes = lireFec(texte);
+      const sum = (compte: string, col: number, piece: RegExp) =>
+        lignes.filter((c) => c[4] === compte && piece.test(c[8])).reduce((s, c) => s + Number(c[col].replace(",", ".")), 0);
+      const avance = franchiseAttendue ? 1200 : 1000;
+      const tvaMa = sum("445660", 11, /^MA-2026-/);
+      const charge = sum("604000", 11, /^MA-2026-0118$/);
+      const reste = sum("401000", 12, /^MA-2026-0118$/);
+      const equilibre = Math.abs(lignes.reduce((s, c) => s + Number(c[11].replace(",", ".")) - Number(c[12].replace(",", ".")), 0)) < 0.005;
+      const bon = r.status === 200 && sum("409100", 11, /^MA-/) === avance && sum("409100", 12, /^MA-/) === avance
+        && Math.abs(tvaMa - (franchiseAttendue ? 0 : 600)) < 0.005 && charge === (franchiseAttendue ? 3600 : 3000) && reste === 2400 && equilibre;
+      if (!bon) { ok = false; detail += `[${statut ?? "statut vide"} : HTTP ${r.status}, avance ${sum("409100", 11, /^MA-/)}, TVA ${tvaMa}, charge ${charge}, reste ${reste}, équilibre ${equilibre}] `; }
+      fichiers.add(texte);
+    }
+    verifier(
+      `régime ${regime ?? "non renseigné"} : ${franchiseAttendue ? "franchise (avance TTC, aucune TVA déduite)" : "assujetti (avance HT, TVA déduite une fois)"}, pour micro, EI au réel, société et statut vide`,
+      ok, detail
+    );
+    verifier(`régime ${regime ?? "non renseigné"} : le statut juridique ne change pas une ligne du FEC`, fichiers.size === 1, `${fichiers.size} versions différentes`);
+  }
+  await admin.from("profiles").update({ tva_regime: avant?.tva_regime ?? null, statut_juridique: avant?.statut_juridique ?? null }).eq("id", demo.userId);
+
   console.log("");
   process.exit(bilan() > 0 ? 1 : 0);
 })();

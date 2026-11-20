@@ -46,8 +46,19 @@ export type VueTableauDeBord = {
  * La seule source de la vue du tableau de bord. Le regime de TVA absent vaut
  * franchise, comme dans les parametres (case cochee par defaut).
  */
+/**
+ * Franchise en base de TVA : la SEULE règle, partagée par le tableau de bord
+ * et le journal des achats (lib/achats-export.ts). Un régime absent vaut
+ * franchise, comme dans les paramètres (case cochée par défaut). Le statut
+ * juridique (micro, EI au réel, société) n'y entre pas : une société peut être
+ * en franchise, un micro-entrepreneur assujetti.
+ */
+export function enFranchise(tvaRegime: string | null | undefined): boolean {
+  return (tvaRegime ?? "franchise") === "franchise";
+}
+
 export function vueTableauDeBord(statut: string | null | undefined, tvaRegime: string | null | undefined): VueTableauDeBord {
-  const franchise = (tvaRegime ?? "franchise") === "franchise";
+  const franchise = enFranchise(tvaRegime);
   return {
     echeanceUrssaf: statut === "micro",
     jaugeFranchise: franchise,
