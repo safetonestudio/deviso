@@ -115,7 +115,7 @@ export default function Page() {
   return (
     <ArticleLong
       slug={SLUG}
-      chapeau="Vente de biens ou prestation de services ? Cette seule question fixe vos cotisations, votre abattement, votre plafond et votre seuil de TVA. Voici comment vous situer, et pourquoi l&rsquo;activité mixte se ventile."
+      chapeau="Vente de biens, prestation de services commerciale ou artisanale (BIC), ou prestation libérale (BNC) ? Cette seule question fixe vos cotisations, votre abattement, votre plafond et votre seuil de TVA. Voici comment vous situer, et pourquoi l&rsquo;activité mixte se ventile."
       enBref={[
         "La catégorie d&rsquo;activité décide de <strong>tout</strong> : taux de cotisations, abattement fiscal, plafond de CA et seuil de TVA.",
         "Cotisations 2026 : <strong>12,3 %</strong> (vente), <strong>21,2 %</strong> (services BIC), <strong>25,6 %</strong> (libéral), 23,2 % (Cipav).",

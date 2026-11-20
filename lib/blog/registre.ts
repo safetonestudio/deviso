@@ -444,17 +444,18 @@ export const ARTICLES: Article[] = [
       "facture-electronique-refusee-que-faire",
       "numerotation-factures-freelance",
       "facture-acompte-freelance",
+      "note-honoraires-ou-facture",
     ],
   },
   {
     slug: "note-honoraires-ou-facture",
     categorie: "factures",
-    titre: "Note d'honoraires ou facture : laquelle émettre ?",
+    titre: "Note d'honoraires : c'est quoi, et faut-il une facture ?",
     description:
-      "Praticiens, consultants, professions libérales : la note d'honoraires n'est pas un document à part. Ce qui la distingue d'une facture, et ce qu'elle doit contenir.",
-    h1: "Note d'honoraires ou facture : ce qui les distingue vraiment",
+      "Une note d'honoraires, c'est quoi ? Pour un praticien ou une profession libérale, ce n'est pas un document à part : ce qui la distingue d'une facture, et ce qu'elle contient.",
+    h1: "Note d'honoraires : c'est quoi, et en quoi diffère-t-elle d'une facture ?",
     og: {
-      titre: "Note d'honoraires ou facture : la différence, et ce qu'elle doit contenir",
+      titre: "Note d'honoraires : c'est quoi, et en quoi diffère-t-elle d'une facture",
       description:
         "Pour un praticien ou une profession libérale, la note d'honoraires obéit aux mêmes obligations qu'une facture. Ce qui change, et ce qui ne change pas.",
     },
@@ -518,12 +519,12 @@ export const ARTICLES: Article[] = [
   {
     slug: "biens-ou-services-micro-entrepreneur",
     categorie: "micro",
-    titre: "Biens ou services : la distinction qui change tout",
+    titre: "Micro-entreprise : vente de biens ou prestation de services",
     description:
-      "Vente de biens ou prestation ? Cette seule question fixe vos cotisations, votre abattement, votre plafond et votre seuil de TVA. Les chiffres 2026.",
-    h1: "Biens ou services en micro-entreprise : la distinction qui change vos cotisations et vos seuils",
+      "Prestation de services BIC ou BNC, ou vente de biens : la catégorie de votre micro-entreprise fixe cotisations, abattement, plafond et seuil de TVA. Chiffres 2026.",
+    h1: "Micro-entreprise : vente de biens ou prestation de services (BIC, BNC), ce qui change pour vous",
     og: {
-      titre: "Biens ou services : la distinction qui change tout en micro",
+      titre: "Micro-entreprise : vente de biens ou prestation de services (BIC, BNC)",
       description:
         "Taux de cotisations, abattement, plafond, seuil de TVA : tout dépend de la catégorie de votre activité. Et l'activité mixte se ventile.",
     },
@@ -538,6 +539,7 @@ export const ARTICLES: Article[] = [
       "livre-des-recettes-micro-entrepreneur",
       "plafonds-micro-entreprise-2026",
       "declarer-chiffre-affaires-urssaf",
+      "note-honoraires-ou-facture",
     ],
   },
   {
@@ -764,7 +766,7 @@ export const ARTICLES: Article[] = [
       profession: "graphiste freelance",
       professionPluriel: "graphistes freelances",
     },
-    lies: ["clauses-devis-freelance", "fixer-ses-tarifs-freelance"],
+    lies: ["clauses-devis-freelance", "fixer-ses-tarifs-freelance", "devis-redacteur-web"],
   },
   {
     slug: "devis-developpeur-web",
@@ -841,12 +843,12 @@ export const ARTICLES: Article[] = [
   {
     slug: "devis-redacteur-web",
     categorie: "metier",
-    titre: "Devis rédacteur web : tarifs et droits",
+    titre: "Devis rédacteur web : tarifs, exemple et droits",
     description:
-      "Comment rédiger un devis de rédaction web ou copywriting : tarif au mot ou à la page, révisions, cession de droits, relances. Exemple et erreurs à éviter.",
-    h1: "Devis rédacteur web freelance : tarifs, révisions et erreurs à éviter",
+      "Devis rédacteur web : tarif au mot ou à la page, révisions, cession de droits et relances, avec un exemple de devis de rédaction web et les erreurs à éviter.",
+    h1: "Devis rédacteur web : tarifs, exemple, révisions et erreurs à éviter",
     og: {
-      titre: "Devis rédacteur web freelance : tarifs, révisions, droits",
+      titre: "Devis rédacteur web : tarifs, exemple, révisions, droits",
       description:
         "Tarif au mot ou à la page, révisions, cession de droits, guide complet pour votre devis de rédaction web freelance.",
     },
@@ -932,7 +934,7 @@ export const ARTICLES: Article[] = [
       profession: "community manager freelance",
       professionPluriel: "community managers freelances",
     },
-    lies: ["scope-creep-freelance", "clauses-devis-freelance"],
+    lies: ["scope-creep-freelance", "clauses-devis-freelance", "devis-redacteur-web"],
   },
   {
     slug: "devis-coach-freelance",

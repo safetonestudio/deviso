@@ -9,7 +9,7 @@ export default function Page() {
   return (
     <BlogPost
       slug={SLUG}
-      intro="Les rédacteurs web freelances jonglent souvent avec de nombreux petits clients, des délais serrés et des demandes de révisions sans fin. Un bon devis de rédaction pose les règles dès le départ et évite les dérapages. Voici tout ce qu'il doit contenir."
+      intro="Les rédacteurs web freelances jonglent souvent avec de nombreux petits clients, des délais serrés et des demandes de révisions sans fin. Un bon devis de rédacteur web pose les règles dès le départ et évite les dérapages. Voici tout ce qu'il doit contenir, tarifs et exemple compris."
       mandatoryTitle="Les mentions clés d'un devis de rédaction web"
       mandatoryIntro="Un devis de rédaction doit être précis sur le volume, le périmètre et les conditions, pour éviter les révisions infinies et les clients qui changent d'avis après livraison :"
       mandatoryItems={[

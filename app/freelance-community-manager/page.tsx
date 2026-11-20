@@ -3,9 +3,9 @@ import { FreelanceLanding } from "@/components/landing/FreelanceLanding";
 import { BarChart3, Bell, Smartphone } from "lucide-react";
 
 export const metadata: Metadata = {
-  title: "Devis et facturation community manager",
+  title: "Devis et facturation community manager : logiciel et exemple",
   description:
-    "Devis de gestion des réseaux sociaux en 30 secondes : forfaits mensuels, reporting, création de contenus, signature en ligne. Essai gratuit.",
+    "Devis et facture de community manager en 30 secondes : forfait mensuel, réseaux sociaux, création de contenus, exemple chiffré, signature en ligne. Essai gratuit.",
   alternates: { canonical: "https://getdeviso.fr/freelance-community-manager" },
   openGraph: {
     title: "Devis community manager freelance en 30 secondes | Deviso",
@@ -22,11 +22,11 @@ export const metadata: Metadata = {
 export default function Page() {
   return (
     <FreelanceLanding
-      metaTitle="Devis et facturation pour community managers freelances | Deviso"
+      metaTitle="Devis et facturation community manager : logiciel et exemple | Deviso"
       metaDescription="Génère un devis de gestion réseaux sociaux en 30 secondes. Forfaits mensuels, reporting, création de contenus, devis clairs et signés électroniquement."
       canonical="https://getdeviso.fr/freelance-community-manager"
       professionLabel="community manager freelance"
-      heroTitle="Tes devis réseaux sociaux,"
+      heroTitle="Tes devis et factures de community manager,"
       heroHighlight="en 30 secondes"
       heroSubtitle="Tu décris la prestation, plateformes, volume de posts, création de visuels. L'IA structure un devis mensuel clair avec les bons livrables. Ton client signe, tu publies."
       painPoints={[

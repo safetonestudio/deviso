@@ -3,32 +3,32 @@ import { FreelanceLanding } from "@/components/landing/FreelanceLanding";
 import { Handshake, MailOpen, Palette } from "lucide-react";
 
 export const metadata: Metadata = {
-  title: "Devis et facturation pour graphistes freelances",
+  title: "Devis graphiste et infographie : logiciel de devis et facturation",
   description:
-    "Génère un devis de graphiste en 30 secondes grâce à l'IA. Signature électronique, facture Factur-X conforme 2026, relances automatiques. Essai gratuit.",
+    "Devis graphiste ou devis d'infographie en 30 secondes : logo, charte, print et web chiffrés par l'IA, signature en ligne, factures conformes 2026. Essai gratuit.",
   alternates: { canonical: "https://getdeviso.fr/freelance-graphiste" },
   openGraph: {
-    title: "Devis de graphiste en 30 secondes | Deviso",
-    description: "Génère un devis de graphiste grâce à l'IA. Signature électronique, Factur-X 2026, relances auto. Essai gratuit.",
+    title: "Devis graphiste et infographie en 30 secondes | Deviso",
+    description: "Devis de graphisme et d'infographie rédigé par l'IA, signature en ligne, factures conformes 2026. Essai gratuit.",
     url: "https://getdeviso.fr/freelance-graphiste",
     images: [{ url: "https://getdeviso.fr/opengraph-image", width: 1200, height: 630, alt: "Deviso, logiciel de devis et facturation" }],
   },
   twitter: {
-    title: "Devis de graphiste en 30 secondes | Deviso",
-    description: "Génère un devis de graphiste grâce à l'IA. Signature électronique, Factur-X 2026, relances auto.",
+    title: "Devis graphiste et infographie en 30 secondes | Deviso",
+    description: "Devis de graphisme et d'infographie rédigé par l'IA, signature en ligne, factures conformes 2026.",
   },
 };
 
 export default function Page() {
   return (
     <FreelanceLanding
-      metaTitle="Devis et facturation pour graphistes freelances | Deviso"
+      metaTitle="Devis graphiste et infographie : logiciel de devis et facturation | Deviso"
       metaDescription="Génère un devis de graphiste en 30 secondes grâce à l'IA. Signature électronique, facture Factur-X conforme 2026, relances automatiques."
       canonical="https://getdeviso.fr/freelance-graphiste"
       professionLabel="graphiste freelance"
-      heroTitle="Tes devis de graphiste,"
+      heroTitle="Tes devis de graphiste et d'infographie,"
       heroHighlight="en 30 secondes"
-      heroSubtitle="Tu décris la mission, logo, charte, intégration. L'IA génère un devis structuré et professionnel. Ton client signe en ligne, tu factures en 1 clic."
+      heroSubtitle="Logo, charte, print, web : tu décris ta mission de graphisme, l'IA rédige un devis structuré et chiffré. Ton client signe en ligne, tu factures en un clic."
       painPoints={[
         {
           icon: Palette,

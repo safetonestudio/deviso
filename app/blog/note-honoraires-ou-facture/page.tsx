@@ -182,7 +182,7 @@ export default function Page() {
   return (
     <ArticleLong
       slug={SLUG}
-      chapeau="La question revient chez tous les praticiens et toutes les professions libérales, et la réponse est plus simple qu&rsquo;on ne croit : ce n&rsquo;est pas un document différent. Mais il y a bien une distinction qui compte, et elle ne se situe pas là où on la cherche."
+      chapeau="Une note d&rsquo;honoraires, c&rsquo;est quoi&nbsp;? La question revient chez tous les praticiens et toutes les professions libérales, et la réponse est plus simple qu&rsquo;on ne croit : ce n&rsquo;est pas un document différent. Mais il y a bien une distinction qui compte, et elle ne se situe pas là où on la cherche."
       enBref={[
         "La note d&rsquo;honoraires n&rsquo;est <strong>pas une catégorie juridique</strong> : c&rsquo;est un usage de vocabulaire libéral.",
         "Mentions obligatoires, numérotation continue, conservation : <strong>identiques</strong> à celles d&rsquo;une facture.",
