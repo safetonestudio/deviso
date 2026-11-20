@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { ventilationTva } from "@/lib/tva";
 import { useParams, useRouter } from "next/navigation";
 import Link from "next/link";
@@ -23,6 +23,7 @@ import { libelleStatut } from "@/lib/superpdp-statuts";
 import { etatPdp } from "@/lib/superpdp-etat-facture";
 import type { Invoice } from "@/types";
 import { MODES_REGLEMENT, type ModeReglement } from "@/lib/recettes";
+import { estAPointer, joursDeRetard, ESPACEMENT_JOURS } from "@/lib/pointage-paiement";
 import { couleurEtatChorus, libelleEtatFlux } from "@/lib/chorus-etats";
 
 const STATUS_LABEL: Record<string, string> = {
@@ -132,6 +133,17 @@ function ActionPanel({ invoice, id, router, hasChorusPro }: {
   const [demandeDatePaiement, setDemandeDatePaiement] = useState(false);
   const [modeReglement, setModeReglement] = useState<ModeReglement>("virement");
   const [datePaiement, setDatePaiement] = useState(() => new Date().toISOString().slice(0, 10));
+  const [pasEncoreAt, setPasEncoreAt] = useState<string | null>(invoice.pointage_pas_encore_at ?? null);
+  const [envoiPasEncore, setEnvoiPasEncore] = useState(false);
+  const [pointageDemande, setPointageDemande] = useState<"payee" | "pas-encore" | null>(null);
+  const panneauRef = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    const q = new URLSearchParams(window.location.search).get("pointage");
+    if (q !== "payee" && q !== "pas-encore") return;
+    setPointageDemande(q);
+    if (q === "payee") setDemandeDatePaiement(true);
+    panneauRef.current?.scrollIntoView({ block: "start" });
+  }, []);
   const dateEncaissementRequise = Boolean(inv.superpdp_invoice_id) && !inv.superpdp_encaisse_at;
 
   async function handleDownload() {
@@ -332,6 +344,25 @@ function ActionPanel({ invoice, id, router, hasChorusPro }: {
   const canMarkPaid = !estAvoir && inv.status !== "paid" && inv.status !== "cancelled" && !isMember;
   const canMarkSent = inv.status === "draft" && peutEnvoyerFacture;
   const canRemind = !estAvoir && inv.status === "sent" && !!inv.client_email;
+
+  // ── Relance de pointage (lib/pointage-paiement.ts) ──────────────────────
+  // Facture échue sans paiement enregistré : on pose la question ici aussi,
+  // pas seulement par courriel. Les liens du courriel arrivent avec
+  // `?pointage=payee` (ouvre la saisie de la date) ou `?pointage=pas-encore`
+  // (met le bouton en évidence ; l'enregistrement exige un clic, jamais un
+  // simple chargement de page).
+  const aPointer = canMarkPaid && estAPointer(inv, new Date());
+  const pasEncoreRecent =
+    !!pasEncoreAt && Date.now() - new Date(pasEncoreAt).getTime() < ESPACEMENT_JOURS * 24 * 60 * 60 * 1000;
+
+  async function handlePasEncore() {
+    setEnvoiPasEncore(true);
+    const res = await fetch(`/api/invoices/${id}/pas-encore`, { method: "POST" });
+    const data = await res.json().catch(() => ({}));
+    if (res.ok) setPasEncoreAt(data.invoice?.pointage_pas_encore_at ?? new Date().toISOString());
+    else alert(data.error || "Enregistrement impossible");
+    setEnvoiPasEncore(false);
+  }
   /**
    * Transmet la facture à la plateforme agréée.
    *
@@ -386,13 +417,50 @@ function ActionPanel({ invoice, id, router, hasChorusPro }: {
   const peutEmettre = inv.status !== "draft" && inv.status !== "cancelled" && !dejaTransmise && peutTransmettrePa;
 
   return (
-    <div className="carte overflow-hidden sticky top-8">
+    <div ref={panneauRef} className="carte overflow-hidden sticky top-8 scroll-mt-4">
       {/* En-tête du panel */}
       <div className="px-5 py-4 border-b border-ds-border">
         <p className="text-xs font-semibold text-gray-500">Actions</p>
       </div>
 
       <div className="p-4 space-y-2">
+        {aPointer && (
+          <div className="rounded-lg border border-amber-500/30 bg-amber-500/5 p-3 mb-3 space-y-2.5">
+            <p className="text-sm font-medium text-amber-300">
+              Échue depuis {joursDeRetard(inv.due_date as string, new Date())} jour{joursDeRetard(inv.due_date as string, new Date()) > 1 ? "s" : ""}. A-t-elle été payée ?
+            </p>
+            {pasEncoreRecent ? (
+              <p className="text-xs text-gray-400 leading-relaxed">
+                Noté le {new Date(pasEncoreAt as string).toLocaleDateString("fr-FR")} : pas encore payée. On te reposera la question dans {ESPACEMENT_JOURS} jours.
+              </p>
+            ) : (
+              !demandeDatePaiement && (
+                <div className="flex gap-2">
+                  <button
+                    onClick={() => setDemandeDatePaiement(true)}
+                    className="flex-1 text-sm font-medium px-3 py-2 rounded-lg bg-emerald-500/15 border border-emerald-500/40 hover:bg-emerald-500/25 text-emerald-300 transition-colors"
+                  >
+                    Oui, payée
+                  </button>
+                  <button
+                    onClick={handlePasEncore}
+                    disabled={envoiPasEncore}
+                    className={`flex-1 text-sm font-medium px-3 py-2 rounded-lg border hover:bg-ds-elevated/60 text-gray-300 disabled:opacity-50 transition-colors ${pointageDemande === "pas-encore" ? "border-amber-500/60" : "border-ds-border"}`}
+                  >
+                    {envoiPasEncore ? "Enregistrement…" : "Pas encore"}
+                  </button>
+                </div>
+              )
+            )}
+            {!pasEncoreRecent && (
+              <p className="text-xs text-gray-400 leading-relaxed">
+                {inv.superpdp_invoice_id
+                  ? "Ce pointage déclare l'encaissement à l'administration : la date de paiement fixe le mois où la TVA est due."
+                  : "Ce pointage tient à jour ton livre des recettes et ce que voit ton expert-comptable."}
+              </p>
+            )}
+          </div>
+        )}
         {/* ── Groupe 1 : Envoi ── */}
         {canSendEmail && (
           <button

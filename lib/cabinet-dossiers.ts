@@ -5,6 +5,7 @@ import { accord, pluriel } from "./pluriel";
 import { natureOperation } from "./superpdp-nature";
 import { libelleStatut } from "./superpdp-statuts";
 import { siretValide, toSiren } from "./facturx-helpers";
+import { sansReponse } from "./pointage-paiement";
 
 type Admin = ReturnType<typeof createAdminClient>;
 
@@ -52,6 +53,9 @@ export type FactureCabinet = {
   superpdp_invoice_id: string | null;
   superpdp_encaisse_at: string | null;
   operation_category: string | null;
+  pointage_demande_at?: string | null;
+  pointage_demande_nb?: number | null;
+  pointage_pas_encore_at?: string | null;
 };
 
 export type SyntheseDossier = {
@@ -74,7 +78,7 @@ export type SyntheseDossier = {
 };
 
 const COLONNES_FACTURES =
-  "id, user_id, invoice_number, issue_date, due_date, status, total_ht, total_ttc, tva_rate, items, invoice_type, type_code, client_name, client_company, client_siren, client_country, superpdp_status, superpdp_error, paid_at, superpdp_invoice_id, superpdp_encaisse_at, operation_category";
+  "id, user_id, invoice_number, issue_date, due_date, status, total_ht, total_ttc, tva_rate, items, invoice_type, type_code, client_name, client_company, client_siren, client_country, superpdp_status, superpdp_error, paid_at, superpdp_invoice_id, superpdp_encaisse_at, operation_category, pointage_demande_at, pointage_demande_nb, pointage_pas_encore_at";
 
 /** Seuil au-dela duquel un dossier sans facture est signale comme inactif. */
 export const JOURS_INACTIVITE = 45;
@@ -294,6 +298,16 @@ export async function syntheseDossiers(
     };
     if (impayes.nb > 0) {
       anomalies.push({ niveau: "orange", libelle: `${pluriel(impayes.nb, "facture")} ${accord(impayes.nb, "échue")} non ${accord(impayes.nb, "payée")}` });
+    }
+    // Relance de pointage restée sans réponse (au moins deux questions) : le
+    // client n'a dit ni « payée » ni « pas encore ». Le paiement a peut-être
+    // été reçu sans être déclaré, c'est ce que le cabinet doit vérifier.
+    const muettes = echues.filter((f) => sansReponse(f, new Date()));
+    if (muettes.length > 0) {
+      anomalies.push({
+        niveau: "orange",
+        libelle: `${pluriel(muettes.length, "facture")} ${accord(muettes.length, "échue")} sans réponse du client à la question « payée ? » : paiement peut-être reçu sans être déclaré`,
+      });
     }
     // Prestation payée, transmise à la plateforme, mais dont l'encaissement
     // (statut « Encaissée ») n'est jamais parti : pour une prestation de

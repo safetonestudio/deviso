@@ -20,6 +20,10 @@
       "schedule": "0 6 * * *"
     },
     {
+      "path": "/api/cron/pointage-paiements",
+      "schedule": "0 9 * * *"
+    },
+    {
       "path": "/api/cron/superpdp-sync",
       "schedule": "0 0 * * *"
     },

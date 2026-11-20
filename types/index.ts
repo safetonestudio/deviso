@@ -211,6 +211,10 @@ export interface Invoice {
   facturx_pdf_path: string | null;
   last_reminder_sent_at: string | null;
   reminder_count: number;
+  /** Relance de pointage (lib/pointage-paiement.ts). */
+  pointage_demande_at?: string | null;
+  pointage_demande_nb?: number | null;
+  pointage_pas_encore_at?: string | null;
   // Acompte / Solde
   /**
    * `avoir` : note de crédit (type_code 381) annulant la facture désignée par
