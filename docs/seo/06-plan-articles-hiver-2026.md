@@ -15,17 +15,37 @@ Vercel Analytics, 21/10 au 20/11/2026 (le plan gratuit ne garde que 31 jours) :
 | Venus d'un moteur de recherche | 3 (DuckDuckGo 2, Google 1) |
 | Visites sur les 45 articles du blog | une vingtaine |
 
-**Conclusion : le frein n'est pas le nombre d'articles, c'est la visibilité.**
-45 articles sourcés n'apportent presque rien parce que Google ne les montre pas
-encore : domaine récent, peu de liens entrants, et aucun suivi de l'indexation.
-Publier davantage sans traiter ce point, c'est remplir une bibliothèque fermée.
+Google Search Console (branchée, domaine `getdeviso.fr`, sitemap soumis le
+12/09/2026, lu le 18/11), du 11/09 au 17/11/2026 :
+
+| Mesure | Valeur |
+|---|---|
+| Pages indexées | 61 |
+| Découvertes, non encore indexées | 13 (plus 1 noindex, 1 redirection) |
+| Impressions | 1 100 |
+| Clics | 5 |
+| Position moyenne | 39,9 (quatrième page de résultats) |
+
+Pages qui ont déjà des impressions : `/freelance-graphiste` (247),
+`/freelance-community-manager` (129), `/blog/biens-ou-services-micro-entrepreneur`
+(85), `/blog/devis-redacteur-web` (83), `/blog/note-honoraires-ou-facture` (73).
+Requêtes en tête : « devis graphiste » (124), « devis rédacteur web » (65),
+« devis infographie » (55), « facturation community manager » (51), « combien
+facturer en freelance » (35).
+
+**Conclusion : Google connaît et indexe le site, mais le classe trop bas pour
+être cliqué.** Le frein n'est ni l'indexation ni le nombre d'articles, c'est la
+position : en quatrième page, une page n'est presque jamais vue. Il faut faire
+monter les pages qui ont déjà des impressions (liens entrants, titres alignés
+sur les requêtes réelles) avant de multiplier les nouvelles.
 
 ## 2. Avant d'écrire : trois actions qui conditionnent tout le reste
 
-1. **Google Search Console** (gratuit, 30 minutes). Vérifier le domaine,
-   soumettre `sitemap.xml`, lire les pages « découvertes, non indexées ».
-   C'est la seule source qui dit ce que Google fait du site. Déjà demandé dans
-   `01-audit.md`, à confirmer comme fait.
+1. **Faire monter ce qui a déjà des impressions.** Pour les cinq pages
+   ci-dessus, aligner titre, H1 et premier paragraphe sur la requête qui les
+   fait apparaître (par exemple « devis graphiste » et « devis infographie »
+   pour `/freelance-graphiste`), et leur donner des liens internes depuis les
+   articles proches. Mesurer la position dans la Search Console 30 jours après.
 2. **Liens entrants.** Envoyer les messages préparés dans
    `05-envois-backlinks.md` (annuaires d'outils, associations d'indépendants,
    CCI, forums). Un domaine neuf sans liens n'est pas classé, même avec de bons
@@ -96,14 +116,16 @@ pour les cabinets), plus une mise à jour d'article existant, comme le prévoit
   clics, position moyenne. Un article sans impression à 90 jours est à revoir
   (titre, angle) avant d'en écrire un autre sur le même modèle.
 - **Vercel Analytics** : part des visites venues d'un moteur de recherche.
-  Point de départ : 3 sur 58 en octobre-novembre 2026.
+  Point de départ : 3 sur 58 en octobre-novembre 2026 ; dans la Search
+  Console, 5 clics pour 1 100 impressions, position moyenne 39,9.
 - **Experts-comptables** : nombre de cabinets qui demandent une démo après avoir
   lu un article (lien `mailto` de `/experts-comptables`).
 
 ## 6. Ce que ce plan ne promet pas
 
-Aucune estimation de volume de recherche n'est donnée ici : il faudrait un
-outil payant (Ahrefs, Semrush) ou la Search Console, que le site n'exploite pas
-encore. Les priorités reposent sur des requêtes connues pour être fréquentes et
-sur l'actualité. Elles sont à corriger dès que la Search Console donne ses
-premiers chiffres.
+Aucune estimation de volume de recherche n'est donnée pour les nouveaux sujets :
+la Search Console ne montre que les requêtes sur lesquelles le site apparaît
+déjà, et un outil payant (Ahrefs, Semrush) serait nécessaire pour les autres.
+Les priorités des nouveaux articles reposent sur des requêtes connues pour être
+fréquentes et sur l'actualité ; celles du § 2.1 reposent, elles, sur les
+chiffres réels de la Search Console.
