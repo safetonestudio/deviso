@@ -402,7 +402,7 @@ export const ARTICLES: Article[] = [
   // ── Famille « documents » ──────────────────────────────────────────────────
   {
     slug: "facture-acompte-freelance",
-    categorie: "documents",
+    categorie: "factures",
     titre: "Facture d'acompte : le document d'après le devis",
     description:
       "Votre devis est signé, le client verse un acompte : il faut une facture d'acompte. Mentions obligatoires, lien avec la facture de solde, TVA, et ce qu'il faut déclarer.",
@@ -423,7 +423,7 @@ export const ARTICLES: Article[] = [
   },
   {
     slug: "facture-avoir-erreur-facture",
-    categorie: "documents",
+    categorie: "factures",
     titre: "Erreur sur une facture : l'avoir, pas la gomme",
     description:
       "Une facture émise ne se modifie ni ne se supprime. Comment corriger : avoir total, avoir partiel, facture rectificative, et ce que la facturation électronique change.",
@@ -448,7 +448,7 @@ export const ARTICLES: Article[] = [
   },
   {
     slug: "note-honoraires-ou-facture",
-    categorie: "documents",
+    categorie: "factures",
     titre: "Note d'honoraires ou facture : laquelle émettre ?",
     description:
       "Praticiens, consultants, professions libérales : la note d'honoraires n'est pas un document à part. Ce qui la distingue d'une facture, et ce qu'elle doit contenir.",
@@ -469,7 +469,7 @@ export const ARTICLES: Article[] = [
   },
   {
     slug: "attestation-vigilance-urssaf-freelance",
-    categorie: "documents",
+    categorie: "factures",
     titre: "Mon client demande une attestation de vigilance",
     description:
       "Votre client exige une attestation de vigilance URSSAF avant de payer. Pourquoi il y est obligé, comment l'obtenir en micro-entreprise, et quoi faire si elle vous est refusée.",
@@ -492,7 +492,7 @@ export const ARTICLES: Article[] = [
   // ── Famille « obligations » ────────────────────────────────────────────────
   {
     slug: "livre-des-recettes-micro-entrepreneur",
-    categorie: "comptabilite",
+    categorie: "micro",
     titre: "Le livre des recettes du micro-entrepreneur",
     description:
       "Le seul document comptable obligatoire en micro-entreprise. Les mentions à porter, le piège de l'encaissement, et ce qui est vraiment sanctionné.",
@@ -517,7 +517,7 @@ export const ARTICLES: Article[] = [
   },
   {
     slug: "biens-ou-services-micro-entrepreneur",
-    categorie: "comptabilite",
+    categorie: "micro",
     titre: "Biens ou services : la distinction qui change tout",
     description:
       "Vente de biens ou prestation ? Cette seule question fixe vos cotisations, votre abattement, votre plafond et votre seuil de TVA. Les chiffres 2026.",
@@ -542,7 +542,7 @@ export const ARTICLES: Article[] = [
   },
   {
     slug: "passer-a-la-tva-micro-entrepreneur",
-    categorie: "comptabilite",
+    categorie: "micro",
     titre: "Passer à la TVA en micro-entreprise",
     description:
       "La franchise de TVA s'arrête avant votre plafond de micro. Les seuils 2026, ce qui déclenche la bascule, et les démarches pour passer à la TVA.",
@@ -567,7 +567,7 @@ export const ARTICLES: Article[] = [
   },
   {
     slug: "declarer-chiffre-affaires-urssaf",
-    categorie: "comptabilite",
+    categorie: "micro",
     titre: "Déclarer son chiffre d'affaires à l'URSSAF",
     description:
       "Chaque mois ou trimestre, vous déclarez l'encaissé et payez vos cotisations dessus. Taux 2026, bonne périodicité, ACRE et oublis coûteux.",
@@ -592,7 +592,7 @@ export const ARTICLES: Article[] = [
   },
   {
     slug: "versement-liberatoire-2026",
-    categorie: "comptabilite",
+    categorie: "micro",
     titre: "Le versement libératoire en 2026 : pour qui",
     description:
       "Payer son impôt au fil de l'eau, séduisant mais pas pour tout le monde. Taux 2026, condition de revenu, et la question qui décide : êtes-vous imposable ?",
@@ -617,7 +617,7 @@ export const ARTICLES: Article[] = [
   },
   {
     slug: "obligations-comptables-micro-entrepreneur",
-    categorie: "comptabilite",
+    categorie: "micro",
     titre: "Les obligations comptables au-delà du livre des recettes",
     description:
       "Le micro dispense de bilan, pas de tout. Compte bancaire dédié, factures conformes, registre des achats, conservation 10 ans : le tour complet.",
@@ -642,7 +642,7 @@ export const ARTICLES: Article[] = [
   },
   {
     slug: "plafonds-micro-entreprise-2026",
-    categorie: "obligations",
+    categorie: "micro",
     titre: "Plafonds de la micro-entreprise 2026-2028",
     description:
       "203 100 € et 83 600 € depuis 2026. Et surtout : ne confondez pas ces plafonds avec les seuils de TVA, bien plus bas, que vous franchirez en premier.",
@@ -667,7 +667,7 @@ export const ARTICLES: Article[] = [
   },
   {
     slug: "refacturer-frais-client-freelance",
-    categorie: "obligations",
+    categorie: "factures",
     titre: "Refacturer ses frais sans gonfler son CA",
     description:
       "Refacturer un train ou un hôtel augmente votre chiffre d'affaires, donc vos cotisations. Le mécanisme du débours, ses conditions strictes, et quand il ne s'applique pas.",
@@ -692,7 +692,7 @@ export const ARTICLES: Article[] = [
   },
   {
     slug: "facturer-client-etranger-freelance",
-    categorie: "obligations",
+    categorie: "factures",
     titre: "Facturer un client à l'étranger",
     description:
       "Client pro dans l'UE, particulier en Belgique, entreprise aux États-Unis : la mention à porter sur la facture change à chaque fois. Le guide des quatre cas.",
@@ -717,7 +717,7 @@ export const ARTICLES: Article[] = [
   },
   {
     slug: "numerotation-factures-freelance",
-    categorie: "obligations",
+    categorie: "factures",
     titre: "Numéroter ses factures, et réparer un trou",
     description:
       "La numérotation doit être continue et sans trou : c'est une obligation du CGI. Les formats qui tiennent, et comment réparer une série déjà cassée.",
@@ -986,7 +986,7 @@ export const ARTICLES: Article[] = [
   // ── Famille « transverse » ─────────────────────────────────────────────────
   {
     slug: "micro-ou-reel-quand-basculer",
-    categorie: "comptabilite",
+    categorie: "gestion",
     titre: "Micro ou régime réel : quand basculer",
     description:
       "Le micro applique un abattement forfaitaire, le réel déduit vos charges. La bascule tient à une question : vos charges dépassent-elles votre abattement ?",
@@ -1011,7 +1011,7 @@ export const ARTICLES: Article[] = [
   },
   {
     slug: "quand-prendre-expert-comptable-micro",
-    categorie: "comptabilite",
+    categorie: "gestion",
     titre: "Micro-entrepreneur : quand prendre un expert-comptable",
     description:
       "En micro, l'expert-comptable n'est pas obligatoire. La vraie question : à partir de quand est-ce rentable. Les moments qui le justifient.",
@@ -1036,7 +1036,7 @@ export const ARTICLES: Article[] = [
   },
   {
     slug: "experts-comptables-equiper-clients-micro",
-    categorie: "comptabilite",
+    categorie: "comptables",
     titre: "Experts-comptables : équiper ses clients micro",
     description:
       "Le dossier micro est peu rentable non parce qu'il est simple, mais parce qu'il arrive en désordre. L'équiper à la source, et ce que la réforme y change.",
@@ -1061,7 +1061,7 @@ export const ARTICLES: Article[] = [
   },
   {
     slug: "calendrier-fiscal-social-micro",
-    categorie: "comptabilite",
+    categorie: "micro",
     titre: "Le calendrier fiscal et social du micro",
     description:
       "Déclaration de CA, déclaration de revenus, CFE, TVA : le tour des rendez-vous de l'année, et de ceux qui tombent même sans activité.",
@@ -1086,7 +1086,7 @@ export const ARTICLES: Article[] = [
   },
   {
     slug: "deviso-solution-comptable-marche",
-    categorie: "comptabilite",
+    categorie: "gestion",
     titre: "Deviso face au marché : notre solution comptable",
     description:
       "Le marché des outils déborde, et pourtant le micro reste mal servi. Où Deviso se place, les points de douleur qu'il règle, et ce qu'il ne prétend pas être.",
@@ -1111,7 +1111,7 @@ export const ARTICLES: Article[] = [
   },
   {
     slug: "clauses-devis-freelance",
-    categorie: "transverse",
+    categorie: "factures",
     titre: "Clauses indispensables d'un devis freelance",
     description:
       "Périmètre, acompte, révisions, propriété intellectuelle, résiliation : les 9 clauses à mettre dans un devis freelance, avec formulations prêtes à l'emploi.",
@@ -1134,7 +1134,7 @@ export const ARTICLES: Article[] = [
   },
   {
     slug: "scope-creep-freelance",
-    categorie: "transverse",
+    categorie: "factures",
     titre: "Scope creep freelance : s'en protéger au devis",
     description:
       "Le scope creep est la première cause de perte de rentabilité en freelance. Comment il arrive et quelles clauses mettre au devis pour s'en protéger.",
@@ -1157,7 +1157,7 @@ export const ARTICLES: Article[] = [
   },
   {
     slug: "gerer-impayes-freelance",
-    categorie: "transverse",
+    categorie: "paiement",
     titre: "Gérer les impayés en freelance : les 4 étapes",
     description:
       "Récupérer une facture impayée en freelance : relance amiable, mise en demeure, injonction de payer. Étapes concrètes et protection dès le devis.",
@@ -1180,7 +1180,7 @@ export const ARTICLES: Article[] = [
   },
   {
     slug: "fixer-ses-tarifs-freelance",
-    categorie: "transverse",
+    categorie: "gestion",
     titre: "Fixer ses tarifs en freelance : TJM et méthodes",
     description:
       "Calculer son TJM en freelance : 3 méthodes, les erreurs classiques, et comment augmenter ses tarifs sans perdre ses clients.",
@@ -1204,7 +1204,7 @@ export const ARTICLES: Article[] = [
   // ── Articles du 19/11/2026 : sujets d'actualité pour toutes les entreprises ──
   {
     slug: "delais-paiement-penalites-retard",
-    categorie: "transverse",
+    categorie: "paiement",
     titre: "Délais de paiement et pénalités de retard : ce que dit la loi",
     description:
       "Entre professionnels : 30 jours par défaut, 60 jours au plus, pénalités automatiques et 40 € par facture en retard. Les règles, les mentions et les recours.",
@@ -1220,7 +1220,7 @@ export const ARTICLES: Article[] = [
   },
   {
     slug: "fraude-faux-rib-faux-fournisseur",
-    categorie: "transverse",
+    categorie: "paiement",
     titre: "Fraude au faux RIB et au faux fournisseur : s'en protéger",
     description:
       "Un faux changement de RIB au nom d'un fournisseur ou d'un client : les signaux d'alerte, le contre-appel, et que faire si le virement est déjà parti.",
@@ -1236,7 +1236,7 @@ export const ARTICLES: Article[] = [
   },
   {
     slug: "choisir-statut-micro-ei-eurl-sasu",
-    categorie: "obligations",
+    categorie: "gestion",
     titre: "Micro, EI, EURL ou SASU : choisir son statut",
     description:
       "Micro-entreprise, entreprise individuelle au réel, EURL ou SASU : impôt, cotisations et protection sociale comparés pour choisir le bon statut.",

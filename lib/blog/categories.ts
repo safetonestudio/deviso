@@ -49,6 +49,30 @@ type FormeCategorie = {
   ouverteParDefaut?: boolean;
 };
 
+/*
+ * OÙ RANGER UN NOUVEL ARTICLE (réorganisation du 20/11/2026).
+ *
+ * Les familles sont rangées par SUJET, pas par public : un article sur les
+ * délais de paiement sert autant à une SASU qu'à un micro-entrepreneur. Pour
+ * classer un nouvel article, se demander ce que le lecteur cherche à faire :
+ *
+ *   reforme     se mettre en conformité avec la facturation électronique 2026
+ *   factures    émettre le bon document, avec les bonnes mentions (devis,
+ *               facture, avoir, acompte, numérotation, frais, étranger)
+ *   paiement    être payé et ne pas se faire voler (délais, relances,
+ *               impayés, fraudes)
+ *   micro       tenir une micro-entreprise (URSSAF, TVA, plafonds, livre
+ *               des recettes, calendrier) : tout ce qui ne vaut QUE pour le micro
+ *   gestion     décider et faire grandir l'entreprise (statut, prix, régime,
+ *               outils, embauche, trésorerie) : toutes formes d'entreprise
+ *   metier      un devis propre à une profession (un article par métier)
+ *   comptables  ce qu'un expert-comptable veut savoir pour ses clients
+ *
+ * Un article qui hésite entre « micro » et une autre famille va dans l'autre :
+ * « micro » est réservé à ce qui ne concerne que le régime micro. Ajouter une
+ * famille reste possible, mais seulement quand trois articles au moins la
+ * justifient, sinon l'index se fragmente.
+ */
 export const CATEGORIES = [
   {
     id: "reforme",
@@ -60,27 +84,35 @@ export const CATEGORIES = [
     prioritaire: true,
   },
   {
-    id: "comptabilite",
-    titre: "La comptabilité du micro-entrepreneur",
-    badge: "Comptabilité",
+    id: "factures",
+    titre: "Devis et factures : les règles du jeu",
+    badge: "Devis et factures",
     resume:
-      "Livre des recettes, TVA, cotisations, versement libératoire, régime réel, calendrier : tenir sa comptabilité de micro sans s'y perdre, et savoir quand se faire aider.",
-    accent: "sky",
-  },
-  {
-    id: "documents",
-    titre: "Les documents du freelance",
-    badge: "Documents",
-    resume:
-      "Acompte, avoir, note d'honoraires, attestation de vigilance : quel document émettre, quand, et ce qu'il doit contenir pour être valable.",
+      "Quel document émettre et ce qu'il doit contenir : devis, acompte, avoir, note d'honoraires, numérotation, frais refacturés, clients à l'étranger.",
     accent: "indigo",
   },
   {
-    id: "obligations",
-    titre: "Argent et obligations",
-    badge: "Obligations",
+    id: "paiement",
+    titre: "Se faire payer et se protéger",
+    badge: "Paiement",
     resume:
-      "TVA, seuils, cotisations, clients à l'étranger, refacturation de frais, numérotation, archivage : ce qui encadre une facture sans se voir dessus.",
+      "Délais légaux, pénalités de retard, relances, impayés, fraude au faux RIB : sécuriser l'argent que vos clients vous doivent.",
+    accent: "rose",
+  },
+  {
+    id: "micro",
+    titre: "Micro-entreprise : cotisations, TVA et plafonds",
+    badge: "Micro-entreprise",
+    resume:
+      "Déclarations URSSAF, versement libératoire, passage à la TVA, livre des recettes, plafonds, calendrier : tenir sa micro-entreprise sans s'y perdre.",
+    accent: "sky",
+  },
+  {
+    id: "gestion",
+    titre: "Gérer et développer son entreprise",
+    badge: "Gestion",
+    resume:
+      "Choisir son statut, fixer ses prix, passer au régime réel, s'entourer d'un expert-comptable, choisir ses outils : les décisions qui font grandir une entreprise.",
     accent: "emerald",
   },
   {
@@ -92,12 +124,12 @@ export const CATEGORIES = [
     accent: "indigo",
   },
   {
-    id: "transverse",
-    titre: "Se protéger et se faire payer",
-    badge: "Tous métiers",
+    id: "comptables",
+    titre: "Pour les experts-comptables",
+    badge: "Experts-comptables",
     resume:
-      "Les problèmes que tous les indépendants rencontrent : périmètre qui dérape, impayés, clauses qui protègent, tarifs.",
-    accent: "rose",
+      "Équiper ses clients indépendants et TPE pour la réforme, et suivre tout un portefeuille sans se connecter chez chacun.",
+    accent: "sky",
   },
 ] as const satisfies readonly FormeCategorie[];
 
