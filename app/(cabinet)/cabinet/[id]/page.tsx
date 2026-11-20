@@ -154,7 +154,7 @@ export default async function FicheClient({
 
   return (
     <div className="w-full">
-      <Link href="/cabinet" className="text-sm text-gray-400 hover:text-ink transition-colors">
+      <Link href="/cabinet/dossiers" className="text-sm text-gray-400 hover:text-ink transition-colors">
         ← Portefeuille
       </Link>
 

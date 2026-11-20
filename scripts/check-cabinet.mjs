@@ -167,7 +167,7 @@ contreEpreuve("une page admin sans contrôle d'accès", litEnAdmin("const a = cr
   const lib = lire(join("lib", "cabinet-tva-calendrier.ts"));
   const page = lire(join("app", "(cabinet)", "cabinet", "tva", "page.tsx"));
   const portefeuille = lire(join("app", "(cabinet)", "cabinet", "page.tsx"));
-  const nav = lire(join("components", "cabinet", "CabinetNav.tsx"));
+  const nav = lire(join("lib", "navigation-cabinet.ts"));
   const calcule = (s) => /export function calendrierTva/.test(s) && /aDeclarer/.test(s) && /enCours/.test(s);
   exige("calendrier TVA, échéance par dossier calculée", calcule(lib), "le comptable doit voir la TVA à déclarer par dossier, sans ouvrir chaque fiche");
   exige(
@@ -245,7 +245,7 @@ contreEpreuve("une page admin sans contrôle d'accès", litEnAdmin("const a = cr
   const synth = lire(join("lib", "cabinet-dossiers.ts"));
   const page = lire(join("app", "(cabinet)", "cabinet", "conformite", "page.tsx"));
   const portefeuille = lire(join("app", "(cabinet)", "cabinet", "page.tsx"));
-  const nav = lire(join("components", "cabinet", "CabinetNav.tsx"));
+  const nav = lire(join("lib", "navigation-cabinet.ts"));
   const detecte = (s) =>
     /directory_address/.test(s) &&
     /siretValide\(p\?\.siret\)/.test(s) &&

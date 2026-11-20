@@ -1,6 +1,5 @@
 import { redirect } from "next/navigation";
 import type { Metadata } from "next";
-import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { dossiersDuCabinet } from "@/lib/cabinet-acces";
@@ -36,11 +35,7 @@ export default async function JournalCabinet() {
 
   return (
     <div className="w-full">
-      <Link href="/cabinet" className="text-sm text-gray-400 hover:text-ink transition-colors">
-        ← Portefeuille
-      </Link>
-
-      <div className="mt-3 mb-6">
+      <div className="mb-6">
         <h1 className="titre-page">Journal des accès et exports</h1>
         <p className="sous-titre-page">
           Chaque consultation de dossier et chaque export de votre cabinet est tracé ici. Vous seul y avez accès.

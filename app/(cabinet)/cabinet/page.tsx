@@ -6,16 +6,19 @@ import { createAdminClient } from "@/lib/supabase/admin";
 import { dossiersDuCabinet } from "@/lib/cabinet-acces";
 import { syntheseDossiers, lireFacturesDossiers } from "@/lib/cabinet-dossiers";
 import { calendrierTva } from "@/lib/cabinet-tva-calendrier";
-import { CabinetInvitations } from "@/components/CabinetInvitations";
-import { CabinetPortefeuille } from "@/components/CabinetPortefeuille";
 
-export const metadata: Metadata = { title: "Portefeuille cabinet" };
+export const metadata: Metadata = { title: "Accueil cabinet" };
 export const dynamic = "force-dynamic";
 
 const eur = (n: number) =>
   new Intl.NumberFormat("fr-FR", { style: "currency", currency: "EUR" }).format(n);
 
-export default async function CabinetCockpit() {
+/**
+ * Accueil de l'espace cabinet (20/11/2026) : un tableau de bord, comme
+ * l'accueil de l'app du client. La synthèse en haut, puis les dossiers à
+ * traiter et la TVA à déclarer ; la liste complète vit sur /cabinet/dossiers.
+ */
+export default async function CabinetAccueil() {
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) redirect("/login");
@@ -36,31 +39,32 @@ export default async function CabinetCockpit() {
   const tvaADeclarer = calendrier.filter((l) => l.aDeclarer && l.aDeclarer.tva > 0);
   const tvaTotale = tvaADeclarer.reduce((s, l) => s + (l.aDeclarer?.tva ?? 0), 0);
   const pl = (n: number, mot: string) => `${n} ${mot}${n > 1 ? "s" : ""}`;
+  const prioritaires = dossiers.filter((d) => d.niveau !== "vert").slice(0, 5);
+  const tvaTriee = [...tvaADeclarer].sort((a, b) => (b.aDeclarer?.tva ?? 0) - (a.aDeclarer?.tva ?? 0)).slice(0, 5);
+  const cap = (t: string) => t.charAt(0).toUpperCase() + t.slice(1);
 
   return (
     <div className="w-full">
       <div className="mb-6 flex flex-wrap items-end justify-between gap-3">
         <div>
-          <h1 className="titre-page">Portefeuille</h1>
-          <p className="sous-titre-page">
-            Vos dossiers clients Deviso, en lecture seule. Ceux qui demandent une action apparaissent en premier.
-          </p>
+          <h1 className="titre-page">Accueil</h1>
+          <p className="sous-titre-page">Ce qui demande votre attention dans votre portefeuille, en un coup d&apos;œil.</p>
         </div>
-        <a
-          href="#inviter"
+        <Link
+          href="/cabinet/inviter"
           className="h-9 inline-flex items-center px-3.5 bg-indigo-600 text-on-accent rounded-lg hover:bg-indigo-700 text-sm font-medium transition-colors whitespace-nowrap"
         >
           Inviter un client
-        </a>
+        </Link>
       </div>
 
       {dossiers.length === 0 ? (
-        <div className="carte p-8 text-center mb-6">
+        <div className="carte carte-heros p-8 text-center">
           <p className="text-ink font-semibold mb-1">Aucun dossier rattaché pour l&apos;instant</p>
-          <p className="text-gray-500 text-sm max-w-lg mx-auto">
-            Générez un code ci-dessous et transmettez-le à votre client : dès qu&apos;il le saisit dans Deviso, son
-            dossier apparaît ici. Ses factures de vente y seront déjà, conformes et horodatées : rien à réclamer ni à
-            ressaisir.
+          <p className="text-gray-400 text-sm max-w-lg mx-auto">
+            <Link href="/cabinet/inviter" className="text-indigo-400 hover:text-indigo-300">Invitez un client</Link> : dès
+            qu&apos;il saisit votre code dans Deviso, son dossier apparaît ici. Ses factures de vente y seront déjà,
+            conformes et horodatées : rien à réclamer ni à ressaisir.
           </p>
         </div>
       ) : (
@@ -68,7 +72,9 @@ export default async function CabinetCockpit() {
           {/* Synthèse : ce qui demande votre attention, et où le traiter. */}
           <section className="carte carte-heros p-5 sm:p-6 mb-6 grid gap-6 lg:grid-cols-[1.1fr_1fr] items-center">
             <div className="min-w-0">
-              <div className="text-[13px] font-medium text-gray-300">{pl(dossiers.length, "dossier")} suivi{dossiers.length > 1 ? "s" : ""}</div>
+              <div className="text-[13px] font-medium text-gray-300">
+                {pl(dossiers.length, "dossier")} suivi{dossiers.length > 1 ? "s" : ""}
+              </div>
               <div className="mt-2 flex items-baseline gap-3 flex-wrap">
                 <span className={`font-semibold leading-none tracking-[-0.02em] text-[44px] sm:text-[52px] tabular-nums ${rouges ? "text-ink" : "text-emerald-400"}`}>
                   {rouges}
@@ -102,13 +108,71 @@ export default async function CabinetCockpit() {
             </div>
           </section>
 
-          <CabinetPortefeuille dossiers={dossiers} annee={maintenant.getFullYear()} />
+          <div className="grid gap-6 lg:grid-cols-[1.4fr_1fr]">
+            <section className="carte overflow-hidden">
+              <div className="px-5 py-4 border-b border-ds-border flex items-center justify-between gap-3">
+                <h2 className="text-ink font-semibold">À traiter en priorité</h2>
+                <Link href="/cabinet/dossiers" className="text-sm text-indigo-400 hover:text-indigo-300 transition-colors">
+                  Tout le portefeuille →
+                </Link>
+              </div>
+              {prioritaires.length === 0 ? (
+                <p className="px-5 py-6 text-sm text-gray-400">Tous vos dossiers sont à jour.</p>
+              ) : (
+                <ul className="divide-y divide-ds-border">
+                  {prioritaires.map((d) => (
+                    <li key={d.id}>
+                      <Link href={`/cabinet/${d.id}`} className="flex items-start gap-3 px-5 py-3.5 hover:bg-ds-elevated/60 transition-colors">
+                        <span className={`mt-1.5 w-2 h-2 rounded-full shrink-0 ${d.niveau === "rouge" ? "bg-red-500" : "bg-amber-500"}`} aria-hidden="true" />
+                        <span className="min-w-0 flex-1">
+                          <span className="block font-medium text-ink truncate">{d.nom}</span>
+                          <span className="flex gap-1 text-sm text-gray-400 min-w-0">
+                            <span className="truncate">{d.anomalies[0]?.libelle}</span>
+                            {d.anomalies.length > 1 && (
+                              <span className="shrink-0 text-gray-500">
+                                · et {d.anomalies.length - 1} autre{d.anomalies.length > 2 ? "s" : ""}
+                              </span>
+                            )}
+                          </span>
+                        </span>
+                        <span className={`hidden sm:inline shrink-0 text-xs font-medium ${d.niveau === "rouge" ? "text-red-400" : "text-amber-400"}`}>
+                          {d.niveau === "rouge" ? "Action requise" : "À surveiller"}
+                        </span>
+                      </Link>
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </section>
+
+            <section className="carte overflow-hidden">
+              <div className="px-5 py-4 border-b border-ds-border flex items-center justify-between gap-3">
+                <h2 className="text-ink font-semibold">TVA à déclarer</h2>
+                <Link href="/cabinet/tva" className="text-sm text-indigo-400 hover:text-indigo-300 transition-colors">
+                  Calendrier →
+                </Link>
+              </div>
+              {tvaTriee.length === 0 ? (
+                <p className="px-5 py-6 text-sm text-gray-400">Aucune TVA à déclarer sur les périodes closes.</p>
+              ) : (
+                <ul className="divide-y divide-ds-border">
+                  {tvaTriee.map((l) => (
+                    <li key={l.id}>
+                      <Link href={`/cabinet/${l.id}#tva`} className="flex items-center justify-between gap-3 px-5 py-3.5 hover:bg-ds-elevated/60 transition-colors">
+                        <span className="min-w-0">
+                          <span className="block font-medium text-ink truncate">{l.nom}</span>
+                          <span className="block text-sm text-gray-400">{cap(l.aDeclarer?.libelle ?? "")}</span>
+                        </span>
+                        <span className="shrink-0 font-semibold text-ink tabular-nums">{eur(l.aDeclarer?.tva ?? 0)}</span>
+                      </Link>
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </section>
+          </div>
         </>
       )}
-
-      <div id="inviter" className="mt-6 scroll-mt-28">
-        <CabinetInvitations />
-      </div>
     </div>
   );
 }
