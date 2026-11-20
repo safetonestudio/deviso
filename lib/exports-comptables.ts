@@ -73,6 +73,17 @@ export interface AchatExport {
   tvaEtrangere?: boolean;
   /** Dossier en franchise en base : aucune TVA deductible, elle va en charge. */
   nonDeductible?: boolean;
+  /**
+   * Facture d'ACOMPTE recue (type 386) : ce n'est pas encore une charge, c'est
+   * une avance au fournisseur (4091). Sa TVA se deduit des maintenant.
+   */
+  acompte?: boolean;
+  /**
+   * Acomptes que cette facture de SOLDE reprend (montant deja verse, BT-113),
+   * retrouves par lib/achats-export.ts. Le solde porte le total : on solde
+   * l'avance et on ne deduit que la TVA qui ne l'a pas deja ete.
+   */
+  imputations?: { ref: string; ht: number; ttc: number; tvas: { taux: number; montant: number }[] }[];
   /** Devise d'origine si autre que l'euro, et montant du fournisseur dans cette devise. */
   devise?: string | null;
   montantDevise?: number | null;
@@ -289,7 +300,20 @@ export function ecrituresComptables(
     const sens = (montant: number, debitSurFacture: boolean) =>
       debitSurFacture !== avoir ? { debit: montant, credit: 0 } : { debit: 0, credit: montant };
     const ht = +a.ht.toFixed(2);
-    const tvas = a.tvas.map((t) => ({ taux: t.taux, montant: +t.montant.toFixed(2) })).filter((t) => t.montant > 0);
+    const tvasTotales = a.tvas.map((t) => ({ taux: t.taux, montant: +t.montant.toFixed(2) })).filter((t) => t.montant > 0);
+    // Solde d'acompte : la TVA deja deduite sur l'acompte ne se deduit pas une
+    // seconde fois. On la retire du meme taux (a defaut, du premier).
+    const imputations = !avoir && !a.autoliquidation ? a.imputations ?? [] : [];
+    const tvas = tvasTotales.map((t) => ({ ...t }));
+    if (!a.nonDeductible && !a.tvaEtrangere) {
+      for (const imp of imputations) {
+        for (const ti of imp.tvas) {
+          const cible = tvas.find((t) => t.taux === ti.taux) ?? tvas[0];
+          if (cible) cible.montant = +(cible.montant - ti.montant).toFixed(2);
+        }
+      }
+    }
+    const tvaRetiree = +(tvasTotales.reduce((s, t) => s + t.montant, 0) - tvas.reduce((s, t) => s + t.montant, 0)).toFixed(2);
     const biens = a.categorie === "biens";
     // La charge porte le HT, plus toute TVA qui ne se deduit pas : TVA
     // etrangere, ou TVA d'un dossier en franchise.
@@ -307,14 +331,28 @@ export function ecrituresComptables(
         charge += t.montant;
         duFournisseur += t.montant;
       } else {
-        lignesTva.push({ compte: plan.tvaDeductible, compteLib: `TVA deductible ${t.taux}%`, auxNum: "", auxLib: "", ...sens(t.montant, true) });
+        if (t.montant !== 0) lignesTva.push({ compte: plan.tvaDeductible, compteLib: `TVA deductible ${t.taux}%`, auxNum: "", auxLib: "", ...sens(t.montant, true) });
         duFournisseur += t.montant;
       }
     }
+    // Le fournisseur est du du TTC de la facture : la TVA retiree ci-dessus
+    // reste due, elle a seulement deja ete deduite.
+    duFournisseur += tvaRetiree;
     const lignes: Ligne[] = [
-      { compte: biens ? plan.achatsBiens : plan.achatsServices, compteLib: biens ? "Achats de marchandises" : "Achats de prestations", auxNum: "", auxLib: "", ...sens(+charge.toFixed(2), true) },
+      // Un acompte n'est pas une charge : avance au fournisseur (4091).
+      a.acompte
+        ? { compte: plan.avancesFournisseurs, compteLib: "Acomptes verses aux fournisseurs", auxNum: "", auxLib: "", ...sens(+charge.toFixed(2), true) }
+        : { compte: biens ? plan.achatsBiens : plan.achatsServices, compteLib: biens ? "Achats de marchandises" : "Achats de prestations", auxNum: "", auxLib: "", ...sens(+charge.toFixed(2), true) },
       ...lignesTva,
     ];
+    // Solde : l'avance est soldee (HT, ou TTC si la TVA n'etait pas
+    // deductible, comme elle a ete portee a l'acompte) ; le fournisseur n'est
+    // plus du que du reste.
+    for (const imp of imputations) {
+      const avance = a.nonDeductible || a.tvaEtrangere ? imp.ttc : imp.ht;
+      lignes.push({ compte: plan.avancesFournisseurs, compteLib: `Acompte ${texteSur(imp.ref)} impute`, auxNum: "", auxLib: "", ...sens(+avance.toFixed(2), false) });
+      duFournisseur -= imp.ttc;
+    }
     const devise = a.devise && a.devise !== "EUR" && a.montantDevise ? { montantDevise: +a.montantDevise.toFixed(2), devise: a.devise } : {};
     lignes.push({
       compte: plan.fournisseurs, compteLib: "Fournisseurs", auxNum: fCode, auxLib: fLib,

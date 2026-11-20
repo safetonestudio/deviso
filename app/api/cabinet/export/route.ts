@@ -73,6 +73,8 @@ export async function GET(req: NextRequest) {
   const fichiers: FichierZip[] = [];
   /** Achats qu'on n'a pas pu convertir en euros, par dossier : jamais tus. */
   const nonRepris: string[] = [];
+  /** Soldes d'achat dont l'acompte n'a pas été retrouvé : à vérifier par le cabinet. */
+  const aVerifier: string[] = [];
   let nbPdf = 0;
   const nomsPris = new Set<string>();
   for (const ownerId of selection) {
@@ -96,6 +98,7 @@ export async function GET(req: NextRequest) {
         const lus = await chargerAchats(ownerId, year);
         achats = lus.achats;
         for (const n of lus.nonRepris) nonRepris.push(`${p?.company_name || p?.full_name || "Dossier"} : ${n}`);
+        for (const n of lus.aVerifier) aVerifier.push(`${p?.company_name || p?.full_name || "Dossier"} : ${n}`);
       } catch {
         return NextResponse.json({ error: "Lecture des achats impossible" }, { status: 500 });
       }
@@ -173,6 +176,14 @@ export async function GET(req: NextRequest) {
     fichiers.push({
       nom: "ACHATS_NON_REPRIS.txt",
       contenu: `Achats absents des fichiers de cette archive, faute de cours de change :\r\n${nonRepris.map((n) => `- ${n}`).join("\r\n")}\r\n`,
+    });
+  }
+  // Dans une archive, une note à côté des fichiers ; un fichier seul n'a pas
+  // de place pour elle (l'écriture du solde y est la facture telle quelle).
+  if (aVerifier.length > 0 && !(fichiers.length === 1 && !avecPdf)) {
+    fichiers.push({
+      nom: "ACHATS_A_VERIFIER.txt",
+      contenu: `Factures de solde dont l'acompte n'a pas été retrouvé (écriture passée telle que la facture) :\r\n${aVerifier.map((n) => `- ${n}`).join("\r\n")}\r\n`,
     });
   }
 

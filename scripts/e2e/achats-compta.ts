@@ -25,7 +25,7 @@ if (existsSync(".env.local")) {
   const { ecrituresComptables, genererFec } = await import("@/lib/exports-comptables");
   const { genererQuadra } = await import("@/lib/export-quadra");
   const { validerPlan, PLAN_PAR_DEFAUT } = await import("@/lib/plan-comptes-fec");
-  const { tauxDeduit, coursBce, chargerAchats, estAvoirRecu, TAUX_AUTOLIQUIDATION } = await import("@/lib/achats-export");
+  const { tauxDeduit, coursBce, chargerAchats, estAvoirRecu, TAUX_AUTOLIQUIDATION, acomptesDuSolde } = await import("@/lib/achats-export");
   type Achat = import("@/lib/exports-comptables").AchatExport;
 
   const francais: Achat = { ref: "FA-12", date: "2026-03-10", fournisseur: "Imprimerie Dupré", siren: "853322915", ht: 100, tvas: [{ taux: 20, montant: 20 }] };
@@ -74,6 +74,47 @@ if (existsSync(".env.local")) {
     ["381", "261", "262", "396", "502", "503"].every(estAvoirRecu) && estAvoirRecu(381) && !estAvoirRecu("380") && !estAvoirRecu("386"));
   const desequilibres2 = ecr2.filter((e) => Math.abs(e.lignes.reduce((s, l) => s + l.debit - l.credit, 0)) > 0.001);
   verifier("cas de la revue : écritures équilibrées", desequilibres2.length === 0, desequilibres2.map((e) => e.ref).join(", "));
+
+  // ── Acompte puis solde (20/11/2026) ──
+  console.log("");
+  console.log("── Acompte reçu puis solde ──────────────────────────────────");
+  const acompteRecu: Achat = { ref: "MA-AC", date: "2026-09-01", fournisseur: "Menuiserie", siren: "512345675", ht: 1000, tvas: [{ taux: 20, montant: 200 }], acompte: true };
+  const soldeAc: Achat = { ref: "MA-SOL", date: "2026-10-01", fournisseur: "Menuiserie", siren: "512345675", ht: 3000, tvas: [{ taux: 20, montant: 600 }],
+    imputations: [{ ref: "MA-AC", ht: 1000, ttc: 1200, tvas: [{ taux: 20, montant: 200 }] }] };
+  const ecr3 = ecrituresComptables([], PLAN_PAR_DEFAUT, [acompteRecu, soldeAc, { ...acompteRecu, ref: "MA-ACF", nonDeductible: true }, { ...soldeAc, ref: "MA-SOLF", nonDeductible: true }]);
+  const l3 = (ref: string, compte: string) => ecr3.find((e) => e.ref === ref)?.lignes.filter((l) => l.compte === compte) ?? [];
+  const dAc = (ref: string, compte: string) => l3(ref, compte).reduce((s, l) => s + l.debit, 0);
+  const cAc = (ref: string, compte: string) => l3(ref, compte).reduce((s, l) => s + l.credit, 0);
+  verifier("acompte : avance 409100 au débit (pas de charge), TVA déduite, fournisseur TTC",
+    dAc("MA-AC", "409100") === 1000 && dAc("MA-AC", "445660") === 200 && cAc("MA-AC", "401000") === 1200 && l3("MA-AC", "604000").length === 0);
+  verifier("solde : charge pour le total HT", dAc("MA-SOL", "604000") === 3000);
+  verifier("solde : seule la TVA pas encore déduite (600 - 200)", dAc("MA-SOL", "445660") === 400);
+  verifier("solde : l'avance est soldée", cAc("MA-SOL", "409100") === 1000);
+  verifier("solde : le fournisseur n'est plus dû que du reste", cAc("MA-SOL", "401000") === 2400);
+  verifier("sur l'ensemble : TVA déduite une seule fois (600)", dAc("MA-AC", "445660") + dAc("MA-SOL", "445660") === 600);
+  verifier("franchise : acompte en avance TTC, solde en charge TTC, avance soldée TTC",
+    dAc("MA-ACF", "409100") === 1200 && dAc("MA-SOLF", "604000") === 3600 && cAc("MA-SOLF", "409100") === 1200 && cAc("MA-SOLF", "401000") === 2400 && l3("MA-SOLF", "445660").length === 0);
+  const des3 = ecr3.filter((e) => Math.abs(e.lignes.reduce((s, l) => s + l.debit - l.credit, 0)) > 0.001);
+  verifier("acompte et solde : écritures équilibrées", des3.length === 0, des3.map((e) => e.ref).join(", "));
+
+  // Règles de rapprochement.
+  const R = (id: number, number: string, date: string, ttc: number, opts: { type?: string; siren?: string; verse?: number; refs?: string[]; vendeur?: string } = {}) => ({
+    id, number, issue_date: date, seller_name: opts.vendeur ?? "Menuiserie", total_without_vat: ttc / 1.2, total_vat: ttc - ttc / 1.2, total_with_vat: ttc, last_status_code: "fr:200",
+    en_invoice: { type_code: opts.type ?? "380", seller: { legal_registration_identifier: { value: opts.siren ?? "512345675" } },
+      totals: opts.verse ? { paid_amount: String(opts.verse) } : {}, preceding_invoice_references: (opts.refs ?? []).map((reference) => ({ reference })) },
+  });
+  const ac1 = R(1, "AC-1", "2026-09-01", 1200, { type: "386" });
+  const ac2 = R(2, "AC-2", "2026-09-05", 1200, { type: "386" });
+  const autre = R(3, "AC-X", "2026-09-01", 1200, { type: "386", siren: "999999999" });
+  const tard = R(4, "AC-T", "2026-11-01", 1200, { type: "386" });
+  const vide = new Set<number>();
+  verifier("rapprochement par la référence que porte le solde", acomptesDuSolde(R(9, "S", "2026-10-01", 3600, { verse: 1200, refs: ["AC-2"] }), [ac1, ac2], vide)?.[0]?.number === "AC-2");
+  verifier("sans référence : un seul acompte du montant versé", acomptesDuSolde(R(9, "S", "2026-10-01", 3600, { verse: 1200 }), [ac1, autre, tard], vide)?.[0]?.number === "AC-1");
+  verifier("sans référence, deux acomptes du même montant : on ne devine pas", acomptesDuSolde(R(9, "S", "2026-10-01", 3600, { verse: 1200 }), [ac1, ac2], vide) === null);
+  verifier("un autre fournisseur ou un acompte postérieur n'est jamais pris", acomptesDuSolde(R(9, "S", "2026-10-01", 3600, { verse: 1200 }), [autre, tard], vide) === null);
+  verifier("référence trouvée mais montant différent : on ne devine pas", acomptesDuSolde(R(9, "S", "2026-10-01", 3600, { verse: 500, refs: ["AC-1"] }), [ac1], vide) === null);
+  verifier("un acompte déjà imputé ne l'est pas deux fois", acomptesDuSolde(R(9, "S", "2026-10-01", 3600, { verse: 1200 }), [ac1], new Set([1])) === null);
+  verifier("sans déjà-versé : aucun rapprochement", acomptesDuSolde(R(9, "S", "2026-10-01", 3600), [ac1], vide) === null);
 
   const desequilibres = ecr.filter((e) => Math.abs(e.lignes.reduce((s, l) => s + l.debit - l.credit, 0)) > 0.001);
   verifier("chaque écriture est équilibrée (ventes et achats)", desequilibres.length === 0, desequilibres.map((e) => e.ref).join(", "));
@@ -159,7 +200,7 @@ if (existsSync(".env.local")) {
   // Le jeu de démonstration porte ces achats tels que le formulaire les fait
   // saisir (Allemagne, Italie, Pologne, TVA 0) : on le charge par le même
   // chemin que l'export.
-  const demo = await openSession("achats-compta");
+  const demo = await openSession("achats-acompte");
   const achatsDemo = (await chargerAchats(demo.userId, "2026")).achats;
   const { data: saisis } = await admin.from("superpdp_achats_int")
     .select("numero, id, fournisseur_pays, categorie, montant_ht, montant_tva, devise")
@@ -208,6 +249,12 @@ if (existsSync(".env.local")) {
   const ecartClient = lignesClient.reduce((s, c) => s + Number(c[11].replace(",", ".")) - Number(c[12].replace(",", ".")), 0);
   verifier("export du client : débits = crédits sur tout le fichier", Math.abs(ecartClient) < 0.005, ecartClient.toFixed(2));
   verifier("export du client : TVA autoliquidée présente", lignesClient.some((c) => c[4] === "445200"));
+  const somme = (compte: string, col: number, piece?: RegExp) =>
+    lignesClient.filter((c) => c[4] === compte && (!piece || piece.test(c[8]))).reduce((s, c) => s + Number(c[col].replace(",", ".")), 0);
+  verifier("export du client : l'avance de l'acompte démo est soldée (409100 à zéro)",
+    somme("409100", 11) === 1000 && somme("409100", 12) === 1000, `débit ${somme("409100", 11)} crédit ${somme("409100", 12)}`);
+  verifier("export du client : TVA de l'acompte et du solde déduite une fois (600)",
+    Math.abs(somme("445660", 11, /^MA-2026-/) - 600) < 0.005, String(somme("445660", 11, /^MA-2026-/)));
 
   const cab = await openSession("achats-cabinet");
   await admin.from("team_members").delete().eq("owner_id", demo.userId).eq("member_id", cab.userId);

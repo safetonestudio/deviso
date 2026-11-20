@@ -22,6 +22,7 @@ export type PlanComptesFec = {
   // auprès de fournisseurs étrangers.
   journalAchats: string;
   fournisseurs: string;
+  avancesFournisseurs: string;
   achatsServices: string;
   achatsBiens: string;
   tvaDeductible: string;
@@ -40,6 +41,7 @@ export const PLAN_PAR_DEFAUT: PlanComptesFec = {
   banque: "512000",
   journalAchats: "HA",
   fournisseurs: "401000",
+  avancesFournisseurs: "409100",
   achatsServices: "604000",
   achatsBiens: "607000",
   tvaDeductible: "445660",
@@ -58,6 +60,7 @@ export const LIBELLES_PLAN: Record<keyof PlanComptesFec, string> = {
   banque: "Banque",
   journalAchats: "Journal des achats",
   fournisseurs: "Compte fournisseurs (collectif)",
+  avancesFournisseurs: "Acomptes versés aux fournisseurs",
   achatsServices: "Achats de prestations de services",
   achatsBiens: "Achats de marchandises",
   tvaDeductible: "TVA déductible",
@@ -90,7 +93,7 @@ export function validerPlan(saisie: unknown): { plan: PlanComptesFec } | { erreu
   const classes: [keyof PlanComptesFec, string][] = [
     ["clients", "411"], ["ventesServices", "70"], ["ventesBiens", "70"],
     ["tvaCollectee", "4457"], ["tvaNonExigible", "4457"], ["banque", "51"],
-    ["fournisseurs", "401"], ["achatsServices", "60"], ["achatsBiens", "60"],
+    ["fournisseurs", "401"], ["avancesFournisseurs", "409"], ["achatsServices", "60"], ["achatsBiens", "60"],
     ["tvaDeductible", "4456"], ["tvaDeductibleAutoliq", "4456"], ["tvaAutoliquidee", "4452"],
   ];
   for (const [cle, prefixe] of classes) {

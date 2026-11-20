@@ -501,6 +501,36 @@ export async function synchroniserFactures(userId: string): Promise<ResultatSync
     console.error("[superpdp-sync/encaissements]", err instanceof Error ? err.message : err);
   }
 
+  // ── Rattrapage du détail des factures reçues (20/11/2026) ────────────────
+  //
+  // Les factures reçues synchronisées avant qu'on conserve `en_invoice` n'ont
+  // que leurs totaux. Or le journal des achats a besoin du type de document
+  // (acompte 386, avoir) et du montant déjà versé (BT-113) pour rapprocher un
+  // acompte de son solde (lib/achats-export.ts). On va chercher ce détail une
+  // fois par facture, vingt au plus par passage. Une facture que la plateforme
+  // ne connaît pas (404) reçoit un détail vide : on ne la redemande plus.
+  //
+  // Fait ICI, en production, et pas par un script local : le client OAuth du
+  // poste n'est pas celui de la production, et un renouvellement de jeton raté
+  // marque la connexion en erreur (incident du 20/11/2026).
+  try {
+    const { data: sansDetail } = await admin
+      .from("superpdp_invoices")
+      .select("id")
+      .eq("user_id", userId)
+      .eq("direction", "in")
+      .is("en_invoice", null)
+      .limit(20);
+    for (const f of sansDetail ?? []) {
+      const d = await superpdpFetch(userId, `/invoices/${f.id}`);
+      if (!d.ok && d.status !== 404) break;
+      const detail = d.ok ? (((await d.json()) as { en_invoice?: Record<string, unknown> }).en_invoice ?? {}) : {};
+      await admin.from("superpdp_invoices").update({ en_invoice: detail }).eq("id", f.id).is("en_invoice", null);
+    }
+  } catch (err) {
+    console.error("[superpdp-sync/detail-recues]", err instanceof Error ? err.message : err);
+  }
+
   // Une synchronisation sans nouveauté est un succès, pas un non-événement :
   // on horodate quand même, sinon l'écran ne peut pas distinguer « rien de
   // nouveau » de « on n'a pas regardé depuis hier ».
