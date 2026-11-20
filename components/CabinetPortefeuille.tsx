@@ -89,7 +89,7 @@ export function CabinetPortefeuille({ dossiers, annee }: { dossiers: DossierVue[
       </div>
 
       {/* En-tête de colonnes, une seule fois (écran large). */}
-      <div className={`hidden ${GRILLE} px-4 py-2.5 bg-ds-elevated border-b border-ds-border text-xs font-semibold text-gray-400`}>
+      <div className={`hidden ${GRILLE} px-4 py-2.5 entete-tableau border-b border-ds-border`}>
         <span>Dossier</span>
         <span>État</span>
         <span className="text-right">Factures du mois</span>
@@ -132,15 +132,15 @@ export function CabinetPortefeuille({ dossiers, annee }: { dossiers: DossierVue[
                   {/* Chiffres : en colonnes sur grand écran, en ligne étiquetée sur téléphone. */}
                   <dl className="w-full lg:contents grid grid-cols-3 gap-2 text-sm tabular-nums">
                     <div className="lg:text-right">
-                      <dt className="lg:hidden text-xs text-gray-500">Factures du mois</dt>
+                      <dt className="lg:hidden text-[13px] text-gray-400">Factures du mois</dt>
                       <dd className="text-gray-200 font-medium">{d.nbFacturesMois}</dd>
                     </div>
                     <div className="lg:text-right">
-                      <dt className="lg:hidden text-xs text-gray-500">CA HT du mois</dt>
+                      <dt className="lg:hidden text-[13px] text-gray-400">CA HT du mois</dt>
                       <dd className="text-gray-200 font-medium">{eur(d.caHtMois)}</dd>
                     </div>
                     <div className="lg:text-right">
-                      <dt className="lg:hidden text-xs text-gray-500">CA HT {annee}</dt>
+                      <dt className="lg:hidden text-[13px] text-gray-400">CA HT {annee}</dt>
                       <dd className="text-ink font-semibold">{eur(d.caHtAnnee)}</dd>
                     </div>
                   </dl>

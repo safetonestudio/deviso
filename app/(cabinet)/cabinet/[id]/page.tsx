@@ -162,7 +162,7 @@ export default async function FicheClient({
         <div className="min-w-0">
           <h1 className="titre-page truncate">{synthese.nom}</h1>
           <div className="mt-2 flex flex-wrap items-center gap-2">
-            {synthese.siret && <span className="text-xs text-gray-500">SIRET {synthese.siret}</span>}
+            {synthese.siret && <span className="text-[13px] text-gray-400">SIRET {synthese.siret}</span>}
             {synthese.raccorde ? (
               <span className={`${badge} border-emerald-500/30 bg-emerald-500/10 text-emerald-400`}>
                 Raccordé à une plateforme agréée
@@ -264,12 +264,12 @@ export default async function FicheClient({
               <div className="carte overflow-hidden">
                 <div className="p-4 border-b border-ds-border">
                   <h2 className="text-ink font-semibold">TVA collectée par mois</h2>
-                  <p className="text-xs text-gray-500 mt-0.5">Avoirs déduits. Pour une déclaration trimestrielle, additionnez les trois mois.</p>
+                  <p className="text-sm text-gray-400 mt-0.5">Avoirs déduits. Pour une déclaration trimestrielle, additionnez les trois mois.</p>
                 </div>
                 <div className="overflow-x-auto">
                   <table className="w-full text-sm">
                     <thead>
-                      <tr className="text-left text-xs font-semibold text-gray-400 bg-ds-elevated border-b border-ds-border">
+                      <tr className="entete-tableau border-b border-ds-border">
                         <th className="px-4 py-2.5 font-semibold">Mois</th>
                         <th className="px-4 py-2.5 font-semibold text-right">Base HT</th>
                         {taux.map((t) => (
@@ -304,7 +304,7 @@ export default async function FicheClient({
               <div className="carte p-4">
                 <div className="flex flex-wrap items-baseline justify-between gap-2 mb-3">
                   <h2 className="text-ink font-semibold">Comparaison avec {annee - 1}</h2>
-                  <span className="text-xs text-gray-500">
+                  <span className="text-[13px] text-gray-400">
                     {annee === anneeCourante ? "À date, du 1er janvier à aujourd'hui" : "Année complète"}
                   </span>
                 </div>
@@ -313,12 +313,12 @@ export default async function FicheClient({
                     const ev = evolution(c.actuel, c.precedent);
                     return (
                       <div key={c.label} className="bg-ds-bg border border-ds-border rounded-lg p-3">
-                        <div className="text-xs text-gray-500">{c.label}</div>
+                        <div className="text-[13px] text-gray-400">{c.label}</div>
                         <div className="flex items-baseline gap-2 mt-1">
                           <span className="text-lg font-semibold text-ink">{c.fmt(c.actuel)}</span>
                           {ev && <span className={`text-xs font-medium ${ev.ton}`}>{ev.texte}</span>}
                         </div>
-                        <div className="text-xs text-gray-500 mt-0.5">{annee - 1} : {c.fmt(c.precedent)}</div>
+                        <div className="text-sm text-gray-400 mt-0.5">{annee - 1} : {c.fmt(c.precedent)}</div>
                       </div>
                     );
                   })}
@@ -341,7 +341,7 @@ export default async function FicheClient({
                   <div className="overflow-x-auto">
                     <table className="w-full text-sm">
                       <thead>
-                        <tr className="text-left text-xs font-semibold text-gray-400 bg-ds-elevated border-b border-ds-border">
+                        <tr className="entete-tableau border-b border-ds-border">
                           <th className="px-4 py-2.5 font-semibold">Numéro</th>
                           <th className="px-4 py-2.5 font-semibold">Date</th>
                           <th className="px-4 py-2.5 font-semibold">Client</th>

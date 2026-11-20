@@ -101,11 +101,11 @@ export function ExportPortefeuille({ dossiers, annee }: { dossiers: DossierExpor
                 <div className="grid grid-cols-2 gap-2">
                   <button type="button" aria-pressed={format === "fec"} onClick={() => setFormat("fec")} className={option(format === "fec")}>
                     <div className="font-semibold text-ink">FEC</div>
-                    <div className="text-xs text-gray-400 mt-0.5">Écritures comptables, à importer dans votre logiciel</div>
+                    <div className="text-[13px] text-gray-400 mt-0.5">Écritures comptables, à importer dans votre logiciel</div>
                   </button>
                   <button type="button" aria-pressed={format === "csv"} onClick={() => setFormat("csv")} className={option(format === "csv")}>
                     <div className="font-semibold text-ink">CSV</div>
-                    <div className="text-xs text-gray-400 mt-0.5">Liste des factures, à ouvrir dans un tableur</div>
+                    <div className="text-[13px] text-gray-400 mt-0.5">Liste des factures, à ouvrir dans un tableur</div>
                   </button>
                 </div>
               </fieldset>
@@ -126,17 +126,17 @@ export function ExportPortefeuille({ dossiers, annee }: { dossiers: DossierExpor
                 <div className="grid grid-cols-2 gap-2">
                   <button type="button" aria-pressed={portee === "tout"} onClick={() => setPortee("tout")} className={option(portee === "tout")}>
                     <div className="font-semibold text-ink">Tout le portefeuille</div>
-                    <div className="text-xs text-gray-400 mt-0.5">{dossiers.length} dossier{dossiers.length > 1 ? "s" : ""}</div>
+                    <div className="text-[13px] text-gray-400 mt-0.5">{dossiers.length} dossier{dossiers.length > 1 ? "s" : ""}</div>
                   </button>
                   <button type="button" aria-pressed={portee === "choix"} onClick={() => setPortee("choix")} className={option(portee === "choix")}>
                     <div className="font-semibold text-ink">Choisir</div>
-                    <div className="text-xs text-gray-400 mt-0.5">Un ou plusieurs dossiers</div>
+                    <div className="text-[13px] text-gray-400 mt-0.5">Un ou plusieurs dossiers</div>
                   </button>
                 </div>
 
                 {portee === "choix" && (
                   <div className="mt-3 rounded-xl border border-ds-border overflow-hidden">
-                    <div className="flex items-center justify-between px-3 py-2 bg-ds-elevated text-xs text-gray-400">
+                    <div className="flex items-center justify-between px-3 py-2 bg-ds-elevated text-[13px] text-gray-400">
                       <span>{choix.size} sélectionné{choix.size > 1 ? "s" : ""}</span>
                       <span className="flex gap-3">
                         <button type="button" onClick={() => setChoix(new Set(dossiers.map((d) => d.id)))} className="hover:text-ink transition-colors">Tous</button>

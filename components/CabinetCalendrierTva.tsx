@@ -51,7 +51,7 @@ export function CabinetCalendrierTva({ lignes }: { lignes: Ligne[] }) {
     <div className="carte mb-6 overflow-hidden">
       <div className="p-4 border-b border-ds-border">
         <h2 className="text-ink font-semibold">TVA à déclarer par dossier</h2>
-        <p className="text-xs text-gray-500 mt-0.5">
+        <p className="text-sm text-gray-400 mt-0.5">
           TVA collectée (avoirs déduits), prête pour la déclaration. La période close est à déclarer ;
           la période en cours n&apos;est pas encore terminée.
         </p>
@@ -59,7 +59,7 @@ export function CabinetCalendrierTva({ lignes }: { lignes: Ligne[] }) {
       <div className="overflow-x-auto">
         <table className="w-full text-sm">
           <thead>
-            <tr className="text-left text-xs font-semibold text-gray-400 bg-ds-elevated border-b border-ds-border">
+            <tr className="entete-tableau border-b border-ds-border">
               <th className="px-4 py-2.5 font-semibold">Dossier</th>
               <th className="px-4 py-2.5 font-semibold">Périodicité</th>
               <th className="px-4 py-2.5 font-semibold">Période à déclarer</th>
@@ -95,7 +95,7 @@ export function CabinetCalendrierTva({ lignes }: { lignes: Ligne[] }) {
         </table>
       </div>
       {franchises.length > 0 && (
-        <div className="px-4 py-3 border-t border-ds-border text-xs text-gray-500">
+        <div className="px-4 py-3 border-t border-ds-border text-[13px] text-gray-400">
           {franchises.length} dossier{franchises.length > 1 ? "s" : ""} en franchise en base : rien à déclarer.
         </div>
       )}

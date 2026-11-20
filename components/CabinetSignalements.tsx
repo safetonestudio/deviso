@@ -52,7 +52,7 @@ export function CabinetSignalements({ clientId, initiaux }: { clientId: string; 
     <div className="carte mb-6 overflow-hidden">
       <div className="p-4 border-b border-ds-border">
         <h2 className="text-ink font-semibold">Signaler au client</h2>
-        <p className="text-xs text-gray-500 mt-0.5">
+        <p className="text-sm text-gray-400 mt-0.5">
           Un message ciblé que le client verra dans son tableau de bord Deviso. Vous ne modifiez pas son dossier.
         </p>
       </div>
@@ -93,7 +93,7 @@ export function CabinetSignalements({ clientId, initiaux }: { clientId: string; 
               </span>
               <div className="min-w-0 flex-1">
                 <p className="text-sm text-gray-200 whitespace-pre-wrap wrap-break-word">{s.message}</p>
-                <p className="text-xs text-gray-500 mt-1">{horodatage(s.created_at)}</p>
+                <p className="text-[13px] text-gray-400 mt-1">{horodatage(s.created_at)}</p>
               </div>
             </li>
           ))}

@@ -90,18 +90,18 @@ export default async function CabinetAccueil() {
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               <Link href="/cabinet/tva" className="group rounded-xl border border-ds-border bg-ds-bg/60 p-4 hover:border-gray-600 transition-colors">
-                <div className="text-xs text-gray-400">TVA à déclarer</div>
+                <div className="text-[13px] text-gray-300">TVA à déclarer</div>
                 <div className="mt-1 text-xl font-semibold text-ink tabular-nums">{eur(tvaTotale)}</div>
-                <div className="mt-1 text-xs text-gray-500 group-hover:text-gray-300 transition-colors">
+                <div className="mt-1 text-[13px] text-gray-400 group-hover:text-gray-200 transition-colors">
                   {tvaADeclarer.length ? `${pl(tvaADeclarer.length, "dossier")}, période close →` : "Rien à déclarer →"}
                 </div>
               </Link>
               <Link href="/cabinet/conformite" className="group rounded-xl border border-ds-border bg-ds-bg/60 p-4 hover:border-gray-600 transition-colors">
-                <div className="text-xs text-gray-400">Conformité réforme</div>
+                <div className="text-[13px] text-gray-300">Conformité réforme</div>
                 <div className={`mt-1 text-xl font-semibold tabular-nums ${prets === dossiers.length ? "text-emerald-400" : "text-ink"}`}>
                   {prets}/{dossiers.length} prêts
                 </div>
-                <div className="mt-1 text-xs text-gray-500 group-hover:text-gray-300 transition-colors">
+                <div className="mt-1 text-[13px] text-gray-400 group-hover:text-gray-200 transition-colors">
                   {prets === dossiers.length ? "Tous peuvent recevoir →" : `${pl(dossiers.length - prets, "dossier")} à régulariser →`}
                 </div>
               </Link>

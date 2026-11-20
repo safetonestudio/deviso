@@ -453,6 +453,16 @@
     box-shadow: var(--ds-shadow-card);
   }
   .carte-lg { border-radius: 18px; }
+  /* En-tête de tableau de l'app : lisible d'abord (retour Selim 20/11/2026,
+     « écrit en petit, peu visible »). 13 px, gras, encre presque pleine sur
+     la surface surélevée : un seul endroit pour tous les tableaux. */
+  .entete-tableau {
+    font-size: 13px;
+    font-weight: 600;
+    text-align: left;
+    color: rgb(var(--n-200, 211 220 214));
+    background-color: var(--ds-elevated);
+  }
   /* Titre et sous-titre de page : une seule echelle pour toute l'app. Quatre
      tailles cohabitaient (24, 30, 38, 44 px), d'ou un rendu disparate d'une
      page a l'autre (retour Selim 02/11). Le tableau de bord, page d'accueil,

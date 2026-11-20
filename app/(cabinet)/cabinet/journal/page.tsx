@@ -52,7 +52,7 @@ export default async function JournalCabinet() {
           <div className="overflow-x-auto">
             <table className="w-full text-sm">
               <thead>
-                <tr className="text-left text-xs font-semibold text-gray-400 bg-ds-elevated border-b border-ds-border">
+                <tr className="entete-tableau border-b border-ds-border">
                   <th className="px-4 py-2.5">Date</th>
                   <th className="px-4 py-2.5">Action</th>
                   <th className="px-4 py-2.5">Dossier</th>

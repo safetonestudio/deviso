@@ -39,7 +39,7 @@ export function CabinetConformite({ lignes }: { lignes: Ligne[] }) {
       <div className="p-4 border-b border-ds-border flex flex-wrap items-baseline justify-between gap-2">
         <div>
           <h2 className="text-ink font-semibold">Conformité à la réforme</h2>
-          <p className="text-xs text-gray-500 mt-0.5">
+          <p className="text-sm text-gray-400 mt-0.5">
             Qui peut émettre et recevoir des factures électroniques conformes. Après la fin de la tolérance
             (31 décembre 2026), une facture non conforme coûte 50 € (plafond 15 000 €/an).
           </p>
@@ -51,7 +51,7 @@ export function CabinetConformite({ lignes }: { lignes: Ligne[] }) {
       <div className="overflow-x-auto">
         <table className="w-full text-sm">
           <thead>
-            <tr className="text-left text-xs font-semibold text-gray-400 bg-ds-elevated border-b border-ds-border">
+            <tr className="entete-tableau border-b border-ds-border">
               <th className="px-4 py-2.5 font-semibold">Dossier</th>
               <th className="px-4 py-2.5 font-semibold text-center">Plateforme</th>
               <th className="px-4 py-2.5 font-semibold text-center">Reçoit</th>
