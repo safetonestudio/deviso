@@ -251,10 +251,17 @@ if (existsSync(".env.local")) {
   verifier("export du client : TVA autoliquidée présente", lignesClient.some((c) => c[4] === "445200"));
   const somme = (compte: string, col: number, piece?: RegExp) =>
     lignesClient.filter((c) => c[4] === compte && (!piece || piece.test(c[8]))).reduce((s, c) => s + Number(c[col].replace(",", ".")), 0);
-  verifier("export du client : l'avance de l'acompte démo est soldée (409100 à zéro)",
-    somme("409100", 11) === 1000 && somme("409100", 12) === 1000, `débit ${somme("409100", 11)} crédit ${somme("409100", 12)}`);
-  verifier("export du client : TVA de l'acompte et du solde déduite une fois (600)",
-    Math.abs(somme("445660", 11, /^MA-2026-/) - 600) < 0.005, String(somme("445660", 11, /^MA-2026-/)));
+  // Le régime du dossier décide : avance HT et TVA déduite une fois (600), ou,
+  // en franchise, avance TTC et aucune TVA déduite.
+  const { data: regime } = await admin.from("profiles").select("tva_regime").eq("id", demo.userId).maybeSingle();
+  const enFranchise = regime?.tva_regime === "franchise";
+  const avance = enFranchise ? 1200 : 1000;
+  verifier(`export du client : l'avance de l'acompte démo est soldée (409100, ${avance} / ${avance}${enFranchise ? ", franchise" : ""})`,
+    somme("409100", 11) === avance && somme("409100", 12) === avance, `débit ${somme("409100", 11)} crédit ${somme("409100", 12)}`);
+  verifier(`export du client : TVA de l'acompte et du solde déduite ${enFranchise ? "jamais (franchise)" : "une fois (600)"}`,
+    Math.abs(somme("445660", 11, /^MA-2026-/) - (enFranchise ? 0 : 600)) < 0.005, String(somme("445660", 11, /^MA-2026-/)));
+  const soldeLigne = lignesClient.find((c) => c[8] === "MA-2026-0118" && c[4] === "401000");
+  verifier("export du client : le fournisseur n'est dû que du reste (2 400)", soldeLigne?.[12] === "2400,00", soldeLigne?.[12]);
 
   const cab = await openSession("achats-cabinet");
   await admin.from("team_members").delete().eq("owner_id", demo.userId).eq("member_id", cab.userId);
