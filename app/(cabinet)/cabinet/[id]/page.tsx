@@ -16,6 +16,7 @@ import {
   type FactureCabinet,
 } from "@/lib/cabinet-dossiers";
 import { estAvoir } from "@/lib/exports-comptables";
+import { formatDuLogiciel, logicielParId } from "@/lib/logiciels-comptables";
 import { libelleStatut } from "@/lib/superpdp-statuts";
 import { KpiCard } from "@/components/ui/KpiCard";
 import { OngletsDossier } from "@/components/cabinet/OngletsDossier";
@@ -125,7 +126,11 @@ export default async function FicheClient({
     };
   }).reverse();
 
-  const exportUrl = (format: "fec" | "csv") => `/api/cabinet/export?format=${format}&year=${annee}&clients=${id}`;
+  // Format des écritures : celui du logiciel choisi dans les paramètres du cabinet.
+  const { data: prefs } = await supabase.from("profiles").select("logiciel_comptable").eq("id", user.id).maybeSingle();
+  const formatEcritures = formatDuLogiciel(prefs?.logiciel_comptable);
+  const logiciel = logicielParId(prefs?.logiciel_comptable);
+  const exportUrl = (format: "fec" | "quadra" | "csv") => `/api/cabinet/export?format=${format}&year=${annee}&clients=${id}`;
   const badge = "text-xs px-2 py-0.5 rounded-full border";
   const tuiles: { label: string; valeur: string; point?: "alerte" | "info" | "bon" | "neutre"; trend?: string }[] = [
     { label: `CA HT ${annee}`, valeur: eur(caHt) },
@@ -186,8 +191,8 @@ export default async function FicheClient({
               {a}
             </Link>
           ))}
-          <a href={exportUrl("fec")} className="text-sm px-3 py-1.5 bg-indigo-600 text-ink rounded-lg hover:bg-indigo-700 font-medium transition-colors">
-            Exporter le FEC {annee}
+          <a href={exportUrl(formatEcritures)} className="text-sm px-3 py-1.5 bg-indigo-600 text-ink rounded-lg hover:bg-indigo-700 font-medium transition-colors">
+            {logiciel ? `Exporter pour ${logiciel.nom.split(" (")[0]}` : "Exporter le FEC"} {annee}
           </a>
           <a href={exportUrl("csv")} className="text-sm px-3 py-1.5 border border-ds-border text-gray-300 rounded-lg hover:bg-ink/5 font-medium transition-colors">
             CSV des factures

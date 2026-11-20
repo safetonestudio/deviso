@@ -94,8 +94,23 @@ function tvaSurEncaissements(inv: FactureExport): boolean {
   return services && !inv.payment_on_debit;
 }
 
-type Ligne = { compte: string; compteLib: string; auxNum: string; auxLib: string; debit: number; credit: number; lettrage?: string; dateLet?: string };
-type Ecriture = { journal: string; journalLib: string; date: string; ref: string; lib: string; lignes: Ligne[]; ordre: number };
+export type LigneEcriture = {
+  compte: string; compteLib: string; auxNum: string; auxLib: string; debit: number; credit: number;
+  lettrage?: string; dateLet?: string;
+  /** Rang du reglement lettre (0, 1, 2...) : chaque format en tire son propre code. */
+  rangLettrage?: number;
+  /** SIREN du client, sur les lignes client (formats qui codent l'auxiliaire autrement). */
+  siren?: string | null;
+};
+type Ligne = LigneEcriture;
+/** Ecriture triee et numerotee, commune au FEC et aux formats des logiciels. Dates AAAAMMJJ. */
+export type EcritureComptable = {
+  journal: string; journalLib: string; num: string; date: string; ref: string; lib: string;
+  /** Vente (porte la piece : le PDF de la facture) ou reglement. */
+  nature: "vente" | "reglement";
+  lignes: LigneEcriture[];
+};
+type Ecriture = Omit<EcritureComptable, "num"> & { ordre: number };
 
 /**
  * Contenu du FEC (separateur tabulation, fin de ligne CRLF), conforme a
@@ -109,14 +124,7 @@ type Ecriture = { journal: string; journalLib: string; date: string; ref: string
  * vente a part entiere ; passer l'acompte en 4191 laisserait ce compte non
  * solde, la facture de solde ne reprenant pas l'acompte.
  */
-export function genererFec(invoices: FactureExport[], plan: PlanComptesFec = PLAN_PAR_DEFAUT): string {
-  const COLS = [
-    "JournalCode", "JournalLib", "EcritureNum", "EcritureDate",
-    "CompteNum", "CompteLib", "CompAuxNum", "CompAuxLib",
-    "PieceRef", "PieceDate", "EcritureLib",
-    "Debit", "Credit", "EcritureLet", "DateLet", "ValidDate",
-    "Montantdevise", "Idevise",
-  ];
+export function ecrituresComptables(invoices: FactureExport[], plan: PlanComptesFec = PLAN_PAR_DEFAUT): EcritureComptable[] {
 
   const ecritures: Ecriture[] = [];
   let nLettrage = 0;
@@ -125,7 +133,7 @@ export function genererFec(invoices: FactureExport[], plan: PlanComptesFec = PLA
     const date = fecDate(inv.issue_date);
     const ref = inv.invoice_number ?? "";
     const clientLib = (inv.client_company || inv.client_name || "CLIENT")
-      .toUpperCase().replace(/[^A-Z0-9 ]/g, "").slice(0, 17);
+      .normalize("NFD").replace(/[̀-ͯ]/g, "").toUpperCase().replace(/[^A-Z0-9 ]/g, "").slice(0, 17);
 
     /**
      * Un avoir s'enregistre en SENS INVERSE d'une facture.
@@ -145,6 +153,7 @@ export function genererFec(invoices: FactureExport[], plan: PlanComptesFec = PLA
     const attente = tvaSurEncaissements(inv);
     const payee = inv.status === "paid";
     const payDate = payee ? fecDate(inv.paid_at || inv.updated_at || inv.issue_date) : "";
+    const rang = nLettrage;
     const lettre = payee ? codeLettrage(nLettrage++) : undefined;
 
     // 706 « prestations de services » ou 707 « ventes de marchandises ».
@@ -163,7 +172,7 @@ export function genererFec(invoices: FactureExport[], plan: PlanComptesFec = PLA
 
     const lignesVente: Ligne[] = [
       // Client : debite sur une facture (il doit), credite sur un avoir.
-      { compte: plan.clients, compteLib: "Clients", auxNum: cCode, auxLib: clientLib, ...sens(ttc, true), lettrage: lettre, dateLet: lettre ? payDate : undefined },
+      { compte: plan.clients, compteLib: "Clients", auxNum: cCode, auxLib: clientLib, ...sens(ttc, true), lettrage: lettre, dateLet: lettre ? payDate : undefined, rangLettrage: lettre ? rang : undefined, siren: inv.client_siren },
       // Produit : credite sur une facture, debite sur un avoir.
       { compte: compteVente, compteLib: libelleVente, auxNum: "", auxLib: "", ...sens(ht, false) },
       ...tvas.map((t) => ({
@@ -172,14 +181,14 @@ export function genererFec(invoices: FactureExport[], plan: PlanComptesFec = PLA
         auxNum: "", auxLib: "", ...sens(t.montant, false),
       })),
     ];
-    ecritures.push({ journal: plan.journalVentes, journalLib: "Ventes", date, ref, lib, lignes: lignesVente, ordre: i * 2 });
+    ecritures.push({ journal: plan.journalVentes, journalLib: "Ventes", date, ref, lib, nature: "vente", lignes: lignesVente, ordre: i * 2 });
 
     if (payee) {
       const payLib = `${avoir ? "Remboursement" : "Reglement"} ${ref}`;
       const lignesBanque: Ligne[] = [
         // Un avoir rembourse sort de la banque, il n'y entre pas.
         { compte: plan.banque, compteLib: "Banque", auxNum: "", auxLib: "", ...sens(ttc, true) },
-        { compte: plan.clients, compteLib: "Clients", auxNum: cCode, auxLib: clientLib, ...sens(ttc, false), lettrage: lettre, dateLet: payDate },
+        { compte: plan.clients, compteLib: "Clients", auxNum: cCode, auxLib: clientLib, ...sens(ttc, false), lettrage: lettre, dateLet: payDate, rangLettrage: rang, siren: inv.client_siren },
       ];
       // Le paiement rend la TVA exigible : du compte d'attente au 44571.
       if (attente) {
@@ -188,7 +197,7 @@ export function genererFec(invoices: FactureExport[], plan: PlanComptesFec = PLA
           lignesBanque.push({ compte: plan.tvaCollectee, compteLib: `TVA collectee ${t.taux}%`, auxNum: "", auxLib: "", ...sens(t.montant, false) });
         }
       }
-      ecritures.push({ journal: plan.journalBanque, journalLib: "Banque", date: payDate, ref, lib: payLib, lignes: lignesBanque, ordre: i * 2 + 1 });
+      ecritures.push({ journal: plan.journalBanque, journalLib: "Banque", date: payDate, ref, lib: payLib, nature: "reglement", lignes: lignesBanque, ordre: i * 2 + 1 });
     }
   });
 
@@ -196,13 +205,29 @@ export function genererFec(invoices: FactureExport[], plan: PlanComptesFec = PLA
   // validation ; la numerotation suit cet ordre, continue dans chaque journal.
   ecritures.sort((a, b) => (a.date === b.date ? a.ordre - b.ordre : a.date < b.date ? -1 : 1));
   const compteurs: Record<string, number> = {};
-  const rows: string[][] = [COLS];
-  for (const e of ecritures) {
+  return ecritures.map(({ ordre: _ordre, ...e }) => {
     compteurs[e.journal] = (compteurs[e.journal] ?? 0) + 1;
-    const num = `${e.journal}${String(compteurs[e.journal]).padStart(6, "0")}`;
+    return { ...e, num: `${e.journal}${String(compteurs[e.journal]).padStart(6, "0")}` };
+  });
+}
+
+/**
+ * Contenu du FEC (separateur tabulation, fin de ligne CRLF), conforme a
+ * l'article A47 A-1 du LPF : voir ecrituresComptables pour le detail.
+ */
+export function genererFec(invoices: FactureExport[], plan: PlanComptesFec = PLAN_PAR_DEFAUT): string {
+  const COLS = [
+    "JournalCode", "JournalLib", "EcritureNum", "EcritureDate",
+    "CompteNum", "CompteLib", "CompAuxNum", "CompAuxLib",
+    "PieceRef", "PieceDate", "EcritureLib",
+    "Debit", "Credit", "EcritureLet", "DateLet", "ValidDate",
+    "Montantdevise", "Idevise",
+  ];
+  const rows: string[][] = [COLS];
+  for (const e of ecrituresComptables(invoices, plan)) {
     for (const l of e.lignes) {
       rows.push([
-        e.journal, e.journalLib, num, e.date,
+        e.journal, e.journalLib, e.num, e.date,
         l.compte, l.compteLib, l.auxNum, l.auxLib,
         e.ref, e.date, e.lib,
         amt(l.debit), amt(l.credit), l.lettrage ?? "", l.dateLet ?? "", e.date,
@@ -210,7 +235,6 @@ export function genererFec(invoices: FactureExport[], plan: PlanComptesFec = PLA
       ]);
     }
   }
-
   return rows.map((r) => r.join("\t")).join("\r\n");
 }
 

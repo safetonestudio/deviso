@@ -1,6 +1,8 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import Link from "next/link";
+import { FORMATS, LIBELLE_FIABILITE, formatDuLogiciel, logicielParId } from "@/lib/logiciels-comptables";
 
 type Niveau = "rouge" | "orange" | "vert";
 type DossierExport = { id: string; nom: string; niveau: Niveau };
@@ -15,13 +17,28 @@ const POINT: Record<Niveau, string> = { rouge: "bg-red-500", orange: "bg-amber-5
  * grandes zones cliquables, et un résumé de ce qui sera téléchargé avant de
  * cliquer. Pas d'animation : règle de l'app.
  */
-export function ExportPortefeuille({ dossiers, annee }: { dossiers: DossierExport[]; annee: number }) {
+export function ExportPortefeuille({
+  dossiers,
+  annee,
+  logiciel,
+  pdfDefaut,
+}: {
+  dossiers: DossierExport[];
+  annee: number;
+  /** Logiciel de production choisi dans les paramètres du cabinet (null : FEC standard). */
+  logiciel: string | null;
+  pdfDefaut: boolean;
+}) {
+  const choisi = logicielParId(logiciel);
+  const formatEcritures = formatDuLogiciel(logiciel);
+  const nomFormat = formatEcritures === "quadra" ? "Quadra" : "FEC";
   const [ouvert, setOuvert] = useState(false);
-  const [format, setFormat] = useState<"fec" | "csv">("fec");
+  const [type, setType] = useState<"ecritures" | "csv">("ecritures");
+  const format = type === "csv" ? "csv" : formatEcritures;
   const [an, setAn] = useState(annee);
   const [portee, setPortee] = useState<"tout" | "choix">("tout");
   const [choix, setChoix] = useState<Set<string>>(new Set());
-  const [avecPdf, setAvecPdf] = useState(false);
+  const [avecPdf, setAvecPdf] = useState(pdfDefaut);
   const boite = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -35,14 +52,14 @@ export function ExportPortefeuille({ dossiers, annee }: { dossiers: DossierExpor
   const ids = portee === "tout" ? [] : [...choix];
   const nb = portee === "tout" ? dossiers.length : choix.size;
   const pret = nb > 0;
-  const pdf = format === "fec" && avecPdf;
+  const pdf = type === "ecritures" && avecPdf;
   const lien =
     `/api/cabinet/export?format=${format}&year=${an}` + (ids.length ? `&clients=${ids.join(",")}` : "") + (pdf ? "&pdf=1" : "");
   const fichier = pdf
-    ? "une archive zip, le FEC et les PDF des factures de chaque dossier"
+    ? `une archive zip, le fichier ${nomFormat} et les PDF des factures de chaque dossier`
     : nb === 1
-      ? `un fichier ${format === "fec" ? "FEC" : "CSV"}`
-      : `une archive zip, un fichier ${format === "fec" ? "FEC" : "CSV"} par dossier`;
+      ? `un fichier ${type === "csv" ? "CSV" : nomFormat}`
+      : `une archive zip, un fichier ${type === "csv" ? "CSV" : nomFormat} par dossier`;
 
   function basculer(id: string) {
     setChoix((prev) => {
@@ -103,18 +120,35 @@ export function ExportPortefeuille({ dossiers, annee }: { dossiers: DossierExpor
               <fieldset>
                 <legend className="text-sm font-medium text-gray-300 mb-2">Format</legend>
                 <div className="grid grid-cols-2 gap-2">
-                  <button type="button" aria-pressed={format === "fec"} onClick={() => setFormat("fec")} className={option(format === "fec")}>
-                    <div className="font-semibold text-ink">FEC</div>
-                    <div className="text-[13px] text-gray-400 mt-0.5">Écritures comptables, à importer dans votre logiciel</div>
+                  <button type="button" aria-pressed={type === "ecritures"} onClick={() => setType("ecritures")} className={option(type === "ecritures")}>
+                    <div className="font-semibold text-ink">{choisi ? `Pour ${choisi.nom}` : "FEC"}</div>
+                    <div className="text-[13px] text-gray-400 mt-0.5">
+                      {choisi ? FORMATS[formatEcritures].libelle : "Écritures comptables, à importer dans votre logiciel"}
+                    </div>
                   </button>
-                  <button type="button" aria-pressed={format === "csv"} onClick={() => setFormat("csv")} className={option(format === "csv")}>
+                  <button type="button" aria-pressed={type === "csv"} onClick={() => setType("csv")} className={option(type === "csv")}>
                     <div className="font-semibold text-ink">CSV</div>
                     <div className="text-[13px] text-gray-400 mt-0.5">Liste des factures, à ouvrir dans un tableur</div>
                   </button>
                 </div>
               </fieldset>
 
-              {format === "fec" && (
+              {type === "ecritures" && (
+                <p className="text-[13px] text-gray-400 -mt-2">
+                  {choisi ? (
+                    <>
+                      {choisi.consigne} <span className="text-gray-500">({LIBELLE_FIABILITE[choisi.fiabilite]}.)</span>{" "}
+                    </>
+                  ) : (
+                    <>Indiquez votre logiciel pour recevoir directement le fichier qu&apos;il importe. </>
+                  )}
+                  <Link href="/cabinet/parametres?vue=logiciel" className="text-indigo-400 hover:text-indigo-300">
+                    {choisi ? "Changer de logiciel" : "Choisir mon logiciel"}
+                  </Link>
+                </p>
+              )}
+
+              {type === "ecritures" && (
                 <label className="flex items-start gap-3 rounded-xl border border-ds-border p-3.5 cursor-pointer hover:border-gray-600 transition-colors">
                   <input
                     type="checkbox"
@@ -125,7 +159,9 @@ export function ExportPortefeuille({ dossiers, annee }: { dossiers: DossierExpor
                   <span>
                     <span className="block text-sm font-medium text-ink">Joindre les PDF des factures</span>
                     <span className="block text-[13px] text-gray-400 mt-0.5">
-                      Chaque PDF porte le numéro de sa pièce dans le FEC : votre logiciel les rattache aux écritures.
+                      {formatEcritures === "quadra"
+                        ? "Chaque PDF est cité dans son écriture : Quadra le rattache s'il reste à côté du fichier."
+                        : "Chaque PDF porte le numéro de sa pièce dans le FEC : votre logiciel les rattache aux écritures."}
                     </span>
                   </span>
                 </label>
@@ -199,7 +235,7 @@ export function ExportPortefeuille({ dossiers, annee }: { dossiers: DossierExpor
               <p className="text-sm text-gray-400">
                 {pret ? (
                   <>
-                    <span className="text-ink font-medium">{nb} dossier{nb > 1 ? "s" : ""}</span> · {format.toUpperCase()} {an} · {fichier}
+                    <span className="text-ink font-medium">{nb} dossier{nb > 1 ? "s" : ""}</span> · {type === "csv" ? "CSV" : nomFormat} {an} · {fichier}
                   </>
                 ) : (
                   "Choisissez au moins un dossier."

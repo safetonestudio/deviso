@@ -76,6 +76,8 @@ import { verifier, bilan } from "./lib.mjs";
   verifier("avoir : le client est crédité, le produit débité", client411("AV-1").some((l) => l[C.journal] === "VT" && n(l[C.credit]) === 120) && sur("AV-1", "706000").some((l) => n(l[C.debit]) === 100));
   verifier("même SIREN, même compte client, même si le nom change", new Set(lignes.filter((l) => l[C.compte] === "411000").map((l) => l[C.aux])).size === 1);
   verifier("le compte client vient du SIREN", client411("F-1")[0][C.aux] === "C552100554");
+  const accent = genererFec([{ ...factures[1], client_company: "Atelier 2030 Sète" }] as never).split("\r\n")[1].split("\t")[7];
+  verifier("nom du client : accents retirés, lettres et chiffres gardés", accent === "ATELIER 2030 SETE", accent);
 
   console.log("── Nom de fichier ─────────────────────────────────────────────");
   verifier("nom réglementaire SIREN + FEC + clôture", nomFichierFec("552 100 554 00010", "2026", "x") === "552100554FEC20261231.txt");

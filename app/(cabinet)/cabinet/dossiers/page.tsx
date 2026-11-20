@@ -20,6 +20,8 @@ export default async function CabinetDossiers() {
   const ownerIds = await dossiersDuCabinet(admin, user.id);
   const maintenant = new Date();
   const dossiers = await syntheseDossiers(admin, ownerIds, maintenant);
+  // Réglages d'export du cabinet (Paramètres > Logiciel et export) : son propre profil.
+  const { data: prefs } = await supabase.from("profiles").select("logiciel_comptable, export_pdf_defaut").eq("id", user.id).maybeSingle();
 
   return (
     <div className="w-full">
@@ -44,7 +46,12 @@ export default async function CabinetDossiers() {
           </p>
         </div>
       ) : (
-        <CabinetPortefeuille dossiers={dossiers} annee={maintenant.getFullYear()} />
+        <CabinetPortefeuille
+          dossiers={dossiers}
+          annee={maintenant.getFullYear()}
+          logiciel={prefs?.logiciel_comptable ?? null}
+          pdfDefaut={prefs?.export_pdf_defaut === true}
+        />
       )}
     </div>
   );

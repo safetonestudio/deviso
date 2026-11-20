@@ -4,6 +4,7 @@ import { createAdminClient } from "@/lib/supabase/admin";
 import { dossiersDuCabinet } from "@/lib/cabinet-acces";
 import { journaliser } from "@/lib/cabinet-journal";
 import { genererFec, genererCsvFactures, nomFichierFec, segmentFichier, STATUTS_FEC } from "@/lib/exports-comptables";
+import { genererQuadra, nomPieceQuadra } from "@/lib/export-quadra";
 import { creerZip, type FichierZip } from "@/lib/zip";
 import { validerPlan, PLAN_PAR_DEFAUT } from "@/lib/plan-comptes-fec";
 import { generateFacturXPdf } from "@/lib/facturx";
@@ -19,7 +20,7 @@ const MAX_PDF = 150;
 /**
  * Export comptable depuis le cockpit cabinet.
  *
- * GET /api/cabinet/export?format=fec|csv&year=2026&clients=<id>,<id>
+ * GET /api/cabinet/export?format=fec|quadra|csv&year=2026&clients=<id>,<id>
  * Sans `clients` : tout le portefeuille. Un seul dossier : le fichier
  * directement. Plusieurs : une archive ZIP, un fichier par dossier.
  *
@@ -33,10 +34,14 @@ export async function GET(req: NextRequest) {
   if (!user) return NextResponse.json({ error: "Non autorisé" }, { status: 401 });
 
   const params = req.nextUrl.searchParams;
-  const format = params.get("format") === "csv" ? "csv" : "fec";
+  // quadra : format d'import de Cegid Quadra (lib/export-quadra.ts), choisi par
+  // le cabinet dans ses paramètres (lib/logiciels-comptables.ts).
+  const demande = params.get("format");
+  const format = demande === "csv" ? "csv" : demande === "quadra" ? "quadra" : "fec";
+  const ecritures = format !== "csv";
   // PDF des factures nommes comme leur piece (PieceRef) : le logiciel du
   // cabinet rattache chaque PDF a son ecriture sans intervention (20/11/2026).
-  const avecPdf = format === "fec" && params.get("pdf") === "1";
+  const avecPdf = ecritures && params.get("pdf") === "1";
   const year = params.get("year") ?? String(new Date().getFullYear());
   if (!/^\d{4}$/.test(year)) return NextResponse.json({ error: "Année invalide" }, { status: 400 });
 
@@ -74,7 +79,7 @@ export async function GET(req: NextRequest) {
       .gte("issue_date", `${year}-01-01`)
       .lte("issue_date", `${year}-12-31`)
       .order("issue_date", { ascending: true });
-    if (format === "fec") q = q.in("status", [...STATUTS_FEC]);
+    if (ecritures) q = q.in("status", [...STATUTS_FEC]);
     const { data: invoices, error } = await q;
     if (error) return NextResponse.json({ error: error.message }, { status: 500 });
 
@@ -87,7 +92,9 @@ export async function GET(req: NextRequest) {
       fichiers.push(
         format === "fec"
           ? { nom: nomFichierFec(p?.siret, year, base), contenu: genererFec(invoices ?? [], plan) }
-          : { nom: `Factures_${year}_${base}.csv`, contenu: genererCsvFactures(invoices ?? []) },
+          : format === "quadra"
+            ? { nom: `Quadra_${year}_${base}.txt`, contenu: genererQuadra(invoices ?? [], { plan }) }
+            : { nom: `Factures_${year}_${base}.csv`, contenu: genererCsvFactures(invoices ?? []) },
       );
       continue;
     }
@@ -100,7 +107,16 @@ export async function GET(req: NextRequest) {
         { status: 413 },
       );
     }
-    fichiers.push({ nom: `${base}/${nomFichierFec(p?.siret, year, base)}`, contenu: genererFec(invoices ?? [], plan) });
+    // Quadra lit les PDF à côté du fichier, sous un nom 8.3 écrit dans
+    // l'écriture (position 182) ; le FEC les range dans pieces/, nommés comme
+    // leur pièce (PieceRef).
+    const numerotees = (invoices ?? []).filter((inv) => inv.invoice_number);
+    const nomsQuadra = new Map(numerotees.map((inv, k) => [inv.invoice_number as string, nomPieceQuadra(k)]));
+    fichiers.push(
+      format === "quadra"
+        ? { nom: `${base}/Quadra_${year}_${base}.txt`, contenu: genererQuadra(invoices ?? [], { plan, pieces: nomsQuadra }) }
+        : { nom: `${base}/${nomFichierFec(p?.siret, year, base)}`, contenu: genererFec(invoices ?? [], plan) },
+    );
     const paymentInfo = p
       ? {
           method: (p.payment_method || "none") as "none" | "link" | "bank" | "both",
@@ -115,14 +131,15 @@ export async function GET(req: NextRequest) {
       if (!inv.invoice_number) continue;
       const lie = await documentLie(admin, inv, ownerId);
       const pdf = await generateFacturXPdf(inv as Invoice, p?.proposal_color ?? undefined, paymentInfo, lie.numero, lie.date);
-      fichiers.push({ nom: `${base}/pieces/${segmentPiece(inv.invoice_number)}.pdf`, contenu: new Uint8Array(pdf) });
+      const nomPdf = format === "quadra" ? `${base}/${nomsQuadra.get(inv.invoice_number)}` : `${base}/pieces/${segmentPiece(inv.invoice_number)}.pdf`;
+      fichiers.push({ nom: nomPdf, contenu: new Uint8Array(pdf) });
     }
   }
 
   await journaliser(
     admin,
     user.id,
-    format === "fec" ? "export_fec" : "export_csv",
+    format === "csv" ? "export_csv" : "export_fec",
     selection.length === 1 ? selection[0] : null,
     `${year} · ${selection.length} dossier${selection.length > 1 ? "s" : ""}`,
   );
@@ -131,14 +148,14 @@ export async function GET(req: NextRequest) {
     const f = fichiers[0];
     return new NextResponse(f.contenu as string, {
       headers: {
-        "Content-Type": format === "fec" ? "text/plain; charset=utf-8" : "text/csv; charset=utf-8",
+        "Content-Type": format === "csv" ? "text/csv; charset=utf-8" : "text/plain; charset=utf-8",
         "Content-Disposition": `attachment; filename="${f.nom}"`,
       },
     });
   }
 
   const zip = creerZip(fichiers);
-  const nomZip = `${format === "fec" ? "FEC" : "Factures"}${avecPdf ? "_et_pieces" : ""}_${year}_${selection.length === 1 ? segmentFichier((profils ?? [])[0]?.company_name || (profils ?? [])[0]?.full_name || "dossier") : "portefeuille"}_${new Date().toISOString().split("T")[0]}.zip`;
+  const nomZip = `${format === "fec" ? "FEC" : format === "quadra" ? "Quadra" : "Factures"}${avecPdf ? "_et_pieces" : ""}_${year}_${selection.length === 1 ? segmentFichier((profils ?? [])[0]?.company_name || (profils ?? [])[0]?.full_name || "dossier") : "portefeuille"}_${new Date().toISOString().split("T")[0]}.zip`;
   return new NextResponse(zip.buffer as ArrayBuffer, {
     headers: {
       "Content-Type": "application/zip",

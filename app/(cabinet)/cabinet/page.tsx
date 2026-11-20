@@ -6,7 +6,6 @@ import { createAdminClient } from "@/lib/supabase/admin";
 import { dossiersDuCabinet } from "@/lib/cabinet-acces";
 import { syntheseDossiers, lireFacturesDossiers } from "@/lib/cabinet-dossiers";
 import { calendrierTva } from "@/lib/cabinet-tva-calendrier";
-import { ResumeHebdoToggle } from "@/components/cabinet/ResumeHebdoToggle";
 
 export const metadata: Metadata = { title: "Accueil cabinet" };
 export const dynamic = "force-dynamic";
@@ -30,7 +29,6 @@ export default async function CabinetAccueil() {
   const dossiers = await syntheseDossiers(admin, ownerIds, maintenant);
   const factures = await lireFacturesDossiers(admin, ownerIds, `${maintenant.getFullYear() - 1}-01-01`);
   const calendrier = calendrierTva(dossiers, factures, maintenant);
-  const { data: prefs } = await admin.from("profiles").select("resume_cabinet_hebdo").eq("id", user.id).maybeSingle();
   const conformite = dossiers.map((d) => ({ id: d.id, nom: d.nom, conformite: d.conformite }));
 
   const rouges = dossiers.filter((d) => d.niveau === "rouge").length;
@@ -176,9 +174,6 @@ export default async function CabinetAccueil() {
         </>
       )}
 
-      <section className="carte p-5 mt-6">
-        <ResumeHebdoToggle initial={prefs?.resume_cabinet_hebdo !== false} />
-      </section>
     </div>
   );
 }

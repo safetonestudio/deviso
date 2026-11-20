@@ -40,7 +40,17 @@ const GRILLE = "lg:grid lg:grid-cols-[minmax(0,1fr)_150px_110px_130px_140px_20px
  * toutes lettres, des filtres par état. L'export (format, exercice, dossiers)
  * vit dans sa propre fenêtre, ExportPortefeuille : plus de cases à cocher.
  */
-export function CabinetPortefeuille({ dossiers, annee }: { dossiers: DossierVue[]; annee: number }) {
+export function CabinetPortefeuille({
+  dossiers,
+  annee,
+  logiciel,
+  pdfDefaut,
+}: {
+  dossiers: DossierVue[];
+  annee: number;
+  logiciel: string | null;
+  pdfDefaut: boolean;
+}) {
   const [filtre, setFiltre] = useState<Niveau | "tous">("tous");
 
   const compte = useMemo(
@@ -85,7 +95,12 @@ export function CabinetPortefeuille({ dossiers, annee }: { dossiers: DossierVue[
           })}
         </div>
 
-        <ExportPortefeuille dossiers={dossiers.map(({ id, nom, niveau }) => ({ id, nom, niveau }))} annee={annee} />
+        <ExportPortefeuille
+          dossiers={dossiers.map(({ id, nom, niveau }) => ({ id, nom, niveau }))}
+          annee={annee}
+          logiciel={logiciel}
+          pdfDefaut={pdfDefaut}
+        />
       </div>
 
       {/* En-tête de colonnes, une seule fois (écran large). */}

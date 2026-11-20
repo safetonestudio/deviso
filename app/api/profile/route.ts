@@ -6,6 +6,7 @@ import { getWorkspaceUserId } from "@/lib/workspace";
 import { pousserRegimeTva } from "@/lib/superpdp-entreprise";
 import { chiffrerMotDePasse } from "@/lib/chorus-pro";
 import { validerPlan } from "@/lib/plan-comptes-fec";
+import { logicielConnu } from "@/lib/logiciels-comptables";
 
 const supabaseAdmin = createAdminClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -59,6 +60,8 @@ export async function PATCH(req: NextRequest) {
     "resume_cabinet_hebdo",
     // Expert-comptable : comptes et journaux de ses FEC (lib/plan-comptes-fec.ts).
     "plan_comptes_fec",
+    // Expert-comptable : logiciel de production et PDF joints par défaut (lib/logiciels-comptables.ts).
+    "logiciel_comptable", "export_pdf_defaut",
   ];
   const updates = Object.fromEntries(Object.entries(body).filter(([k]) => allowed.includes(k)));
   // Mot de passe Chorus Pro : chiffré avant écriture. Vide ou absent = on garde
@@ -74,6 +77,12 @@ export async function PATCH(req: NextRequest) {
     const v = validerPlan(updates.plan_comptes_fec);
     if ("erreur" in v) return NextResponse.json({ error: v.erreur }, { status: 400 });
     updates.plan_comptes_fec = v.plan;
+  }
+  if ("logiciel_comptable" in updates && updates.logiciel_comptable !== null && !logicielConnu(updates.logiciel_comptable)) {
+    return NextResponse.json({ error: "Logiciel inconnu" }, { status: 400 });
+  }
+  if ("export_pdf_defaut" in updates && typeof updates.export_pdf_defaut !== "boolean") {
+    return NextResponse.json({ error: "Préférence invalide" }, { status: 400 });
   }
   if ("resume_cabinet_hebdo" in updates && typeof updates.resume_cabinet_hebdo !== "boolean") {
     return NextResponse.json({ error: "Préférence invalide" }, { status: 400 });
