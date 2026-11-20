@@ -113,6 +113,11 @@ export function validerSaisie(s: Partial<SaisieAchat>): string[] {
     manques.push("la nature de l'achat (biens ou services)");
   }
 
+  // Code ISO à trois lettres : « US$ » ou « EURO » rendaient la conversion en
+  // euros de la comptabilité impossible (lib/achats-export.ts).
+  const devise = (s.devise ?? "EUR").trim().toUpperCase() || "EUR";
+  if (!/^[A-Z]{3}$/.test(devise)) manques.push("une devise en code à trois lettres (EUR, USD, GBP…)");
+
   const ht = Number(s.montant_ht);
   if (!Number.isFinite(ht) || ht <= 0) manques.push("un montant HT valide");
 

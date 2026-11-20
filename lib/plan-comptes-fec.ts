@@ -18,6 +18,15 @@ export type PlanComptesFec = {
   tvaCollectee: string;
   tvaNonExigible: string;
   banque: string;
+  // Achats (20/11/2026) : factures reçues par la plateforme agréée et achats
+  // auprès de fournisseurs étrangers.
+  journalAchats: string;
+  fournisseurs: string;
+  achatsServices: string;
+  achatsBiens: string;
+  tvaDeductible: string;
+  tvaDeductibleAutoliq: string;
+  tvaAutoliquidee: string;
 };
 
 export const PLAN_PAR_DEFAUT: PlanComptesFec = {
@@ -29,6 +38,13 @@ export const PLAN_PAR_DEFAUT: PlanComptesFec = {
   tvaCollectee: "445710",
   tvaNonExigible: "445740",
   banque: "512000",
+  journalAchats: "HA",
+  fournisseurs: "401000",
+  achatsServices: "604000",
+  achatsBiens: "607000",
+  tvaDeductible: "445660",
+  tvaDeductibleAutoliq: "445662",
+  tvaAutoliquidee: "445200",
 };
 
 export const LIBELLES_PLAN: Record<keyof PlanComptesFec, string> = {
@@ -40,6 +56,13 @@ export const LIBELLES_PLAN: Record<keyof PlanComptesFec, string> = {
   tvaCollectee: "TVA collectée",
   tvaNonExigible: "TVA collectée non exigible (encaissements)",
   banque: "Banque",
+  journalAchats: "Journal des achats",
+  fournisseurs: "Compte fournisseurs (collectif)",
+  achatsServices: "Achats de prestations de services",
+  achatsBiens: "Achats de marchandises",
+  tvaDeductible: "TVA déductible",
+  tvaDeductibleAutoliq: "TVA déductible autoliquidée (achats à l'étranger)",
+  tvaAutoliquidee: "TVA due autoliquidée (achats à l'étranger)",
 };
 
 const estJournal = (v: unknown) => typeof v === "string" && /^[A-Z0-9]{1,6}$/.test(v);
@@ -67,11 +90,15 @@ export function validerPlan(saisie: unknown): { plan: PlanComptesFec } | { erreu
   const classes: [keyof PlanComptesFec, string][] = [
     ["clients", "411"], ["ventesServices", "70"], ["ventesBiens", "70"],
     ["tvaCollectee", "4457"], ["tvaNonExigible", "4457"], ["banque", "51"],
+    ["fournisseurs", "401"], ["achatsServices", "60"], ["achatsBiens", "60"],
+    ["tvaDeductible", "4456"], ["tvaDeductibleAutoliq", "4456"], ["tvaAutoliquidee", "4452"],
   ];
   for (const [cle, prefixe] of classes) {
     if (!plan[cle].startsWith(prefixe)) return { erreur: `${LIBELLES_PLAN[cle]} : doit commencer par ${prefixe}` };
   }
-  if (plan.journalVentes === plan.journalBanque) return { erreur: "Les journaux de ventes et de banque doivent être différents" };
+  if (new Set([plan.journalVentes, plan.journalBanque, plan.journalAchats]).size < 3) {
+    return { erreur: "Les journaux de ventes, d'achats et de banque doivent être différents" };
+  }
   if (plan.tvaCollectee === plan.tvaNonExigible) return { erreur: "La TVA non exigible doit avoir son propre compte" };
   return { plan };
 }

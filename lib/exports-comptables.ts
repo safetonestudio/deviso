@@ -36,6 +36,48 @@ export interface FactureExport {
   payment_on_debit?: boolean | null;
 }
 
+/**
+ * Un achat, normalise pour l'ecriture (20/11/2026). Deux sources, lues par
+ * lib/achats-export.ts : les factures recues par la plateforme agreee
+ * (fournisseurs francais) et les achats aupres de fournisseurs etrangers
+ * (e-reporting). Montants en EUROS ; la devise d'origine est conservee pour
+ * les colonnes Montantdevise / Idevise du FEC.
+ */
+export interface AchatExport {
+  /** Numero de la facture du fournisseur. */
+  ref: string;
+  /** Date de la facture, AAAA-MM-JJ. */
+  date: string;
+  fournisseur: string;
+  /** SIREN du fournisseur francais. */
+  siren?: string | null;
+  /** N° de TVA intracommunautaire du fournisseur etranger. */
+  tvaIntra?: string | null;
+  categorie?: "biens" | "services" | null;
+  /** Montant hors taxe en euros. */
+  ht: number;
+  /** TVA par taux, en euros (deductible, ou autoliquidee si `autoliquidation`). */
+  tvas: { taux: number; montant: number }[];
+  /** Avoir recu : ecriture en sens inverse. */
+  avoir?: boolean;
+  /**
+   * Achat a l'etranger : le fournisseur ne facture pas la TVA francaise,
+   * l'acheteur la doit ET la deduit (4452 au credit, 44566x au debit), et le
+   * fournisseur n'est du que du hors taxe.
+   */
+  autoliquidation?: boolean;
+  /**
+   * TVA ETRANGERE facturee par un fournisseur etranger : non deductible en
+   * France, elle s'ajoute a la charge et au du fournisseur.
+   */
+  tvaEtrangere?: boolean;
+  /** Dossier en franchise en base : aucune TVA deductible, elle va en charge. */
+  nonDeductible?: boolean;
+  /** Devise d'origine si autre que l'euro, et montant du fournisseur dans cette devise. */
+  devise?: string | null;
+  montantDevise?: number | null;
+}
+
 /** Statuts qui entrent dans le FEC : une facture emise, payee ou non. */
 export const STATUTS_FEC = ["sent", "paid"] as const;
 
@@ -75,6 +117,27 @@ function clientCode(siren: string | null | undefined, nomNormalise: string): str
   return `C${String(h % 100000).padStart(5, "0")}`;
 }
 
+/**
+ * Code du compte auxiliaire fournisseur : « F » + SIREN pour un fournisseur
+ * francais, « F » + n° de TVA pour un fournisseur etranger, a defaut une
+ * empreinte du nom. Stable d'un export a l'autre.
+ */
+function fournisseurCode(siren: string | null | undefined, tvaIntra: string | null | undefined, nomNormalise: string): string {
+  const chiffres = (siren ?? "").replace(/\D/g, "");
+  if (chiffres.length === 9 || chiffres.length === 14) return `F${chiffres.slice(0, 9)}`;
+  const tva = (tvaIntra ?? "").toUpperCase().replace(/[^A-Z0-9]/g, "");
+  if (tva.length >= 4) return `F${tva}`.slice(0, 17);
+  let h = 0;
+  for (let i = 0; i < nomNormalise.length; i++) h = (h * 31 + nomNormalise.charCodeAt(i)) >>> 0;
+  return `F${h.toString(36).toUpperCase()}`;
+}
+
+/** Texte venu d'un tiers (numero, nom) : sans tabulation ni retour a la ligne, qui casseraient les colonnes. */
+const texteSur = (s: string) => s.replace(/[\t\r\n]+/g, " ").trim();
+
+const libelleTiers = (nom: string) =>
+  nom.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toUpperCase().replace(/[^A-Z0-9 ]/g, "").slice(0, 17);
+
 /** Code de lettrage : AAA, AAB, ... (trois lettres, 17 576 codes par fichier). */
 function codeLettrage(n: number): string {
   const a = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
@@ -99,15 +162,20 @@ export type LigneEcriture = {
   lettrage?: string; dateLet?: string;
   /** Rang du reglement lettre (0, 1, 2...) : chaque format en tire son propre code. */
   rangLettrage?: number;
-  /** SIREN du client, sur les lignes client (formats qui codent l'auxiliaire autrement). */
+  /** SIREN du tiers, sur les lignes client ou fournisseur (formats qui codent l'auxiliaire autrement). */
   siren?: string | null;
+  /** Nature du tiers d'une ligne auxiliaire (Quadra : C ou F, collectif 411 ou 401). */
+  tiers?: "client" | "fournisseur";
+  /** Montant dans la devise d'origine, et cette devise (FEC : Montantdevise, Idevise). */
+  montantDevise?: number;
+  devise?: string;
 };
 type Ligne = LigneEcriture;
 /** Ecriture triee et numerotee, commune au FEC et aux formats des logiciels. Dates AAAAMMJJ. */
 export type EcritureComptable = {
   journal: string; journalLib: string; num: string; date: string; ref: string; lib: string;
-  /** Vente (porte la piece : le PDF de la facture) ou reglement. */
-  nature: "vente" | "reglement";
+  /** Vente (porte la piece : le PDF de la facture), reglement ou achat. */
+  nature: "vente" | "reglement" | "achat";
   lignes: LigneEcriture[];
 };
 type Ecriture = Omit<EcritureComptable, "num"> & { ordre: number };
@@ -124,7 +192,11 @@ type Ecriture = Omit<EcritureComptable, "num"> & { ordre: number };
  * vente a part entiere ; passer l'acompte en 4191 laisserait ce compte non
  * solde, la facture de solde ne reprenant pas l'acompte.
  */
-export function ecrituresComptables(invoices: FactureExport[], plan: PlanComptesFec = PLAN_PAR_DEFAUT): EcritureComptable[] {
+export function ecrituresComptables(
+  invoices: FactureExport[],
+  plan: PlanComptesFec = PLAN_PAR_DEFAUT,
+  achats: AchatExport[] = [],
+): EcritureComptable[] {
 
   const ecritures: Ecriture[] = [];
   let nLettrage = 0;
@@ -172,7 +244,7 @@ export function ecrituresComptables(invoices: FactureExport[], plan: PlanComptes
 
     const lignesVente: Ligne[] = [
       // Client : debite sur une facture (il doit), credite sur un avoir.
-      { compte: plan.clients, compteLib: "Clients", auxNum: cCode, auxLib: clientLib, ...sens(ttc, true), lettrage: lettre, dateLet: lettre ? payDate : undefined, rangLettrage: lettre ? rang : undefined, siren: inv.client_siren },
+      { compte: plan.clients, compteLib: "Clients", auxNum: cCode, auxLib: clientLib, ...sens(ttc, true), lettrage: lettre, dateLet: lettre ? payDate : undefined, rangLettrage: lettre ? rang : undefined, siren: inv.client_siren, tiers: "client" },
       // Produit : credite sur une facture, debite sur un avoir.
       { compte: compteVente, compteLib: libelleVente, auxNum: "", auxLib: "", ...sens(ht, false) },
       ...tvas.map((t) => ({
@@ -188,7 +260,7 @@ export function ecrituresComptables(invoices: FactureExport[], plan: PlanComptes
       const lignesBanque: Ligne[] = [
         // Un avoir rembourse sort de la banque, il n'y entre pas.
         { compte: plan.banque, compteLib: "Banque", auxNum: "", auxLib: "", ...sens(ttc, true) },
-        { compte: plan.clients, compteLib: "Clients", auxNum: cCode, auxLib: clientLib, ...sens(ttc, false), lettrage: lettre, dateLet: payDate, rangLettrage: rang, siren: inv.client_siren },
+        { compte: plan.clients, compteLib: "Clients", auxNum: cCode, auxLib: clientLib, ...sens(ttc, false), lettrage: lettre, dateLet: payDate, rangLettrage: rang, siren: inv.client_siren, tiers: "client" },
       ];
       // Le paiement rend la TVA exigible : du compte d'attente au 44571.
       if (attente) {
@@ -199,6 +271,60 @@ export function ecrituresComptables(invoices: FactureExport[], plan: PlanComptes
       }
       ecritures.push({ journal: plan.journalBanque, journalLib: "Banque", date: payDate, ref, lib: payLib, nature: "reglement", lignes: lignesBanque, ordre: i * 2 + 1 });
     }
+  });
+
+  // ── Achats : journal des achats ─────────────────────────────────────────
+  //
+  // Facture d'un fournisseur francais : charge et TVA deductible au debit,
+  // fournisseur au credit pour le TTC. Achat a l'etranger (autoliquidation) :
+  // le fournisseur n'est du que du hors taxe ; la TVA francaise est due par
+  // l'acheteur (4452 au credit) et deductible dans le meme temps (44566x au
+  // debit). Un avoir recu inverse le tout. Le fournisseur est credite de la
+  // SOMME des autres lignes : l'ecriture est toujours equilibree.
+  achats.forEach((a, j) => {
+    const fLib = libelleTiers(a.fournisseur || "FOURNISSEUR");
+    const fCode = fournisseurCode(a.siren, a.tvaIntra, fLib);
+    const ref = texteSur(a.ref);
+    const avoir = !!a.avoir;
+    const sens = (montant: number, debitSurFacture: boolean) =>
+      debitSurFacture !== avoir ? { debit: montant, credit: 0 } : { debit: 0, credit: montant };
+    const ht = +a.ht.toFixed(2);
+    const tvas = a.tvas.map((t) => ({ taux: t.taux, montant: +t.montant.toFixed(2) })).filter((t) => t.montant > 0);
+    const biens = a.categorie === "biens";
+    // La charge porte le HT, plus toute TVA qui ne se deduit pas : TVA
+    // etrangere, ou TVA d'un dossier en franchise.
+    let charge = ht;
+    let duFournisseur = ht;
+    const lignesTva: Ligne[] = [];
+    for (const t of tvas) {
+      if (a.autoliquidation) {
+        // TVA due (4452) dans tous les cas ; deductible (44566x) sauf franchise,
+        // ou elle est une charge.
+        if (a.nonDeductible) charge += t.montant;
+        else lignesTva.push({ compte: plan.tvaDeductibleAutoliq, compteLib: `TVA deductible autoliquidee ${t.taux}%`, auxNum: "", auxLib: "", ...sens(t.montant, true) });
+        lignesTva.push({ compte: plan.tvaAutoliquidee, compteLib: `TVA due autoliquidee ${t.taux}%`, auxNum: "", auxLib: "", ...sens(t.montant, false) });
+      } else if (a.tvaEtrangere || a.nonDeductible) {
+        charge += t.montant;
+        duFournisseur += t.montant;
+      } else {
+        lignesTva.push({ compte: plan.tvaDeductible, compteLib: `TVA deductible ${t.taux}%`, auxNum: "", auxLib: "", ...sens(t.montant, true) });
+        duFournisseur += t.montant;
+      }
+    }
+    const lignes: Ligne[] = [
+      { compte: biens ? plan.achatsBiens : plan.achatsServices, compteLib: biens ? "Achats de marchandises" : "Achats de prestations", auxNum: "", auxLib: "", ...sens(+charge.toFixed(2), true) },
+      ...lignesTva,
+    ];
+    const devise = a.devise && a.devise !== "EUR" && a.montantDevise ? { montantDevise: +a.montantDevise.toFixed(2), devise: a.devise } : {};
+    lignes.push({
+      compte: plan.fournisseurs, compteLib: "Fournisseurs", auxNum: fCode, auxLib: fLib,
+      ...sens(+duFournisseur.toFixed(2), false), siren: a.siren ?? null, tiers: "fournisseur", ...devise,
+    });
+    ecritures.push({
+      journal: plan.journalAchats, journalLib: "Achats", date: fecDate(a.date), ref,
+      lib: `${avoir ? "Avoir" : "Facture"} ${ref} ${fLib}`.trim(), nature: "achat", lignes,
+      ordre: 1_000_000 + j,
+    });
   });
 
   // L'article A47 A-1 veut les ecritures dans l'ordre chronologique de
@@ -215,7 +341,7 @@ export function ecrituresComptables(invoices: FactureExport[], plan: PlanComptes
  * Contenu du FEC (separateur tabulation, fin de ligne CRLF), conforme a
  * l'article A47 A-1 du LPF : voir ecrituresComptables pour le detail.
  */
-export function genererFec(invoices: FactureExport[], plan: PlanComptesFec = PLAN_PAR_DEFAUT): string {
+export function genererFec(invoices: FactureExport[], plan: PlanComptesFec = PLAN_PAR_DEFAUT, achats: AchatExport[] = []): string {
   const COLS = [
     "JournalCode", "JournalLib", "EcritureNum", "EcritureDate",
     "CompteNum", "CompteLib", "CompAuxNum", "CompAuxLib",
@@ -224,14 +350,14 @@ export function genererFec(invoices: FactureExport[], plan: PlanComptesFec = PLA
     "Montantdevise", "Idevise",
   ];
   const rows: string[][] = [COLS];
-  for (const e of ecrituresComptables(invoices, plan)) {
+  for (const e of ecrituresComptables(invoices, plan, achats)) {
     for (const l of e.lignes) {
       rows.push([
         e.journal, e.journalLib, e.num, e.date,
         l.compte, l.compteLib, l.auxNum, l.auxLib,
         e.ref, e.date, e.lib,
         amt(l.debit), amt(l.credit), l.lettrage ?? "", l.dateLet ?? "", e.date,
-        "", "",
+        l.montantDevise !== undefined ? amt(l.montantDevise) : "", l.devise ?? "",
       ]);
     }
   }

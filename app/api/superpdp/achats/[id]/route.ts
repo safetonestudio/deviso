@@ -82,7 +82,16 @@ export async function PATCH(req: NextRequest, ctx: { params: Promise<{ id: strin
     montant_ht: Number(corps.montant_ht),
     taux_tva: Number(corps.taux_tva),
     montant_tva: Number(corps.montant_tva),
+    // Montant, devise ou date peuvent avoir changé : la conversion en euros
+    // (lib/achats-export.ts) sera refaite au prochain export.
+    taux_change: null,
+    date_taux_change: null,
+    montant_ht_eur: null,
+    montant_tva_eur: null,
   };
+  if (!/^[A-Z]{3}$/.test(champs.devise)) {
+    return NextResponse.json({ error: "Devise invalide", message: "La devise doit être un code à trois lettres (EUR, USD, GBP…)." }, { status: 400 });
+  }
 
   const { data: achat, error: errMaj } = await admin
     .from("superpdp_achats_int")

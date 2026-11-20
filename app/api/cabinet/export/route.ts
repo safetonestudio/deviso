@@ -5,6 +5,8 @@ import { dossiersDuCabinet } from "@/lib/cabinet-acces";
 import { journaliser } from "@/lib/cabinet-journal";
 import { genererFec, genererCsvFactures, nomFichierFec, segmentFichier, STATUTS_FEC } from "@/lib/exports-comptables";
 import { genererQuadra, nomPieceQuadra } from "@/lib/export-quadra";
+import { chargerAchats } from "@/lib/achats-export";
+import type { AchatExport } from "@/lib/exports-comptables";
 import { creerZip, type FichierZip } from "@/lib/zip";
 import { validerPlan, PLAN_PAR_DEFAUT } from "@/lib/plan-comptes-fec";
 import { generateFacturXPdf } from "@/lib/facturx";
@@ -69,6 +71,8 @@ export async function GET(req: NextRequest) {
   const plan = "plan" in lu ? lu.plan : PLAN_PAR_DEFAUT;
 
   const fichiers: FichierZip[] = [];
+  /** Achats qu'on n'a pas pu convertir en euros, par dossier : jamais tus. */
+  const nonRepris: string[] = [];
   let nbPdf = 0;
   const nomsPris = new Set<string>();
   for (const ownerId of selection) {
@@ -83,7 +87,20 @@ export async function GET(req: NextRequest) {
     const { data: invoices, error } = await q;
     if (error) return NextResponse.json({ error: error.message }, { status: 500 });
 
+    // Achats du dossier (factures reçues, achats à l'étranger) : le journal
+    // des achats du FEC et de Quadra. Sans eux, le cabinet les ressaisissait.
+    let achats: AchatExport[] = [];
     const p = (profils ?? []).find((x) => x.id === ownerId);
+    if (ecritures) {
+      try {
+        const lus = await chargerAchats(ownerId, year);
+        achats = lus.achats;
+        for (const n of lus.nonRepris) nonRepris.push(`${p?.company_name || p?.full_name || "Dossier"} : ${n}`);
+      } catch {
+        return NextResponse.json({ error: "Lecture des achats impossible" }, { status: 500 });
+      }
+    }
+
     let base = segmentFichier(p?.company_name || p?.full_name || "dossier");
     if (nomsPris.has(base)) base = `${base}_${ownerId.slice(0, 6)}`;
     nomsPris.add(base);
@@ -91,9 +108,9 @@ export async function GET(req: NextRequest) {
     if (!avecPdf) {
       fichiers.push(
         format === "fec"
-          ? { nom: nomFichierFec(p?.siret, year, base), contenu: genererFec(invoices ?? [], plan) }
+          ? { nom: nomFichierFec(p?.siret, year, base), contenu: genererFec(invoices ?? [], plan, achats) }
           : format === "quadra"
-            ? { nom: `Quadra_${year}_${base}.txt`, contenu: genererQuadra(invoices ?? [], { plan }) }
+            ? { nom: `Quadra_${year}_${base}.txt`, contenu: genererQuadra(invoices ?? [], { plan }, achats) }
             : { nom: `Factures_${year}_${base}.csv`, contenu: genererCsvFactures(invoices ?? []) },
       );
       continue;
@@ -114,8 +131,8 @@ export async function GET(req: NextRequest) {
     const nomsQuadra = new Map(numerotees.map((inv, k) => [inv.invoice_number as string, nomPieceQuadra(k)]));
     fichiers.push(
       format === "quadra"
-        ? { nom: `${base}/Quadra_${year}_${base}.txt`, contenu: genererQuadra(invoices ?? [], { plan, pieces: nomsQuadra }) }
-        : { nom: `${base}/${nomFichierFec(p?.siret, year, base)}`, contenu: genererFec(invoices ?? [], plan) },
+        ? { nom: `${base}/Quadra_${year}_${base}.txt`, contenu: genererQuadra(invoices ?? [], { plan, pieces: nomsQuadra }, achats) }
+        : { nom: `${base}/${nomFichierFec(p?.siret, year, base)}`, contenu: genererFec(invoices ?? [], plan, achats) },
     );
     const paymentInfo = p
       ? {
@@ -143,6 +160,21 @@ export async function GET(req: NextRequest) {
     selection.length === 1 ? selection[0] : null,
     `${year} · ${selection.length} dossier${selection.length > 1 ? "s" : ""}`,
   );
+
+  // Un achat non converti : un fichier seul le tairait, on refuse en le
+  // nommant ; une archive porte une note à côté des fichiers.
+  if (nonRepris.length > 0) {
+    if (fichiers.length === 1 && !avecPdf) {
+      return NextResponse.json(
+        { error: `Achat${nonRepris.length > 1 ? "s" : ""} impossible${nonRepris.length > 1 ? "s" : ""} à convertir en euros, à corriger dans « Achats à l'étranger » : ${nonRepris.join(" ; ")}` },
+        { status: 422 },
+      );
+    }
+    fichiers.push({
+      nom: "ACHATS_NON_REPRIS.txt",
+      contenu: `Achats absents des fichiers de cette archive, faute de cours de change :\r\n${nonRepris.map((n) => `- ${n}`).join("\r\n")}\r\n`,
+    });
+  }
 
   if (fichiers.length === 1 && !avecPdf) {
     const f = fichiers[0];

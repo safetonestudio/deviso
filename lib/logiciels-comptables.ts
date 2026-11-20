@@ -45,7 +45,7 @@ export const LOGICIELS: Logiciel[] = [
   },
   {
     id: "quadra", nom: "Cegid Quadra (Quadratus)", format: "quadra", fiabilite: "editeur",
-    consigne: "Outils > Suivi des dossiers > Import ASCII (Compta). Créez d'abord vos journaux de ventes et de banque (Paramétrage des journaux), sinon les écritures arrivent en OD. Gardez les PDF à côté du fichier, sans les renommer.",
+    consigne: "Outils > Suivi des dossiers > Import ASCII (Compta). Créez d'abord vos journaux de ventes, d'achats et de banque (Paramétrage des journaux), sinon les écritures arrivent en OD. Gardez les PDF à côté du fichier, sans les renommer.",
   },
   {
     id: "ebp", nom: "EBP Compta", format: "fec", fiabilite: "editeur",

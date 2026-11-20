@@ -1,4 +1,4 @@
-import { ecrituresComptables, type FactureExport } from "./exports-comptables";
+import { ecrituresComptables, type AchatExport, type FactureExport, type LigneEcriture } from "./exports-comptables";
 import { PLAN_PAR_DEFAUT, type PlanComptesFec } from "./plan-comptes-fec";
 
 /**
@@ -43,6 +43,23 @@ export function auxiliaireQuadra(siren: string | null | undefined, repli: string
   return repli.slice(0, 8).toUpperCase();
 }
 
+/**
+ * Compte auxiliaire fournisseur sur 8 caractères : « F » + SIREN en base 36,
+ * ou « F » + empreinte en base 36 du code du FEC (n° de TVA d'un fournisseur
+ * étranger, trop long pour 8 caractères : tronquer ferait collisionner deux
+ * fournisseurs d'un même pays).
+ */
+export function auxiliaireFournisseurQuadra(siren: string | null | undefined, repli: string): string {
+  const chiffres = (siren ?? "").replace(/\D/g, "");
+  if (chiffres.length >= 9) return `F${Number(chiffres.slice(0, 9)).toString(36).toUpperCase().padStart(7, "0")}`;
+  let h = 0;
+  for (let i = 0; i < repli.length; i++) h = (h * 31 + repli.charCodeAt(i)) >>> 0;
+  return `F${h.toString(36).toUpperCase().padStart(7, "0").slice(-7)}`;
+}
+
+const auxiliaire = (l: LigneEcriture) =>
+  l.tiers === "fournisseur" ? auxiliaireFournisseurQuadra(l.siren, l.auxNum) : auxiliaireQuadra(l.siren, l.auxNum);
+
 /** Lettrage Quadra sur 2 lettres : 676 codes ; au-delà, pas de lettrage plutôt qu'un code réutilisé. */
 function lettrageQuadra(rang: number | undefined): string {
   if (rang === undefined || rang >= 676) return "  ";
@@ -63,26 +80,26 @@ export type OptionsQuadra = {
   pieces?: Map<string, string>;
 };
 
-export function genererQuadra(invoices: FactureExport[], options: OptionsQuadra = {}): string {
+export function genererQuadra(invoices: FactureExport[], options: OptionsQuadra = {}, achats: AchatExport[] = []): string {
   const plan = options.plan ?? PLAN_PAR_DEFAUT;
-  const ecritures = ecrituresComptables(invoices, plan);
-  const collectif = compteQuadra(plan.clients);
+  const ecritures = ecrituresComptables(invoices, plan, achats);
   const sortie: string[] = [];
 
-  // Enregistrements C : un par client, avant les écritures.
-  const clients = new Map<string, string>();
+  // Enregistrements C : un par client (type C, collectif 411) et par
+  // fournisseur (type F, collectif 401), avant les écritures.
+  const comptes = new Map<string, { libelle: string; fournisseur: boolean }>();
   for (const e of ecritures) {
     for (const l of e.lignes) {
-      if (l.auxNum) clients.set(auxiliaireQuadra(l.siren, l.auxNum), l.auxLib);
+      if (l.auxNum) comptes.set(auxiliaire(l), { libelle: l.auxLib, fournisseur: l.tiers === "fournisseur" });
     }
   }
-  for (const [code, libelle] of clients) {
+  for (const [code, { libelle, fournisseur }] of comptes) {
     const c = Array<string>(219).fill(" ");
     poser(c, 1, "C");
     poser(c, 2, alpha(code, 8));
     poser(c, 10, alpha(libelle, 30));
-    poser(c, 99, collectif);
-    poser(c, 218, "C");
+    poser(c, 99, compteQuadra(fournisseur ? plan.fournisseurs : plan.clients));
+    poser(c, 218, fournisseur ? "F" : "C");
     sortie.push(c.join("").trimEnd());
   }
 
@@ -94,7 +111,7 @@ export function genererQuadra(invoices: FactureExport[], options: OptionsQuadra 
       if (!(montant > 0)) continue;
       const m = Array<string>(251).fill(" ");
       poser(m, 1, "M");
-      poser(m, 2, l.auxNum ? alpha(auxiliaireQuadra(l.siren, l.auxNum), 8) : compteQuadra(l.compte));
+      poser(m, 2, l.auxNum ? alpha(auxiliaire(l), 8) : compteQuadra(l.compte));
       poser(m, 10, alpha(e.journal, 2));
       poser(m, 12, "000");
       poser(m, 15, jjmmaa(e.date));

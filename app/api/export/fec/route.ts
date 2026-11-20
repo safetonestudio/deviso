@@ -3,6 +3,7 @@ import { createClient } from "@/lib/supabase/server";
 import { getWorkspaceUserId, getWorkspaceProfile } from "@/lib/workspace";
 import { exigerTitulaire } from "@/lib/droits";
 import { genererFec, nomFichierFec, STATUTS_FEC } from "@/lib/exports-comptables";
+import { chargerAchats } from "@/lib/achats-export";
 
 // GET /api/export/fec?year=2025, Solo + Pro.
 // Le contenu est fabrique par lib/exports-comptables, source partagee avec le
@@ -25,6 +26,7 @@ export async function GET(req: NextRequest) {
   }
 
   const year = req.nextUrl.searchParams.get("year") ?? String(new Date().getFullYear());
+  if (!/^\d{4}$/.test(year)) return NextResponse.json({ error: "Année invalide" }, { status: 400 });
 
   const { data: invoices, error } = await supabase
     .from("invoices")
@@ -37,7 +39,20 @@ export async function GET(req: NextRequest) {
 
   if (error) return NextResponse.json({ error: error.message }, { status: 500 });
 
-  const content = genererFec(invoices ?? []);
+  // Achats (factures reçues, achats à l'étranger) : journal des achats.
+  let lus;
+  try {
+    lus = await chargerAchats(workspaceId, year);
+  } catch {
+    return NextResponse.json({ error: "Lecture des achats impossible" }, { status: 500 });
+  }
+  if (lus.nonRepris.length > 0) {
+    return NextResponse.json(
+      { error: `Achat impossible à convertir en euros, à corriger dans « Achats à l'étranger » : ${lus.nonRepris.join(" ; ")}` },
+      { status: 422 },
+    );
+  }
+  const content = genererFec(invoices ?? [], undefined, lus.achats);
   const filename = nomFichierFec(profile?.siret, year, new Date().toISOString().split("T")[0]);
 
   return new NextResponse(content, {
