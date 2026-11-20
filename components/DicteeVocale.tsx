@@ -75,11 +75,11 @@ export function DicteeVocale({
     } catch (e) {
       const nom = (e as { name?: string })?.name;
       if (nom === "NotAllowedError" || nom === "SecurityError") {
-        setErreur("Micro refusé. Autorisez le microphone pour ce site, puis réessayez.");
+        setErreur("Micro refusé. Autorise le microphone pour ce site, puis réessaie.");
       } else if (nom === "NotFoundError" || nom === "OverconstrainedError") {
         setErreur("Aucun micro détecté sur cet appareil.");
       } else {
-        setErreur("Impossible d'accéder au micro. Réessayez.");
+        setErreur("Impossible d'accéder au micro. Réessaie.");
       }
       return;
     }
@@ -91,7 +91,7 @@ export function DicteeVocale({
       rec = new MediaRecorder(stream, mime ? { mimeType: mime } : undefined);
     } catch {
       couperFlux();
-      setErreur("Ce navigateur ne sait pas enregistrer l'audio. Tapez le texte.");
+      setErreur("Ce navigateur ne sait pas enregistrer l'audio. Tape le texte.");
       return;
     }
 
@@ -105,7 +105,7 @@ export function DicteeVocale({
       const blob = new Blob(morceauxRef.current, { type });
       if (blob.size < 1000) {
         setEtat("idle");
-        setErreur("Aucune parole détectée. Réessayez.");
+        setErreur("Aucune parole détectée. Réessaie.");
         return;
       }
       setEtat("transcription");
@@ -119,10 +119,10 @@ export function DicteeVocale({
         } else if (typeof d.texte === "string" && d.texte.trim()) {
           onTexteFinal(d.texte.trim());
         } else {
-          setErreur("Rien n'a été compris. Réessayez, ou tapez le texte.");
+          setErreur("Rien n'a été compris. Réessaie, ou tape le texte.");
         }
       } catch {
-        setErreur("Envoi interrompu. Réessayez.");
+        setErreur("Envoi interrompu. Réessaie.");
       } finally {
         setEtat("idle");
       }
@@ -134,7 +134,7 @@ export function DicteeVocale({
       setEtat("enregistrement");
     } catch {
       couperFlux();
-      setErreur("Impossible de démarrer l'enregistrement. Réessayez.");
+      setErreur("Impossible de démarrer l'enregistrement. Réessaie.");
     }
   };
 
@@ -187,7 +187,7 @@ export function DicteeVocale({
 
       {etat === "enregistrement" && (
         <span className="text-xs text-gray-500 max-w-xs text-right">
-          Parlez, puis cliquez pour transcrire.
+          Parle, puis clique pour transcrire.
         </span>
       )}
       {erreur && <span className="text-xs text-red-400 max-w-xs text-right">{erreur}</span>}

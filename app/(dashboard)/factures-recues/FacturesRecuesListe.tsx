@@ -185,7 +185,7 @@ export function FacturesRecuesListe({
 
       {adresseAnnuaire && (
         <p className="text-xs text-gray-400 mt-3">
-          Vos fournisseurs vous adressent leurs factures à{" "}
+          Ton adresse de réception de factures électroniques :{" "}
           <span className="font-mono text-gray-400 select-all">{adresseAnnuaire}</span>
         </p>
       )}

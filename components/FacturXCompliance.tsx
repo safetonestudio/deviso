@@ -11,7 +11,7 @@ import { motifExoneration } from "@/lib/exoneration";
  *
  * Rien n'est bloquant : la facture reste téléchargeable et envoyable. Mais dès
  * qu'un élément exigé par la norme manque, l'utilisateur doit le savoir AVANT
- * que sa Plateforme Agréée ne rejette le document.
+ * que sa plateforme agréée ne rejette le document.
  */
 export function FacturXCompliance({ invoice }: { invoice: Invoice }) {
   const issuesBrutes = checkInvoiceCompliance({
@@ -66,7 +66,7 @@ export function FacturXCompliance({ invoice }: { invoice: Invoice }) {
       <div className="flex items-start gap-2.5 rounded-xl border border-emerald-500/20 bg-emerald-500/10 px-4 py-3">
         <span className="mt-0.5 text-emerald-400 shrink-0" aria-hidden="true">✓</span>
         <div className="text-sm">
-          <p className="font-medium text-emerald-300">Facture conforme Factur-X EN 16931</p>
+          <p className="font-medium text-emerald-300">Facture électronique conforme</p>
           <p className="text-emerald-400/70 text-xs mt-0.5">
             Toutes les données exigées par la réforme 2026 sont présentes.
           </p>
@@ -93,7 +93,7 @@ export function FacturXCompliance({ invoice }: { invoice: Invoice }) {
           <p className={`font-medium ${isBlocking ? "text-amber-300" : "text-gray-300"}`}>
             {isBlocking
               ? "Cette facture serait refusée par une plateforme de facturation électronique"
-              : "Conformité Factur-X : à vérifier"}
+              : "Conformité de la facture électronique : à vérifier"}
           </p>
           <ul className="mt-2 space-y-1">
             {blocking.map((i) => (

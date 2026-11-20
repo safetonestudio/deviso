@@ -18,7 +18,7 @@ export const dynamic = "force-dynamic";
  * L'obligation manquante que l'écran « Déclarations » signalait sans pouvoir la
  * remplir : une entreprise française qui achète hors de France doit déclarer
  * ces acquisitions (article 290-II du CGI), et leurs factures n'arrivent pas
- * par la Plateforme Agréée. On les saisit ici, et Deviso les déclare.
+ * par la plateforme agréée. On les saisit ici, et Deviso les déclare.
  *
  * Réservé au titulaire : c'est une obligation déclarative de l'entreprise.
  */
@@ -56,19 +56,19 @@ export default async function AchatsInternationaux() {
       <div className="mb-6">
         <h1 className="titre-page">Achats à l&apos;étranger</h1>
         <p className="sous-titre-page">
-          Quand vous achetez un bien ou un service à un fournisseur établi hors de France, vous
-          devez déclarer cette acquisition à l&apos;administration (article 290-II du CGI). Sa
-          facture ne passe pas par la Plateforme Agréée&nbsp;: saisissez-la ici, Deviso s&apos;occupe
+          Quand tu achètes un bien ou un service à un fournisseur établi hors de France, tu
+          dois déclarer cette acquisition à l&apos;administration (article 290-II du CGI). Sa
+          facture ne passe pas par la plateforme agréée&nbsp;: saisis-la ici, Deviso s&apos;occupe
           de la déclaration.
         </p>
       </div>
 
       {!raccorde ? (
         <section className="carte p-6 text-center">
-          <p className="text-ink font-medium mb-1">Vous n&apos;êtes pas encore raccordé</p>
+          <p className="text-ink font-medium mb-1">Tu n&apos;es pas encore raccordé</p>
           <p className="text-sm text-gray-400 mb-4 max-w-md mx-auto">
-            La déclaration de vos achats étrangers passe par votre Plateforme Agréée. Le
-            raccordement se fait depuis vos paramètres.
+            La déclaration de tes achats étrangers passe par ta plateforme agréée. Le
+            raccordement se fait depuis tes paramètres.
           </p>
           <a
             href="/profil"
@@ -83,7 +83,7 @@ export default async function AchatsInternationaux() {
 
           {error ? (
             <section className="bg-ds-surface border border-red-500/30 rounded-xl p-6 text-center">
-              <p className="text-ink font-medium mb-1">Impossible de lire vos achats étrangers</p>
+              <p className="text-ink font-medium mb-1">Impossible de lire tes achats étrangers</p>
               <p className="text-xs font-mono text-red-400/90 mt-2 break-all">{error.message}</p>
             </section>
           ) : (

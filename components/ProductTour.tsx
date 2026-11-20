@@ -20,13 +20,13 @@ const STEPS_OWNER = [
   },
   {
     target: "invoices",
-    title: "Factures Factur-X conformes 2026",
+    title: "Factures électroniques conformes 2026",
     body: "Convertis un devis signé en facture conforme, en un clic.",
   },
   {
     target: "factures-recues",
     title: "Factures reçues",
-    body: "Les factures de tes fournisseurs arrivent ici via la Plateforme Agréée. Tu n'agis qu'en cas de problème.",
+    body: "Les factures de tes fournisseurs arrivent ici via la plateforme agréée. Tu n'agis qu'en cas de problème.",
   },
   {
     target: "declarations",
@@ -91,7 +91,7 @@ const STEPS_MEMBER = [
   },
   {
     target: "invoices",
-    title: "Factures Factur-X conformes 2026",
+    title: "Factures électroniques conformes 2026",
     body: "Convertis un devis signé en facture conforme, en un clic.",
   },
   {

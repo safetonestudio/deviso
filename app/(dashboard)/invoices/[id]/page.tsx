@@ -113,7 +113,7 @@ function ActionPanel({ invoice, id, router, hasChorusPro }: {
 
   // ── La date d'encaissement, demandée là où elle change quelque chose ──────
   //
-  // Sur une facture transmise à la Plateforme Agréée, marquer « payée » déclenche
+  // Sur une facture transmise à la plateforme agréée, marquer « payée » déclenche
   // le message `fr:212`, dont l'administration tire l'e-reporting de paiement.
   // La date portée par ce message fixe la période d'exigibilité de la TVA sur
   // les prestations de services.
@@ -218,7 +218,7 @@ function ActionPanel({ invoice, id, router, hasChorusPro }: {
       // Le lien de paiement est celui de l'utilisateur : l'argent va
       // directement de son client à lui, sans passer par Deviso. Deviso ne peut
       // donc pas savoir que la facture a été réglée, et c'est le passage à
-      // « payée » qui déclare l'encaissement (fr:212) à la Plateforme Agréée,
+      // « payée » qui déclare l'encaissement (fr:212) à la plateforme agréée,
       // l'un des quatre statuts obligatoires de la réforme.
       //
       // Sans cette phrase, l'utilisateur suppose raisonnablement l'inverse :
@@ -227,8 +227,8 @@ function ActionPanel({ invoice, id, router, hasChorusPro }: {
       // déclarative.
       alert(
         "Lien de paiement copié.\n\n" +
-          "Ce lien envoie l'argent directement sur votre compte : Deviso ne voit pas " +
-          "le paiement. Pensez à marquer la facture « payée » quand vous serez réglé, " +
+          "Ce lien envoie l'argent directement sur ton compte : Deviso ne voit pas " +
+          "le paiement. Pense à marquer la facture « payée » quand tu seras réglé, " +
           "c'est ce geste qui déclare l'encaissement à l'administration."
       );
     } else if (data.error === "PAYMENT_NOT_CONFIGURED") {
@@ -329,7 +329,7 @@ function ActionPanel({ invoice, id, router, hasChorusPro }: {
   const canMarkSent = inv.status === "draft" && peutEnvoyerFacture;
   const canRemind = !estAvoir && inv.status === "sent" && !!inv.client_email;
   /**
-   * Transmet la facture à la Plateforme Agréée.
+   * Transmet la facture à la plateforme agréée.
    *
    * Les messages viennent du serveur et sont déjà en français : la route
    * traduit les contrôles préalables (SIREN manquant) plutôt que de relayer le
@@ -367,7 +367,7 @@ function ActionPanel({ invoice, id, router, hasChorusPro }: {
       }
       window.location.reload();
     } catch {
-      setMessagePdp("Connexion interrompue. Réessayez.");
+      setMessagePdp("Connexion interrompue. Réessaie.");
     } finally {
       setEmission(false);
     }
@@ -375,7 +375,7 @@ function ActionPanel({ invoice, id, router, hasChorusPro }: {
 
   const canChorus = inv.status === "sent" && !chorusRef && hasChorusPro && peutDeposerChorus;
 
-  // Émission vers la Plateforme Agréée. Une facture ne se transmet qu'une fois :
+  // Émission vers la plateforme agréée. Une facture ne se transmet qu'une fois :
   // un second envoi arriverait en double chez le client, qui la refuserait pour
   // « DOUBLON ». D'où la condition sur l'absence d'identifiant.
   const dejaTransmise = Boolean(inv.superpdp_invoice_id);
@@ -466,7 +466,7 @@ function ActionPanel({ invoice, id, router, hasChorusPro }: {
                 <p className="text-xs text-gray-400 leading-relaxed">
                   {dateEncaissementRequise
                     ? "Cette date part à l'administration avec la déclaration d'encaissement. Elle ne pourra plus être corrigée ensuite."
-                    : "Ces informations alimentent votre livre des recettes."}
+                    : "Ces informations alimentent ton livre des recettes."}
                 </p>
                 <div className="flex gap-2">
                   <button
@@ -572,7 +572,7 @@ function ActionPanel({ invoice, id, router, hasChorusPro }: {
             className="w-full text-sm font-medium px-4 py-2.5 rounded-lg border border-indigo-500/30 hover:bg-indigo-500/10 text-indigo-400 disabled:opacity-50 transition-colors text-left flex items-center gap-2"
           >
             <RadioTower size={17} className="shrink-0" />
-            <span>{emission ? "Transmission…" : "Transmettre à la Plateforme Agréée"}</span>
+            <span>{emission ? "Transmission…" : "Transmettre à la plateforme agréée"}</span>
           </button>
         )}
 
@@ -590,7 +590,7 @@ function ActionPanel({ invoice, id, router, hasChorusPro }: {
             <div className={`w-full text-sm px-4 py-2.5 rounded-lg border border-current/20 flex items-start gap-2 ${etat?.classe ?? "bg-gray-500/5 text-gray-300"}`}>
               <RadioTower size={17} className="shrink-0 mt-0.5" />
               <div className="flex flex-col gap-0.5">
-                <span>{etat?.texte ?? "Transmise à la Plateforme Agréée"}</span>
+                <span>{etat?.texte ?? "Transmise à la plateforme agréée"}</span>
                 {/* Un code que notre table ne connaît pas s'affiche brut plutôt
                     que de disparaître : leur nomenclature évolue, `fr:220` a
                     été ajouté par Super PDP le 07/08/2026 sans que la norme en
@@ -882,9 +882,9 @@ export default function InvoiceDetailPage() {
           <div className="bg-indigo-500/10 border border-indigo-500/20 rounded-xl px-5 py-3 flex items-center gap-3">
             <span className="text-indigo-400 text-lg">✦</span>
             <div>
-              <p className="text-sm font-semibold text-indigo-300">Factur-X EN 16931 · Conforme réforme 2026</p>
+              <p className="text-sm font-semibold text-indigo-300">Facture électronique · Conforme réforme 2026</p>
               <p className="text-xs text-indigo-400">
-                PDF/A-3 avec XML CII embarqué ·{" "}
+                PDF avec les données de facturation intégrées ·{" "}
                 {invoice.payment_on_debit ? "TVA sur débits" : "TVA sur encaissements"} ·{" "}
                 {invoice.operation_category === "services" ? "Prestations de services" :
                  invoice.operation_category === "goods" ? "Livraison de biens" : "Mixte"}

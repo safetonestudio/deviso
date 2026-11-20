@@ -109,13 +109,13 @@ export default function CataloguePage() {
         <GuidedTourBanner pageKey="catalogue" />
         <div className="mb-8">
           <h1 className="titre-page">Services</h1>
-          <p className="sous-titre-page">Sauvegardez vos prestations pour les réutiliser en un clic.</p>
+          <p className="sous-titre-page">Sauvegarde tes prestations pour les réutiliser en un clic.</p>
         </div>
         <div className="carte p-10 text-center">
           <Package size={32} className="mx-auto mb-3 text-gray-600" />
           <p className="text-ink font-semibold mb-1">Catalogue de prestations</p>
           <p className="text-gray-500 text-sm mb-6">
-            Créez votre catalogue de prestations et insérez-les en un clic dans vos devis.
+            Crée ton catalogue de prestations et insère-les en un clic dans tes devis.
           </p>
           <UpgradeButton plan="solo" label="Passer Solo" />
         </div>
@@ -133,7 +133,7 @@ export default function CataloguePage() {
       <div className="mb-8">
         <h1 className="titre-page">Services</h1>
         <p className="sous-titre-page">
-          {items.length} prestation{items.length !== 1 ? "s" : ""}, réutilisables en un clic dans vos devis et factures.
+          {items.length} prestation{items.length !== 1 ? "s" : ""}, réutilisables en un clic dans tes devis et factures.
         </p>
       </div>
 
@@ -202,7 +202,7 @@ export default function CataloguePage() {
             </div>
             {formType === "hourly" && (
               <p className="text-xs text-gray-600">
-                Lors de l'ajout à un devis ou une facture, vous choisirez le nombre d'heures (par tranche de 15 min).
+                Lors de l'ajout à un devis ou une facture, tu choisiras le nombre d'heures (par tranche de 15 min).
               </p>
             )}
           </div>
@@ -262,7 +262,7 @@ export default function CataloguePage() {
       {/* ── Section Taux horaire ── */}
       <Section
         title="Taux horaire"
-        description="Facturez au temps passé, par tranches de 15 minutes."
+        description="Facture au temps passé, par tranches de 15 minutes."
         icon={<Clock size={15} className="text-violet-400" />}
         badge={<span className="text-[10px] font-semibold px-1.5 py-0.5 rounded-md bg-violet-500/10 border border-violet-500/20 text-violet-400">{hourlyItems.length}</span>}
         onAdd={isMember ? null : () => openCreate("hourly")}

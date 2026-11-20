@@ -136,7 +136,7 @@ export function CaUrssafWidget({ monthlyHT, currentMonth, currentYear, echeances
         </div>
 
         <p className="text-xs text-gray-600 mt-4">
-          Basé sur les factures marquées payées · Vérifiez les montants avant déclaration.
+          Basé sur les factures marquées payées · Vérifie les montants avant déclaration.
         </p>
       </div>
     </div>

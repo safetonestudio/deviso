@@ -48,7 +48,7 @@ const CONTENT: Record<PageKey, { title: string; body: string }> = {
   },
   invoices: {
     title: "Tes factures",
-    body: "Tes factures au format Factur-X 2026. Configure d'abord un moyen de paiement (onglet Paiements) : sans ça, la création est bloquée.",
+    body: "Tes factures électroniques conformes 2026. Configure d'abord un moyen de paiement (onglet Paiements) : sans ça, la création est bloquée.",
   },
   invoices_new: {
     title: "Créer une facture",
@@ -84,11 +84,11 @@ const CONTENT: Record<PageKey, { title: string; body: string }> = {
   },
   "factures-recues": {
     title: "Factures reçues",
-    body: "Les factures de tes fournisseurs arrivent ici via la Plateforme Agréée. Tu n'agis qu'en cas de problème : un rejet à justifier ou un litige à signaler.",
+    body: "Les factures de tes fournisseurs arrivent ici via la plateforme agréée. Tu n'agis qu'en cas de problème : un rejet à justifier ou un litige à signaler.",
   },
   declarations: {
     title: "Déclarations au fisc",
-    body: "L'état de ce que la Plateforme Agréée déclare pour toi (e-reporting). Seuls les refus de l'administration demandent une action de ta part.",
+    body: "L'état de ce que la plateforme agréée déclare pour toi (e-reporting). Seuls les refus de l'administration demandent une action de ta part.",
   },
   "achats-internationaux": {
     title: "Achats à l'étranger",

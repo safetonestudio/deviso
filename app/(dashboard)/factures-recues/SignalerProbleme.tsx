@@ -47,13 +47,13 @@ const REVERSIBLES: Issue[] = [
     titre: "Mettre en attente",
     effet:
       "Suspend le traitement, le temps d'obtenir une pièce ou une précision. " +
-      "Vous pourrez reprendre à tout moment.",
+      "Tu pourras reprendre à tout moment.",
   },
   {
     code: "fr:207",
     titre: "Contester",
     effet:
-      "Signale votre désaccord à votre fournisseur sans annuler la facture. " +
+      "Signale ton désaccord à ton fournisseur sans annuler la facture. " +
       "À préférer tant qu'un accord reste possible.",
   },
 ];
@@ -104,7 +104,7 @@ export function SignalerProbleme({
       setNote("");
       router.refresh();
     } catch {
-      setErreur("Connexion interrompue. Réessayez.");
+      setErreur("Connexion interrompue. Réessaie.");
     } finally {
       setEnCours(false);
     }
@@ -128,7 +128,7 @@ export function SignalerProbleme({
       fermer();
       router.refresh();
     } catch {
-      setErreur("Connexion interrompue. Réessayez.");
+      setErreur("Connexion interrompue. Réessaie.");
     } finally {
       setEnCours(false);
     }
@@ -171,7 +171,7 @@ export function SignalerProbleme({
               {/* Le mot libre accompagne l'action : sans lui, le fournisseur
                   reçoit un code et doit deviner ce qui ne va pas. */}
               <label className="block text-xs font-medium text-gray-400 mb-1.5">
-                Ce que vous voulez lui dire <span className="text-gray-600">(facultatif)</span>
+                Ce que tu veux lui dire <span className="text-gray-600">(facultatif)</span>
               </label>
               <textarea
                 value={note}
@@ -218,7 +218,7 @@ export function SignalerProbleme({
                   </span>
                   <span className="block text-xs text-gray-500 mt-0.5 leading-relaxed">
                     Définitif et sans retour. La facture est annulée auprès de
-                    l&apos;administration, et votre fournisseur devra passer une annulation
+                    l&apos;administration, et ton fournisseur devra passer une annulation
                     comptable.
                   </span>
                 </button>

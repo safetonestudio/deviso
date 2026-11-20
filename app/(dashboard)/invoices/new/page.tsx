@@ -81,6 +81,9 @@ export default function NewInvoicePage() {
 
   // Vendeur
   const [sellerCompany, setSellerCompany] = useState("");
+  // Tes informations viennent du profil : repliées en une ligne, dépliables
+  // pour cette facture seulement. Ouvertes d'office s'il en manque une.
+  const [vendeurOuvert, setVendeurOuvert] = useState(false);
   const [sellerSiren, setSellerSiren] = useState("");
   const [sellerStreet, setSellerStreet] = useState("");
   const [sellerPostcode, setSellerPostcode] = useState("");
@@ -448,6 +451,8 @@ export default function NewInvoicePage() {
   const needsProposalPicker = (invoiceType === "acompte" || invoiceType === "solde") && !fromProposalParam;
   const proposalPickerReady = needsProposalPicker && linkedProposalId;
 
+  const vendeurComplet = !!(sellerCompany.trim() && sellerSiren.trim() && sellerStreet.trim() && sellerPostcode.trim() && sellerCity.trim());
+
   return (
     <div className="max-w-2xl mx-auto">
       <GuidedTourBanner pageKey="invoices_new" />
@@ -506,7 +511,7 @@ export default function NewInvoicePage() {
           ) : proposalsList.length === 0 ? (
             <div className="text-sm text-amber-400 py-1">
               Aucun devis envoyé trouvé.{" "}
-              <Link href="/proposals" className="underline">Créez d&apos;abord un devis</Link>.
+              <Link href="/proposals" className="underline">Crée d&apos;abord un devis</Link>.
             </div>
           ) : (
             <select
@@ -560,8 +565,8 @@ export default function NewInvoicePage() {
           {!proposalPickerReady && proposalsList.length > 0 && (
             <p className="text-xs text-amber-400 mt-2">
               {invoiceType === "acompte"
-                ? "Sélectionnez un devis pour calculer automatiquement le montant de l'acompte."
-                : "Sélectionnez le devis pour lequel une facture d'acompte a déjà été émise."}
+                ? "Sélectionne un devis pour calculer automatiquement le montant de l'acompte."
+                : "Sélectionne le devis pour lequel une facture d'acompte a déjà été émise."}
             </p>
           )}
         </div>
@@ -593,7 +598,7 @@ export default function NewInvoicePage() {
             )}
             {!linkedInvoiceNumber && linkedProposalId && (
               <p className="text-amber-400 text-xs mt-0.5">
-                Aucune facture d'acompte trouvée pour ce devis, créez d'abord un acompte.
+                Aucune facture d'acompte trouvée pour ce devis, crée d'abord un acompte.
               </p>
             )}
           </div>
@@ -606,9 +611,9 @@ export default function NewInvoicePage() {
           <div className="flex items-start gap-3">
             <TriangleAlert size={22} className="shrink-0 text-amber-400" />
             <div className="flex-1">
-              <p className="font-semibold text-amber-300 mb-1">Configurez votre moyen de paiement avant de facturer</p>
+              <p className="font-semibold text-amber-300 mb-1">Configure ton moyen de paiement avant de facturer</p>
               <p className="text-sm text-amber-400/80 mb-4">
-                Sans cette étape, vos clients ne sauront pas comment vous payer.
+                Sans cette étape, tes clients ne sauront pas comment te payer.
                 Cela ne prend que 2 minutes.
               </p>
               <Link
@@ -628,7 +633,31 @@ export default function NewInvoicePage() {
         <form onSubmit={handleSubmit} className="space-y-6">
           {/* Vendeur */}
           <section className="bg-ds-surface rounded-xl border border-ds-border p-5 space-y-4">
-            <h2 className="font-semibold text-gray-200">Vos informations</h2>
+            <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-2 sm:gap-3">
+              <div className="min-w-0">
+                <h2 className="font-semibold text-gray-200">Émise par</h2>
+                {!(vendeurOuvert || !vendeurComplet) && (
+                  <p className="mt-1 text-sm text-gray-400">
+                    <span className="text-ink font-medium">{sellerCompany}</span>
+                    {sellerSiren && <> · SIREN {sellerSiren}</>}
+                    <br />
+                    {sellerStreet}, {sellerPostcode} {sellerCity}
+                    {sellerTva && tvaRate !== 0 && <> · TVA {sellerTva}</>}
+                  </p>
+                )}
+              </div>
+              {vendeurComplet && (
+                <button
+                  type="button"
+                  onClick={() => setVendeurOuvert((o) => !o)}
+                  aria-expanded={vendeurOuvert}
+                  className="shrink-0 self-start text-sm text-indigo-400 hover:text-indigo-300 transition-colors"
+                >
+                  {vendeurOuvert ? "Replier" : "Modifier pour cette facture"}
+                </button>
+              )}
+            </div>
+            {(vendeurOuvert || !vendeurComplet) && (
             <div className="grid grid-cols-2 gap-3">
               <div>
                 <label className="block text-xs font-medium text-gray-400 mb-1">Entreprise / Nom</label>
@@ -657,6 +686,7 @@ export default function NewInvoicePage() {
                   className={`${inputCls} disabled:opacity-50`} />
               </div>
             </div>
+            )}
           </section>
 
           {/* Client */}
@@ -979,7 +1009,7 @@ export default function NewInvoicePage() {
             <button
               type="submit"
               disabled={loading || paymentConfigured === false}
-              title={paymentConfigured === false ? "Configurez d'abord vos paiements" : undefined}
+              title={paymentConfigured === false ? "Configure d'abord tes paiements" : undefined}
               className="flex-1 bg-indigo-600 hover:bg-indigo-700 disabled:opacity-40 disabled:cursor-not-allowed text-ink rounded-lg py-2.5 text-sm font-semibold transition-colors"
             >
               {loading ? "Création…" : invoiceType === "acompte" ? `Créer l'acompte ${depositPct}%` : invoiceType === "solde" ? "Créer la facture de solde" : "Créer la facture"}
@@ -991,7 +1021,7 @@ export default function NewInvoicePage() {
       {/* Message d'attente si acompte/solde sans devis sélectionné */}
       {needsProposalPicker && !proposalPickerReady && proposalsList.length > 0 && (
         <div className="text-center py-10 text-gray-500 text-sm">
-          Sélectionnez un devis ci-dessus pour continuer.
+          Sélectionne un devis ci-dessus pour continuer.
         </div>
       )}
 

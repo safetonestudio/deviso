@@ -31,11 +31,11 @@ export function SyncButton({ derniere }: { derniere: string | null }) {
       const res = await r.json();
 
       if (res.raison === "trop_recent") {
-        setMessage("Vérification déjà en cours, patientez un instant.");
+        setMessage("Vérification déjà en cours, patiente un instant.");
       } else if (res.raison === "verification_en_cours") {
-        setMessage("Super PDP vérifie encore le rattachement de votre entreprise.");
+        setMessage("Super PDP vérifie encore le rattachement de ton entreprise.");
       } else if (res.raison) {
-        setMessage("La vérification a échoué. Réessayez dans un moment.");
+        setMessage("La vérification a échoué. Réessaie dans un moment.");
       } else if (res.recuperees > 0) {
         setMessage(`${res.entrantes} facture${res.entrantes > 1 ? "s" : ""} reçue${res.entrantes > 1 ? "s" : ""}.`);
         router.refresh();

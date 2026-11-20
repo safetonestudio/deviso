@@ -38,7 +38,7 @@ export async function SignalementsClient({ workspaceId }: { workspaceId: string 
             key={s.id}
             className="carte p-4 sm:p-5 grid gap-4 grid-cols-[48px_minmax(0,1fr)] sm:grid-cols-[48px_minmax(0,1fr)_auto] items-center"
           >
-            <div className="w-12 h-12 rounded-xl bg-ink text-ds-bg grid place-items-center font-display font-bold text-[15px]">
+            <div className="w-12 h-12 rounded-xl bg-ink text-ds-bg grid place-items-center font-display font-semibold text-[15px]">
               {initiales(nom)}
             </div>
             <div className="min-w-0">

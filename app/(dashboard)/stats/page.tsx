@@ -399,7 +399,7 @@ export default function StatsPage() {
                   <Lock size={16} className="text-indigo-400" />
                 </div>
                 <p className="text-ink font-semibold text-base mb-1">Analytics avancées</p>
-                <p className="text-gray-400 text-sm mb-4">Funnel de conversion, délai moyen de signature, meilleur mois et efficacité de vos relances.</p>
+                <p className="text-gray-400 text-sm mb-4">Funnel de conversion, délai moyen de signature, meilleur mois et efficacité de tes relances.</p>
                 <UpgradeButton plan="solo" label="Passer Solo, 18€/mois" />
               </div>
             </div>

@@ -31,7 +31,7 @@ export function UpgradeButton({ plan = "solo", label, className }: UpgradeButton
         setLoading(false);
       }
     } catch {
-      setError("Erreur réseau. Réessayez dans quelques secondes.");
+      setError("Erreur réseau. Réessaie dans quelques secondes.");
       setLoading(false);
     }
   }

@@ -21,6 +21,7 @@ import { StatutAPreciser } from "@/components/dashboard/StatutAPreciser";
 import { vueTableauDeBord, prochaineDeclarationTva } from "@/lib/statut-entreprise";
 import { echeanceDossier } from "@/lib/cabinet-tva-calendrier";
 import type { FactureCabinet } from "@/lib/cabinet-dossiers";
+import { accord } from "@/lib/pluriel";
 import { Receipt, FileText, ArrowRight, Plus, Wallet, Hourglass, CircleCheck, FileSignature } from "lucide-react";
 
 const PROPOSAL_STATUS: Record<string, { label: string; color: string }> = {
@@ -294,7 +295,7 @@ export default async function DashboardPage() {
       {!isPaid && !isMember && (
         <div className="bg-linear-to-r/srgb from-indigo-600 to-violet-600 rounded-xl p-5 flex items-center justify-between gap-4 text-ink">
           <div>
-            <div className="font-semibold text-sm">Passez à Solo, débloquez l&apos;IA, les factures et les relances</div>
+            <div className="font-semibold text-sm">Passe à Solo, débloque l&apos;IA, les factures et les relances</div>
             <div className="text-xs text-indigo-200 mt-0.5">Essai gratuit 14 jours · sans carte bancaire</div>
           </div>
           <Link
@@ -345,7 +346,7 @@ export default async function DashboardPage() {
           icon={Hourglass}
           visuel={pendingProposals.length > 0 ? (
             <BarreParts
-              description={`Devis en attente : ${devisConsultes} consulté(s), ${pendingProposals.length - devisConsultes} envoyé(s) non ouvert(s)`}
+              description={`Devis en attente : ${devisConsultes} ${accord(devisConsultes, "consulté")}, ${pendingProposals.length - devisConsultes} ${accord(pendingProposals.length - devisConsultes, "envoyé")} non ${accord(pendingProposals.length - devisConsultes, "ouvert")}`}
               parts={[
                 { valeur: devisConsultes, classe: "bg-indigo-500", libelle: `Consulté${devisConsultes > 1 ? "s" : ""} ${devisConsultes}` },
                 { valeur: pendingProposals.length - devisConsultes, classe: "bg-gray-400", libelle: `Non ouvert${pendingProposals.length - devisConsultes > 1 ? "s" : ""} ${pendingProposals.length - devisConsultes}` },
@@ -376,7 +377,7 @@ export default async function DashboardPage() {
           icon={FileSignature}
           visuel={devisSignes > 0 ? (
             <BarreParts
-              description={`Devis signés : ${devisSignes - toInvoice.length} facturé(s), ${toInvoice.length} à facturer`}
+              description={`Devis signés : ${devisSignes - toInvoice.length} ${accord(devisSignes - toInvoice.length, "facturé")}, ${toInvoice.length} à facturer`}
               parts={[
                 { valeur: devisSignes - toInvoice.length, classe: "bg-indigo-500", libelle: `Facturé${devisSignes - toInvoice.length > 1 ? "s" : ""} ${devisSignes - toInvoice.length}` },
                 { valeur: toInvoice.length, classe: "bg-gray-400", libelle: `À facturer ${toInvoice.length}` },

@@ -165,7 +165,7 @@ export default function CRMPage() {
         <div className="carte p-16 text-center">
           <Users size={32} className="mx-auto mb-3 text-gray-600" />
           <p className="text-gray-400 font-medium">Aucun client trouvé</p>
-          <p className="text-sm text-gray-500 mt-1">Vos clients apparaîtront ici dès que vous créerez un devis ou une facture.</p>
+          <p className="text-sm text-gray-500 mt-1">Tes clients apparaîtront ici dès que tu créeras un devis ou une facture.</p>
           <Link href="/proposals/new" className="inline-block mt-4 px-4 py-2 bg-indigo-600 text-ink text-sm font-medium rounded-lg hover:bg-indigo-700">
             Créer un devis
           </Link>

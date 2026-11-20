@@ -81,7 +81,7 @@ export default function ShareSection({ proposal, shareUrl, profile }: Props) {
             <div className="text-xs text-gray-500">
               {proposal.client_email
                 ? `Destinataire : ${proposal.client_email}`
-                : "Saisissez l'email du client pour lui envoyer le lien directement"}
+                : "Saisis l'email du client pour lui envoyer le lien directement"}
             </div>
           </div>
           <button

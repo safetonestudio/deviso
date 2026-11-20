@@ -107,6 +107,7 @@ export function etatPdp(
   if (manques.length)
     return { texte: "Transmission impossible", classe: "bg-red-500/10 text-red-400", aFaire: false, manques };
 
-  return { texte: "À transmettre", classe: "bg-amber-500/10 text-amber-400", aFaire: true, manques: [] };
+  // Bleu : une étape de la réforme à faire, pas une alerte (code couleur du site).
+  return { texte: "À transmettre", classe: "bg-blue-500/10 text-blue-400", aFaire: true, manques: [] };
 }
 

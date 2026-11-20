@@ -98,7 +98,7 @@ export default function InvoicesPage() {
       fetch("/api/invoices").then((r) => r.json()),
       fetch("/api/profile").then((r) => r.json()),
       // Le statut du raccordement ne doit pas pouvoir faire échouer la liste :
-      // une facture reste consultable même si la Plateforme Agréée est muette.
+      // une facture reste consultable même si la plateforme agréée est muette.
       fetch("/api/superpdp/status").then((r) => r.json()).catch(() => null),
     ]).then(([invoiceData, profileData, pdp]) => {
       setInvoices(invoiceData.invoices || []);
@@ -147,7 +147,7 @@ export default function InvoicesPage() {
           x.id === inv.id ? { ...x, superpdp_invoice_id: d.superpdpId ?? "transmise" } : x
         )
       );
-      setMessagePdp({ id: inv.id, texte: "Transmise à la Plateforme Agréée.", ok: true });
+      setMessagePdp({ id: inv.id, texte: "Transmise à la plateforme agréée.", ok: true });
     } catch {
       setMessagePdp({ id: inv.id, texte: "Transmission impossible : réseau indisponible.", ok: false });
     } finally {
@@ -200,7 +200,7 @@ export default function InvoicesPage() {
 
   async function handleSaveRecurring() {
     if (!rClientName || rItems.some((it) => !it.description)) {
-      setRecurringMsg("Remplissez le nom client et la description de chaque article.");
+      setRecurringMsg("Remplis le nom client et la description de chaque article.");
       return;
     }
     setSavingRecurring(true);
@@ -266,7 +266,7 @@ export default function InvoicesPage() {
       <div className="flex flex-wrap items-start justify-between gap-3 mb-8">
         <div>
           <h1 className="titre-page">Mes factures</h1>
-          <p className="sous-titre-page">Factur-X EN 16931 · PDF/A-3 · conforme réforme 2026</p>
+          <p className="sous-titre-page">Tes factures, conformes à la réforme 2026</p>
         </div>
         <div className="flex items-center gap-2 flex-wrap">
           {isPro && !isMember && tab === "invoices" && (
@@ -374,8 +374,8 @@ export default function InvoicesPage() {
         <div className="bg-amber-500/10 border-2 border-amber-500/40 rounded-xl px-4 py-4 mb-5 flex items-start gap-3">
           <TriangleAlert size={20} className="shrink-0 text-amber-400" />
           <div className="flex-1">
-            <p className="font-semibold text-amber-300 text-sm">Vos clients ne savent pas comment vous payer</p>
-            <p className="text-xs text-amber-400/80 mt-0.5 mb-3">Configurez votre moyen de paiement pour débloquer la création de factures.</p>
+            <p className="font-semibold text-amber-300 text-sm">Tes clients ne savent pas comment te payer</p>
+            <p className="text-xs text-amber-400/80 mt-0.5 mb-3">Configure ton moyen de paiement pour débloquer la création de factures.</p>
             <Link href="/paiements" className="inline-flex items-center gap-1.5 bg-emerald-700 hover:bg-emerald-800 text-ink text-xs font-semibold px-3 py-1.5 rounded-lg transition-colors">
               Configurer mes paiements →
             </Link>
@@ -397,7 +397,7 @@ export default function InvoicesPage() {
                   {bloquees} facture{bloquees > 1 ? "s" : ""} ne peu{bloquees > 1 ? "vent" : "t"} pas être transmise{bloquees > 1 ? "s" : ""}
                 </span>{" "}
                 <span className="text-red-400/80">
-                  - il y manque une information. Survolez l&apos;état de la ligne pour savoir laquelle.
+                  - il y manque une information. Survole l&apos;état de la ligne pour savoir laquelle.
                 </span>
               </p>
             </div>
@@ -409,12 +409,12 @@ export default function InvoicesPage() {
             <div className="text-center py-16 border border-dashed border-ds-border rounded-xl bg-ds-surface">
               <Lock size={32} className="mx-auto mb-3 text-gray-600" />
               <p className="text-ink font-semibold">Les factures sont réservées au plan Solo</p>
-              <p className="text-gray-500 text-sm mt-1">Passez Solo pour créer des factures électroniques Factur-X conformes.</p>
+              <p className="text-gray-500 text-sm mt-1">Passe à Solo pour créer des factures électroniques conformes.</p>
             </div>
           ) : invoices.length === 0 ? (
             <div className="text-center py-16 border border-dashed border-ds-border rounded-xl bg-ds-surface">
               <p className="text-gray-400 font-medium">Aucune facture pour l&apos;instant</p>
-              <p className="text-gray-500 text-sm mt-1">Créez votre première facture depuis un devis signé ou manuellement.</p>
+              <p className="text-gray-500 text-sm mt-1">Crée ta première facture depuis un devis signé ou manuellement.</p>
               <Link href="/invoices/new" className="mt-4 inline-block bg-indigo-600 hover:bg-indigo-700 text-ink text-sm font-medium px-4 py-2 rounded-lg transition-colors">
                 Créer une facture
               </Link>
@@ -442,7 +442,7 @@ export default function InvoicesPage() {
               <Lock size={32} className="mx-auto mb-3 text-gray-600" />
               <p className="text-ink font-semibold">Factures récurrentes, offre payante</p>
               <p className="text-gray-500 text-sm mt-1 max-w-sm mx-auto">
-                Automatisez vos abonnements et contrats. Deviso génère et envoie les factures à la bonne date, chaque mois.
+                Automatise tes abonnements et contrats. Deviso génère et envoie les factures à la bonne date, chaque mois.
               </p>
               <Link href="/billing" className="mt-4 inline-block bg-indigo-600 hover:bg-indigo-700 text-ink text-sm font-medium px-4 py-2 rounded-lg transition-colors">
                 Passer en Solo
@@ -581,7 +581,7 @@ export default function InvoicesPage() {
                 <div className="text-center py-16 border border-dashed border-ds-border rounded-xl bg-ds-surface">
                   <RefreshCw size={32} className="mx-auto text-gray-600 mb-3" />
                   <p className="text-gray-400 font-medium">Aucune facture récurrente</p>
-                  <p className="text-gray-500 text-sm mt-1">Automatisez vos abonnements et contrats mensuels.</p>
+                  <p className="text-gray-500 text-sm mt-1">Automatise tes abonnements et contrats mensuels.</p>
                   <button
                     onClick={() => setShowRecurringForm(true)}
                     className="mt-4 inline-flex items-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-ink text-sm font-medium px-4 py-2 rounded-lg transition-colors"

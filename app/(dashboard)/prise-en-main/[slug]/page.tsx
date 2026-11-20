@@ -381,12 +381,12 @@ const ARTICLES: Record<string, Article> = {
             <Card
               icon={Calendar}
               title="Émission à chaque échéance"
-              desc="À la date prévue, Deviso crée la facture au format Factur-X, numérotée automatiquement dans ta série habituelle. Aucune action de ta part."
+              desc="À la date prévue, Deviso crée la facture électronique, numérotée automatiquement dans ta série habituelle. Aucune action de ta part."
             />
             <Card
               icon={CircleCheck}
               title="Envoi automatique si l'email est renseigné"
-              desc="Quand le client a un email, la facture lui part directement, PDF Factur-X en pièce jointe et tes coordonnées de paiement incluses, comme une facture envoyée à la main."
+              desc="Quand le client a un email, la facture lui part directement, PDF en pièce jointe et tes coordonnées de paiement incluses, comme une facture envoyée à la main."
               accent
             />
             <Card
@@ -1041,8 +1041,8 @@ const ARTICLES: Record<string, Article> = {
             facture de mars en décembre, c&apos;est bien plus laborieux que de l&apos;identifier dans le mois.
           </Warning>
           <Note>
-            Les factures Deviso sont au format <B>Factur-X EN 16931</B> (PDF/A-3 avec données XML
-            embarquées), conformes à la réforme de facturation électronique 2026.
+            Tes factures Deviso sont des <B>factures électroniques</B> (un PDF qui embarque les données de
+            facturation), conformes à la réforme de facturation électronique 2026.
           </Note>
         </Section>
       </>
@@ -1104,8 +1104,8 @@ const ARTICLES: Record<string, Article> = {
           <div className="space-y-3 mt-1">
             <Card
               icon={CircleCheck}
-              title="Format Factur-X conforme"
-              desc="Tes factures sont générées au format Factur-X (norme EN 16931, PDF/A-3), celui qu'impose la réforme. Côté document, tu es déjà prêt, sans rien changer à ta façon de facturer."
+              title="Facture électronique conforme"
+              desc="Tes factures sont générées au format électronique que la réforme impose. Côté document, tu es déjà prêt, sans rien changer à ta façon de facturer."
               accent
             />
             <Card
@@ -1147,9 +1147,9 @@ const ARTICLES: Record<string, Article> = {
     ),
   },
 
-  // ── 10. Réforme : émettre via la Plateforme Agréée ─────────────
+  // ── 10. Réforme : émettre via la plateforme agréée ─────────────
   "conformite-plateforme-agreee": {
-    title: "Réforme 2026 : émettre via la Plateforme Agréée",
+    title: "Réforme 2026 : émettre via la plateforme agréée",
     description: "Comment Deviso transmet tes factures à l'administration, et comment suivre leur cycle de vie.",
     readingTime: 5,
     cta: { label: "Voir ma conformité", href: "/declarations" },
@@ -1172,7 +1172,7 @@ const ARTICLES: Record<string, Article> = {
           <Steps>
             <Step n={1} title="Paramètres → raccordement">
               <p>
-                Depuis <B>Paramètres</B>, lance le raccordement à la Plateforme Agréée. Tu
+                Depuis <B>Paramètres</B>, lance le raccordement à la plateforme agréée. Tu
                 autorises Deviso à agir pour ton compte via une connexion sécurisée (OAuth) :
                 aucun mot de passe n&apos;est stocké.
               </p>
@@ -1194,8 +1194,8 @@ const ARTICLES: Record<string, Article> = {
 
         <Section title="Émettre une facture">
           <p>
-            Une fois raccordé, chaque facture peut être transmise à la Plateforme Agréée en un
-            clic. Deviso génère le fichier Factur-X et le dépose pour toi.
+            Une fois raccordé, chaque facture peut être transmise à la plateforme agréée en un
+            clic. Deviso génère la facture électronique et la dépose pour toi.
           </p>
           <Tip>
             <B>Adresse du destinataire :</B> pour une entreprise française, le SIREN du client
@@ -1237,7 +1237,7 @@ const ARTICLES: Record<string, Article> = {
         <Section title="Où les trouver">
           <p>
             Les factures que tes fournisseurs t&apos;adressent arrivent dans l&apos;onglet{" "}
-            <B>Factures reçues</B>, dès que ton entreprise est raccordée à la Plateforme Agréée.
+            <B>Factures reçues</B>, dès que ton entreprise est raccordée à la plateforme agréée.
           </p>
         </Section>
 
@@ -1264,7 +1264,7 @@ const ARTICLES: Record<string, Article> = {
   // ── 12. Déclarations / e-reporting ─────────────────────────────
   "declarations-ereporting": {
     title: "Tes déclarations au fisc (e-reporting)",
-    description: "Ce que la Plateforme Agréée déclare pour toi, et le peu qui reste à ta charge.",
+    description: "Ce que la plateforme agréée déclare pour toi, et le peu qui reste à ta charge.",
     readingTime: 3,
     cta: { label: "Voir mes déclarations", href: "/declarations" },
     content: (
@@ -1272,7 +1272,7 @@ const ARTICLES: Record<string, Article> = {
         <Section title="Ce que c'est">
           <p>
             L&apos;e-reporting, c&apos;est la transmission au fisc des données de transaction et de
-            paiement. Pour tout ce que tu factures via la Plateforme Agréée, tu n&apos;as{" "}
+            paiement. Pour tout ce que tu factures via la plateforme agréée, tu n&apos;as{" "}
             <B>rien à envoyer</B> : transmettre la facture suffit, la plateforme s&apos;occupe du reste.
           </p>
         </Section>
@@ -1292,7 +1292,7 @@ const ARTICLES: Record<string, Article> = {
         <Section title="Ce qui reste à ta charge">
           <p>
             Une exception : tes <B>achats auprès de fournisseurs étrangers</B> se déclarent par
-            tes soins (leur facture ne passe pas par ta Plateforme Agréée). Deviso le gère aussi,
+            tes soins (leur facture ne passe pas par ta plateforme agréée). Deviso le gère aussi,
             voir le guide dédié.
           </p>
         </Section>
@@ -1312,7 +1312,7 @@ const ARTICLES: Record<string, Article> = {
           <p>
             Si tu achètes un bien ou un service à un fournisseur établi hors de France, tu dois
             déclarer cette acquisition toi-même (article 290-II du CGI). Sa facture ne passe pas
-            par ta Plateforme Agréée : elle t&apos;arrive par email, comme avant.
+            par ta plateforme agréée : elle t&apos;arrive par email, comme avant.
           </p>
         </Section>
 

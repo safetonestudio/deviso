@@ -69,9 +69,9 @@ export function MobileNav({ initials, userName, userEmail, isMember = false, isC
         <div className="flex items-center gap-2.5">
           <Link href="/dashboard" className="flex items-center gap-2 min-h-10">
             <div className="w-7 h-7 rounded-[7px] bg-indigo-600 flex items-center justify-center">
-              <span className="text-ink font-display font-bold text-[15px]">D</span>
+              <span className="text-ink font-display font-semibold text-[15px]">D</span>
             </div>
-            <span className="font-display font-bold text-[17px] tracking-tight text-ink">Deviso</span>
+            <span className="font-display font-semibold text-[17px] tracking-tight text-ink">Deviso</span>
           </Link>
           <ThemeToggleIcone />
         </div>

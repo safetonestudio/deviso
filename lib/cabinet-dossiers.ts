@@ -1,6 +1,7 @@
 import type { createAdminClient } from "@/lib/supabase/admin";
 import { ventilationTva, type LigneMontant } from "./tva";
 import { estAvoir } from "./exports-comptables";
+import { accord, pluriel } from "./pluriel";
 import { natureOperation } from "./superpdp-nature";
 import { libelleStatut } from "./superpdp-statuts";
 import { siretValide, toSiren } from "./facturx-helpers";
@@ -223,15 +224,15 @@ export async function syntheseDossiers(
     // echec, au meme titre qu'une erreur technique de transmission.
     const enEchec = emises.filter((f) => f.superpdp_error || estEchecPlateforme(f.superpdp_status));
     if (enEchec.length > 0) {
-      anomalies.push({ niveau: "rouge", libelle: `${enEchec.length} facture(s) refusée(s), rejetée(s) ou en erreur à la plateforme` });
+      anomalies.push({ niveau: "rouge", libelle: `${pluriel(enEchec.length, "facture")} ${accord(enEchec.length, "refusée")}, ${accord(enEchec.length, "rejetée")} ou en erreur à la plateforme` });
     }
     const aSuivre = emises.filter((f) => !f.superpdp_error && estASuivrePlateforme(f.superpdp_status));
     if (aSuivre.length > 0) {
-      anomalies.push({ niveau: "orange", libelle: `${aSuivre.length} facture(s) en litige ou suspendue(s)` });
+      anomalies.push({ niveau: "orange", libelle: `${pluriel(aSuivre.length, "facture")} en litige ou ${accord(aSuivre.length, "suspendue")}` });
     }
     const sansSiren = annee_.filter((f) => natureOperation(f) === "B2B" && !f.client_siren?.trim());
     if (sansSiren.length > 0) {
-      anomalies.push({ niveau: "orange", libelle: `${sansSiren.length} facture(s) à une entreprise française sans SIREN client` });
+      anomalies.push({ niveau: "orange", libelle: `${pluriel(sansSiren.length, "facture")} à une entreprise française sans SIREN client` });
     }
     // Conformite TVA au regime declare dans le profil du client.
     const franchise = (p?.tva_regime ?? "franchise") === "franchise";
@@ -242,7 +243,7 @@ export async function syntheseDossiers(
       const avecTva = annee_.filter((f) => !estAvoir(f) && factureAvecTva(f));
       if (avecTva.length > 0) {
         tvaRegimeOk = false;
-        anomalies.push({ niveau: "rouge", libelle: `${avecTva.length} facture(s) avec TVA alors que le dossier est en franchise en base (art. 293 B CGI)` });
+        anomalies.push({ niveau: "rouge", libelle: `${pluriel(avecTva.length, "facture")} avec TVA alors que le dossier est en franchise en base (art. 293 B CGI)` });
       }
     } else if (!p?.tva_periodicite) {
       // Assujetti sans periodicite : impossible de savoir quand il declare.
@@ -282,7 +283,7 @@ export async function syntheseDossiers(
       pret: joignable && !!p?.siret && siretOk && tvaRegimeOk && !tvaNumIncoherent,
     };
     if (impayes.nb > 0) {
-      anomalies.push({ niveau: "orange", libelle: `${impayes.nb} facture(s) échue(s) non payée(s)` });
+      anomalies.push({ niveau: "orange", libelle: `${pluriel(impayes.nb, "facture")} ${accord(impayes.nb, "échue")} non ${accord(impayes.nb, "payée")}` });
     }
     const trous = trousNumerotation(emises);
     const totalTrous = trous.reduce((n, t) => n + t.manquants.length, 0);
@@ -293,7 +294,7 @@ export async function syntheseDossiers(
       const reste = totalTrous - trous.reduce((n, t) => n + Math.min(t.manquants.length, 3), 0);
       anomalies.push({
         niveau: "orange",
-        libelle: `Trou de numérotation : ${totalTrous} numéro(s) manquant(s) (${exemples}${reste > 0 ? `, +${reste}` : ""})`,
+        libelle: `Trou de numérotation : ${pluriel(totalTrous, "numéro")} ${accord(totalTrous, "manquant")} (${exemples}${reste > 0 ? `, +${reste}` : ""})`,
       });
     }
     if (!derniere) {

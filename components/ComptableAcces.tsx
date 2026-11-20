@@ -98,8 +98,8 @@ export function ComptableAcces() {
   return (
     <div className="space-y-4">
       <p className="text-sm text-gray-400">
-        Rattachez votre cabinet comptable avec le code qu&apos;il vous a transmis. Il accède alors à
-        vos devis, factures et exports (FEC) en lecture seule, depuis sa propre interface. Il ne peut
+        Rattache ton cabinet comptable avec le code qu&apos;il t&apos;a transmis. Il accède alors à
+        tes devis, factures et exports (FEC) en lecture seule, depuis sa propre interface. Il ne peut
         rien modifier, envoyer ni supprimer. C&apos;est gratuit et cela n&apos;occupe aucun siège.
       </p>
 
@@ -143,7 +143,7 @@ export function ComptableAcces() {
           <div className="flex flex-wrap items-center justify-between gap-3">
             <div className="min-w-0">
               <p className="truncate text-sm font-medium text-ink">
-                {comptable.email || "Votre cabinet comptable"}
+                {comptable.email || "Ton cabinet comptable"}
               </p>
               <p className="text-xs text-gray-500">
                 {comptable.status === "active"

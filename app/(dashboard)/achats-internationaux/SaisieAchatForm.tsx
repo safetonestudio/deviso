@@ -145,7 +145,7 @@ export function SaisieAchatForm() {
       });
       setOuvert(true);
     } catch {
-      setErreur("Import interrompu. Réessayez, ou saisissez les champs à la main.");
+      setErreur("Import interrompu. Réessaie, ou saisis les champs à la main.");
       setOuvert(true);
     } finally {
       setImportEnCours(false);
@@ -180,18 +180,18 @@ export function SaisieAchatForm() {
         return;
       }
       // Le stockage réussit toujours ; la transmission peut être différée par la
-      // fenêtre de déclaration de la Plateforme Agréée. On le dit clairement.
+      // fenêtre de déclaration de la plateforme agréée. On le dit clairement.
       const t = d.transmission;
       setMessage(
         t?.ok
-          ? "Achat enregistré et déclaré à la Plateforme Agréée."
-          : "Achat enregistré. La déclaration sera transmise dès que la Plateforme Agréée l'accepte."
+          ? "Achat enregistré et déclaré à la plateforme agréée."
+          : "Achat enregistré. La déclaration sera transmise dès que la plateforme agréée l'accepte."
       );
       reinitialiser();
       setOuvert(false);
       router.refresh();
     } catch {
-      setErreur("Connexion interrompue. Réessayez.");
+      setErreur("Connexion interrompue. Réessaie.");
     } finally {
       setEnCours(false);
     }
@@ -244,8 +244,8 @@ export function SaisieAchatForm() {
       {!ouvert && erreur && <p className="text-sm text-red-400 mt-3">{erreur}</p>}
       {!ouvert && (
         <p className="text-xs text-gray-600 mt-2 max-w-2xl">
-          L&apos;import lit la facture pour vous faire gagner la saisie. Les valeurs restent à vérifier :
-          rien n&apos;est déclaré tant que vous n&apos;avez pas validé.
+          L&apos;import lit la facture pour te faire gagner la saisie. Les valeurs restent à vérifier :
+          rien n&apos;est déclaré tant que tu n&apos;as pas validé.
         </p>
       )}
 
@@ -253,15 +253,15 @@ export function SaisieAchatForm() {
         <section className="carte p-5 mt-1">
           <h2 className="text-ink font-semibold mb-1">Nouvel achat à l&apos;étranger</h2>
           <p className="text-sm text-gray-400 mb-4">
-            Recopiez (ou vérifiez) les montants depuis la facture de votre fournisseur. Cette
-            déclaration remplit votre obligation d&apos;e-reporting d&apos;acquisition (article 290-II du
+            Recopie (ou vérifie) les montants depuis la facture de ton fournisseur. Cette
+            déclaration remplit ton obligation d&apos;e-reporting d&apos;acquisition (article 290-II du
             CGI).
           </p>
 
           {apercu && (
             <div className="mb-4 rounded-lg border border-amber-500/30 bg-amber-500/10 p-3 text-sm">
               <p className="text-amber-300 font-medium">
-                Champs pré-remplis depuis votre facture. Vérifiez chaque valeur, surtout les montants,
+                Champs pré-remplis depuis ta facture. Vérifie chaque valeur, surtout les montants,
                 avant d&apos;enregistrer
                 {apercu.confiance ? ` (confiance de lecture : ${apercu.confiance})` : ""}.
               </p>

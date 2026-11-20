@@ -31,31 +31,31 @@ const ACTES: { cle: Cle; titre: string; explication: string }[] = [
     cle: "envoyer_devis",
     titre: "Envoyer un devis",
     explication:
-      "Autorise ce collaborateur à envoyer lui-même un devis au client, par e-mail, avec le lien de signature. Sans cette autorisation, il peut créer et préparer le devis, mais c'est vous qui l'envoyez.",
+      "Autorise ce collaborateur à envoyer lui-même un devis au client, par e-mail, avec le lien de signature. Sans cette autorisation, il peut créer et préparer le devis, mais c'est toi qui l'envoies.",
   },
   {
     cle: "envoyer_facture",
     titre: "Envoyer une facture",
     explication:
-      "Autorise l'envoi d'une facture au client par e-mail. Sans cette autorisation, le collaborateur prépare la facture et c'est vous qui l'envoyez.",
+      "Autorise l'envoi d'une facture au client par e-mail. Sans cette autorisation, le collaborateur prépare la facture et c'est toi qui l'envoies.",
   },
   {
     cle: "transmettre_pa",
-    titre: "Transmettre à la Plateforme Agréée",
+    titre: "Transmettre à la plateforme agréée",
     explication:
-      "Autorise la transmission d'une facture à la plateforme officielle de facturation électronique, obligatoire pour vos clients professionnels. C'est un envoi définitif, effectué sous le SIRET de votre entreprise et opposable à l'administration.",
+      "Autorise la transmission d'une facture à la plateforme officielle de facturation électronique, obligatoire pour tes clients professionnels. C'est un envoi définitif, effectué sous le SIRET de ton entreprise et opposable à l'administration.",
   },
   {
     cle: "deposer_chorus",
     titre: "Déposer sur Chorus Pro",
     explication:
-      "Autorise le dépôt d'une facture destinée à un client public (mairie, hôpital, administration…) sur Chorus Pro. Sans cette autorisation, vous seul déposez ces factures.",
+      "Autorise le dépôt d'une facture destinée à un client public (mairie, hôpital, administration…) sur Chorus Pro. Sans cette autorisation, toi seul déposes ces factures.",
   },
   {
     cle: "refuser_facture_recue",
     titre: "Refuser une facture reçue",
     explication:
-      "Autorise le refus d'une facture qu'une autre entreprise vous a adressée via la plateforme. Le refus est définitif et oblige l'expéditeur à recommencer.",
+      "Autorise le refus d'une facture qu'une autre entreprise t'a adressée via la plateforme. Le refus est définitif et oblige l'expéditeur à recommencer.",
   },
 ];
 
@@ -104,7 +104,7 @@ export function GrillePermissions({
     } catch {
       // L'écriture a échoué : on revient à l'état d'avant, rien n'est deviné.
       setPerms(avant);
-      setErreur("L'enregistrement a échoué. Réessayez.");
+      setErreur("L'enregistrement a échoué. Réessaie.");
     } finally {
       setEnCours(null);
     }

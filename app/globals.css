@@ -483,8 +483,8 @@
   .titre-page {
     font-size: 30px;
     line-height: 1.1;
-    font-weight: 700;
-    letter-spacing: -0.02em;
+    font-weight: 600;
+    letter-spacing: -0.035em;
     color: rgb(var(--ink, 15 23 42));
   }
   .sous-titre-page {
@@ -590,7 +590,7 @@ html:has(.ds-app.accueil), body:has(.ds-app.accueil) { background-color: #0E1512
 }
 
 ::-webkit-scrollbar { width: 5px; }
-::-webkit-scrollbar-track { background: #080808; }
+::-webkit-scrollbar-track { background: var(--ds-bg); }
 ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.12); border-radius: 4px; }
 ::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.2); }
 
@@ -717,17 +717,19 @@ html:has(.ds-app.accueil), body:has(.ds-app.accueil) { background-color: #0E1512
   --inf-600: 60 107 136; --inf-700: 47 85 108; --inf-800: 210 224 233; --inf-900: 226 234 240; --inf-950: 238 243 247;
 }
 
-/* Typographie de l'app : Hanken Grotesk pour l'interface, Bricolage
-   Grotesque pour les titres, chiffres tabulaires partout (un logiciel de
-   facturation vit sur des montants, ils doivent s'aligner en colonne). */
+/* Typographie de l'app : Hanken Grotesk partout, titres compris, comme le
+   site public ; chiffres tabulaires partout (un logiciel de facturation vit
+   sur des montants, ils doivent s'aligner en colonne). */
 .ds-app {
+  --font-display: var(--font-app);
   font-family: var(--font-app), ui-sans-serif, system-ui, sans-serif;
   font-variant-numeric: tabular-nums;
   color: rgb(var(--ink));
 }
 .ds-app h1, .ds-app h2, .ds-app h3 {
   font-family: var(--font-display), var(--font-app), ui-sans-serif, sans-serif;
-  letter-spacing: -0.015em;
+  letter-spacing: -0.02em;
+  text-wrap: balance;
 }
 
 /* Fond de l'app : papier uni, sans texture. Le relief en galets rendait les

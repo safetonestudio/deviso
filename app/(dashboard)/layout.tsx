@@ -44,7 +44,7 @@ export default async function DashboardLayout({ children }: { children: React.Re
     // "free", suspendant à tort tout membre d'un espace pourtant payant. On passe
     // donc par le client d'administration, comme getWorkspaceProfile.
     createAdminClient().from("profiles").select("plan").eq("id", workspaceUserId).maybeSingle(),
-    // Le raccordement à la Plateforme Agréée vit dans une table sans politique
+    // Le raccordement à la plateforme agréée vit dans une table sans politique
     // RLS (elle contient un jeton d'un an) : lecture par la clé de service.
     // On ne lit que le statut, jamais le jeton.
     createAdminClient()
@@ -146,22 +146,22 @@ export default async function DashboardLayout({ children }: { children: React.Re
           <p className="text-gray-400 text-sm leading-relaxed">
             {isComptable ? (
               <>
-                L&apos;espace de travail auquel vous étiez rattaché n&apos;est plus sur une
+                L&apos;espace de travail auquel tu étais rattaché n&apos;est plus sur une
                 formule payante. L&apos;accès expert-comptable est disponible dès l&apos;offre
-                Solo. Votre accès est suspendu le temps que son propriétaire la rétablisse,
+                Solo. Ton accès est suspendu le temps que son propriétaire la rétablisse,
                 rien n&apos;a été supprimé.
               </>
             ) : (
               <>
-                L&apos;espace de travail auquel vous étiez rattaché n&apos;est plus sur la
-                formule Pro, qui est celle qui permet de travailler à plusieurs. Votre accès
+                L&apos;espace de travail auquel tu étais rattaché n&apos;est plus sur la
+                formule Pro, qui est celle qui permet de travailler à plusieurs. Ton accès
                 est suspendu le temps que son propriétaire la rétablisse, rien n&apos;a été
                 supprimé.
               </>
             )}
           </p>
           <p className="text-gray-500 text-xs mt-6">
-            Une question ? Écrivez-nous à support@getdeviso.fr
+            Une question ? Écris-nous à support@getdeviso.fr
           </p>
         </div>
       </div>
@@ -194,9 +194,9 @@ export default async function DashboardLayout({ children }: { children: React.Re
           <div className="px-5 py-4 border-b border-ds-border flex items-center justify-between gap-2">
             <a href="/dashboard" className="flex items-center gap-2 min-w-0">
               <div className="w-7 h-7 rounded-[7px] bg-indigo-600 flex items-center justify-center">
-                <span className="text-ink font-display font-bold text-[15px]">D</span>
+                <span className="text-ink font-display font-semibold text-[15px]">D</span>
               </div>
-              <span className="font-display font-bold text-[19px] tracking-tight text-ink">Deviso</span>
+              <span className="font-display font-semibold text-[19px] tracking-tight text-ink">Deviso</span>
               {isDemo && (
                 <span className="ml-1 text-[10px] font-bold bg-amber-500/20 text-amber-400 border border-amber-500/30 px-1.5 py-0.5 rounded-sm">
                   Démo
@@ -279,7 +279,7 @@ export default async function DashboardLayout({ children }: { children: React.Re
           l'arbre React, après l'interactivité. */}
       <Script id="crisp-widget" strategy="afterInteractive">
         {`
-            window.$crisp=[];
+            window.$crisp=[["config","color:theme",["teal"]]];
             window.CRISP_WEBSITE_ID="3eb0e10f-5c5d-4119-b8c3-90edacbdfb61";
             (function(){
               var d=document;

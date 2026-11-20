@@ -9,6 +9,7 @@ import { estTitulaire, estComptable } from "@/lib/droits";
 import { can } from "@/lib/plans";
 import { getPlan } from "@/lib/stripe";
 import { lireFacturesPayees, lignesRecettes, totauxParCategorie, MODES_REGLEMENT, type LigneRecette } from "@/lib/recettes";
+import { pluriel } from "@/lib/pluriel";
 
 export const metadata: Metadata = { title: "Livre des recettes" };
 export const dynamic = "force-dynamic";
@@ -100,7 +101,7 @@ export default async function LivreRecettes({ searchParams }: { searchParams: Pr
         <div>
           <h1 className="titre-page">Livre des recettes</h1>
           <p className="sous-titre-page">
-            Tenu automatiquement à partir de vos factures payées, dans l&apos;ordre des encaissements.
+            Tenu automatiquement à partir de tes factures payées, dans l&apos;ordre des encaissements.
           </p>
         </div>
         {autorise && (
@@ -128,11 +129,11 @@ export default async function LivreRecettes({ searchParams }: { searchParams: Pr
         // Une lecture qui échoue ne doit pas se lire comme « aucun encaissement » :
         // une panne doit se voir, et le détail doit être signalable.
         <section className="bg-ds-surface border border-red-500/30 rounded-xl p-6 text-center">
-          <p className="text-ink font-medium mb-1">Impossible de lire votre livre des recettes</p>
+          <p className="text-ink font-medium mb-1">Impossible de lire ton livre des recettes</p>
           <p className="text-sm text-gray-400 max-w-md mx-auto">
-            Vous avez peut-être des encaissements : cette page n&apos;a pas pu les charger, alors
-            elle ne prétend pas le contraire. Réessayez dans un instant ; si le problème persiste,
-            signalez-le avec ce détail&nbsp;:
+            Tu as peut-être des encaissements : cette page n&apos;a pas pu les charger, alors
+            elle ne prétend pas le contraire. Réessaie dans un instant ; si le problème persiste,
+            signale-le avec ce détail&nbsp;:
           </p>
           <p className="mt-3 text-xs font-mono text-red-400/90 break-all max-w-md mx-auto">{erreur}</p>
         </section>
@@ -154,10 +155,10 @@ export default async function LivreRecettes({ searchParams }: { searchParams: Pr
             <div className="bg-amber-500/10 border border-amber-500/30 rounded-xl p-4 mb-6 text-sm text-amber-400">
               {sansDate > 0 && (
                 <p>
-                  {sansDate} encaissement(s) sans date réelle : la date d&apos;émission de la facture est affichée à la place.
+                  {pluriel(sansDate, "encaissement")} sans date réelle : la date d&apos;émission de la facture est affichée à la place.
                 </p>
               )}
-              {sansMode > 0 && <p>{sansMode} encaissement(s) sans mode de règlement renseigné.</p>}
+              {sansMode > 0 && <p>{pluriel(sansMode, "encaissement")} sans mode de règlement renseigné.</p>}
               <p className="text-gray-400 mt-1">
                 Ce sont des factures marquées payées avant que Deviso ne demande ces informations. Les suivantes les auront.
               </p>
@@ -168,7 +169,7 @@ export default async function LivreRecettes({ searchParams }: { searchParams: Pr
             <section className="carte p-6 text-center">
               <p className="text-ink font-medium mb-1">Aucun encaissement en {annee}</p>
               <p className="text-sm text-gray-400 max-w-md mx-auto">
-                Une facture apparaît ici dès que vous la marquez payée.
+                Une facture apparaît ici dès que tu la marques payée.
               </p>
             </section>
           ) : (

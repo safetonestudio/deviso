@@ -4,7 +4,7 @@ import { useCallback, useEffect, useState } from "react";
 import { useSearchParams } from "next/navigation";
 
 /**
- * Raccordement à la Plateforme Agréée (Super PDP).
+ * Raccordement à la plateforme agréée (Super PDP).
  *
  * Ce composant existe parce que les routes `/api/superpdp/connect`, `/callback`
  * et `/status` étaient écrites depuis un mois sans qu'aucune interface ne les
@@ -49,30 +49,30 @@ const RETOURS: Record<string, { ton: "ok" | "attente" | "erreur"; texte: string 
   en_attente: {
     ton: "attente",
     texte:
-      "Autorisation enregistrée. Super PDP vérifie le rattachement de votre entreprise, " +
+      "Autorisation enregistrée. Super PDP vérifie le rattachement de ton entreprise, " +
       "cela peut prendre un moment.",
   },
   expire: {
     ton: "erreur",
     texte:
       "La demande a expiré : le raccordement doit être mené en une fois, en moins " +
-      "de 30 minutes. Relancez-le.",
+      "de 30 minutes. Relance-le.",
   },
   interrompu: {
     ton: "erreur",
     texte:
-      "Le raccordement a été interrompu avant la dernière étape. Relancez-le et " +
-      "allez jusqu'à l'écran d'autorisation.",
+      "Le raccordement a été interrompu avant la dernière étape. Relance-le et " +
+      "va jusqu'à l'écran d'autorisation.",
   },
   double: {
     ton: "erreur",
     texte:
       "Le raccordement a été ouvert plusieurs fois : c'est une demande précédente " +
-      "qui est revenue. Fermez les autres onglets et relancez-le une seule fois.",
+      "qui est revenue. Ferme les autres onglets et relance-le une seule fois.",
   },
   session_perdue: {
     ton: "erreur",
-    texte: "Votre session Deviso a été perdue pendant le raccordement. Reconnectez-vous puis réessayez.",
+    texte: "Ta session Deviso a été perdue pendant le raccordement. Reconnecte-toi puis réessaie.",
   },
   indisponible: { ton: "erreur", texte: "Le raccordement n'est pas encore activé côté Deviso." },
   erreur: { ton: "erreur", texte: "Le raccordement a échoué." },
@@ -87,8 +87,8 @@ const RETOURS: Record<string, { ton: "ok" | "attente" | "erreur"; texte: string 
 function traduire(detail: string): string {
   if (/no company found/i.test(detail)) {
     return (
-      "Super PDP ne reconnaît pas l'entreprise transmise. Reprenez le raccordement " +
-      "et saisissez vos informations directement dans leur formulaire."
+      "Super PDP ne reconnaît pas l'entreprise transmise. Reprends le raccordement " +
+      "et saisis tes informations directement dans leur formulaire."
     );
   }
   return detail;
@@ -142,7 +142,7 @@ export function SuperPdpCard() {
         return;
       }
       setMessageLigne(
-        d.dejaOuverte ? "Votre ligne est déjà ouverte." : "Ligne de réception ouverte."
+        d.dejaOuverte ? "Ta ligne est déjà ouverte." : "Ligne de réception ouverte."
       );
       await relire();
     } catch {
@@ -169,7 +169,7 @@ export function SuperPdpCard() {
       if (fermerLigne && d?.ligne && d.ligne.fermee !== true) {
         setMessageFermeture(
           d.ligne.message ??
-            "Votre ligne d'annuaire n'a pas pu être fermée : elle reste ouverte chez Super PDP."
+            "Ta ligne d'annuaire n'a pas pu être fermée : elle reste ouverte chez Super PDP."
         );
       }
       await relire();
@@ -193,7 +193,7 @@ export function SuperPdpCard() {
   // On proposait « Ouvrir ma ligne de réception » dans ce cas, avec un
   // encadré ambre alarmant. C'est le geste à ne pas faire. La documentation
   // Super PDP (article « Annuaire ») décrit l'erreur comme l'état NORMAL d'une
-  // portabilité : quand une entreprise arrive d'une autre Plateforme Agréée,
+  // portabilité : quand une entreprise arrive d'une autre plateforme agréée,
   // « pendant le temps de la migration, la ligne d'annuaire est en erreur côté
   // SUPER PDP, mais ça n'est pas grave, il ne faut pas la supprimer ». L'ancien
   // plateforme a cinq jours pour répondre.
@@ -217,7 +217,7 @@ export function SuperPdpCard() {
       <p className="text-xs text-gray-500 leading-relaxed mb-4">
         Depuis le <strong className="text-gray-400">1ᵉʳ septembre 2026</strong>, toutes les entreprises
         doivent pouvoir <strong className="text-gray-400">recevoir</strong> des factures électroniques.
-        Le raccordement à une Plateforme Agréée est le moyen de le faire.
+        Le raccordement à une plateforme agréée est le moyen de le faire.
       </p>
 
       {retour && (
@@ -262,18 +262,18 @@ export function SuperPdpCard() {
               <p className="text-xs text-gray-500 truncate">
                 {verifie
                   ? ligne?.etat === "joignable"
-                    ? "Vous pouvez recevoir des factures électroniques."
+                    ? "Tu peux recevoir des factures électroniques."
                     : ligne?.etat === "programmee"
-                      ? `Votre ligne de réception s'ouvre le ${new Date(ligne.aPartirDu).toLocaleDateString("fr-FR", { timeZone: "Europe/Paris" })}.`
+                      ? `Ta ligne de réception s'ouvre le ${new Date(ligne.aPartirDu).toLocaleDateString("fr-FR", { timeZone: "Europe/Paris" })}.`
                       : ligne?.etat === "en_cours"
-                        ? "Votre ligne de réception est en cours d'ouverture."
+                        ? "Ta ligne de réception est en cours d'ouverture."
                         : ligne?.etat === "en_erreur"
-                          ? "Votre ligne de réception est signalée en erreur. Si vous arrivez d'une autre Plateforme Agréée, c'est normal le temps du transfert."
-                          : "Aucune ligne de réception : vos fournisseurs ne peuvent pas vous joindre."
+                          ? "Ta ligne de réception est signalée en erreur. Si tu arrives d'une autre plateforme agréée, c'est normal le temps du transfert."
+                          : "Aucune ligne de réception : tes fournisseurs ne peuvent pas te joindre."
                   : enAttente
                     ? (etat?.messageStatut?.texte ??
-                      "Super PDP vérifie le rattachement de votre entreprise.")
-                    : "Vous ne pouvez pas encore recevoir de factures électroniques."}
+                      "Super PDP vérifie le rattachement de ton entreprise.")
+                    : "Tu ne peux pas encore recevoir de factures électroniques."}
               </p>
             </div>
           </div>
@@ -298,7 +298,7 @@ export function SuperPdpCard() {
         </div>
       )}
 
-      {/* Le régime de TVA connu de la Plateforme Agréée.
+      {/* Le régime de TVA connu de la plateforme agréée.
           `/api/superpdp/status` le lit chez EUX, et non dans notre copie,
           précisément pour rendre visible une divergence. Le champ était calculé
           à chaque appel puis jeté : la carte ne le déclarait même pas. Vide,
@@ -306,13 +306,13 @@ export function SuperPdpCard() {
       {verifie && !etat?.regimeTva && (
         <div className="mt-4 bg-amber-500/10 border border-amber-500/30 rounded-lg px-4 py-3">
           <p className="text-sm text-amber-300 font-medium">
-            Vos factures aux particuliers seront refusées
+            Tes factures aux particuliers seront refusées
           </p>
           <p className="text-xs text-amber-400/80 mt-1">
-            La Plateforme Agréée ne connaît pas votre périodicité de déclaration de TVA. C&apos;est
+            La plateforme agréée ne connaît pas ta périodicité de déclaration de TVA. C&apos;est
             elle qui commande le calendrier d&apos;e-reporting.{" "}
             <a href="/profil#tva" className="underline hover:text-amber-300">
-              Renseignez-la dans votre profil
+              Renseigne-la dans ton profil
             </a>
             .
           </p>
@@ -325,11 +325,11 @@ export function SuperPdpCard() {
       {ligneAOuvrir && (
         <div className="mt-4 bg-amber-500/10 border border-amber-500/30 rounded-lg px-4 py-3">
           <p className="text-sm text-amber-300 font-medium">
-            Vos fournisseurs ne peuvent pas encore vous adresser de factures
+            Tes fournisseurs ne peuvent pas encore t&apos;adresser de factures
           </p>
           <p className="text-xs text-amber-400/80 mt-1 mb-3">
-            Votre entreprise est raccordée, mais aucune ligne n&apos;est ouverte à
-            l&apos;annuaire. C&apos;est elle qui vous rend joignable.
+            Ton entreprise est raccordée, mais aucune ligne n&apos;est ouverte à
+            l&apos;annuaire. C&apos;est elle qui te rend joignable.
           </p>
           <button
             onClick={ouvrirLigne}
@@ -348,12 +348,12 @@ export function SuperPdpCard() {
       {verifie && ligne?.etat === "en_erreur" && (
         <div className="mt-4 bg-amber-500/10 border border-amber-500/30 rounded-lg px-4 py-3">
           <p className="text-sm text-amber-300 font-medium">
-            Votre ligne de réception est signalée en erreur
+            Ta ligne de réception est signalée en erreur
           </p>
           <p className="text-xs text-amber-400/80 mt-1 leading-relaxed">
             {ligne.message ? `${ligne.message} ` : ""}
-            Si vous venez de quitter une autre Plateforme Agréée, c&apos;est
-            attendu : votre ligne est en cours de transfert.{" "}
+            Si tu viens de quitter une autre plateforme agréée, c&apos;est
+            attendu : ta ligne est en cours de transfert.{" "}
             {/* Le point que l'ancien message taisait, et qui change tout :
                 la portabilité commence par un e-mail de confirmation adressé
                 au client. « Attendez » se lit alors comme « ne faites rien »,
@@ -361,13 +361,13 @@ export function SuperPdpCard() {
                 rien n'avance, jamais. Même défaut que le message d'identité
                 non vérifiée, corrigé pour la même raison. */}
             <strong className="text-amber-300">
-              Super PDP vous a envoyé un e-mail pour vous demander de confirmer
-              votre choix : sans cette confirmation, le transfert ne démarre pas.
+              Super PDP t&apos;a envoyé un e-mail pour te demander de confirmer
+              ton choix : sans cette confirmation, le transfert ne démarre pas.
             </strong>{" "}
             Une fois confirmé, l&apos;ancienne plateforme a cinq jours pour
-            répondre. N&apos;ouvrez pas de seconde ligne et ne supprimez pas
-            celle-ci, vous interrompriez le transfert. Si la situation dure
-            au-delà d&apos;une semaine, contactez la Plateforme Agréée.
+            répondre. N&apos;ouvre pas de seconde ligne et ne supprime pas
+            celle-ci, tu interromprais le transfert. Si la situation dure
+            au-delà d&apos;une semaine, contacte ta plateforme agréée.
           </p>
         </div>
       )}
@@ -378,10 +378,10 @@ export function SuperPdpCard() {
           erreurs de recopie sur une chaîne de ce genre. */}
       {verifie && etat?.directoryAddress && (
         <div className="mt-4 bg-ds-elevated border border-ds-border rounded-lg px-4 py-3">
-          <p className="text-xs text-gray-400 mb-1">Votre adresse de facturation électronique</p>
+          <p className="text-xs text-gray-400 mb-1">Ton adresse de facturation électronique</p>
           <p className="text-sm text-ink font-mono break-all select-all">{etat.directoryAddress}</p>
           <p className="text-xs text-gray-600 mt-1.5">
-            Communiquez-la à vos clients pour qu&apos;ils puissent vous adresser leurs factures.
+            Communique-la à tes clients pour qu&apos;ils puissent t&apos;adresser leurs factures.
           </p>
         </div>
       )}
@@ -394,7 +394,7 @@ export function SuperPdpCard() {
           {confirmation ? (
             <div className="space-y-3">
               <p className="text-xs text-gray-400 max-w-md">
-                Vous ne recevrez plus de factures dans Deviso.
+                Tu ne recevras plus de factures dans Deviso.
               </p>
 
               {/* Le choix qui manquait.
@@ -418,9 +418,9 @@ export function SuperPdpCard() {
                   <span className="text-xs text-gray-400 leading-relaxed">
                     Fermer aussi ma ligne de réception à l&apos;annuaire
                     <span className="block text-gray-600 mt-0.5">
-                      À cocher seulement si vous cessez votre activité. Si vous
-                      changez simplement d&apos;outil, laissez décoché&nbsp;: sinon
-                      plus personne en France ne pourra vous adresser de facture.
+                      À cocher seulement si tu cesses ton activité. Si tu
+                      changes simplement d&apos;outil, laisse décoché&nbsp;: sinon
+                      plus personne en France ne pourra t&apos;adresser de facture.
                     </span>
                   </span>
                 </label>

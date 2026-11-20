@@ -103,7 +103,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="fr" className={inter.variable} suppressHydrationWarning>
-      <body className="bg-[#080808] text-ink antialiased">
+      <body className="bg-[#0E1512] text-ink antialiased">
         <ServiceWorkerRegistration />
         {children}
         <Analytics />

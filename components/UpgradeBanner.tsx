@@ -27,16 +27,16 @@ export function UpgradeBanner({ variant = "proposal_limit", count = 0 }: Upgrade
 
   const messages: Record<BannerVariant, { title: string; sub: string }> = {
     proposal_limit: {
-      title: "Débloquez les factures, la signature électronique et le logo",
-      sub: "Factures Factur-X, e-signature, relances auto, logo personnalisé, dès 18€/mois",
+      title: "Débloque les factures, la signature électronique et le logo",
+      sub: "Factures électroniques, e-signature, relances auto, logo personnalisé, dès 18€/mois",
     },
     invoice_blocked: {
       title: "Les factures sont réservées au plan Solo",
-      sub: "Passez Solo à 18€/mois pour créer des factures électroniques Factur-X conformes",
+      sub: "Passe à Solo à 18€/mois pour créer des factures électroniques conformes",
     },
     logo_blocked: {
       title: "L'upload de logo est réservé au plan Solo",
-      sub: "Personnalisez vos devis avec votre logo en passant au plan Solo",
+      sub: "Personnalise tes devis avec ton logo en passant au plan Solo",
     },
   };
 

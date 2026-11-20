@@ -9,6 +9,7 @@ import { LayoutTemplate, ChevronDown, ChevronUp, Clock, Package, Lightbulb, Zap,
 import { GuidedTourBanner } from "@/components/GuidedTourBanner";
 import { RechercheEntreprise } from "@/components/RechercheEntreprise";
 import { DicteeVocale } from "@/components/DicteeVocale";
+import { pluriel } from "@/lib/pluriel";
 
 type Step = "brief" | "review" | "client";
 
@@ -402,7 +403,7 @@ export default function NewProposalPage() {
               </ul>
             </div>
             <div className="flex items-center justify-between gap-3 mb-2">
-              <span className="text-xs text-gray-500">Tapez, ou dictez à la voix.</span>
+              <span className="text-xs text-gray-500">Tape, ou dicte à la voix.</span>
               <DicteeVocale
                 onTexteFinal={(t) => setBrief((b) => (b.trim() ? b.trimEnd() + " " : "") + t)}
               />
@@ -743,7 +744,7 @@ export default function NewProposalPage() {
             <div className="font-semibold text-gray-300 mb-2">Récapitulatif</div>
             <div className="text-gray-400 space-y-1">
               <div>{generated.title}</div>
-              <div>{generated.items.length} ligne(s) · Total {generated.tva_rate > 0 ? "TTC" : "net"} {fmt(generated.total_ttc)}</div>
+              <div>{pluriel(generated.items.length, "ligne")} · Total {generated.tva_rate > 0 ? "TTC" : "net"} {fmt(generated.total_ttc)}</div>
               <div>Validité : {generated.valid_days} jours · TVA : {generated.tva_rate === 0 ? "non applicable (franchise)" : `${generated.tva_rate}%`}</div>
             </div>
           </div>

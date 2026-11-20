@@ -228,7 +228,7 @@ export default function ProfilPage() {
       tva_number: profile.tva_number ?? null,
       tva_regime: profile.tva_regime ?? null,
       statut_juridique: profile.statut_juridique ?? null,
-      // Transmise à la Plateforme Agréée par l'API, où elle commande le
+      // Transmise à la plateforme agréée par l'API, où elle commande le
       // calendrier d'e-reporting. L'oublier ici la perdrait en silence.
       tva_periodicite: profile.tva_periodicite ?? null,
       proposal_template: profile.proposal_template ?? null,
@@ -622,7 +622,7 @@ Les présentes CGV sont soumises au droit français. Tout litige relève de la c
 
           {/* Périodicité de déclaration, assujettis uniquement.
               Distincte du régime ci-dessus : celui-là fixe le taux, celle-ci le
-              calendrier de déclaration. La Plateforme Agréée l'exige pour
+              calendrier de déclaration. La plateforme agréée l'exige pour
               l'e-reporting ; sans elle, les factures aux particuliers sont
               refusées. En franchise, il n'y a rien à déclarer : la question ne
               se pose pas et n'est donc pas posée. */}
@@ -630,7 +630,7 @@ Les présentes CGV sont soumises au droit français. Tout litige relève de la c
             <div className="space-y-2 pt-1">
               <div className="text-sm font-medium text-ink">Périodicité de déclaration de TVA</div>
               <p className="text-xs text-gray-500">
-                Transmise à la Plateforme Agréée : elle détermine le rythme auquel vos ventes aux
+                Transmise à la plateforme agréée : elle détermine le rythme auquel tes ventes aux
                 particuliers sont déclarées à l&apos;administration. Sans elle, ces factures sont refusées.
               </p>
               <div className="grid gap-2 sm:grid-cols-3">
@@ -649,7 +649,7 @@ Les présentes CGV sont soumises au droit français. Tout litige relève de la c
               </div>
               {!profile.tva_periodicite && (
                 <p className="text-xs text-amber-400/90">
-                  Non renseignée : vos factures à des particuliers seront refusées par la Plateforme Agréée.
+                  Non renseignée : tes factures à des particuliers seront refusées par la plateforme agréée.
                 </p>
               )}
             </div>
@@ -679,7 +679,7 @@ Les présentes CGV sont soumises au droit français. Tout litige relève de la c
         {vue === "documents" && (<>
         {/* Apparence */}
         {canName(profile.plan, "accentColor") ? (
-          <SectionRepliable id="documents" titre="Apparence des documents" sousTitre="Choisissez le style de vos devis et factures envoyés aux clients.">
+          <SectionRepliable id="documents" titre="Apparence des documents" sousTitre="Choisis le style de tes devis et factures envoyés aux clients.">
             <div>
               <label className="block text-xs font-medium text-gray-400 mb-2">Mise en page</label>
               <div className="grid grid-cols-3 gap-4">
@@ -795,7 +795,7 @@ Les présentes CGV sont soumises au droit français. Tout litige relève de la c
       {vue === "sous-domaine" && (<>
       {/* ── Sous-domaine ── */}
       {canName(profile.plan, "subdomain") ? (
-        <SectionRepliable id="sous-domaine" titre="Sous-domaine personnalisé" sousTitre={<>Vos devis seront accessibles via <span className="text-indigo-400 font-mono">votre-nom.getdeviso.fr</span>.</>}>
+        <SectionRepliable id="sous-domaine" titre="Sous-domaine personnalisé" sousTitre={<>Tes devis seront accessibles via <span className="text-indigo-400 font-mono">ton-nom.getdeviso.fr</span>.</>}>
           {profile.subdomain && (
             <div className="flex items-center gap-2 bg-emerald-500/10 border border-emerald-500/20 rounded-lg px-3 py-2">
               <span className="text-emerald-400 text-sm">✓</span>
@@ -836,7 +836,7 @@ Les présentes CGV sont soumises au droit français. Tout litige relève de la c
             )}
           </div>
           <p className="text-xs text-gray-500 border-t border-ds-border pt-3">
-            Le lien de partage de vos devis utilisera automatiquement ce sous-domaine.
+            Le lien de partage de tes devis utilisera automatiquement ce sous-domaine.
           </p>
         </SectionRepliable>
       ) : (
@@ -844,7 +844,7 @@ Les présentes CGV sont soumises au droit français. Tout litige relève de la c
           <div className="flex items-center justify-between gap-4">
             <div>
               <h2 className="font-semibold text-gray-300">Sous-domaine personnalisé</h2>
-              <p className="text-xs text-gray-500 mt-0.5">Partagez vos devis via <span className="font-mono">votre-nom.getdeviso.fr</span> : disponible dès le plan Solo.</p>
+              <p className="text-xs text-gray-500 mt-0.5">Partage tes devis via <span className="font-mono">ton-nom.getdeviso.fr</span> : disponible dès le plan Solo.</p>
             </div>
             <span className="shrink-0 text-xs font-semibold bg-indigo-500/20 text-indigo-300 px-2.5 py-1 rounded-full">Solo</span>
           </div>
@@ -856,7 +856,7 @@ Les présentes CGV sont soumises au droit français. Tout litige relève de la c
       {vue === "relances" && (<>
       {/* ── Relances programmables ── */}
       {canName(profile.plan, "remindersCustom") ? (
-        <SectionRepliable id="relances" titre="Relances automatiques" sousTitre="Définissez vos propres délais de relance (en jours après envoi) et un message personnalisé inclus dans chaque email.">
+        <SectionRepliable id="relances" titre="Relances automatiques" sousTitre="Définis tes propres délais de relance (en jours après envoi) et un message personnalisé inclus dans chaque email.">
 
           {/* Intervalles */}
           <div>
@@ -937,7 +937,7 @@ Les présentes CGV sont soumises au droit français. Tout litige relève de la c
             <div>
               <h2 className="font-semibold text-gray-300">Relances automatiques personnalisées</h2>
               <p className="text-xs text-gray-500 mt-0.5">
-                Choisissez vos délais (J+2, J+10…) et un message sur-mesure : disponible dès le plan Solo.
+                Choisis tes délais (J+2, J+10…) et un message sur-mesure : disponible dès le plan Solo.
               </p>
             </div>
             <span className="shrink-0 text-xs font-semibold bg-indigo-500/20 text-indigo-300 px-2.5 py-1 rounded-full">Solo</span>
@@ -952,12 +952,12 @@ Les présentes CGV sont soumises au droit français. Tout litige relève de la c
         id="chorus"
         titre="Chorus Pro"
         droite={<span className="text-xs font-semibold bg-blue-500/15 text-blue-300 border border-blue-500/20 px-2 py-0.5 rounded-full">Réforme 2026 · B2G</span>}
-        sousTitre="Pour déposer vos factures auprès du service public (collectivités, ministères, hôpitaux) en un clic. Laissez vide si vous ne facturez pas le secteur public."
+        sousTitre="Pour déposer tes factures auprès du service public (collectivités, ministères, hôpitaux) en un clic. Laisse vide si tu ne factures pas le secteur public."
       >
 
         <div className="bg-blue-500/5 border border-blue-500/15 rounded-lg px-4 py-3">
           <p className="text-xs text-blue-300 leading-relaxed">
-            <strong>Prérequis :</strong> créez un compte technique sur{" "}
+            <strong>Prérequis :</strong> crée un compte technique sur{" "}
             <a href="https://chorus-pro.gouv.fr" target="_blank" rel="noopener noreferrer" className="underline hover:text-blue-200">
               chorus-pro.gouv.fr
             </a>{" "}
@@ -1064,7 +1064,7 @@ Les présentes CGV sont soumises au droit français. Tout litige relève de la c
           value={cgvText}
           onChange={(e) => setCgvText(e.target.value)}
           rows={14}
-          placeholder="Rédigez vos conditions générales de vente ici, ou cliquez sur « Utiliser le modèle » pour partir d'une base complète…"
+          placeholder="Rédige tes conditions générales de vente ici, ou clique sur « Utiliser le modèle » pour partir d'une base complète…"
           className="w-full bg-ds-bg border border-ds-border text-ink placeholder:text-gray-600 rounded-lg px-3 py-2.5 text-sm focus:outline-hidden focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500/30 resize-y mt-3 font-mono leading-relaxed"
         />
         <div className="flex items-center gap-3 mt-3">

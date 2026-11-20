@@ -74,7 +74,7 @@ export function InvoicesListe({
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 sm:gap-3">
         <TuileSynthese libelle="Encaissé" valeur={fmt(encaisse)} />
         <TuileSynthese libelle="En attente de paiement" valeur={fmt(enAttente)} />
-        <TuileSynthese libelle="À transmettre" valeur={String(aTransmettre)} alerte={aTransmettre > 0} />
+        <TuileSynthese libelle="À transmettre" valeur={String(aTransmettre)} />
       </div>
 
       <div className="mt-4">
@@ -101,7 +101,7 @@ export function InvoicesListe({
                     </span>
                   )}
                   {e && e.aFaire && (
-                    <PuceCouleur classe="bg-amber-500/15 text-amber-400 border-amber-500/30" texte="À transmettre" />
+                    <PuceCouleur classe="bg-blue-500/10 text-blue-400 border-blue-500/25" texte="À transmettre" />
                   )}
                 </>
               }
@@ -135,7 +135,7 @@ export function InvoicesListe({
                     disabled={transmission === inv.id}
                     className="inline-flex items-center gap-2 px-3 py-2 rounded-lg border border-amber-500/30 bg-amber-500/5 text-amber-400 text-sm font-semibold hover:bg-amber-500/10 disabled:opacity-50 transition-colors"
                   >
-                    {transmission === inv.id ? "Transmission…" : "Transmettre à la Plateforme Agréée"}
+                    {transmission === inv.id ? "Transmission…" : "Transmettre à la plateforme agréée"}
                   </button>
                 )}
                 <button

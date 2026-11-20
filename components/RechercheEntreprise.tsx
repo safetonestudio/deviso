@@ -57,7 +57,7 @@ export function RechercheEntreprise({
       if ((d.entreprises ?? []).length === 0) {
         // Une absence de l'annuaire a un sens précis, documenté par Super PDP,
         // et le taire laissait l'utilisateur croire à une panne de recherche.
-        // « Si le SIREN de votre entreprise ou association ne figure pas dans
+        // « Si le SIREN de ton entreprise ou association ne figure pas dans
         // l'annuaire de la facturation électronique, cela signifie soit qu'elle
         // n'est pas assujettie à la TVA, et donc n'est pas soumise aux
         // obligations d'émettre et de recevoir des factures électroniques ;
@@ -67,10 +67,10 @@ export function RechercheEntreprise({
         // peut la choisir que s'il connaît l'alternative.
         setMessage(
           "Aucune entreprise trouvée. La recherche porte sur le début du nom officiel, " +
-            "essayez une orthographe plus courte, ou ajoutez le code postal. " +
-            "Si vous êtes sûr du nom, c'est que cette entreprise n'est pas assujettie à la TVA : " +
-            "elle n'est alors pas concernée par la facturation électronique, et vous pouvez " +
-            "continuer à lui adresser vos factures comme avant.",
+            "essaie une orthographe plus courte, ou ajoute le code postal. " +
+            "Si tu es sûr du nom, c'est que cette entreprise n'est pas assujettie à la TVA : " +
+            "elle n'est alors pas concernée par la facturation électronique, et tu peux " +
+            "continuer à lui adresser tes factures comme avant.",
         );
       }
     } catch {
@@ -141,7 +141,7 @@ export function RechercheEntreprise({
               que l'entreprise n'existe pas alors qu'elle est au-delà. */}
           {tronque && (
             <p className="text-xs text-amber-400/90">
-              Trop de résultats : précisez le nom ou ajoutez le code postal.
+              Trop de résultats : précise le nom ou ajoute le code postal.
             </p>
           )}
         </div>

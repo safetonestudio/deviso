@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { pluriel } from "@/lib/pluriel";
 
 /**
  * L'aperçu de ce qui partira.
@@ -112,12 +113,12 @@ export function Apercu() {
           {resultat && !resultat.vide && (
             <div className="text-sm text-gray-300 space-y-2">
               <p>
-                Période retenue par la Plateforme Agréée :{" "}
+                Période retenue par la plateforme agréée :{" "}
                 <span className="text-ink font-medium">
                   {resultat.periode ? `${resultat.periode.debut}, ${resultat.periode.fin}` : "non précisée"}
                 </span>
                 {typeof resultat.nombreMontants === "number" && (
-                  <span className="text-gray-500"> · {resultat.nombreMontants} montant(s)</span>
+                  <span className="text-gray-500"> · {pluriel(resultat.nombreMontants, "montant")}</span>
                 )}
               </p>
               <details>

@@ -16,7 +16,7 @@ const PLAN_INFO = {
   free: {
     label: "Non abonné",
     color: "bg-ds-elevated text-gray-400",
-    description: "Aucun abonnement actif, commencez un essai gratuit de 14 jours",
+    description: "Aucun abonnement actif, commence un essai gratuit de 14 jours",
   },
   solo: {
     label: "Solo",
@@ -87,9 +87,9 @@ export default function BillingPage() {
         // base n'a pas accordé.
         setChangeOk(
           data.message ??
-            `Votre formule est passée à ${plan === "pro" ? "Pro" : "Solo"} ` +
+            `Ta formule est passée à ${plan === "pro" ? "Pro" : "Solo"} ` +
               `en facturation ${billing === "annual" ? "annuelle" : "mensuelle"}. ` +
-              `L'écart est ajusté au prorata sur votre prochaine facture.`
+              `L'écart est ajusté au prorata sur ta prochaine facture.`
         );
         const r = await fetch("/api/profile");
         const d = await r.json();
@@ -113,7 +113,7 @@ export default function BillingPage() {
       setPortalError(data.message || data.error || "Le changement de formule n'a pas abouti.");
       setActing(false);
     } catch {
-      setPortalError("Erreur réseau. Réessayez dans quelques instants.");
+      setPortalError("Erreur réseau. Réessaie dans quelques instants.");
       setActing(false);
     }
   }
@@ -127,11 +127,11 @@ export default function BillingPage() {
       if (data.url) {
         window.location.href = data.url;
       } else {
-        setPortalError(data.error || "Impossible d'accéder au portail. Contactez le support.");
+        setPortalError(data.error || "Impossible d'accéder au portail. Contacte le support.");
         setActing(false);
       }
     } catch {
-      setPortalError("Erreur réseau. Réessayez dans quelques instants.");
+      setPortalError("Erreur réseau. Réessaie dans quelques instants.");
       setActing(false);
     }
   }
@@ -156,13 +156,13 @@ export default function BillingPage() {
       <GuidedTourBanner pageKey="billing" />
       <div className="en-tete-page mb-6">
         <h1 className="titre-page">Abonnement</h1>
-        <p className="sous-titre-page">Gérez votre plan et votre facturation.</p>
+        <p className="sous-titre-page">Gère ton plan et ta facturation.</p>
       </div>
 
       {searchParams.get("upgraded") === "1" && (
         <div className="bg-emerald-500/10 border border-emerald-500/20 rounded-xl px-5 py-4 mb-6 flex items-center gap-3">
           <PartyPopper size={22} className="shrink-0 text-emerald-400" />
-          <p className="text-emerald-400 font-medium">Votre abonnement a bien été activé !</p>
+          <p className="text-emerald-400 font-medium">Ton abonnement a bien été activé !</p>
         </div>
       )}
 
@@ -243,7 +243,7 @@ export default function BillingPage() {
           <div className="mt-4 bg-amber-500/10 border border-amber-500/20 rounded-xl px-4 py-3 flex items-center justify-between gap-4">
             <p className="text-sm text-amber-200">
               <span className="font-semibold inline-flex items-center gap-1.5"><Hourglass size={16} className="shrink-0" />Essai en cours.</span>{" "}
-              Ajoutez une carte maintenant pour continuer automatiquement à la fin des 14 jours, sans interruption.
+              Ajoute une carte maintenant pour continuer automatiquement à la fin des 14 jours, sans interruption.
             </p>
             <button
               onClick={handlePortal}
@@ -268,7 +268,7 @@ export default function BillingPage() {
       <div className="carte p-6">
           <div className="flex items-center justify-between mb-5">
             <p className="text-xs font-semibold text-gray-500">
-              {plan === "free" ? "Commencer votre essai gratuit" : "Changer de formule"}
+              {plan === "free" ? "Commencer ton essai gratuit" : "Changer de formule"}
             </p>
             {/* Toggle mensuel / annuel */}
             <div className="flex items-center gap-1 bg-ds-elevated rounded-lg p-0.5">
@@ -305,8 +305,8 @@ export default function BillingPage() {
               <Gift size={18} className="shrink-0 text-gray-500" />
               <p className="text-sm text-gray-400">
                 Le changement prend effet <span className="font-semibold text-gray-300">immédiatement</span>.
-                L&apos;écart est calculé au prorata et ajusté sur votre prochaine facture, rien n&apos;est
-                prélevé maintenant{isTrialing ? ", et vos jours d'essai restants sont conservés" : ""}.
+                L&apos;écart est calculé au prorata et ajusté sur ta prochaine facture, rien n&apos;est
+                prélevé maintenant{isTrialing ? ", et tes jours d'essai restants sont conservés" : ""}.
               </p>
             </div>
           )}
@@ -321,7 +321,7 @@ export default function BillingPage() {
                       <span className="text-xs text-gray-500 ml-2">({ANNUAL_TOTAL.solo}/an)</span>
                     )}
                   </p>
-                  <p className="text-sm text-gray-400 mt-0.5">IA devis, factures Factur-X, acompte/solde, Chorus Pro</p>
+                  <p className="text-sm text-gray-400 mt-0.5">IA devis, factures électroniques, acompte/solde, Chorus Pro</p>
                 </div>
                 <button
                   onClick={() => handleUpgrade("solo")}

@@ -10,9 +10,9 @@ const PROVIDERS = [
   {
     id: "stripe",
     label: "Stripe",
-    description: "Paiement par carte bancaire via votre propre compte Stripe",
+    description: "Paiement par carte bancaire via ton propre compte Stripe",
     placeholder: "https://buy.stripe.com/xxxx",
-    hint: "Créez un Payment Link dans votre dashboard Stripe → Produits → Payment Links",
+    hint: "Crée un Payment Link dans ton dashboard Stripe → Produits → Payment Links",
     docsUrl: "https://stripe.com/docs/payment-links",
     color: "indigo",
   },
@@ -20,8 +20,8 @@ const PROVIDERS = [
     id: "paypal",
     label: "PayPal",
     description: "Lien PayPal.me ou bouton de paiement PayPal",
-    placeholder: "https://paypal.me/votre-nom/montant",
-    hint: "Créez votre lien sur paypal.me ou utilisez un bouton de demande de paiement PayPal",
+    placeholder: "https://paypal.me/ton-nom/montant",
+    hint: "Crée ton lien sur paypal.me ou utilise un bouton de demande de paiement PayPal",
     docsUrl: "https://paypal.me",
     color: "blue",
   },
@@ -57,7 +57,7 @@ const PROVIDERS = [
     label: "SumUp",
     description: "Lien de paiement SumUp, idéal pour les petits commerçants",
     placeholder: "https://pay.sumup.com/b2c/xxxx",
-    hint: "Dans SumUp : Créer un lien de paiement depuis votre compte",
+    hint: "Dans SumUp : Créer un lien de paiement depuis ton compte",
     docsUrl: "https://sumup.fr",
     color: "teal",
   },
@@ -66,7 +66,7 @@ const PROVIDERS = [
     label: "HelloAsso",
     description: "Pour les associations, collecte de paiement sans frais",
     placeholder: "https://www.helloasso.com/associations/xxxx",
-    hint: "Créez un formulaire de paiement sur HelloAsso",
+    hint: "Crée un formulaire de paiement sur HelloAsso",
     docsUrl: "https://www.helloasso.com",
     color: "pink",
   },
@@ -75,7 +75,7 @@ const PROVIDERS = [
     label: "Autre lien",
     description: "N'importe quel autre service de paiement en ligne",
     placeholder: "https://...",
-    hint: "Collez directement l'URL de votre page de paiement",
+    hint: "Colle directement l'URL de ta page de paiement",
     docsUrl: null,
     color: "gray",
   },
@@ -191,7 +191,7 @@ export default function PaiementsPage() {
           <div>
             <h1 className="titre-page">Paiements clients</h1>
             <p className="sous-titre-page">
-              Comment vos clients vous paient, ces infos apparaîtront sur chaque facture envoyée.
+              Comment tes clients te paient, ces infos apparaîtront sur chaque facture envoyée.
             </p>
           </div>
         </div>
@@ -201,13 +201,13 @@ export default function PaiementsPage() {
       <div className="bg-amber-500/10 border border-amber-500/30 rounded-xl px-4 py-3 mb-6 flex gap-3">
         <AlertTriangle size={16} className="text-amber-400 shrink-0 mt-0.5" />
         <p className="text-sm text-amber-300 leading-relaxed">
-          <strong>Important :</strong> les paiements de vos clients vous arrivent <strong>directement</strong>, Deviso n'intervient à aucun moment dans la transaction et ne perçoit aucune commission.
+          <strong>Important :</strong> les paiements de tes clients t'arrivent <strong>directement</strong>, Deviso n'intervient à aucun moment dans la transaction et ne perçoit aucune commission.
         </p>
       </div>
 
       {/* Méthode */}
       <section className="carte p-5 mb-5">
-        <h2 className="font-semibold text-ink mb-4">Comment souhaitez-vous être payé ?</h2>
+        <h2 className="font-semibold text-ink mb-4">Comment souhaites-tu être payé ?</h2>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
           {[
             { value: "none",  icon: Minus as LucideIcon,    label: "Aucun", desc: "Ne pas afficher d'info de paiement" },
@@ -245,7 +245,7 @@ export default function PaiementsPage() {
 
           {/* Sélection provider */}
           <div className="mb-4">
-            <label className="text-xs font-medium text-gray-400 mb-2 block">Votre service de paiement</label>
+            <label className="text-xs font-medium text-gray-400 mb-2 block">Ton service de paiement</label>
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
               {PROVIDERS.map((p) => (
                 <button
@@ -282,9 +282,9 @@ export default function PaiementsPage() {
           {/* Champ URL */}
           <div>
             <label className="text-xs font-medium text-gray-400 mb-1.5 block">
-              Votre lien de paiement *
+              Ton lien de paiement *
             </label>
-            <input aria-label="Votre lien de paiement"
+            <input aria-label="Ton lien de paiement"
               type="url"
               value={linkUrl}
               onChange={(e) => setLinkUrl(e.target.value)}
@@ -300,7 +300,7 @@ export default function PaiementsPage() {
               </p>
             )}
             <p className="text-xs text-gray-600 mt-1.5">
-              Ce lien génère un bouton "Payer en ligne" dans l'email de facture envoyée à votre client.
+              Ce lien génère un bouton "Payer en ligne" dans l'email de facture envoyée à ton client.
             </p>
           </div>
         </section>
@@ -325,7 +325,7 @@ export default function PaiementsPage() {
                 placeholder={profile.company_name || profile.full_name || "Nom ou raison sociale"}
                 className={inputCls}
               />
-              <p className="text-xs text-gray-600 mt-1">Exactement comme sur votre relevé bancaire</p>
+              <p className="text-xs text-gray-600 mt-1">Exactement comme sur ton relevé bancaire</p>
             </div>
 
             <div>
@@ -339,7 +339,7 @@ export default function PaiementsPage() {
                 className={`${inputCls} font-mono tracking-wide ${iban && !ibanValid ? "border-red-500" : iban && ibanValid ? "border-emerald-500/50" : ""}`}
                 maxLength={42}
               />
-              {iban && !ibanValid && <p className="text-xs text-red-400 mt-1">IBAN invalide, vérifiez le format</p>}
+              {iban && !ibanValid && <p className="text-xs text-red-400 mt-1">IBAN invalide, vérifie le format</p>}
               {iban && ibanValid && <p className="text-xs text-emerald-400 mt-1 flex items-center gap-1"><CheckCircle2 size={11} /> IBAN valide</p>}
             </div>
 
@@ -354,14 +354,14 @@ export default function PaiementsPage() {
                 className={`${inputCls} font-mono tracking-wide`}
                 maxLength={11}
               />
-              <p className="text-xs text-gray-600 mt-1">8 ou 11 caractères, visible sur votre RIB</p>
+              <p className="text-xs text-gray-600 mt-1">8 ou 11 caractères, visible sur ton RIB</p>
             </div>
           </div>
 
           {/* RIB reminder */}
           <div className="bg-ds-elevated border border-ds-border rounded-lg px-4 py-3 mt-4">
             <p className="text-xs text-gray-400 leading-relaxed">
-              <Lightbulb size={16} className="inline-block align-text-bottom mr-1 text-indigo-400" /><strong className="text-gray-300">Où trouver ces informations ?</strong> Sur votre RIB (Relevé d'Identité Bancaire) disponible dans votre application bancaire sous "Mes comptes" → "Voir le RIB".
+              <Lightbulb size={16} className="inline-block align-text-bottom mr-1 text-indigo-400" /><strong className="text-gray-300">Où trouver ces informations ?</strong> Sur ton RIB (Relevé d'Identité Bancaire) disponible dans ton application bancaire sous "Mes comptes" → "Voir le RIB".
             </p>
           </div>
         </section>
@@ -370,7 +370,7 @@ export default function PaiementsPage() {
       {/* Prévisualisation */}
       {method !== "none" && (
         <section className="carte p-5 mb-5">
-          <h2 className="font-semibold text-ink mb-3 text-sm">Aperçu sur vos factures</h2>
+          <h2 className="font-semibold text-ink mb-3 text-sm">Aperçu sur tes factures</h2>
           <div className="bg-ds-elevated border border-ds-border rounded-lg p-4 text-xs text-gray-400 space-y-2">
             <p className="font-semibold text-gray-300 text-xs">Modalités de paiement</p>
             {needsBank && (
@@ -407,7 +407,7 @@ export default function PaiementsPage() {
 
       {saved && (
         <p className="text-center text-xs text-emerald-400 mt-3">
-          Ces informations apparaîtront désormais sur toutes vos nouvelles factures.
+          Ces informations apparaîtront désormais sur toutes tes nouvelles factures.
         </p>
       )}
     </div>

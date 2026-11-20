@@ -89,7 +89,7 @@ export function KpiCard({ label, value, icon: Icon, trend, point = "neutre", del
   ) : (
     <>
       <div className="text-[14px] font-medium text-gray-400">{label}</div>
-      <div className="font-display text-[28px] leading-none font-bold text-ink tabular-nums tracking-tight wrap-break-word">
+      <div className="font-display text-[28px] leading-none font-semibold text-ink tabular-nums tracking-tight wrap-break-word">
         {nombre}
         {euro && <span className="text-[0.55em] text-gray-400 font-semibold ml-0.5">€</span>}
       </div>

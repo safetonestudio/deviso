@@ -479,7 +479,7 @@ export default function TeamPage() {
                         <td colSpan={4} className="px-4 pb-4 bg-ds-elevated">
                           <div className="pt-1">
                             <p className="text-xs text-gray-500 mb-2">
-                              Autorisations de <span className="text-gray-300">{m.email}</span>, cochez ce que ce collaborateur a le droit de faire.
+                              Autorisations de <span className="text-gray-300">{m.email}</span>, coche ce que ce collaborateur a le droit de faire.
                             </p>
                             <GrillePermissions
                               memberId={m.id}

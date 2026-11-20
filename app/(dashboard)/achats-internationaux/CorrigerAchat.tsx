@@ -60,7 +60,7 @@ export function CorrigerAchat({ achat }: { achat: AchatInternational }) {
       }
       router.refresh();
     } catch {
-      setErreur("Connexion interrompue. Réessayez.");
+      setErreur("Connexion interrompue. Réessaie.");
     } finally {
       setEnCours(false);
     }

@@ -13,7 +13,7 @@ export const metadata: Metadata = { title: "Déclarations au fisc" };
 export const dynamic = "force-dynamic";
 
 /**
- * Ce que la Plateforme Agréée déclare à l'administration en votre nom.
+ * Ce que la plateforme agréée déclare à l'administration en ton nom.
  *
  * Pourquoi cet écran existe. Deviso ne fabrique pas l'e-reporting : Super PDP
  * agrège seul les données de transaction et de paiement, et les dépose au
@@ -82,7 +82,7 @@ export default async function Declarations() {
       if (res.ok) declarations = corps.declarations ?? [];
       else erreur = corps.message ?? corps.error ?? "Lecture impossible";
     } catch {
-      erreur = "La Plateforme Agréée n'a pas répondu.";
+      erreur = "La plateforme agréée n'a pas répondu.";
     }
   }
 
@@ -94,8 +94,8 @@ export default async function Declarations() {
       <div>
         <h1 className="titre-page">Déclarations au fisc</h1>
         <p className="sous-titre-page">
-          Ce que la Plateforme Agréée déclare à l&apos;administration en votre nom. Pour tout ce que
-          vous facturez, vous n&apos;avez rien à envoyer&nbsp;: transmettre la facture suffit.
+          Ce que la plateforme agréée déclare à l&apos;administration en ton nom. Pour tout ce que
+          tu factures, tu n&apos;as rien à envoyer&nbsp;: transmettre la facture suffit.
         </p>
         <p className="text-xs text-gray-400 mt-2">
           Compte affiché : <span className="text-gray-300 font-medium">{nomCompte}</span>
@@ -104,9 +104,9 @@ export default async function Declarations() {
 
       {!raccorde ? (
         <section className="carte p-6 mt-6 text-center">
-          <p className="text-ink font-medium mb-1">Vous n&apos;êtes pas encore raccordé</p>
+          <p className="text-ink font-medium mb-1">Tu n&apos;es pas encore raccordé</p>
           <p className="text-sm text-gray-400 mb-4 max-w-md mx-auto">
-            Les déclarations d&apos;e-reporting sont produites par votre Plateforme Agréée. Sans
+            Les déclarations d&apos;e-reporting sont produites par ta plateforme agréée. Sans
             raccordement, il n&apos;y en a aucune.
           </p>
           <a
@@ -143,14 +143,14 @@ export default async function Declarations() {
 
           {erreur ? (
             <section className="bg-ds-surface border border-red-500/30 rounded-xl p-6 mt-6 text-center">
-              <p className="text-ink font-medium mb-1">Impossible de lire vos déclarations</p>
+              <p className="text-ink font-medium mb-1">Impossible de lire tes déclarations</p>
               <p className="text-xs font-mono text-red-400/90 mt-2 break-all">{erreur}</p>
             </section>
           ) : declarations.length === 0 ? (
             <section className="carte p-6 mt-6 text-center">
               <p className="text-ink font-medium mb-1">Aucune déclaration pour l&apos;instant</p>
               <p className="text-sm text-gray-400 max-w-lg mx-auto">
-                Les déclarations sont déposées selon un calendrier qui dépend de votre périodicité
+                Les déclarations sont déposées selon un calendrier qui dépend de ta périodicité
                 de TVA. Elles apparaîtront ici une fois envoyées.
               </p>
             </section>

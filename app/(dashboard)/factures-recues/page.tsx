@@ -42,7 +42,7 @@ export default async function FacturesRecues() {
     workspaceId,
     "company_name"
   );
-  const nomCompte = profil?.company_name?.trim() || user.email || "compte sans nom";
+  const nomCompte = profil?.company_name?.trim() || (user.email && !user.email.endsWith(".internal") ? user.email : "compte sans nom");
 
   const [{ data: raccordement }, { data: factures, error: erreurLecture }] = await Promise.all([
     admin
@@ -69,27 +69,24 @@ export default async function FacturesRecues() {
         <div>
           <h1 className="titre-page">Factures reçues</h1>
           <p className="sous-titre-page">
-            Les factures électroniques que vos fournisseurs vous adressent via la Plateforme Agréée.
+            Les factures électroniques que tes fournisseurs t&apos;adressent par ta plateforme agréée.
           </p>
           <p className="text-xs text-gray-400 mt-2">
             Compte affiché :{" "}
             <span className="text-gray-300 font-medium">{nomCompte}</span>
-            {user.email && nomCompte !== user.email && (
-              <span className="text-gray-400"> · {user.email}</span>
-            )}
           </p>
         </div>
         {raccorde && <SyncButton derniere={raccordement?.last_sync_at ?? null} />}
       </div>
 
       {/* Les factures d'un fournisseur ÉTRANGER n'arrivent pas ici : elles ne
-          passent pas par la Plateforme Agréée. On oriente vers la saisie des
+          passent pas par la plateforme agréée. On oriente vers la saisie des
           achats étrangers, dont l'acquisition doit être déclarée séparément. */}
       {raccorde && (
         <div className="carte px-4 py-3 mt-4 flex flex-wrap items-center justify-between gap-3">
           <p className="text-xs text-gray-400 max-w-xl">
             Une facture d&apos;un fournisseur <span className="text-gray-300">hors de France</span>{" "}
-            n&apos;arrive pas ici&nbsp;: elle vous parvient par courriel et son acquisition se déclare
+            n&apos;arrive pas ici&nbsp;: elle te parvient par courriel et son acquisition se déclare
             à part.
           </p>
           <a
@@ -105,10 +102,10 @@ export default async function FacturesRecues() {
         // Sans raccordement, l'absence de factures ne veut pas dire qu'on n'en a
         // pas reçu, elle veut dire qu'on ne peut pas en recevoir.
         <section className="carte p-6 mt-6 text-center">
-          <p className="text-ink font-medium mb-1">Vous n&apos;êtes pas encore raccordé</p>
+          <p className="text-ink font-medium mb-1">Tu n&apos;es pas encore raccordé</p>
           <p className="text-sm text-gray-400 mb-4 max-w-md mx-auto">
             Depuis le 1ᵉʳ septembre 2026, toutes les entreprises doivent pouvoir recevoir des
-            factures électroniques. Le raccordement se fait depuis vos paramètres.
+            factures électroniques. Le raccordement se fait depuis tes paramètres.
           </p>
           <a
             href="/profil"
@@ -121,11 +118,11 @@ export default async function FacturesRecues() {
         // Une lecture qui échoue ne doit pas se lire comme « aucune facture » :
         // une panne doit se voir. Il n'y a pas de repli acceptable ici.
         <section className="bg-ds-surface border border-red-500/30 rounded-xl p-6 mt-6 text-center">
-          <p className="text-ink font-medium mb-1">Impossible de lire vos factures reçues</p>
+          <p className="text-ink font-medium mb-1">Impossible de lire tes factures reçues</p>
           <p className="text-sm text-gray-400 max-w-md mx-auto">
-            Vous en avez peut-être. Cette page n&apos;a pas pu les charger, alors elle ne
-            prétend pas que vous n&apos;en avez aucune. Réessayez dans un instant ; si le
-            problème persiste, signalez-le avec ce détail&nbsp;:
+            Tu en as peut-être. Cette page n&apos;a pas pu les charger, alors elle ne
+            prétend pas que tu n&apos;en as aucune. Réessaie dans un instant ; si le
+            problème persiste, signale-le avec ce détail&nbsp;:
           </p>
           <p className="mt-3 text-xs font-mono text-red-400/90 break-all max-w-md mx-auto">
             {erreurLecture.message}
@@ -135,7 +132,7 @@ export default async function FacturesRecues() {
         <section className="carte p-6 mt-6 text-center">
           <p className="text-ink font-medium mb-1">Aucune facture reçue pour l&apos;instant</p>
           <p className="text-sm text-gray-400 max-w-md mx-auto">
-            Vos fournisseurs peuvent vous adresser leurs factures à l&apos;adresse{" "}
+            Tes fournisseurs peuvent t&apos;adresser leurs factures électroniques. Ton adresse de réception :{" "}
             <span className="font-mono text-gray-400 select-all">
               {raccordement?.directory_address ?? "-"}
             </span>

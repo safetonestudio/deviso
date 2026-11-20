@@ -18,6 +18,7 @@ import {
 import { estAvoir } from "@/lib/exports-comptables";
 import { libelleStatut } from "@/lib/superpdp-statuts";
 import { KpiCard } from "@/components/ui/KpiCard";
+import { OngletsDossier } from "@/components/cabinet/OngletsDossier";
 
 export const metadata: Metadata = { title: "Dossier client" };
 export const dynamic = "force-dynamic";
@@ -193,156 +194,191 @@ export default async function FicheClient({
         </div>
       </div>
 
-      <div className="carte p-4 mb-6">
-        <div className="flex flex-wrap items-baseline justify-between gap-2 mb-3">
-          <h2 className="text-ink font-semibold">Conformité à la réforme</h2>
-          {synthese.conformite.pret ? (
-            <span className="text-xs px-2 py-0.5 rounded-full border border-emerald-500/30 bg-emerald-500/10 text-emerald-400">Prêt</span>
-          ) : (
-            <span className="text-xs px-2 py-0.5 rounded-full border border-amber-500/30 bg-amber-500/10 text-amber-400">À régulariser</span>
-          )}
-        </div>
-        <ul className="grid grid-cols-1 sm:grid-cols-2 gap-y-2 gap-x-6 text-sm">
-          {[
-            { label: "Raccordé à une plateforme agréée", ok: synthese.conformite.raccordePA },
-            { label: "Peut recevoir des factures (annuaire)", ok: synthese.conformite.joignableAnnuaire },
-            { label: "SIRET valide", ok: synthese.conformite.siretValide },
-            { label: "Régime et n° de TVA cohérents", ok: synthese.conformite.tvaConforme },
-            { label: "Émet au format Factur-X", ok: true },
-          ].map((c) => (
-            <li key={c.label} className="flex items-start gap-2">
-              <span className={`mt-1.5 w-2 h-2 rounded-full shrink-0 ${c.ok ? "bg-emerald-500" : "bg-amber-500"}`} />
-              <span className={c.ok ? "text-gray-300" : "text-amber-300"}>{c.label}</span>
-            </li>
-          ))}
-        </ul>
-      </div>
-
-      {synthese.anomalies.length > 0 && (
-        <div className="carte p-4 mb-6">
-          <h2 className="text-ink font-semibold mb-2">À traiter</h2>
-          <ul className="space-y-1.5">
-            {synthese.anomalies.map((a) => (
-              <li key={a.libelle} className="flex items-start gap-2 text-sm text-gray-300">
-                <span className={`mt-1.5 w-2 h-2 rounded-full shrink-0 ${a.niveau === "rouge" ? "bg-red-500" : "bg-amber-500"}`} />
-                {a.libelle}
-              </li>
-            ))}
-          </ul>
-        </div>
-      )}
-
-      <CabinetSignalements clientId={id} initiaux={signalements} />
-
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 mb-6">
         {tuiles.map((t) => (
           <KpiCard key={t.label} label={t.label} value={t.valeur} point={t.point} trend={t.trend} />
         ))}
       </div>
 
-      <div className="carte p-4 mb-6">
-        <div className="flex flex-wrap items-baseline justify-between gap-2 mb-3">
-          <h2 className="text-ink font-semibold">Comparaison avec {annee - 1}</h2>
-          <span className="text-xs text-gray-500">
-            {annee === anneeCourante ? "À date, du 1er janvier à aujourd'hui" : "Année complète"}
-          </span>
-        </div>
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-          {comparaisons.map((c) => {
-            const ev = evolution(c.actuel, c.precedent);
-            return (
-              <div key={c.label} className="bg-ds-bg border border-ds-border rounded-lg p-3">
-                <div className="text-xs text-gray-500">{c.label}</div>
-                <div className="flex items-baseline gap-2 mt-1">
-                  <span className="text-lg font-semibold text-ink">{c.fmt(c.actuel)}</span>
-                  {ev && <span className={`text-xs font-medium ${ev.ton}`}>{ev.texte}</span>}
+      <OngletsDossier
+        onglets={[
+          {
+            id: "a-traiter",
+            libelle: "À traiter",
+            compteur: synthese.anomalies.length,
+            alerte: true,
+            contenu: (
+              <>
+                <div className="carte p-4 mb-6">
+                  <div className="flex flex-wrap items-baseline justify-between gap-2 mb-3">
+                    <h2 className="text-ink font-semibold">Conformité à la réforme</h2>
+                    {synthese.conformite.pret ? (
+                      <span className="text-xs px-2 py-0.5 rounded-full border border-emerald-500/30 bg-emerald-500/10 text-emerald-400">Prêt</span>
+                    ) : (
+                      <span className="text-xs px-2 py-0.5 rounded-full border border-amber-500/30 bg-amber-500/10 text-amber-400">À régulariser</span>
+                    )}
+                  </div>
+                  <ul className="grid grid-cols-1 sm:grid-cols-2 gap-y-2 gap-x-6 text-sm">
+                    {[
+                      { label: "Raccordé à une plateforme agréée", ok: synthese.conformite.raccordePA },
+                      { label: "Peut recevoir des factures (annuaire)", ok: synthese.conformite.joignableAnnuaire },
+                      { label: "SIRET valide", ok: synthese.conformite.siretValide },
+                      { label: "Régime et n° de TVA cohérents", ok: synthese.conformite.tvaConforme },
+                      { label: "Émet au format Factur-X", ok: true },
+                    ].map((c) => (
+                      <li key={c.label} className="flex items-start gap-2">
+                        <span className={`mt-1.5 w-2 h-2 rounded-full shrink-0 ${c.ok ? "bg-emerald-500" : "bg-amber-500"}`} />
+                        <span className={c.ok ? "text-gray-300" : "text-amber-300"}>{c.label}</span>
+                      </li>
+                    ))}
+                  </ul>
                 </div>
-                <div className="text-xs text-gray-500 mt-0.5">{annee - 1} : {c.fmt(c.precedent)}</div>
+                {synthese.anomalies.length > 0 ? (
+                  <div className="carte p-4 mb-6">
+                    <h2 className="text-ink font-semibold mb-2">À traiter</h2>
+                    <ul className="space-y-1.5">
+                      {synthese.anomalies.map((a) => (
+                        <li key={a.libelle} className="flex items-start gap-2 text-sm text-gray-300">
+                          <span className={`mt-1.5 w-2 h-2 rounded-full shrink-0 ${a.niveau === "rouge" ? "bg-red-500" : "bg-amber-500"}`} />
+                          {a.libelle}
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                ) : (
+                  <p className="carte p-4 text-sm text-gray-400">Aucun point à traiter sur ce dossier.</p>
+                )}
+              </>
+            ),
+          },
+          {
+            id: "messages",
+            libelle: "Messages au client",
+            compteur: signalements.length,
+            contenu: <CabinetSignalements clientId={id} initiaux={signalements} />,
+          },
+          {
+            id: "tva",
+            libelle: "TVA par mois",
+            contenu: (
+              <div className="carte overflow-hidden">
+                <div className="p-4 border-b border-ds-border">
+                  <h2 className="text-ink font-semibold">TVA collectée par mois</h2>
+                  <p className="text-xs text-gray-500 mt-0.5">Avoirs déduits. Pour une déclaration trimestrielle, additionnez les trois mois.</p>
+                </div>
+                <div className="overflow-x-auto">
+                  <table className="w-full text-sm">
+                    <thead>
+                      <tr className="text-left text-xs font-semibold text-gray-400 bg-ds-elevated border-b border-ds-border">
+                        <th className="px-4 py-2.5 font-semibold">Mois</th>
+                        <th className="px-4 py-2.5 font-semibold text-right">Base HT</th>
+                        {taux.map((t) => (
+                          <th key={t} className="px-4 py-2.5 font-semibold text-right">TVA {pct(t)}</th>
+                        ))}
+                        <th className="px-4 py-2.5 font-semibold text-right">TVA totale</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {lignesTva.map((l) => (
+                        <tr key={l.mois} className="border-b border-ds-border last:border-0 hover:bg-ds-elevated/40 transition-colors">
+                          <td className="px-4 py-2 text-gray-300 capitalize">{l.mois}</td>
+                          <td className="px-4 py-2 text-right text-gray-300">{eur(l.base)}</td>
+                          {taux.map((t) => (
+                            <td key={t} className="px-4 py-2 text-right text-gray-300">
+                              {eur(l.parTaux.find((x) => x.taux === t)?.tva ?? 0)}
+                            </td>
+                          ))}
+                          <td className="px-4 py-2 text-right text-ink font-medium">{eur(l.tva)}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
               </div>
-            );
-          })}
-        </div>
-      </div>
-
-      <div className="carte mb-6 overflow-hidden">
-        <div className="p-4 border-b border-ds-border">
-          <h2 className="text-ink font-semibold">TVA collectée par mois</h2>
-          <p className="text-xs text-gray-500 mt-0.5">Avoirs déduits. Pour une déclaration trimestrielle, additionnez les trois mois.</p>
-        </div>
-        <div className="overflow-x-auto">
-          <table className="w-full text-sm">
-            <thead>
-              <tr className="text-left text-xs font-semibold text-gray-400 bg-ds-elevated border-b border-ds-border">
-                <th className="px-4 py-2.5 font-semibold">Mois</th>
-                <th className="px-4 py-2.5 font-semibold text-right">Base HT</th>
-                {taux.map((t) => (
-                  <th key={t} className="px-4 py-2.5 font-semibold text-right">TVA {pct(t)}</th>
-                ))}
-                <th className="px-4 py-2.5 font-semibold text-right">TVA totale</th>
-              </tr>
-            </thead>
-            <tbody>
-              {lignesTva.map((l) => (
-                <tr key={l.mois} className="border-b border-ds-border last:border-0 hover:bg-ds-elevated/40 transition-colors">
-                  <td className="px-4 py-2 text-gray-300 capitalize">{l.mois}</td>
-                  <td className="px-4 py-2 text-right text-gray-300">{eur(l.base)}</td>
-                  {taux.map((t) => (
-                    <td key={t} className="px-4 py-2 text-right text-gray-300">
-                      {eur(l.parTaux.find((x) => x.taux === t)?.tva ?? 0)}
-                    </td>
-                  ))}
-                  <td className="px-4 py-2 text-right text-ink font-medium">{eur(l.tva)}</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      </div>
-
-      <div className="carte overflow-hidden">
-        <div className="p-4 border-b border-ds-border">
-          <h2 className="text-ink font-semibold">Factures {annee}</h2>
-        </div>
-        {factures.length === 0 ? (
-          <p className="p-4 text-sm text-gray-500">Aucune facture sur {annee}.</p>
-        ) : (
-          <div className="overflow-x-auto">
-            <table className="w-full text-sm">
-              <thead>
-                <tr className="text-left text-xs font-semibold text-gray-400 bg-ds-elevated border-b border-ds-border">
-                  <th className="px-4 py-2.5 font-semibold">Numéro</th>
-                  <th className="px-4 py-2.5 font-semibold">Date</th>
-                  <th className="px-4 py-2.5 font-semibold">Client</th>
-                  <th className="px-4 py-2.5 font-semibold text-right">HT</th>
-                  <th className="px-4 py-2.5 font-semibold text-right">TTC</th>
-                  <th className="px-4 py-2.5 font-semibold">Statut</th>
-                  <th className="px-4 py-2.5 font-semibold">Plateforme</th>
-                </tr>
-              </thead>
-              <tbody>
-                {factures.map((f) => {
-                  const s = signe(f);
-                  const pf = plateforme(f);
-                  return (
-                    <tr key={f.id} className="border-b border-ds-border last:border-0 hover:bg-ds-elevated/40 transition-colors">
-                      <td className="px-4 py-2 text-gray-200 whitespace-nowrap">
-                        {f.invoice_number || "Brouillon"}
-                        {estAvoir(f) && <span className="ml-2 text-xs text-amber-400">Avoir</span>}
-                      </td>
-                      <td className="px-4 py-2 text-gray-400 whitespace-nowrap">{dateFr(f.issue_date)}</td>
-                      <td className="px-4 py-2 text-gray-300">{f.client_company || f.client_name || ""}</td>
-                      <td className="px-4 py-2 text-right text-gray-300 whitespace-nowrap">{eur(s * Number(f.total_ht ?? 0))}</td>
-                      <td className="px-4 py-2 text-right text-gray-300 whitespace-nowrap">{eur(s * Number(f.total_ttc ?? 0))}</td>
-                      <td className="px-4 py-2 text-gray-400">{STATUT[f.status] ?? f.status}</td>
-                      <td className={`px-4 py-2 ${pf.ton}`} title={f.superpdp_error ?? undefined}>{pf.texte}</td>
-                    </tr>
-                  );
-                })}
-              </tbody>
-            </table>
-          </div>
-        )}
-      </div>
+            ),
+          },
+          {
+            id: "comparaison",
+            libelle: `Comparaison ${annee - 1}`,
+            contenu: (
+              <div className="carte p-4">
+                <div className="flex flex-wrap items-baseline justify-between gap-2 mb-3">
+                  <h2 className="text-ink font-semibold">Comparaison avec {annee - 1}</h2>
+                  <span className="text-xs text-gray-500">
+                    {annee === anneeCourante ? "À date, du 1er janvier à aujourd'hui" : "Année complète"}
+                  </span>
+                </div>
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                  {comparaisons.map((c) => {
+                    const ev = evolution(c.actuel, c.precedent);
+                    return (
+                      <div key={c.label} className="bg-ds-bg border border-ds-border rounded-lg p-3">
+                        <div className="text-xs text-gray-500">{c.label}</div>
+                        <div className="flex items-baseline gap-2 mt-1">
+                          <span className="text-lg font-semibold text-ink">{c.fmt(c.actuel)}</span>
+                          {ev && <span className={`text-xs font-medium ${ev.ton}`}>{ev.texte}</span>}
+                        </div>
+                        <div className="text-xs text-gray-500 mt-0.5">{annee - 1} : {c.fmt(c.precedent)}</div>
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+            ),
+          },
+          {
+            id: "factures",
+            libelle: `Factures ${annee}`,
+            compteur: factures.length,
+            contenu: (
+              <div className="carte overflow-hidden">
+                <div className="p-4 border-b border-ds-border">
+                  <h2 className="text-ink font-semibold">Factures {annee}</h2>
+                </div>
+                {factures.length === 0 ? (
+                  <p className="p-4 text-sm text-gray-500">Aucune facture sur {annee}.</p>
+                ) : (
+                  <div className="overflow-x-auto">
+                    <table className="w-full text-sm">
+                      <thead>
+                        <tr className="text-left text-xs font-semibold text-gray-400 bg-ds-elevated border-b border-ds-border">
+                          <th className="px-4 py-2.5 font-semibold">Numéro</th>
+                          <th className="px-4 py-2.5 font-semibold">Date</th>
+                          <th className="px-4 py-2.5 font-semibold">Client</th>
+                          <th className="px-4 py-2.5 font-semibold text-right">HT</th>
+                          <th className="px-4 py-2.5 font-semibold text-right">TTC</th>
+                          <th className="px-4 py-2.5 font-semibold">Statut</th>
+                          <th className="px-4 py-2.5 font-semibold">Plateforme</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {factures.map((f) => {
+                          const s = signe(f);
+                          const pf = plateforme(f);
+                          return (
+                            <tr key={f.id} className="border-b border-ds-border last:border-0 hover:bg-ds-elevated/40 transition-colors">
+                              <td className="px-4 py-2 text-gray-200 whitespace-nowrap">
+                                {f.invoice_number || "Brouillon"}
+                                {estAvoir(f) && <span className="ml-2 text-xs text-amber-400">Avoir</span>}
+                              </td>
+                              <td className="px-4 py-2 text-gray-400 whitespace-nowrap">{dateFr(f.issue_date)}</td>
+                              <td className="px-4 py-2 text-gray-300">{f.client_company || f.client_name || ""}</td>
+                              <td className="px-4 py-2 text-right text-gray-300 whitespace-nowrap">{eur(s * Number(f.total_ht ?? 0))}</td>
+                              <td className="px-4 py-2 text-right text-gray-300 whitespace-nowrap">{eur(s * Number(f.total_ttc ?? 0))}</td>
+                              <td className="px-4 py-2 text-gray-400">{STATUT[f.status] ?? f.status}</td>
+                              <td className={`px-4 py-2 ${pf.ton}`} title={f.superpdp_error ?? undefined}>{pf.texte}</td>
+                            </tr>
+                          );
+                        })}
+                      </tbody>
+                    </table>
+                  </div>
+                )}
+              </div>
+            ),
+          },
+        ]}
+      />
     </div>
   );
 }

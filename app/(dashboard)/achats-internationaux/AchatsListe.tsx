@@ -21,7 +21,7 @@ const montant = (n: number, devise: string) =>
 const DECLARE = { texte: "Déclaré", classe: "bg-emerald-500/15 text-emerald-400 border-emerald-500/30" };
 
 const STATUT: Record<AchatInternational["transmission_status"], { texte: string; classe: string }> = {
-  // « transmis » = stocké par la Plateforme Agréée, envoi à l'administration
+  // « transmis » = stocké par la plateforme agréée, envoi à l'administration
   // encore à venir. « Déclaré » n'est affiché qu'avec ppf_ereporting_id.
   transmis: { texte: "Enregistré", classe: "bg-indigo-500/15 text-indigo-400 border-indigo-500/30" },
   en_attente: { texte: "En attente", classe: "bg-amber-500/15 text-amber-400 border-amber-500/30" },
@@ -50,7 +50,7 @@ export function AchatsListe({ achats }: { achats: AchatInternational[] }) {
       }
       router.refresh();
     } catch {
-      setErreur("Connexion interrompue. Réessayez.");
+      setErreur("Connexion interrompue. Réessaie.");
     } finally {
       setEnCours(null);
     }
@@ -61,7 +61,7 @@ export function AchatsListe({ achats }: { achats: AchatInternational[] }) {
       <section className="carte p-6 text-center">
         <p className="text-ink font-medium mb-1">Aucun achat étranger saisi</p>
         <p className="text-sm text-gray-400 max-w-md mx-auto">
-          Quand vous achetez à un fournisseur établi hors de France, saisissez sa facture ici pour
+          Quand tu achètes à un fournisseur établi hors de France, saisis sa facture ici pour
           en déclarer l&apos;acquisition à l&apos;administration.
         </p>
       </section>
@@ -125,7 +125,7 @@ export function AchatsListe({ achats }: { achats: AchatInternational[] }) {
 
               {a.transmission_status === "transmis" && !declare && (
                 <p className="text-xs text-gray-500 mb-3">
-                  Envoi à l&apos;administration programmé par la Plateforme Agréée.
+                  Envoi à l&apos;administration programmé par la plateforme agréée.
                 </p>
               )}
               {declare && a.declared_at && (

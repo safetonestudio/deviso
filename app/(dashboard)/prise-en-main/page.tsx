@@ -130,7 +130,7 @@ const GUIDES: {
   {
     slug: "conformite-plateforme-agreee",
     icon: ShieldCheck,
-    title: "Réforme 2026 : émettre via la Plateforme Agréée",
+    title: "Réforme 2026 : émettre via la plateforme agréée",
     desc: "Raccordement, transmission de tes factures et suivi du cycle de vie.",
     time: 5,
     reforme: true,
@@ -147,7 +147,7 @@ const GUIDES: {
     slug: "declarations-ereporting",
     icon: Landmark,
     title: "Tes déclarations au fisc (e-reporting)",
-    desc: "Ce que la Plateforme Agréée déclare pour toi, et ce qui reste à ta charge.",
+    desc: "Ce que la plateforme agréée déclare pour toi, et ce qui reste à ta charge.",
     time: 3,
     reforme: true,
   },
@@ -172,19 +172,19 @@ const STORAGE_KEY = "deviso_guides_read";
 const REFORME_PUBLIEE = true;
 
 const PAGES: { icon: LucideIcon; label: string; desc: string }[] = [
-  { icon: LayoutDashboard, label: "Tableau de bord", desc: "KPIs, alertes et vue d'ensemble de votre activité" },
-  { icon: FileText, label: "Devis", desc: "Créer, envoyer et suivre vos devis" },
-  { icon: Receipt, label: "Factures", desc: "Factures Factur-X, récurrentes et exports" },
-  { icon: Inbox, label: "Factures reçues", desc: "Les factures de vos fournisseurs via la Plateforme Agréée" },
-  { icon: Landmark, label: "Déclarations", desc: "Ce que la Plateforme Agréée déclare au fisc pour vous" },
-  { icon: Globe, label: "Achats à l'étranger", desc: "Déclarer vos acquisitions auprès de fournisseurs étrangers" },
-  { icon: Wallet, label: "Paiements clients", desc: "Configurer vos moyens de paiement (IBAN, lien)" },
-  { icon: BookMarked, label: "Livre des recettes", desc: "Votre registre d'encaissements, tenu automatiquement" },
+  { icon: LayoutDashboard, label: "Tableau de bord", desc: "KPIs, alertes et vue d'ensemble de ton activité" },
+  { icon: FileText, label: "Devis", desc: "Créer, envoyer et suivre tes devis" },
+  { icon: Receipt, label: "Factures", desc: "Factures électroniques, récurrentes et exports" },
+  { icon: Inbox, label: "Factures reçues", desc: "Les factures de tes fournisseurs via la plateforme agréée" },
+  { icon: Landmark, label: "Déclarations", desc: "Ce que la plateforme agréée déclare au fisc pour toi" },
+  { icon: Globe, label: "Achats à l'étranger", desc: "Déclarer tes acquisitions auprès de fournisseurs étrangers" },
+  { icon: Wallet, label: "Paiements clients", desc: "Configurer tes moyens de paiement (IBAN, lien)" },
+  { icon: BookMarked, label: "Livre des recettes", desc: "Ton registre d'encaissements, tenu automatiquement" },
   { icon: Users, label: "Clients & Revenus", desc: "CRM automatique et suivi des revenus" },
   { icon: BarChart3, label: "Performance", desc: "Analytics et exports comptables" },
-  { icon: Package, label: "Catalogue", desc: "Vos prestations réutilisables, base des devis IA (Pro)" },
+  { icon: Package, label: "Catalogue", desc: "Tes prestations réutilisables, base des devis IA (Pro)" },
   { icon: UsersRound, label: "Équipe", desc: "Multi-utilisateurs et validation (Pro)" },
-  { icon: CreditCard, label: "Abonnement", desc: "Gérer votre plan et votre facturation" },
+  { icon: CreditCard, label: "Abonnement", desc: "Gérer ton plan et ta facturation" },
   { icon: Settings, label: "Paramètres", desc: "Profil, apparence et domaine email personnalisé" },
 ];
 
@@ -220,7 +220,7 @@ export default function PriseEnMainPage() {
           <div>
             <h2 className="font-semibold text-ink text-base">Mode guidé</h2>
             <p className="text-sm text-gray-400 mt-1">
-              Quand activé, une carte explicative apparaît en haut de chaque page pour vous expliquer comment elle fonctionne. Désactivez-le quand vous n&apos;en avez plus besoin.
+              Quand activé, une carte explicative apparaît en haut de chaque page pour t&apos;expliquer comment elle fonctionne. Désactive-le quand tu n&apos;en as plus besoin.
             </p>
           </div>
           <button
