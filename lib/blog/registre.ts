@@ -1250,6 +1250,22 @@ export const ARTICLES: Article[] = [
     },
     lies: ["micro-ou-reel-quand-basculer", "plafonds-micro-entreprise-2026", "quand-prendre-expert-comptable-micro"],
   },
+  {
+    slug: "cfe-cotisation-fonciere-entreprises",
+    categorie: "gestion",
+    titre: "CFE : qui la paie, combien, et avant quand",
+    description:
+      "La CFE concerne toutes les entreprises, même sans local. Exonération la première année, seuil de 5 000 €, avis en ligne uniquement, paiement avant le 15 décembre.",
+    h1: "CFE : qui doit la payer, combien, et ce qu'il faut faire avant le 15 décembre",
+    publieLe: "2026-11-20",
+    misAJourLe: "2026-11-20",
+    dureeLecture: 6,
+    carte: {
+      titre: "CFE : qui la paie, combien, et avant quand",
+      resume: "Exonération de création, seuil de 5 000 €, base minimum, avis en ligne et échéance du 15 décembre",
+    },
+    lies: ["choisir-statut-micro-ei-eurl-sasu", "calendrier-fiscal-social-micro", "plafonds-micro-entreprise-2026"],
+  },
 ];
 
 /** Index par slug, construit une fois. */

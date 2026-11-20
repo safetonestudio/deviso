@@ -13,7 +13,7 @@ import {
   ShieldCheck, Smartphone, Stamp, Target,
   Ban, FileCode, Gavel,
   Briefcase, CalendarDays, ClipboardList, Compass, Landmark, Percent, PiggyBank, Scale, Split, UserCheck,
-  Zap, Clock, ShieldAlert, Building2, type LucideIcon,
+  Zap, Clock, ShieldAlert, Building2, MapPin, type LucideIcon,
 } from "lucide-react";
 
 /**
@@ -84,6 +84,7 @@ const ICONES: Record<string, LucideIcon> = {
   "delais-paiement-penalites-retard": Clock,
   "fraude-faux-rib-faux-fournisseur": ShieldAlert,
   "choisir-statut-micro-ei-eurl-sasu": Building2,
+  "cfe-cotisation-fonciere-entreprises": MapPin,
 };
 
 export const metadata: Metadata = {
