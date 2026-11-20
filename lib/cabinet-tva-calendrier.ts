@@ -74,7 +74,7 @@ function bornesTrimestre(annee: number, t: number) {
 }
 
 function bornesAnnee(annee: number) {
-  return { cle: `${annee}`, libelle: `annee ${annee}`, debut: `${annee}-01-01`, fin: `${annee}-12-31` };
+  return { cle: `${annee}`, libelle: `année ${annee}`, debut: `${annee}-01-01`, fin: `${annee}-12-31` };
 }
 
 /**

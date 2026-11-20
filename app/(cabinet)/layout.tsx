@@ -4,6 +4,7 @@ import { createClient } from "@/lib/supabase/server";
 import { DashboardThemeProvider, ThemeToggleIcone } from "@/components/DashboardTheme";
 import { policesApp } from "@/app/polices-app";
 import { SignOutButton } from "@/components/SignOutButton";
+import { CabinetNav } from "@/components/cabinet/CabinetNav";
 
 /**
  * Espace cabinet : une surface dediee, separee de l'interface du
@@ -24,24 +25,25 @@ export default async function CabinetLayout({ children }: { children: ReactNode 
   return (
     <DashboardThemeProvider className={policesApp}>
       <div className="min-h-screen bg-app-relief">
-        <header className="bg-ds-surface border-b border-ds-border">
-          <div className="px-4 sm:px-6 lg:px-10 py-3 flex flex-wrap items-center justify-between gap-3">
-            <div className="flex items-center gap-3 min-w-0">
-            <a href="/cabinet" className="flex items-center gap-2 min-w-0">
+        <header className="sticky top-0 z-30 bg-ds-surface/95 backdrop-blur border-b border-ds-border">
+          <div className="px-4 sm:px-6 lg:px-10 flex flex-wrap lg:flex-nowrap items-center gap-x-3 lg:gap-x-8">
+            <a href="/cabinet" className="flex items-center gap-2 min-w-0 py-3">
               <div className="w-7 h-7 rounded-[7px] bg-indigo-600 flex items-center justify-center shrink-0">
-                <span className="text-ink font-display font-semibold text-[15px]">D</span>
+                <span className="text-on-accent font-display font-semibold text-[15px]">D</span>
               </div>
               <span className="font-display font-semibold text-[19px] tracking-tight text-ink">Deviso</span>
-              <span className="text-[10px] font-bold bg-indigo-500/15 text-indigo-300 border border-indigo-500/30 px-1.5 py-0.5 rounded-sm">
+              <span className="text-[11px] font-semibold bg-indigo-500/15 text-indigo-300 border border-indigo-500/30 px-1.5 py-0.5 rounded-sm">
                 Cabinet
               </span>
             </a>
-            <ThemeToggleIcone />
+            <div className="order-3 lg:order-none w-full lg:w-auto lg:flex-1 self-end border-t border-ds-border lg:border-0">
+              <CabinetNav />
             </div>
-            <div className="flex items-center gap-2 sm:gap-3">
-              <span className="hidden sm:inline-flex items-center rounded-lg border border-ds-border bg-ds-elevated px-3 py-2 text-sm text-gray-300 max-w-[240px] truncate">
+            <div className="ml-auto lg:order-none flex items-center gap-2 sm:gap-3 py-3">
+              <span className="hidden md:inline-block text-sm text-gray-400 max-w-[220px] truncate">
                 {profile?.company_name || profile?.full_name || user.email}
               </span>
+              <ThemeToggleIcone />
               <SignOutButton compact />
             </div>
           </div>

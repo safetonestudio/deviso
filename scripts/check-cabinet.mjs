@@ -161,16 +161,24 @@ contreEpreuve("une page admin sans contrôle d'accès", litEnAdmin("const a = cr
 }
 
 // 6 quinquies. Calendrier TVA : l'echeance par dossier (periode close a declarer
-// et periode en cours) est calculee et affichee sur le portefeuille.
+// et periode en cours) est calculee, rendue sur sa page /cabinet/tva (depuis le
+// 20/11/2026, une page par sujet) et resumee sur le portefeuille qui y mene.
 {
   const lib = lire(join("lib", "cabinet-tva-calendrier.ts"));
-  const page = lire(join("app", "(cabinet)", "cabinet", "page.tsx"));
+  const page = lire(join("app", "(cabinet)", "cabinet", "tva", "page.tsx"));
+  const portefeuille = lire(join("app", "(cabinet)", "cabinet", "page.tsx"));
+  const nav = lire(join("components", "cabinet", "CabinetNav.tsx"));
   const calcule = (s) => /export function calendrierTva/.test(s) && /aDeclarer/.test(s) && /enCours/.test(s);
   exige("calendrier TVA, échéance par dossier calculée", calcule(lib), "le comptable doit voir la TVA à déclarer par dossier, sans ouvrir chaque fiche");
   exige(
-    "calendrier TVA, branché sur le portefeuille",
-    /calendrierTva\(/.test(page) && /CabinetCalendrierTva/.test(page),
-    "le calcul doit être rendu sur /cabinet",
+    "calendrier TVA, rendu sur /cabinet/tva",
+    /calendrierTva\(/.test(page) && /<CabinetCalendrierTva lignes=/.test(page),
+    "le calendrier doit être rendu sur /cabinet/tva",
+  );
+  exige(
+    "calendrier TVA, accessible depuis le portefeuille et la navigation",
+    /calendrierTva\(/.test(portefeuille) && /href="\/cabinet\/tva"/.test(portefeuille) && /"\/cabinet\/tva"/.test(nav),
+    "le portefeuille doit résumer la TVA à déclarer et mener à /cabinet/tva",
   );
   contreEpreuve("un calendrier sans période close à déclarer", !calcule(lib.replace(/aDeclarer/g, "xxx")));
 }
@@ -235,7 +243,9 @@ contreEpreuve("une page admin sans contrôle d'accès", litEnAdmin("const a = cr
 // qui peut emettre ET recevoir, et quelles donnees font rejeter les factures.
 {
   const synth = lire(join("lib", "cabinet-dossiers.ts"));
-  const page = lire(join("app", "(cabinet)", "cabinet", "page.tsx"));
+  const page = lire(join("app", "(cabinet)", "cabinet", "conformite", "page.tsx"));
+  const portefeuille = lire(join("app", "(cabinet)", "cabinet", "page.tsx"));
+  const nav = lire(join("components", "cabinet", "CabinetNav.tsx"));
   const detecte = (s) =>
     /directory_address/.test(s) &&
     /siretValide\(p\?\.siret\)/.test(s) &&
@@ -243,9 +253,14 @@ contreEpreuve("une page admin sans contrôle d'accès", litEnAdmin("const a = cr
     /joignableAnnuaire:/.test(s);
   exige("conformité réforme, calculée par dossier", detecte(synth), "le cabinet doit voir qui peut émettre ET recevoir, pas seulement « raccordé »");
   exige(
-    "conformité réforme, affichée sur le portefeuille",
-    /<CabinetConformite lignes=\{conformite\}/.test(page) && /const conformite = dossiers\.map/.test(page),
-    "le tableau de conformité doit être rendu sur /cabinet",
+    "conformité réforme, rendue sur /cabinet/conformite",
+    /<CabinetConformite lignes=\{lignes\}/.test(page) && /const lignes = dossiers\.map/.test(page),
+    "le tableau de conformité doit être rendu sur /cabinet/conformite",
+  );
+  exige(
+    "conformité réforme, accessible depuis le portefeuille et la navigation",
+    /conformite\.pret/.test(portefeuille) && /href="\/cabinet\/conformite"/.test(portefeuille) && /"\/cabinet\/conformite"/.test(nav),
+    "le portefeuille doit résumer la conformité et mener à /cabinet/conformite",
   );
   contreEpreuve("une conformité sans contrôle de joignabilité", !detecte(synth.replace(/directory_address/g, "xxx")));
   exige(

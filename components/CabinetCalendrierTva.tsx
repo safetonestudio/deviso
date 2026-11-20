@@ -79,9 +79,9 @@ export function CabinetCalendrierTva({ lignes }: { lignes: Ligne[] }) {
                 <td className="px-4 py-2 text-gray-400">{l.periodicite ? LIBELLE[l.periodicite] : "À renseigner"}</td>
                 {l.periodicite ? (
                   <>
-                    <td className="px-4 py-2 text-gray-300 capitalize">{cap(l.aDeclarer?.libelle ?? "")}</td>
+                    <td className="px-4 py-2 text-gray-300">{cap(l.aDeclarer?.libelle ?? "")}</td>
                     <td className="px-4 py-2 text-right text-ink font-semibold">{eur(l.aDeclarer?.tva ?? 0)}</td>
-                    <td className="px-4 py-2 text-gray-400 capitalize">{cap(l.enCours?.libelle ?? "")}</td>
+                    <td className="px-4 py-2 text-gray-400">{cap(l.enCours?.libelle ?? "")}</td>
                     <td className="px-4 py-2 text-right text-gray-400">{eur(l.enCours?.tva ?? 0)}</td>
                   </>
                 ) : (
