@@ -1,4 +1,5 @@
 import { ventilationTva, type LigneMontant } from "./tva";
+import { PLAN_PAR_DEFAUT, type PlanComptesFec } from "./plan-comptes-fec";
 
 /**
  * Fabrication des exports comptables (FEC et CSV des factures).
@@ -31,6 +32,8 @@ export interface FactureExport {
   paid_at?: string | null;
   updated_at?: string | null;
   payment_link_url?: string | null;
+  /** Option pour la TVA d'apres les debits (prestations de services). */
+  payment_on_debit?: boolean | null;
 }
 
 /** Statuts qui entrent dans le FEC : une facture emise, payee ou non. */
@@ -56,16 +59,15 @@ function amt(n: number): string {
 /**
  * Code du compte auxiliaire client.
  *
- * Il etait derive de l'INDEX DE LA LIGNE dans l'export. Deux consequences :
- * un meme client changeait de code auxiliaire a chaque facture, et `C00001`
- * designait un client different d'une annee sur l'autre. Le lettrage
- * auxiliaire, la raison d'etre de cette colonne, etait donc inexploitable.
- *
- * On le derive du nom normalise du client, stable par construction. Un
- * prefixe alphabetique plus une empreinte courte : pas de collision en
- * pratique, et le meme client garde son code d'un exercice a l'autre.
+ * Il etait derive de l'INDEX DE LA LIGNE dans l'export (code different a
+ * chaque facture), puis du nom du client (stable, mais un client renomme
+ * changeait de compte et le cabinet voyait apparaitre un doublon). Depuis le
+ * 20/11/2026 : le SIREN quand on l'a, identifiant legal qui ne bouge pas ; a
+ * defaut, une empreinte du nom normalise.
  */
-function clientCode(nomNormalise: string): string {
+function clientCode(siren: string | null | undefined, nomNormalise: string): string {
+  const chiffres = (siren ?? "").replace(/\D/g, "");
+  if (chiffres.length === 9 || chiffres.length === 14) return `C${chiffres.slice(0, 9)}`;
   let h = 0;
   for (let i = 0; i < nomNormalise.length; i++) {
     h = (h * 31 + nomNormalise.charCodeAt(i)) >>> 0;
@@ -73,8 +75,41 @@ function clientCode(nomNormalise: string): string {
   return `C${String(h % 100000).padStart(5, "0")}`;
 }
 
-/** Contenu du FEC (separateur tabulation, fin de ligne CRLF). */
-export function genererFec(invoices: FactureExport[]): string {
+/** Code de lettrage : AAA, AAB, ... (trois lettres, 17 576 codes par fichier). */
+function codeLettrage(n: number): string {
+  const a = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+  return a[Math.floor(n / 676) % 26] + a[Math.floor(n / 26) % 26] + a[n % 26];
+}
+
+/**
+ * TVA exigible a l'encaissement (prestations de services sans option pour
+ * les debits) : a la facture, la TVA va au compte d'attente 44574 « TVA
+ * collectee non exigible » ; au paiement, elle passe au 44571. Sans cette
+ * separation, le cabinet devait reprendre a la main la TVA de chaque
+ * prestation non encore payee avant de declarer. Livraisons de biens et
+ * operations mixtes : TVA exigible a la facturation, directement en 44571.
+ */
+function tvaSurEncaissements(inv: FactureExport): boolean {
+  const services = inv.operation_category !== "goods" && inv.operation_category !== "mixed";
+  return services && !inv.payment_on_debit;
+}
+
+type Ligne = { compte: string; compteLib: string; auxNum: string; auxLib: string; debit: number; credit: number; lettrage?: string; dateLet?: string };
+type Ecriture = { journal: string; journalLib: string; date: string; ref: string; lib: string; lignes: Ligne[]; ordre: number };
+
+/**
+ * Contenu du FEC (separateur tabulation, fin de ligne CRLF), conforme a
+ * l'article A47 A-1 du LPF et importable sans retouche (20/11/2026) :
+ * ecritures triees par date de validation, numerotees en continu par journal,
+ * lettrage entre la facture et son reglement sur le compte client, TVA sur
+ * encaissements en compte d'attente.
+ *
+ * Choix assume, PAS de compte 4191 pour les acomptes : Deviso emet l'acompte
+ * puis un solde qui ne facture que le reste. Chaque document est donc une
+ * vente a part entiere ; passer l'acompte en 4191 laisserait ce compte non
+ * solde, la facture de solde ne reprenant pas l'acompte.
+ */
+export function genererFec(invoices: FactureExport[], plan: PlanComptesFec = PLAN_PAR_DEFAUT): string {
   const COLS = [
     "JournalCode", "JournalLib", "EcritureNum", "EcritureDate",
     "CompteNum", "CompteLib", "CompAuxNum", "CompAuxLib",
@@ -83,7 +118,8 @@ export function genererFec(invoices: FactureExport[]): string {
     "Montantdevise", "Idevise",
   ];
 
-  const rows: string[][] = [COLS];
+  const ecritures: Ecriture[] = [];
+  let nLettrage = 0;
 
   invoices.forEach((inv, i) => {
     const date = fecDate(inv.issue_date);
@@ -102,47 +138,90 @@ export function genererFec(invoices: FactureExport[]): string {
      */
     const avoir = estAvoir(inv);
     const lib = `${avoir ? "Avoir" : "Facture"} ${ref}`;
-    const numStr = `VT${String(i + 1).padStart(6, "0")}`;
-    const cCode = clientCode(clientLib);
+    const cCode = clientCode(inv.client_siren, clientLib);
     const ht = +(inv.total_ht ?? 0).toFixed(2);
     const ttc = +(inv.total_ttc ?? 0).toFixed(2);
     const ventFec = ventilationTva((inv.items ?? []) as LigneMontant[], inv.tva_rate);
+    const attente = tvaSurEncaissements(inv);
+    const payee = inv.status === "paid";
+    const payDate = payee ? fecDate(inv.paid_at || inv.updated_at || inv.issue_date) : "";
+    const lettre = payee ? codeLettrage(nLettrage++) : undefined;
 
     // 706 « prestations de services » ou 707 « ventes de marchandises ».
-    const compteVente = inv.operation_category === "goods" ? "707000" : "706000";
+    const compteVente = inv.operation_category === "goods" ? plan.ventesBiens : plan.ventesServices;
     const libelleVente =
       inv.operation_category === "goods" ? "Ventes de marchandises" : "Prestations de services";
 
-    const row = (compte: string, compteLib: string, auxNum: string, auxLib: string, debit: number, credit: number) =>
-      [numStr, date, compte, compteLib, auxNum, auxLib, ref, date, lib, amt(debit), amt(credit), "", "", date, "", ""];
+    // Sens d'une ligne : `debitSurFacture` dit si elle est au debit sur une
+    // facture ; un avoir inverse tout.
+    const sens = (montant: number, debitSurFacture: boolean) =>
+      debitSurFacture !== avoir ? { debit: montant, credit: 0 } : { debit: 0, credit: montant };
 
-    // Client : debite sur une facture (il doit), credite sur un avoir (on lui doit).
-    rows.push(["VT", "Ventes", ...row("411000", "Clients", cCode, clientLib, avoir ? 0 : ttc, avoir ? ttc : 0)]);
-    // Produit : credite sur une facture, debite sur un avoir.
-    rows.push(["VT", "Ventes", ...row(compteVente, libelleVente, "", "", avoir ? ht : 0, avoir ? 0 : ht)]);
-    for (const g of ventFec.groupes) {
-      if (g.montant_tva <= 0) continue;
-      const tvaG = +g.montant_tva.toFixed(2);
-      rows.push(["VT", "Ventes", ...row("445710", `TVA collectee ${g.taux}%`, "", "", avoir ? tvaG : 0, avoir ? 0 : tvaG)]);
-    }
+    const tvas = ventFec.groupes
+      .filter((g) => g.montant_tva > 0)
+      .map((g) => ({ taux: g.taux, montant: +g.montant_tva.toFixed(2) }));
 
-    if (inv.status === "paid") {
-      // Date d'encaissement reelle, pas `updated_at` (qui bouge a la moindre
-      // modification et produisait des ecritures hors exercice).
-      const payDate = fecDate(inv.paid_at || inv.updated_at || inv.issue_date);
-      const payNum = `BQ${String(i + 1).padStart(6, "0")}`;
+    const lignesVente: Ligne[] = [
+      // Client : debite sur une facture (il doit), credite sur un avoir.
+      { compte: plan.clients, compteLib: "Clients", auxNum: cCode, auxLib: clientLib, ...sens(ttc, true), lettrage: lettre, dateLet: lettre ? payDate : undefined },
+      // Produit : credite sur une facture, debite sur un avoir.
+      { compte: compteVente, compteLib: libelleVente, auxNum: "", auxLib: "", ...sens(ht, false) },
+      ...tvas.map((t) => ({
+        compte: attente ? plan.tvaNonExigible : plan.tvaCollectee,
+        compteLib: attente ? `TVA collectee non exigible ${t.taux}%` : `TVA collectee ${t.taux}%`,
+        auxNum: "", auxLib: "", ...sens(t.montant, false),
+      })),
+    ];
+    ecritures.push({ journal: plan.journalVentes, journalLib: "Ventes", date, ref, lib, lignes: lignesVente, ordre: i * 2 });
+
+    if (payee) {
       const payLib = `${avoir ? "Remboursement" : "Reglement"} ${ref}`;
-
-      const payRow = (compte: string, compteLib: string, auxNum: string, auxLib: string, debit: number, credit: number) =>
-        [payNum, payDate, compte, compteLib, auxNum, auxLib, ref, payDate, payLib, amt(debit), amt(credit), "", "", payDate, "", ""];
-
-      // Un avoir rembourse sort de la banque, il n'y entre pas.
-      rows.push(["BQ", "Banque", ...payRow("512000", "Banque", "", "", avoir ? 0 : ttc, avoir ? ttc : 0)]);
-      rows.push(["BQ", "Banque", ...payRow("411000", "Clients", cCode, clientLib, avoir ? ttc : 0, avoir ? 0 : ttc)]);
+      const lignesBanque: Ligne[] = [
+        // Un avoir rembourse sort de la banque, il n'y entre pas.
+        { compte: plan.banque, compteLib: "Banque", auxNum: "", auxLib: "", ...sens(ttc, true) },
+        { compte: plan.clients, compteLib: "Clients", auxNum: cCode, auxLib: clientLib, ...sens(ttc, false), lettrage: lettre, dateLet: payDate },
+      ];
+      // Le paiement rend la TVA exigible : du compte d'attente au 44571.
+      if (attente) {
+        for (const t of tvas) {
+          lignesBanque.push({ compte: plan.tvaNonExigible, compteLib: `TVA collectee non exigible ${t.taux}%`, auxNum: "", auxLib: "", ...sens(t.montant, true) });
+          lignesBanque.push({ compte: plan.tvaCollectee, compteLib: `TVA collectee ${t.taux}%`, auxNum: "", auxLib: "", ...sens(t.montant, false) });
+        }
+      }
+      ecritures.push({ journal: plan.journalBanque, journalLib: "Banque", date: payDate, ref, lib: payLib, lignes: lignesBanque, ordre: i * 2 + 1 });
     }
   });
 
+  // L'article A47 A-1 veut les ecritures dans l'ordre chronologique de
+  // validation ; la numerotation suit cet ordre, continue dans chaque journal.
+  ecritures.sort((a, b) => (a.date === b.date ? a.ordre - b.ordre : a.date < b.date ? -1 : 1));
+  const compteurs: Record<string, number> = {};
+  const rows: string[][] = [COLS];
+  for (const e of ecritures) {
+    compteurs[e.journal] = (compteurs[e.journal] ?? 0) + 1;
+    const num = `${e.journal}${String(compteurs[e.journal]).padStart(6, "0")}`;
+    for (const l of e.lignes) {
+      rows.push([
+        e.journal, e.journalLib, num, e.date,
+        l.compte, l.compteLib, l.auxNum, l.auxLib,
+        e.ref, e.date, e.lib,
+        amt(l.debit), amt(l.credit), l.lettrage ?? "", l.dateLet ?? "", e.date,
+        "", "",
+      ]);
+    }
+  }
+
   return rows.map((r) => r.join("\t")).join("\r\n");
+}
+
+/**
+ * Nom de fichier du FEC prevu par l'article A47 A-1 : SIREN, « FEC », date de
+ * cloture AAAAMMJJ. Les logiciels des cabinets le reconnaissent tel quel.
+ * Sans SIREN connu, un nom lisible.
+ */
+export function nomFichierFec(siren: string | null | undefined, annee: string, repli: string): string {
+  const chiffres = (siren ?? "").replace(/\D/g, "");
+  return chiffres.length >= 9 ? `${chiffres.slice(0, 9)}FEC${annee}1231.txt` : `FEC_${annee}_${repli}.txt`;
 }
 
 /** Contenu du CSV des factures (point-virgule, BOM UTF-8 pour Excel). */

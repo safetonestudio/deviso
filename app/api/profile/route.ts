@@ -5,6 +5,7 @@ import { createClient as createAdminClient } from "@supabase/supabase-js";
 import { getWorkspaceUserId } from "@/lib/workspace";
 import { pousserRegimeTva } from "@/lib/superpdp-entreprise";
 import { chiffrerMotDePasse } from "@/lib/chorus-pro";
+import { validerPlan } from "@/lib/plan-comptes-fec";
 
 const supabaseAdmin = createAdminClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -54,6 +55,10 @@ export async function PATCH(req: NextRequest) {
     "cgv_text",
     "chorus_pro_login", "chorus_pro_password", "chorus_pro_fournisseur_id",
     "chorus_pro_bank_code", "chorus_pro_user_id",
+    // Expert-comptable : résumé du lundi par e-mail (lib/cabinet-resume.ts).
+    "resume_cabinet_hebdo",
+    // Expert-comptable : comptes et journaux de ses FEC (lib/plan-comptes-fec.ts).
+    "plan_comptes_fec",
   ];
   const updates = Object.fromEntries(Object.entries(body).filter(([k]) => allowed.includes(k)));
   // Mot de passe Chorus Pro : chiffré avant écriture. Vide ou absent = on garde
@@ -65,6 +70,14 @@ export async function PATCH(req: NextRequest) {
   }
   // Le statut decide de ce que montre le tableau de bord (echeance URSSAF des
   // micros, TVA des assujettis) : une valeur hors liste est refusee.
+  if ("plan_comptes_fec" in updates && updates.plan_comptes_fec !== null) {
+    const v = validerPlan(updates.plan_comptes_fec);
+    if ("erreur" in v) return NextResponse.json({ error: v.erreur }, { status: 400 });
+    updates.plan_comptes_fec = v.plan;
+  }
+  if ("resume_cabinet_hebdo" in updates && typeof updates.resume_cabinet_hebdo !== "boolean") {
+    return NextResponse.json({ error: "Préférence invalide" }, { status: 400 });
+  }
   if ("statut_juridique" in updates && updates.statut_juridique !== null && !estStatut(updates.statut_juridique)) {
     return NextResponse.json({ error: "Statut d'entreprise inconnu" }, { status: 400 });
   }

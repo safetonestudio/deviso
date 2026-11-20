@@ -16,6 +16,10 @@
       "schedule": "0 2 * * *"
     },
     {
+      "path": "/api/cron/resume-cabinet",
+      "schedule": "0 6 * * 1"
+    },
+    {
       "path": "/api/cron/superpdp-sync",
       "schedule": "0 0 * * *"
     },

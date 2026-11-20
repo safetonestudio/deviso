@@ -111,6 +111,24 @@ export function echeanceDossier(
     };
   }
   // simplified : declaration annuelle (CA12).
+  //
+  // Le regime simplifie de TVA est supprime au 1er janvier 2027 (article 38
+  // de la loi de finances pour 2025, art. 287 CGI ; verifie le 20/11/2026 sur
+  // deux sources concordantes, LegiFiscal et macompta). Les anciens dossiers
+  // au RSI passent d'office au reel normal TRIMESTRIEL (mensuel au-dela de
+  // 1 000 000 EUR de CA). Exercice civil : derniere CA12 sur 2026, deposee au
+  // plus tard le 4 mai 2027 ; premiere CA3 sur le 1er trimestre 2027. D'ou :
+  // en 2027, tant qu'aucun trimestre n'est clos, l'annee 2026 reste a
+  // declarer et le 1er trimestre est en cours ; ensuite, rythme trimestriel.
+  if (an >= 2027) {
+    const t = Math.floor(m / 3);
+    const cour = bornesTrimestre(an, t);
+    const prec = an === 2027 && t === 0 ? bornesAnnee(2026) : bornesTrimestre(t === 0 ? an - 1 : an, t === 0 ? 3 : t - 1);
+    return {
+      enCours: periode(cour.cle, cour.libelle, cour.debut, cour.fin, factures),
+      aDeclarer: periode(prec.cle, prec.libelle, prec.debut, prec.fin, factures),
+    };
+  }
   const cour = bornesAnnee(an);
   const prec = bornesAnnee(an - 1);
   return {
@@ -153,5 +171,5 @@ export function calendrierTva(
 export const LIBELLE_PERIODICITE: Record<Periodicite, string> = {
   monthly: "Mensuelle",
   quarterly: "Trimestrielle",
-  simplified: "Annuelle (RSI)",
+  simplified: "Annuelle (RSI, supprimée au 1er janvier 2027)",
 };

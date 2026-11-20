@@ -45,12 +45,21 @@ export async function GET() {
   const admin = createAdminClient();
   const { data: comptable } = await admin
     .from("team_members")
-    .select("id, email, status, invited_at, accepted_at")
+    .select("id, email, status, invited_at, accepted_at, member_id")
     .eq("owner_id", user.id)
     .eq("role", ROLE_COMPTABLE)
     .maybeSingle();
 
-  return NextResponse.json({ comptable: comptable ?? null });
+  // Le nom du cabinet, pour que le client sache qui lit son dossier
+  // (20/11/2026). Seulement le nom affiché, jamais d'autre donnée du cabinet.
+  let cabinet: string | null = null;
+  if (comptable?.member_id) {
+    const { data: p } = await admin.from("profiles").select("company_name, full_name").eq("id", comptable.member_id).maybeSingle();
+    cabinet = p?.company_name || p?.full_name || null;
+  }
+  const { member_id: _membre, ...reste } = comptable ?? ({} as Record<string, unknown>);
+  void _membre;
+  return NextResponse.json({ comptable: comptable ? { ...reste, cabinet } : null });
 }
 
 // POST /api/team/comptable : inviter (ou reinviter) l'expert-comptable.

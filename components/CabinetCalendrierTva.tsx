@@ -18,7 +18,7 @@ type Ligne = {
 const LIBELLE: Record<Periodicite, string> = {
   monthly: "Mensuelle",
   quarterly: "Trimestrielle",
-  simplified: "Annuelle",
+  simplified: "Annuelle (supprimée en 2027)",
 };
 
 const eur = (n: number) =>

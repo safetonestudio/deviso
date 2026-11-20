@@ -27,7 +27,9 @@ const CADRATIN = String.fromCharCode(0x2014);
 // ajoutés le 04/11/2026). Ce ne sont ni le code ni le contenu de Deviso, rien
 // n'en est servi aux visiteurs, et les réécrire reviendrait à modifier des
 // fichiers de fournisseurs que leurs mises à jour écraseraient.
-const DOSSIERS_TIERS = new Set([join(".claude", "skills")]);
+// docs/reference : notes de travail locales, hors Git (.gitignore), dont des
+// extraits de sources tierces cites tels quels.
+const DOSSIERS_TIERS = new Set([join(".claude", "skills"), join("docs", "reference")]);
 // Fichier régénéré par `next dev` à chaque lancement (non suivi par git).
 const FICHIERS_GENERES = new Set(["AGENTS.md"]);
 

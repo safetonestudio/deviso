@@ -79,5 +79,12 @@ export function prochaineDeclarationTva(
     const suivant = Math.floor(m / 3) * 3 + 3;
     return { periode: "enCours", depot: suivant === 12 ? `en janvier ${an + 1}` : `en ${MOIS[suivant]} ${an}` };
   }
+  // Régime simplifié supprimé au 1er janvier 2027 (art. 38 LF 2025) : passage
+  // d'office au trimestriel. De janvier à mars 2027, la dernière CA12 (année
+  // 2026, au plus tard le 4 mai 2027) ; ensuite, le rythme trimestriel.
+  if (an >= 2027) {
+    if (an === 2027 && m <= 2) return { periode: "aDeclarer", depot: "au plus tard le 4 mai 2027" };
+    return prochaineDeclarationTva("quarterly", reference);
+  }
   return m <= 4 ? { periode: "aDeclarer", depot: `début mai ${an}` } : { periode: "enCours", depot: `début mai ${an + 1}` };
 }

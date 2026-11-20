@@ -49,6 +49,9 @@ export type FactureCabinet = {
   superpdp_status: string | null;
   superpdp_error: string | null;
   paid_at: string | null;
+  superpdp_invoice_id: string | null;
+  superpdp_encaisse_at: string | null;
+  operation_category: string | null;
 };
 
 export type SyntheseDossier = {
@@ -71,7 +74,7 @@ export type SyntheseDossier = {
 };
 
 const COLONNES_FACTURES =
-  "id, user_id, invoice_number, issue_date, due_date, status, total_ht, total_ttc, tva_rate, items, invoice_type, type_code, client_name, client_company, client_siren, client_country, superpdp_status, superpdp_error, paid_at";
+  "id, user_id, invoice_number, issue_date, due_date, status, total_ht, total_ttc, tva_rate, items, invoice_type, type_code, client_name, client_company, client_siren, client_country, superpdp_status, superpdp_error, paid_at, superpdp_invoice_id, superpdp_encaisse_at, operation_category";
 
 /** Seuil au-dela duquel un dossier sans facture est signale comme inactif. */
 export const JOURS_INACTIVITE = 45;
@@ -250,6 +253,13 @@ export async function syntheseDossiers(
       tvaRegimeOk = false;
       anomalies.push({ niveau: "orange", libelle: "Assujetti à la TVA sans périodicité de déclaration renseignée" });
     }
+    // Régime simplifié de TVA supprimé au 1er janvier 2027 (art. 38 LF 2025) :
+    // le dossier passe d'office au trimestriel. Signalé dès novembre 2026 pour
+    // que la périodicité soit mise à jour (le calendrier, lib/cabinet-tva-
+    // calendrier.ts, applique déjà le trimestriel à partir de 2027).
+    if (p?.tva_regime !== "franchise" && p?.tva_periodicite === "simplified" && aujourdhui >= "2026-11-01") {
+      anomalies.push({ niveau: "orange", libelle: "Régime simplifié de TVA supprimé au 1er janvier 2027 : passer en déclaration trimestrielle" });
+    }
 
     // Donnees de reference : un SIRET faux, un n° de TVA incoherent, ou une
     // entreprise raccordee mais pas joignable font rejeter les factures a la
@@ -284,6 +294,27 @@ export async function syntheseDossiers(
     };
     if (impayes.nb > 0) {
       anomalies.push({ niveau: "orange", libelle: `${pluriel(impayes.nb, "facture")} ${accord(impayes.nb, "échue")} non ${accord(impayes.nb, "payée")}` });
+    }
+    // Prestation payée, transmise à la plateforme, mais dont l'encaissement
+    // (statut « Encaissée ») n'est jamais parti : pour une prestation de
+    // services, c'est lui qui rend la TVA exigible côté administration. La
+    // synchronisation le retente pendant sept jours (lib/superpdp-sync.ts) ;
+    // au-delà, il faut une intervention, d'où l'alerte au cabinet (20/11/2026).
+    const septJours = new Date(reference.getTime() - 7 * 86400000).toISOString().slice(0, 10);
+    const encaissementManquant = emises.filter(
+      (f) =>
+        f.status === "paid" &&
+        !!f.superpdp_invoice_id &&
+        !f.superpdp_encaisse_at &&
+        f.operation_category !== "goods" &&
+        !!f.paid_at &&
+        f.paid_at.slice(0, 10) < septJours,
+    );
+    if (encaissementManquant.length > 0) {
+      anomalies.push({
+        niveau: "orange",
+        libelle: `${pluriel(encaissementManquant.length, "facture")} ${accord(encaissementManquant.length, "payée")} sans statut « encaissée » transmis à la plateforme`,
+      });
     }
     const trous = trousNumerotation(emises);
     const totalTrous = trous.reduce((n, t) => n + t.manquants.length, 0);

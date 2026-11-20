@@ -20,5 +20,5 @@ export type VatRegime = "monthly" | "quarterly" | "simplified" | "vat_exemption"
 export const PERIODICITES_TVA = [
   { value: "monthly", label: "Mensuelle, régime réel normal" },
   { value: "quarterly", label: "Trimestrielle, régime réel normal" },
-  { value: "simplified", label: "Annuelle, régime simplifié (RSI)" },
+  { value: "simplified", label: "Annuelle, régime simplifié (RSI), supprimé au 1er janvier 2027" },
 ] as const;

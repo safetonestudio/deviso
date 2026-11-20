@@ -96,7 +96,7 @@ contreEpreuve("séparateur CSV", csvVirgule, 'const csv = BOM + [h, ...rows.map(
   const src = lire("lib/exports-comptables.ts");
   exige(
     "FEC, un avoir s'enregistre en sens inverse",
-    /const avoir = estAvoir\(inv\)/.test(src) && /avoir \? 0 : ttc/.test(src),
+    /const avoir = estAvoir\(inv\)/.test(src) && /debitSurFacture !== avoir/.test(src),
     "les montants d'un avoir sont positifs (BR-27) : additionnés, ils doublent le CA et la TVA collectée",
   );
   exige(
@@ -106,12 +106,12 @@ contreEpreuve("séparateur CSV", csvVirgule, 'const csv = BOM + [h, ...rows.map(
   );
   exige(
     "FEC, le compte auxiliaire est stable d'une facture à l'autre",
-    /clientCode\(clientLib\)/.test(src),
-    "dérivé de l'index de ligne, un même client changeait de code à chaque facture et le lettrage devenait inexploitable",
+    /clientCode\(inv\.client_siren, clientLib\)/.test(src),
+    "dérivé de l'index de ligne puis du nom, un même client changeait de code (facture suivante, ou client renommé) : le SIREN d'abord (test:fec le prouve)",
   );
   exige(
     "FEC, les ventes de biens vont au 707",
-    /707000/.test(src),
+    /ventesBiens : plan\.ventesServices/.test(src) && /ventesBiens: "707000"/.test(lire("lib/plan-comptes-fec.ts")),
     "tout était imputé en 706 « prestations de services », y compris les livraisons de biens",
   );
 }

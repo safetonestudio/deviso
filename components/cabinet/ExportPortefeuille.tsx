@@ -21,6 +21,7 @@ export function ExportPortefeuille({ dossiers, annee }: { dossiers: DossierExpor
   const [an, setAn] = useState(annee);
   const [portee, setPortee] = useState<"tout" | "choix">("tout");
   const [choix, setChoix] = useState<Set<string>>(new Set());
+  const [avecPdf, setAvecPdf] = useState(false);
   const boite = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -34,9 +35,12 @@ export function ExportPortefeuille({ dossiers, annee }: { dossiers: DossierExpor
   const ids = portee === "tout" ? [] : [...choix];
   const nb = portee === "tout" ? dossiers.length : choix.size;
   const pret = nb > 0;
-  const lien = `/api/cabinet/export?format=${format}&year=${an}` + (ids.length ? `&clients=${ids.join(",")}` : "");
-  const fichier =
-    nb === 1
+  const pdf = format === "fec" && avecPdf;
+  const lien =
+    `/api/cabinet/export?format=${format}&year=${an}` + (ids.length ? `&clients=${ids.join(",")}` : "") + (pdf ? "&pdf=1" : "");
+  const fichier = pdf
+    ? "une archive zip, le FEC et les PDF des factures de chaque dossier"
+    : nb === 1
       ? `un fichier ${format === "fec" ? "FEC" : "CSV"}`
       : `une archive zip, un fichier ${format === "fec" ? "FEC" : "CSV"} par dossier`;
 
@@ -109,6 +113,23 @@ export function ExportPortefeuille({ dossiers, annee }: { dossiers: DossierExpor
                   </button>
                 </div>
               </fieldset>
+
+              {format === "fec" && (
+                <label className="flex items-start gap-3 rounded-xl border border-ds-border p-3.5 cursor-pointer hover:border-gray-600 transition-colors">
+                  <input
+                    type="checkbox"
+                    checked={avecPdf}
+                    onChange={(e) => setAvecPdf(e.target.checked)}
+                    className="mt-0.5 accent-indigo-500"
+                  />
+                  <span>
+                    <span className="block text-sm font-medium text-ink">Joindre les PDF des factures</span>
+                    <span className="block text-[13px] text-gray-400 mt-0.5">
+                      Chaque PDF porte le numéro de sa pièce dans le FEC : votre logiciel les rattache aux écritures.
+                    </span>
+                  </span>
+                </label>
+              )}
 
               <fieldset>
                 <legend className="text-sm font-medium text-gray-300 mb-2">Exercice</legend>

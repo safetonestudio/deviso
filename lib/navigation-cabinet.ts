@@ -1,5 +1,5 @@
 import type { LucideIcon } from "lucide-react";
-import { BookOpenCheck, Briefcase, History, Landmark, LayoutGrid, UserPlus } from "lucide-react";
+import { BookOpenCheck, Briefcase, History, Landmark, LayoutGrid, ListChecks, ShieldCheck, UserPlus } from "lucide-react";
 
 /**
  * Menu de l'espace cabinet, source unique de la barre latérale et du menu
@@ -21,10 +21,12 @@ export const NAVIGATION_CABINET: ElementCabinet[] = [
   { href: "/cabinet/tva", label: "TVA à déclarer", icon: Landmark },
   { href: "/cabinet/conformite", label: "Conformité réforme", icon: BookOpenCheck },
   { section: "Cabinet" },
+  { href: "/cabinet/comptes-fec", label: "Comptes du FEC", icon: ListChecks },
   { href: "/cabinet/journal", label: "Journal des accès", icon: History },
+  { href: "/cabinet/confiance", label: "Sécurité et confiance", icon: ShieldCheck },
 ];
 
-const RESERVES = ["/cabinet/dossiers", "/cabinet/inviter", "/cabinet/tva", "/cabinet/conformite", "/cabinet/journal"];
+const RESERVES = ["/cabinet/dossiers", "/cabinet/inviter", "/cabinet/tva", "/cabinet/conformite", "/cabinet/journal", "/cabinet/confiance", "/cabinet/comptes-fec"];
 
 /** Lien actif. Une fiche dossier (/cabinet/<id>) appartient au portefeuille. */
 export function lienActifCabinet(href: string, chemin: string): boolean {

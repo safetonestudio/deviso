@@ -1,6 +1,7 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { cleBrouillon } from "@/components/cabinet/DemanderAuClient";
 
 // Forme locale : aucun import du code serveur cabinet (check:cabinet, regle 7).
 type Signalement = {
@@ -8,6 +9,7 @@ type Signalement = {
   message: string;
   statut: "ouvert" | "traite";
   created_at: string;
+  traite_at?: string | null;
 };
 
 const horodatage = (iso: string) => new Date(iso).toLocaleString("fr-FR", { timeZone: "Europe/Paris", dateStyle: "short", timeStyle: "short" });
@@ -23,6 +25,19 @@ export function CabinetSignalements({ clientId, initiaux }: { clientId: string; 
   const [message, setMessage] = useState("");
   const [envoi, setEnvoi] = useState(false);
   const [erreur, setErreur] = useState<string | null>(null);
+
+  // Brouillon préparé depuis une anomalie (bouton « Demander au client »).
+  useEffect(() => {
+    try {
+      const brouillon = sessionStorage.getItem(cleBrouillon(clientId));
+      if (brouillon) {
+        setMessage(brouillon);
+        sessionStorage.removeItem(cleBrouillon(clientId));
+      }
+    } catch {
+      /* stockage indisponible : rien à reprendre */
+    }
+  }, [clientId]);
 
   async function envoyer() {
     const texte = message.trim();
@@ -93,7 +108,10 @@ export function CabinetSignalements({ clientId, initiaux }: { clientId: string; 
               </span>
               <div className="min-w-0 flex-1">
                 <p className="text-sm text-gray-200 whitespace-pre-wrap wrap-break-word">{s.message}</p>
-                <p className="text-[13px] text-gray-400 mt-1">{horodatage(s.created_at)}</p>
+                <p className="text-[13px] text-gray-400 mt-1">
+                  Envoyé le {horodatage(s.created_at)}
+                  {s.statut === "traite" && s.traite_at ? ` · traité par le client le ${horodatage(s.traite_at)}` : s.statut === "ouvert" ? " · en attente du client" : ""}
+                </p>
               </div>
             </li>
           ))}

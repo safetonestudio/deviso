@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 import { getWorkspaceUserId, getWorkspaceProfile } from "@/lib/workspace";
 import { exigerTitulaire } from "@/lib/droits";
-import { genererFec, STATUTS_FEC } from "@/lib/exports-comptables";
+import { genererFec, nomFichierFec, STATUTS_FEC } from "@/lib/exports-comptables";
 
 // GET /api/export/fec?year=2025, Solo + Pro.
 // Le contenu est fabrique par lib/exports-comptables, source partagee avec le
@@ -15,7 +15,7 @@ export async function GET(req: NextRequest) {
   // Le profil de l'ESPACE, pas celui de la personne connectée : un
   // collaborateur lisait sinon SON plan au lieu de celui de l'entreprise.
   const workspaceId = await getWorkspaceUserId(user.id);
-  const profile = await getWorkspaceProfile<{ plan: string | null }>(workspaceId, "plan");
+  const profile = await getWorkspaceProfile<{ plan: string | null; siret: string | null }>(workspaceId, "plan, siret");
 
   const refusT = exigerTitulaire(user.id, workspaceId);
   if (refusT) return refusT;
@@ -38,7 +38,7 @@ export async function GET(req: NextRequest) {
   if (error) return NextResponse.json({ error: error.message }, { status: 500 });
 
   const content = genererFec(invoices ?? []);
-  const filename = `FEC_${year}_${new Date().toISOString().split("T")[0]}.txt`;
+  const filename = nomFichierFec(profile?.siret, year, new Date().toISOString().split("T")[0]);
 
   return new NextResponse(content, {
     headers: {

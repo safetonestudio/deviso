@@ -39,7 +39,7 @@ export default async function CabinetLayout({ children }: { children: ReactNode 
       <div className="min-h-screen bg-ds-bg flex overflow-x-clip">
         <CabinetMobileNav nomCabinet={nomCabinet} email={user.email || ""} initiales={initiales} />
 
-        <aside className="hidden lg:flex w-64 bg-ds-surface border-r border-ds-border flex-col fixed h-full">
+        <aside className="no-print hidden lg:flex w-64 bg-ds-surface border-r border-ds-border flex-col fixed h-full">
           <div className="px-5 py-4 border-b border-ds-border flex items-center justify-between gap-2">
             <a href="/cabinet" className="flex items-center gap-2 min-w-0">
               <div className="w-7 h-7 rounded-[7px] bg-indigo-600 flex items-center justify-center">
@@ -69,8 +69,8 @@ export default async function CabinetLayout({ children }: { children: ReactNode 
           </div>
         </aside>
 
-        <main className="flex-1 lg:ml-64 min-w-0">
-          <div className="barre-haut hidden lg:flex sticky top-0 z-30 h-14 items-center justify-between gap-4 px-10 bg-ds-bg/85 backdrop-blur-sm border-b border-ds-border">
+        <main className="flex-1 lg:ml-64 print:ml-0 min-w-0">
+          <div className="barre-haut no-print hidden lg:flex sticky top-0 z-30 h-14 items-center justify-between gap-4 px-10 bg-ds-bg/85 backdrop-blur-sm border-b border-ds-border">
             <span className="text-sm text-gray-400 first-letter:uppercase">
               {new Date().toLocaleDateString("fr-FR", { weekday: "long", day: "numeric", month: "long", timeZone: "Europe/Paris" })}
             </span>

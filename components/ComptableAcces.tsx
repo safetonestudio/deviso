@@ -8,6 +8,7 @@ type Comptable = {
   status: "pending" | "active";
   invited_at: string;
   accepted_at: string | null;
+  cabinet?: string | null;
 } | null;
 
 /**
@@ -143,11 +144,12 @@ export function ComptableAcces() {
           <div className="flex flex-wrap items-center justify-between gap-3">
             <div className="min-w-0">
               <p className="truncate text-sm font-medium text-ink">
-                {comptable.email || "Ton cabinet comptable"}
+                {comptable.cabinet || comptable.email || "Ton cabinet comptable"}
               </p>
-              <p className="text-xs text-gray-500">
+              <p className="text-[13px] text-gray-400">
+                {comptable.cabinet && comptable.email ? `${comptable.email} · ` : ""}
                 {comptable.status === "active"
-                  ? "Accès actif, en lecture seule"
+                  ? "suit ton dossier en lecture seule : il voit tes factures, ne peut rien modifier ni envoyer"
                   : "Invitation en attente"}
               </p>
             </div>

@@ -19,6 +19,7 @@ import { estAvoir } from "@/lib/exports-comptables";
 import { libelleStatut } from "@/lib/superpdp-statuts";
 import { KpiCard } from "@/components/ui/KpiCard";
 import { OngletsDossier } from "@/components/cabinet/OngletsDossier";
+import { DemanderAuClient } from "@/components/cabinet/DemanderAuClient";
 
 export const metadata: Metadata = { title: "Dossier client" };
 export const dynamic = "force-dynamic";
@@ -240,7 +241,8 @@ export default async function FicheClient({
                       {synthese.anomalies.map((a) => (
                         <li key={a.libelle} className="flex items-start gap-2 text-sm text-gray-300">
                           <span className={`mt-1.5 w-2 h-2 rounded-full shrink-0 ${a.niveau === "rouge" ? "bg-red-500" : "bg-amber-500"}`} />
-                          {a.libelle}
+                          <span className="flex-1 min-w-0">{a.libelle}</span>
+                          <DemanderAuClient clientId={id} anomalie={a.libelle} />
                         </li>
                       ))}
                     </ul>

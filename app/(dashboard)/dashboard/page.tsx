@@ -204,7 +204,7 @@ export default async function DashboardPage() {
       ? (() => {
           const prochaine = prochaineDeclarationTva(periodiciteTva, now);
           const p = echeanceDossier(periodiciteTva, inv as unknown as FactureCabinet[], now)[prochaine.periode];
-          return { formulaire: periodiciteTva === "simplified" ? "CA12" as const : "CA3" as const, periode: p.libelle, depot: prochaine.depot, baseHt: p.base_ht, tva: p.tva, enCours: prochaine.periode === "enCours" };
+          return { formulaire: periodiciteTva === "simplified" && /^\d{4}$/.test(p.cle) ? "CA12" as const : "CA3" as const, periode: p.libelle, depot: prochaine.depot, baseHt: p.base_ht, tva: p.tva, enCours: prochaine.periode === "enCours" };
         })()
       : { formulaire: null, periode: "", depot: "", baseHt: 0, tva: 0, enCours: false };
   const colonneEcheances = !!echeanceDepot || !!echeanceTva;
