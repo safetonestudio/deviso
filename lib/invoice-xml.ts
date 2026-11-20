@@ -196,7 +196,15 @@ export function generateFacturXml(
    * tous les paramètres voisins sont des `string | null`, un décalage
    * positionnel y passerait la vérification de types sans être vu.
    */
-  linkedInvoiceDate?: string | null
+  linkedInvoiceDate?: string | null,
+  /**
+   * Dépôt sur Chorus Pro (factures aux administrations) : la structure
+   * publique destinataire y est identifiée par son SIRET (14 chiffres, schéma
+   * ICD 0009), pas par son SIREN. Absent, le document reste celui de la
+   * Plateforme Agréée (SIREN, schéma 0002). Objet et non chaîne, pour qu'un
+   * décalage positionnel ne passe pas la vérification de types.
+   */
+  chorus?: { siretDestinataire: string } | null
 ): string {
   /**
    * BT-8, quand la TVA devient exigible.
@@ -399,7 +407,9 @@ export function generateFacturXml(
       </ram:SellerTradeParty>
       <ram:BuyerTradeParty>
         <ram:Name>${esc(invoice.client_company || invoice.client_name || "")}</ram:Name>
-        ${buyerSiren ? `<ram:SpecifiedLegalOrganization><ram:ID schemeID="0002">${esc(buyerSiren)}</ram:ID></ram:SpecifiedLegalOrganization>` : ""}
+        ${chorus
+          ? `<ram:SpecifiedLegalOrganization><ram:ID schemeID="0009">${esc(chorus.siretDestinataire)}</ram:ID></ram:SpecifiedLegalOrganization>`
+          : buyerSiren ? `<ram:SpecifiedLegalOrganization><ram:ID schemeID="0002">${esc(buyerSiren)}</ram:ID></ram:SpecifiedLegalOrganization>` : ""}
         ${postalAddress(
           { street: invoice.client_street, postcode: invoice.client_postcode, city: invoice.client_city, country: invoice.client_country },
           invoice.client_address

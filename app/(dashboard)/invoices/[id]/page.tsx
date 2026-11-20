@@ -23,6 +23,7 @@ import { libelleStatut } from "@/lib/superpdp-statuts";
 import { etatPdp } from "@/lib/superpdp-etat-facture";
 import type { Invoice } from "@/types";
 import { MODES_REGLEMENT, type ModeReglement } from "@/lib/recettes";
+import { couleurEtatChorus, libelleEtatFlux } from "@/lib/chorus-etats";
 
 const STATUS_LABEL: Record<string, string> = {
   draft: "Brouillon",
@@ -102,7 +103,7 @@ function ActionPanel({ invoice, id, router, hasChorusPro }: {
   };
   const [chorusStatus, setChorusStatus] = useState<{ label: string; color: string; motifRejet?: string | null } | null>(
     invoice.chorus_pro_status
-      ? (CHORUS_STATUS_MAP[invoice.chorus_pro_status] ?? { label: invoice.chorus_pro_status, color: "blue" })
+      ? (CHORUS_STATUS_MAP[invoice.chorus_pro_status] ?? { label: libelleEtatFlux(invoice.chorus_pro_status), color: couleurEtatChorus(invoice.chorus_pro_status), motifRejet: invoice.chorus_pro_motif_rejet ?? null })
       : null
   );
   const [fetchingStatus, setFetchingStatus] = useState(false);
@@ -307,7 +308,10 @@ function ActionPanel({ invoice, id, router, hasChorusPro }: {
     const res = await fetch(`/api/invoices/${id}/chorus-pro/status`);
     const data = await res.json();
     if (res.ok) {
+      setChorusError(null);
       setChorusStatus({ label: data.label, color: data.color, motifRejet: data.motifRejet });
+    } else {
+      setChorusError(data.message || data.error || "Statut Chorus Pro indisponible pour le moment.");
     }
     setFetchingStatus(false);
   }

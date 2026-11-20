@@ -169,6 +169,8 @@ export default function ProfilPage() {
   // Chorus Pro state
   const [chorusLogin, setChorusLogin] = useState("");
   const [chorusPassword, setChorusPassword] = useState("");
+  // Le mot de passe enregistré n'est jamais renvoyé : on sait seulement qu'il existe.
+  const [chorusPasswordDefini, setChorusPasswordDefini] = useState(false);
   const [chorusFournisseurId, setChorusFournisseurId] = useState("");
   const [chorusBankCode, setChorusBankCode] = useState("");
   const [chorusUserId, setChorusUserId] = useState("");
@@ -195,7 +197,7 @@ export default function ProfilPage() {
           setCgvText(d.profile.cgv_text || "");
           // Chorus Pro
           if (d.profile.chorus_pro_login) setChorusLogin(d.profile.chorus_pro_login);
-          if (d.profile.chorus_pro_password) setChorusPassword(d.profile.chorus_pro_password);
+          setChorusPasswordDefini(!!d.profile.chorus_pro_password_defini);
           if (d.profile.chorus_pro_fournisseur_id) setChorusFournisseurId(String(d.profile.chorus_pro_fournisseur_id));
           if (d.profile.chorus_pro_bank_code) setChorusBankCode(String(d.profile.chorus_pro_bank_code));
           if (d.profile.chorus_pro_user_id) setChorusUserId(String(d.profile.chorus_pro_user_id));
@@ -384,7 +386,8 @@ Les présentes CGV sont soumises au droit français. Tout litige relève de la c
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
         chorus_pro_login: chorusLogin || null,
-        chorus_pro_password: chorusPassword || null,
+        // Vide = garder le mot de passe enregistré (voir PATCH /api/profile).
+        chorus_pro_password: chorusPassword || undefined,
         chorus_pro_fournisseur_id: chorusFournisseurId ? parseInt(chorusFournisseurId) : null,
         chorus_pro_bank_code: chorusBankCode ? parseInt(chorusBankCode) : null,
         chorus_pro_user_id: chorusUserId ? parseInt(chorusUserId) : null,
@@ -392,6 +395,7 @@ Les présentes CGV sont soumises au droit français. Tout litige relève de la c
     });
     if (res.ok) {
       setChorusSaved(true);
+      if (chorusPassword) { setChorusPasswordDefini(true); setChorusPassword(""); }
       setTimeout(() => setChorusSaved(false), 3000);
     }
     setSavingChorus(false);
@@ -987,7 +991,7 @@ Les présentes CGV sont soumises au droit français. Tout litige relève de la c
               type="password"
               value={chorusPassword}
               onChange={(e) => setChorusPassword(e.target.value)}
-              placeholder="••••••••"
+              placeholder={chorusPasswordDefini ? "Enregistré (laisse vide pour le garder)" : "Mot de passe du compte technique"}
               className={inputCls}
             />
           </div>

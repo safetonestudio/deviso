@@ -32,14 +32,14 @@ import type { ReactElement } from "react";
  * le même avoir, et c'est celui que le comptable du client ouvre dans le PDF
  * qui était le mauvais.
  */
-export async function generateFacturXPdf(invoice: Invoice, accentColor?: string, paymentInfo?: PaymentInfo, linkedInvoiceNumber?: string | null, linkedInvoiceDate?: string | null): Promise<Buffer> {
+export async function generateFacturXPdf(invoice: Invoice, accentColor?: string, paymentInfo?: PaymentInfo, linkedInvoiceNumber?: string | null, linkedInvoiceDate?: string | null, chorus?: { siretDestinataire: string } | null): Promise<Buffer> {
   // 1. Génération du PDF visuel (React PDF → Buffer)
   const pdfBuffer = await renderToBuffer(
     React.createElement(InvoicePDF, { invoice, accentColor, paymentInfo, linkedInvoiceNumber }) as ReactElement<React.ComponentProps<typeof Document>>
   );
 
   // 2. Génération du XML CII
-  const xml = generateFacturXml(invoice, linkedInvoiceNumber, paymentInfo, undefined, undefined, undefined, linkedInvoiceDate);
+  const xml = generateFacturXml(invoice, linkedInvoiceNumber, paymentInfo, undefined, undefined, undefined, linkedInvoiceDate, chorus);
   const xmlBytes = new TextEncoder().encode(xml);
 
   // 3. Chargement du PDF avec pdf-lib

@@ -8,6 +8,11 @@ Statut au 24/10/2026 : client, règles, base et route codés et testés contre l
 documentation ; écrans en attente de la charte URSSAF ; accès bac à sable en
 cours (DataPass D99994).
 
+Mise à jour du 20/11/2026 : la demande DataPass D99994 (API Tierce Déclaration
+auto-entrepreneur, au nom de BERRABAH SELIM) est **soumise**, statut « en cours
+d'instruction ». Prochaine étape côté URSSAF : accord, puis identifiants du bac
+à sable. Rien à faire côté Deviso avant leur arrivée.
+
 ## Ne pas confondre avec Super PDP
 
 Deux systemes distincts, deux administrations, deux API :
@@ -135,6 +140,10 @@ Aligné sur le découpage déja utilisé pour Super PDP :
   montant et confirme ; Deviso propose, l'utilisateur décide.
 
 ## Point d'accroche déja en place
+
+⚠️ 20/11/2026 : `CaUrssafWidget` n'est plus importé nulle part depuis la refonte
+du tableau de bord. Le bouton ira sur la carte « Prochaine échéance, Déclaration
+URSSAF » du tableau de bord (micro seulement), pas dans ce widget.
 
 Le widget CA (`components/CaUrssafWidget.tsx`) réserve, sous le total annuel, un
 emplacement commenté pour le futur bouton « Télétransmettre a l'URSSAF ». Aucun

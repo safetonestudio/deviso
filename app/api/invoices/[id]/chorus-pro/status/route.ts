@@ -3,39 +3,14 @@ import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { getWorkspaceUserId } from "@/lib/workspace";
 import { estCompteDemo, MESSAGE_DEMO_TIERS } from "@/lib/garde-demo";
+import { consulterCompteRendu, enteteCompte, jetonPiste } from "@/lib/chorus-pro";
 
-const PISTE_OAUTH_URL = "https://oauth.piste.gouv.fr/api/oauth/token";
-const PISTE_API_BASE = "https://api.piste.gouv.fr/cpro";
-
-// Statuts Chorus Pro → libellé FR + couleur UI
-export const CHORUS_STATUS_MAP: Record<string, { label: string; color: string }> = {
-  DEPOSEE:              { label: "Déposée",               color: "blue" },
-  EN_COURS_TRAITEMENT:  { label: "En cours de traitement", color: "amber" },
-  COMPLETEE:            { label: "Complétée",              color: "amber" },
-  MISE_EN_PAIEMENT:     { label: "Mise en paiement",       color: "indigo" },
-  MANDATEE:             { label: "Mandatée",               color: "emerald" },
-  VALIDEE:              { label: "Validée",                color: "emerald" },
-  SUSPENDUE:            { label: "Suspendue",              color: "amber" },
-  REJETEE:              { label: "Rejetée",                color: "red" },
-  ANNULEE:              { label: "Annulée",                color: "red" },
-};
-
-async function getPisteToken(): Promise<string> {
-  const res = await fetch(PISTE_OAUTH_URL, {
-    method: "POST",
-    headers: { "Content-Type": "application/x-www-form-urlencoded" },
-    body: new URLSearchParams({
-      grant_type: "client_credentials",
-      client_id: process.env.PISTE_CLIENT_ID!,
-      client_secret: process.env.PISTE_CLIENT_SECRET!,
-      scope: "openid",
-    }),
-  });
-  if (!res.ok) throw new Error(`PISTE OAuth: ${res.status}`);
-  const data = await res.json();
-  return data.access_token;
-}
-
+/**
+ * Statut d'une facture déposée sur Chorus Pro : compte rendu du flux
+ * (transverses/v1/consulterCR, interrogé avec le numéro de flux reçu au dépôt).
+ * L'ancienne version interrogeait factures/v1/consulterCR avec un numéro de
+ * facture, adresse et paramètre qui ne correspondent pas à l'API.
+ */
 export async function GET(
   _req: NextRequest,
   { params }: { params: Promise<{ id: string }> }
@@ -45,25 +20,18 @@ export async function GET(
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) return NextResponse.json({ error: "Non authentifié" }, { status: 401 });
 
-  // La consultation d'un compte-rendu est une lecture, mais elle s'authentifie
-  // avec les identifiants PISTE de PRODUCTION de Deviso. Le jeu de données de
-  // démonstration porte une référence Chorus Pro inventée : interroger
-  // l'administration avec un numéro qui n'existe pas n'apprend rien à personne
-  // et laisse des erreurs dans les journaux du compte AIFE.
+  // La démonstration porte une référence Chorus Pro inventée : interroger
+  // l'administration avec un numéro qui n'existe pas n'apprend rien.
   if (await estCompteDemo(user.id)) {
     return NextResponse.json({ error: "DEMO", message: MESSAGE_DEMO_TIERS }, { status: 403 });
   }
 
-  // Les documents appartiennent à l'espace de travail, pas au collaborateur :
-  // filtrer sur user.id renvoyait 404 à tout membre d'équipe.
   const workspaceId = await getWorkspaceUserId(user.id);
-
   const admin = createAdminClient();
 
-  // Récupère la facture
   const { data: invoice } = await admin
     .from("invoices")
-    .select("id, invoice_number, chorus_pro_ref, chorus_pro_status, user_id")
+    .select("id, chorus_pro_ref")
     .eq("id", id)
     .eq("user_id", workspaceId)
     .single();
@@ -71,78 +39,43 @@ export async function GET(
   if (!invoice) return NextResponse.json({ error: "Facture introuvable" }, { status: 404 });
   if (!invoice.chorus_pro_ref) return NextResponse.json({ error: "Pas encore déposée sur Chorus Pro" }, { status: 404 });
 
-  // Récupère les identifiants Chorus Pro
+  // Le compte technique de l'ESPACE (celui qui a déposé), pas celui du
+  // collaborateur qui consulte : sur user.id, un membre obtenait « non configuré ».
   const { data: profile } = await admin
     .from("profiles")
     .select("chorus_pro_login, chorus_pro_password")
-    .eq("id", user.id)
+    .eq("id", workspaceId)
     .single();
 
-  if (!profile?.chorus_pro_login) {
+  if (!profile?.chorus_pro_login || !profile?.chorus_pro_password) {
     return NextResponse.json({ error: "Compte Chorus Pro non configuré" }, { status: 422 });
   }
 
-  const cproAccount = Buffer.from(
-    `${profile.chorus_pro_login}:${profile.chorus_pro_password}`
-  ).toString("base64");
-
-  // Token PISTE
-  let token: string;
   try {
-    token = await getPisteToken();
-  } catch (e: any) {
-    return NextResponse.json({ error: `Auth PISTE : ${e.message}` }, { status: 502 });
+    const jeton = await jetonPiste();
+    const compte = enteteCompte(profile.chorus_pro_login, profile.chorus_pro_password);
+    const cr = await consulterCompteRendu({ jeton, compte, numeroFluxDepot: invoice.chorus_pro_ref });
+    const etat = cr.etat || "DEPOSEE";
+    const rejet = /REJET|INCIDENT|ERREUR|ANOMALIE/i.test(etat);
+    const motif = rejet ? String(cr.raw.libelle ?? "") || null : null;
+
+    await admin
+      .from("invoices")
+      .update({
+        chorus_pro_status: etat,
+        chorus_pro_status_date: new Date().toISOString(),
+        chorus_pro_motif_rejet: motif,
+      })
+      .eq("id", invoice.id);
+
+    return NextResponse.json({
+      ref: invoice.chorus_pro_ref,
+      status: etat,
+      label: cr.libelle,
+      color: rejet ? "red" : /INTEGR/i.test(etat) ? "emerald" : "blue",
+      motifRejet: motif,
+    });
+  } catch (e) {
+    return NextResponse.json({ error: (e as Error).message }, { status: 502 });
   }
-
-  // Interroge consulterCR (Compte Rendu) via API Facturations
-  const crRes = await fetch(`${PISTE_API_BASE}/factures/v1/consulterCR`, {
-    method: "POST",
-    headers: {
-      Authorization: `Bearer ${token}`,
-      "cpro-account": cproAccount,
-      "Content-Type": "application/json;charset=utf-8",
-      Accept: "application/json;charset=utf-8",
-    },
-    body: JSON.stringify({
-      numeroFactureCPP: parseInt(invoice.chorus_pro_ref, 10),
-    }),
-  });
-
-  if (!crRes.ok) {
-    const text = await crRes.text();
-    return NextResponse.json({ error: `consulterCR: ${crRes.status} ${text}` }, { status: 502 });
-  }
-
-  const crData = await crRes.json();
-
-  // Le statut est dans statutFacture ou statutCourantFacture selon la version de l'API
-  const statut: string =
-    crData.statutFacture ??
-    crData.statutCourantFacture ??
-    crData.libelleStatut ??
-    "DEPOSEE";
-
-  const motifRejet: string | null =
-    crData.motifRefus ?? crData.motifRejet ?? null;
-
-  // Stocke le statut en DB
-  await admin
-    .from("invoices")
-    .update({
-      chorus_pro_status: statut,
-      chorus_pro_status_date: new Date().toISOString(),
-      ...(motifRejet ? { chorus_pro_motif_rejet: motifRejet } : {}),
-    })
-    .eq("id", invoice.id);
-
-  const statusInfo = CHORUS_STATUS_MAP[statut] ?? { label: statut, color: "gray" };
-
-  return NextResponse.json({
-    ref: invoice.chorus_pro_ref,
-    status: statut,
-    label: statusInfo.label,
-    color: statusInfo.color,
-    motifRejet,
-    raw: crData,
-  });
 }

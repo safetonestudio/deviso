@@ -4,6 +4,7 @@ import { createClient } from "@/lib/supabase/server";
 import { createClient as createAdminClient } from "@supabase/supabase-js";
 import { getWorkspaceUserId } from "@/lib/workspace";
 import { pousserRegimeTva } from "@/lib/superpdp-entreprise";
+import { chiffrerMotDePasse } from "@/lib/chorus-pro";
 
 const supabaseAdmin = createAdminClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -26,7 +27,13 @@ export async function GET() {
   const workspaceId = await getWorkspaceUserId(user.id);
   const is_owner = user.id === workspaceId;
 
-  return NextResponse.json({ profile: data, is_owner });
+  // Le mot de passe Chorus Pro ne quitte jamais le serveur : le navigateur
+  // apprend seulement s'il est enregistré.
+  const { chorus_pro_password, ...profile } = data ?? {};
+  return NextResponse.json({
+    profile: { ...profile, chorus_pro_password_defini: !!chorus_pro_password },
+    is_owner,
+  });
 }
 
 export async function PATCH(req: NextRequest) {
@@ -49,6 +56,13 @@ export async function PATCH(req: NextRequest) {
     "chorus_pro_bank_code", "chorus_pro_user_id",
   ];
   const updates = Object.fromEntries(Object.entries(body).filter(([k]) => allowed.includes(k)));
+  // Mot de passe Chorus Pro : chiffré avant écriture. Vide ou absent = on garde
+  // celui déjà enregistré (le formulaire ne le réaffiche jamais).
+  if ("chorus_pro_password" in updates) {
+    const mdp = updates.chorus_pro_password;
+    if (typeof mdp === "string" && mdp.length > 0) updates.chorus_pro_password = chiffrerMotDePasse(mdp);
+    else delete updates.chorus_pro_password;
+  }
   // Le statut decide de ce que montre le tableau de bord (echeance URSSAF des
   // micros, TVA des assujettis) : une valeur hors liste est refusee.
   if ("statut_juridique" in updates && updates.statut_juridique !== null && !estStatut(updates.statut_juridique)) {

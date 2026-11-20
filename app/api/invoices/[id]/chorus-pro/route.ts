@@ -1,4 +1,3 @@
-import { ventilationTva, tauxLigne } from "@/lib/tva";
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
@@ -7,108 +6,28 @@ import type { Invoice } from "@/types";
 import { getWorkspaceUserId } from "@/lib/workspace";
 import { exigerActe } from "@/lib/droits";
 import { estCompteDemo, MESSAGE_DEMO_TIERS } from "@/lib/garde-demo";
+import { deposerFacturX, enteteCompte, jetonPiste, siretDestinataire } from "@/lib/chorus-pro";
 
-// ─── Config PISTE ────────────────────────────────────────────────────────────
-const PISTE_SANDBOX = false; // Production PISTE activée
-const PISTE_OAUTH_URL = PISTE_SANDBOX
-  ? "https://sandbox-oauth.piste.gouv.fr/api/oauth/token"
-  : "https://oauth.piste.gouv.fr/api/oauth/token";
-const PISTE_API_BASE = PISTE_SANDBOX
-  ? "https://sandbox-api.piste.gouv.fr/cpro"
-  : "https://api.piste.gouv.fr/cpro";
-
-// ─── Mode complet (DEPOT_PDF_API) ────────────────────────────────────────────
-// false → SAISIE_API (mode actuel, sans PDF joint)
-// true  → DEPOT_PDF_API + Structures + Utilisateurs + Factur-X joint
-// À activer via Vercel env var dès réception de la confirmation AIFE
-const FULL_MODE = process.env.CHORUS_PRO_FULL_MODE === "true";
-
-// ─── PISTE OAuth token ───────────────────────────────────────────────────────
-async function getPisteToken(): Promise<string> {
-  const res = await fetch(PISTE_OAUTH_URL, {
-    method: "POST",
-    headers: { "Content-Type": "application/x-www-form-urlencoded" },
-    body: new URLSearchParams({
-      grant_type: "client_credentials",
-      client_id: process.env.PISTE_CLIENT_ID!,
-      client_secret: process.env.PISTE_CLIENT_SECRET!,
-      scope: "openid",
-    }),
-  });
-  if (!res.ok) {
-    const text = await res.text();
-    throw new Error(`PISTE OAuth failed: ${res.status} ${text}`);
-  }
-  const data = await res.json();
-  return data.access_token;
-}
-
-// ─── API Structures, résout SIRET → identifiantStructure ───────────────────
-async function getStructureId(
-  siret: string,
-  token: string,
-  cproAccount: string
-): Promise<number> {
-  const res = await fetch(`${PISTE_API_BASE}/structures/v1/rechercher/criteres`, {
-    method: "POST",
-    headers: {
-      Authorization: `Bearer ${token}`,
-      "cpro-account": cproAccount,
-      "Content-Type": "application/json;charset=utf-8",
-      Accept: "application/json;charset=utf-8",
-    },
-    body: JSON.stringify({ numSiret: siret, statutStructure: "ACTIVE" }),
-  });
-  if (!res.ok) {
-    const text = await res.text();
-    throw new Error(`API Structures: ${res.status} ${text}`);
-  }
-  const data = await res.json();
-  const structure = data.listeStructures?.[0];
-  if (!structure?.idStructure) {
-    throw new Error(
-      `Aucune structure active trouvée pour le SIRET ${siret}. Vérifiez que votre client est bien référencé sur Chorus Pro.`
-    );
-  }
-  return structure.idStructure as number;
-}
-
-// ─── API Utilisateurs, récupère l'ID utilisateur courant ───────────────────
-async function getCurrentUserId(
-  token: string,
-  cproAccount: string
-): Promise<number | null> {
-  try {
-    const res = await fetch(`${PISTE_API_BASE}/utilisateurs/v1/recuperer/idCourant`, {
-      method: "POST",
-      headers: {
-        Authorization: `Bearer ${token}`,
-        "cpro-account": cproAccount,
-        "Content-Type": "application/json;charset=utf-8",
-        Accept: "application/json;charset=utf-8",
-      },
-      body: JSON.stringify({}),
-    });
-    if (!res.ok) return null;
-    const data = await res.json();
-    return (data.idUtilisateur as number) ?? null;
-  } catch {
-    return null;
-  }
-}
+/**
+ * Dépôt d'une facture sur Chorus Pro (client public).
+ *
+ * Refait le 20/11/2026 : on dépose le PDF Factur-X lui-même (flux
+ * IN_DP_E2_CII_FACTURX), voir lib/chorus-pro.ts pour le pourquoi. L'ancienne
+ * version envoyait une description JSON de la facture à une adresse qui
+ * n'accepte qu'un fichier, et n'avait jamais servi.
+ */
 
 // ─── Génère le PDF Factur-X directement (sans fetch HTTP interne) ────────────
-// Remplace l'ancien fetchInvoicePdf qui faisait un fetch vers /api/invoices/[id]/download
-//, couplage fragile (dépendait du process Next.js, pas de localhost garanti en Vercel).
-async function buildInvoicePdfBase64(
+async function pdfFacturXBase64(
   invoice: Invoice,
-  userId: string,
-  admin: ReturnType<typeof createAdminClient>
+  workspaceId: string,
+  admin: ReturnType<typeof createAdminClient>,
+  siret: string
 ): Promise<string> {
   const { data: profileData } = await admin
     .from("profiles")
     .select("proposal_color, payment_method, payment_link_provider, payment_link_profile, bank_iban, bank_bic, bank_account_name")
-    .eq("id", userId)
+    .eq("id", workspaceId)
     .single();
 
   const accentColor = profileData?.proposal_color ?? undefined;
@@ -121,23 +40,25 @@ async function buildInvoicePdfBase64(
     bankAccountName: profileData.bank_account_name,
   } : undefined;
 
-  let linkedInvoiceNumber: string | null = null;
-  if (invoice.invoice_type === "solde" && invoice.linked_invoice_id) {
-    const { data: linkedInv } = await admin
+  // Facture de solde ou avoir : la facture d'origine (numéro ET date, BT-25/26).
+  let linkedNumber: string | null = null;
+  let linkedDate: string | null = null;
+  if (invoice.linked_invoice_id) {
+    const { data: linked } = await admin
       .from("invoices")
-      .select("invoice_number")
+      .select("invoice_number, issue_date")
       .eq("id", invoice.linked_invoice_id)
       .single();
-    linkedInvoiceNumber = linkedInv?.invoice_number ?? null;
+    linkedNumber = linked?.invoice_number ?? null;
+    linkedDate = linked?.issue_date ? String(linked.issue_date).slice(0, 10) : null;
   }
 
-  const pdfBuffer = await generateFacturXPdf(invoice, accentColor, paymentInfo, linkedInvoiceNumber);
-  return Buffer.from(pdfBuffer).toString("base64");
+  const pdf = await generateFacturXPdf(invoice, accentColor, paymentInfo, linkedNumber, linkedDate, { siretDestinataire: siret });
+  return Buffer.from(pdf).toString("base64");
 }
 
-// ─── Handler principal ───────────────────────────────────────────────────────
 export async function POST(
-  req: NextRequest,
+  _req: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
   const { id } = await params;
@@ -156,16 +77,14 @@ export async function POST(
   if (refusActe) return refusActe;
 
   // Aucun dépôt chez un tiers depuis un compte de démonstration. Voir
-  // lib/garde-demo.ts : PISTE et la Plateforme Agréée sont en production, et le
-  // jeu de données de démonstration contient de vrais destinataires, dont une
-  // facture B2G adressée au SIREN d'une commune réelle.
+  // lib/garde-demo.ts : PISTE est en production, et le jeu de données de
+  // démonstration contient une facture adressée au SIREN d'une commune réelle.
   if (await estCompteDemo(user.id)) {
     return NextResponse.json({ error: "DEMO", message: MESSAGE_DEMO_TIERS }, { status: 403 });
   }
 
   const admin = createAdminClient();
 
-  // ── Facture
   const { data: invoice, error: invErr } = await admin
     .from("invoices")
     .select("*")
@@ -182,188 +101,66 @@ export async function POST(
       { status: 409 }
     );
 
-  // ── Profil
+  if (!invoice.invoice_number)
+    return NextResponse.json({ error: "Un brouillon ne peut pas être déposé : finalise d'abord la facture." }, { status: 422 });
+
+  // Le compte technique Chorus Pro de l'ESPACE, pas celui du collaborateur :
+  // sinon un membre déposerait la facture de l'entreprise sous son propre
+  // compte. La déposition reste réglée par la permission deposer_chorus.
   const { data: profile } = await admin
     .from("profiles")
-    .select(
-      "chorus_pro_login, chorus_pro_password, chorus_pro_fournisseur_id, chorus_pro_bank_code, chorus_pro_user_id"
-    )
-    // Le compte fournisseur Chorus Pro de l'ESPACE, pas celui du collaborateur.
-    // Sur .eq("id", user.id), un membre déposait la facture B2G de l'entreprise
-    // sous SON identifiant fournisseur, l'administration paie alors sur son
-    // compte. La déposition reste réglée par la permission deposer_chorus.
+    .select("chorus_pro_login, chorus_pro_password, chorus_pro_user_id")
     .eq("id", workspaceId)
     .single();
 
-  if (
-    !profile?.chorus_pro_login ||
-    !profile?.chorus_pro_password ||
-    !profile?.chorus_pro_fournisseur_id
-  ) {
+  if (!profile?.chorus_pro_login || !profile?.chorus_pro_password) {
+    return NextResponse.json(
+      { error: "Compte Chorus Pro non configuré. Rends-toi dans Paramètres → Chorus Pro." },
+      { status: 422 }
+    );
+  }
+
+  const siret = siretDestinataire(invoice.client_siren);
+  if (!siret) {
     return NextResponse.json(
       {
         error:
-          "Compte Chorus Pro non configuré. Rendez-vous dans Paramètres → Chorus Pro.",
+          "Chorus Pro identifie l'administration par son SIRET (14 chiffres), pas par son SIREN (9). " +
+          "Renseigne le SIRET du service destinataire dans la facture.",
       },
       { status: 422 }
     );
   }
 
-  if (!invoice.client_siren) {
-    return NextResponse.json(
-      { error: "Le SIRET du client est requis pour déposer sur Chorus Pro." },
-      { status: 422 }
-    );
-  }
-
-  // ── Auth headers
-  const cproAccount = Buffer.from(
-    `${profile.chorus_pro_login}:${profile.chorus_pro_password}`
-  ).toString("base64");
-
-  // ── Token PISTE
-  let token: string;
+  let compte: string;
   try {
-    token = await getPisteToken();
-  } catch (e: any) {
+    compte = enteteCompte(profile.chorus_pro_login, profile.chorus_pro_password);
+  } catch {
     return NextResponse.json(
-      { error: `Erreur authentification PISTE : ${e.message}` },
-      { status: 502 }
+      { error: "Mot de passe Chorus Pro illisible : ressaisis-le dans Paramètres → Chorus Pro." },
+      { status: 422 }
     );
   }
 
-  // ── Lignes de poste (communes aux deux modes)
-  const items = (invoice.items as any[]) || [];
-  const lignePoste = items.map((item: any, idx: number) => ({
-    lignePosteDenomination: item.description,
-    lignePosteMontantRemiseHT: 0,
-    lignePosteMontantUnitaireHT: item.unit_price,
-    lignePosteNumero: idx + 1,
-    lignePosteQuantite: item.quantity,
-    lignePosteReference: `ligne-${idx + 1}`,
-    lignePosteTauxTvaManuel: tauxLigne(item, invoice.tva_rate),
-    lignePosteUnite: item.unit || "forfait",
-  }));
-
-  const montantHt = invoice.total_ht;
-  const montantTva = invoice.total_ttc - invoice.total_ht;
-  const ventCpp = ventilationTva(items, invoice.tva_rate);
-  const ligneTva = ventCpp.groupes.map((g) => ({
-    ligneTvaMontantBaseHtParTaux: g.base_ht,
-    ligneTvaMontantTvaParTaux: g.montant_tva,
-    ligneTvaTauxManuel: g.taux,
-  }));
-
-  const montantTotal = {
-    montantAPayer: invoice.total_ttc,
-    montantHtTotal: montantHt,
-    montantRemiseGlobaleTTC: 0,
-    montantTVA: montantTva,
-    montantTtcTotal: invoice.total_ttc,
-  };
-
-  const references = {
-    deviseFacture: "EUR",
-    modePaiement: "VIREMENT",
-    // AVOIR = note de crédit uniquement. Un acompte reste une FACTURE sur Chorus Pro.
-    typeFacture: "FACTURE",
-    typeTva: invoice.payment_on_debit
-      ? "TVA_SUR_DEBITS"
-      : "TVA_SUR_ENCAISSEMENT",
-  };
-
-  const cadreDeFacturation = { codeCadreFacturation: "A1_FACTURE_FOURNISSEUR" };
-
-  const fournisseur = {
-    idFournisseur: profile.chorus_pro_fournisseur_id,
-    codeCoordonneesBancairesFournisseur: profile.chorus_pro_bank_code ?? 0,
-  };
-
-  // ── Construction du payload selon le mode ──────────────────────────────────
-  let payload: any;
-
-  if (FULL_MODE) {
-    // ── Mode complet : DEPOT_PDF_API + Structures + Utilisateurs + Factur-X
-    let structureId: number;
-    try {
-      structureId = await getStructureId(invoice.client_siren, token, cproAccount);
-    } catch (e: any) {
-      return NextResponse.json(
-        { error: `API Structures : ${e.message}` },
-        { status: 502 }
-      );
-    }
-
-    // Récupère l'ID utilisateur : depuis le profil ou via API Utilisateurs
-    const userId =
-      profile.chorus_pro_user_id ??
-      (await getCurrentUserId(token, cproAccount));
-
-    // Génère le PDF Factur-X directement (appel fonction, pas fetch HTTP interne)
-    let pdfBase64: string;
-    try {
-      pdfBase64 = await buildInvoicePdfBase64(invoice as Invoice, workspaceId, admin);
-    } catch (e: any) {
-      return NextResponse.json(
-        { error: `Génération PDF : ${e.message}` },
-        { status: 502 }
-      );
-    }
-
-    payload = {
-      numeroFactureSaisi: invoice.invoice_number,
-      dateFacture: invoice.issue_date.slice(0, 10),
-      modeDepot: "DEPOT_PDF_API",
-      cadreDeFacturation,
-      destinataire: {
-        identifiantStructureDestinataire: structureId,
-      },
-      fournisseur,
-      lignePoste,
-      ligneTva,
-      montantTotal,
-      references,
-      pieceJointe: [
-        {
-          pieceJointeDesignation: "Facture Factur-X",
-          pieceJointeNumeroLigneFacture: 0,
-          pieceJointeTypeCode: "DEP",
-          pieceJointeNomFichier: `${invoice.invoice_number}.pdf`,
-          pieceJointeContenu: pdfBase64,
-        },
-      ],
-    };
-
-    if (userId) payload.idUtilisateurCourant = userId;
-  } else {
-    // ── Mode basique : SAISIE_API (actif jusqu'à confirmation AIFE)
-    payload = {
-      numeroFactureSaisi: invoice.invoice_number,
-      dateFacture: invoice.issue_date.slice(0, 10),
-      modeDepot: "SAISIE_API",
-      cadreDeFacturation,
-      destinataire: {
-        codeDestinataire: invoice.client_siren,
-      },
-      fournisseur,
-      lignePoste,
-      ligneTva,
-      montantTotal,
-      references,
-    };
+  let jeton: string;
+  try {
+    jeton = await jetonPiste();
+  } catch (e) {
+    return NextResponse.json({ error: `Chorus Pro injoignable : ${(e as Error).message}` }, { status: 502 });
   }
 
-  // ─── Envoi à Chorus Pro via PISTE ────────────────────────────────────────
-  const endpoint = `${PISTE_API_BASE}/factures/v1/deposer/flux`;
+  let pdfBase64: string;
+  try {
+    pdfBase64 = await pdfFacturXBase64(invoice as Invoice, workspaceId, admin, siret);
+  } catch (e) {
+    return NextResponse.json({ error: `Génération du PDF : ${(e as Error).message}` }, { status: 502 });
+  }
 
   // Prise atomique juste avant le dépôt. La garde-lecture `chorus_pro_ref`
   // plus haut ne suffit pas : deux appels concurrents (double-clic, deux
   // onglets, réessai réseau) la franchissent tous deux et déposent DEUX fois
-  // la même facture B2G chez la collectivité, sous le compte AIFE de l'espace -
-  // refus « DOUBLON », il faut un avoir. On remplace donc la lecture par un
-  // verrou que la base arbitre, comme l'émission Super PDP : le premier obtient
-  // sa ligne, les suivants zéro. Le verrou se périme en 10 min pour qu'un
-  // plantage à mi-course ne bloque pas la facture indéfiniment.
+  // la même facture chez la collectivité, qui la refuse pour doublon. Le
+  // verrou se périme en 10 min pour qu'un plantage ne bloque pas la facture.
   const perimeDepot = new Date(Date.now() - 10 * 60 * 1000).toISOString();
   const { data: priseDepot } = await admin
     .from("invoices")
@@ -380,60 +177,50 @@ export async function POST(
       {
         error: "Dépôt déjà en cours",
         message:
-          "Cette facture est déjà en cours de dépôt sur Chorus Pro. Patientez quelques " +
-          "secondes et rechargez la page plutôt que de réessayer : un second dépôt la ferait " +
-          "arriver en double chez la collectivité, qui la refuserait pour doublon.",
+          "Cette facture est déjà en cours de dépôt sur Chorus Pro. Patiente quelques " +
+          "secondes et recharge la page plutôt que de réessayer : un second dépôt la ferait " +
+          "arriver en double chez l'administration, qui la refuserait.",
       },
       { status: 409 }
     );
   }
 
-  // Rend le verrou si le dépôt n'aboutit pas, pour qu'un réessai (adresse
-  // corrigée, PISTE momentanément indisponible) ne se heurte pas à « déjà en
-  // cours » pendant 10 min. Sur succès, c'est chorus_pro_ref qui bloque le
-  // re-dépôt, le verrou peut rester posé.
-  const rendreVerrouDepot = () =>
-    admin
+  let numeroFlux: string;
+  try {
+    const r = await deposerFacturX({
+      jeton,
+      compte,
+      pdfBase64,
+      nomFichier: `${String(invoice.invoice_number).replace(/[^\w.-]/g, "_")}.pdf`,
+      idUtilisateurCourant: profile.chorus_pro_user_id,
+    });
+    numeroFlux = r.numeroFluxDepot;
+  } catch (e) {
+    // Rend le verrou : un réessai (SIRET corrigé, PISTE momentanément
+    // indisponible) ne doit pas se heurter à « déjà en cours » pendant 10 min.
+    await admin
       .from("invoices")
       .update({ chorus_pro_depot_debute_at: null })
       .eq("id", id)
       .eq("user_id", workspaceId)
       .then(() => undefined, () => undefined);
-
-  const submitRes = await fetch(endpoint, {
-    method: "POST",
-    headers: {
-      Authorization: `Bearer ${token}`,
-      "Content-Type": "application/json",
-      "cpro-account": cproAccount,
-    },
-    body: JSON.stringify(payload),
-  });
-
-  if (!submitRes.ok) {
-    await rendreVerrouDepot();
-    const errText = await submitRes.text();
-    return NextResponse.json(
-      { error: `Chorus Pro API error: ${submitRes.status} ${errText}` },
-      { status: 502 }
-    );
+    return NextResponse.json({ error: (e as Error).message }, { status: 502 });
   }
 
-  const result = await submitRes.json();
-  const ref = result.numeroFluxDepot ?? result.numeroDossierFacture ?? "?";
-
+  const maintenant = new Date().toISOString();
   await admin
     .from("invoices")
     .update({
-      chorus_pro_ref: ref,
-      chorus_pro_submitted_at: new Date().toISOString(),
+      chorus_pro_ref: numeroFlux,
+      chorus_pro_submitted_at: maintenant,
       chorus_pro_status: "DEPOSEE",
-      chorus_pro_status_date: new Date().toISOString(),
+      chorus_pro_status_date: maintenant,
+      chorus_pro_motif_rejet: null,
     })
     .eq("id", id);
 
   return NextResponse.json({
-    ref,
-    message: "Facture déposée avec succès sur Chorus Pro.",
+    ref: numeroFlux,
+    message: "Facture déposée sur Chorus Pro. Son traitement prend quelques minutes : actualise le statut ensuite.",
   });
 }
