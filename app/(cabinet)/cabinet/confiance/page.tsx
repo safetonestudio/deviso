@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { FenetreConfidentialite } from "@/components/cabinet/FenetreConfidentialite";
 import { BoutonImprimer } from "@/components/cabinet/BoutonImprimer";
 
 export const metadata: Metadata = { title: "Sécurité et confiance" };
@@ -90,7 +91,7 @@ export default function CabinetConfiance() {
 
         <p className="text-[13px] text-gray-400 px-1">
           La liste des sous-traitants et la durée de conservation des données figurent dans la{" "}
-          <Link href="/confidentialite" className="text-indigo-400 hover:text-indigo-300">politique de confidentialité</Link>.
+          <FenetreConfidentialite />.
           Une question : support@getdeviso.fr.
         </p>
       </div>
