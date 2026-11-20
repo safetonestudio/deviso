@@ -3,6 +3,7 @@ import type { Metadata } from "next";
 import { createClient } from "@/lib/supabase/server";
 import { validerPlan, PLAN_PAR_DEFAUT } from "@/lib/plan-comptes-fec";
 import { logicielConnu } from "@/lib/logiciels-comptables";
+import { estFrequence, estJour } from "@/lib/cabinet-resume-frequence";
 import { ParametresCabinet, type VueParametres } from "@/components/cabinet/ParametresCabinet";
 
 export const metadata: Metadata = { title: "Paramètres" };
@@ -12,7 +13,7 @@ const VUES: VueParametres[] = ["cabinet", "logiciel", "fec", "notifications"];
 
 /**
  * Paramètres du cabinet (20/11/2026) : identité affichée aux clients, logiciel
- * de production (format d'export par défaut), comptes du FEC, résumé du lundi.
+ * de production (format d'export par défaut), comptes du FEC, résumé par e-mail.
  * Son propre profil : la connexion de l'utilisateur suffit (pas de clé de service).
  */
 export default async function CabinetParametres({ searchParams }: { searchParams: Promise<{ vue?: string }> }) {
@@ -21,7 +22,7 @@ export default async function CabinetParametres({ searchParams }: { searchParams
   if (!user) redirect("/login");
   const { data: p } = await supabase
     .from("profiles")
-    .select("company_name, full_name, plan_comptes_fec, resume_cabinet_hebdo, logiciel_comptable, export_pdf_defaut")
+    .select("company_name, full_name, plan_comptes_fec, resume_cabinet_hebdo, resume_cabinet_frequence, resume_cabinet_jour, resume_cabinet_dernier_passage, logiciel_comptable, export_pdf_defaut")
     .eq("id", user.id)
     .maybeSingle();
   const lu = validerPlan(p?.plan_comptes_fec ?? null);
@@ -40,7 +41,12 @@ export default async function CabinetParametres({ searchParams }: { searchParams
           nomCabinet: p?.company_name ?? "",
           nomContact: p?.full_name ?? "",
           plan: "plan" in lu ? lu.plan : PLAN_PAR_DEFAUT,
-          resume: p?.resume_cabinet_hebdo !== false,
+          resume: {
+            actif: p?.resume_cabinet_hebdo !== false,
+            frequence: estFrequence(p?.resume_cabinet_frequence) ? p!.resume_cabinet_frequence : "hebdo",
+            jour: estJour(p?.resume_cabinet_jour) ? p!.resume_cabinet_jour : 1,
+            dernierPassage: p?.resume_cabinet_dernier_passage ?? null,
+          },
           logiciel: logicielConnu(p?.logiciel_comptable) ? p!.logiciel_comptable : null,
           pdfDefaut: p?.export_pdf_defaut === true,
         }}

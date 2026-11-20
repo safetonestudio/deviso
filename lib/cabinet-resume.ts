@@ -26,7 +26,13 @@ const eur = (n: number) => new Intl.NumberFormat("fr-FR", { style: "currency", c
 const pl = (n: number, mot: string, motPluriel = `${mot}s`) => `${n} ${n > 1 ? motPluriel : mot}`;
 const cap = (t: string) => t.charAt(0).toUpperCase() + t.slice(1);
 
-export async function construireResume(admin: Admin, cabinetId: string, reference: Date = new Date()): Promise<Resume | null> {
+export async function construireResume(
+  admin: Admin,
+  cabinetId: string,
+  reference: Date = new Date(),
+  /** Rythme choisi par le cabinet, en clair (« chaque lundi »), cité dans le pied du courriel. */
+  rythme = "chaque lundi",
+): Promise<Resume | null> {
   const tous = await dossiersDuCabinet(admin, cabinetId);
   if (tous.length === 0) return null;
   const { data: demos } = await admin.from("profiles").select("id").in("id", tous).eq("is_demo", true);
@@ -94,8 +100,8 @@ export async function construireResume(admin: Admin, cabinetId: string, referenc
           </td></tr></table>
         </td></tr>
         <tr><td style="padding-top:16px;font-size:12px;color:#5b665f;line-height:1.6;text-align:center;">
-          Vous recevez ce résumé chaque lundi parce que des clients vous ont donné accès à leur dossier Deviso, en lecture seule.
-          Pour ne plus le recevoir : <a href="${base}/cabinet" style="color:#0f7a55;">Accueil de votre espace cabinet</a>, case « Résumé du lundi par e-mail ».
+          Vous recevez ce résumé ${echapperHtml(rythme)} parce que des clients vous ont donné accès à leur dossier Deviso, en lecture seule.
+          Pour changer son rythme ou ne plus le recevoir : <a href="${base}/cabinet/parametres?vue=notifications" style="color:#0f7a55;">Paramètres de votre espace cabinet</a>, rubrique Notifications.
         </td></tr>
       </table>
     </td></tr>
@@ -104,12 +110,14 @@ export async function construireResume(admin: Admin, cabinetId: string, referenc
 </html>`;
 
   const texte = [
-    "Votre portefeuille cette semaine",
+    "Votre portefeuille Deviso",
     "",
     ...aTraiter.slice(0, 10).map((d) => `- ${d.nom} (${d.niveau === "rouge" ? "action requise" : "à surveiller"}) : ${d.anomalies[0]?.libelle ?? ""}`),
     ...(tva.length ? ["", "TVA à déclarer :", ...tva.slice(0, 10).map((l) => `- ${l.nom}, ${cap(l.aDeclarer?.libelle ?? "")} : ${eur(l.aDeclarer?.tva ?? 0)}`)] : []),
     "",
     `Ouvrir mon espace cabinet : ${base}/cabinet`,
+    "",
+    `Vous recevez ce résumé ${rythme}. Pour changer son rythme ou ne plus le recevoir : ${base}/cabinet/parametres?vue=notifications`,
   ].join("\n");
 
   return { sujet, html, texte, nbATraiter: aTraiter.length, nbTva: tva.length };

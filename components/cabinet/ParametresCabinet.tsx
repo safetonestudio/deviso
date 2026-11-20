@@ -6,7 +6,7 @@ import { Bell, Building2, FileSpreadsheet, ListChecks } from "lucide-react";
 import type { PlanComptesFec } from "@/lib/plan-comptes-fec";
 import { LOGICIELS, FORMATS, logicielParId } from "@/lib/logiciels-comptables";
 import { ReglagesFec } from "@/components/cabinet/ReglagesFec";
-import { ResumeHebdoToggle } from "@/components/cabinet/ResumeHebdoToggle";
+import { ReglagesResume, type ReglageResume } from "@/components/cabinet/ReglagesResume";
 
 export type VueParametres = "cabinet" | "logiciel" | "fec" | "notifications";
 
@@ -26,7 +26,7 @@ type Initial = {
   nomCabinet: string;
   nomContact: string;
   plan: PlanComptesFec;
-  resume: boolean;
+  resume: ReglageResume;
   logiciel: string | null;
   pdfDefaut: boolean;
 };
@@ -145,7 +145,7 @@ export function ParametresCabinet({ vueInitiale, email, initial }: { vueInitiale
               <div className="block">
                 <span className="block text-sm font-medium text-gray-300 mb-1.5">Adresse de connexion</span>
                 <p className="text-sm text-ink">{email}</p>
-                <p className="text-[13px] text-gray-500 mt-1">Le résumé du lundi y est envoyé. Pour la changer, écrivez au support.</p>
+                <p className="text-[13px] text-gray-500 mt-1">Le résumé par e-mail y est envoyé. Pour la changer, écrivez au support.</p>
               </div>
               <div className="flex items-center gap-3 pt-1">
                 <button type="submit" disabled={etatCab.envoi} className={boutonCls}>Enregistrer</button>
@@ -222,7 +222,7 @@ export function ParametresCabinet({ vueInitiale, email, initial }: { vueInitiale
         {vue === "notifications" && (
           <section className="carte p-6">
             <h2 className="font-semibold text-ink mb-4">Notifications</h2>
-            <ResumeHebdoToggle initial={initial.resume} />
+            <ReglagesResume initial={initial.resume} />
           </section>
         )}
       </div>

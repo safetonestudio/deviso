@@ -49,7 +49,7 @@ async function main() {
   const nomsDemo = (demos ?? []).map((d) => d.company_name || d.full_name).filter(Boolean) as string[];
   verifier("aucun dossier de démonstration n'y figure", nomsDemo.every((n) => !r.html.includes(n)), nomsDemo.join(", "));
   verifier("chaque dossier mène à sa fiche", /\/cabinet\/[0-9a-f-]{36}/.test(r.html));
-  verifier("le moyen de ne plus le recevoir est indiqué", /Pour ne plus le recevoir/.test(r.html));
+  verifier("le moyen de ne plus le recevoir est indiqué", /ne plus le recevoir/.test(r.html) && r.html.includes("/cabinet/parametres?vue=notifications"));
 
   console.log("── Contre-épreuve : un cabinet sans dossier réel ──────────────");
   const { data: martel } = await admin.from("profiles").select("id").eq("email", "cabinet.martel@demo.getdeviso.fr").maybeSingle();

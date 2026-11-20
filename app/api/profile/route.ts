@@ -7,6 +7,7 @@ import { pousserRegimeTva } from "@/lib/superpdp-entreprise";
 import { chiffrerMotDePasse } from "@/lib/chorus-pro";
 import { validerPlan } from "@/lib/plan-comptes-fec";
 import { logicielConnu } from "@/lib/logiciels-comptables";
+import { estFrequence, estJour } from "@/lib/cabinet-resume-frequence";
 
 const supabaseAdmin = createAdminClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -56,8 +57,8 @@ export async function PATCH(req: NextRequest) {
     "cgv_text",
     "chorus_pro_login", "chorus_pro_password", "chorus_pro_fournisseur_id",
     "chorus_pro_bank_code", "chorus_pro_user_id",
-    // Expert-comptable : résumé du lundi par e-mail (lib/cabinet-resume.ts).
-    "resume_cabinet_hebdo",
+    // Expert-comptable : résumé par e-mail, reçu ou non, rythme et jour (lib/cabinet-resume-frequence.ts).
+    "resume_cabinet_hebdo", "resume_cabinet_frequence", "resume_cabinet_jour",
     // Expert-comptable : comptes et journaux de ses FEC (lib/plan-comptes-fec.ts).
     "plan_comptes_fec",
     // Expert-comptable : logiciel de production et PDF joints par défaut (lib/logiciels-comptables.ts).
@@ -83,6 +84,12 @@ export async function PATCH(req: NextRequest) {
   }
   if ("export_pdf_defaut" in updates && typeof updates.export_pdf_defaut !== "boolean") {
     return NextResponse.json({ error: "Préférence invalide" }, { status: 400 });
+  }
+  if ("resume_cabinet_frequence" in updates && !estFrequence(updates.resume_cabinet_frequence)) {
+    return NextResponse.json({ error: "Rythme invalide" }, { status: 400 });
+  }
+  if ("resume_cabinet_jour" in updates && !estJour(updates.resume_cabinet_jour)) {
+    return NextResponse.json({ error: "Jour invalide" }, { status: 400 });
   }
   if ("resume_cabinet_hebdo" in updates && typeof updates.resume_cabinet_hebdo !== "boolean") {
     return NextResponse.json({ error: "Préférence invalide" }, { status: 400 });
