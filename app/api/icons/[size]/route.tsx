@@ -17,7 +17,7 @@ export async function GET(_req: NextRequest, { params }: Params) {
         style={{
           width: size,
           height: size,
-          background: "#4f46e5",
+          background: "#0F7A55",
           borderRadius: radius,
           display: "flex",
           alignItems: "center",

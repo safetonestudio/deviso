@@ -122,8 +122,8 @@ export default function StatsPage() {
             <svg viewBox={`0 0 ${CW} ${CH + BOTTOM}`} className="w-full" style={{ height: "164px" }}>
               <defs>
                 <linearGradient id="caGrad" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="0%" stopColor="#6366f1" stopOpacity={0.22} />
-                  <stop offset="100%" stopColor="#6366f1" stopOpacity={0} />
+                  <stop offset="0%" stopColor="rgb(var(--acc-500))" stopOpacity={0.22} />
+                  <stop offset="100%" stopColor="rgb(var(--acc-500))" stopOpacity={0} />
                 </linearGradient>
               </defs>
 
@@ -138,7 +138,7 @@ export default function StatsPage() {
 
               {/* Line */}
               {linePath && (
-                <path d={linePath} fill="none" stroke="#6366f1" strokeWidth={2.5}
+                <path d={linePath} fill="none" stroke="rgb(var(--acc-500))" strokeWidth={2.5}
                   strokeLinecap="round" strokeLinejoin="round" />
               )}
 
@@ -156,11 +156,11 @@ export default function StatsPage() {
                       onMouseLeave={() => setHoveredBar(null)} />
                     {isHov && (
                       <line x1={x} y1={0} x2={x} y2={CH}
-                        stroke="#6366f1" strokeWidth={1} strokeOpacity={0.2} strokeDasharray="4 3" />
+                        stroke="rgb(var(--acc-500))" strokeWidth={1} strokeOpacity={0.2} strokeDasharray="4 3" />
                     )}
                     {(isHov || isCur) && (
                       <circle cx={x} cy={y} r={isCur ? 4.5 : 3.5}
-                        fill={isCur ? "#818cf8" : "#6366f1"}
+                        fill={isCur ? "rgb(var(--acc-400))" : "rgb(var(--acc-500))"}
                         stroke={isCur ? "#1e1b4b" : "#3730a3"} strokeWidth={1.5} />
                     )}
                     <text x={x} y={CH + 16} textAnchor="middle" fill="#4b5563" fontSize={9}>
@@ -216,7 +216,7 @@ export default function StatsPage() {
                     </div>
                     <div className="w-full bg-ds-elevated rounded-full h-2">
                       <div className="h-2 rounded-full transition-all"
-                        style={{ width: `${pct}%`, background: "linear-gradient(90deg, #4f46e5, #818cf8)" }} />
+                        style={{ width: `${pct}%`, background: "linear-gradient(90deg, rgb(var(--acc-600)), rgb(var(--acc-400)))" }} />
                     </div>
                   </div>
                 );
@@ -249,7 +249,7 @@ export default function StatsPage() {
                     background: stats.conversion_rate >= 60
                       ? "linear-gradient(90deg, #059669, #34d399)"
                       : stats.conversion_rate >= 30
-                      ? "linear-gradient(90deg, #4f46e5, #818cf8)"
+                      ? "linear-gradient(90deg, rgb(var(--acc-600)), rgb(var(--acc-400)))"
                       : "linear-gradient(90deg, #d97706, #fbbf24)",
                   }}
                 />

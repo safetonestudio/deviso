@@ -2,13 +2,13 @@ import type { MetadataRoute } from "next";
 
 export default function manifest(): MetadataRoute.Manifest {
   return {
-    name: "Deviso, Devis & Factures IA",
+    name: "Deviso, devis et factures",
     short_name: "Deviso",
-    description: "Créez des devis et factures Factur-X en quelques secondes grâce à l'IA.",
+    description: "Devis rédigés, factures conformes à la réforme 2026, relances envoyées : pour les indépendants et les petites entreprises.",
     start_url: "/dashboard",
     display: "standalone",
-    background_color: "#ffffff",
-    theme_color: "#4f46e5",
+    background_color: "#0E1512",
+    theme_color: "#0E1512",
     orientation: "portrait-primary",
     categories: ["business", "finance", "productivity"],
     lang: "fr",

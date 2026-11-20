@@ -24,8 +24,8 @@ export default async function CabinetLayout({ children }: { children: ReactNode 
 
   return (
     <DashboardThemeProvider className={policesApp}>
-      <div className="min-h-screen bg-app-relief">
-        <header className="sticky top-0 z-30 bg-ds-surface/95 backdrop-blur border-b border-ds-border">
+      <div className="min-h-screen bg-ds-bg">
+        <header className="sticky top-0 z-30 bg-ds-surface/95 backdrop-blur-sm border-b border-ds-border">
           <div className="px-4 sm:px-6 lg:px-10 flex flex-wrap lg:flex-nowrap items-center gap-x-3 lg:gap-x-8">
             <a href="/cabinet" className="flex items-center gap-2 min-w-0 py-3">
               <div className="w-7 h-7 rounded-[7px] bg-indigo-600 flex items-center justify-center shrink-0">

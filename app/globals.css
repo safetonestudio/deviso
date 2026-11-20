@@ -1,5 +1,5 @@
 /* Les polices sont chargées via next/font (Inter pour le site, voir
-   app/layout.tsx ; Hanken Grotesk et Bricolage Grotesque pour l'app, voir
+   app/layout.tsx ; Hanken Grotesk pour l'app, voir
    app/polices-app.ts) : elles sont auto-hébergées au build. Un @import vers fonts.googleapis.com serait bloqué
    par notre CSP, ralentirait le rendu et enverrait l'IP de chaque visiteur
    à Google — incompatible avec nos engagements RGPD. */
@@ -365,22 +365,6 @@
   --text-3xl--line-height: 2.25rem;
   --text-4xl--line-height: 2.5rem;
 
-  --animate-fade-in: fadeIn 0.5s ease-in-out;
-  --animate-slide-up: slideUp 0.6s ease-out;
-  --animate-gradient: gradient 8s ease infinite;
-
-  @keyframes fadeIn {
-    0% { opacity: 0; }
-    100% { opacity: 1; }
-  }
-  @keyframes slideUp {
-    0% { opacity: 0; transform: translateY(20px); }
-    100% { opacity: 1; transform: translateY(0); }
-  }
-  @keyframes gradient {
-    0%, 100% { background-position: 0% 50%; }
-    50% { background-position: 100% 50%; }
-  }
 }
 
 /* Variables semantiques shadcn/ui (bg-background, text-foreground, border-border,
@@ -412,9 +396,9 @@
 }
 
 /* font-display : ecrit en utilitaire et non en variable de theme, parce que
-   la variable de theme s'appellerait --font-display, deja le nom de la
-   variable posee par next/font (Bricolage Grotesque, app/polices-app.ts) :
-   elle se referencerait elle-meme. */
+   la variable de theme s'appellerait --font-display, deja posee par .ds-app
+   (= Hanken Grotesk, la police des titres depuis le 20/11/2026) : elle se
+   referencerait elle-meme. */
 @utility font-display {
   font-family: var(--font-display, var(--font-app, var(--font-inter))), system-ui, sans-serif;
 }
@@ -455,13 +439,6 @@
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
   }
-}
-
-@utility gradient-text {
-  @apply bg-linear-to-r/srgb from-indigo-400 to-violet-400 bg-clip-text text-transparent;
-}
-@utility gradient-bg {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
 }
 
 /* Carte : la surface de base de l'app (fond, bordure, rayon, relief) en un
@@ -514,11 +491,6 @@
    d'actions, composant ActionsGlobales) masque la barre du haut generique. */
 .ds-app main:has(.en-tete-page) .barre-haut { display: none; }
 @media (min-width: 1024px) { .ds-app main:has(.en-tete-page) .bandeau-demo { top: 0; } }
-
-/* Jauge du seuil de TVA : le seul mouvement du tableau de bord, une fois. */
-@keyframes remplir { from { transform: scaleX(0); } to { transform: scaleX(1); } }
-.jauge-remplir { transform-origin: left center; animation: remplir 1.1s cubic-bezier(.2,.7,.2,1) 0.15s both; }
-@media (prefers-reduced-motion: reduce) { .jauge-remplir { animation: none; } }
 
 /* Relief et matieres des widgets (14/11/2026). Couleurs tirees des variables
    de theme : clair et sombre suivent sans surcharge. */
@@ -594,60 +566,15 @@ html:has(.ds-app.accueil), body:has(.ds-app.accueil) { background-color: #0E1512
 ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.12); border-radius: 4px; }
 ::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.2); }
 
-/* === Fond de page a relief (pages publiques, hors app) ===
-   Grain fin + lueur indigo. Uniquement sur les wrappers publics via .bg-site.
-   L'app garde bg-ds-bg (plat). Les cartes (bg-ds-surface) ne sont pas touchees. */
+/* === Fond des écrans de passage (connexion, inscription, démo, invitation) === */
 .bg-site {
+  /* Même fond que le site et l'app : vert profond, une lueur discrète de
+     l'accent. Ces écrans sont enveloppés dans .ds-app (voir leurs layouts). */
   background-color: var(--ds-bg);
-  background-image:
-    linear-gradient(rgba(8,8,10,0.40), rgba(8,8,10,0.52)),
-    url('/site-bg-v2.webp');
-  background-repeat: no-repeat, repeat;
-  background-size: cover, 1456px auto;
-  background-position: center, top center;
-  background-attachment: scroll, scroll;
+  background-image: radial-gradient(90% 60% at 50% 0%, rgb(var(--acc-500, 31 165 113) / 0.08), transparent 70%);
 }
 
-/* === Fond a relief DANS l'app (dashboard), clair et sombre ===
-   Meme base de relief que la landing (memes galets). Le mode clair utilise
-   une variante derivee EXACTEMENT de la meme image (site-bg-v2-light.webp),
-   remappee sur une tonalite claire. Les cartes de l'app restent opaques
-   (bg-ds-surface) : le relief n'apparait que dans les marges, pour ne pas
-   nuire a la lisibilite des donnees. */
-.bg-app-relief {
-  background-color: var(--ds-bg);
-  background-image:
-    linear-gradient(rgba(8,8,10,0.40), rgba(8,8,10,0.52)),
-    url('/site-bg-v2.webp');
-  background-repeat: no-repeat, repeat;
-  background-size: cover, 1456px auto;
-  background-position: center, top center;
-  background-attachment: scroll, scroll;
-}
 
-/* === Cartes des pages publiques : verre depoli ===
-   Un soupcon de verre (le relief transparait a peine), mais assez opaque pour
-   que le texte reste lisible : le relief bleu-gris derriere du texte le rendait
-   difficile a lire (retour utilisateur 28/09/2026). On passe donc de 0.3 a 0.85
-   en sombre et de 0.6 a 0.92 en clair, et la carte devient pleine au survol.
-   A n'appliquer qu'aux cartes posees sur .bg-site. */
-.carte-site {
-  background-color: rgba(20, 20, 20, 0.85);
-  border: 1px solid rgba(255, 255, 255, 0.09);
-  transition: background-color 0.2s ease, border-color 0.2s ease;
-}
-.carte-site:hover {
-  background-color: var(--ds-surface);
-  border-color: rgba(255, 255, 255, 0.16);
-}
-/* Mode clair (au cas ou une page publique l'active un jour) */
-.light .carte-site {
-  background-color: rgba(255, 255, 255, 0.92);
-  border-color: rgba(0, 0, 0, 0.10);
-}
-.light .carte-site:hover {
-  background-color: var(--ds-surface);
-}
 
 /* === Cartes DANS l'app posees sur le fond a relief ===
    Le fond a relief a un ton moyen proche de var(--ds-surface) (#141414) :
@@ -734,7 +661,6 @@ html:has(.ds-app.accueil), body:has(.ds-app.accueil) { background-color: #0E1512
 
 /* Fond de l'app : papier uni, sans texture. Le relief en galets rendait les
    donnees moins lisibles et datait le produit. */
-.ds-app .bg-app-relief { background-image: none; background-color: var(--ds-bg); }
 .ds-app .carte-app { box-shadow: var(--ds-shadow-card); }
 
 /* Papier : apercus de documents (devis, factures). Un document reste blanc

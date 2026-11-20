@@ -14,7 +14,7 @@
  *      applique. C'est ce qui empêche la matrice de mentir sur ce que fait
  *      l'app (le défaut d'origine du 18/10, mais pour toutes les fonctions).
  *
- *   2. Vitrines dérivées. La carte de prix (PricingSection) et la page
+ *   2. Vitrines dérivées. Le tableau des tarifs (TarifsTable) et la page
  *      d'abonnement (billing) doivent LIRE la matrice, pas retaper une liste.
  *      Une liste tapée à la main ré-ouvre la porte aux décalages : interdite.
  *
@@ -91,13 +91,13 @@ for (const r of ROUTE_RULES) {
 }
 
 /* ── 2) Les vitrines dérivent de la matrice, aucune liste tapée à la main ─── */
-const pricing = lire("components/landing/PricingSection.tsx");
-if (!/planFeatures\(\s*"solo"\s*\)/.test(pricing) || !/proOnlyFeatures\(/.test(pricing))
-  erreurs.push("PricingSection.tsx : ne dérive pas de la matrice (planFeatures/proOnlyFeatures attendus)");
-if (/const\s+SOLO_FEATURES\s*=\s*\[/.test(pricing))
-  erreurs.push("PricingSection.tsx : SOLO_FEATURES est un tableau tapé à la main (doit venir de planFeatures)");
-if (!/\.\.\.proOnlyFeatures\(\)/.test(pricing))
-  erreurs.push("PricingSection.tsx : la carte Pro ne déploie pas proOnlyFeatures() (liste Pro non dérivée)");
+// Le tableau réellement affiché sur l'accueil (l'ancienne PricingSection, plus
+// montée nulle part, a été supprimée le 20/11/2026).
+const pricing = lire("components/landing/TarifsTable.tsx");
+if (!/planFeatures\(\s*"solo"\s*\)/.test(pricing) || !/proOnlyFeatures\(\)/.test(pricing))
+  erreurs.push("TarifsTable.tsx : ne dérive pas de la matrice (planFeatures/proOnlyFeatures attendus)");
+if (/const\s+(SOLO_FEATURES|COMMUNES|PRO_SEUL)\s*=\s*\[/.test(pricing))
+  erreurs.push("TarifsTable.tsx : une liste de fonctions est tapée à la main (doit venir de la matrice)");
 
 const billing = lire("app/(dashboard)/billing/page.tsx");
 if (!/planFeatures\(\s*"solo"\s*\)/.test(billing) || !/proOnlyFeatures\(/.test(billing))

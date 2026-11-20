@@ -76,7 +76,7 @@ export function ExportPortefeuille({ dossiers, annee }: { dossiers: DossierExpor
             role="dialog"
             aria-modal="true"
             aria-labelledby="titre-export"
-            className="relative carte carte-lg w-full sm:max-w-lg max-h-[90vh] flex flex-col outline-none rounded-b-none sm:rounded-b-[18px]"
+            className="relative carte carte-lg w-full sm:max-w-lg max-h-[90vh] flex flex-col outline-hidden rounded-b-none sm:rounded-b-[18px]"
           >
             <div className="p-5 pb-3 flex items-start justify-between gap-3">
               <div>

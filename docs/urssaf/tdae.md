@@ -141,8 +141,8 @@ Aligné sur le découpage déja utilisé pour Super PDP :
 
 ## Point d'accroche déja en place
 
-⚠️ 20/11/2026 : `CaUrssafWidget` n'est plus importé nulle part depuis la refonte
-du tableau de bord. Le bouton ira sur la carte « Prochaine échéance, Déclaration
+⚠️ 20/11/2026 : `CaUrssafWidget` n'était plus importé nulle part depuis la refonte
+du tableau de bord ; il a été supprimé le même jour (ménage de l'ancien design). Le bouton ira sur la carte « Prochaine échéance, Déclaration
 URSSAF » du tableau de bord (micro seulement), pas dans ce widget.
 
 Le widget CA (`components/CaUrssafWidget.tsx`) réserve, sous le total annuel, un

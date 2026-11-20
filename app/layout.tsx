@@ -48,14 +48,6 @@ export const metadata: Metadata = {
   creator: "Deviso",
   publisher: "Deviso",
   manifest: "/manifest.webmanifest",
-  icons: {
-    icon: [
-      { url: "/icons/icon-192.svg", type: "image/svg+xml" },
-    ],
-    apple: [
-      { url: "/icons/icon-192.svg", sizes: "192x192", type: "image/svg+xml" },
-    ],
-  },
   appleWebApp: {
     capable: true,
     statusBarStyle: "default",
@@ -91,7 +83,7 @@ export const metadata: Metadata = {
 };
 
 export const viewport: Viewport = {
-  themeColor: "#4f46e5",
+  themeColor: "#0E1512",
   width: "device-width",
   initialScale: 1,
 };
