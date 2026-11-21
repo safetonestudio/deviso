@@ -6,6 +6,7 @@ import { natureOperation } from "./superpdp-nature";
 import { libelleStatut } from "./superpdp-statuts";
 import { siretValide, toSiren } from "./facturx-helpers";
 import { sansReponse } from "./pointage-paiement";
+import { chargerAchats } from "./achats-export";
 
 type Admin = ReturnType<typeof createAdminClient>;
 
@@ -82,6 +83,8 @@ const COLONNES_FACTURES =
 
 /** Seuil au-dela duquel un dossier sans facture est signale comme inactif. */
 export const JOURS_INACTIVITE = 45;
+/** Points d'achat listés un par un dans les anomalies d'un dossier ; au-delà, un résumé. */
+const MAX_ACHATS_A_VERIFIER = 5;
 
 const arrondi = (n: number) => Math.round(n * 100) / 100;
 
@@ -200,6 +203,27 @@ export async function syntheseDossiers(
     admin.from("superpdp_connections").select("user_id, session_status, directory_address").in("user_id", ownerIds),
     lireFacturesDossiers(admin, ownerIds, `${annee - 1}-01-01`),
   ]);
+
+  // Points d'achat que l'export signale « à vérifier » (acompte non retrouvé,
+  // achat à l'étranger en échec, autoliquidation à confirmer) : ils doivent se
+  // voir AVANT l'export, pas seulement dans la note de l'archive (21/11/2026).
+  // Exercice en cours et précédent (clôture), sans appel à la BCE.
+  const achatsAVerifier = new Map(
+    await Promise.all(
+      ownerIds.map(async (id): Promise<[string, string[]]> => {
+        const lignes: string[] = [];
+        for (const an of [annee, annee - 1]) {
+          try {
+            const { aVerifier } = await chargerAchats(id, String(an), { convertir: false });
+            for (const t of aVerifier) lignes.push(`Achats ${an} à vérifier : ${t}`);
+          } catch {
+            // Lecture impossible : le tableau de bord reste lisible, l'export le dira.
+          }
+        }
+        return [id, lignes];
+      }),
+    ),
+  );
 
   const dossiers = ownerIds.map((id): SyntheseDossier => {
     const p = (profils ?? []).find((x) => x.id === id);
@@ -349,6 +373,13 @@ export async function syntheseDossiers(
       if (jours > JOURS_INACTIVITE) {
         anomalies.push({ niveau: "orange", libelle: `Aucune facture émise depuis ${jours} jours` });
       }
+    }
+
+    const aVerifier = achatsAVerifier.get(id) ?? [];
+    for (const libelle of aVerifier.slice(0, MAX_ACHATS_A_VERIFIER)) anomalies.push({ niveau: "orange", libelle });
+    if (aVerifier.length > MAX_ACHATS_A_VERIFIER) {
+      const reste = aVerifier.length - MAX_ACHATS_A_VERIFIER;
+      anomalies.push({ niveau: "orange", libelle: `Achats à vérifier : ${reste} autre${reste > 1 ? "s" : ""} point${reste > 1 ? "s" : ""} (liste complète dans la fenêtre d'export)` });
     }
 
     const niveau: Niveau = anomalies.some((a) => a.niveau === "rouge")

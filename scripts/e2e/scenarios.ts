@@ -35,6 +35,7 @@ const egal = (a: number, b: number) => Math.abs(a - b) < 0.005;
   const { createAdminClient } = await import("@/lib/supabase/admin");
   const { coursBce } = await import("@/lib/achats-export");
   const { compteQuadra } = await import("@/lib/export-quadra");
+  const { syntheseDossiers } = await import("@/lib/cabinet-dossiers");
   const admin = createAdminClient();
   const filtre = process.argv[2];
 
@@ -53,7 +54,7 @@ const egal = (a: number, b: number) => Math.abs(a - b) < 0.005;
       ["achat saisi avant le choix, avec TVA", { ...base, montant_tva: 190, taux_tva: 19, tva_facturee: null }, "S", "190.00"],
     ];
     for (const [nom, achat, code, montant] of cas) {
-      const st = (construirePayloadB2bint(achat as never, nous, "9930").data[0].tax_subtotals[0]) as { tax_amount: string; tax_category: { code: string } };
+      const st = (construirePayloadB2bint(achat as never, nous, "9930").data[0].tax_subtotals[0]) as unknown as { tax_amount: string; tax_category: { code: string } };
       verifier(`déclaration, ${nom} : catégorie ${code}, TVA ${montant}`, st.tax_category.code === code && st.tax_amount === montant, JSON.stringify(st));
     }
   }
@@ -234,6 +235,22 @@ const egal = (a: number, b: number) => Math.abs(a - b) < 0.005;
     for (const a of new Set(attendues)) {
       verifier(`alerte « ${a} »`, lignesNote.filter((l) => l.includes(a)).length === attendues.filter((x) => x === a).length, lignesNote.join(" | ") || "aucune");
     }
+    // Les mêmes alertes AVANT le téléchargement : la fenêtre d'export les lit
+    // par cette route, et la fiche du dossier les montre dans ses anomalies.
+    const avant = await cabinet.call(`/api/cabinet/export/alertes?year=${sc.annee}&clients=${client.userId}`);
+    const listeAvant: string[] = (avant.body?.dossiers ?? []).flatMap((d: { aVerifier: string[] }) => d.aVerifier);
+    verifier(
+      "fenêtre d'export : mêmes alertes que l'archive, avant le téléchargement",
+      avant.status === 200 && listeAvant.length === lignesNote.length && lignesNote.every((l) => listeAvant.some((t) => l.endsWith(t))),
+      `HTTP ${avant.status}, ${listeAvant.join(" | ") || "aucune"}`
+    );
+    const [synthese] = await syntheseDossiers(admin, [client.userId], new Date(`${sc.annee}-12-31T12:00:00Z`));
+    const dansAnomalies = (synthese?.anomalies ?? []).filter((x) => x.libelle.startsWith(`Achats ${sc.annee} à vérifier`));
+    verifier(
+      "anomalies du dossier côté cabinet : mêmes alertes",
+      dansAnomalies.length === Math.min(listeAvant.length, 5) && dansAnomalies.every((x) => listeAvant.some((t) => x.libelle.endsWith(t))),
+      dansAnomalies.map((x) => x.libelle).join(" | ") || "aucune"
+    );
 
     // 4b. Ce que le scénario attend.
     const somme = (filtreLigne: (c: string[]) => boolean, col: number) => lignes.filter(filtreLigne).reduce((s, c) => s + nb(c[col]), 0);

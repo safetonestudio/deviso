@@ -187,7 +187,7 @@ export function AchatsListe({ achats }: { achats: AchatInternational[] }) {
                       <button
                         onClick={() => supprimer(a.id)}
                         disabled={enCours === a.id}
-                        className="px-3 py-2 rounded-lg bg-red-600 text-white text-sm font-semibold hover:bg-red-700 transition-colors disabled:opacity-50"
+                        className="px-3 py-2 rounded-lg bg-red-600 text-on-accent text-sm font-semibold hover:bg-red-700 transition-colors disabled:opacity-50"
                       >
                         {enCours === a.id ? "Suppression…" : "Oui, supprimer"}
                       </button>

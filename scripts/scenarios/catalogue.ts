@@ -367,6 +367,22 @@ export const SCENARIOS: Scenario[] = [
       alertes: ["ST-3 (Menuiserie Arnaud) : autoliquidation (sous-traitance)"],
     },
   },
+  // ── Point 7 : alertes visibles avant l'export ────────────────────────────
+  {
+    nom: "alertes-nombreuses-avant-export",
+    pourquoi: "Six achats en échec : les six figurent dans la fenêtre d'export et la note, la fiche du dossier en liste cinq puis résume.",
+    dossier: { tva_regime: "normal" },
+    annee: "2023",
+    etrangers: [
+      { numero: "KO-1", date: "2023-10-01", fournisseur: "Refus GmbH", pays: "DE", tva: "DE811569869", categorie: "services", ht: 100, statut: "echec" },
+      { numero: "KO-2", date: "2023-10-02", fournisseur: "Refus GmbH", pays: "DE", tva: "DE811569869", categorie: "services", ht: 200, statut: "echec" },
+      { numero: "KO-3", date: "2023-10-03", fournisseur: "Refus GmbH", pays: "DE", tva: "DE811569869", categorie: "services", ht: 300, statut: "echec" },
+      { numero: "KO-4", date: "2023-10-04", fournisseur: "Refus GmbH", pays: "DE", tva: "DE811569869", categorie: "services", ht: 400, statut: "echec" },
+      { numero: "KO-5", date: "2023-10-05", fournisseur: "Refus GmbH", pays: "DE", tva: "DE811569869", categorie: "services", ht: 500, statut: "echec" },
+      { numero: "KO-6", date: "2023-10-06", fournisseur: "Refus GmbH", pays: "DE", tva: "DE811569869", categorie: "services", ht: 600, statut: "echec" },
+    ],
+    attendu: { alertes: Array(6).fill("achat à l'étranger non déclaré") },
+  },
   {
     nom: "vente-payee-et-achat",
     pourquoi: "Ventes et achats dans le même fichier : prestation payée (TVA sur encaissements) et une facture reçue.",

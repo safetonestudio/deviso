@@ -3,6 +3,17 @@
 import { useState } from "react";
 import { LIBELLES_PLAN, PLAN_PAR_DEFAUT, type PlanComptesFec } from "@/lib/plan-comptes-fec";
 
+/**
+ * Seize réglages en trois groupes (21/11/2026) : à plat, la liste devenait
+ * illisible depuis l'ajout des comptes d'achat. Chaque clé du plan figure dans
+ * exactement un groupe (contrôlé à l'affichage : une clé oubliée s'ajoute à la fin).
+ */
+const GROUPES: { titre: string; aide: string; cles: (keyof PlanComptesFec)[] }[] = [
+  { titre: "Journaux", aide: "Codes de 1 à 6 caractères, différents dès les 2 premiers (Quadra n'en lit que 2).", cles: ["journalVentes", "journalAchats", "journalBanque"] },
+  { titre: "Ventes et encaissements", aide: "Factures émises par le dossier et leur règlement.", cles: ["clients", "ventesServices", "ventesBiens", "tvaCollectee", "tvaNonExigible", "banque"] },
+  { titre: "Achats", aide: "Factures reçues et achats à l'étranger.", cles: ["fournisseurs", "avancesFournisseurs", "achatsServices", "achatsBiens", "tvaDeductible", "tvaDeductibleAutoliq", "tvaAutoliquidee"] },
+];
+
 const inputCls =
   "w-full h-10 bg-ds-bg border border-ds-border rounded-lg px-3 text-sm text-ink tabular-nums focus:outline-hidden focus:border-indigo-500";
 
@@ -13,7 +24,10 @@ const inputCls =
 export function ReglagesFec({ initial }: { initial: PlanComptesFec }) {
   const [plan, setPlan] = useState<PlanComptesFec>(initial);
   const [etat, setEtat] = useState<{ ok?: boolean; erreur?: string; envoi?: boolean }>({});
-  const cles = Object.keys(PLAN_PAR_DEFAUT) as (keyof PlanComptesFec)[];
+  const toutes = Object.keys(PLAN_PAR_DEFAUT) as (keyof PlanComptesFec)[];
+  const rangees = GROUPES.flatMap((g) => g.cles);
+  const oubliees = toutes.filter((c) => !rangees.includes(c));
+  const groupes = oubliees.length ? [...GROUPES, { titre: "Autres comptes", aide: "", cles: oubliees }] : GROUPES;
 
   async function enregistrer(valeur: PlanComptesFec | null) {
     setEtat({ envoi: true });
@@ -30,8 +44,13 @@ export function ReglagesFec({ initial }: { initial: PlanComptesFec }) {
 
   return (
     <div className="carte p-5">
-      <div className="grid gap-4 sm:grid-cols-2">
-        {cles.map((cle) => (
+      <div className="space-y-6">
+      {groupes.map((g) => (
+      <fieldset key={g.titre}>
+        <legend className="text-sm font-semibold text-ink">{g.titre}</legend>
+        {g.aide && <p className="text-[13px] text-gray-400 mt-0.5 mb-3">{g.aide}</p>}
+      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+        {g.cles.map((cle) => (
           <label key={cle} className="block">
             <span className="block text-sm font-medium text-gray-300 mb-1.5">{LIBELLES_PLAN[cle]}</span>
             <input
@@ -47,6 +66,9 @@ export function ReglagesFec({ initial }: { initial: PlanComptesFec }) {
             />
           </label>
         ))}
+      </div>
+      </fieldset>
+      ))}
       </div>
       <div className="mt-5 flex flex-wrap items-center gap-3">
         <button

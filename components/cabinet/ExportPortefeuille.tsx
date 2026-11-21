@@ -6,6 +6,7 @@ import { FORMATS, LIBELLE_FIABILITE, formatDuLogiciel, logicielParId } from "@/l
 
 type Niveau = "rouge" | "orange" | "vert";
 type DossierExport = { id: string; nom: string; niveau: Niveau };
+type AlertesDossier = { id: string; nom: string; aVerifier: string[]; nonRepris: string[] };
 
 const POINT: Record<Niveau, string> = { rouge: "bg-red-500", orange: "bg-amber-500", vert: "bg-emerald-500" };
 
@@ -53,6 +54,25 @@ export function ExportPortefeuille({
   const nb = portee === "tout" ? dossiers.length : choix.size;
   const pret = nb > 0;
   const pdf = type === "ecritures" && avecPdf;
+
+  // Ce que l'export signalera, lu AVANT le téléchargement (21/11/2026) : la
+  // note de l'archive arrivait trop tard, et un fichier seul n'en porte pas.
+  const cleAlertes = ouvert && type === "ecritures" && pret ? `${an}|${ids.join(",")}` : null;
+  const [alertes, setAlertes] = useState<{ cle: string; dossiers: AlertesDossier[] | null; erreur?: boolean } | null>(null);
+  useEffect(() => {
+    if (!cleAlertes) return;
+    let actif = true;
+    const [a, c] = cleAlertes.split("|");
+    fetch(`/api/cabinet/export/alertes?year=${a}${c ? `&clients=${c}` : ""}`)
+      .then((r) => (r.ok ? r.json() : Promise.reject()))
+      .then((d) => actif && setAlertes({ cle: cleAlertes, dossiers: d.dossiers ?? [] }))
+      .catch(() => actif && setAlertes({ cle: cleAlertes, dossiers: null, erreur: true }));
+    return () => {
+      actif = false;
+    };
+  }, [cleAlertes]);
+  const alertesAJour = alertes && alertes.cle === cleAlertes ? alertes : null;
+  const nbAlertes = (alertesAJour?.dossiers ?? []).reduce((n, d) => n + d.aVerifier.length + d.nonRepris.length, 0);
   const lien =
     `/api/cabinet/export?format=${format}&year=${an}` + (ids.length ? `&clients=${ids.join(",")}` : "") + (pdf ? "&pdf=1" : "");
   const fichier = pdf
@@ -230,6 +250,39 @@ export function ExportPortefeuille({
                 )}
               </fieldset>
             </div>
+
+            {cleAlertes && (
+              <div className="px-5 pb-4" aria-live="polite">
+                {!alertesAJour ? (
+                  <p className="text-[13px] text-gray-500">Vérification des achats de l&apos;exercice…</p>
+                ) : alertesAJour.erreur ? (
+                  <p className="text-[13px] text-amber-400">Les points à vérifier n&apos;ont pas pu être lus. L&apos;export reste possible.</p>
+                ) : nbAlertes === 0 ? (
+                  <p className="text-[13px] text-gray-500">Aucun achat à vérifier sur cette sélection.</p>
+                ) : (
+                  <div className="rounded-xl border border-amber-500/30 bg-amber-500/10 p-3.5">
+                    <p className="text-sm font-medium text-amber-300">
+                      {nbAlertes} point{nbAlertes > 1 ? "s" : ""} à vérifier avant l&apos;import
+                    </p>
+                    <ul className="mt-2 space-y-2 max-h-48 overflow-y-auto">
+                      {(alertesAJour.dossiers ?? []).map((d) => (
+                        <li key={d.id} className="text-[13px]">
+                          <span className="block font-medium text-ink">{d.nom}</span>
+                          <ul className="mt-0.5 space-y-0.5 text-gray-300">
+                            {d.nonRepris.map((t) => (
+                              <li key={`n${t}`}>Non repris dans le fichier : {t}</li>
+                            ))}
+                            {d.aVerifier.map((t) => (
+                              <li key={`v${t}`}>{t}</li>
+                            ))}
+                          </ul>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
+              </div>
+            )}
 
             <div className="p-5 pt-4 border-t border-ds-border flex flex-col sm:flex-row sm:items-center gap-3 sm:justify-between">
               <p className="text-sm text-gray-400">
