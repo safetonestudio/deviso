@@ -1,3 +1,4 @@
+import { arrondi2 } from "./montants";
 import { ventilationTva, type LigneMontant } from "./tva";
 import { PLAN_PAR_DEFAUT, type PlanComptesFec } from "./plan-comptes-fec";
 
@@ -105,6 +106,17 @@ export interface AchatExport {
   /** Devise d'origine si autre que l'euro, et montant du fournisseur dans cette devise. */
   devise?: string | null;
   montantDevise?: number | null;
+}
+
+/**
+ * Ecriture dont les debits ne valent pas les credits. Jamais exportee : la
+ * route refuse le fichier en nommant la piece, plutot que de livrer au
+ * cabinet une comptabilite fausse.
+ */
+export class EcritureDesequilibree extends Error {
+  constructor(public piece: string, public ecart: number) {
+    super(`Ecriture ${piece} desequilibree de ${ecart.toFixed(2)} EUR : export refuse`);
+  }
 }
 
 /** Statuts qui entrent dans le FEC : une facture emise, payee ou non. */
@@ -248,8 +260,8 @@ export function ecrituresComptables(
     const avoir = estAvoir(inv);
     const lib = `${avoir ? "Avoir" : "Facture"} ${ref}`;
     const cCode = clientCode(inv.client_siren, clientLib);
-    const ht = +(inv.total_ht ?? 0).toFixed(2);
-    const ttc = +(inv.total_ttc ?? 0).toFixed(2);
+    const ht = arrondi2(inv.total_ht ?? 0);
+    const ttc = arrondi2(inv.total_ttc ?? 0);
     const ventFec = ventilationTva((inv.items ?? []) as LigneMontant[], inv.tva_rate);
     const attente = tvaSurEncaissements(inv);
     const payee = inv.status === "paid";
@@ -269,7 +281,7 @@ export function ecrituresComptables(
 
     const tvas = ventFec.groupes
       .filter((g) => g.montant_tva > 0)
-      .map((g) => ({ taux: g.taux, montant: +g.montant_tva.toFixed(2) }));
+      .map((g) => ({ taux: g.taux, montant: arrondi2(g.montant_tva) }));
 
     const lignesVente: Ligne[] = [
       // Client : debite sur une facture (il doit), credite sur un avoir.
@@ -317,8 +329,8 @@ export function ecrituresComptables(
     const avoir = !!a.avoir;
     const sens = (montant: number, debitSurFacture: boolean) =>
       debitSurFacture !== avoir ? { debit: montant, credit: 0 } : { debit: 0, credit: montant };
-    const ht = +a.ht.toFixed(2);
-    const tvasTotales = a.tvas.map((t) => ({ taux: t.taux, montant: +t.montant.toFixed(2) })).filter((t) => t.montant > 0);
+    const ht = arrondi2(a.ht);
+    const tvasTotales = a.tvas.map((t) => ({ taux: t.taux, montant: arrondi2(t.montant) })).filter((t) => t.montant > 0);
     // Solde d'acompte : la TVA deja deduite sur l'acompte ne se deduit pas une
     // seconde fois. On la retire du meme taux (a defaut, du premier).
     const imputations = !avoir && !a.autoliquidation ? a.imputations ?? [] : [];
@@ -332,12 +344,12 @@ export function ecrituresComptables(
           // exonere, ou taux different) : sa TVA deja deduite est reprise
           // (ligne negative a ce taux), jamais deplacee sur un autre taux.
           const cible = tvas.find((t) => t.taux === ti.taux);
-          if (cible) cible.montant = +(cible.montant - ti.montant).toFixed(2);
-          else tvas.push({ taux: ti.taux, montant: +(-ti.montant).toFixed(2) });
+          if (cible) cible.montant = arrondi2(cible.montant - ti.montant);
+          else tvas.push({ taux: ti.taux, montant: arrondi2(-ti.montant) });
         }
       }
     }
-    const tvaRetiree = +(tvasTotales.reduce((s, t) => s + t.montant, 0) - tvas.reduce((s, t) => s + t.montant, 0)).toFixed(2);
+    const tvaRetiree = arrondi2(tvasTotales.reduce((s, t) => s + t.montant, 0) - tvas.reduce((s, t) => s + t.montant, 0));
     const biens = a.categorie === "biens";
     // La charge porte le HT, plus toute TVA qui ne se deduit pas : TVA
     // etrangere, ou TVA d'un dossier en franchise.
@@ -369,16 +381,19 @@ export function ecrituresComptables(
     let autoliqImputee = 0;
     for (const imp of imputations) {
       for (const ti of imp.autoliquidees ?? []) {
+        // Meme taux d'abord ; a defaut, sur la part AE du solde quel que soit
+        // son taux (le total du 4452 reste juste, le cabinet est prevenu par
+        // lib/achats-export.ts que les taux different).
         const cible = autoliqRestante.find((t) => t.taux === ti.taux) ?? autoliqRestante[0];
-        if (cible) {
-          cible.montant = +(cible.montant - ti.montant).toFixed(2);
-          autoliqImputee += ti.montant;
-        }
+        if (cible) cible.montant = arrondi2(cible.montant - ti.montant);
+        // En franchise, l'avance soldee porte cette TVA (4091) : la charge la
+        // recoit dans tous les cas, sinon l'ecriture serait desequilibree.
+        autoliqImputee += ti.montant;
       }
     }
     if (a.nonDeductible) charge += autoliqImputee;
     for (const t of autoliqRestante) {
-      const m = +t.montant.toFixed(2);
+      const m = arrondi2(t.montant);
       if (m === 0) continue;
       if (a.nonDeductible) charge += m;
       else lignesTva.push({ compte: plan.tvaDeductibleAutoliq, compteLib: `TVA deductible autoliquidee ${t.taux}%`, auxNum: "", auxLib: "", ...sens(m, true) });
@@ -390,8 +405,8 @@ export function ecrituresComptables(
     const lignes: Ligne[] = [
       // Un acompte n'est pas une charge : avance au fournisseur (4091).
       a.acompte
-        ? { compte: plan.avancesFournisseurs, compteLib: "Acomptes verses aux fournisseurs", auxNum: "", auxLib: "", ...sens(+charge.toFixed(2), true) }
-        : { compte: biens ? plan.achatsBiens : plan.achatsServices, compteLib: biens ? "Achats de marchandises" : "Achats de prestations", auxNum: "", auxLib: "", ...sens(+charge.toFixed(2), true) },
+        ? { compte: plan.avancesFournisseurs, compteLib: "Acomptes verses aux fournisseurs", auxNum: "", auxLib: "", ...sens(arrondi2(charge), true) }
+        : { compte: biens ? plan.achatsBiens : plan.achatsServices, compteLib: biens ? "Achats de marchandises" : "Achats de prestations", auxNum: "", auxLib: "", ...sens(arrondi2(charge), true) },
       ...lignesTva,
     ];
     // Solde : l'avance est soldee (HT, ou TTC si la TVA n'etait pas
@@ -401,13 +416,13 @@ export function ecrituresComptables(
       // En franchise, l'acompte AE a aussi porte sa TVA autoliquidee en 4091.
       const autoliqImp = a.nonDeductible ? (imp.autoliquidees ?? []).reduce((x, t) => x + t.montant, 0) : 0;
       const avance = a.nonDeductible || a.tvaEtrangere ? imp.ttc + autoliqImp : imp.ht;
-      lignes.push({ compte: plan.avancesFournisseurs, compteLib: `Acompte ${texteSur(imp.ref)} impute`, auxNum: "", auxLib: "", ...sens(+avance.toFixed(2), false) });
+      lignes.push({ compte: plan.avancesFournisseurs, compteLib: `Acompte ${texteSur(imp.ref)} impute`, auxNum: "", auxLib: "", ...sens(arrondi2(avance), false) });
       duFournisseur -= imp.ttc;
     }
-    const devise = a.devise && a.devise !== "EUR" && a.montantDevise ? { montantDevise: +a.montantDevise.toFixed(2), devise: a.devise } : {};
+    const devise = a.devise && a.devise !== "EUR" && a.montantDevise ? { montantDevise: arrondi2(a.montantDevise), devise: a.devise } : {};
     lignes.push({
       compte: plan.fournisseurs, compteLib: "Fournisseurs", auxNum: fCode, auxLib: fLib,
-      ...sens(+duFournisseur.toFixed(2), false), siren: a.siren ?? null, tiers: "fournisseur", ...devise,
+      ...sens(arrondi2(duFournisseur), false), siren: a.siren ?? null, tiers: "fournisseur", ...devise,
     });
     ecritures.push({
       journal: plan.journalAchats, journalLib: "Achats", date: fecDate(a.date), ref,
@@ -415,6 +430,21 @@ export function ecrituresComptables(
       ordre: 1_000_000 + j,
     });
   });
+
+  // Une ligne negative (reprise de TVA d'un acompte, fournisseur qui nous doit
+  // apres un solde inferieur a l'acompte) s'ecrit dans l'autre colonne : un
+  // debit de -100 est un credit de 100. Le FEC et Quadra ecrivent ainsi
+  // exactement la meme chose, sans montant negatif.
+  for (const e of ecritures) {
+    e.lignes = e.lignes
+      .map((l) => {
+        const net = arrondi2(l.debit - l.credit);
+        return { ...l, debit: net > 0 ? net : 0, credit: net < 0 ? -net : 0 };
+      });
+    // Garde : une ecriture desequilibree ne sort jamais, meme d'un centime.
+    const ecart = arrondi2(e.lignes.reduce((x, l) => x + l.debit - l.credit, 0));
+    if (ecart !== 0) throw new EcritureDesequilibree(e.ref, ecart);
+  }
 
   // L'article A47 A-1 veut les ecritures dans l'ordre chronologique de
   // validation ; la numerotation suit cet ordre, continue dans chaque journal.

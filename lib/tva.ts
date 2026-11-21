@@ -2,7 +2,11 @@
 // des totaux ou rendent une facture (creation, modification, devis,
 // recurrentes, generation IA, Factur-X, PDF, plateforme agreee, FEC).
 
-const round2 = (n: number) => Math.round((Number(n) || 0) * 100) / 100;
+import { arrondi2, tvaSurBase } from "./montants.ts";
+
+// Arrondi exact au centime (lib/montants.ts) : Math.round(x * 100) / 100
+// donnait 1,00 € de TVA sur 10,05 € à 10 % au lieu de 1,01 €.
+const round2 = (n: number) => arrondi2(Number(n) || 0);
 
 // Forme minimale attendue d'une ligne: son total HT et, optionnellement, son
 // propre taux de TVA. Compatible avec ProposalItem et toutes les lignes de
@@ -44,7 +48,7 @@ export function ventilationTva(items: LigneMontant[], tauxDefaut: number): Venti
   }
   const groupes: GroupeTva[] = [...parTaux.entries()]
     .sort((a, b) => b[0] - a[0])
-    .map(([taux, base_ht]) => ({ taux, base_ht, montant_tva: round2((base_ht * taux) / 100) }));
+    .map(([taux, base_ht]) => ({ taux, base_ht, montant_tva: tvaSurBase(base_ht, taux) }));
   const total_ht = round2(groupes.reduce((s, g) => s + g.base_ht, 0));
   const total_tva = round2(groupes.reduce((s, g) => s + g.montant_tva, 0));
   const total_ttc = round2(total_ht + total_tva);

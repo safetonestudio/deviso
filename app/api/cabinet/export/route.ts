@@ -3,7 +3,7 @@ import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { dossiersDuCabinet } from "@/lib/cabinet-acces";
 import { journaliser } from "@/lib/cabinet-journal";
-import { genererFec, genererCsvFactures, nomFichierFec, segmentFichier, STATUTS_FEC } from "@/lib/exports-comptables";
+import { genererFec, genererCsvFactures, nomFichierFec, segmentFichier, STATUTS_FEC, EcritureDesequilibree } from "@/lib/exports-comptables";
 import { genererQuadra, nomPieceQuadra } from "@/lib/export-quadra";
 import { chargerAchats, toutLire } from "@/lib/achats-export";
 import type { AchatExport } from "@/lib/exports-comptables";
@@ -31,6 +31,16 @@ const MAX_PDF = 150;
  * l'export, on ne livre jamais un sous-ensemble silencieux.
  */
 export async function GET(req: NextRequest) {
+  try {
+    return await exporter(req);
+  } catch (e) {
+    // Une ecriture desequilibree n'est jamais livree : le cabinet voit pourquoi.
+    if (e instanceof EcritureDesequilibree) return NextResponse.json({ error: e.message }, { status: 422 });
+    throw e;
+  }
+}
+
+async function exporter(req: NextRequest) {
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) return NextResponse.json({ error: "Non autorisé" }, { status: 401 });

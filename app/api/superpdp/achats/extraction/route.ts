@@ -1,3 +1,4 @@
+import { arrondi2, tvaSurBase } from "@/lib/montants";
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 import { getWorkspaceUserId } from "@/lib/workspace";
@@ -20,7 +21,7 @@ export const dynamic = "force-dynamic";
 const TAILLE_MAX = 10 * 1024 * 1024; // 10 Mo
 
 function nombreOuNull(v: number | null): number | null {
-  return typeof v === "number" && Number.isFinite(v) ? Math.round(v * 100) / 100 : null;
+  return typeof v === "number" && Number.isFinite(v) ? arrondi2(v) : null;
 }
 
 export async function POST(req: NextRequest) {
@@ -105,7 +106,7 @@ export async function POST(req: NextRequest) {
   const montantTva = nombreOuNull(brut.montant_tva);
 
   if (ht !== null && taux !== null && montantTva !== null && taux > 0) {
-    const attendu = Math.round(ht * (taux / 100) * 100) / 100;
+    const attendu = tvaSurBase(ht, taux);
     if (Math.abs(attendu - montantTva) > Math.max(0.02, attendu * 0.01)) {
       avertissements.push(`Le montant de TVA lu (${montantTva}) ne correspond pas au taux (${taux}% de ${ht} = ${attendu}). Vérifiez les montants.`);
     }

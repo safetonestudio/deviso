@@ -4,6 +4,7 @@ import { useRouter } from "next/navigation";
 import type { GeneratedProposal, ProposalItem } from "@/types";
 import { v4 as uuidv4 } from "uuid";
 import { ventilationTva } from "@/lib/tva";
+import { produitArrondi } from "@/lib/montants";
 import { UpgradeButton } from "@/components/UpgradeButton";
 import { LayoutTemplate, ChevronDown, ChevronUp, Clock, Package, Lightbulb, Zap, RotateCcw, Save } from "lucide-react";
 import { GuidedTourBanner } from "@/components/GuidedTourBanner";
@@ -200,7 +201,7 @@ export default function NewProposalPage() {
     const items = [...generated.items];
     const item = { ...items[idx], [field]: value };
     if (field === "quantity" || field === "unit_price") {
-      item.total = Math.round(Number(item.quantity) * Number(item.unit_price) * 100) / 100;
+      item.total = produitArrondi(Number(item.quantity), Number(item.unit_price));
     }
     items[idx] = item;
     const total_ht = Math.round(items.reduce((s, i) => s + i.total, 0) * 100) / 100;

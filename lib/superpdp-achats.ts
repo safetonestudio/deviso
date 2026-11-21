@@ -1,3 +1,4 @@
+import { arrondi2, tvaSurBase } from "@/lib/montants";
 import { superpdpFetch, SuperPdpNotConnected, SuperPdpSessionPending } from "@/lib/superpdp";
 import { lireEntreprise } from "@/lib/superpdp-entreprise";
 import { getWorkspaceProfile } from "@/lib/workspace";
@@ -82,7 +83,7 @@ export interface SaisieAchat {
 
 /** Montant à deux décimales, format attendu par l'API (chaîne « 1000.00 »). */
 export function montantStr(n: number): string {
-  return (Math.round(n * 100) / 100).toFixed(2);
+  return arrondi2(n).toFixed(2);
 }
 
 /**
@@ -141,8 +142,8 @@ export function validerSaisie(s: Partial<SaisieAchat>): string[] {
   // Cohérence taux / montant : un taux nul avec de la TVA, ou l'inverse, est
   // presque toujours une erreur de saisie qui fausserait la déclaration.
   if (Number.isFinite(ht) && Number.isFinite(tva) && Number.isFinite(taux)) {
-    const attendu = Math.round(ht * (taux / 100) * 100) / 100;
-    if (Math.abs(attendu - Math.round(tva * 100) / 100) > 0.02) {
+    const attendu = tvaSurBase(ht, taux);
+    if (Math.abs(attendu - arrondi2(tva)) > 0.02) {
       manques.push(
         `un montant de TVA cohérent avec le taux (${taux}% de ${montantStr(ht)} = ${montantStr(attendu)})`
       );
@@ -152,11 +153,11 @@ export function validerSaisie(s: Partial<SaisieAchat>): string[] {
   // Nature de la TVA (21/11/2026) : elle doit dire la même chose que les
   // montants, sinon la comptabilité et la déclaration se contrediraient.
   if (s.tva_facturee === undefined || s.tva_facturee === null) {
-    manques.push("la TVA de la facture (aucune, française ou étrangère)");
+    manques.push("la TVA de la facture (aucune, aucune hors de France, française ou étrangère)");
   } else {
     if (!estNatureTva(s.tva_facturee)) {
-      manques.push("la TVA de la facture (aucune, française ou étrangère)");
-    } else if (s.tva_facturee === "aucune") {
+      manques.push("la TVA de la facture (aucune, aucune hors de France, française ou étrangère)");
+    } else if (s.tva_facturee === "aucune" || s.tva_facturee === "hors_france") {
       if (Number.isFinite(tva) && tva !== 0) manques.push("un montant de TVA nul : la facture ne porte pas de TVA (autoliquidation)");
     } else if (Number.isFinite(tva) && !(tva > 0)) {
       manques.push(`un montant de TVA : la facture porte une TVA ${s.tva_facturee === "francaise" ? "française" : "étrangère"}`);
@@ -677,7 +678,47 @@ export function patchStatut(resultat: ResultatTransmission) {
  * déclaration existe déjà chez eux. Retransmettre en aveugle créerait un
  * doublon de déclaration fiscale. On regarde donc d'abord ce qui existe.
  */
-type LigneB2bint = { id?: number; number?: string; direction?: string; ppf_ereporting_id?: number | null };
+type LigneB2bint = {
+  id?: number;
+  number?: string;
+  direction?: string;
+  ppf_ereporting_id?: number | null;
+  issue_date?: string;
+  seller?: { company_id?: string; tax_registration_id?: string };
+  total?: { tax_exclusive_amount?: string };
+};
+
+/**
+ * Cet achat est-il déjà parmi les déclarations de la plateforme ? (21/11/2026)
+ *
+ * Deux fournisseurs peuvent émettre chacun une facture « 1001 » : le numéro
+ * seul ne prouve rien. On reconnaît la déclaration au numéro ET à
+ * l'identifiant du fournisseur, et on la confirme par la date et le montant HT.
+ *  - identique : même numéro, même fournisseur, même date, même HT ;
+ *  - ambigu : même numéro et même fournisseur mais autre date ou autre montant
+ *    (achat corrigé après un envoi dont la réponse s'est perdue ?), ou
+ *    fournisseur illisible dans la liste : on ne conclut rien ;
+ *  - absent : aucun autre cas, le numéro appartient à un autre fournisseur.
+ */
+export function rapprocherDeclaration(
+  liste: LigneB2bint[],
+  achat: Pick<AchatInternational, "numero" | "id" | "fournisseur_tva" | "date_facture" | "montant_ht">
+): { etat: "absent" } | { etat: "identique"; id: number | null } | { etat: "ambigu" } {
+  const numero = numeroDeclaration(achat);
+  const nous = normaliserTva(achat.fournisseur_tva);
+  let ambigu = false;
+  for (const it of liste) {
+    if (it.number !== numero || (it.direction ?? "in") !== "in") continue;
+    const leur = normaliserTva(it.seller?.company_id || it.seller?.tax_registration_id);
+    if (leur && nous && leur !== nous) continue;
+    if (!leur || !nous) { ambigu = true; continue; }
+    if (it.issue_date === achat.date_facture && it.total?.tax_exclusive_amount === montantStr(Number(achat.montant_ht))) {
+      return { etat: "identique", id: typeof it.id === "number" ? it.id : null };
+    }
+    ambigu = true;
+  }
+  return ambigu ? { etat: "ambigu" } : { etat: "absent" };
+}
 
 /**
  * Toutes les declarations B2BInt du compte chez la Plateforme Agreee, page par
@@ -726,14 +767,12 @@ async function listerDeclarationsB2bint(workspaceId: string): Promise<LigneB2bin
  */
 export async function declarationExisteChezPa(
   workspaceId: string,
-  achat: Pick<AchatInternational, "numero" | "id">
-): Promise<{ existe: false } | { existe: true; id: number | null } | null> {
-  if (await estCompteDemo(workspaceId)) return { existe: false };
+  achat: Pick<AchatInternational, "numero" | "id" | "fournisseur_tva" | "date_facture" | "montant_ht">
+): Promise<ReturnType<typeof rapprocherDeclaration> | null> {
+  if (await estCompteDemo(workspaceId)) return { etat: "absent" };
   const liste = await listerDeclarationsB2bint(workspaceId);
   if (liste === null) return null;
-  const numero = numeroDeclaration(achat);
-  const trouve = liste.find((it) => it.number === numero && (it.direction ?? "in") === "in");
-  return trouve ? { existe: true, id: typeof trouve.id === "number" ? trouve.id : null } : { existe: false };
+  return rapprocherDeclaration(liste, achat);
 }
 
 /**
@@ -748,7 +787,7 @@ export async function declarationExisteChezPa(
 export async function refusSiDeclare(
   admin: SupabaseClient,
   workspaceId: string,
-  achat: Pick<AchatInternational, "id" | "numero" | "transmission_status" | "superpdp_id" | "ppf_ereporting_id">,
+  achat: Pick<AchatInternational, "id" | "numero" | "transmission_status" | "superpdp_id" | "ppf_ereporting_id" | "fournisseur_tva" | "date_facture" | "montant_ht">,
   action: string
 ): Promise<{ status: number; error: string; message: string } | null> {
   if (achat.transmission_status === "transmis" || achat.superpdp_id !== null || achat.ppf_ereporting_id !== null) {
@@ -759,7 +798,10 @@ export async function refusSiDeclare(
   if (chezPa === null) {
     return { status: 503, error: "Vérification impossible", message: "Impossible de vérifier auprès de la plateforme agréée que cet achat n'a pas déjà été déclaré. Réessaie dans un instant." };
   }
-  if (chezPa.existe) {
+  if (chezPa.etat === "ambigu") {
+    return { status: 409, error: "À vérifier", message: `La plateforme agréée détient une déclaration sous ce numéro pour ce fournisseur, avec une autre date ou un autre montant. Vérifie-la avec ton comptable : cet achat ne peut pas être ${action} sans risquer une déclaration en double.` };
+  }
+  if (chezPa.etat === "identique") {
     await admin
       .from("superpdp_achats_int")
       .update({ transmission_status: "transmis", superpdp_id: chezPa.id, transmission_error: null, transmitted_at: new Date().toISOString(), updated_at: new Date().toISOString() })
@@ -770,17 +812,6 @@ export async function refusSiDeclare(
   return null;
 }
 
-async function numerosDejaDeclares(workspaceId: string): Promise<Map<string, number>> {
-  const map = new Map<string, number>();
-  // Compte injoignable ou liste illisible : carte vide, le reessai suit son
-  // cours normal (comportement inchange).
-  for (const it of (await listerDeclarationsB2bint(workspaceId)) ?? []) {
-    if (it.number && typeof it.id === "number" && (it.direction ?? "in") === "in" && !map.has(it.number)) {
-      map.set(it.number, it.id);
-    }
-  }
-  return map;
-}
 
 /**
  * Fait passer un achat de « enregistre » a « declare » quand il l'est vraiment.
@@ -882,20 +913,26 @@ export async function retenterAchatsEnAttente(
   let encore = 0;
   let echecs = 0;
   let abandonnes = 0;
-  const cacheNumeros = new Map<string, Map<string, number>>();
+  const cacheListes = new Map<string, LigneB2bint[] | null>();
 
   for (const brut of achats ?? []) {
     const achat = brut as AchatInternational;
     const ws = achat.user_id;
 
-    if (!cacheNumeros.has(ws)) cacheNumeros.set(ws, await numerosDejaDeclares(ws));
-    const dejaMap = cacheNumeros.get(ws)!;
-    const num = numeroDeclaration(achat);
+    // Un compte de démonstration ne transmet jamais : rien à lire chez la plateforme.
+    if (!cacheListes.has(ws)) cacheListes.set(ws, (await estCompteDemo(ws)) ? [] : await listerDeclarationsB2bint(ws));
+    const liste = cacheListes.get(ws)!;
+    const rapproche = liste ? rapprocherDeclaration(liste, achat) : null;
 
     let resultat: ResultatTransmission;
-    if (dejaMap.has(num)) {
+    if (rapproche === null) {
+      // Liste illisible : renvoyer en aveugle risquerait une déclaration en double.
+      resultat = { ok: false, suite: "reessayer", message: "Vérification des déclarations existantes impossible pour l'instant : nouvel essai automatique.", detail: "liste_illisible" };
+    } else if (rapproche.etat === "identique") {
       // Déjà déclaré (200 perdu en route) : on ne recrée pas, on réconcilie.
-      resultat = { ok: true, superpdpId: dejaMap.get(num) ?? null };
+      resultat = { ok: true, superpdpId: rapproche.id };
+    } else if (rapproche.etat === "ambigu") {
+      resultat = { ok: false, suite: "action_requise", message: "Une déclaration existe déjà sous ce numéro pour ce fournisseur, avec une autre date ou un autre montant : à vérifier avec ton comptable avant tout nouvel envoi.", detail: "declaration_ambigue" };
     } else {
       resultat = await transmettreAchat(ws, achat);
     }

@@ -4,7 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { PAYS_FACTURATION } from "@/lib/superpdp-nature";
 import type { AchatInternational } from "@/lib/superpdp-achats";
-import { estImportation, natureTva, type NatureTva } from "@/lib/achats-tva";
+import { estImportation, natureTva, type NatureTva, sansTvaFacturee } from "@/lib/achats-tva";
 import { ChoixTvaAchat } from "./ChoixTvaAchat";
 
 /**
@@ -34,18 +34,19 @@ export function CorrigerAchat({ achat }: { achat: AchatInternational }) {
   const [ht, setHt] = useState(String(achat.montant_ht));
   const [taux, setTaux] = useState(String(achat.taux_tva));
   const [montantTva, setMontantTva] = useState(String(achat.montant_tva));
-  const [nature, setNature] = useState<NatureTva>(natureTva(achat));
+  const [nature, setNature] = useState<NatureTva | null>(natureTva(achat));
   const [tauxAutoliq, setTauxAutoliq] = useState(String(achat.taux_autoliquidation ?? 20));
   const [avoir, setAvoir] = useState(achat.est_avoir === true);
   const choisirNature = (n: NatureTva) => {
     setNature(n);
-    if (n === "aucune") {
+    if (sansTvaFacturee(n)) {
       setTaux("0");
       setMontantTva("0");
     }
   };
 
   async function enregistrer() {
+    if (!nature) return setErreur("Indique la TVA que porte la facture du fournisseur.");
     setEnCours(true);
     setErreur(null);
     try {
@@ -63,8 +64,8 @@ export function CorrigerAchat({ achat }: { achat: AchatInternational }) {
           montant_ht: Number(ht),
           // Sans TVA, le taux est nul (son champ est masqué) : un taux lu à
           // l'import ne doit pas faire refuser la saisie.
-          taux_tva: nature === "aucune" ? 0 : Number(taux),
-          montant_tva: nature === "aucune" ? 0 : Number(montantTva),
+          taux_tva: sansTvaFacturee(nature) ? 0 : Number(taux),
+          montant_tva: sansTvaFacturee(nature) ? 0 : Number(montantTva),
           tva_facturee: nature,
           taux_autoliquidation: Number(tauxAutoliq),
           est_avoir: avoir,
@@ -154,7 +155,7 @@ export function CorrigerAchat({ achat }: { achat: AchatInternational }) {
           importation={estImportation(categorie, pays)}
           prefixe={`c-${achat.id.slice(0, 8)}`}
         />
-        {nature !== "aucune" && (
+        {(nature === "francaise" || nature === "etrangere") && (
         <>
         <div>
           <label className={etiquette}>Taux de TVA (%)</label>

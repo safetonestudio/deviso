@@ -20,7 +20,8 @@ export function ChoixTvaAchat({
   importation,
   prefixe,
 }: {
-  nature: NatureTva;
+  /** null tant que l'utilisateur n'a pas choisi : aucun choix par défaut. */
+  nature: NatureTva | null;
   onNature: (n: NatureTva) => void;
   tauxAutoliq: string;
   onTauxAutoliq: (t: string) => void;
@@ -34,7 +35,7 @@ export function ChoixTvaAchat({
     <div className="sm:col-span-2">
       <fieldset>
         <legend className={etiquette}>TVA sur la facture du fournisseur</legend>
-        <div className="grid gap-2 sm:grid-cols-3" role="radiogroup">
+        <div className="grid gap-2 sm:grid-cols-2" role="radiogroup">
           {NATURES_TVA.map((n) => {
             const choisi = nature === n.valeur;
             return (
@@ -59,8 +60,9 @@ export function ChoixTvaAchat({
       {nature === "aucune" &&
         (importation ? (
           <p className="text-xs text-gray-500 mt-3">
-            Biens achetés hors de l&apos;Union européenne : la TVA se paie à l&apos;importation, sur la
-            déclaration en douane. Ton comptable la passe depuis ce document.
+            Biens achetés hors de l&apos;Union européenne : c&apos;est une importation. La douane la
+            connaît ; sa TVA s&apos;autoliquide sur ta déclaration de TVA. Ton comptable la passe depuis
+            les données de la douane.
           </p>
         ) : (
           <div className="mt-3 sm:max-w-xs">

@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 import { getWorkspaceUserId, getWorkspaceProfile } from "@/lib/workspace";
 import { exigerTitulaire } from "@/lib/droits";
-import { genererFec, nomFichierFec, STATUTS_FEC } from "@/lib/exports-comptables";
+import { genererFec, nomFichierFec, STATUTS_FEC, EcritureDesequilibree } from "@/lib/exports-comptables";
 import { chargerAchats, toutLire } from "@/lib/achats-export";
 
 // GET /api/export/fec?year=2025, Solo + Pro.
@@ -61,7 +61,13 @@ export async function GET(req: NextRequest) {
       { status: 422 },
     );
   }
-  const content = genererFec(invoices ?? [], undefined, lus.achats);
+  let content: string;
+  try {
+    content = genererFec(invoices ?? [], undefined, lus.achats);
+  } catch (e) {
+    if (e instanceof EcritureDesequilibree) return NextResponse.json({ error: e.message }, { status: 422 });
+    throw e;
+  }
   const filename = nomFichierFec(profile?.siret, year, new Date().toISOString().split("T")[0]);
 
   return new NextResponse(content, {

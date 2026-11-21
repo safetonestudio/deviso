@@ -1,3 +1,4 @@
+import { arrondi2, tvaSurBase } from "@/lib/montants";
 import { createAdminClient } from "@/lib/supabase/admin";
 import type { AchatExport } from "@/lib/exports-comptables";
 import { enFranchise } from "@/lib/statut-entreprise";
@@ -46,7 +47,8 @@ const nombre = (v: unknown): number => {
   const n = typeof v === "number" ? v : Number(v);
   return Number.isFinite(n) ? n : 0;
 };
-const arrondi = (n: number) => Math.round(n * 100) / 100;
+// Exact au centime (lib/montants.ts), demi-centime vers l'extérieur.
+const arrondi = (n: number) => arrondi2(n);
 
 /** Taux déduit des totaux, ramené au taux français le plus proche s'il est à moins de 0,2 point. */
 export function tauxDeduit(ht: number, tva: number): number {
@@ -108,7 +110,7 @@ function tauxAe(f: { taux_autoliquidation?: unknown }): number {
 function autoliquideesDe(f: { en_invoice: unknown; taux_autoliquidation?: unknown }): { taux: number; montant: number }[] {
   const base = baseAutoliquidee(f.en_invoice);
   const taux = tauxAe(f);
-  return base > 0 ? [{ taux, montant: arrondi((base * taux) / 100) }] : [];
+  return base > 0 ? [{ taux, montant: tvaSurBase(base, taux) }] : [];
 }
 
 /** Cours BCE (unités de `devise` pour 1 euro) au `jour`, ou au dernier jour publié avant. */
@@ -149,8 +151,12 @@ export async function toutLire<T>(page: (de: number, a: number) => PromiseLike<{
   }
 }
 
-/** Cumuls d'acquisitions de biens dans l'UE sans TVA (avoirs déduits), année en cours et précédente. */
-async function cumulsBiensUe(userId: string, annee: number): Promise<string> {
+/**
+ * Cumuls d'acquisitions de biens dans l'UE sans TVA (avoirs déduits) : année
+ * en cours jusqu'à la date de l'achat incluse (c'est l'achat qui franchit le
+ * seuil qui devient taxable), et toute l'année précédente.
+ */
+async function cumulsBiensUe(userId: string, annee: number, jusquau: string): Promise<string> {
   const admin = createAdminClient();
   const { data } = await admin
     .from("superpdp_achats_int")
@@ -159,7 +165,7 @@ async function cumulsBiensUe(userId: string, annee: number): Promise<string> {
     .eq("categorie", "biens")
     .eq("tva_facturee", "aucune")
     .gte("date_facture", `${annee - 1}-01-01`)
-    .lte("date_facture", `${annee}-12-31`);
+    .lte("date_facture", jusquau);
   const par = new Map<number, number>([[annee - 1, 0], [annee, 0]]);
   let incomplet = false;
   for (const r of data ?? []) {
@@ -170,7 +176,7 @@ async function cumulsBiensUe(userId: string, annee: number): Promise<string> {
     par.set(an, (par.get(an) ?? 0) + (r.est_avoir ? -enEuros : enEuros));
   }
   const fmt = (n: number) => `${n.toFixed(2)} €`;
-  return `${fmt(par.get(annee) ?? 0)} en ${annee}, ${fmt(par.get(annee - 1) ?? 0)} en ${annee - 1}${incomplet ? " (hors achats en devise non encore convertis)" : ""}`;
+  return `${fmt(par.get(annee) ?? 0)} en ${annee} jusqu'au ${jusquau.split("-").reverse().join("/")} inclus, ${fmt(par.get(annee - 1) ?? 0)} sur toute l'année ${annee - 1}${incomplet ? " (hors achats en devise non encore convertis)" : ""}`;
 }
 
 export type AchatsDuDossier = {
@@ -193,7 +199,58 @@ type Recue = {
   en_invoice: unknown;
   /** Taux français choisi pour une facture en autoliquidation (AE) ; null = 20 % présumé. */
   taux_autoliquidation?: unknown;
+  /** Devise de la facture (BT-5) ; absente = euro. */
+  currency_code?: string | null;
+  /** Après conversion : devise d'origine et TTC dans cette devise (FEC : Montantdevise, Idevise). */
+  devise?: string | null;
+  montantDevise?: number | null;
 };
+
+/**
+ * Une facture reçue en devise, ramenée en euros (21/11/2026). Le HT au cours BCE
+ * du jour de la facture ; la TVA en euros portée par la facture (BT-111,
+ * obligatoire quand la TVA est due en euros) si elle y figure, sinon convertie.
+ * La ventilation, le déjà-versé et les lignes sont convertis aussi, la TVA par
+ * taux étant ajustée pour que sa somme soit exactement BT-111.
+ */
+function convertirRecue(f: Recue, taux: number): Recue {
+  const en = (f.en_invoice ?? {}) as Record<string, unknown>;
+  const conv = (v: unknown) => arrondi(nombre(v) / taux);
+  const totaux = { ...((en.totals as Record<string, unknown>) ?? {}) };
+  const tvaEuros = (totaux.total_vat_amount_accounting_currency as { value?: unknown } | undefined)?.value;
+  const bt111 = String(en.vat_accounting_currency_code ?? "").toUpperCase() === "EUR" && tvaEuros !== undefined ? arrondi(nombre(tvaEuros)) : null;
+  const vb = Array.isArray(en.vat_break_down)
+    ? (en.vat_break_down as Record<string, unknown>[]).map((g) => {
+        const c: Record<string, unknown> = { ...g };
+        for (const k of Object.keys(c)) if (/amount/i.test(k)) c[k] = conv(c[k]).toFixed(2);
+        return c;
+      })
+    : en.vat_break_down;
+  if (Array.isArray(vb) && bt111 !== null && vb.length > 0) {
+    const cle = (g: Record<string, unknown>) => Object.keys(g).find((k) => /tax_amount|vat_amount/i.test(k));
+    const somme = vb.reduce((x, g) => x + nombre(g[cle(g) ?? ""]), 0);
+    const plusGros = vb.reduce((m, g) => (nombre(g[cle(g) ?? ""]) > nombre(m[cle(m) ?? ""]) ? g : m), vb[0]);
+    const k = cle(plusGros);
+    if (k) plusGros[k] = arrondi(nombre(plusGros[k]) + bt111 - somme).toFixed(2);
+  }
+  if (totaux.paid_amount !== undefined) totaux.paid_amount = conv(totaux.paid_amount).toFixed(2);
+  const lignes = Array.isArray(en.lines)
+    ? (en.lines as Record<string, unknown>[]).map((l) => ({ ...l, net_amount: conv(l.net_amount).toFixed(2) }))
+    : en.lines;
+  const ht = conv(f.total_without_vat);
+  const tva = bt111 ?? conv(f.total_vat);
+  return {
+    ...f,
+    total_without_vat: ht,
+    total_vat: tva,
+    total_with_vat: arrondi(ht + tva),
+    en_invoice: { ...en, totals: totaux, vat_break_down: vb, lines: lignes },
+    devise: String(f.currency_code ?? en.currency_code ?? "EUR").toUpperCase(),
+    montantDevise: nombre(f.total_with_vat),
+  };
+}
+
+const deviseDe = (f: Recue) => String(f.currency_code || (f.en_invoice as Record<string, unknown> | null)?.currency_code || "EUR").toUpperCase();
 
 const ACOMPTE = "386";
 const typeDe = (en: Record<string, unknown> | null) => String(en?.type_code ?? "").trim();
@@ -260,7 +317,7 @@ export async function chargerAchats(
   const recues = await toutLire<Recue>((de, a) =>
     admin
       .from("superpdp_invoices")
-      .select("id, number, issue_date, seller_name, total_without_vat, total_vat, total_with_vat, last_status_code, en_invoice, taux_autoliquidation")
+      .select("id, number, issue_date, seller_name, total_without_vat, total_vat, total_with_vat, last_status_code, en_invoice, taux_autoliquidation, currency_code")
       .eq("user_id", userId)
       .eq("direction", "in")
       .gte("issue_date", `${annee}-01-01`)
@@ -275,7 +332,7 @@ export async function chargerAchats(
     await toutLire<Recue>((de, a) =>
       admin
         .from("superpdp_invoices")
-        .select("id, number, issue_date, seller_name, total_without_vat, total_vat, total_with_vat, last_status_code, en_invoice, taux_autoliquidation")
+        .select("id, number, issue_date, seller_name, total_without_vat, total_vat, total_with_vat, last_status_code, en_invoice, taux_autoliquidation, currency_code")
         .eq("user_id", userId)
         .eq("direction", "in")
         .eq("en_invoice->>type_code", ACOMPTE)
@@ -285,8 +342,38 @@ export async function chargerAchats(
     )
   ).filter((f) => !STATUTS_EXCLUS.includes(f.last_status_code ?? ""));
   const dejaImputes = new Set<number>();
+  const cache = new Map<string, { taux: number; date: string }>();
+  const cours = async (devise: string, jour: string) => {
+    const cle = `${devise}|${jour}`;
+    let c = cache.get(cle);
+    if (!c) {
+      c = await coursBce(devise, jour);
+      cache.set(cle, c);
+    }
+    return c;
+  };
+  // Factures en devise ramenées en euros. Sans cours BCE : non reprises, et
+  // dites (nonRepris) ; en lecture sans conversion (tableau de bord), ignorées.
+  const enEuros = async (f: Recue, signaler: boolean): Promise<Recue | null> => {
+    const devise = deviseDe(f);
+    if (devise === "EUR") return f;
+    if (options.convertir === false) return null;
+    try {
+      return convertirRecue(f, (await cours(devise, f.issue_date)).taux);
+    } catch (e) {
+      if (signaler) nonRepris.push(`${f.number ?? "Facture reçue"} (${f.seller_name ?? "fournisseur"}, ${nombre(f.total_with_vat)} ${devise}) : ${(e as Error).message}`);
+      return null;
+    }
+  };
+  for (let k = 0; k < acomptes.length; k++) {
+    const c = await enEuros(acomptes[k], false);
+    if (c) acomptes[k] = c;
+    else acomptes.splice(k--, 1);
+  }
 
-  for (const f of recues) {
+  for (const brute of recues) {
+    const f = await enEuros(brute, !STATUTS_EXCLUS.includes(brute.last_status_code ?? ""));
+    if (!f) continue;
     if (STATUTS_EXCLUS.includes(f.last_status_code ?? "")) continue;
     const en = f.en_invoice as Record<string, unknown> | null;
     const estAcompte = typeDe(en) === ACOMPTE;
@@ -306,6 +393,19 @@ export async function chargerAchats(
         }));
         // Un taux de TVA de l'acompte absent du solde : la TVA déduite sur
         // l'acompte est reprise (lib/exports-comptables.ts). Le cabinet le voit.
+        // Acompte autoliquidé (AE) dont le solde n'a pas de part AE, ou pas au
+        // même taux : le total de TVA due reste celui du solde, mais le cabinet
+        // doit vérifier les taux.
+        const aeSolde = autoliquideesDe(f);
+        for (const a of trouves) {
+          const aeAcompte = autoliquideesDe(a);
+          if (aeAcompte.length === 0) continue;
+          if (aeSolde.length === 0) {
+            aVerifier.push(`${f.number ?? "Facture"} (${f.seller_name ?? "fournisseur"}) : l'acompte ${a.number ?? ""} était en autoliquidation (catégorie AE), le solde ne l'est pas ; TVA autoliquidée de l'acompte à confirmer`);
+          } else if (aeAcompte[0].taux !== aeSolde[0].taux) {
+            aVerifier.push(`${f.number ?? "Facture"} (${f.seller_name ?? "fournisseur"}) : autoliquidation à ${aeSolde[0].taux} % sur le solde, ${aeAcompte[0].taux} % sur l'acompte ${a.number ?? ""} ; choisir le même taux sur les deux factures reçues`);
+          }
+        }
         const tauxSolde = new Set(tvasDe(f).map((t) => t.taux));
         for (const a of trouves) {
           for (const t of tvasDe(a).filter((t) => !tauxSolde.has(t.taux))) {
@@ -342,6 +442,8 @@ export async function chargerAchats(
       autoliquidees,
       origineAutoliq: "france",
       nonDeductible: franchise,
+      devise: f.devise && f.devise !== "EUR" ? f.devise : null,
+      montantDevise: f.devise && f.devise !== "EUR" ? f.montantDevise ?? null : null,
     });
   }
 
@@ -357,7 +459,6 @@ export async function chargerAchats(
       .order("id", { ascending: true })
       .range(de, a)
   );
-  const cache = new Map<string, { taux: number; date: string }>();
   const aujourdhui = jourParis(new Date());
   for (const a of etrangers) {
     const devise = (a.devise || "EUR").toUpperCase();
@@ -373,6 +474,27 @@ export async function chargerAchats(
     // peut-être aussi par la plateforme. Le cabinet tranche.
     if (natureTva(a) === "francaise") {
       aVerifier.push(`${ref} (${a.fournisseur_nom}) : TVA française facturée par un fournisseur étranger, déduite ; à confirmer (CGI art. 283-1) et à rapprocher des factures reçues`);
+    }
+    // Nature et alertes avant la conversion : elles ne dépendent pas du cours,
+    // et le tableau de bord (sans conversion) doit les voir aussi.
+    const pays = String(a.fournisseur_pays ?? "").toUpperCase();
+    const biens = a.categorie === "biens";
+    const importation = estImportation(a.categorie, pays);
+    // Ce que porte la facture, choisi à la saisie (lib/achats-tva.ts) ; pour
+    // un achat saisi avant ce choix, déduit du montant comme alors.
+    const nature = natureTva(a);
+    const tvaEtrangere = nature === "etrangere";
+    const tvaFrancaise = nature === "francaise";
+    const autoliquidation = nature === "aucune" && !importation;
+    const tauxAutoliq = estTauxFrancais(a.taux_autoliquidation) ? nombre(a.taux_autoliquidation) : TAUX_AUTOLIQUIDATION;
+    const ue = PAYS_UE.includes(pays);
+    // Dossier en franchise qui acquiert des biens dans l'UE sans TVA : la TVA
+    // n'est due qu'au-delà de 10 000 € d'acquisitions sur l'année en cours ou
+    // la précédente, ou sur option (CGI art. 256 bis, I-2°). On donne au
+    // cabinet les cumuls qui le décident.
+    if (franchise && autoliquidation && biens && ue) {
+      const cumuls = await cumulsBiensUe(userId, Number(annee), a.date_facture);
+      aVerifier.push(`${ref} (${a.fournisseur_nom}) : dossier en franchise, acquisition de biens dans l'UE autoliquidée ; TVA due seulement au-delà de 10 000 € d'acquisitions (CGI art. 256 bis) ou sur option : ${cumuls}`);
     }
     let ht = nombre(a.montant_ht);
     let tvaFacturee = nombre(a.montant_tva);
@@ -408,25 +530,6 @@ export async function chargerAchats(
         }
       }
     }
-    const pays = String(a.fournisseur_pays ?? "").toUpperCase();
-    const biens = a.categorie === "biens";
-    const importation = estImportation(a.categorie, pays);
-    // Ce que porte la facture, choisi à la saisie (lib/achats-tva.ts) ; pour
-    // un achat saisi avant ce choix, déduit du montant comme alors.
-    const nature = natureTva(a);
-    const tvaEtrangere = nature === "etrangere";
-    const tvaFrancaise = nature === "francaise";
-    const autoliquidation = nature === "aucune" && !importation;
-    const tauxAutoliq = estTauxFrancais(a.taux_autoliquidation) ? nombre(a.taux_autoliquidation) : TAUX_AUTOLIQUIDATION;
-    const ue = PAYS_UE.includes(pays);
-    // Dossier en franchise qui acquiert des biens dans l'UE sans TVA : la TVA
-    // n'est due qu'au-delà de 10 000 € d'acquisitions sur l'année en cours ou
-    // la précédente, ou sur option (CGI art. 256 bis, I-2°). On donne au
-    // cabinet les cumuls qui le décident.
-    if (franchise && autoliquidation && biens && ue) {
-      const cumuls = await cumulsBiensUe(userId, Number(annee));
-      aVerifier.push(`${ref} (${a.fournisseur_nom}) : dossier en franchise, acquisition de biens dans l'UE autoliquidée ; TVA due seulement au-delà de 10 000 € d'acquisitions (CGI art. 256 bis) ou sur option : ${cumuls}`);
-    }
     achats.push({
       ref,
       date: a.date_facture,
@@ -438,7 +541,7 @@ export async function chargerAchats(
       // français ; étrangère : en charge ; aucune : autoliquidée au taux
       // français saisi.
       tvas: autoliquidation
-        ? [{ taux: tauxAutoliq, montant: arrondi((ht * tauxAutoliq) / 100) }]
+        ? [{ taux: tauxAutoliq, montant: tvaSurBase(ht, tauxAutoliq) }]
         : tvaEtrangere || tvaFrancaise
           ? [{ taux: nombre(a.taux_tva), montant: tvaFacturee }]
           : [],

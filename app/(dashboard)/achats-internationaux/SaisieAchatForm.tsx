@@ -3,7 +3,8 @@
 import { useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { PAYS_FACTURATION } from "@/lib/superpdp-nature";
-import { estImportation, type NatureTva } from "@/lib/achats-tva";
+import { estImportation, type NatureTva, sansTvaFacturee } from "@/lib/achats-tva";
+import { tvaSurBase } from "@/lib/montants";
 import { ChoixTvaAchat } from "./ChoixTvaAchat";
 
 /**
@@ -71,13 +72,14 @@ export function SaisieAchatForm() {
   const [tvaManuelle, setTvaManuelle] = useState(false);
   // TVA que porte la facture (21/11/2026) : décide de l'écriture comptable et
   // de la déclaration. Sans TVA, taux et montant sont nuls.
-  const [nature, setNature] = useState<NatureTva>("aucune");
+  // Aucun choix par défaut : c'est lui qui décide de l'autoliquidation.
+  const [nature, setNature] = useState<NatureTva | null>(null);
   const [tauxAutoliq, setTauxAutoliq] = useState("20");
   // Avoir du fournisseur : montants saisis positifs, l'écriture s'inverse.
   const [avoir, setAvoir] = useState(false);
   const choisirNature = (n: NatureTva) => {
     setNature(n);
-    if (n === "aucune") {
+    if (sansTvaFacturee(n)) {
       setTaux("0");
       setMontantTva("0");
       setTvaManuelle(false);
@@ -92,7 +94,7 @@ export function SaisieAchatForm() {
       const h = Number(ht);
       const t = Number(v);
       if (Number.isFinite(h) && Number.isFinite(t)) {
-        setMontantTva((Math.round(h * (t / 100) * 100) / 100).toFixed(2));
+        setMontantTva(tvaSurBase(h, t).toFixed(2));
       }
     }
   };
@@ -103,7 +105,7 @@ export function SaisieAchatForm() {
       const h = Number(v);
       const t = Number(taux);
       if (Number.isFinite(h) && Number.isFinite(t)) {
-        setMontantTva((Math.round(h * (t / 100) * 100) / 100).toFixed(2));
+        setMontantTva(tvaSurBase(h, t).toFixed(2));
       }
     }
   };
@@ -120,7 +122,7 @@ export function SaisieAchatForm() {
     setTaux("0");
     setMontantTva("0");
     setTvaManuelle(false);
-    setNature("aucune");
+    setNature(null);
     setTauxAutoliq("20");
     setAvoir(false);
     setApercu(null);
@@ -158,9 +160,9 @@ export function SaisieAchatForm() {
         // La TVA lue fait foi : on empêche le recalcul automatique de l'écraser.
         setTvaManuelle(true);
         setMontantTva(String(c.montant_tva));
-        // Une TVA lue sur une facture étrangère est d'abord présumée
-        // étrangère ; l'utilisateur corrige si elle est française.
-        setNature(Number(c.montant_tva) > 0 ? "etrangere" : "aucune");
+        // La lecture ne dit pas si la TVA est française ou étrangère, ni si un
+        // achat sans TVA a lieu en France : l'utilisateur choisit toujours.
+        setNature(null);
       }
       setApercu({
         avertissements: d.avertissements ?? [],
@@ -178,6 +180,10 @@ export function SaisieAchatForm() {
   };
 
   const enregistrer = async () => {
+    if (!nature) {
+      setErreur("Indique la TVA que porte la facture du fournisseur.");
+      return;
+    }
     setEnCours(true);
     setErreur(null);
     setMessage(null);
@@ -196,8 +202,8 @@ export function SaisieAchatForm() {
           montant_ht: Number(ht),
           // Sans TVA, le taux est nul (son champ est masqué) : un taux lu à
           // l'import ne doit pas faire refuser la saisie.
-          taux_tva: nature === "aucune" ? 0 : Number(taux),
-          montant_tva: nature === "aucune" ? 0 : Number(montantTva),
+          taux_tva: sansTvaFacturee(nature) ? 0 : Number(taux),
+          montant_tva: sansTvaFacturee(nature) ? 0 : Number(montantTva),
           tva_facturee: nature,
           taux_autoliquidation: Number(tauxAutoliq),
           est_avoir: avoir,
@@ -374,7 +380,7 @@ export function SaisieAchatForm() {
               prefixe="a"
             />
 
-            {nature !== "aucune" && (
+            {(nature === "francaise" || nature === "etrangere") && (
               <>
                 <div>
                   <label className={etiquette} htmlFor="a-taux">Taux de TVA (%)</label>

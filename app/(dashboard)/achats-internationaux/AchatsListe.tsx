@@ -14,6 +14,7 @@ import { estImportation, natureTva } from "@/lib/achats-tva";
 // Ce que porte la facture, tel que la comptabilité le traite (lib/achats-tva.ts).
 const libelleTva = (a: AchatInternational) => {
   const n = natureTva(a);
+  if (n === "hors_france") return "Aucune (opération hors de France)";
   if (n === "aucune") {
     return estImportation(a.categorie, a.fournisseur_pays)
       ? "Aucune (importation, TVA en douane)"

@@ -55,7 +55,7 @@ export async function PATCH(req: NextRequest, ctx: { params: Promise<{ id: strin
 
   const { data: existant } = await admin
     .from("superpdp_achats_int")
-    .select("id, numero, transmission_status, superpdp_id, ppf_ereporting_id")
+    .select("id, numero, transmission_status, superpdp_id, ppf_ereporting_id, fournisseur_tva, date_facture, montant_ht")
     .eq("id", id)
     .eq("user_id", workspaceId)
     .maybeSingle();
@@ -150,7 +150,7 @@ export async function DELETE(_req: NextRequest, ctx: { params: Promise<{ id: str
   const admin = createAdminClient();
   const { data: achat } = await admin
     .from("superpdp_achats_int")
-    .select("id, numero, transmission_status, superpdp_id, ppf_ereporting_id")
+    .select("id, numero, transmission_status, superpdp_id, ppf_ereporting_id, fournisseur_tva, date_facture, montant_ht")
     .eq("id", id)
     .eq("user_id", workspaceId)
     .maybeSingle();

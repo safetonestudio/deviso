@@ -15,10 +15,11 @@
  * Les achats saisis avant ce choix n'ont pas de nature en base (NULL) : on
  * garde la règle d'alors, déduite du montant (TVA > 0 = étrangère).
  */
-export type NatureTva = "aucune" | "francaise" | "etrangere";
+export type NatureTva = "aucune" | "hors_france" | "francaise" | "etrangere";
 
 export const NATURES_TVA: { valeur: NatureTva; libelle: string; aide: string }[] = [
-  { valeur: "aucune", libelle: "Aucune TVA (autoliquidation)", aide: "La facture ne porte pas de TVA : tu la dois en France et tu la déduis. Cas le plus courant (services de l'UE)." },
+  { valeur: "aucune", libelle: "Aucune TVA (autoliquidation)", aide: "La facture ne porte pas de TVA et l'achat a lieu en France (logiciel, prestation, marchandise livrée en France) : tu dois la TVA française et tu la déduis. Cas le plus courant." },
+  { valeur: "hors_france", libelle: "Aucune TVA, opération hors de France", aide: "Hôtel, restaurant, transport, salon ou travaux à l'étranger, facturés sans TVA : l'opération n'a pas lieu en France, rien à autoliquider ni à déclarer." },
   { valeur: "francaise", libelle: "TVA française", aide: "La facture porte la TVA française (fournisseur enregistré à la TVA en France). Elle est déductible ; ton comptable vérifiera qu'elle était bien due." },
   { valeur: "etrangere", libelle: "TVA étrangère", aide: "TVA du pays du fournisseur (hôtel, salon, achat sur place) : elle n'est pas récupérable en France." },
 ];
@@ -28,7 +29,9 @@ export const TAUX_FRANCAIS = [20, 10, 8.5, 5.5, 2.1, 1.05, 0.9] as const;
 /** Taux appliqué à une autoliquidation quand rien d'autre n'est dit : le taux normal. */
 export const TAUX_AUTOLIQUIDATION_DEFAUT = 20;
 
-export const estNatureTva = (v: unknown): v is NatureTva => v === "aucune" || v === "francaise" || v === "etrangere";
+export const estNatureTva = (v: unknown): v is NatureTva => v === "aucune" || v === "hors_france" || v === "francaise" || v === "etrangere";
+/** Natures sans TVA sur la facture (montant nul, imposé en base). */
+export const sansTvaFacturee = (n: NatureTva | null | undefined) => n === "aucune" || n === "hors_france";
 export const estTauxFrancais = (v: unknown) => TAUX_FRANCAIS.some((t) => Math.abs(t - Number(v)) < 1e-9);
 
 /**
@@ -57,7 +60,8 @@ export const estImportation = (categorie: string | null | undefined, pays: strin
  * prestations de services situées en France (CGI art. 290, I-3° ;
  * BOI-TVA-DECLA-20-30-50-10 § 60). Restent hors champ :
  *  - les importations (même texte, remarque) : biens venus d'un pays tiers
- *    sans TVA française sur la facture, la TVA se liquide en douane ;
+ *    sans TVA française sur la facture ; la douane les connaît, leur TVA
+ *    s'autoliquide sur la déclaration de TVA (CGI art. 1695 II) ;
  *  - une opération facturée avec une TVA ÉTRANGÈRE : son lieu d'imposition est
  *    hors de France (hôtel, salon, achat sur place), elle n'est pas taxable en
  *    France.
@@ -65,11 +69,14 @@ export const estImportation = (categorie: string | null | undefined, pays: strin
  */
 export function motifHorsChamp(a: { tva_facturee?: string | null; montant_tva: number | string | null; categorie: string | null; fournisseur_pays: string | null }): string | null {
   const nature = natureTva(a);
+  if (nature === "hors_france") {
+    return "Hors du champ de la déclaration : opération réalisée hors de France, sans TVA française (CGI art. 259 A et 290). L'achat reste dans ta comptabilité.";
+  }
   if (nature === "etrangere") {
     return "Hors du champ de la déclaration : la TVA étrangère facturée montre une opération située hors de France (CGI art. 290). L'achat reste dans ta comptabilité.";
   }
   if (nature === "aucune" && estImportation(a.categorie, a.fournisseur_pays)) {
-    return "Hors du champ de la déclaration : importation de biens, déclarée en douane (BOI-TVA-DECLA-20-30-50-10). L'achat reste dans ta comptabilité.";
+    return "Hors du champ de la déclaration : importation de biens, connue par la douane (BOI-TVA-DECLA-20-30-50-10). Sa TVA s'autoliquide sur ta déclaration de TVA (CGI art. 1695 II). L'achat reste dans ta comptabilité.";
   }
   return null;
 }

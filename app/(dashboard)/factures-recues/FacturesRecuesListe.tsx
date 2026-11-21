@@ -171,7 +171,7 @@ export function FacturesRecuesListe({
                 {(f.base_ae ?? 0) > 0 && (
                   <TauxAutoliquidation
                     factureId={f.id}
-                    base={euros(f.base_ae ?? 0, "EUR")}
+                    base={euros(f.base_ae ?? 0, f.currency_code)}
                     taux={f.taux_autoliquidation ?? null}
                     modifiable={titulaire}
                   />

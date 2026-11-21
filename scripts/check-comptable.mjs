@@ -121,7 +121,8 @@ contreEpreuve("séparateur CSV", csvVirgule, 'const csv = BOM + [h, ...rows.map(
   const src = lire("app/(dashboard)/invoices/new/page.tsx");
   exige(
     "facture, le total d'une ligne est arrondi au centime",
-    /updated\.total = Math\.round\(/.test(src),
+    // Arrondi exact au centime (lib/montants.ts, produitArrondi) depuis le 21/11/2026.
+    /updated\.total = (Math\.round\(|produitArrondi\()/.test(src),
     "non arrondi, il rend la somme des lignes différente du total imprimé, et le XML viole BR-CO-10",
   );
   exige(

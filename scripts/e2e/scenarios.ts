@@ -68,12 +68,22 @@ const egal = (a: number, b: number) => Math.abs(a - b) < 0.005;
     verifier("schéma du vendeur : préfixe EL = Grèce (9933)", schemaVendeur("GR", "EL094259216") === "9933");
     verifier("schéma du vendeur : n° allemand = schéma allemand (9930)", schemaVendeur("DE", "DE811569869") === "9930");
     verifier("schéma du vendeur : identifiant hors UE sans préfixe d'État = aucun schéma TVA", schemaVendeur("US", "98-7654321") === null);
+    // Déclaration existante : reconnue au numéro ET au fournisseur, confirmée
+    // par la date et le HT ; le numéro seul ne prouve rien.
+    const { rapprocherDeclaration } = await import("@/lib/superpdp-achats");
+    const achatR = { numero: "1001", id: "x", fournisseur_tva: "IE6388047V", date_facture: "2023-05-01", montant_ht: 500 };
+    const decl = (o: Record<string, unknown>) => ({ id: 9, number: "1001", direction: "in", issue_date: "2023-05-01", seller: { company_id: "IE6388047V" }, total: { tax_exclusive_amount: "500.00" }, ...o });
+    verifier("déclaration identique reconnue", rapprocherDeclaration([decl({})], achatR).etat === "identique");
+    verifier("même numéro chez un autre fournisseur : absent (jamais « transmis » par erreur)", rapprocherDeclaration([decl({ seller: { company_id: "DE811569869" } })], achatR).etat === "absent");
+    verifier("même numéro et fournisseur, autre montant : ambigu", rapprocherDeclaration([decl({ total: { tax_exclusive_amount: "600.00" } })], achatR).etat === "ambigu");
+    verifier("fournisseur illisible dans la liste : ambigu", rapprocherDeclaration([decl({ seller: {} })], achatR).etat === "ambigu");
     // Périmètre (CGI art. 290, I-3° ; BOI-TVA-DECLA-20-30-50-10 § 60).
     const { motifHorsChamp } = await import("@/lib/achats-tva");
     verifier("périmètre : TVA étrangère hors champ", !!motifHorsChamp({ tva_facturee: "etrangere", montant_tva: 19, categorie: "services", fournisseur_pays: "DE" }));
     verifier("périmètre : importation hors champ", !!motifHorsChamp({ tva_facturee: "aucune", montant_tva: 0, categorie: "biens", fournisseur_pays: "US" }));
     verifier("périmètre : services hors UE sans TVA déclarés", motifHorsChamp({ tva_facturee: "aucune", montant_tva: 0, categorie: "services", fournisseur_pays: "US" }) === null);
     verifier("périmètre : biens UE sans TVA déclarés", motifHorsChamp({ tva_facturee: "aucune", montant_tva: 0, categorie: "biens", fournisseur_pays: "DE" }) === null);
+    verifier("périmètre : sans TVA, hors de France, hors champ", !!motifHorsChamp({ tva_facturee: "hors_france", montant_tva: 0, categorie: "services", fournisseur_pays: "US" }));
     verifier("périmètre : TVA française déclarée", motifHorsChamp({ tva_facturee: "francaise", montant_tva: 20, categorie: "biens", fournisseur_pays: "US" }) === null);
   }
   const scenarios = SCENARIOS.filter((s) => !filtre || filtre.split(",").includes(s.nom));

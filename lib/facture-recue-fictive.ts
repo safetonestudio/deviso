@@ -28,6 +28,9 @@ export type FactureRecue = {
   statut?: string;
   /** Ventilation de TVA vide (le tableau reste présent, exigé par le schéma) : la lecture doit se rabattre sur les lignes. */
   sansVentilation?: boolean;
+  /** Devise de la facture (défaut EUR) et, si elle n'est pas l'euro, TVA en euros portée par la facture (BT-111). */
+  devise?: string;
+  tvaEuros?: number;
 };
 
 const m = (n: number) => (Math.round(n * 100) / 100).toFixed(2);
@@ -49,16 +52,18 @@ export function enInvoice(f: FactureRecue, acheteur: string): Record<string, unk
   const totals: Record<string, unknown> = {
     sum_invoice_lines_amount: m(ht),
     total_without_vat: m(ht),
-    total_vat_amount: { value: m(tva), currency_code: "EUR" },
+    total_vat_amount: { value: m(tva), currency_code: f.devise ?? "EUR" },
     total_with_vat: m(ttc),
     amount_due_for_payment: m(ttc - (f.dejaVerse ?? 0)),
   };
   if (f.dejaVerse) totals.paid_amount = m(f.dejaVerse);
+  if (f.tvaEuros !== undefined) totals.total_vat_amount_accounting_currency = { value: m(f.tvaEuros), currency_code: "EUR" };
   const en: Record<string, unknown> = {
     number: f.numero,
     issue_date: f.date,
     type_code: f.type ?? 380,
-    currency_code: "EUR",
+    currency_code: f.devise ?? "EUR",
+    ...(f.tvaEuros !== undefined ? { vat_accounting_currency_code: "EUR" } : {}),
     process_control: { business_process_type: "B1", specification_identifier: "urn:cen.eu:en16931:2017" },
     seller: {
       name: f.fournisseur.nom,
@@ -105,7 +110,7 @@ export function ligneSuperpdp(f: FactureRecue, userId: string, id: number, achet
     number: f.numero,
     issue_date: f.date,
     payment_due_date: f.date,
-    currency_code: "EUR",
+    currency_code: f.devise ?? "EUR",
     seller_name: f.fournisseur.nom,
     buyer_name: acheteur,
     total_without_vat: Number(t.total_without_vat),

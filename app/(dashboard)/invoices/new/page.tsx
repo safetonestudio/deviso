@@ -8,6 +8,7 @@ import { PAYS_FACTURATION } from "@/lib/superpdp-nature";
 import { RechercheEntreprise } from "@/components/RechercheEntreprise";
 import { v4 as uuidv4 } from "uuid";
 import { ventilationTva } from "@/lib/tva";
+import { produitArrondi } from "@/lib/montants";
 import { Clock, Package, FileText, Coins, CircleCheck, TriangleAlert, type LucideIcon } from "lucide-react";
 import { GuidedTourBanner } from "@/components/GuidedTourBanner";
 import { splitAddress } from "@/lib/address";
@@ -338,7 +339,7 @@ export default function NewInvoicePage() {
           // Au centime : c'est ce montant qui s'imprime sur la ligne du PDF et
           // qui part en `LineTotalAmount` dans le XML. Non arrondi, il rend la
           // somme des lignes différente du total affiché.
-          updated.total = Math.round(Number(updated.quantity) * Number(updated.unit_price) * 100) / 100;
+          updated.total = produitArrondi(Number(updated.quantity), Number(updated.unit_price));
         }
         return updated;
       })
@@ -375,7 +376,7 @@ export default function NewInvoicePage() {
       quantity,
       unit: item.unit || "forfait",
       unit_price: item.unit_price,
-      total: Math.round(quantity * item.unit_price * 100) / 100,
+      total: produitArrondi(quantity, item.unit_price),
     };
     setItems((prev) => [...prev, newItem]);
   }

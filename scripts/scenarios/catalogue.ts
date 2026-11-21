@@ -24,7 +24,7 @@ export type AchatEtranger = {
   /** État de la transmission (défaut : en_attente). « transmis » pose aussi un identifiant chez la plateforme. */
   statut?: "en_attente" | "transmis" | "echec" | "action_requise";
   /** TVA que porte la facture (absente : achat saisi avant ce choix, déduite du montant). */
-  tva_facturee?: "aucune" | "francaise" | "etrangere";
+  tva_facturee?: "aucune" | "hors_france" | "francaise" | "etrangere";
   /** Taux français de l'autoliquidation (défaut en base : 20). */
   taux_autoliquidation?: number;
   /** Saisi par la route POST /api/superpdp/achats, comme l'écran, au lieu d'être injecté en base. */
@@ -257,7 +257,8 @@ export const SCENARIOS: Scenario[] = [
       { numero: "MA-AC6", date: "2023-04-01", fournisseur: M, type: 386, lignes: [{ libelle: "Acompte", ht: 1000, taux: 20 }] },
       { numero: "MA-S6", date: "2023-04-20", fournisseur: M, lignes: [{ libelle: "Solde réduit", ht: 500, taux: 20 }], dejaVerse: 1200, precedentes: [{ numero: "MA-AC6", type: 386 }] },
     ],
-    attendu: { pieces: { "MA-S6": { "604000": { debit: 500 }, "445660": { debit: -100 }, "409100": { credit: 1000 }, "401000": { credit: -600 } } } },
+    // Aucun montant négatif : la reprise de TVA va au crédit, le fournisseur qui nous doit au débit.
+    attendu: { pieces: { "MA-S6": { "604000": { debit: 500 }, "445660": { debit: 0, credit: 100 }, "409100": { credit: 1000 }, "401000": { debit: 600, credit: 0 } } } },
   },
   {
     nom: "quadra-journaux-deux-caracteres",
@@ -519,8 +520,8 @@ export const SCENARIOS: Scenario[] = [
       { numero: "MA-S9", date: "2023-06-05", fournisseur: M, lignes: [{ libelle: "Solde exonéré", ht: 3000, taux: 0 }], dejaVerse: 1200, precedentes: [{ numero: "MA-AC9", type: 386 }] },
     ],
     attendu: {
-      pieces: { "MA-S9": { "604000": { debit: 3000 }, "445660": { debit: -200 }, "409100": { credit: 1000 }, "401000": { credit: 1800 } } },
-      comptes: { "445660": { debit: 0 }, "409100": { debit: 1000, credit: 1000 } },
+      pieces: { "MA-S9": { "604000": { debit: 3000 }, "445660": { debit: 0, credit: 200 }, "409100": { credit: 1000 }, "401000": { credit: 1800 } } },
+      comptes: { "445660": { debit: 200, credit: 200 }, "409100": { debit: 1000, credit: 1000 } },
       alertes: ["MA-S9 (Menuiserie Arnaud) : TVA de l'acompte MA-AC9 à 20 % absente du solde"],
     },
   },
@@ -532,10 +533,75 @@ export const SCENARIOS: Scenario[] = [
     etrangers: [
       { numero: "BI-22", date: "2022-11-02", fournisseur: "Holz GmbH", pays: "DE", tva: "DE811569869", categorie: "biens", ht: 4000, tva_facturee: "aucune" },
       { numero: "BI-23", date: "2023-05-02", fournisseur: "Holz GmbH", pays: "DE", tva: "DE811569869", categorie: "biens", ht: 2000, tva_facturee: "aucune" },
+      { numero: "BI-23B", date: "2023-09-01", fournisseur: "Holz GmbH", pays: "DE", tva: "DE811569869", categorie: "biens", ht: 9000, tva_facturee: "aucune" },
     ],
     attendu: {
       pieces: { "BI-23": { "607000": { debit: 2400 }, "445200": { credit: 400 }, "401000": { credit: 2000 } } },
-      alertes: ["BI-23 (Holz GmbH) : dossier en franchise, acquisition de biens dans l'UE autoliquidée ; TVA due seulement au-delà de 10 000 € d'acquisitions (CGI art. 256 bis) ou sur option : 2000.00 € en 2023, 4000.00 € en 2022"],
+// Cumul à la date de chaque achat : c'est le second qui franchit le seuil.
+      alertes: [
+        "BI-23 (Holz GmbH) : dossier en franchise, acquisition de biens dans l'UE autoliquidée ; TVA due seulement au-delà de 10 000 € d'acquisitions (CGI art. 256 bis) ou sur option : 2000.00 € en 2023 jusqu'au 02/05/2023 inclus, 4000.00 € sur toute l'année 2022",
+        "BI-23B (Holz GmbH) : dossier en franchise, acquisition de biens dans l'UE autoliquidée ; TVA due seulement au-delà de 10 000 € d'acquisitions (CGI art. 256 bis) ou sur option : 11000.00 € en 2023 jusqu'au 01/09/2023 inclus, 4000.00 € sur toute l'année 2022",
+      ],
+    },
+  },
+  // ── Seconde relecture (21/11) : centime, hors de France, devise ─────────
+  {
+    nom: "centime-vente-a-10",
+    pourquoi: "Une vente de 10,05 € HT à 10 % : 1,01 € de TVA (l'ancien arrondi en virgule flottante donnait 1,00 €).",
+    dossier: { tva_regime: "normal", statut_juridique: "societe" },
+    annee: "2023",
+    ventes: [{ date: "2023-02-01", client: "Client Centime", siren: "552100554", ht: 10.05, taux: 10 }],
+    attendu: { comptes: { "706000": { credit: 10.05 }, "445740": { credit: 1.01 }, "411000": { debit: 11.06 } } },
+  },
+  {
+    nom: "centime-achats-a-10",
+    pourquoi: "Autoliquidation à 10 % sur 10,05 € (achat à l'étranger et sous-traitance AE) : 1,01 € exactement.",
+    dossier: { tva_regime: "normal" },
+    annee: "2023",
+    etrangers: [{ numero: "CT-ET", date: "2023-02-02", fournisseur: "Renov SPRL", pays: "BE", tva: "BE0477472701", categorie: "services", ht: 10.05, tva_facturee: "aucune", taux_autoliquidation: 10, parRoute: true }],
+    recues: [{ numero: "CT-AE", date: "2023-02-03", fournisseur: M, lignes: [{ libelle: "Pose", ht: 10.05, taux: 0, categorie: "AE" }] }],
+    tauxAe: [{ numero: "CT-AE", taux: 10, status: 200 }],
+    attendu: {
+      pieces: { "CT-ET": { "445662": { debit: 1.01 }, "445200": { credit: 1.01 } }, "CT-AE": { "445662": { debit: 1.01 }, "445220": { credit: 1.01 } } },
+    },
+  },
+  {
+    nom: "hors-france-sans-tva",
+    pourquoi: "Hôtel à New York facturé sans TVA : opération hors de France, ni autoliquidation ni déclaration, la charge au HT.",
+    dossier: { tva_regime: "franchise", statut_juridique: "micro" },
+    annee: "2023",
+    etrangers: [{ numero: "NY-HT", date: "2023-02-04", fournisseur: "Hotel Manhattan", pays: "US", tva: "98-7654321", categorie: "services", ht: 460, tva_facturee: "hors_france", parRoute: true, statutApresSaisie: "hors_champ" }],
+    attendu: { pieces: { "NY-HT": { "604000": { debit: 460 }, "401000": { credit: 460 } } }, comptes: { "445210": { credit: 0 }, "445662": { debit: 0 } } },
+  },
+  {
+    nom: "acompte-ae-solde-taxe-franchise",
+    pourquoi: "En franchise, acompte autoliquidé puis solde avec TVA : l'avance (TVA autoliquidée comprise) est soldée, l'écriture équilibrée, le cabinet prévenu.",
+    dossier: { tva_regime: "franchise", statut_juridique: "micro" },
+    annee: "2023",
+    recues: [
+      { numero: "AE-AC", date: "2023-03-01", fournisseur: M, type: 386, lignes: [{ libelle: "Acompte pose", ht: 1000, taux: 0, categorie: "AE" }] },
+      { numero: "AE-SO", date: "2023-04-01", fournisseur: M, lignes: [{ libelle: "Fourniture et pose", ht: 3000, taux: 20 }], dejaVerse: 1000, precedentes: [{ numero: "AE-AC", type: 386 }] },
+    ],
+    attendu: {
+      pieces: {
+        "AE-AC": { "409100": { debit: 1200 }, "445220": { credit: 200 }, "401000": { credit: 1000 } },
+        "AE-SO": { "604000": { debit: 3800 }, "409100": { credit: 1200 }, "401000": { credit: 2600 } },
+      },
+      comptes: { "409100": { debit: 1200, credit: 1200 } },
+      alertes: [
+        "AE-AC (Menuiserie Arnaud) : autoliquidation (catégorie AE",
+        "AE-SO (Menuiserie Arnaud) : l'acompte AE-AC était en autoliquidation",
+      ],
+    },
+  },
+  {
+    nom: "recue-en-dollars",
+    pourquoi: "Facture reçue en dollars : HT au cours BCE du jour, TVA en euros prise sur la facture (BT-111), devise d'origine dans le FEC.",
+    dossier: { tva_regime: "normal" },
+    annee: "2023",
+    recues: [{ numero: "FA-USD", date: "2023-10-02", fournisseur: F, devise: "USD", tvaEuros: 189.37, lignes: [{ libelle: "Licence", ht: 1000, taux: 20 }] }],
+    attendu: {
+      pieces: { "FA-USD": { "604000": { debit: { devise: "USD", date: "2023-10-02", montant: 1000 } }, "445660": { debit: 189.37 } } },
     },
   },
   // ── Point 7 : alertes visibles avant l'export ────────────────────────────

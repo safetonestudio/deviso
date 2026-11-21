@@ -1,4 +1,5 @@
 import { ventilationTva } from "@/lib/tva";
+import { produitArrondi } from "@/lib/montants";
 import OpenAI from "openai";
 import type { GeneratedProposal } from "@/types";
 import { lazyClient } from "@/lib/lazy-client";
@@ -246,7 +247,7 @@ Format JSON exact à retourner :
 function recalcTotals(proposal: GeneratedProposal): GeneratedProposal {
   const items = proposal.items.map((item) => ({
     ...item,
-    total: Math.round(item.quantity * item.unit_price * 100) / 100,
+    total: produitArrondi(item.quantity, item.unit_price),
   }));
   const vGen = ventilationTva(items, proposal.tva_rate ?? 0);
   const total_ht = vGen.total_ht;
