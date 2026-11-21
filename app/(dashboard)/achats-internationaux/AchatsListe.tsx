@@ -9,6 +9,18 @@ import { CarteDepliable, PuceCouleur, TuileSynthese, Champ } from "@/components/
 import { ExplicationProbleme } from "@/components/ui/ExplicationProbleme";
 import { expliquerAchat } from "@/lib/superpdp-explications";
 import { CorrigerAchat } from "./CorrigerAchat";
+import { estImportation, natureTva } from "@/lib/achats-tva";
+
+// Ce que porte la facture, tel que la comptabilité le traite (lib/achats-tva.ts).
+const libelleTva = (a: AchatInternational) => {
+  const n = natureTva(a);
+  if (n === "aucune") {
+    return estImportation(a.categorie, a.fournisseur_pays)
+      ? "Aucune (importation, TVA en douane)"
+      : `Autoliquidée à ${String(a.taux_autoliquidation ?? 20).replace(".", ",")} %`;
+  }
+  return `${montant(a.montant_tva, a.devise)} (${a.taux_tva} %, ${n === "francaise" ? "française" : "étrangère"})`;
+};
 
 const nomPays = (code: string) => PAYS_FACTURATION.find((p) => p.code === code)?.nom ?? code;
 
@@ -142,7 +154,7 @@ export function AchatsListe({ achats }: { achats: AchatInternational[] }) {
                 <Champ libelle="Numéro" valeur={a.numero || "-"} mono />
                 <Champ libelle="Pays" valeur={nomPays(a.fournisseur_pays)} />
                 <Champ libelle="Montant HT" valeur={montant(a.montant_ht, a.devise)} />
-                <Champ libelle="TVA" valeur={`${montant(a.montant_tva, a.devise)} (${a.taux_tva} %)`} />
+                <Champ libelle="TVA" valeur={libelleTva(a)} />
               </dl>
 
               {a.transmission_status === "transmis" && !declare && (

@@ -4,6 +4,8 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { PAYS_FACTURATION } from "@/lib/superpdp-nature";
 import type { AchatInternational } from "@/lib/superpdp-achats";
+import { estImportation, natureTva, type NatureTva } from "@/lib/achats-tva";
+import { ChoixTvaAchat } from "./ChoixTvaAchat";
 
 /**
  * Correction d'un achat non encore declare, en ligne dans le volet deplie.
@@ -32,6 +34,15 @@ export function CorrigerAchat({ achat }: { achat: AchatInternational }) {
   const [ht, setHt] = useState(String(achat.montant_ht));
   const [taux, setTaux] = useState(String(achat.taux_tva));
   const [montantTva, setMontantTva] = useState(String(achat.montant_tva));
+  const [nature, setNature] = useState<NatureTva>(natureTva(achat));
+  const [tauxAutoliq, setTauxAutoliq] = useState(String(achat.taux_autoliquidation ?? 20));
+  const choisirNature = (n: NatureTva) => {
+    setNature(n);
+    if (n === "aucune") {
+      setTaux("0");
+      setMontantTva("0");
+    }
+  };
 
   async function enregistrer() {
     setEnCours(true);
@@ -50,7 +61,9 @@ export function CorrigerAchat({ achat }: { achat: AchatInternational }) {
           devise,
           montant_ht: Number(ht),
           taux_tva: Number(taux),
-          montant_tva: Number(montantTva),
+          montant_tva: nature === "aucune" ? 0 : Number(montantTva),
+          tva_facturee: nature,
+          taux_autoliquidation: Number(tauxAutoliq),
         }),
       });
       const d = await r.json().catch(() => ({}));
@@ -121,6 +134,16 @@ export function CorrigerAchat({ achat }: { achat: AchatInternational }) {
           <label className={etiquette}>Montant HT</label>
           <input type="number" step="0.01" min="0" className={champ} value={ht} onChange={(e) => setHt(e.target.value)} />
         </div>
+        <ChoixTvaAchat
+          nature={nature}
+          onNature={choisirNature}
+          tauxAutoliq={tauxAutoliq}
+          onTauxAutoliq={setTauxAutoliq}
+          importation={estImportation(categorie, pays)}
+          prefixe={`c-${achat.id.slice(0, 8)}`}
+        />
+        {nature !== "aucune" && (
+        <>
         <div>
           <label className={etiquette}>Taux de TVA (%)</label>
           <input type="number" step="0.01" min="0" className={champ} value={taux} onChange={(e) => setTaux(e.target.value)} />
@@ -128,8 +151,10 @@ export function CorrigerAchat({ achat }: { achat: AchatInternational }) {
         <div>
           <label className={etiquette}>Montant de TVA</label>
           <input type="number" step="0.01" min="0" className={champ} value={montantTva} onChange={(e) => setMontantTva(e.target.value)} />
-          <p className="text-xs text-gray-600 mt-1">0 en cas d&apos;autoliquidation.</p>
+          <p className="text-xs text-gray-600 mt-1">Recopie la TVA indiquée sur la facture.</p>
         </div>
+        </>
+        )}
       </div>
       {erreur && <p className="text-sm text-red-400 mt-3">{erreur}</p>}
       <div className="flex gap-2 mt-4">

@@ -1,6 +1,7 @@
 import { createAdminClient } from "@/lib/supabase/admin";
 import type { AchatExport } from "@/lib/exports-comptables";
 import { enFranchise } from "@/lib/statut-entreprise";
+import { natureTva, estTauxFrancais, estImportation, TAUX_AUTOLIQUIDATION_DEFAUT } from "@/lib/achats-tva";
 
 /**
  * Les achats d'un dossier pour une année, prêts pour le FEC et Quadra
@@ -38,8 +39,7 @@ const STATUTS_EXCLUS = ["fr:210", "fr:213"];
 const CODES_AVOIR = ["381", "261", "262", "396", "502", "503"];
 const TAUX_FRANCAIS = [20, 10, 8.5, 5.5, 2.1, 1.05, 0.9];
 /** Taux français appliqué à une autoliquidation (taux normal). */
-export const TAUX_AUTOLIQUIDATION = 20;
-const UE = ["AT", "BE", "BG", "CY", "CZ", "DE", "DK", "EE", "ES", "FI", "GR", "EL", "HR", "HU", "IE", "IT", "LT", "LU", "LV", "MT", "NL", "PL", "PT", "RO", "SE", "SI", "SK"];
+export const TAUX_AUTOLIQUIDATION = TAUX_AUTOLIQUIDATION_DEFAUT;
 const PAGE = 1000;
 
 const nombre = (v: unknown): number => {
@@ -71,6 +71,22 @@ function ventilation(en: unknown): { taux: number; montant: number }[] | null {
     })
     .filter((x): x is { taux: number; montant: number } => !!x);
   return lignes.length > 0 ? lignes : null;
+}
+
+/**
+ * Base des groupes « AE » (autoliquidation) de la ventilation de TVA d'une
+ * facture reçue, par exemple d'un sous-traitant du bâtiment. La norme impose
+ * un taux nul à cette catégorie (BR-AE-05) : le taux français dû n'est pas sur
+ * la facture.
+ */
+export function baseAutoliquidee(en: unknown): number {
+  const vb = (en as { vat_break_down?: unknown } | null)?.vat_break_down;
+  if (!Array.isArray(vb)) return 0;
+  return arrondi(
+    vb
+      .filter((g: Record<string, unknown>) => String(g.vat_category_code ?? "").trim().toUpperCase() === "AE")
+      .reduce((s: number, g: Record<string, unknown>) => s + nombre(g.vat_category_taxable_amount), 0)
+  );
 }
 
 /** Cours BCE (unités de `devise` pour 1 euro) au `jour`, ou au dernier jour publié avant. */
@@ -177,7 +193,12 @@ export function acomptesDuSolde(solde: Recue, acomptes: Recue[], dejaImputes: Se
   return memeMontant.length === 1 ? memeMontant : null;
 }
 
-export async function chargerAchats(userId: string, annee: string): Promise<AchatsDuDossier> {
+export async function chargerAchats(
+  userId: string,
+  annee: string,
+  /** convertir: false : aucun appel à la BCE (alertes du tableau de bord) ; un achat en devise non encore converti est alors ignoré. */
+  options: { convertir?: boolean } = {},
+): Promise<AchatsDuDossier> {
   const admin = createAdminClient();
   const achats: AchatExport[] = [];
   const nonRepris: string[] = [];
@@ -241,6 +262,13 @@ export async function chargerAchats(userId: string, annee: string): Promise<Acha
         );
       }
     }
+    // Sous-traitance autoliquidée (AE) : la TVA française est due par le
+    // dossier, au taux normal faute de mieux, et le cabinet le confirme.
+    const baseAe = baseAutoliquidee(en);
+    const autoliquidees = baseAe > 0 ? [{ taux: TAUX_AUTOLIQUIDATION, montant: arrondi((baseAe * TAUX_AUTOLIQUIDATION) / 100) }] : undefined;
+    if (autoliquidees) {
+      aVerifier.push(`${f.number ?? "Facture"} (${f.seller_name ?? "fournisseur"}) : autoliquidation (sous-traitance) calculée à ${TAUX_AUTOLIQUIDATION} % sur ${baseAe.toFixed(2)} €, taux à confirmer`);
+    }
     achats.push({
       ref: f.number ?? "",
       date: f.issue_date,
@@ -252,6 +280,7 @@ export async function chargerAchats(userId: string, annee: string): Promise<Acha
       avoir: estAvoirRecu(en?.type_code),
       acompte: estAcompte,
       imputations,
+      autoliquidees,
       nonDeductible: franchise,
     });
   }
@@ -260,7 +289,7 @@ export async function chargerAchats(userId: string, annee: string): Promise<Acha
   const etrangers = await toutLire((de, a) =>
     admin
       .from("superpdp_achats_int")
-      .select("id, fournisseur_nom, fournisseur_pays, fournisseur_tva, numero, date_facture, categorie, devise, montant_ht, taux_tva, montant_tva, taux_change, montant_ht_eur, montant_tva_eur, transmission_status")
+      .select("id, fournisseur_nom, fournisseur_pays, fournisseur_tva, numero, date_facture, categorie, devise, montant_ht, taux_tva, montant_tva, taux_change, montant_ht_eur, montant_tva_eur, transmission_status, tva_facturee, taux_autoliquidation")
       .eq("user_id", userId)
       .gte("date_facture", `${annee}-01-01`)
       .lte("date_facture", `${annee}-12-31`)
@@ -285,6 +314,9 @@ export async function chargerAchats(userId: string, annee: string): Promise<Acha
         ht = nombre(a.montant_ht_eur);
         tvaFacturee = nombre(a.montant_tva_eur);
       } else {
+        // Lecture pour les alertes du cabinet : pas d'appel à la BCE, l'achat
+        // sera converti au prochain export.
+        if (options.convertir === false) continue;
         const cle = `${devise}|${a.date_facture}`;
         let cours = cache.get(cle);
         if (!cours) {
@@ -311,9 +343,14 @@ export async function chargerAchats(userId: string, annee: string): Promise<Acha
     }
     const pays = String(a.fournisseur_pays ?? "").toUpperCase();
     const biens = a.categorie === "biens";
-    const importation = biens && !UE.includes(pays);
-    const tvaEtrangere = tvaFacturee > 0;
-    const autoliquidation = !tvaEtrangere && !importation;
+    const importation = estImportation(a.categorie, pays);
+    // Ce que porte la facture, choisi à la saisie (lib/achats-tva.ts) ; pour
+    // un achat saisi avant ce choix, déduit du montant comme alors.
+    const nature = natureTva(a);
+    const tvaEtrangere = nature === "etrangere";
+    const tvaFrancaise = nature === "francaise";
+    const autoliquidation = nature === "aucune" && !importation;
+    const tauxAutoliq = estTauxFrancais(a.taux_autoliquidation) ? nombre(a.taux_autoliquidation) : TAUX_AUTOLIQUIDATION;
     achats.push({
       ref,
       date: a.date_facture,
@@ -321,9 +358,12 @@ export async function chargerAchats(userId: string, annee: string): Promise<Acha
       tvaIntra: a.fournisseur_tva,
       categorie: biens ? "biens" : "services",
       ht,
+      // TVA française : déductible (445660), comme chez un fournisseur
+      // français ; étrangère : en charge ; aucune : autoliquidée au taux
+      // français saisi.
       tvas: autoliquidation
-        ? [{ taux: TAUX_AUTOLIQUIDATION, montant: arrondi((ht * TAUX_AUTOLIQUIDATION) / 100) }]
-        : tvaEtrangere
+        ? [{ taux: tauxAutoliq, montant: arrondi((ht * tauxAutoliq) / 100) }]
+        : tvaEtrangere || tvaFrancaise
           ? [{ taux: nombre(a.taux_tva), montant: tvaFacturee }]
           : [],
       autoliquidation,

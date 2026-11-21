@@ -37,6 +37,26 @@ const egal = (a: number, b: number) => Math.abs(a - b) < 0.005;
   const { compteQuadra } = await import("@/lib/export-quadra");
   const admin = createAdminClient();
   const filtre = process.argv[2];
+
+  // La déclaration à la plateforme dit la même chose que la comptabilité : un
+  // compte de démonstration ne transmet jamais, on contrôle donc le contenu
+  // envoyé directement, pour chaque TVA de facture (21/11/2026).
+  {
+    const { construirePayloadB2bint } = await import("@/lib/superpdp-achats");
+    const nous = { number: "552100554", scheme_id: "0002", country: "FR", vat: "FR61552100554" };
+    const base = { fournisseur_pays: "DE", fournisseur_tva: "DE811569869", numero: "P-1", date_facture: "2023-07-01", devise: "EUR", montant_ht: 1000, id: "00000000-0000-0000-0000-000000000000" };
+    const cas: [string, Record<string, unknown>, string, string][] = [
+      ["aucune TVA", { ...base, montant_tva: 0, taux_tva: 0, tva_facturee: "aucune" }, "AE", "0.00"],
+      ["TVA française", { ...base, montant_tva: 200, taux_tva: 20, tva_facturee: "francaise" }, "S", "200.00"],
+      ["TVA étrangère", { ...base, montant_tva: 190, taux_tva: 19, tva_facturee: "etrangere" }, "S", "190.00"],
+      ["achat saisi avant le choix, sans TVA", { ...base, montant_tva: 0, taux_tva: 0, tva_facturee: null }, "AE", "0.00"],
+      ["achat saisi avant le choix, avec TVA", { ...base, montant_tva: 190, taux_tva: 19, tva_facturee: null }, "S", "190.00"],
+    ];
+    for (const [nom, achat, code, montant] of cas) {
+      const st = (construirePayloadB2bint(achat as never, nous, "9930").data[0].tax_subtotals[0]) as { tax_amount: string; tax_category: { code: string } };
+      verifier(`déclaration, ${nom} : catégorie ${code}, TVA ${montant}`, st.tax_category.code === code && st.tax_amount === montant, JSON.stringify(st));
+    }
+  }
   const scenarios = SCENARIOS.filter((s) => !filtre || filtre.split(",").includes(s.nom));
 
   // ── Comptes : le dossier joué, un second dossier vide, un cabinet ─────────
@@ -94,12 +114,31 @@ const egal = (a: number, b: number) => Math.abs(a - b) < 0.005;
       const { error } = await admin.from("superpdp_invoices").insert(lignes);
       if (error) { verifier("injection des factures reçues", false, error.message); continue; }
     }
-    if (sc.etrangers?.length) {
-      const { error } = await admin.from("superpdp_achats_int").insert(sc.etrangers.map((a) => ({
+    // Achats saisis comme l'écran les envoie : par la route de saisie (validation,
+    // enregistrement), le reste injecté en base.
+    let saisieOk = true;
+    for (const a of (sc.etrangers ?? []).filter((x) => x.parRoute)) {
+      const r = await client.call("/api/superpdp/achats", { method: "POST", body: JSON.stringify({
+        fournisseur_nom: a.fournisseur, fournisseur_pays: a.pays, fournisseur_tva: a.tva ?? null, numero: a.numero,
+        date_facture: a.date, categorie: a.categorie, devise: a.devise ?? "EUR", montant_ht: a.ht,
+        taux_tva: a.taux_tva ?? 0, montant_tva: a.montant_tva ?? 0,
+        ...(a.tva_facturee ? { tva_facturee: a.tva_facturee } : {}),
+        ...(a.taux_autoliquidation !== undefined ? { taux_autoliquidation: a.taux_autoliquidation } : {}),
+      }) });
+      const attendu = a.refuse ?? 200;
+      verifier(`saisie de ${a.numero} par la route : HTTP ${attendu}`, r.status === attendu, `HTTP ${r.status} ${JSON.stringify(r.body).slice(0, 160)}`);
+      if (attendu === 200 && r.status !== 200) saisieOk = false;
+    }
+    if (!saisieOk) continue;
+    const enBase = (sc.etrangers ?? []).filter((x) => !x.parRoute);
+    if (enBase.length) {
+      const { error } = await admin.from("superpdp_achats_int").insert(enBase.map((a) => ({
         user_id: client.userId, fournisseur_nom: a.fournisseur, fournisseur_pays: a.pays, fournisseur_tva: a.tva ?? null,
         numero: a.numero, date_facture: a.date, categorie: a.categorie, devise: a.devise ?? "EUR",
         montant_ht: a.ht, taux_tva: a.taux_tva ?? 0, montant_tva: a.montant_tva ?? 0,
         transmission_status: a.statut ?? "en_attente", retry_count: 0,
+        ...(a.tva_facturee ? { tva_facturee: a.tva_facturee } : {}),
+        ...(a.taux_autoliquidation !== undefined ? { taux_autoliquidation: a.taux_autoliquidation } : {}),
         ...(a.statut === "transmis" ? { superpdp_id: 700_000_000 + Math.floor(Math.random() * 90_000_000), transmitted_at: new Date().toISOString() } : {}),
         ...(a.statut === "echec" || a.statut === "action_requise" ? { transmission_error: "Refus simulé par le banc d'essai" } : {}),
       })));

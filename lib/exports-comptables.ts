@@ -84,6 +84,14 @@ export interface AchatExport {
    * l'avance et on ne deduit que la TVA qui ne l'a pas deja ete.
    */
   imputations?: { ref: string; ht: number; ttc: number; tvas: { taux: number; montant: number }[] }[];
+  /**
+   * TVA AUTOLIQUIDEE sur une facture recue d'un fournisseur francais
+   * (categorie AE : sous-traitance du batiment, art. 283-2 nonies du CGI) : la
+   * facture ne porte pas de TVA, l'acheteur la doit (4452 au credit) et la
+   * deduit (445662 au debit), ou la porte en charge en franchise. Le
+   * fournisseur n'est du que de ce que dit la facture.
+   */
+  autoliquidees?: { taux: number; montant: number }[];
   /** Devise d'origine si autre que l'euro, et montant du fournisseur dans cette devise. */
   devise?: string | null;
   montantDevise?: number | null;
@@ -334,6 +342,15 @@ export function ecrituresComptables(
         if (t.montant !== 0) lignesTva.push({ compte: plan.tvaDeductible, compteLib: `TVA deductible ${t.taux}%`, auxNum: "", auxLib: "", ...sens(t.montant, true) });
         duFournisseur += t.montant;
       }
+    }
+    // Autoliquidation d'une facture francaise (AE) : due et deductible, sans
+    // toucher au du fournisseur.
+    for (const t of a.autoliquidees ?? []) {
+      const m = +t.montant.toFixed(2);
+      if (!(m > 0)) continue;
+      if (a.nonDeductible) charge += m;
+      else lignesTva.push({ compte: plan.tvaDeductibleAutoliq, compteLib: `TVA deductible autoliquidee ${t.taux}%`, auxNum: "", auxLib: "", ...sens(m, true) });
+      lignesTva.push({ compte: plan.tvaAutoliquidee, compteLib: `TVA due autoliquidee ${t.taux}%`, auxNum: "", auxLib: "", ...sens(m, false) });
     }
     // Le fournisseur est du du TTC de la facture : la TVA retiree ci-dessus
     // reste due, elle a seulement deja ete deduite.

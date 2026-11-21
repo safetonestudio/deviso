@@ -3,6 +3,8 @@
 import { useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { PAYS_FACTURATION } from "@/lib/superpdp-nature";
+import { estImportation, type NatureTva } from "@/lib/achats-tva";
+import { ChoixTvaAchat } from "./ChoixTvaAchat";
 
 /**
  * Saisie d'un achat auprès d'un fournisseur étranger, manuelle ou pré-remplie
@@ -67,6 +69,20 @@ export function SaisieAchatForm() {
   // depuis le taux, mais dès qu'il la corrige (cas de l'autoliquidation, où la
   // facture du fournisseur porte 0), on cesse d'écraser sa saisie.
   const [tvaManuelle, setTvaManuelle] = useState(false);
+  // TVA que porte la facture (21/11/2026) : décide de l'écriture comptable et
+  // de la déclaration. Sans TVA, taux et montant sont nuls.
+  const [nature, setNature] = useState<NatureTva>("aucune");
+  const [tauxAutoliq, setTauxAutoliq] = useState("20");
+  const choisirNature = (n: NatureTva) => {
+    setNature(n);
+    if (n === "aucune") {
+      setTaux("0");
+      setMontantTva("0");
+      setTvaManuelle(false);
+    } else if (n === "francaise" && Number(taux) === 0) {
+      majTaux("20");
+    }
+  };
 
   const majTaux = (v: string) => {
     setTaux(v);
@@ -102,6 +118,8 @@ export function SaisieAchatForm() {
     setTaux("0");
     setMontantTva("0");
     setTvaManuelle(false);
+    setNature("aucune");
+    setTauxAutoliq("20");
     setApercu(null);
   };
 
@@ -137,6 +155,9 @@ export function SaisieAchatForm() {
         // La TVA lue fait foi : on empêche le recalcul automatique de l'écraser.
         setTvaManuelle(true);
         setMontantTva(String(c.montant_tva));
+        // Une TVA lue sur une facture étrangère est d'abord présumée
+        // étrangère ; l'utilisateur corrige si elle est française.
+        setNature(Number(c.montant_tva) > 0 ? "etrangere" : "aucune");
       }
       setApercu({
         avertissements: d.avertissements ?? [],
@@ -171,7 +192,9 @@ export function SaisieAchatForm() {
           devise,
           montant_ht: Number(ht),
           taux_tva: Number(taux),
-          montant_tva: Number(montantTva),
+          montant_tva: nature === "aucune" ? 0 : Number(montantTva),
+          tva_facturee: nature,
+          taux_autoliquidation: Number(tauxAutoliq),
         }),
       });
       const d = await r.json().catch(() => ({}));
@@ -328,31 +351,42 @@ export function SaisieAchatForm() {
               <input id="a-ht" type="number" inputMode="decimal" step="0.01" min="0" className={champ} value={ht} onChange={(e) => majHt(e.target.value)} placeholder="1000.00" />
             </div>
 
-            <div>
-              <label className={etiquette} htmlFor="a-taux">Taux de TVA (%)</label>
-              <input id="a-taux" type="number" inputMode="decimal" step="0.01" min="0" className={champ} value={taux} onChange={(e) => majTaux(e.target.value)} placeholder="0" />
-            </div>
+            <ChoixTvaAchat
+              nature={nature}
+              onNature={choisirNature}
+              tauxAutoliq={tauxAutoliq}
+              onTauxAutoliq={setTauxAutoliq}
+              importation={estImportation(categorie, pays)}
+              prefixe="a"
+            />
 
-            <div>
-              <label className={etiquette} htmlFor="a-tvamt">Montant de TVA</label>
-              <input
-                id="a-tvamt"
-                type="number"
-                inputMode="decimal"
-                step="0.01"
-                min="0"
-                className={champ}
-                value={montantTva}
-                onChange={(e) => {
-                  setTvaManuelle(true);
-                  setMontantTva(e.target.value);
-                }}
-                placeholder="0.00"
-              />
-              <p className="text-xs text-gray-600 mt-1">
-                0 en cas d&apos;autoliquidation (services intra-UE, cas le plus courant).
-              </p>
-            </div>
+            {nature !== "aucune" && (
+              <>
+                <div>
+                  <label className={etiquette} htmlFor="a-taux">Taux de TVA (%)</label>
+                  <input id="a-taux" type="number" inputMode="decimal" step="0.01" min="0" className={champ} value={taux} onChange={(e) => majTaux(e.target.value)} placeholder="0" />
+                </div>
+
+                <div>
+                  <label className={etiquette} htmlFor="a-tvamt">Montant de TVA</label>
+                  <input
+                    id="a-tvamt"
+                    type="number"
+                    inputMode="decimal"
+                    step="0.01"
+                    min="0"
+                    className={champ}
+                    value={montantTva}
+                    onChange={(e) => {
+                      setTvaManuelle(true);
+                      setMontantTva(e.target.value);
+                    }}
+                    placeholder="0.00"
+                  />
+                  <p className="text-xs text-gray-600 mt-1">Recopie la TVA indiquée sur la facture.</p>
+                </div>
+              </>
+            )}
           </div>
 
           {erreur && <p className="text-sm text-red-400 mt-4">{erreur}</p>}

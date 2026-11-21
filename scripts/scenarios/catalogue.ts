@@ -23,6 +23,14 @@ export type AchatEtranger = {
   categorie: "biens" | "services"; devise?: string; ht: number; taux_tva?: number; montant_tva?: number;
   /** État de la transmission (défaut : en_attente). « transmis » pose aussi un identifiant chez la plateforme. */
   statut?: "en_attente" | "transmis" | "echec" | "action_requise";
+  /** TVA que porte la facture (absente : achat saisi avant ce choix, déduite du montant). */
+  tva_facturee?: "aucune" | "francaise" | "etrangere";
+  /** Taux français de l'autoliquidation (défaut en base : 20). */
+  taux_autoliquidation?: number;
+  /** Saisi par la route POST /api/superpdp/achats, comme l'écran, au lieu d'être injecté en base. */
+  parRoute?: boolean;
+  /** Code HTTP attendu si la route doit refuser la saisie (l'achat n'existe alors pas). */
+  refuse?: number;
 };
 
 export type Vente = {
@@ -261,6 +269,103 @@ export const SCENARIOS: Scenario[] = [
     annee: "2023",
     ventesEnMasse: { nombre: 1005, date: "2023-06-15", ht: 10, taux: 20 },
     attendu: { comptes: { "706000": { credit: 10050 }, "445740": { credit: 2010 }, "411000": { debit: 12060 } } },
+  },
+  // ── Point 3 : TVA de la facture choisie à la saisie ─────────────────────
+  {
+    nom: "etranger-tva-francaise",
+    pourquoi: "Fournisseur étranger immatriculé en France, qui facture la TVA française : déductible en 445660, pas d'autoliquidation.",
+    dossier: { tva_regime: "normal" },
+    annee: "2023",
+    etrangers: [{ numero: "DE-FR", date: "2023-07-01", fournisseur: "Messe GmbH", pays: "DE", tva: "FR40303265045", categorie: "services", ht: 1000, taux_tva: 20, montant_tva: 200, tva_facturee: "francaise", parRoute: true }],
+    attendu: { pieces: { "DE-FR": { "604000": { debit: 1000 }, "445660": { debit: 200 }, "401000": { credit: 1200 } } }, comptes: { "445200": { credit: 0 }, "445662": { debit: 0 } } },
+  },
+  {
+    nom: "etranger-tva-francaise-franchise",
+    pourquoi: "La même facture en franchise : la TVA française n'est pas déductible, elle va en charge.",
+    dossier: { tva_regime: "franchise", statut_juridique: "micro" },
+    annee: "2023",
+    etrangers: [{ numero: "DE-FR2", date: "2023-07-02", fournisseur: "Messe GmbH", pays: "DE", tva: "FR40303265045", categorie: "services", ht: 1000, taux_tva: 20, montant_tva: 200, tva_facturee: "francaise", parRoute: true }],
+    attendu: { pieces: { "DE-FR2": { "604000": { debit: 1200 }, "401000": { credit: 1200 } } }, comptes: { "445660": { debit: 0 } } },
+  },
+  {
+    nom: "etranger-tva-etrangere-saisie",
+    pourquoi: "TVA allemande choisie explicitement à la saisie : en charge, rien à déduire ni à autoliquider.",
+    dossier: { tva_regime: "normal" },
+    annee: "2023",
+    etrangers: [{ numero: "DE-ET", date: "2023-07-03", fournisseur: "Hotel Berlin", pays: "DE", tva: "DE123456789", categorie: "services", ht: 500, taux_tva: 19, montant_tva: 95, tva_facturee: "etrangere", parRoute: true }],
+    attendu: { pieces: { "DE-ET": { "604000": { debit: 595 }, "401000": { credit: 595 } } }, comptes: { "445660": { debit: 0 }, "445200": { credit: 0 } } },
+  },
+  {
+    nom: "etranger-aucune-saisie",
+    pourquoi: "Aucune TVA choisie à la saisie, services de l'UE : autoliquidation au taux normal par défaut.",
+    dossier: { tva_regime: "normal" },
+    annee: "2023",
+    etrangers: [{ numero: "NL-AU", date: "2023-07-04", fournisseur: "Design BV", pays: "NL", tva: "NL859048676B01", categorie: "services", ht: 800, tva_facturee: "aucune", parRoute: true }],
+    attendu: { pieces: { "NL-AU": { "604000": { debit: 800 }, "445662": { debit: 160 }, "445200": { credit: 160 }, "401000": { credit: 800 } } } },
+  },
+  {
+    nom: "etranger-saisie-incoherente",
+    pourquoi: "« Aucune TVA » avec un montant de TVA, ou « TVA française » sans TVA ou à un taux étranger : la saisie est refusée, rien n'est enregistré.",
+    dossier: { tva_regime: "normal" },
+    annee: "2023",
+    etrangers: [
+      { numero: "BAD-1", date: "2023-07-05", fournisseur: "X GmbH", pays: "DE", tva: "DE811569869", categorie: "services", ht: 100, taux_tva: 20, montant_tva: 20, tva_facturee: "aucune", parRoute: true, refuse: 400 },
+      { numero: "BAD-2", date: "2023-07-05", fournisseur: "X GmbH", pays: "DE", tva: "DE811569869", categorie: "services", ht: 100, tva_facturee: "francaise", parRoute: true, refuse: 400 },
+      { numero: "BAD-3", date: "2023-07-05", fournisseur: "X GmbH", pays: "DE", tva: "DE811569869", categorie: "services", ht: 100, taux_tva: 19, montant_tva: 19, tva_facturee: "francaise", parRoute: true, refuse: 400 },
+    ],
+    attendu: { absentes: ["BAD-1", "BAD-2", "BAD-3"] },
+  },
+  // ── Point 5 : taux français de l'autoliquidation, sous-traitance AE ─────
+  {
+    nom: "etranger-autoliquidation-taux-reduit",
+    pourquoi: "Achat autoliquidé relevant du taux de 10 % : le taux saisi remplace le 20 % fixe.",
+    dossier: { tva_regime: "normal" },
+    annee: "2023",
+    etrangers: [{ numero: "BE-10", date: "2023-08-01", fournisseur: "Renov SPRL", pays: "BE", tva: "BE0477472701", categorie: "services", ht: 1000, tva_facturee: "aucune", taux_autoliquidation: 10, parRoute: true }],
+    attendu: { pieces: { "BE-10": { "604000": { debit: 1000 }, "445662": { debit: 100 }, "445200": { credit: 100 }, "401000": { credit: 1000 } } } },
+  },
+  {
+    nom: "etranger-autoliquidation-taux-invalide",
+    pourquoi: "Un taux d'autoliquidation qui n'existe pas en France (7 %) est refusé.",
+    dossier: { tva_regime: "normal" },
+    annee: "2023",
+    etrangers: [{ numero: "BE-7", date: "2023-08-02", fournisseur: "Renov SPRL", pays: "BE", tva: "BE0477472701", categorie: "services", ht: 1000, tva_facturee: "aucune", taux_autoliquidation: 7, parRoute: true, refuse: 400 }],
+    attendu: { absentes: ["BE-7"] },
+  },
+  {
+    nom: "recue-sous-traitance-ae",
+    pourquoi: "Facture d'un sous-traitant du bâtiment, catégorie AE (sans TVA) : 4452 au crédit, 445662 au débit, fournisseur dû du HT ; taux à confirmer par le cabinet.",
+    dossier: { tva_regime: "normal", statut_juridique: "societe" },
+    annee: "2023",
+    recues: [{ numero: "ST-1", date: "2023-09-10", fournisseur: M, lignes: [{ libelle: "Pose de cloisons", ht: 5000, taux: 0, categorie: "AE" }] }],
+    attendu: {
+      pieces: { "ST-1": { "604000": { debit: 5000 }, "445662": { debit: 1000 }, "445200": { credit: 1000 }, "401000": { credit: 5000 } } },
+      comptes: { "445660": { debit: 0 } },
+      alertes: ["ST-1 (Menuiserie Arnaud) : autoliquidation (sous-traitance)"],
+    },
+  },
+  {
+    nom: "recue-sous-traitance-ae-franchise",
+    pourquoi: "La même facture en franchise : la TVA autoliquidée est due mais en charge.",
+    dossier: { tva_regime: "franchise", statut_juridique: "micro" },
+    annee: "2023",
+    recues: [{ numero: "ST-2", date: "2023-09-11", fournisseur: M, lignes: [{ libelle: "Pose de cloisons", ht: 5000, taux: 0, categorie: "AE" }] }],
+    attendu: {
+      pieces: { "ST-2": { "604000": { debit: 6000 }, "445200": { credit: 1000 }, "401000": { credit: 5000 } } },
+      comptes: { "445662": { debit: 0 } },
+      alertes: ["ST-2 (Menuiserie Arnaud) : autoliquidation (sous-traitance)"],
+    },
+  },
+  {
+    nom: "recue-mixte-s-et-ae",
+    pourquoi: "Une facture qui porte à la fois de la TVA (fourniture) et une part autoliquidée (pose) : chaque part suit sa règle.",
+    dossier: { tva_regime: "normal" },
+    annee: "2023",
+    recues: [{ numero: "ST-3", date: "2023-09-12", fournisseur: M, lignes: [{ libelle: "Fourniture", ht: 1000, taux: 20 }, { libelle: "Pose", ht: 2000, taux: 0, categorie: "AE" }] }],
+    attendu: {
+      pieces: { "ST-3": { "604000": { debit: 3000 }, "445660": { debit: 200 }, "445662": { debit: 400 }, "445200": { credit: 400 }, "401000": { credit: 3200 } } },
+      alertes: ["ST-3 (Menuiserie Arnaud) : autoliquidation (sous-traitance)"],
+    },
   },
   {
     nom: "vente-payee-et-achat",

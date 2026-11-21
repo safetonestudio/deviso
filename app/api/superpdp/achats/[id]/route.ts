@@ -5,6 +5,7 @@ import { getWorkspaceUserId } from "@/lib/workspace";
 import { exigerTitulaire } from "@/lib/droits";
 import {
   validerSaisie,
+  champsTva,
   transmettreAchat,
   patchStatut,
   declarationExisteChezPa,
@@ -83,6 +84,7 @@ export async function PATCH(req: NextRequest, ctx: { params: Promise<{ id: strin
     montant_ht: Number(corps.montant_ht),
     taux_tva: Number(corps.taux_tva),
     montant_tva: Number(corps.montant_tva),
+    ...champsTva(corps),
     // Montant, devise ou date peuvent avoir changé : la conversion en euros
     // (lib/achats-export.ts) sera refaite au prochain export.
     taux_change: null,

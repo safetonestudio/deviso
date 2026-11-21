@@ -4,6 +4,7 @@ import { getWorkspaceProfile } from "@/lib/workspace";
 import { resolveVatNumber } from "@/lib/facturx-helpers";
 import { paysFrancais } from "@/lib/superpdp-nature";
 import { estCompteDemo } from "@/lib/garde-demo";
+import { estNatureTva, estTauxFrancais, natureTva, TAUX_FRANCAIS, type NatureTva } from "@/lib/achats-tva";
 import type { SupabaseClient } from "@supabase/supabase-js";
 
 /**
@@ -39,6 +40,10 @@ export interface AchatInternational {
   montant_ht: number;
   taux_tva: number;
   montant_tva: number;
+  /** Nature de la TVA de la facture (lib/achats-tva.ts) ; NULL = achat saisi avant ce choix. */
+  tva_facturee: NatureTva | null;
+  /** Taux français de l'autoliquidation (défaut 20). */
+  taux_autoliquidation: number;
   superpdp_id: number | null;
   transmission_status: "en_attente" | "transmis" | "echec" | "action_requise";
   transmission_error: string | null;
@@ -65,6 +70,8 @@ export interface SaisieAchat {
   montant_ht: number;
   taux_tva: number;
   montant_tva: number;
+  tva_facturee?: NatureTva | null;
+  taux_autoliquidation?: number | null;
 }
 
 // ─────────────────────────── Validation ───────────────────────────
@@ -138,7 +145,36 @@ export function validerSaisie(s: Partial<SaisieAchat>): string[] {
     }
   }
 
+  // Nature de la TVA (21/11/2026) : elle doit dire la même chose que les
+  // montants, sinon la comptabilité et la déclaration se contrediraient.
+  if (s.tva_facturee !== undefined && s.tva_facturee !== null) {
+    if (!estNatureTva(s.tva_facturee)) {
+      manques.push("la TVA de la facture (aucune, française ou étrangère)");
+    } else if (s.tva_facturee === "aucune") {
+      if (Number.isFinite(tva) && tva !== 0) manques.push("un montant de TVA nul : la facture ne porte pas de TVA (autoliquidation)");
+    } else if (Number.isFinite(tva) && !(tva > 0)) {
+      manques.push(`un montant de TVA : la facture porte une TVA ${s.tva_facturee === "francaise" ? "française" : "étrangère"}`);
+    }
+    if (s.tva_facturee === "francaise" && Number.isFinite(taux) && !estTauxFrancais(taux)) {
+      manques.push(`un taux de TVA française (${TAUX_FRANCAIS.join(", ")} %)`);
+    }
+  }
+  if (s.taux_autoliquidation !== undefined && s.taux_autoliquidation !== null && !estTauxFrancais(s.taux_autoliquidation)) {
+    manques.push(`un taux français d'autoliquidation (${TAUX_FRANCAIS.join(", ")} %)`);
+  }
+
   return manques;
+}
+
+/**
+ * Colonnes de TVA à enregistrer depuis une saisie validée. Sans nature
+ * fournie (ancien client de l'API), on la déduit du montant comme avant.
+ */
+export function champsTva(s: Partial<SaisieAchat>) {
+  return {
+    tva_facturee: natureTva({ tva_facturee: s.tva_facturee ?? null, montant_tva: Number(s.montant_tva) }),
+    taux_autoliquidation: s.taux_autoliquidation != null ? Number(s.taux_autoliquidation) : 20,
+  };
 }
 
 // ───────────────────── Construction du payload b2bint ─────────────────────
@@ -287,10 +323,11 @@ export async function lireNotreIdentite(workspaceId: string): Promise<NotreIdent
  * b2bint_invoice) : `direction`, `number`, `issue_date`, `business_process`,
  * `seller`, `buyer`, `tax_due_date_type_code`, `notes`, `tax_subtotals`, `total`.
  *
- * Catégorie de TVA : une TVA facturée par le fournisseur (montant > 0) est
- * déclarée « S » au taux correspondant ; une acquisition en autoliquidation
- * (montant nul, cas le plus fréquent des services intra-UE) est déclarée « AE »
- * avec le motif d'exonération EN 16931 correspondant.
+ * Catégorie de TVA, d'après la TVA que porte la facture (lib/achats-tva.ts) :
+ * TVA française ou étrangère, déclarée « S » au taux facturé ; aucune TVA
+ * (autoliquidation, cas le plus fréquent des services intra-UE), déclarée « AE »
+ * avec le motif d'exonération EN 16931 correspondant. Inchangé pour les achats
+ * saisis avant ce choix (nature déduite du montant).
  */
 export function construirePayloadB2bint(
   achat: Pick<
@@ -304,7 +341,7 @@ export function construirePayloadB2bint(
     | "montant_tva"
     | "taux_tva"
     | "id"
-  >,
+  > & { tva_facturee?: NatureTva | null },
   nous: NotreIdentite,
   // Code EAS du schéma de TVA du fournisseur (voir EAS_TVA_PAR_PAYS). Résolu et
   // garanti non vide par l'appelant (transmettreAchat), qui garde l'achat en
@@ -313,7 +350,9 @@ export function construirePayloadB2bint(
 ) {
   const ht = montantStr(achat.montant_ht);
   const tva = montantStr(achat.montant_tva);
-  const autoliquidation = achat.montant_tva <= 0;
+  // La nature saisie décide (21/11/2026) ; la validation garantit qu'une
+  // facture sans TVA a un montant nul et qu'une facture avec TVA en a un.
+  const autoliquidation = natureTva(achat) === "aucune";
 
   // Le vendeur (fournisseur étranger) doit porter un `company_id` et son
   // `company_id_scheme_id`, tous deux exigés par l'API. Faute d'autre

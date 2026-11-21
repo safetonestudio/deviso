@@ -5,6 +5,7 @@ import { getWorkspaceUserId } from "@/lib/workspace";
 import { exigerTitulaire } from "@/lib/droits";
 import {
   validerSaisie,
+  champsTva,
   transmettreAchat,
   patchStatut,
   type SaisieAchat,
@@ -98,6 +99,7 @@ export async function POST(req: NextRequest) {
       montant_ht: Number(corps.montant_ht),
       taux_tva: Number(corps.taux_tva),
       montant_tva: Number(corps.montant_tva),
+      ...champsTva(corps),
       transmission_status: "en_attente",
     })
     .select("*")
