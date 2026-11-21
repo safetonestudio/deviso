@@ -30,6 +30,7 @@
     "test:achats-compta": "npx -y tsx scripts/e2e/achats-compta.ts",
     "test:scenarios": "npx -y tsx scripts/e2e/scenarios.ts",
     "test:montants": "npx -y tsx scripts/test-montants.ts",
+    "test:achats-declaration-pa": "npx -y tsx scripts/e2e/achats-declaration-pa.ts",
     "test:quadra": "npx -y tsx scripts/e2e/quadra.ts",
     "test:resume-frequence": "npx -y tsx scripts/e2e/resume-frequence.ts",
     "test:pointage": "npx -y tsx scripts/e2e/pointage.ts",
