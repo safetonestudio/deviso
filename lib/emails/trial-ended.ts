@@ -51,12 +51,12 @@ export function trialEndedEmailHtml(
               </p>
               <p style="margin:0 0 24px;font-size:15px;color:#64748b;line-height:1.6;">
                 Tes 14 jours d'essai de la formule ${planLabel} sont passés et aucune carte
-                n'était enregistrée. Les fonctions ${planLabel} sont donc suspendues depuis
-                aujourd'hui.
+                n'était enregistrée. Pour continuer à utiliser Deviso, un abonnement est
+                désormais nécessaire.
               </p>
               <p style="margin:0 0 24px;font-size:15px;color:#64748b;line-height:1.6;">
-                Rien n'a été supprimé : tes devis, tes factures et tes clients t'attendent,
-                exactement où tu les as laissés.
+                Rien n'a été supprimé : tes devis, tes factures et tes clients restent
+                consultables, exactement où tu les as laissés.
               </p>
               <p style="margin:0 0 28px;font-size:15px;color:#64748b;line-height:1.6;">
                 Pour reprendre, ajoute une carte en une minute. Tu choisis ta formule et ta

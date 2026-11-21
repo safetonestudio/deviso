@@ -405,7 +405,13 @@ export default function InvoicesPage() {
 
           {loading ? (
             <div className="text-center py-16 text-gray-500">Chargement…</div>
-          ) : isFree ? (
+          ) : isFree && invoices.length === 0 ? (
+            /* Sans formule, on ne CRÉE plus de facture, mais celles qui existent
+               restent consultables (décision de Selim, 21/11/2026) : un essai
+               terminé ne confisque pas les documents du titulaire. L'API de
+               liste, la fiche et le PDF ne regardaient déjà pas la formule ;
+               seul cet écran masquait la liste. La création reste refusée côté
+               serveur (POST /api/invoices). */
             <div className="text-center py-16 border border-dashed border-ds-border rounded-xl bg-ds-surface">
               <Lock size={32} className="mx-auto mb-3 text-gray-600" />
               <p className="text-ink font-semibold">Les factures sont réservées au plan Solo</p>

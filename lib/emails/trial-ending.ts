@@ -46,9 +46,13 @@ export function trialEndingEmailHtml(
                 Ton essai se termine dans 3 jours, ${name}
               </p>
               <p style="margin:0 0 24px;font-size:15px;color:#64748b;line-height:1.6;">
-                Ton essai de la formule ${planLabel} arrive à son terme. Aucune carte n'est
-                enregistrée pour l'instant : sans moyen de paiement, ton accès repassera
-                automatiquement à la formule gratuite et tu perdras les fonctions ${planLabel}.
+                Ton essai de la formule ${planLabel} se termine dans 3 jours. Une fois l'essai
+                passé, un abonnement est nécessaire pour continuer à utiliser Deviso : créer
+                tes devis et tes factures, les envoyer, relancer tes clients.
+              </p>
+              <p style="margin:0 0 24px;font-size:15px;color:#64748b;line-height:1.6;">
+                Aucune carte n'est enregistrée pour l'instant. Sans carte, tes documents
+                resteront consultables, mais tu ne pourras plus en créer.
               </p>
               <p style="margin:0 0 28px;font-size:15px;color:#64748b;line-height:1.6;">
                 Pour continuer sans interruption, ajoute une carte en une minute. Tu ne seras

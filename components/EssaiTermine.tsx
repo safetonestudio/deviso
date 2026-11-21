@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { CreditCard, TriangleAlert, Hourglass } from "lucide-react";
+import { CreditCard, FolderOpen, TriangleAlert, Hourglass } from "lucide-react";
 
 /**
  * Fin d'essai sans carte : ce que voit le titulaire en se reconnectant.
@@ -10,10 +10,9 @@ import { CreditCard, TriangleAlert, Hourglass } from "lucide-react";
  * d'explication. Deux formes :
  *   - `EcranEssaiTermine`, à la place du tableau de bord (là où mène la
  *     connexion et le lien du courriel de fin d'essai) ;
- *   - `BandeauEssaiTermine`, en tête des autres pages, qui restent ouvertes
- *     dans la limite de ce que le plan « free » permet (⚠️ la liste des
- *     factures, elle, est verrouillée sans formule : rien ici ne promet donc
- *     qu'elles sont consultables).
+ *   - `BandeauEssaiTermine`, en tête des autres pages, qui restent ouvertes en
+ *     consultation (les factures existantes restent lisibles sans formule,
+ *     décision de Selim du 21/11/2026 ; seule la création est réservée).
  *
  * Le bouton appelle `/api/stripe/checkout` : l'abonnement d'essai est résilié,
  * la route ouvre donc un NOUVEL abonnement, carte exigée, sans second essai
@@ -70,8 +69,8 @@ export function EcranEssaiTermine() {
           fonctions payantes sont suspendues.
         </p>
         <p className="text-gray-400 text-sm leading-relaxed mb-6">
-          Rien n&apos;a été supprimé. Tes devis, tes factures et tes clients t&apos;attendent,
-          exactement où tu les as laissés, et réapparaissent dès que tu reprends.
+          Rien n&apos;a été supprimé : tes devis, tes factures et tes clients restent
+          consultables. Pour continuer à facturer, un abonnement est nécessaire.
         </p>
 
         <div className="flex items-center justify-between gap-3 mb-3">
@@ -155,6 +154,16 @@ export function EcranEssaiTermine() {
           Paiement sur la page sécurisée de Stripe · résiliable à tout moment
         </p>
 
+        <div className="border-t border-ds-border mt-6 pt-4 text-center">
+          <a
+            href="/invoices"
+            className="text-sm text-gray-400 hover:text-gray-300 inline-flex items-center gap-1.5"
+          >
+            <FolderOpen size={15} className="shrink-0" />
+            Consulter mes factures
+          </a>
+        </div>
+
       </div>
     </div>
   );
@@ -168,7 +177,7 @@ export function BandeauEssaiTermine() {
     >
       <p className="text-sm text-amber-200 flex items-start gap-2">
         <Hourglass size={16} className="shrink-0 mt-0.5 text-amber-400" />
-        Ton essai est terminé : les fonctions payantes sont suspendues. Rien n&apos;a été supprimé.
+        Ton essai est terminé : un abonnement est nécessaire pour continuer à facturer. Tes documents restent consultables.
       </p>
       <a
         href="/dashboard"
