@@ -73,6 +73,8 @@ export function SaisieAchatForm() {
   // de la déclaration. Sans TVA, taux et montant sont nuls.
   const [nature, setNature] = useState<NatureTva>("aucune");
   const [tauxAutoliq, setTauxAutoliq] = useState("20");
+  // Avoir du fournisseur : montants saisis positifs, l'écriture s'inverse.
+  const [avoir, setAvoir] = useState(false);
   const choisirNature = (n: NatureTva) => {
     setNature(n);
     if (n === "aucune") {
@@ -120,6 +122,7 @@ export function SaisieAchatForm() {
     setTvaManuelle(false);
     setNature("aucune");
     setTauxAutoliq("20");
+    setAvoir(false);
     setApercu(null);
   };
 
@@ -197,6 +200,7 @@ export function SaisieAchatForm() {
           montant_tva: nature === "aucune" ? 0 : Number(montantTva),
           tva_facturee: nature,
           taux_autoliquidation: Number(tauxAutoliq),
+          est_avoir: avoir,
         }),
       });
       const d = await r.json().catch(() => ({}));
@@ -352,6 +356,14 @@ export function SaisieAchatForm() {
               <label className={etiquette} htmlFor="a-ht">Montant HT</label>
               <input id="a-ht" type="number" inputMode="decimal" step="0.01" min="0" className={champ} value={ht} onChange={(e) => majHt(e.target.value)} placeholder="1000.00" />
             </div>
+
+            <label className="sm:col-span-2 flex items-start gap-2.5 text-sm text-gray-300 cursor-pointer">
+              <input type="checkbox" className="mt-0.5 accent-indigo-500" checked={avoir} onChange={(e) => setAvoir(e.target.checked)} />
+              <span>
+                C&apos;est un avoir du fournisseur
+                <span className="block text-xs text-gray-500">Recopie les montants positifs de l&apos;avoir : la comptabilité et la déclaration les inversent.</span>
+              </span>
+            </label>
 
             <ChoixTvaAchat
               nature={nature}

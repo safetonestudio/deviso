@@ -36,6 +36,7 @@ export function CorrigerAchat({ achat }: { achat: AchatInternational }) {
   const [montantTva, setMontantTva] = useState(String(achat.montant_tva));
   const [nature, setNature] = useState<NatureTva>(natureTva(achat));
   const [tauxAutoliq, setTauxAutoliq] = useState(String(achat.taux_autoliquidation ?? 20));
+  const [avoir, setAvoir] = useState(achat.est_avoir === true);
   const choisirNature = (n: NatureTva) => {
     setNature(n);
     if (n === "aucune") {
@@ -66,6 +67,7 @@ export function CorrigerAchat({ achat }: { achat: AchatInternational }) {
           montant_tva: nature === "aucune" ? 0 : Number(montantTva),
           tva_facturee: nature,
           taux_autoliquidation: Number(tauxAutoliq),
+          est_avoir: avoir,
         }),
       });
       const d = await r.json().catch(() => ({}));
@@ -136,6 +138,14 @@ export function CorrigerAchat({ achat }: { achat: AchatInternational }) {
           <label className={etiquette}>Montant HT</label>
           <input type="number" step="0.01" min="0" className={champ} value={ht} onChange={(e) => setHt(e.target.value)} />
         </div>
+        <label className="sm:col-span-2 flex items-start gap-2.5 text-sm text-gray-300 cursor-pointer">
+          <input type="checkbox" className="mt-0.5 accent-indigo-500" checked={avoir} onChange={(e) => setAvoir(e.target.checked)} />
+          <span>
+            C&apos;est un avoir du fournisseur
+            <span className="block text-xs text-gray-500">Recopie les montants positifs de l&apos;avoir : la comptabilité et la déclaration les inversent.</span>
+          </span>
+        </label>
+
         <ChoixTvaAchat
           nature={nature}
           onNature={choisirNature}

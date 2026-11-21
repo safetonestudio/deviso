@@ -39,6 +39,8 @@ const STATUT: Record<AchatInternational["transmission_status"], { texte: string;
   en_attente: { texte: "En attente", classe: "bg-amber-500/15 text-amber-400 border-amber-500/30" },
   action_requise: { texte: "Action requise", classe: "bg-orange-500/15 text-orange-400 border-orange-500/30" },
   echec: { texte: "En échec", classe: "bg-red-500/15 text-red-400 border-red-500/30" },
+  // Hors du champ de l'e-reporting (importation, TVA étrangère) : rien à faire.
+  hors_champ: { texte: "Non déclarable", classe: "bg-gray-500/15 text-gray-400 border-gray-500/30" },
 };
 
 const estDeclare = (a: AchatInternational) =>
@@ -140,7 +142,7 @@ export function AchatsListe({ achats }: { achats: AchatInternational[] }) {
           return (
             <CarteDepliable
               key={a.id}
-              titre={a.fournisseur_nom}
+              titre={a.est_avoir ? `${a.fournisseur_nom} (avoir)` : a.fournisseur_nom}
               pastilles={<PuceCouleur classe={s.classe} texte={s.texte} />}
               sousTitre={
                 <span className="text-gray-400">
@@ -166,7 +168,7 @@ export function AchatsListe({ achats }: { achats: AchatInternational[] }) {
                 <p className="text-xs text-gray-500 mb-3">Déclaré le {jour(a.declared_at)}.</p>
               )}
               {a.transmission_status !== "transmis" && a.transmission_error && (
-                <p className="text-xs text-red-400/90 mb-3">{a.transmission_error}</p>
+                <p className={`text-xs mb-3 ${a.transmission_status === "hors_champ" ? "text-gray-400" : "text-red-400/90"}`}>{a.transmission_error}</p>
               )}
 
               {ex && <ExplicationProbleme ton={ex.ton} probleme={ex.probleme} etapes={ex.etapes} />}
@@ -174,6 +176,7 @@ export function AchatsListe({ achats }: { achats: AchatInternational[] }) {
               {a.transmission_status !== "transmis" && (
                 <div className="flex flex-wrap items-center gap-3">
                   <CorrigerAchat achat={a} />
+                  {a.transmission_status !== "hors_champ" && (
                   <button
                     onClick={() => retransmettre(a.id)}
                     disabled={enCours === a.id}
@@ -181,6 +184,7 @@ export function AchatsListe({ achats }: { achats: AchatInternational[] }) {
                   >
                     {enCours === a.id ? "Envoi…" : "Retransmettre"}
                   </button>
+                  )}
                   {aConfirmer === a.id ? (
                     <span className="inline-flex flex-wrap items-center gap-2">
                       <span className="text-sm text-gray-300">Supprimer cet achat ?</span>

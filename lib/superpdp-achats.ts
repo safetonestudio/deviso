@@ -4,7 +4,7 @@ import { getWorkspaceProfile } from "@/lib/workspace";
 import { resolveVatNumber } from "@/lib/facturx-helpers";
 import { paysFrancais } from "@/lib/superpdp-nature";
 import { estCompteDemo } from "@/lib/garde-demo";
-import { estNatureTva, estTauxFrancais, natureTva, TAUX_FRANCAIS, type NatureTva } from "@/lib/achats-tva";
+import { estNatureTva, estTauxFrancais, estImportation, motifHorsChamp, natureTva, PAYS_UE, TAUX_FRANCAIS, type NatureTva } from "@/lib/achats-tva";
 import type { SupabaseClient } from "@supabase/supabase-js";
 
 /**
@@ -45,7 +45,10 @@ export interface AchatInternational {
   /** Taux français de l'autoliquidation (défaut 20). */
   taux_autoliquidation: number;
   superpdp_id: number | null;
-  transmission_status: "en_attente" | "transmis" | "echec" | "action_requise";
+  /** hors_champ : achat hors du périmètre de l'e-reporting (lib/achats-tva.ts, motifHorsChamp), jamais transmis. */
+  transmission_status: "en_attente" | "transmis" | "echec" | "action_requise" | "hors_champ";
+  /** Avoir du fournisseur : montants positifs, écriture et déclaration en sens inverse. */
+  est_avoir: boolean;
   transmission_error: string | null;
   transmitted_at: string | null;
   retry_count: number;
@@ -72,6 +75,7 @@ export interface SaisieAchat {
   montant_tva: number;
   tva_facturee?: NatureTva | null;
   taux_autoliquidation?: number | null;
+  est_avoir?: boolean | null;
 }
 
 // ─────────────────────────── Validation ───────────────────────────
@@ -147,7 +151,9 @@ export function validerSaisie(s: Partial<SaisieAchat>): string[] {
 
   // Nature de la TVA (21/11/2026) : elle doit dire la même chose que les
   // montants, sinon la comptabilité et la déclaration se contrediraient.
-  if (s.tva_facturee !== undefined && s.tva_facturee !== null) {
+  if (s.tva_facturee === undefined || s.tva_facturee === null) {
+    manques.push("la TVA de la facture (aucune, française ou étrangère)");
+  } else {
     if (!estNatureTva(s.tva_facturee)) {
       manques.push("la TVA de la facture (aucune, française ou étrangère)");
     } else if (s.tva_facturee === "aucune") {
@@ -174,6 +180,7 @@ export function champsTva(s: Partial<SaisieAchat>) {
   return {
     tva_facturee: natureTva({ tva_facturee: s.tva_facturee ?? null, montant_tva: Number(s.montant_tva) }),
     taux_autoliquidation: s.taux_autoliquidation != null ? Number(s.taux_autoliquidation) : 20,
+    est_avoir: s.est_avoir === true,
   };
 }
 
@@ -265,6 +272,20 @@ export function schemaTvaPays(pays: string | null | undefined): string | null {
 }
 
 /**
+ * Schéma du vendeur : celui de l'État qui a ATTRIBUÉ son n° de TVA (préfixe du
+ * numéro, « EL » pour la Grèce), et non celui de son pays d'établissement. Un
+ * fournisseur allemand immatriculé en France (FR…) s'identifie sous le schéma
+ * français ; le schéma du pays seul aurait déclaré un numéro français sous un
+ * schéma allemand. Sans préfixe d'un État membre : le schéma du pays.
+ */
+export function schemaVendeur(pays: string | null | undefined, tva: string | null | undefined): string | null {
+  const prefixe = normaliserTva(tva).slice(0, 2);
+  const etat = prefixe === "EL" ? "GR" : prefixe;
+  if (/^[A-Z]{2}$/.test(etat) && (EAS_TVA_PAR_PAYS[etat] || etat === "FR")) return EAS_TVA_PAR_PAYS[etat] ?? null;
+  return schemaTvaPays(pays);
+}
+
+/**
  * Schéma d'identifiant pour un vendeur sans n° de TVA intracommunautaire : un
  * fournisseur hors UE identifié par son identifiant fiscal local. La Plateforme
  * Agréée EXIGE un `company_id` ET un `company_id_scheme_id` pour le vendeur,
@@ -341,7 +362,7 @@ export function construirePayloadB2bint(
     | "montant_tva"
     | "taux_tva"
     | "id"
-  > & { tva_facturee?: NatureTva | null },
+  > & { tva_facturee?: NatureTva | null; categorie?: string | null; est_avoir?: boolean | null },
   nous: NotreIdentite,
   // Code EAS du schéma de TVA du fournisseur (voir EAS_TVA_PAR_PAYS). Résolu et
   // garanti non vide par l'appelant (transmettreAchat), qui garde l'achat en
@@ -353,6 +374,12 @@ export function construirePayloadB2bint(
   // La nature saisie décide (21/11/2026) ; la validation garantit qu'une
   // facture sans TVA a un montant nul et qu'une facture avec TVA en a un.
   const autoliquidation = natureTva(achat) === "aucune";
+  // Biens venus d'un État membre sans TVA : acquisition intracommunautaire,
+  // catégorie K (livraison intracommunautaire exonérée côté fournisseur) ;
+  // services et autres achats sans TVA : autoliquidation, catégorie AE. Les
+  // biens hors UE sans TVA (importation) ne sont jamais déclarés (motifHorsChamp).
+  const intracomBiens =
+    autoliquidation && achat.categorie === "biens" && !estImportation(achat.categorie, achat.fournisseur_pays) && PAYS_UE.includes(String(achat.fournisseur_pays ?? "").toUpperCase());
 
   // Le vendeur (fournisseur étranger) doit porter un `company_id` et son
   // `company_id_scheme_id`, tous deux exigés par l'API. Faute d'autre
@@ -381,14 +408,21 @@ export function construirePayloadB2bint(
     buyer.tax_registration_id_qualifying_id = "VA";
   }
 
-  const tax_category: Record<string, unknown> = autoliquidation
+  const tax_category: Record<string, unknown> = intracomBiens
     ? {
-        code: "AE",
+        code: "K",
         percent: "0.00",
-        exemption_reason_code: "VATEX-EU-AE",
-        exemption_reason: "Autoliquidation",
+        exemption_reason_code: "VATEX-EU-IC",
+        exemption_reason: "Livraison intracommunautaire exonérée",
       }
-    : { code: "S", percent: montantStr(achat.taux_tva) };
+    : autoliquidation
+      ? {
+          code: "AE",
+          percent: "0.00",
+          exemption_reason_code: "VATEX-EU-AE",
+          exemption_reason: "Autoliquidation",
+        }
+      : { code: "S", percent: montantStr(achat.taux_tva) };
 
   return {
     data: [
@@ -403,7 +437,8 @@ export function construirePayloadB2bint(
         // 28/09/2026. Un achat déclaré est toujours la facture commerciale reçue
         // du fournisseur : 380. (Son absence renvoyait un 500, désormais un 400
         // « missing type_code for b2bint invoice ».)
-        type_code: "380",
+        // Avoir du fournisseur : 381, montants positifs (BR-27), le type porte le sens.
+        type_code: achat.est_avoir ? "381" : "380",
         business_process: { id: "B1", type_id: "urn:cen.eu:en16931:2017" },
         seller,
         buyer,
@@ -430,16 +465,17 @@ export function construirePayloadB2bint(
  *    delai de declaration, pays non pris en charge). Etat terminal, l'humain agit.
  *  - "refuse" : refus de contenu par la Plateforme Agreee, saisie a corriger.
  */
-export type SuiteEchec = "reessayer" | "action_requise" | "refuse";
+export type SuiteEchec = "reessayer" | "action_requise" | "refuse" | "hors_champ";
 export type ResultatTransmission =
   | { ok: true; superpdpId: number | null }
   | { ok: false; suite: SuiteEchec; message: string; detail: string };
 
 /** Statut de base stocke pour chaque suite d'echec. */
-const STATUT_PAR_SUITE: Record<SuiteEchec, "en_attente" | "action_requise" | "echec"> = {
+const STATUT_PAR_SUITE: Record<SuiteEchec, "en_attente" | "action_requise" | "echec" | "hors_champ"> = {
   reessayer: "en_attente",
   action_requise: "action_requise",
   refuse: "echec",
+  hors_champ: "hors_champ",
 };
 
 /**
@@ -493,6 +529,9 @@ export async function transmettreAchat(
 ): Promise<ResultatTransmission> {
   // Compte de démonstration : la transmission est simulée, jamais envoyée à la
   // vraie Plateforme Agréée. L'achat reste "en attente" côté écran.
+  // Avant tout : un achat hors du champ de l'e-reporting n'est jamais envoyé.
+  const horsChamp = motifHorsChamp(achat);
+  if (horsChamp) return { ok: false, suite: "hors_champ", message: horsChamp, detail: "hors_champ" };
   if (await estCompteDemo(workspaceId)) {
     return { ok: false, suite: "reessayer", message: "Transmission à la Plateforme Agréée simulée en mode démonstration.", detail: "demo" };
   }
@@ -541,9 +580,9 @@ export async function transmettreAchat(
       detail: "identifiant_fournisseur_absent",
     };
   }
-  const schemaVendeur = schemaTvaPays(achat.fournisseur_pays) ?? SCHEMA_GENERIQUE;
+  const schema = schemaVendeur(achat.fournisseur_pays, achat.fournisseur_tva) ?? SCHEMA_GENERIQUE;
 
-  const payload = construirePayloadB2bint(achat, nous, schemaVendeur);
+  const payload = construirePayloadB2bint(achat, nous, schema);
 
   try {
     const res = await superpdpFetch(workspaceId, "/b2bint_invoices", {
@@ -580,6 +619,7 @@ export async function transmettreAchat(
       action_requise:
         "Cette facture est hors du délai de déclaration accepté par la Plateforme Agréée. À régulariser avec votre comptable : un réessai automatique ne la fera pas passer.",
       refuse: `La Plateforme Agréée a refusé la déclaration : ${message}`,
+      hors_champ: "Hors du champ de la déclaration.",
     };
     return {
       ok: false,
@@ -687,12 +727,47 @@ async function listerDeclarationsB2bint(workspaceId: string): Promise<LigneB2bin
 export async function declarationExisteChezPa(
   workspaceId: string,
   achat: Pick<AchatInternational, "numero" | "id">
-): Promise<boolean | null> {
-  if (await estCompteDemo(workspaceId)) return false;
+): Promise<{ existe: false } | { existe: true; id: number | null } | null> {
+  if (await estCompteDemo(workspaceId)) return { existe: false };
   const liste = await listerDeclarationsB2bint(workspaceId);
   if (liste === null) return null;
   const numero = numeroDeclaration(achat);
-  return liste.some((it) => it.number === numero && (it.direction ?? "in") === "in");
+  const trouve = liste.find((it) => it.number === numero && (it.direction ?? "in") === "in");
+  return trouve ? { existe: true, id: typeof trouve.id === "number" ? trouve.id : null } : { existe: false };
+}
+
+/**
+ * Refus à opposer avant de modifier, retransmettre ou supprimer un achat dont
+ * la déclaration existe peut-être déjà (21/11/2026). Un achat transmis, ou
+ * portant une trace d'envoi, est figé. Sinon on regarde chez la plateforme :
+ * une réponse perdue après un envoi réussi laisse un achat « en attente » chez
+ * nous alors que la déclaration existe ; on le resynchronise (transmis) et on
+ * refuse. Liste illisible : on refuse aussi, sans conclure. Un achat hors champ
+ * n'a jamais été envoyé : rien à vérifier. null = l'opération peut continuer.
+ */
+export async function refusSiDeclare(
+  admin: SupabaseClient,
+  workspaceId: string,
+  achat: Pick<AchatInternational, "id" | "numero" | "transmission_status" | "superpdp_id" | "ppf_ereporting_id">,
+  action: string
+): Promise<{ status: number; error: string; message: string } | null> {
+  if (achat.transmission_status === "transmis" || achat.superpdp_id !== null || achat.ppf_ereporting_id !== null) {
+    return { status: 409, error: "Déjà transmis", message: `Cet achat a été transmis à la plateforme agréée : sa déclaration existe, il ne peut pas être ${action}.` };
+  }
+  if (achat.transmission_status === "hors_champ") return null;
+  const chezPa = await declarationExisteChezPa(workspaceId, achat);
+  if (chezPa === null) {
+    return { status: 503, error: "Vérification impossible", message: "Impossible de vérifier auprès de la plateforme agréée que cet achat n'a pas déjà été déclaré. Réessaie dans un instant." };
+  }
+  if (chezPa.existe) {
+    await admin
+      .from("superpdp_achats_int")
+      .update({ transmission_status: "transmis", superpdp_id: chezPa.id, transmission_error: null, transmitted_at: new Date().toISOString(), updated_at: new Date().toISOString() })
+      .eq("id", achat.id)
+      .eq("user_id", workspaceId);
+    return { status: 409, error: "Déjà déclaré", message: `La plateforme agréée a déjà reçu la déclaration de cet achat : il est désormais marqué transmis et ne peut pas être ${action}.` };
+  }
+  return null;
 }
 
 async function numerosDejaDeclares(workspaceId: string): Promise<Map<string, number>> {

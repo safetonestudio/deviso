@@ -11,7 +11,7 @@ import { LIBELLES_PLAN, PLAN_PAR_DEFAUT, type PlanComptesFec } from "@/lib/plan-
 const GROUPES: { titre: string; aide: string; cles: (keyof PlanComptesFec)[] }[] = [
   { titre: "Journaux", aide: "Codes de 1 à 6 caractères, différents dès les 2 premiers (Quadra n'en lit que 2).", cles: ["journalVentes", "journalAchats", "journalBanque"] },
   { titre: "Ventes et encaissements", aide: "Factures émises par le dossier et leur règlement.", cles: ["clients", "ventesServices", "ventesBiens", "tvaCollectee", "tvaNonExigible", "banque"] },
-  { titre: "Achats", aide: "Factures reçues et achats à l'étranger.", cles: ["fournisseurs", "avancesFournisseurs", "achatsServices", "achatsBiens", "tvaDeductible", "tvaDeductibleAutoliq", "tvaAutoliquidee"] },
+  { titre: "Achats", aide: "Factures reçues et achats à l'étranger.", cles: ["fournisseurs", "avancesFournisseurs", "achatsServices", "achatsBiens", "tvaDeductible", "tvaDeductibleAutoliq", "tvaAutoliquidee", "tvaAutoliquideeHorsUe", "tvaAutoliquideeFrance"] },
 ];
 
 const inputCls =

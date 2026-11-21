@@ -31,7 +31,11 @@ export const TAUX_AUTOLIQUIDATION_DEFAUT = 20;
 export const estNatureTva = (v: unknown): v is NatureTva => v === "aucune" || v === "francaise" || v === "etrangere";
 export const estTauxFrancais = (v: unknown) => TAUX_FRANCAIS.some((t) => Math.abs(t - Number(v)) < 1e-9);
 
-/** Nature de la TVA d'un achat, y compris pour un achat saisi avant ce choix. */
+/**
+ * Nature de la TVA d'un achat. Obligatoire en base depuis le 21/11/2026, avec
+ * une contrainte qui la lie au montant ; le repli sur le montant ne sert plus
+ * qu'à une saisie incomplète avant validation.
+ */
 export function natureTva(a: { tva_facturee?: string | null; montant_tva: number | string | null }): NatureTva {
   if (estNatureTva(a.tva_facturee)) return a.tva_facturee;
   return Number(a.montant_tva) > 0 ? "etrangere" : "aucune";
@@ -43,3 +47,29 @@ export const PAYS_UE = ["AT", "BE", "BG", "CY", "CZ", "DE", "DK", "EE", "ES", "F
 /** Biens achetés hors UE : importation, la TVA se liquide en douane, pas sur la facture. */
 export const estImportation = (categorie: string | null | undefined, pays: string | null | undefined) =>
   categorie === "biens" && !PAYS_UE.includes(String(pays ?? "").toUpperCase());
+
+/**
+ * L'achat est-il hors du champ de l'e-reporting d'acquisition ? (21/11/2026)
+ *
+ * Sont déclarés, par l'acheteur établi en France, les achats auprès d'un
+ * assujetti non établi qui sont SITUÉS EN FRANCE : acquisitions
+ * intracommunautaires de biens, livraisons de biens imposables en France,
+ * prestations de services situées en France (CGI art. 290, I-3° ;
+ * BOI-TVA-DECLA-20-30-50-10 § 60). Restent hors champ :
+ *  - les importations (même texte, remarque) : biens venus d'un pays tiers
+ *    sans TVA française sur la facture, la TVA se liquide en douane ;
+ *  - une opération facturée avec une TVA ÉTRANGÈRE : son lieu d'imposition est
+ *    hors de France (hôtel, salon, achat sur place), elle n'est pas taxable en
+ *    France.
+ * Renvoie le motif, à afficher, ou null si l'achat doit être déclaré.
+ */
+export function motifHorsChamp(a: { tva_facturee?: string | null; montant_tva: number | string | null; categorie: string | null; fournisseur_pays: string | null }): string | null {
+  const nature = natureTva(a);
+  if (nature === "etrangere") {
+    return "Hors du champ de la déclaration : la TVA étrangère facturée montre une opération située hors de France (CGI art. 290). L'achat reste dans ta comptabilité.";
+  }
+  if (nature === "aucune" && estImportation(a.categorie, a.fournisseur_pays)) {
+    return "Hors du champ de la déclaration : importation de biens, déclarée en douane (BOI-TVA-DECLA-20-30-50-10). L'achat reste dans ta comptabilité.";
+  }
+  return null;
+}

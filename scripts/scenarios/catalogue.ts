@@ -31,6 +31,10 @@ export type AchatEtranger = {
   parRoute?: boolean;
   /** Code HTTP attendu si la route doit refuser la saisie (l'achat n'existe alors pas). */
   refuse?: number;
+  /** Avoir du fournisseur (montants positifs). */
+  avoir?: boolean;
+  /** Statut de transmission attendu après la saisie par la route (compte démo : jamais « transmis »). */
+  statutApresSaisie?: "en_attente" | "hors_champ";
 };
 
 export type Vente = {
@@ -73,6 +77,8 @@ export type Scenario = {
    * passer le seuil de 1 000 lignes d'une lecture PostgREST.
    */
   ventesEnMasse?: { nombre: number; date: string; ht: number; taux: number };
+  /** Taux d'autoliquidation choisis sur des factures reçues AE, par la route de l'écran, et code HTTP attendu. */
+  tauxAe?: { numero: string; taux: number | null; status: number }[];
   /** Plan de comptes que le cabinet tente d'enregistrer, et le code HTTP attendu (remis à défaut après). */
   planCabinet?: { plan: Record<string, string>; status: number };
 };
@@ -191,7 +197,7 @@ export const SCENARIOS: Scenario[] = [
     pourquoi: "Un fournisseur étranger facture sa propre TVA : non déductible en France, en charge.",
     dossier: { tva_regime: "normal" },
     annee: "2023",
-    etrangers: [{ numero: "DE-2", date: "2023-06-10", fournisseur: "Hotel Berlin", pays: "DE", tva: "DE123456789", categorie: "services", ht: 1000, taux_tva: 19, montant_tva: 190 }],
+    etrangers: [{ numero: "DE-2", date: "2023-06-10", fournisseur: "Hotel Berlin", pays: "DE", tva: "DE123456789", categorie: "services", ht: 1000, taux_tva: 19, montant_tva: 190, tva_facturee: "etrangere" }],
     attendu: { pieces: { "DE-2": { "604000": { debit: 1190 }, "401000": { credit: 1190 } } }, comptes: { "445200": { credit: 0 }, "445662": { debit: 0 } } },
   },
   {
@@ -318,8 +324,9 @@ export const SCENARIOS: Scenario[] = [
       { numero: "BAD-1", date: "2023-07-05", fournisseur: "X GmbH", pays: "DE", tva: "DE811569869", categorie: "services", ht: 100, taux_tva: 20, montant_tva: 20, tva_facturee: "aucune", parRoute: true, refuse: 400 },
       { numero: "BAD-2", date: "2023-07-05", fournisseur: "X GmbH", pays: "DE", tva: "DE811569869", categorie: "services", ht: 100, tva_facturee: "francaise", parRoute: true, refuse: 400 },
       { numero: "BAD-3", date: "2023-07-05", fournisseur: "X GmbH", pays: "DE", tva: "DE811569869", categorie: "services", ht: 100, taux_tva: 19, montant_tva: 19, tva_facturee: "francaise", parRoute: true, refuse: 400 },
+      { numero: "BAD-4", date: "2023-07-05", fournisseur: "X GmbH", pays: "DE", tva: "DE811569869", categorie: "services", ht: 100, parRoute: true, refuse: 400 },
     ],
-    attendu: { absentes: ["BAD-1", "BAD-2", "BAD-3"] },
+    attendu: { absentes: ["BAD-1", "BAD-2", "BAD-3", "BAD-4"] },
   },
   // ── Point 5 : taux français de l'autoliquidation, sous-traitance AE ─────
   {
@@ -345,7 +352,7 @@ export const SCENARIOS: Scenario[] = [
     annee: "2023",
     recues: [{ numero: "ST-1", date: "2023-09-10", fournisseur: M, lignes: [{ libelle: "Pose de cloisons", ht: 5000, taux: 0, categorie: "AE" }] }],
     attendu: {
-      pieces: { "ST-1": { "604000": { debit: 5000 }, "445662": { debit: 1000 }, "445200": { credit: 1000 }, "401000": { credit: 5000 } } },
+      pieces: { "ST-1": { "604000": { debit: 5000 }, "445662": { debit: 1000 }, "445220": { credit: 1000 }, "401000": { credit: 5000 } } },
       comptes: { "445660": { debit: 0 } },
       alertes: ["ST-1 (Menuiserie Arnaud) : autoliquidation (catégorie AE"],
     },
@@ -357,7 +364,7 @@ export const SCENARIOS: Scenario[] = [
     annee: "2023",
     recues: [{ numero: "ST-2", date: "2023-09-11", fournisseur: M, lignes: [{ libelle: "Pose de cloisons", ht: 5000, taux: 0, categorie: "AE" }] }],
     attendu: {
-      pieces: { "ST-2": { "604000": { debit: 6000 }, "445200": { credit: 1000 }, "401000": { credit: 5000 } } },
+      pieces: { "ST-2": { "604000": { debit: 6000 }, "445220": { credit: 1000 }, "401000": { credit: 5000 } } },
       comptes: { "445662": { debit: 0 } },
       alertes: ["ST-2 (Menuiserie Arnaud) : autoliquidation (catégorie AE"],
     },
@@ -369,7 +376,7 @@ export const SCENARIOS: Scenario[] = [
     annee: "2023",
     recues: [{ numero: "ST-3", date: "2023-09-12", fournisseur: M, lignes: [{ libelle: "Fourniture", ht: 1000, taux: 20 }, { libelle: "Pose", ht: 2000, taux: 0, categorie: "AE" }] }],
     attendu: {
-      pieces: { "ST-3": { "604000": { debit: 3000 }, "445660": { debit: 200 }, "445662": { debit: 400 }, "445200": { credit: 400 }, "401000": { credit: 3200 } } },
+      pieces: { "ST-3": { "604000": { debit: 3000 }, "445660": { debit: 200 }, "445662": { debit: 400 }, "445220": { credit: 400 }, "401000": { credit: 3200 } } },
       alertes: ["ST-3 (Menuiserie Arnaud) : autoliquidation (catégorie AE"],
     },
   },
@@ -385,10 +392,10 @@ export const SCENARIOS: Scenario[] = [
     ],
     attendu: {
       pieces: {
-        "ST-AC": { "409100": { debit: 3000 }, "445662": { debit: 600 }, "445200": { credit: 600 }, "401000": { credit: 3000 } },
-        "ST-SO": { "604000": { debit: 10000 }, "445662": { debit: 1400 }, "445200": { credit: 1400 }, "409100": { credit: 3000 }, "401000": { credit: 7000 } },
+        "ST-AC": { "409100": { debit: 3000 }, "445662": { debit: 600 }, "445220": { credit: 600 }, "401000": { credit: 3000 } },
+        "ST-SO": { "604000": { debit: 10000 }, "445662": { debit: 1400 }, "445220": { credit: 1400 }, "409100": { credit: 3000 }, "401000": { credit: 7000 } },
       },
-      comptes: { "445200": { credit: 2000 }, "445662": { debit: 2000 }, "409100": { debit: 3000, credit: 3000 } },
+      comptes: { "445220": { credit: 2000 }, "445662": { debit: 2000 }, "409100": { debit: 3000, credit: 3000 } },
       alertes: ["ST-AC (Menuiserie Arnaud) : autoliquidation (catégorie AE", "ST-SO (Menuiserie Arnaud) : autoliquidation (catégorie AE"],
     },
   },
@@ -403,10 +410,10 @@ export const SCENARIOS: Scenario[] = [
     ],
     attendu: {
       pieces: {
-        "ST-AC2": { "409100": { debit: 3600 }, "445200": { credit: 600 }, "401000": { credit: 3000 } },
-        "ST-SO2": { "604000": { debit: 12000 }, "445200": { credit: 1400 }, "409100": { credit: 3600 }, "401000": { credit: 7000 } },
+        "ST-AC2": { "409100": { debit: 3600 }, "445220": { credit: 600 }, "401000": { credit: 3000 } },
+        "ST-SO2": { "604000": { debit: 12000 }, "445220": { credit: 1400 }, "409100": { credit: 3600 }, "401000": { credit: 7000 } },
       },
-      comptes: { "445200": { credit: 2000 }, "445662": { debit: 0 }, "409100": { debit: 3600, credit: 3600 } },
+      comptes: { "445220": { credit: 2000 }, "445662": { debit: 0 }, "409100": { debit: 3600, credit: 3600 } },
       alertes: ["ST-AC2 (Menuiserie Arnaud) : autoliquidation (catégorie AE", "ST-SO2 (Menuiserie Arnaud) : autoliquidation (catégorie AE"],
     },
   },
@@ -417,7 +424,7 @@ export const SCENARIOS: Scenario[] = [
     annee: "2023",
     recues: [{ numero: "ST-AV", date: "2023-09-20", fournisseur: M, type: 381, lignes: [{ libelle: "Avoir pose", ht: 1000, taux: 0, categorie: "AE" }] }],
     attendu: {
-      pieces: { "ST-AV": { "604000": { credit: 1000 }, "445662": { credit: 200 }, "445200": { debit: 200 }, "401000": { debit: 1000 } } },
+      pieces: { "ST-AV": { "604000": { credit: 1000 }, "445662": { credit: 200 }, "445220": { debit: 200 }, "401000": { debit: 1000 } } },
       alertes: ["ST-AV (Menuiserie Arnaud) : autoliquidation (catégorie AE"],
     },
   },
@@ -430,6 +437,105 @@ export const SCENARIOS: Scenario[] = [
     attendu: {
       pieces: { "US-FR": { "607000": { debit: 1000 }, "445660": { debit: 200 }, "401000": { credit: 1200 } } },
       alertes: ["US-FR (Gear Inc) : TVA française facturée par un fournisseur étranger"],
+    },
+  },
+  // ── Exactitude (21/11) : périmètre déclaré, sous-comptes, avoir, taux AE ──
+  {
+    nom: "hors-champ-tva-etrangere",
+    pourquoi: "TVA étrangère : opération située hors de France, jamais déclarée (statut « non déclarable »), mais en charge dans la comptabilité.",
+    dossier: { tva_regime: "normal" },
+    annee: "2023",
+    etrangers: [{ numero: "HC-ET", date: "2023-03-12", fournisseur: "Hotel Berlin", pays: "DE", tva: "DE123456789", categorie: "services", ht: 300, taux_tva: 19, montant_tva: 57, tva_facturee: "etrangere", parRoute: true, statutApresSaisie: "hors_champ" }],
+    attendu: { pieces: { "HC-ET": { "604000": { debit: 357 }, "401000": { credit: 357 } } } },
+  },
+  {
+    nom: "hors-champ-importation",
+    pourquoi: "Biens achetés hors UE sans TVA : importation, déclarée en douane, jamais à la plateforme ; aucune TVA sur l'écriture.",
+    dossier: { tva_regime: "normal" },
+    annee: "2023",
+    etrangers: [{ numero: "HC-IM", date: "2023-03-13", fournisseur: "Gear Inc", pays: "US", tva: "98-7654321", categorie: "biens", ht: 800, tva_facturee: "aucune", parRoute: true, statutApresSaisie: "hors_champ" }],
+    attendu: { pieces: { "HC-IM": { "607000": { debit: 800 }, "401000": { credit: 800 } } }, comptes: { "445200": { credit: 0 }, "445210": { credit: 0 } } },
+  },
+  {
+    nom: "declare-services-ue",
+    pourquoi: "Services d'un fournisseur de l'UE sans TVA : déclaré (reste en attente sur un compte de démonstration), TVA due intracommunautaire en 445200.",
+    dossier: { tva_regime: "normal" },
+    annee: "2023",
+    etrangers: [{ numero: "DC-UE", date: "2023-03-14", fournisseur: "Design BV", pays: "NL", tva: "NL859048676B01", categorie: "services", ht: 1000, tva_facturee: "aucune", parRoute: true, statutApresSaisie: "en_attente" }],
+    attendu: { pieces: { "DC-UE": { "604000": { debit: 1000 }, "445662": { debit: 200 }, "445200": { credit: 200 }, "401000": { credit: 1000 } } } },
+  },
+  {
+    nom: "autoliquidation-hors-ue",
+    pourquoi: "Services d'un fournisseur établi hors UE : autoliquidation ventilée dans son propre sous-compte (445210), pas avec l'intracommunautaire.",
+    dossier: { tva_regime: "normal" },
+    annee: "2023",
+    etrangers: [{ numero: "US-SV", date: "2023-03-15", fournisseur: "Cloud Inc", pays: "US", tva: "98-1234567", categorie: "services", ht: 500, tva_facturee: "aucune", parRoute: true, statutApresSaisie: "en_attente" }],
+    attendu: { pieces: { "US-SV": { "604000": { debit: 500 }, "445662": { debit: 100 }, "445210": { credit: 100 }, "401000": { credit: 500 } } }, comptes: { "445200": { credit: 0 } } },
+  },
+  {
+    nom: "avoir-fournisseur-etranger",
+    pourquoi: "Avoir d'un fournisseur de l'UE, saisi en montants positifs : l'écriture et l'autoliquidation s'inversent.",
+    dossier: { tva_regime: "normal" },
+    annee: "2023",
+    etrangers: [{ numero: "AV-DE", date: "2023-03-16", fournisseur: "Kreativ GmbH", pays: "DE", tva: "DE811569869", categorie: "services", ht: 500, tva_facturee: "aucune", avoir: true, parRoute: true }],
+    attendu: { pieces: { "AV-DE": { "604000": { credit: 500 }, "445662": { credit: 100 }, "445200": { debit: 100 }, "401000": { debit: 500 } } } },
+  },
+  {
+    nom: "recue-ae-taux-choisi",
+    pourquoi: "Facture de sous-traitance AE dont le titulaire a choisi 10 % : la TVA autoliquidée suit ce taux, plus rien à confirmer.",
+    dossier: { tva_regime: "normal" },
+    annee: "2023",
+    recues: [{ numero: "ST-10", date: "2023-04-10", fournisseur: M, lignes: [{ libelle: "Rénovation logement", ht: 2000, taux: 0, categorie: "AE" }] }],
+    tauxAe: [{ numero: "ST-10", taux: 10, status: 200 }],
+    attendu: { pieces: { "ST-10": { "604000": { debit: 2000 }, "445662": { debit: 200 }, "445220": { credit: 200 }, "401000": { credit: 2000 } } }, alertes: [] },
+  },
+  {
+    nom: "recue-ae-taux-refuse",
+    pourquoi: "Un taux inexistant (7 %), ou un taux posé sur une facture sans autoliquidation, est refusé ; le taux normal reste présumé et signalé.",
+    dossier: { tva_regime: "normal" },
+    annee: "2023",
+    recues: [
+      { numero: "ST-7", date: "2023-04-11", fournisseur: M, lignes: [{ libelle: "Pose", ht: 1000, taux: 0, categorie: "AE" }] },
+      { numero: "FA-S", date: "2023-04-12", fournisseur: F, lignes: [{ libelle: "Impression", ht: 100, taux: 20 }] },
+    ],
+    tauxAe: [{ numero: "ST-7", taux: 7, status: 400 }, { numero: "FA-S", taux: 10, status: 400 }],
+    attendu: { pieces: { "ST-7": { "445662": { debit: 200 }, "445220": { credit: 200 } } }, alertes: ["ST-7 (Menuiserie Arnaud) : autoliquidation (catégorie AE"] },
+  },
+  {
+    nom: "recue-ae-sans-ventilation",
+    pourquoi: "Facture AE dont la ventilation de TVA est vide : la part autoliquidée est lue sur les lignes.",
+    dossier: { tva_regime: "normal" },
+    annee: "2023",
+    recues: [{ numero: "ST-L", date: "2023-04-13", fournisseur: M, sansVentilation: true, lignes: [{ libelle: "Pose", ht: 1500, taux: 0, categorie: "AE" }] }],
+    attendu: { pieces: { "ST-L": { "604000": { debit: 1500 }, "445662": { debit: 300 }, "445220": { credit: 300 }, "401000": { credit: 1500 } } }, alertes: ["ST-L (Menuiserie Arnaud) : autoliquidation (catégorie AE"] },
+  },
+  {
+    nom: "solde-sans-tva-apres-acompte",
+    pourquoi: "Acompte à 20 %, solde sans TVA : la TVA déduite sur l'acompte est reprise, l'écriture reste équilibrée et le cabinet est prévenu.",
+    dossier: { tva_regime: "normal" },
+    annee: "2023",
+    recues: [
+      { numero: "MA-AC9", date: "2023-05-05", fournisseur: M, type: 386, lignes: [{ libelle: "Acompte", ht: 1000, taux: 20 }] },
+      { numero: "MA-S9", date: "2023-06-05", fournisseur: M, lignes: [{ libelle: "Solde exonéré", ht: 3000, taux: 0 }], dejaVerse: 1200, precedentes: [{ numero: "MA-AC9", type: 386 }] },
+    ],
+    attendu: {
+      pieces: { "MA-S9": { "604000": { debit: 3000 }, "445660": { debit: -200 }, "409100": { credit: 1000 }, "401000": { credit: 1800 } } },
+      comptes: { "445660": { debit: 0 }, "409100": { debit: 1000, credit: 1000 } },
+      alertes: ["MA-S9 (Menuiserie Arnaud) : TVA de l'acompte MA-AC9 à 20 % absente du solde"],
+    },
+  },
+  {
+    nom: "franchise-biens-ue-seuil",
+    pourquoi: "Dossier en franchise qui achète des biens dans l'UE sans TVA : le cabinet reçoit les cumuls d'acquisitions qui décident si la TVA est due.",
+    dossier: { tva_regime: "franchise", statut_juridique: "micro" },
+    annee: "2023",
+    etrangers: [
+      { numero: "BI-22", date: "2022-11-02", fournisseur: "Holz GmbH", pays: "DE", tva: "DE811569869", categorie: "biens", ht: 4000, tva_facturee: "aucune" },
+      { numero: "BI-23", date: "2023-05-02", fournisseur: "Holz GmbH", pays: "DE", tva: "DE811569869", categorie: "biens", ht: 2000, tva_facturee: "aucune" },
+    ],
+    attendu: {
+      pieces: { "BI-23": { "607000": { debit: 2400 }, "445200": { credit: 400 }, "401000": { credit: 2000 } } },
+      alertes: ["BI-23 (Holz GmbH) : dossier en franchise, acquisition de biens dans l'UE autoliquidée ; TVA due seulement au-delà de 10 000 € d'acquisitions (CGI art. 256 bis) ou sur option : 2000.00 € en 2023, 4000.00 € en 2022"],
     },
   },
   // ── Point 7 : alertes visibles avant l'export ────────────────────────────

@@ -96,6 +96,12 @@ export interface AchatExport {
    * fournisseur n'est du que de ce que dit la facture.
    */
   autoliquidees?: { taux: number; montant: number }[];
+  /**
+   * D'ou vient la TVA autoliquidee, pour la ventiler par sous-compte de 4452 :
+   * fournisseur de l'UE (TVA due intracommunautaire), fournisseur hors UE, ou
+   * autoliquidation interne francaise (categorie AE). Defaut : UE.
+   */
+  origineAutoliq?: "ue" | "hors_ue" | "france";
   /** Devise d'origine si autre que l'euro, et montant du fournisseur dans cette devise. */
   devise?: string | null;
   montantDevise?: number | null;
@@ -316,12 +322,18 @@ export function ecrituresComptables(
     // Solde d'acompte : la TVA deja deduite sur l'acompte ne se deduit pas une
     // seconde fois. On la retire du meme taux (a defaut, du premier).
     const imputations = !avoir && !a.autoliquidation ? a.imputations ?? [] : [];
+    const compteTvaDue =
+      a.origineAutoliq === "hors_ue" ? plan.tvaAutoliquideeHorsUe : a.origineAutoliq === "france" ? plan.tvaAutoliquideeFrance : plan.tvaAutoliquidee;
     const tvas = tvasTotales.map((t) => ({ ...t }));
     if (!a.nonDeductible && !a.tvaEtrangere) {
       for (const imp of imputations) {
         for (const ti of imp.tvas) {
-          const cible = tvas.find((t) => t.taux === ti.taux) ?? tvas[0];
+          // Au meme taux seulement. Un taux de l'acompte absent du solde (solde
+          // exonere, ou taux different) : sa TVA deja deduite est reprise
+          // (ligne negative a ce taux), jamais deplacee sur un autre taux.
+          const cible = tvas.find((t) => t.taux === ti.taux);
           if (cible) cible.montant = +(cible.montant - ti.montant).toFixed(2);
+          else tvas.push({ taux: ti.taux, montant: +(-ti.montant).toFixed(2) });
         }
       }
     }
@@ -338,7 +350,7 @@ export function ecrituresComptables(
         // ou elle est une charge.
         if (a.nonDeductible) charge += t.montant;
         else lignesTva.push({ compte: plan.tvaDeductibleAutoliq, compteLib: `TVA deductible autoliquidee ${t.taux}%`, auxNum: "", auxLib: "", ...sens(t.montant, true) });
-        lignesTva.push({ compte: plan.tvaAutoliquidee, compteLib: `TVA due autoliquidee ${t.taux}%`, auxNum: "", auxLib: "", ...sens(t.montant, false) });
+        lignesTva.push({ compte: compteTvaDue, compteLib: `TVA due autoliquidee ${t.taux}%`, auxNum: "", auxLib: "", ...sens(t.montant, false) });
       } else if (a.tvaEtrangere || a.nonDeductible) {
         charge += t.montant;
         duFournisseur += t.montant;
@@ -370,7 +382,7 @@ export function ecrituresComptables(
       if (m === 0) continue;
       if (a.nonDeductible) charge += m;
       else lignesTva.push({ compte: plan.tvaDeductibleAutoliq, compteLib: `TVA deductible autoliquidee ${t.taux}%`, auxNum: "", auxLib: "", ...sens(m, true) });
-      lignesTva.push({ compte: plan.tvaAutoliquidee, compteLib: `TVA due autoliquidee ${t.taux}%`, auxNum: "", auxLib: "", ...sens(m, false) });
+      lignesTva.push({ compte: compteTvaDue, compteLib: `TVA due autoliquidee ${t.taux}%`, auxNum: "", auxLib: "", ...sens(m, false) });
     }
     // Le fournisseur est du du TTC de la facture : la TVA retiree ci-dessus
     // reste due, elle a seulement deja ete deduite.

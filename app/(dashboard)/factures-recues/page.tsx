@@ -6,6 +6,8 @@ import { createAdminClient } from "@/lib/supabase/admin";
 import { getWorkspaceUserId, getWorkspaceProfile } from "@/lib/workspace";
 import { SyncButton } from "./SyncButton";
 import { FacturesRecuesListe } from "./FacturesRecuesListe";
+import { estTitulaire } from "@/lib/droits";
+import { baseAutoliquidee } from "@/lib/achats-export";
 
 export const metadata: Metadata = { title: "Factures reçues" };
 export const dynamic = "force-dynamic";
@@ -20,6 +22,9 @@ type Facture = {
   currency_code: string | null;
   last_status_code: string | null;
   received_at: string | null;
+  taux_autoliquidation: number | null;
+  en_invoice?: unknown;
+  base_ae?: number;
 };
 
 export default async function FacturesRecues() {
@@ -53,14 +58,20 @@ export default async function FacturesRecues() {
     // Seules les entrantes : les sortantes sont déjà dans « Factures ».
     supabase
       .from("superpdp_invoices")
-      .select("id, number, issue_date, payment_due_date, seller_name, total_with_vat, currency_code, last_status_code, received_at")
+      .select("id, number, issue_date, payment_due_date, seller_name, total_with_vat, currency_code, last_status_code, received_at, taux_autoliquidation, en_invoice")
       .eq("direction", "in")
       .order("issue_date", { ascending: false, nullsFirst: false })
       .limit(200),
   ]);
 
   const raccorde = raccordement?.session_status === "verified";
-  const liste = (factures ?? []) as Facture[];
+  // Part autoliquidée (catégorie AE) calculée ici, côté serveur : la facture
+  // structurée complète ne part pas au navigateur.
+  const liste = ((factures ?? []) as Facture[]).map(({ en_invoice, ...f }) => ({
+    ...f,
+    taux_autoliquidation: f.taux_autoliquidation === null ? null : Number(f.taux_autoliquidation),
+    base_ae: baseAutoliquidee(en_invoice),
+  }));
 
   return (
     <div className="w-full">
@@ -143,6 +154,7 @@ export default async function FacturesRecues() {
         <FacturesRecuesListe
           factures={liste}
           adresseAnnuaire={raccordement?.directory_address ?? null}
+          titulaire={estTitulaire(user.id, workspaceId)}
         />
       )}
     </div>

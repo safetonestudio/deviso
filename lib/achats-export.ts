@@ -1,7 +1,7 @@
 import { createAdminClient } from "@/lib/supabase/admin";
 import type { AchatExport } from "@/lib/exports-comptables";
 import { enFranchise } from "@/lib/statut-entreprise";
-import { natureTva, estTauxFrancais, estImportation, TAUX_AUTOLIQUIDATION_DEFAUT } from "@/lib/achats-tva";
+import { natureTva, estTauxFrancais, estImportation, PAYS_UE, TAUX_AUTOLIQUIDATION_DEFAUT } from "@/lib/achats-tva";
 
 /**
  * Les achats d'un dossier pour une année, prêts pour le FEC et Quadra
@@ -81,7 +81,16 @@ function ventilation(en: unknown): { taux: number; montant: number }[] | null {
  */
 export function baseAutoliquidee(en: unknown): number {
   const vb = (en as { vat_break_down?: unknown } | null)?.vat_break_down;
-  if (!Array.isArray(vb)) return 0;
+  if (!Array.isArray(vb) || vb.length === 0) {
+    // Sans ventilation : les lignes portent la catégorie (BT-151) et le net (BT-131).
+    const lignes = (en as { lines?: unknown } | null)?.lines;
+    if (!Array.isArray(lignes)) return 0;
+    return arrondi(
+      lignes
+        .filter((l: Record<string, unknown>) => String((l.vat_information as Record<string, unknown> | undefined)?.invoiced_item_vat_category_code ?? "").trim().toUpperCase() === "AE")
+        .reduce((x: number, l: Record<string, unknown>) => x + nombre(l.net_amount), 0)
+    );
+  }
   return arrondi(
     vb
       .filter((g: Record<string, unknown>) => String(g.vat_category_code ?? "").trim().toUpperCase() === "AE")
@@ -89,10 +98,17 @@ export function baseAutoliquidee(en: unknown): number {
   );
 }
 
-/** TVA autoliquidée d'une facture reçue en catégorie AE, au taux normal présumé. */
-function autoliquideesDe(en: unknown): { taux: number; montant: number }[] {
-  const base = baseAutoliquidee(en);
-  return base > 0 ? [{ taux: TAUX_AUTOLIQUIDATION, montant: arrondi((base * TAUX_AUTOLIQUIDATION) / 100) }] : [];
+/**
+ * TVA autoliquidée d'une facture reçue en catégorie AE : au taux choisi par le
+ * titulaire sur la facture, à défaut au taux normal (présumé, et signalé).
+ */
+function tauxAe(f: { taux_autoliquidation?: unknown }): number {
+  return estTauxFrancais(f.taux_autoliquidation) ? nombre(f.taux_autoliquidation) : TAUX_AUTOLIQUIDATION;
+}
+function autoliquideesDe(f: { en_invoice: unknown; taux_autoliquidation?: unknown }): { taux: number; montant: number }[] {
+  const base = baseAutoliquidee(f.en_invoice);
+  const taux = tauxAe(f);
+  return base > 0 ? [{ taux, montant: arrondi((base * taux) / 100) }] : [];
 }
 
 /** Cours BCE (unités de `devise` pour 1 euro) au `jour`, ou au dernier jour publié avant. */
@@ -133,6 +149,30 @@ export async function toutLire<T>(page: (de: number, a: number) => PromiseLike<{
   }
 }
 
+/** Cumuls d'acquisitions de biens dans l'UE sans TVA (avoirs déduits), année en cours et précédente. */
+async function cumulsBiensUe(userId: string, annee: number): Promise<string> {
+  const admin = createAdminClient();
+  const { data } = await admin
+    .from("superpdp_achats_int")
+    .select("date_facture, fournisseur_pays, categorie, tva_facturee, montant_ht, montant_ht_eur, devise, est_avoir")
+    .eq("user_id", userId)
+    .eq("categorie", "biens")
+    .eq("tva_facturee", "aucune")
+    .gte("date_facture", `${annee - 1}-01-01`)
+    .lte("date_facture", `${annee}-12-31`);
+  const par = new Map<number, number>([[annee - 1, 0], [annee, 0]]);
+  let incomplet = false;
+  for (const r of data ?? []) {
+    if (!PAYS_UE.includes(String(r.fournisseur_pays ?? "").toUpperCase())) continue;
+    const enEuros = (r.devise || "EUR").toUpperCase() === "EUR" ? nombre(r.montant_ht) : r.montant_ht_eur != null ? nombre(r.montant_ht_eur) : null;
+    if (enEuros === null) { incomplet = true; continue; }
+    const an = Number(String(r.date_facture).slice(0, 4));
+    par.set(an, (par.get(an) ?? 0) + (r.est_avoir ? -enEuros : enEuros));
+  }
+  const fmt = (n: number) => `${n.toFixed(2)} €`;
+  return `${fmt(par.get(annee) ?? 0)} en ${annee}, ${fmt(par.get(annee - 1) ?? 0)} en ${annee - 1}${incomplet ? " (hors achats en devise non encore convertis)" : ""}`;
+}
+
 export type AchatsDuDossier = {
   achats: AchatExport[];
   /** Achats qu'on n'a pas pu convertir en euros, décrits pour l'utilisateur. */
@@ -151,6 +191,8 @@ type Recue = {
   total_with_vat: unknown;
   last_status_code: string | null;
   en_invoice: unknown;
+  /** Taux français choisi pour une facture en autoliquidation (AE) ; null = 20 % présumé. */
+  taux_autoliquidation?: unknown;
 };
 
 const ACOMPTE = "386";
@@ -218,7 +260,7 @@ export async function chargerAchats(
   const recues = await toutLire<Recue>((de, a) =>
     admin
       .from("superpdp_invoices")
-      .select("id, number, issue_date, seller_name, total_without_vat, total_vat, total_with_vat, last_status_code, en_invoice")
+      .select("id, number, issue_date, seller_name, total_without_vat, total_vat, total_with_vat, last_status_code, en_invoice, taux_autoliquidation")
       .eq("user_id", userId)
       .eq("direction", "in")
       .gte("issue_date", `${annee}-01-01`)
@@ -233,7 +275,7 @@ export async function chargerAchats(
     await toutLire<Recue>((de, a) =>
       admin
         .from("superpdp_invoices")
-        .select("id, number, issue_date, seller_name, total_without_vat, total_vat, total_with_vat, last_status_code, en_invoice")
+        .select("id, number, issue_date, seller_name, total_without_vat, total_vat, total_with_vat, last_status_code, en_invoice, taux_autoliquidation")
         .eq("user_id", userId)
         .eq("direction", "in")
         .eq("en_invoice->>type_code", ACOMPTE)
@@ -260,8 +302,16 @@ export async function chargerAchats(
           ttc: nombre(a.total_with_vat),
           tvas: tvasDe(a),
           // TVA autoliquidée déjà passée sur l'acompte : à ne pas repasser au solde.
-          autoliquidees: autoliquideesDe(a.en_invoice),
+          autoliquidees: autoliquideesDe(a),
         }));
+        // Un taux de TVA de l'acompte absent du solde : la TVA déduite sur
+        // l'acompte est reprise (lib/exports-comptables.ts). Le cabinet le voit.
+        const tauxSolde = new Set(tvasDe(f).map((t) => t.taux));
+        for (const a of trouves) {
+          for (const t of tvasDe(a).filter((t) => !tauxSolde.has(t.taux))) {
+            aVerifier.push(`${f.number ?? "Facture"} (${f.seller_name ?? "fournisseur"}) : TVA de l'acompte ${a.number ?? ""} à ${t.taux} % absente du solde, ${t.montant.toFixed(2)} € de TVA déduite reprise`);
+          }
+        }
       } else if (verse > 0 && acomptes.some((a) => a.id !== f.id && memeFournisseur(a, f))) {
         // Un déjà-versé sans acompte retrouvé chez un fournisseur qui en a
         // émis : on ne devine pas, on le signale.
@@ -273,9 +323,10 @@ export async function chargerAchats(
     // Sous-traitance autoliquidée (AE) : la TVA française est due par le
     // dossier, au taux normal faute de mieux, et le cabinet le confirme.
     const baseAe = baseAutoliquidee(en);
-    const autoliquidees = baseAe > 0 ? autoliquideesDe(en) : undefined;
-    if (autoliquidees) {
-      aVerifier.push(`${f.number ?? "Facture"} (${f.seller_name ?? "fournisseur"}) : autoliquidation (catégorie AE, sous-traitance ou autre) calculée à ${TAUX_AUTOLIQUIDATION} % sur ${baseAe.toFixed(2)} €, taux à confirmer`);
+    const autoliquidees = baseAe > 0 ? autoliquideesDe(f) : undefined;
+    // Taux non choisi sur la facture : 20 % présumé, à confirmer. Choisi : rien à signaler.
+    if (autoliquidees && !estTauxFrancais(f.taux_autoliquidation)) {
+      aVerifier.push(`${f.number ?? "Facture"} (${f.seller_name ?? "fournisseur"}) : autoliquidation (catégorie AE, sous-traitance ou autre) calculée à ${TAUX_AUTOLIQUIDATION} % sur ${baseAe.toFixed(2)} €, taux à confirmer sur la facture reçue`);
     }
     achats.push({
       ref: f.number ?? "",
@@ -289,6 +340,7 @@ export async function chargerAchats(
       acompte: estAcompte,
       imputations,
       autoliquidees,
+      origineAutoliq: "france",
       nonDeductible: franchise,
     });
   }
@@ -297,7 +349,7 @@ export async function chargerAchats(
   const etrangers = await toutLire((de, a) =>
     admin
       .from("superpdp_achats_int")
-      .select("id, fournisseur_nom, fournisseur_pays, fournisseur_tva, numero, date_facture, categorie, devise, montant_ht, taux_tva, montant_tva, taux_change, montant_ht_eur, montant_tva_eur, transmission_status, tva_facturee, taux_autoliquidation")
+      .select("id, fournisseur_nom, fournisseur_pays, fournisseur_tva, numero, date_facture, categorie, devise, montant_ht, taux_tva, montant_tva, taux_change, montant_ht_eur, montant_tva_eur, transmission_status, tva_facturee, taux_autoliquidation, est_avoir")
       .eq("user_id", userId)
       .gte("date_facture", `${annee}-01-01`)
       .lte("date_facture", `${annee}-12-31`)
@@ -366,6 +418,15 @@ export async function chargerAchats(
     const tvaFrancaise = nature === "francaise";
     const autoliquidation = nature === "aucune" && !importation;
     const tauxAutoliq = estTauxFrancais(a.taux_autoliquidation) ? nombre(a.taux_autoliquidation) : TAUX_AUTOLIQUIDATION;
+    const ue = PAYS_UE.includes(pays);
+    // Dossier en franchise qui acquiert des biens dans l'UE sans TVA : la TVA
+    // n'est due qu'au-delà de 10 000 € d'acquisitions sur l'année en cours ou
+    // la précédente, ou sur option (CGI art. 256 bis, I-2°). On donne au
+    // cabinet les cumuls qui le décident.
+    if (franchise && autoliquidation && biens && ue) {
+      const cumuls = await cumulsBiensUe(userId, Number(annee));
+      aVerifier.push(`${ref} (${a.fournisseur_nom}) : dossier en franchise, acquisition de biens dans l'UE autoliquidée ; TVA due seulement au-delà de 10 000 € d'acquisitions (CGI art. 256 bis) ou sur option : ${cumuls}`);
+    }
     achats.push({
       ref,
       date: a.date_facture,
@@ -382,6 +443,8 @@ export async function chargerAchats(
           ? [{ taux: nombre(a.taux_tva), montant: tvaFacturee }]
           : [],
       autoliquidation,
+      origineAutoliq: ue ? "ue" : "hors_ue",
+      avoir: a.est_avoir === true,
       tvaEtrangere,
       nonDeductible: franchise,
       devise: devise !== "EUR" ? devise : null,

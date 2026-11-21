@@ -57,6 +57,24 @@ const egal = (a: number, b: number) => Math.abs(a - b) < 0.005;
       const st = (construirePayloadB2bint(achat as never, nous, "9930").data[0].tax_subtotals[0]) as unknown as { tax_amount: string; tax_category: { code: string } };
       verifier(`déclaration, ${nom} : catégorie ${code}, TVA ${montant}`, st.tax_category.code === code && st.tax_amount === montant, JSON.stringify(st));
     }
+    // Biens de l'UE sans TVA : acquisition intracommunautaire (K) ; avoir : 381.
+    const biensUe = construirePayloadB2bint({ ...base, categorie: "biens", montant_tva: 0, taux_tva: 0, tva_facturee: "aucune" } as never, nous, "9930").data[0];
+    verifier("déclaration, biens de l'UE sans TVA : catégorie K (VATEX-EU-IC)", (biensUe.tax_subtotals[0].tax_category as { code?: string }).code === "K" && (biensUe.tax_subtotals[0].tax_category as { exemption_reason_code?: string }).exemption_reason_code === "VATEX-EU-IC", JSON.stringify(biensUe.tax_subtotals[0]));
+    const avoirDecl = construirePayloadB2bint({ ...base, montant_tva: 0, taux_tva: 0, tva_facturee: "aucune", est_avoir: true } as never, nous, "9930").data[0];
+    verifier("déclaration, avoir : type 381, montants positifs", avoirDecl.type_code === "381" && avoirDecl.total.tax_exclusive_amount === "1000.00", JSON.stringify({ t: avoirDecl.type_code, m: avoirDecl.total }));
+    // Schéma du vendeur : celui de l'État qui a attribué son n° de TVA.
+    const { schemaVendeur } = await import("@/lib/superpdp-achats");
+    verifier("schéma du vendeur : n° français d'un fournisseur allemand = schéma français (9957)", schemaVendeur("DE", "FR40303265045") === "9957");
+    verifier("schéma du vendeur : préfixe EL = Grèce (9933)", schemaVendeur("GR", "EL094259216") === "9933");
+    verifier("schéma du vendeur : n° allemand = schéma allemand (9930)", schemaVendeur("DE", "DE811569869") === "9930");
+    verifier("schéma du vendeur : identifiant hors UE sans préfixe d'État = aucun schéma TVA", schemaVendeur("US", "98-7654321") === null);
+    // Périmètre (CGI art. 290, I-3° ; BOI-TVA-DECLA-20-30-50-10 § 60).
+    const { motifHorsChamp } = await import("@/lib/achats-tva");
+    verifier("périmètre : TVA étrangère hors champ", !!motifHorsChamp({ tva_facturee: "etrangere", montant_tva: 19, categorie: "services", fournisseur_pays: "DE" }));
+    verifier("périmètre : importation hors champ", !!motifHorsChamp({ tva_facturee: "aucune", montant_tva: 0, categorie: "biens", fournisseur_pays: "US" }));
+    verifier("périmètre : services hors UE sans TVA déclarés", motifHorsChamp({ tva_facturee: "aucune", montant_tva: 0, categorie: "services", fournisseur_pays: "US" }) === null);
+    verifier("périmètre : biens UE sans TVA déclarés", motifHorsChamp({ tva_facturee: "aucune", montant_tva: 0, categorie: "biens", fournisseur_pays: "DE" }) === null);
+    verifier("périmètre : TVA française déclarée", motifHorsChamp({ tva_facturee: "francaise", montant_tva: 20, categorie: "biens", fournisseur_pays: "US" }) === null);
   }
   const scenarios = SCENARIOS.filter((s) => !filtre || filtre.split(",").includes(s.nom));
 
@@ -115,6 +133,13 @@ const egal = (a: number, b: number) => Math.abs(a - b) < 0.005;
       const { error } = await admin.from("superpdp_invoices").insert(lignes);
       if (error) { verifier("injection des factures reçues", false, error.message); continue; }
     }
+    // Taux d'autoliquidation choisis sur des factures reçues, par la route de l'écran.
+    for (const t of sc.tauxAe ?? []) {
+      const { data: fr } = await admin.from("superpdp_invoices").select("id").eq("user_id", client.userId).eq("direction", "in").eq("number", t.numero).maybeSingle();
+      if (!fr) { verifier(t.numero + " injectée avant le choix du taux", false); continue; }
+      const r = await client.call("/api/superpdp/factures-recues/" + fr.id, { method: "PATCH", body: JSON.stringify({ taux_autoliquidation: t.taux }) });
+      verifier("taux d'autoliquidation de " + t.numero + " : HTTP " + t.status, r.status === t.status, "HTTP " + r.status + " " + JSON.stringify(r.body).slice(0, 140));
+    }
     // Achats saisis comme l'écran les envoie : par la route de saisie (validation,
     // enregistrement), le reste injecté en base.
     let saisieOk = true;
@@ -125,9 +150,13 @@ const egal = (a: number, b: number) => Math.abs(a - b) < 0.005;
         taux_tva: a.taux_tva ?? 0, montant_tva: a.montant_tva ?? 0,
         ...(a.tva_facturee ? { tva_facturee: a.tva_facturee } : {}),
         ...(a.taux_autoliquidation !== undefined ? { taux_autoliquidation: a.taux_autoliquidation } : {}),
+        ...(a.avoir ? { est_avoir: true } : {}),
       }) });
       const attendu = a.refuse ?? 200;
       verifier(`saisie de ${a.numero} par la route : HTTP ${attendu}`, r.status === attendu, `HTTP ${r.status} ${JSON.stringify(r.body).slice(0, 160)}`);
+      if (a.statutApresSaisie && r.status === 200) {
+        verifier(`${a.numero} : statut « ${a.statutApresSaisie} » après la saisie`, r.body?.achat?.transmission_status === a.statutApresSaisie, String(r.body?.achat?.transmission_status));
+      }
       if (attendu === 200 && r.status !== 200) saisieOk = false;
     }
     if (!saisieOk) continue;
@@ -140,6 +169,7 @@ const egal = (a: number, b: number) => Math.abs(a - b) < 0.005;
         transmission_status: a.statut ?? "en_attente", retry_count: 0,
         ...(a.tva_facturee ? { tva_facturee: a.tva_facturee } : {}),
         ...(a.taux_autoliquidation !== undefined ? { taux_autoliquidation: a.taux_autoliquidation } : {}),
+        ...(a.avoir ? { est_avoir: true } : {}),
         ...(a.statut === "transmis" ? { superpdp_id: 700_000_000 + Math.floor(Math.random() * 90_000_000), transmitted_at: new Date().toISOString() } : {}),
         ...(a.statut === "echec" || a.statut === "action_requise" ? { transmission_error: "Refus simulé par le banc d'essai" } : {}),
       })));

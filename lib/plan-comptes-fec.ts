@@ -28,6 +28,10 @@ export type PlanComptesFec = {
   tvaDeductible: string;
   tvaDeductibleAutoliq: string;
   tvaAutoliquidee: string;
+  /** TVA due sur achats auprès d'un fournisseur établi hors UE (services, biens situés en France). */
+  tvaAutoliquideeHorsUe: string;
+  /** TVA due sur achats autoliquidés en France (sous-traitance du bâtiment, catégorie AE). */
+  tvaAutoliquideeFrance: string;
 };
 
 export const PLAN_PAR_DEFAUT: PlanComptesFec = {
@@ -47,6 +51,8 @@ export const PLAN_PAR_DEFAUT: PlanComptesFec = {
   tvaDeductible: "445660",
   tvaDeductibleAutoliq: "445662",
   tvaAutoliquidee: "445200",
+  tvaAutoliquideeHorsUe: "445210",
+  tvaAutoliquideeFrance: "445220",
 };
 
 export const LIBELLES_PLAN: Record<keyof PlanComptesFec, string> = {
@@ -65,7 +71,9 @@ export const LIBELLES_PLAN: Record<keyof PlanComptesFec, string> = {
   achatsBiens: "Achats de marchandises",
   tvaDeductible: "TVA déductible",
   tvaDeductibleAutoliq: "TVA déductible autoliquidée (achats à l'étranger)",
-  tvaAutoliquidee: "TVA due autoliquidée (achats à l'étranger)",
+  tvaAutoliquidee: "TVA due intracommunautaire (fournisseurs de l'UE)",
+  tvaAutoliquideeHorsUe: "TVA due autoliquidée (fournisseurs hors UE)",
+  tvaAutoliquideeFrance: "TVA due autoliquidée (sous-traitance, France)",
 };
 
 const estJournal = (v: unknown) => typeof v === "string" && /^[A-Z0-9]{1,6}$/.test(v);
@@ -95,6 +103,7 @@ export function validerPlan(saisie: unknown): { plan: PlanComptesFec } | { erreu
     ["tvaCollectee", "4457"], ["tvaNonExigible", "4457"], ["banque", "51"],
     ["fournisseurs", "401"], ["avancesFournisseurs", "409"], ["achatsServices", "60"], ["achatsBiens", "60"],
     ["tvaDeductible", "4456"], ["tvaDeductibleAutoliq", "4456"], ["tvaAutoliquidee", "4452"],
+    ["tvaAutoliquideeHorsUe", "4452"], ["tvaAutoliquideeFrance", "4452"],
   ];
   for (const [cle, prefixe] of classes) {
     if (!plan[cle].startsWith(prefixe)) return { erreur: `${LIBELLES_PLAN[cle]} : doit commencer par ${prefixe}` };

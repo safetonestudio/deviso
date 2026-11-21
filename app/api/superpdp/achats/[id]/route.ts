@@ -8,7 +8,7 @@ import {
   champsTva,
   transmettreAchat,
   patchStatut,
-  declarationExisteChezPa,
+  refusSiDeclare,
   type SaisieAchat,
   type AchatInternational,
 } from "@/lib/superpdp-achats";
@@ -55,7 +55,7 @@ export async function PATCH(req: NextRequest, ctx: { params: Promise<{ id: strin
 
   const { data: existant } = await admin
     .from("superpdp_achats_int")
-    .select("transmission_status")
+    .select("id, numero, transmission_status, superpdp_id, ppf_ereporting_id")
     .eq("id", id)
     .eq("user_id", workspaceId)
     .maybeSingle();
@@ -63,15 +63,10 @@ export async function PATCH(req: NextRequest, ctx: { params: Promise<{ id: strin
   if (!existant) {
     return NextResponse.json({ error: "Achat introuvable" }, { status: 404 });
   }
-  if (existant.transmission_status === "transmis") {
-    return NextResponse.json(
-      {
-        error: "Déjà déclaré",
-        message: "Cet achat a déjà été transmis à la Plateforme Agréée et ne peut plus être modifié.",
-      },
-      { status: 409 }
-    );
-  }
+  // Vérifié AVANT d'écrire : une correction ne doit jamais réécrire un achat
+  // que la plateforme a déjà reçu (réponse perdue), ni le redéclarer.
+  const refusPa = await refusSiDeclare(admin, workspaceId, existant as AchatInternational, "modifié");
+  if (refusPa) return NextResponse.json({ error: refusPa.error, message: refusPa.message }, { status: refusPa.status });
 
   const champs = {
     fournisseur_nom: corps.fournisseur_nom!.trim(),
@@ -96,13 +91,19 @@ export async function PATCH(req: NextRequest, ctx: { params: Promise<{ id: strin
     return NextResponse.json({ error: "Devise invalide", message: "La devise doit être un code à trois lettres (EUR, USD, GBP…)." }, { status: 400 });
   }
 
+  // Garde face au réessai automatique : jamais d'écriture sur un achat transmis entre-temps.
   const { data: achat, error: errMaj } = await admin
     .from("superpdp_achats_int")
     .update(champs)
     .eq("id", id)
     .eq("user_id", workspaceId)
+    .neq("transmission_status", "transmis")
+    .is("superpdp_id", null)
     .select("*")
-    .single();
+    .maybeSingle();
+  if (!errMaj && !achat) {
+    return NextResponse.json({ error: "Déjà transmis", message: "Cet achat vient d'être transmis : il ne peut plus être modifié." }, { status: 409 });
+  }
 
   if (errMaj || !achat) {
     return NextResponse.json(
@@ -155,37 +156,8 @@ export async function DELETE(_req: NextRequest, ctx: { params: Promise<{ id: str
     .maybeSingle();
   if (!achat) return NextResponse.json({ error: "Achat introuvable" }, { status: 404 });
 
-  const dejaParti =
-    achat.transmission_status === "transmis" || achat.superpdp_id !== null || achat.ppf_ereporting_id !== null;
-  if (dejaParti) {
-    return NextResponse.json(
-      {
-        error: "Déjà transmis",
-        message: "Cet achat a été transmis à la plateforme agréée : sa déclaration existe, il ne peut pas être supprimé.",
-      },
-      { status: 409 }
-    );
-  }
-
-  const existe = await declarationExisteChezPa(workspaceId, achat as Pick<AchatInternational, "numero" | "id">);
-  if (existe === null) {
-    return NextResponse.json(
-      {
-        error: "Vérification impossible",
-        message: "Impossible de vérifier auprès de la plateforme agréée que cet achat n'a pas été déclaré. Réessaie dans un instant.",
-      },
-      { status: 503 }
-    );
-  }
-  if (existe) {
-    return NextResponse.json(
-      {
-        error: "Déjà déclaré",
-        message: "La plateforme agréée a déjà reçu la déclaration de cet achat : il ne peut pas être supprimé.",
-      },
-      { status: 409 }
-    );
-  }
+  const refusPa = await refusSiDeclare(admin, workspaceId, achat as AchatInternational, "supprimé");
+  if (refusPa) return NextResponse.json({ error: refusPa.error, message: refusPa.message }, { status: refusPa.status });
 
   // Le statut est revérifié dans la suppression même : une transmission du
   // cron entre la lecture et ici ne doit pas être effacée.

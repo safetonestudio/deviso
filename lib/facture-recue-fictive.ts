@@ -26,6 +26,8 @@ export type FactureRecue = {
   precedentes?: { numero: string; type?: number }[];
   /** Dernier statut de cycle de vie (fr:200 déposée, fr:210 refusée, fr:213 rejetée...). */
   statut?: string;
+  /** Ventilation de TVA vide (le tableau reste présent, exigé par le schéma) : la lecture doit se rabattre sur les lignes. */
+  sansVentilation?: boolean;
 };
 
 const m = (n: number) => (Math.round(n * 100) / 100).toFixed(2);
@@ -66,7 +68,7 @@ export function enInvoice(f: FactureRecue, acheteur: string): Record<string, unk
     },
     buyer: { name: acheteur, postal_address: { country_code: "FR" } },
     totals,
-    vat_break_down: groupes.map((g) => ({
+    vat_break_down: f.sansVentilation ? [] : groupes.map((g) => ({
       vat_category_taxable_amount: m(g.base),
       vat_category_tax_amount: m(g.tva),
       vat_category_code: g.categorie,

@@ -3,7 +3,7 @@ import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { getWorkspaceUserId } from "@/lib/workspace";
 import { exigerTitulaire } from "@/lib/droits";
-import { transmettreAchat, patchStatut, type AchatInternational } from "@/lib/superpdp-achats";
+import { transmettreAchat, patchStatut, refusSiDeclare, type AchatInternational } from "@/lib/superpdp-achats";
 
 /**
  * Retente la transmission d'un achat international resté en attente ou en échec.
@@ -47,6 +47,11 @@ export async function POST(_req: NextRequest, ctx: { params: Promise<{ id: strin
       dejaTransmis: true,
     });
   }
+
+  // Réponse perdue après un envoi réussi : la déclaration existe déjà, on se
+  // resynchronise au lieu d'en créer une seconde.
+  const refusPa = await refusSiDeclare(admin, workspaceId, achat as AchatInternational, "retransmis");
+  if (refusPa) return NextResponse.json({ error: refusPa.error, message: refusPa.message }, { status: refusPa.status });
 
   const resultat = await transmettreAchat(workspaceId, achat as AchatInternational);
 

@@ -1,4 +1,5 @@
 import { SignalerProbleme } from "./SignalerProbleme";
+import { TauxAutoliquidation } from "./TauxAutoliquidation";
 import { libelleStatut, estCloture } from "@/lib/superpdp-statuts";
 import { ExplicationProbleme } from "@/components/ui/ExplicationProbleme";
 import { expliquerFactureRecue } from "@/lib/superpdp-explications";
@@ -26,6 +27,10 @@ type Facture = {
   currency_code: string | null;
   last_status_code: string | null;
   received_at: string | null;
+  /** Taux français choisi pour la part autoliquidée (AE), null = 20 % présumé. */
+  taux_autoliquidation?: number | null;
+  /** Base autoliquidée (catégorie AE), 0 sinon. */
+  base_ae?: number;
 };
 
 const ESP = " ";
@@ -82,9 +87,11 @@ function Tuile({ libelle, valeur, alerte }: { libelle: string; valeur: string; a
 export function FacturesRecuesListe({
   factures,
   adresseAnnuaire,
+  titulaire = false,
 }: {
   factures: Facture[];
   adresseAnnuaire: string | null;
+  titulaire?: boolean;
 }) {
   const totalDu = factures
     .filter((f) => !estCloture(f.last_status_code))
@@ -160,6 +167,15 @@ export function FacturesRecuesListe({
                 </dl>
 
                 {ex && <ExplicationProbleme ton={ex.ton} probleme={ex.probleme} etapes={ex.etapes} />}
+
+                {(f.base_ae ?? 0) > 0 && (
+                  <TauxAutoliquidation
+                    factureId={f.id}
+                    base={euros(f.base_ae ?? 0, "EUR")}
+                    taux={f.taux_autoliquidation ?? null}
+                    modifiable={titulaire}
+                  />
+                )}
 
                 <div className="flex flex-wrap items-center gap-3">
                   <a
