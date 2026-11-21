@@ -5,7 +5,7 @@ import { dossiersDuCabinet } from "@/lib/cabinet-acces";
 import { journaliser } from "@/lib/cabinet-journal";
 import { genererFec, genererCsvFactures, nomFichierFec, segmentFichier, STATUTS_FEC } from "@/lib/exports-comptables";
 import { genererQuadra, nomPieceQuadra } from "@/lib/export-quadra";
-import { chargerAchats } from "@/lib/achats-export";
+import { chargerAchats, toutLire } from "@/lib/achats-export";
 import type { AchatExport } from "@/lib/exports-comptables";
 import { creerZip, type FichierZip } from "@/lib/zip";
 import { validerPlan, PLAN_PAR_DEFAUT } from "@/lib/plan-comptes-fec";
@@ -73,21 +73,28 @@ export async function GET(req: NextRequest) {
   const fichiers: FichierZip[] = [];
   /** Achats qu'on n'a pas pu convertir en euros, par dossier : jamais tus. */
   const nonRepris: string[] = [];
-  /** Soldes d'achat dont l'acompte n'a pas été retrouvé : à vérifier par le cabinet. */
+  /** Points d'achat à vérifier par le cabinet (acompte non retrouvé, achat étranger en échec...). */
   const aVerifier: string[] = [];
   let nbPdf = 0;
   const nomsPris = new Set<string>();
   for (const ownerId of selection) {
-    let q = admin
-      .from("invoices")
-      .select("*")
-      .eq("user_id", ownerId)
-      .gte("issue_date", `${year}-01-01`)
-      .lte("issue_date", `${year}-12-31`)
-      .order("issue_date", { ascending: true });
-    if (ecritures) q = q.in("status", [...STATUTS_FEC]);
-    const { data: invoices, error } = await q;
-    if (error) return NextResponse.json({ error: error.message }, { status: 500 });
+    // Page par page, comme les achats : au-delà de 1 000 lignes PostgREST
+    // tronque sans prévenir, et le FEC resterait équilibré, donc muet.
+    let invoices: Invoice[];
+    try {
+      invoices = await toutLire<Invoice>((de, a) => {
+        let q = admin
+          .from("invoices")
+          .select("*")
+          .eq("user_id", ownerId)
+          .gte("issue_date", `${year}-01-01`)
+          .lte("issue_date", `${year}-12-31`);
+        if (ecritures) q = q.in("status", [...STATUTS_FEC]);
+        return q.order("issue_date", { ascending: true }).order("id", { ascending: true }).range(de, a);
+      });
+    } catch (e) {
+      return NextResponse.json({ error: (e as Error).message }, { status: 500 });
+    }
 
     // Achats du dossier (factures reçues, achats à l'étranger) : le journal
     // des achats du FEC et de Quadra. Sans eux, le cabinet les ressaisissait.
@@ -183,7 +190,7 @@ export async function GET(req: NextRequest) {
   if (aVerifier.length > 0 && !(fichiers.length === 1 && !avecPdf)) {
     fichiers.push({
       nom: "ACHATS_A_VERIFIER.txt",
-      contenu: `Factures de solde dont l'acompte n'a pas été retrouvé (écriture passée telle que la facture) :\r\n${aVerifier.map((n) => `- ${n}`).join("\r\n")}\r\n`,
+      contenu: `Points que le cabinet doit vérifier (écritures passées telles que les pièces) :\r\n${aVerifier.map((n) => `- ${n}`).join("\r\n")}\r\n`,
     });
   }
 

@@ -37,13 +37,13 @@ const egal = (a: number, b: number) => Math.abs(a - b) < 0.005;
   const { compteQuadra } = await import("@/lib/export-quadra");
   const admin = createAdminClient();
   const filtre = process.argv[2];
-  const scenarios = SCENARIOS.filter((s) => !filtre || s.nom === filtre);
+  const scenarios = SCENARIOS.filter((s) => !filtre || filtre.split(",").includes(s.nom));
 
   // ── Comptes : le dossier joué, un second dossier vide, un cabinet ─────────
   const client = await openSession("banc-client");
   const autre = await openSession("banc-autre");
   const cabinet = await openSession("banc-cabinet");
-  const { data: estDemo } = await admin.from("profiles").select("id, is_demo, company_name").in("id", [client.userId, autre.userId]);
+  const { data: estDemo } = await admin.from("profiles").select("id, is_demo, company_name, full_name").in("id", [client.userId, autre.userId]);
   if ((estDemo ?? []).length !== 2 || (estDemo ?? []).some((p) => !p.is_demo)) {
     console.error("Refus : le banc n'écrit que dans des comptes de démonstration.");
     process.exit(1);
@@ -52,7 +52,8 @@ const egal = (a: number, b: number) => Math.abs(a - b) < 0.005;
     await admin.from("team_members").delete().eq("owner_id", dossier).eq("member_id", cabinet.userId);
     await admin.from("team_members").insert({ owner_id: dossier, member_id: cabinet.userId, email: cabinet.authEmail ?? "cabinet@example.com", role: "comptable", status: "active", accepted_at: new Date().toISOString() });
   }
-  const nomDossier = (estDemo ?? []).find((p) => p.id === client.userId)?.company_name ?? "";
+  const pClient = (estDemo ?? []).find((p) => p.id === client.userId);
+  const nomDossier = pClient?.company_name || pClient?.full_name || "Dossier";
 
   const resoudre = async (m: Montant | undefined): Promise<number | undefined> => {
     if (m === undefined || typeof m === "number") return m;
@@ -97,9 +98,21 @@ const egal = (a: number, b: number) => Math.abs(a - b) < 0.005;
       const { error } = await admin.from("superpdp_achats_int").insert(sc.etrangers.map((a) => ({
         user_id: client.userId, fournisseur_nom: a.fournisseur, fournisseur_pays: a.pays, fournisseur_tva: a.tva ?? null,
         numero: a.numero, date_facture: a.date, categorie: a.categorie, devise: a.devise ?? "EUR",
-        montant_ht: a.ht, taux_tva: a.taux_tva ?? 0, montant_tva: a.montant_tva ?? 0, transmission_status: "en_attente", retry_count: 0,
+        montant_ht: a.ht, taux_tva: a.taux_tva ?? 0, montant_tva: a.montant_tva ?? 0,
+        transmission_status: a.statut ?? "en_attente", retry_count: 0,
+        ...(a.statut === "transmis" ? { superpdp_id: 700_000_000 + Math.floor(Math.random() * 90_000_000), transmitted_at: new Date().toISOString() } : {}),
+        ...(a.statut === "echec" || a.statut === "action_requise" ? { transmission_error: "Refus simulé par le banc d'essai" } : {}),
       })));
       if (error) { verifier("injection des achats à l'étranger", false, error.message); continue; }
+    }
+    // Suppressions demandées par le titulaire, par la route, comme l'écran.
+    for (const sup of sc.supprimer ?? []) {
+      const { data: cible } = await admin.from("superpdp_achats_int").select("id").eq("user_id", client.userId).eq("numero", sup.numero).maybeSingle();
+      if (!cible) { verifier(`${sup.numero} injecté avant suppression`, false); continue; }
+      const r = await client.call(`/api/superpdp/achats/${cible.id}`, { method: "DELETE" });
+      verifier(`suppression de ${sup.numero} : HTTP ${sup.status} attendu`, r.status === sup.status, `HTTP ${r.status} ${JSON.stringify(r.body).slice(0, 140)}`);
+      const { data: reste } = await admin.from("superpdp_achats_int").select("id").eq("id", cible.id).maybeSingle();
+      verifier(`${sup.numero} ${sup.status === 200 ? "retiré" : "toujours"} en base`, sup.status === 200 ? !reste : !!reste);
     }
     for (const v of sc.ventes ?? []) {
       const cree = await client.call("/api/invoices", { method: "POST", body: JSON.stringify({
@@ -113,6 +126,29 @@ const egal = (a: number, b: number) => Math.abs(a - b) < 0.005;
       if (!id) { verifier("création d'une vente par l'API", false, `HTTP ${cree.status} ${JSON.stringify(cree.body).slice(0, 120)}`); continue; }
       await client.call(`/api/invoices/${id}`, { method: "PATCH", body: JSON.stringify({ status: "sent" }) });
       if (v.payeeLe) await client.call(`/api/invoices/${id}`, { method: "PATCH", body: JSON.stringify({ status: "paid", paid_at: v.payeeLe, payment_mode: "virement" }) });
+    }
+
+    if (sc.ventesEnMasse) {
+      const m = sc.ventesEnMasse;
+      const ttc = Math.round(m.ht * (1 + m.taux / 100) * 100) / 100;
+      const rows = Array.from({ length: m.nombre }, (_, k) => ({
+        user_id: client.userId, invoice_number: `BANC-${sc.annee}-${String(k + 1).padStart(5, "0")}`,
+        client_name: "Client Masse", client_company: "Client Masse", client_email: "banc@example.fr",
+        items: [{ description: "Prestation", quantity: 1, unit: "forfait", unit_price: m.ht, total: m.ht }],
+        total_ht: m.ht, tva_rate: m.taux, total_ttc: ttc, issue_date: m.date, due_date: m.date,
+        status: "sent", operation_category: "services", type_code: "380", invoice_type: "standard",
+      }));
+      let erreur = "";
+      for (let k = 0; k < rows.length && !erreur; k += 500) {
+        const { error } = await admin.from("invoices").insert(rows.slice(k, k + 500));
+        if (error) erreur = error.message;
+      }
+      if (erreur) { verifier("injection des ventes en masse", false, erreur); continue; }
+    }
+    // Plan de comptes du cabinet, par la route de son écran de réglage.
+    if (sc.planCabinet) {
+      const r = await cabinet.call("/api/profile", { method: "PATCH", body: JSON.stringify({ plan_comptes_fec: sc.planCabinet.plan }) });
+      verifier(`plan du cabinet : HTTP ${sc.planCabinet.status} attendu`, r.status === sc.planCabinet.status, `HTTP ${r.status} ${JSON.stringify(r.body).slice(0, 160)}`);
     }
 
     // 3. Les vrais exports.
@@ -148,10 +184,17 @@ const egal = (a: number, b: number) => Math.abs(a - b) < 0.005;
     verifier("Quadra : mêmes soldes que le FEC, compte par compte", ecartsQ.length === 0, ecartsQ.map((k) => `${k} FEC ${fParCompte.get(k)} / Quadra ${qParCompte.get(k)}`).join(", "));
     verifier("Quadra : enregistrements M de 251 caractères", mq.every((l) => l.length === 251));
 
+    // Alertes « à vérifier » de la note de l'archive : chacune attendue, aucune autre.
     const zip = texte(archive.octets);
-    const alertes = (zip.match(/acompte correspondant non retrouvé/g) ?? []).length;
-    verifier(`alertes « à vérifier » : ${sc.attendu.aVerifier ?? 0} attendue(s)`, alertes === (sc.attendu.aVerifier ?? 0), `${alertes} trouvée(s)`);
-    void nomDossier;
+    const acomptes = (zip.match(/acompte correspondant non retrouvé/g) ?? []).length;
+    if (sc.attendu.aVerifier !== undefined) verifier(`soldes à vérifier : ${sc.attendu.aVerifier} attendu(s)`, acomptes === sc.attendu.aVerifier, `${acomptes} trouvé(s)`);
+    const note = zip.match(/doit vérifier[^\n]*\r\n((?:- [^\r\n]*\r\n)+)/)?.[1] ?? "";
+    const lignesNote = note.split("\r\n").filter((l) => l.startsWith(`- ${nomDossier} : `));
+    const attendues = sc.attendu.alertes ?? (sc.attendu.aVerifier ? Array(sc.attendu.aVerifier).fill("acompte correspondant non retrouvé") : []);
+    verifier(`alertes « à vérifier » : ${attendues.length} attendue(s)`, lignesNote.length === attendues.length, lignesNote.join(" | ") || "aucune");
+    for (const a of new Set(attendues)) {
+      verifier(`alerte « ${a} »`, lignesNote.filter((l) => l.includes(a)).length === attendues.filter((x) => x === a).length, lignesNote.join(" | ") || "aucune");
+    }
 
     // 4b. Ce que le scénario attend.
     const somme = (filtreLigne: (c: string[]) => boolean, col: number) => lignes.filter(filtreLigne).reduce((s, c) => s + nb(c[col]), 0);
@@ -180,6 +223,7 @@ const egal = (a: number, b: number) => Math.abs(a - b) < 0.005;
       );
     }
     for (const piece of sc.attendu.absentes ?? []) verifier(`${piece} absente du FEC`, !lignes.some((c) => c[8] === piece));
+    if (sc.planCabinet) await cabinet.call("/api/profile", { method: "PATCH", body: JSON.stringify({ plan_comptes_fec: null }) });
   }
 
   // Le banc laisse les dossiers comme il les a trouvés : les liens du cabinet sont retirés.

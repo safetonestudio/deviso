@@ -635,6 +635,27 @@ async function listerDeclarationsB2bint(workspaceId: string): Promise<LigneB2bin
   return null; // au-dela de 50 000 lignes, on ne conclut rien
 }
 
+/**
+ * La Plateforme Agreee detient-elle deja une declaration pour cet achat ?
+ * (20/11/2026, suppression d'un achat non transmis.)
+ *
+ * Un achat reste « en attente » chez nous si la reponse a ete perdue APRES un
+ * 200 : la declaration existe alors chez elle. Le supprimer laisserait une
+ * declaration fiscale sans piece. On regarde donc avant. Renvoie null si la
+ * liste n'a pas pu etre lue en entier : l'appelant ne conclut jamais « absent ».
+ * Un compte de demonstration ne transmet jamais (transmettreAchat) : rien a lire.
+ */
+export async function declarationExisteChezPa(
+  workspaceId: string,
+  achat: Pick<AchatInternational, "numero" | "id">
+): Promise<boolean | null> {
+  if (await estCompteDemo(workspaceId)) return false;
+  const liste = await listerDeclarationsB2bint(workspaceId);
+  if (liste === null) return null;
+  const numero = numeroDeclaration(achat);
+  return liste.some((it) => it.number === numero && (it.direction ?? "in") === "in");
+}
+
 async function numerosDejaDeclares(workspaceId: string): Promise<Map<string, number>> {
   const map = new Map<string, number>();
   // Compte injoignable ou liste illisible : carte vide, le reessai suit son

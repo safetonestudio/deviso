@@ -107,16 +107,22 @@ export function genererQuadra(invoices: FactureExport[], options: OptionsQuadra 
   for (const e of ecritures) {
     const pj = e.nature === "vente" ? options.pieces?.get(e.ref) : undefined;
     for (const l of e.lignes) {
-      const montant = l.debit > 0 ? l.debit : l.credit;
-      if (!(montant > 0)) continue;
+      // Quadra veut un montant positif et un sens. Une ligne négative (TVA d'un
+      // solde inférieure à celle de son acompte, par exemple) s'écrit dans le
+      // sens inverse : un débit de -100 est un crédit de 100. L'ignorer
+      // déséquilibrait l'écriture importée.
+      const net = Math.round((l.debit - l.credit) * 100);
+      if (net === 0) continue;
+      const debit = net > 0;
+      const montant = Math.abs(net);
       const m = Array<string>(251).fill(" ");
       poser(m, 1, "M");
       poser(m, 2, l.auxNum ? alpha(auxiliaire(l), 8) : compteQuadra(l.compte));
       poser(m, 10, alpha(e.journal, 2));
       poser(m, 12, "000");
       poser(m, 15, jjmmaa(e.date));
-      poser(m, 42, l.debit > 0 ? "D" : "C");
-      poser(m, 43, "+" + String(Math.round(montant * 100)).padStart(12, "0"));
+      poser(m, 42, debit ? "D" : "C");
+      poser(m, 43, "+" + String(montant).padStart(12, "0"));
       poser(m, 70, l.auxNum ? lettrageQuadra(l.rangLettrage) : "  ");
       poser(m, 108, "EUR");
       poser(m, 111, alpha(e.journal, 3));

@@ -21,6 +21,8 @@ export type Sens = { debit?: Montant; credit?: Montant };
 export type AchatEtranger = {
   numero: string; date: string; fournisseur: string; pays: string; tva?: string;
   categorie: "biens" | "services"; devise?: string; ht: number; taux_tva?: number; montant_tva?: number;
+  /** État de la transmission (défaut : en_attente). « transmis » pose aussi un identifiant chez la plateforme. */
+  statut?: "en_attente" | "transmis" | "echec" | "action_requise";
 };
 
 export type Vente = {
@@ -43,9 +45,28 @@ export type Scenario = {
     comptes?: Record<string, Sens>;
     /** Pièces qui ne doivent PAS apparaître. */
     absentes?: string[];
-    /** Nombre de soldes signalés « à vérifier » au cabinet. */
+    /** Nombre de soldes signalés « à vérifier » au cabinet (acompte non retrouvé). */
     aVerifier?: number;
+    /**
+     * Toutes les alertes « à vérifier » du dossier : chacune doit apparaître
+     * (morceau de texte), et il n'y en a pas d'autre. Vide par défaut : un
+     * scénario qui n'en attend pas n'en tolère aucune.
+     */
+    alertes?: string[];
   };
+  /**
+   * Suppressions demandées par le titulaire, AVANT les exports : numéro de
+   * l'achat à l'étranger et code HTTP attendu. Un achat supprimé disparaît du
+   * FEC, un achat refusé y reste.
+   */
+  supprimer?: { numero: string; status: number }[];
+  /**
+   * Ventes écrites directement en base (émises, non payées), en nombre : pour
+   * passer le seuil de 1 000 lignes d'une lecture PostgREST.
+   */
+  ventesEnMasse?: { nombre: number; date: string; ht: number; taux: number };
+  /** Plan de comptes que le cabinet tente d'enregistrer, et le code HTTP attendu (remis à défaut après). */
+  planCabinet?: { plan: Record<string, string>; status: number };
 };
 
 const F = { nom: "Imprimerie Dupré", siren: "853322915" };
@@ -175,6 +196,71 @@ export const SCENARIOS: Scenario[] = [
       pieces: { "US-1": { "607000": { debit: { devise: "USD", date: "2023-10-02", montant: 1240 } }, "401000": { credit: { devise: "USD", date: "2023-10-02", montant: 1240 } } } },
       comptes: { "445200": { credit: 0 } },
     },
+  },
+  // ── Point 6 : suppression et échec de transmission des achats à l'étranger ──
+  {
+    nom: "etranger-suppression-non-transmis",
+    pourquoi: "Un achat saisi par erreur, jamais transmis : le titulaire le supprime, il disparaît de la comptabilité.",
+    dossier: { tva_regime: "normal" },
+    annee: "2023",
+    etrangers: [
+      { numero: "DE-ERR", date: "2023-02-01", fournisseur: "Doublon GmbH", pays: "DE", tva: "DE811569869", categorie: "services", ht: 300 },
+      { numero: "DE-OK", date: "2023-02-02", fournisseur: "Kreativ GmbH", pays: "DE", tva: "DE811569869", categorie: "services", ht: 400 },
+    ],
+    supprimer: [{ numero: "DE-ERR", status: 200 }],
+    attendu: { absentes: ["DE-ERR"], pieces: { "DE-OK": { "604000": { debit: 400 }, "401000": { credit: 400 } } } },
+  },
+  {
+    nom: "etranger-transmis-jamais-supprime",
+    pourquoi: "Un achat transmis à la plateforme : sa déclaration existe, la suppression est refusée et il reste en comptabilité.",
+    dossier: { tva_regime: "normal" },
+    annee: "2023",
+    etrangers: [{ numero: "DE-TX", date: "2023-02-03", fournisseur: "Kreativ GmbH", pays: "DE", tva: "DE811569869", categorie: "services", ht: 500, statut: "transmis" }],
+    supprimer: [{ numero: "DE-TX", status: 409 }],
+    attendu: { pieces: { "DE-TX": { "604000": { debit: 500 }, "445662": { debit: 100 }, "445200": { credit: 100 }, "401000": { credit: 500 } } } },
+  },
+  {
+    nom: "etranger-echec-compte-et-signale",
+    pourquoi: "Un achat dont la transmission a échoué : il a eu lieu, il reste en comptabilité, et le cabinet en est averti.",
+    dossier: { tva_regime: "normal" },
+    annee: "2023",
+    etrangers: [
+      { numero: "DE-KO", date: "2023-02-04", fournisseur: "Refus GmbH", pays: "DE", tva: "DE811569869", categorie: "services", ht: 250, statut: "echec" },
+      { numero: "US-AR", date: "2023-02-05", fournisseur: "Blocked Inc", pays: "US", tva: "98-7654321", categorie: "services", ht: 100, statut: "action_requise" },
+    ],
+    attendu: {
+      pieces: { "DE-KO": { "604000": { debit: 250 }, "401000": { credit: 250 } }, "US-AR": { "604000": { debit: 100 }, "401000": { credit: 100 } } },
+      alertes: ["DE-KO (Refus GmbH) : achat à l'étranger non déclaré", "US-AR (Blocked Inc) : achat à l'étranger non déclaré"],
+    },
+  },
+  // ── Point 8 : défauts Quadra et lecture des ventes ──────────────────────
+  {
+    nom: "quadra-ligne-negative",
+    pourquoi: "Solde dont la TVA est inférieure à celle de son acompte : lignes négatives, que Quadra doit écrire en sens inverse au lieu de les perdre.",
+    dossier: { tva_regime: "normal" },
+    annee: "2023",
+    recues: [
+      { numero: "MA-AC6", date: "2023-04-01", fournisseur: M, type: 386, lignes: [{ libelle: "Acompte", ht: 1000, taux: 20 }] },
+      { numero: "MA-S6", date: "2023-04-20", fournisseur: M, lignes: [{ libelle: "Solde réduit", ht: 500, taux: 20 }], dejaVerse: 1200, precedentes: [{ numero: "MA-AC6", type: 386 }] },
+    ],
+    attendu: { pieces: { "MA-S6": { "604000": { debit: 500 }, "445660": { debit: -100 }, "409100": { credit: 1000 }, "401000": { credit: -600 } } } },
+  },
+  {
+    nom: "quadra-journaux-deux-caracteres",
+    pourquoi: "Deux journaux qui ne diffèrent qu'au 3e caractère fusionneraient dans Quadra : le réglage est refusé.",
+    dossier: { tva_regime: "normal" },
+    annee: "2023",
+    planCabinet: { plan: { journalVentes: "VT1", journalAchats: "VT2" }, status: 400 },
+    recues: [{ numero: "FA-103", date: "2023-03-03", fournisseur: F, lignes: [{ libelle: "Impression", ht: 100, taux: 20 }] }],
+    attendu: { pieces: { "FA-103": { "604000": { debit: 100 }, "445660": { debit: 20 }, "401000": { credit: 120 } } } },
+  },
+  {
+    nom: "ventes-au-dela-de-1000",
+    pourquoi: "1 005 ventes sur l'année : au-delà de 1 000 lignes, une lecture non paginée en perdait sans rien dire.",
+    dossier: { tva_regime: "normal", statut_juridique: "societe" },
+    annee: "2023",
+    ventesEnMasse: { nombre: 1005, date: "2023-06-15", ht: 10, taux: 20 },
+    attendu: { comptes: { "706000": { credit: 10050 }, "445740": { credit: 2010 }, "411000": { debit: 12060 } } },
   },
   {
     nom: "vente-payee-et-achat",

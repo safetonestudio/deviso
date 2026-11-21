@@ -37,6 +37,28 @@ export function AchatsListe({ achats }: { achats: AchatInternational[] }) {
   const [enCours, setEnCours] = useState<string | null>(null);
   const [erreur, setErreur] = useState<string | null>(null);
   const [q, setQ] = useState("");
+  const [aConfirmer, setAConfirmer] = useState<string | null>(null);
+
+  // Suppression d'un achat saisi par erreur, tant qu'il n'est pas transmis :
+  // la route refuse tout achat transmis ou déjà reçu par la plateforme.
+  const supprimer = async (id: string) => {
+    setEnCours(id);
+    setErreur(null);
+    try {
+      const r = await fetch(`/api/superpdp/achats/${id}`, { method: "DELETE" });
+      const d = await r.json().catch(() => ({}));
+      if (!r.ok) {
+        setErreur(d.message ?? d.error ?? "La suppression n'a pas abouti.");
+        return;
+      }
+      setAConfirmer(null);
+      router.refresh();
+    } catch {
+      setErreur("Connexion interrompue. Réessaie.");
+    } finally {
+      setEnCours(null);
+    }
+  };
 
   const retransmettre = async (id: string) => {
     setEnCours(id);
@@ -147,6 +169,32 @@ export function AchatsListe({ achats }: { achats: AchatInternational[] }) {
                   >
                     {enCours === a.id ? "Envoi…" : "Retransmettre"}
                   </button>
+                  {aConfirmer === a.id ? (
+                    <span className="inline-flex flex-wrap items-center gap-2">
+                      <span className="text-sm text-gray-300">Supprimer cet achat ?</span>
+                      <button
+                        onClick={() => supprimer(a.id)}
+                        disabled={enCours === a.id}
+                        className="px-3 py-2 rounded-lg bg-red-600 text-white text-sm font-semibold hover:bg-red-700 transition-colors disabled:opacity-50"
+                      >
+                        {enCours === a.id ? "Suppression…" : "Oui, supprimer"}
+                      </button>
+                      <button
+                        onClick={() => setAConfirmer(null)}
+                        disabled={enCours === a.id}
+                        className="px-3 py-2 rounded-lg border border-ds-border text-gray-400 hover:text-ink text-sm font-medium transition-colors disabled:opacity-50"
+                      >
+                        Garder
+                      </button>
+                    </span>
+                  ) : (
+                    <button
+                      onClick={() => setAConfirmer(a.id)}
+                      className="inline-flex items-center gap-2 px-3 py-2 rounded-lg border border-ds-border text-red-400 text-sm font-semibold hover:bg-ds-elevated transition-colors"
+                    >
+                      Supprimer
+                    </button>
+                  )}
                 </div>
               )}
             </CarteDepliable>

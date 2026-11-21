@@ -3,7 +3,7 @@ import { createClient } from "@/lib/supabase/server";
 import { getWorkspaceUserId, getWorkspaceProfile } from "@/lib/workspace";
 import { exigerTitulaire } from "@/lib/droits";
 import { genererFec, nomFichierFec, STATUTS_FEC } from "@/lib/exports-comptables";
-import { chargerAchats } from "@/lib/achats-export";
+import { chargerAchats, toutLire } from "@/lib/achats-export";
 
 // GET /api/export/fec?year=2025, Solo + Pro.
 // Le contenu est fabrique par lib/exports-comptables, source partagee avec le
@@ -28,16 +28,25 @@ export async function GET(req: NextRequest) {
   const year = req.nextUrl.searchParams.get("year") ?? String(new Date().getFullYear());
   if (!/^\d{4}$/.test(year)) return NextResponse.json({ error: "Année invalide" }, { status: 400 });
 
-  const { data: invoices, error } = await supabase
-    .from("invoices")
-    .select("*")
-    .eq("user_id", workspaceId)
-    .in("status", [...STATUTS_FEC])
-    .gte("issue_date", `${year}-01-01`)
-    .lte("issue_date", `${year}-12-31`)
-    .order("issue_date", { ascending: true });
-
-  if (error) return NextResponse.json({ error: error.message }, { status: 500 });
+  // Page par page : au-delà de 1 000 lignes, PostgREST tronque sans prévenir,
+  // et un FEC privé de ses dernières ventes reste équilibré, donc muet.
+  let invoices;
+  try {
+    invoices = await toutLire((de, a) =>
+      supabase
+        .from("invoices")
+        .select("*")
+        .eq("user_id", workspaceId)
+        .in("status", [...STATUTS_FEC])
+        .gte("issue_date", `${year}-01-01`)
+        .lte("issue_date", `${year}-12-31`)
+        .order("issue_date", { ascending: true })
+        .order("id", { ascending: true })
+        .range(de, a)
+    );
+  } catch (e) {
+    return NextResponse.json({ error: (e as Error).message }, { status: 500 });
+  }
 
   // Achats (factures reçues, achats à l'étranger) : journal des achats.
   let lus;

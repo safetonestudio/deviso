@@ -101,7 +101,7 @@ const jourParis = (d: Date) =>
   new Intl.DateTimeFormat("fr-CA", { timeZone: "Europe/Paris", year: "numeric", month: "2-digit", day: "2-digit" }).format(d);
 
 /** Lit toutes les lignes, page par page : au-delà de 1 000, PostgREST tronque sans prévenir. */
-async function toutLire<T>(page: (de: number, a: number) => PromiseLike<{ data: T[] | null; error: { message: string } | null }>): Promise<T[]> {
+export async function toutLire<T>(page: (de: number, a: number) => PromiseLike<{ data: T[] | null; error: { message: string } | null }>): Promise<T[]> {
   const tout: T[] = [];
   for (let de = 0; ; de += PAGE) {
     const { data, error } = await page(de, de + PAGE - 1);
@@ -115,7 +115,7 @@ export type AchatsDuDossier = {
   achats: AchatExport[];
   /** Achats qu'on n'a pas pu convertir en euros, décrits pour l'utilisateur. */
   nonRepris: string[];
-  /** Points que le cabinet doit vérifier (solde dont l'acompte n'est pas retrouvé). */
+  /** Points que le cabinet doit vérifier (solde dont l'acompte n'est pas retrouvé, achat à l'étranger en échec de transmission). */
   aVerifier: string[];
 };
 
@@ -260,7 +260,7 @@ export async function chargerAchats(userId: string, annee: string): Promise<Acha
   const etrangers = await toutLire((de, a) =>
     admin
       .from("superpdp_achats_int")
-      .select("id, fournisseur_nom, fournisseur_pays, fournisseur_tva, numero, date_facture, categorie, devise, montant_ht, taux_tva, montant_tva, taux_change, montant_ht_eur, montant_tva_eur")
+      .select("id, fournisseur_nom, fournisseur_pays, fournisseur_tva, numero, date_facture, categorie, devise, montant_ht, taux_tva, montant_tva, taux_change, montant_ht_eur, montant_tva_eur, transmission_status")
       .eq("user_id", userId)
       .gte("date_facture", `${annee}-01-01`)
       .lte("date_facture", `${annee}-12-31`)
@@ -273,6 +273,11 @@ export async function chargerAchats(userId: string, annee: string): Promise<Acha
   for (const a of etrangers) {
     const devise = (a.devise || "EUR").toUpperCase();
     const ref = a.numero?.trim() || `ACHAT-${String(a.id).slice(0, 8)}`;
+    // L'achat a eu lieu, il reste en comptabilité ; mais sa déclaration n'est
+    // pas partie : le cabinet doit le savoir (20/11/2026).
+    if (a.transmission_status === "echec" || a.transmission_status === "action_requise") {
+      aVerifier.push(`${ref} (${a.fournisseur_nom}) : achat à l'étranger non déclaré, transmission en échec ; compté en comptabilité, déclaration à régulariser`);
+    }
     let ht = nombre(a.montant_ht);
     let tvaFacturee = nombre(a.montant_tva);
     if (devise !== "EUR") {

@@ -102,6 +102,13 @@ export function validerPlan(saisie: unknown): { plan: PlanComptesFec } | { erreu
   if (new Set([plan.journalVentes, plan.journalBanque, plan.journalAchats]).size < 3) {
     return { erreur: "Les journaux de ventes, d'achats et de banque doivent être différents" };
   }
+  // Quadra ne lit que 2 caractères de code journal (lib/export-quadra.ts) :
+  // « VT1 » et « VT2 » y deviendraient le même journal, ventes et achats
+  // mélangés sans erreur à l'import.
+  const deux = [plan.journalVentes, plan.journalBanque, plan.journalAchats].map((j) => j.slice(0, 2));
+  if (new Set(deux).size < 3) {
+    return { erreur: "Les journaux de ventes, d'achats et de banque doivent différer dès leurs 2 premiers caractères (Quadra n'en lit que 2)" };
+  }
   if (plan.tvaCollectee === plan.tvaNonExigible) return { erreur: "La TVA non exigible doit avoir son propre compte" };
   return { plan };
 }
