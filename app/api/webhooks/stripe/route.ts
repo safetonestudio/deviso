@@ -4,6 +4,21 @@ import { createAdminClient } from "@/lib/supabase/admin";
 import type Stripe from "stripe";
 import { envoyerCourriel } from "@/lib/resend";
 import { trialEndingEmailHtml } from "@/lib/emails/trial-ending";
+import { trialEndedEmailHtml, OBJET_ESSAI_TERMINE } from "@/lib/emails/trial-ended";
+import {
+  STATUT_ESSAI_TERMINE,
+  essaiTermineSansPaiement,
+  formuleEssayee,
+} from "@/lib/fin-essai";
+
+/**
+ * Un profil marqué « essai terminé » ne doit pas voir cet état effacé par la
+ * suite du récit Stripe (past_due -> unpaid -> canceled, quelques semaines plus
+ * tard) : l'écran de reprise disparaîtrait sans que rien n'ait été réglé. Seul
+ * un abonnement redevenu actif ou en essai l'efface. Filtre PostgREST : `neq`
+ * seul exclurait les NULL.
+ */
+const PAS_ESSAI_TERMINE = `subscription_status.is.null,subscription_status.neq.${STATUT_ESSAI_TERMINE}`;
 
 // Correspondance price_id → plan (mensuel ET annuel)
 function planFromPriceId(priceId: string): "solo" | "pro" | null {
@@ -93,6 +108,89 @@ export async function POST(req: NextRequest) {
   };
 
   try {
+  /**
+   * Fin d'essai sans carte : coupure, marque, et UN courriel.
+   *
+   * Traité avant le `switch`, parce que le même fait arrive sous deux types
+   * d'événements (voir lib/fin-essai.ts). La marque est écrite AVANT l'envoi et
+   * seulement si elle n'y était pas : un second récit du même fait (updated puis
+   * deleted, rejeu manuel) ne renvoie rien.
+   */
+  /**
+   * Sur le récit « impayé » (ancien réglage `create_invoice`), une carte
+   * refusée produit la même séquence qu'une absence de carte. On ne dit « aucune
+   * carte n'était enregistrée » que si c'est vrai.
+   */
+  let sansCarte = true;
+  if (event.type === "customer.subscription.updated" && essaiTermineSansPaiement(event)) {
+    const subImpaye = event.data.object as Stripe.Subscription;
+    const cust = await stripe.customers.retrieve(subImpaye.customer as string);
+    if (!(cust as Stripe.DeletedCustomer).deleted) {
+      sansCarte = !(cust as Stripe.Customer).invoice_settings?.default_payment_method;
+    }
+    // Un abonnement qui a déjà été payé une fois n'est pas une fin d'essai :
+    // c'est un impayé ordinaire.
+    if (sansCarte) {
+      const payees = await stripe.invoices.list({
+        subscription: subImpaye.id,
+        status: "paid",
+        limit: 10,
+      });
+      sansCarte = !payees.data.some((f) => f.amount_paid > 0);
+    }
+  }
+
+  if (sansCarte && essaiTermineSansPaiement(event)) {
+    const sub = event.data.object as Stripe.Subscription;
+    const customerId = sub.customer as string;
+    const formule = formuleEssayee(sub, planDeAbonnement);
+    const supprime = event.type === "customer.subscription.deleted";
+
+    const { data: marques, error } = await supabase
+      .from("profiles")
+      .update({
+        plan: "free",
+        subscription_status: STATUT_ESSAI_TERMINE,
+        stripe_subscription_id: supprime ? null : sub.id,
+      })
+      .eq("stripe_customer_id", customerId)
+      .or(PAS_ESSAI_TERMINE)
+      .select("id, email, full_name, is_demo");
+    if (error) throw error;
+
+    if (supprime) {
+      // Déjà marqué par un récit précédent (create_invoice -> past_due) : on
+      // oublie seulement l'abonnement mort, sans toucher à la marque.
+      await supabase
+        .from("profiles")
+        .update({ stripe_subscription_id: null })
+        .eq("stripe_customer_id", customerId)
+        .eq("stripe_subscription_id", sub.id);
+    }
+
+    for (const prof of marques ?? []) {
+      if (!prof.email || prof.is_demo) continue;
+      const appUrl = process.env.NEXT_PUBLIC_APP_URL ?? "https://getdeviso.fr";
+      const envoi = await envoyerCourriel(prof.id, {
+        from: "Deviso <noreply@getdeviso.fr>",
+        to: prof.email,
+        replyTo: "support@getdeviso.fr",
+        subject: OBJET_ESSAI_TERMINE,
+        html: trialEndedEmailHtml(prof.full_name ?? "", {
+          url: `${appUrl}/dashboard`,
+          planLabel: formule === "pro" ? "Pro" : "Solo",
+        }),
+      });
+      if (envoi.error) {
+        console.error(
+          `[stripe/webhook] fin d'essai de ${prof.id} : courriel NON parti (${envoi.error.message}). ` +
+            `La marque est posée, l'écran de reprise s'affichera quand même.`
+        );
+      } else {
+        console.info(`[stripe/webhook] fin d'essai : courriel envoyé au titulaire ${prof.id}`);
+      }
+    }
+  } else
   switch (event.type) {
 
     // ── Paiement initial réussi ──────────────────────────────────────────
@@ -188,18 +286,21 @@ export async function POST(req: NextRequest) {
 
       // trialing = utilisateur en essai → accès au plan souscrit (pas "free")
       const isActive = status === "active" || status === "trialing";
-      const { data: touchees, error } = await supabase
+      let requete = supabase
         .from("profiles")
         .update({
           plan: isActive ? plan : "free",
           subscription_status: status,
           stripe_subscription_id: sub.id,
         })
-        .eq("stripe_customer_id", customerId)
-        .select("id");
+        .eq("stripe_customer_id", customerId);
+      // Un impayé qui suit une fin d'essai ne remplace pas la marque « essai
+      // terminé » (sinon l'écran de reprise disparaît sans rien de réglé).
+      if (!isActive) requete = requete.or(PAS_ESSAI_TERMINE);
+      const { data: touchees, error } = await requete.select("id");
 
       if (error) throw error;
-      verifierPortee("customer.subscription.updated", touchees, customerId);
+      if (isActive) verifierPortee("customer.subscription.updated", touchees, customerId);
       break;
     }
 
@@ -216,10 +317,21 @@ export async function POST(req: NextRequest) {
           stripe_subscription_id: null,
         })
         .eq("stripe_customer_id", customerId)
+        .or(PAS_ESSAI_TERMINE)
         .select("id");
 
       if (error) throw error;
-      verifierPortee("customer.subscription.deleted", touchees, customerId);
+      if (!touchees || touchees.length === 0) {
+        // Essai déjà marqué terminé : la marque reste, l'abonnement mort est oublié.
+        const { data: marquees, error: e2 } = await supabase
+          .from("profiles")
+          .update({ plan: "free", stripe_subscription_id: null })
+          .eq("stripe_customer_id", customerId)
+          .eq("subscription_status", STATUT_ESSAI_TERMINE)
+          .select("id");
+        if (e2) throw e2;
+        verifierPortee("customer.subscription.deleted", marquees, customerId);
+      }
       break;
     }
 
@@ -243,14 +355,17 @@ export async function POST(req: NextRequest) {
       const plan = planDeAbonnement(sub);
       const { data: prof } = await supabase
         .from("profiles")
-        .select("email, full_name, is_demo")
+        .select("id, email, full_name, is_demo")
         .eq("stripe_customer_id", customerId)
         .maybeSingle();
 
       if (!prof?.email || prof.is_demo) break;
 
       const appUrl = process.env.NEXT_PUBLIC_APP_URL ?? "https://getdeviso.fr";
-      await envoyerCourriel(prof.email, {
+      // Premier argument = l'identifiant du profil (garde démo), pas l'adresse :
+      // l'adresse passait jusqu'ici, et la garde ne tenait que par le test
+      // `is_demo` juste au-dessus.
+      const rappel = await envoyerCourriel(prof.id, {
         from: "Deviso <noreply@getdeviso.fr>",
         to: prof.email,
         subject:
@@ -260,6 +375,11 @@ export async function POST(req: NextRequest) {
           planLabel: plan === "pro" ? "Pro" : "Solo",
         }),
       });
+      if (rappel.error) {
+        console.error(`[stripe/webhook] rappel J-3 de ${prof.id} : courriel NON parti (${rappel.error.message})`);
+      } else {
+        console.info(`[stripe/webhook] rappel J-3 : courriel envoy\u00e9 au titulaire ${prof.id}`);
+      }
       break;
     }
 
