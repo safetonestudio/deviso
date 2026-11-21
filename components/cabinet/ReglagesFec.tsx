@@ -49,7 +49,7 @@ export function ReglagesFec({ initial }: { initial: PlanComptesFec }) {
       <fieldset key={g.titre}>
         <legend className="text-sm font-semibold text-ink">{g.titre}</legend>
         {g.aide && <p className="text-[13px] text-gray-400 mt-0.5 mb-3">{g.aide}</p>}
-      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 items-end">
         {g.cles.map((cle) => (
           <label key={cle} className="block">
             <span className="block text-sm font-medium text-gray-300 mb-1.5">{LIBELLES_PLAN[cle]}</span>

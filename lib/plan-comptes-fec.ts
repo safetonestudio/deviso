@@ -70,7 +70,7 @@ export const LIBELLES_PLAN: Record<keyof PlanComptesFec, string> = {
   achatsServices: "Achats de prestations de services",
   achatsBiens: "Achats de marchandises",
   tvaDeductible: "TVA déductible",
-  tvaDeductibleAutoliq: "TVA déductible autoliquidée (achats à l'étranger)",
+  tvaDeductibleAutoliq: "TVA déductible autoliquidée (étranger et sous-traitance)",
   tvaAutoliquidee: "TVA due intracommunautaire (fournisseurs de l'UE)",
   tvaAutoliquideeHorsUe: "TVA due autoliquidée (fournisseurs hors UE)",
   tvaAutoliquideeFrance: "TVA due autoliquidée (sous-traitance, France)",
