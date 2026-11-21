@@ -83,7 +83,11 @@ export interface AchatExport {
    * retrouves par lib/achats-export.ts. Le solde porte le total : on solde
    * l'avance et on ne deduit que la TVA qui ne l'a pas deja ete.
    */
-  imputations?: { ref: string; ht: number; ttc: number; tvas: { taux: number; montant: number }[] }[];
+  imputations?: {
+    ref: string; ht: number; ttc: number; tvas: { taux: number; montant: number }[];
+    /** TVA autoliquidee (AE) deja passee sur l'acompte. */
+    autoliquidees?: { taux: number; montant: number }[];
+  }[];
   /**
    * TVA AUTOLIQUIDEE sur une facture recue d'un fournisseur francais
    * (categorie AE : sous-traitance du batiment, art. 283-2 nonies du CGI) : la
@@ -345,9 +349,25 @@ export function ecrituresComptables(
     }
     // Autoliquidation d'une facture francaise (AE) : due et deductible, sans
     // toucher au du fournisseur.
-    for (const t of a.autoliquidees ?? []) {
+    // Solde d'un acompte AE : la TVA autoliquidee de l'acompte a deja ete
+    // passee (due et deduite) ; on ne passe que le reste. En franchise, la
+    // charge porte bien le total : la part de l'acompte, portee en 4091 avec
+    // l'avance, en sort avec elle (voir l'imputation plus bas).
+    const autoliqRestante = (a.autoliquidees ?? []).map((t) => ({ ...t }));
+    let autoliqImputee = 0;
+    for (const imp of imputations) {
+      for (const ti of imp.autoliquidees ?? []) {
+        const cible = autoliqRestante.find((t) => t.taux === ti.taux) ?? autoliqRestante[0];
+        if (cible) {
+          cible.montant = +(cible.montant - ti.montant).toFixed(2);
+          autoliqImputee += ti.montant;
+        }
+      }
+    }
+    if (a.nonDeductible) charge += autoliqImputee;
+    for (const t of autoliqRestante) {
       const m = +t.montant.toFixed(2);
-      if (!(m > 0)) continue;
+      if (m === 0) continue;
       if (a.nonDeductible) charge += m;
       else lignesTva.push({ compte: plan.tvaDeductibleAutoliq, compteLib: `TVA deductible autoliquidee ${t.taux}%`, auxNum: "", auxLib: "", ...sens(m, true) });
       lignesTva.push({ compte: plan.tvaAutoliquidee, compteLib: `TVA due autoliquidee ${t.taux}%`, auxNum: "", auxLib: "", ...sens(m, false) });
@@ -366,7 +386,9 @@ export function ecrituresComptables(
     // deductible, comme elle a ete portee a l'acompte) ; le fournisseur n'est
     // plus du que du reste.
     for (const imp of imputations) {
-      const avance = a.nonDeductible || a.tvaEtrangere ? imp.ttc : imp.ht;
+      // En franchise, l'acompte AE a aussi porte sa TVA autoliquidee en 4091.
+      const autoliqImp = a.nonDeductible ? (imp.autoliquidees ?? []).reduce((x, t) => x + t.montant, 0) : 0;
+      const avance = a.nonDeductible || a.tvaEtrangere ? imp.ttc + autoliqImp : imp.ht;
       lignes.push({ compte: plan.avancesFournisseurs, compteLib: `Acompte ${texteSur(imp.ref)} impute`, auxNum: "", auxLib: "", ...sens(+avance.toFixed(2), false) });
       duFournisseur -= imp.ttc;
     }

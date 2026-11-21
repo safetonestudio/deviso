@@ -89,6 +89,12 @@ export function baseAutoliquidee(en: unknown): number {
   );
 }
 
+/** TVA autoliquidée d'une facture reçue en catégorie AE, au taux normal présumé. */
+function autoliquideesDe(en: unknown): { taux: number; montant: number }[] {
+  const base = baseAutoliquidee(en);
+  return base > 0 ? [{ taux: TAUX_AUTOLIQUIDATION, montant: arrondi((base * TAUX_AUTOLIQUIDATION) / 100) }] : [];
+}
+
 /** Cours BCE (unités de `devise` pour 1 euro) au `jour`, ou au dernier jour publié avant. */
 export async function coursBce(devise: string, jour: string): Promise<{ taux: number; date: string }> {
   const fin = new Date(`${jour}T12:00:00Z`);
@@ -253,6 +259,8 @@ export async function chargerAchats(
           ht: nombre(a.total_without_vat),
           ttc: nombre(a.total_with_vat),
           tvas: tvasDe(a),
+          // TVA autoliquidée déjà passée sur l'acompte : à ne pas repasser au solde.
+          autoliquidees: autoliquideesDe(a.en_invoice),
         }));
       } else if (verse > 0 && acomptes.some((a) => a.id !== f.id && memeFournisseur(a, f))) {
         // Un déjà-versé sans acompte retrouvé chez un fournisseur qui en a
@@ -265,9 +273,9 @@ export async function chargerAchats(
     // Sous-traitance autoliquidée (AE) : la TVA française est due par le
     // dossier, au taux normal faute de mieux, et le cabinet le confirme.
     const baseAe = baseAutoliquidee(en);
-    const autoliquidees = baseAe > 0 ? [{ taux: TAUX_AUTOLIQUIDATION, montant: arrondi((baseAe * TAUX_AUTOLIQUIDATION) / 100) }] : undefined;
+    const autoliquidees = baseAe > 0 ? autoliquideesDe(en) : undefined;
     if (autoliquidees) {
-      aVerifier.push(`${f.number ?? "Facture"} (${f.seller_name ?? "fournisseur"}) : autoliquidation (sous-traitance) calculée à ${TAUX_AUTOLIQUIDATION} % sur ${baseAe.toFixed(2)} €, taux à confirmer`);
+      aVerifier.push(`${f.number ?? "Facture"} (${f.seller_name ?? "fournisseur"}) : autoliquidation (catégorie AE, sous-traitance ou autre) calculée à ${TAUX_AUTOLIQUIDATION} % sur ${baseAe.toFixed(2)} €, taux à confirmer`);
     }
     achats.push({
       ref: f.number ?? "",
@@ -306,6 +314,13 @@ export async function chargerAchats(
     // pas partie : le cabinet doit le savoir (20/11/2026).
     if (a.transmission_status === "echec" || a.transmission_status === "action_requise") {
       aVerifier.push(`${ref} (${a.fournisseur_nom}) : achat à l'étranger non déclaré, transmission en échec ; compté en comptabilité, déclaration à régulariser`);
+    }
+    // TVA française facturée par un fournisseur étranger : déductible si elle
+    // était due. Un fournisseur non établi en France ne doit pas la facturer à
+    // un assujetti (CGI art. 283-1) ; s'il y est établi, sa facture arrive
+    // peut-être aussi par la plateforme. Le cabinet tranche.
+    if (natureTva(a) === "francaise") {
+      aVerifier.push(`${ref} (${a.fournisseur_nom}) : TVA française facturée par un fournisseur étranger, déduite ; à confirmer (CGI art. 283-1) et à rapprocher des factures reçues`);
     }
     let ht = nombre(a.montant_ht);
     let tvaFacturee = nombre(a.montant_tva);

@@ -277,7 +277,10 @@ export const SCENARIOS: Scenario[] = [
     dossier: { tva_regime: "normal" },
     annee: "2023",
     etrangers: [{ numero: "DE-FR", date: "2023-07-01", fournisseur: "Messe GmbH", pays: "DE", tva: "FR40303265045", categorie: "services", ht: 1000, taux_tva: 20, montant_tva: 200, tva_facturee: "francaise", parRoute: true }],
-    attendu: { pieces: { "DE-FR": { "604000": { debit: 1000 }, "445660": { debit: 200 }, "401000": { credit: 1200 } } }, comptes: { "445200": { credit: 0 }, "445662": { debit: 0 } } },
+    attendu: {
+      pieces: { "DE-FR": { "604000": { debit: 1000 }, "445660": { debit: 200 }, "401000": { credit: 1200 } } }, comptes: { "445200": { credit: 0 }, "445662": { debit: 0 } },
+      alertes: ["DE-FR (Messe GmbH) : TVA française facturée par un fournisseur étranger"],
+    },
   },
   {
     nom: "etranger-tva-francaise-franchise",
@@ -285,7 +288,10 @@ export const SCENARIOS: Scenario[] = [
     dossier: { tva_regime: "franchise", statut_juridique: "micro" },
     annee: "2023",
     etrangers: [{ numero: "DE-FR2", date: "2023-07-02", fournisseur: "Messe GmbH", pays: "DE", tva: "FR40303265045", categorie: "services", ht: 1000, taux_tva: 20, montant_tva: 200, tva_facturee: "francaise", parRoute: true }],
-    attendu: { pieces: { "DE-FR2": { "604000": { debit: 1200 }, "401000": { credit: 1200 } } }, comptes: { "445660": { debit: 0 } } },
+    attendu: {
+      pieces: { "DE-FR2": { "604000": { debit: 1200 }, "401000": { credit: 1200 } } }, comptes: { "445660": { debit: 0 } },
+      alertes: ["DE-FR2 (Messe GmbH) : TVA française facturée par un fournisseur étranger"],
+    },
   },
   {
     nom: "etranger-tva-etrangere-saisie",
@@ -341,7 +347,7 @@ export const SCENARIOS: Scenario[] = [
     attendu: {
       pieces: { "ST-1": { "604000": { debit: 5000 }, "445662": { debit: 1000 }, "445200": { credit: 1000 }, "401000": { credit: 5000 } } },
       comptes: { "445660": { debit: 0 } },
-      alertes: ["ST-1 (Menuiserie Arnaud) : autoliquidation (sous-traitance)"],
+      alertes: ["ST-1 (Menuiserie Arnaud) : autoliquidation (catégorie AE"],
     },
   },
   {
@@ -353,7 +359,7 @@ export const SCENARIOS: Scenario[] = [
     attendu: {
       pieces: { "ST-2": { "604000": { debit: 6000 }, "445200": { credit: 1000 }, "401000": { credit: 5000 } } },
       comptes: { "445662": { debit: 0 } },
-      alertes: ["ST-2 (Menuiserie Arnaud) : autoliquidation (sous-traitance)"],
+      alertes: ["ST-2 (Menuiserie Arnaud) : autoliquidation (catégorie AE"],
     },
   },
   {
@@ -364,7 +370,66 @@ export const SCENARIOS: Scenario[] = [
     recues: [{ numero: "ST-3", date: "2023-09-12", fournisseur: M, lignes: [{ libelle: "Fourniture", ht: 1000, taux: 20 }, { libelle: "Pose", ht: 2000, taux: 0, categorie: "AE" }] }],
     attendu: {
       pieces: { "ST-3": { "604000": { debit: 3000 }, "445660": { debit: 200 }, "445662": { debit: 400 }, "445200": { credit: 400 }, "401000": { credit: 3200 } } },
-      alertes: ["ST-3 (Menuiserie Arnaud) : autoliquidation (sous-traitance)"],
+      alertes: ["ST-3 (Menuiserie Arnaud) : autoliquidation (catégorie AE"],
+    },
+  },
+  // ── Relecture indépendante des points 3 et 5 : cas croisés ─────────────
+  {
+    nom: "recue-ae-acompte-puis-solde",
+    pourquoi: "Acompte puis solde d'un sous-traitant en AE : la TVA autoliquidée de l'acompte ne se repasse pas au solde.",
+    dossier: { tva_regime: "normal", statut_juridique: "societe" },
+    annee: "2023",
+    recues: [
+      { numero: "ST-AC", date: "2023-05-02", fournisseur: M, type: 386, lignes: [{ libelle: "Acompte pose", ht: 3000, taux: 0, categorie: "AE" }] },
+      { numero: "ST-SO", date: "2023-06-02", fournisseur: M, lignes: [{ libelle: "Pose", ht: 10000, taux: 0, categorie: "AE" }], dejaVerse: 3000, precedentes: [{ numero: "ST-AC", type: 386 }] },
+    ],
+    attendu: {
+      pieces: {
+        "ST-AC": { "409100": { debit: 3000 }, "445662": { debit: 600 }, "445200": { credit: 600 }, "401000": { credit: 3000 } },
+        "ST-SO": { "604000": { debit: 10000 }, "445662": { debit: 1400 }, "445200": { credit: 1400 }, "409100": { credit: 3000 }, "401000": { credit: 7000 } },
+      },
+      comptes: { "445200": { credit: 2000 }, "445662": { debit: 2000 }, "409100": { debit: 3000, credit: 3000 } },
+      alertes: ["ST-AC (Menuiserie Arnaud) : autoliquidation (catégorie AE", "ST-SO (Menuiserie Arnaud) : autoliquidation (catégorie AE"],
+    },
+  },
+  {
+    nom: "recue-ae-acompte-puis-solde-franchise",
+    pourquoi: "Le même couple en franchise : la TVA autoliquidée est due une fois et va en charge, l'avance (TVA comprise) est soldée en entier.",
+    dossier: { tva_regime: "franchise", statut_juridique: "micro" },
+    annee: "2023",
+    recues: [
+      { numero: "ST-AC2", date: "2023-05-03", fournisseur: M, type: 386, lignes: [{ libelle: "Acompte pose", ht: 3000, taux: 0, categorie: "AE" }] },
+      { numero: "ST-SO2", date: "2023-06-03", fournisseur: M, lignes: [{ libelle: "Pose", ht: 10000, taux: 0, categorie: "AE" }], dejaVerse: 3000, precedentes: [{ numero: "ST-AC2", type: 386 }] },
+    ],
+    attendu: {
+      pieces: {
+        "ST-AC2": { "409100": { debit: 3600 }, "445200": { credit: 600 }, "401000": { credit: 3000 } },
+        "ST-SO2": { "604000": { debit: 12000 }, "445200": { credit: 1400 }, "409100": { credit: 3600 }, "401000": { credit: 7000 } },
+      },
+      comptes: { "445200": { credit: 2000 }, "445662": { debit: 0 }, "409100": { debit: 3600, credit: 3600 } },
+      alertes: ["ST-AC2 (Menuiserie Arnaud) : autoliquidation (catégorie AE", "ST-SO2 (Menuiserie Arnaud) : autoliquidation (catégorie AE"],
+    },
+  },
+  {
+    nom: "recue-ae-avoir",
+    pourquoi: "Avoir d'un sous-traitant en AE : l'autoliquidation s'inverse avec lui.",
+    dossier: { tva_regime: "normal" },
+    annee: "2023",
+    recues: [{ numero: "ST-AV", date: "2023-09-20", fournisseur: M, type: 381, lignes: [{ libelle: "Avoir pose", ht: 1000, taux: 0, categorie: "AE" }] }],
+    attendu: {
+      pieces: { "ST-AV": { "604000": { credit: 1000 }, "445662": { credit: 200 }, "445200": { debit: 200 }, "401000": { debit: 1000 } } },
+      alertes: ["ST-AV (Menuiserie Arnaud) : autoliquidation (catégorie AE"],
+    },
+  },
+  {
+    nom: "etranger-tva-francaise-biens-hors-ue",
+    pourquoi: "TVA française sur des biens achetés hors UE : la nature saisie prime sur la règle d'importation, TVA déductible et signalée.",
+    dossier: { tva_regime: "normal" },
+    annee: "2023",
+    etrangers: [{ numero: "US-FR", date: "2023-09-21", fournisseur: "Gear Inc", pays: "US", tva: "FR40303265045", categorie: "biens", ht: 1000, taux_tva: 20, montant_tva: 200, tva_facturee: "francaise", parRoute: true }],
+    attendu: {
+      pieces: { "US-FR": { "607000": { debit: 1000 }, "445660": { debit: 200 }, "401000": { credit: 1200 } } },
+      alertes: ["US-FR (Gear Inc) : TVA française facturée par un fournisseur étranger"],
     },
   },
   // ── Point 7 : alertes visibles avant l'export ────────────────────────────

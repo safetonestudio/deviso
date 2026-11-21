@@ -19,7 +19,7 @@ export type NatureTva = "aucune" | "francaise" | "etrangere";
 
 export const NATURES_TVA: { valeur: NatureTva; libelle: string; aide: string }[] = [
   { valeur: "aucune", libelle: "Aucune TVA (autoliquidation)", aide: "La facture ne porte pas de TVA : tu la dois en France et tu la déduis. Cas le plus courant (services de l'UE)." },
-  { valeur: "francaise", libelle: "TVA française", aide: "Le fournisseur est immatriculé à la TVA en France et facture la TVA française : elle est déductible." },
+  { valeur: "francaise", libelle: "TVA française", aide: "La facture porte la TVA française (fournisseur enregistré à la TVA en France). Elle est déductible ; ton comptable vérifiera qu'elle était bien due." },
   { valeur: "etrangere", libelle: "TVA étrangère", aide: "TVA du pays du fournisseur (hôtel, salon, achat sur place) : elle n'est pas récupérable en France." },
 ];
 

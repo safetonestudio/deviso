@@ -191,7 +191,9 @@ export function SaisieAchatForm() {
           categorie,
           devise,
           montant_ht: Number(ht),
-          taux_tva: Number(taux),
+          // Sans TVA, le taux est nul (son champ est masqué) : un taux lu à
+          // l'import ne doit pas faire refuser la saisie.
+          taux_tva: nature === "aucune" ? 0 : Number(taux),
           montant_tva: nature === "aucune" ? 0 : Number(montantTva),
           tva_facturee: nature,
           taux_autoliquidation: Number(tauxAutoliq),
