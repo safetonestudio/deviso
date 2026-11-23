@@ -36,10 +36,11 @@ Source : [FAQ DGFiP, Je découvre](https://www.impots.gouv.fr/sites/default/file
 
 Source : *Dossier de spécifications externes de la facturation électronique*, DGFiP/AIFE,
 **version 2.1 du 29/07/2022**, chapitre 5 ([PDF officiel](https://www.impots.gouv.fr/sites/default/files/media/1_metier/2_professionnel/EV/2_gestion/290_facturation_electronique/specification_externes_b2b/version_2-1_du_29_07_2022/dossier-de-specifications-externes-de-la-facturation-electronique-v2.1.pdf)).
-⚠️ La version en vigueur est la v3.2 (30/04/2026, voir `dgfip-v3.2-extraits.md`), dont le
-chapitre annuaire n'a pas été relu ici. Les principes ci-dessous sont structurels et
-n'ont pas de raison d'avoir changé, mais ils sont à revérifier avant toute communication
-publique.
+✅ **Confirmé dans la v3.2** (dossier général du 30/04/2026, §3.5.3 et §3.5.5.5) :
+« Une ligne d'annuaire est unique » et porte la plateforme de réception. Seule une
+plateforme qui a « formellement contractualisé » avec l'entreprise peut la remplacer. Les
+délais de changement viennent du décret n° 2026-677 du 27/07/2026, article 7. Détail
+dans `reponses-documentation.md`, §4 et §5.
 
 - **Seul le destinataire doit être inscrit.** « il n'est pas nécessaire que les émetteurs
   de factures soient identifiés dans l'annuaire » (§2.5.2). Émettre ne demande donc
@@ -141,13 +142,20 @@ les 15 émissions, soit **0,15 € par mois**, et la vérification d'identité r
 toute façon. Pour 1 000 clients, cela représente environ 150 € par mois, face à 24 000 €
 d'abonnements Solo.
 
-**Ce qui n'est pas connu, à demander à Super PDP :**
-1. Les événements de cycle de vie (`fr:212`, refus, contestation) et les e-reportings
-   (achats étrangers, paiements B2C) sont-ils facturés comme une facture ?
-2. Les synchronisations horaires (lectures `GET /invoices`) sont-elles facturées ?
-   (question déjà notée dans le rapport pricing)
-3. Un compte raccordé en émission seule (`superpdp_send_and_receive=send`) est-il facturé
-   de la même façon (vérification d'identité comprise) ?
+**Tranché par la documentation** (relue en entier le 23/11, voir
+`reponses-documentation.md` §3) :
+- la réception est facturée comme l'émission (« prix à l'usage […] pour l'émission et la
+  réception », conditions générales) ;
+- les lectures et la synchronisation horaire ne figurent pas dans la grille, qui ne
+  compte que des factures (*déduit*) ;
+- l'annuaire public s'interroge sans compte, il ne peut pas être facturé (*déduit*) ;
+- la vérification d'identité fait partie de l'inscription, émission seule comprise
+  (*déduit*) ;
+- l'e-reporting de caisse : « une journée est comptée comme une facture ».
+
+**Reste à demander** (mail prêt dans `reponses-documentation.md`) : si les statuts
+(`fr:212`, refus, contestation) sont facturés, et comment sont comptées les déclarations
+d'achat international.
 
 ---
 
@@ -226,12 +234,20 @@ plateforme que vous avez choisie pour vos clients. Vos clients facturent dans De
 leurs factures d'achat continuent d'arriver chez vous. »* Elle répond directement à la
 crainte n° 1 relevée dans l'étude.
 
-**Ce qu'il reste à vérifier avant de s'y engager publiquement :**
-- que le mode `send` de Super PDP fonctionne en production pour une entreprise déjà
-  inscrite ailleurs, et ce qu'il coûte (questions §1.6) ;
-- le chapitre annuaire des spécifications v3.2 (§1.2) ;
-- la réponse de Super PDP sur jedeclare, qui pourrait un jour renvoyer au cabinet les
-  ventes émises par Deviso.
+**Ce qu'il reste à vérifier avant de s'y engager publiquement** (mis à jour le 23/11,
+d'après `reponses-documentation.md`) :
+- ~~le chapitre annuaire v3.2~~ : relu, il confirme le §1.2 ;
+- le mode `send` : documenté, et le cas « plateforme de réception différente de la
+  plateforme d'émission » est prévu par Super PDP (adresse technique `_replyto` pour
+  les statuts). Seul le premier raccordement réel en production le prouvera ;
+- **le forçage `receive` ne vole pas la réception en silence** : Super PDP envoie un
+  e-mail de reconfirmation avant toute portabilité, puis l'ancienne plateforme a 5 jours.
+  Mais un client lié par un mandat de type Audacc doit **prévenir son cabinet** avant
+  toute modification, sous peine de dégager la responsabilité du cabinet. Deviso doit
+  donc afficher l'avertissement de l'étape 1 avant d'ouvrir le tunnel ;
+- jedeclare : aucune trace d'un raccordement de Super PDP, et les conditions de
+  raccordement des plateformes ne sont pas publiées. C'est la seule question de fond à
+  poser à Super PDP.
 
 ---
 
@@ -286,8 +302,9 @@ manuel (`CLAUDE.md`, « Paiements »). Ce qui suit ne dépend que des règles lu
 1. **Le volume d'appels augmente, mais le coût reste négligeable.** Si toute facture
    validée part à Super PDP, et si chaque paiement rapproché déclenche un `fr:212`, un
    client type passe de ~0,15 € (émission au clic) à ~0,30 € par mois. On ajoute au plus
-   ~0,15 € si les événements d'encaissement sont facturés comme des factures, ce qu'il
-   faut demander (question 1 du §1.6). Le coût ne décide toujours rien.
+   ~0,15 € si les événements d'encaissement sont facturés comme des factures. La grille
+   tarifaire ne les mentionne pas, c'est l'une des deux questions de coût qui restent
+   (`reponses-documentation.md`). Le coût ne décide toujours rien.
 2. **Le rapprochement n'a d'effet fiscal que si Deviso a émis la facture.** L'encaissement
    se déclare par un statut rattaché à la facture, sur le chemin de la facture (§1.3).
    Si Deviso a émis par Super PDP, un paiement reconnu sur le relevé peut déclarer seul
