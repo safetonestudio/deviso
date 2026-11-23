@@ -208,9 +208,9 @@ export function ParcoursDocument({ intro }: { intro: ReactNode }) {
                   const etat =
                     i === montree
                       ? `translate-y-0 ${actif === 0 ? "opacity-35" : "opacity-100"}`
-                      : `${i < montree ? "-translate-y-12" : "translate-y-12"} opacity-0 invisible`;
+                      : `${i < montree ? "-translate-y-24" : "translate-y-24"} opacity-0 invisible`;
                   return (
-                    <li key={e.titre} aria-current={i === actif ? "step" : undefined} className={`[grid-area:1/1] self-center transition-[opacity,translate,visibility] duration-500 ease-out motion-reduce:transition-none motion-reduce:translate-y-0 ${etat}`}>
+                    <li key={e.titre} aria-current={i === actif ? "step" : undefined} className={`[grid-area:1/1] self-center transition-[opacity,translate,visibility] duration-700 ease-out motion-reduce:transition-none motion-reduce:translate-y-0 ${etat}`}>
                       <TexteEtape e={e} i={i} />
                     </li>
                   );
