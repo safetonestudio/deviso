@@ -66,7 +66,7 @@ function LoginForm() {
         <div className="bg-ds-surface rounded-2xl border border-ds-border p-8">
           {isInvite && (
             <div className="bg-indigo-500/10 border border-indigo-500/20 rounded-xl px-4 py-3 mb-5 text-sm text-indigo-300">
-              Connecte-toi pour accepter l'invitation et rejoindre l'équipe.
+              Connectez-vous pour accepter l'invitation et rejoindre l'équipe.
             </div>
           )}
 

@@ -56,7 +56,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: "Deviso, devis et factures pour indépendants et petites entreprises",
     description:
-      "Tes devis rédigés, tes factures conformes, tes relances envoyées. Plateforme agréée comprise, essai gratuit de 14 jours.",
+      "Vos devis rédigés, vos factures conformes, vos relances envoyées. Plateforme agréée comprise, essai gratuit de 14 jours.",
     type: "website",
     locale: "fr_FR",
     url: "https://getdeviso.fr",
@@ -66,7 +66,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "Deviso, devis et factures pour indépendants et petites entreprises",
     description:
-      "Tes devis rédigés, tes factures conformes, tes relances envoyées. Plateforme agréée comprise, essai gratuit de 14 jours.",
+      "Vos devis rédigés, vos factures conformes, vos relances envoyées. Plateforme agréée comprise, essai gratuit de 14 jours.",
   },
   robots: {
     index: true,

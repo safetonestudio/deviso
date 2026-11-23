@@ -11,7 +11,7 @@ export const metadata: Metadata = {
     title: "Devis artisan BTP en 30 secondes | Deviso",
     description: "Devis chantier avec TVA réduite et garantie décennale en 30s. Factur-X conforme 2026. Essai gratuit.",
     url: "https://getdeviso.fr/freelance-artisan",
-    images: [{ url: "https://getdeviso.fr/opengraph-image", width: 1200, height: 630, alt: "Deviso, logiciel de devis et facturation" }],
+    images: [{ url: "https://getdeviso.fr/opengraph-image?v=2", width: 1200, height: 630, alt: "Deviso, logiciel de devis et facturation" }],
   },
   twitter: {
     title: "Devis artisan BTP en 30 secondes | Deviso",
@@ -23,12 +23,12 @@ export default function Page() {
   return (
     <FreelanceLanding
       metaTitle="Devis et facturation pour artisans BTP | Deviso"
-      metaDescription="Génère un devis de chantier en 30 secondes avec les bons taux de TVA et la mention garantie décennale. Factur-X conforme 2026, acompte & solde."
+      metaDescription="Générez un devis de chantier en 30 secondes avec les bons taux de TVA et la mention garantie décennale. Factur-X conforme 2026, acompte & solde."
       canonical="https://getdeviso.fr/freelance-artisan"
       professionLabel="artisan BTP"
-      heroTitle="Tes devis de chantier,"
+      heroTitle="Vos devis de chantier,"
       heroHighlight="en 30 secondes"
-      heroSubtitle="Tu décris les travaux, matériaux, surface, main d'œuvre. L'IA génère un devis complet avec les bons taux de TVA et la mention garantie décennale. Ton client signe, tu démarres le chantier."
+      heroSubtitle="Vous décrivez les travaux, matériaux, surface, main d'œuvre. L'IA génère un devis complet avec les bons taux de TVA et la mention garantie décennale. Votre client signe, vous démarrez le chantier."
       painPoints={[
         {
           icon: HardHat,

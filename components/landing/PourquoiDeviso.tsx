@@ -10,17 +10,17 @@ const RAISONS = [
   {
     filet: "bg-blue-400",
     titre: "La réforme, réglée.",
-    texte: "Tes factures partent par une plateforme agréée par l'État, comprise dans ton abonnement. Avec la plupart des outils gratuits, il te faut en choisir une, souvent payante, et la relier toi-même.",
+    texte: "Vos factures partent par une plateforme agréée par l'État, comprise dans votre abonnement. Avec la plupart des outils gratuits, il faut en choisir une, souvent payante, et la raccorder vous-même.",
   },
   {
     filet: "bg-indigo-500",
-    titre: "Ton comptable branché.",
-    texte: "Il consulte tes devis, tes factures et tes exports en lecture seule, sans frais. Plus de fichiers à lui envoyer chaque mois.",
+    titre: "Votre comptable connecté.",
+    texte: "Il consulte vos devis, vos factures et vos exports en lecture seule, sans frais. Plus de fichiers à lui envoyer chaque mois.",
   },
   {
     filet: "bg-amber-400",
-    titre: "Tes clients relancés sans toi.",
-    texte: "Devis sans réponse, facture en retard : Deviso écrit à ton client à ta place, avec ton nom en expéditeur. Tu n'as plus à courir après ton argent.",
+    titre: "Vos clients relancés automatiquement.",
+    texte: "Devis sans réponse, facture en retard : Deviso écrit à votre client à votre place, avec votre nom en expéditeur. Vous n'avez plus à réclamer vos paiements.",
   },
 ];
 
@@ -29,10 +29,10 @@ export function PourquoiDeviso({ titre }: { titre: string }) {
     <div>
       <div className="reveal max-w-[760px]">
         <h2 id="titre-pourquoi" className={titre}>
-          Ce qu&apos;un outil gratuit te laisse sur les bras.
+          Ce qu&apos;un outil gratuit laisse à votre charge.
         </h2>
         <p className="mt-5 text-[17px] sm:text-[20px] leading-relaxed text-gray-300">
-          Faire une facture, n&apos;importe quel outil le sait. Deviso prend aussi en charge ce qui vient autour&nbsp;: la plateforme agréée, ton comptable, tes relances.
+          Faire une facture, n&apos;importe quel outil le sait. Deviso prend aussi en charge ce qui vient autour&nbsp;: la plateforme agréée, votre comptable, vos relances.
         </p>
       </div>
       <ul className="mt-12 sm:mt-16 grid gap-10 md:grid-cols-3 md:gap-8">

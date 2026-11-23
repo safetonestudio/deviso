@@ -19,7 +19,7 @@ export default function ForgotPasswordPage() {
       redirectTo: `${window.location.origin}/auth/callback?next=/reset-password`,
     });
     if (error) {
-      setError("Une erreur est survenue. Vérifie ton adresse email.");
+      setError("Une erreur est survenue. Vérifiez votre adresse email.");
       setLoading(false);
       return;
     }
@@ -45,7 +45,7 @@ export default function ForgotPasswordPage() {
               <MailCheck size={36} className="mx-auto mb-4 text-indigo-400" />
               <h1 className="text-xl font-semibold text-ink mb-2">Email envoyé !</h1>
               <p className="text-gray-400 text-sm mb-6">
-                Un lien de réinitialisation a été envoyé à <strong className="text-ink">{email}</strong>. Vérifie ta boîte mail.
+                Un lien de réinitialisation a été envoyé à <strong className="text-ink">{email}</strong>. Vérifiez votre boîte mail.
               </p>
               <Link href="/login" className="text-indigo-400 hover:text-indigo-300 font-semibold hover:underline text-sm">
                 Retour à la connexion
@@ -55,7 +55,7 @@ export default function ForgotPasswordPage() {
             <>
               <h1 className="text-2xl font-semibold text-ink mb-1">Mot de passe oublié</h1>
               <p className="text-gray-400 text-sm mb-6">
-                Saisis ton email et on t&apos;envoie un lien pour réinitialiser ton mot de passe.
+                Saisissez votre email et nous vous envoyons un lien pour réinitialiser votre mot de passe.
               </p>
 
               {error && (

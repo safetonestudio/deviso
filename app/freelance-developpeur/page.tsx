@@ -5,17 +5,17 @@ import { Banknote, Landmark, Settings } from "lucide-react";
 export const metadata: Metadata = {
   title: "Devis et facturation pour développeurs freelances",
   description:
-    "Génère un devis de développement en 30 secondes grâce à l'IA. Facture Factur-X, Chorus Pro B2G, acompte & solde. Essai gratuit sans carte bancaire.",
+    "Générez un devis de développement en 30 secondes grâce à l'IA. Facture Factur-X, Chorus Pro B2G, acompte & solde. Essai gratuit sans carte bancaire.",
   alternates: { canonical: "https://getdeviso.fr/freelance-developpeur" },
   openGraph: {
     title: "Devis de développeur web en 30 secondes | Deviso",
-    description: "Génère un devis de dev grâce à l'IA. Chorus Pro B2G, acompte & solde, Factur-X 2026. Essai gratuit.",
+    description: "Générez un devis de dev grâce à l'IA. Chorus Pro B2G, acompte & solde, Factur-X 2026. Essai gratuit.",
     url: "https://getdeviso.fr/freelance-developpeur",
-    images: [{ url: "https://getdeviso.fr/opengraph-image", width: 1200, height: 630, alt: "Deviso, logiciel de devis et facturation" }],
+    images: [{ url: "https://getdeviso.fr/opengraph-image?v=2", width: 1200, height: 630, alt: "Deviso, logiciel de devis et facturation" }],
   },
   twitter: {
     title: "Devis de développeur web en 30 secondes | Deviso",
-    description: "Génère un devis de dev grâce à l'IA. Chorus Pro B2G, acompte & solde, Factur-X 2026.",
+    description: "Générez un devis de dev grâce à l'IA. Chorus Pro B2G, acompte & solde, Factur-X 2026.",
   },
 };
 
@@ -23,17 +23,17 @@ export default function Page() {
   return (
     <FreelanceLanding
       metaTitle="Devis et facturation pour développeurs web freelances | Deviso"
-      metaDescription="Génère un devis de développement en 30 secondes grâce à l'IA. Facture Factur-X, Chorus Pro B2G, acompte & solde."
+      metaDescription="Générez un devis de développement en 30 secondes grâce à l'IA. Facture Factur-X, Chorus Pro B2G, acompte & solde."
       canonical="https://getdeviso.fr/freelance-developpeur"
       professionLabel="développeur freelance"
-      heroTitle="Tes devis de dev,"
+      heroTitle="Vos devis de dev,"
       heroHighlight="générés par l'IA"
-      heroSubtitle="Tu décris le projet, stack, fonctionnalités, délai. L'IA structure le devis en lots techniques. Ton client signe en ligne, tu factures acompte puis solde en 1 clic."
+      heroSubtitle="Vous décrivez le projet, stack, fonctionnalités, délai. L'IA structure le devis en lots techniques. Votre client signe en ligne, vous facturez acompte puis solde en 1 clic."
       painPoints={[
         {
           icon: Settings,
           title: "Estimer un projet tech est un art",
-          desc: "Décomposer en sprints, estimer les imprévus, chiffrer les intégrations tierces, ça prend des heures. L'IA de Deviso structure le devis en quelques secondes à partir de ta description.",
+          desc: "Décomposer en sprints, estimer les imprévus, chiffrer les intégrations tierces, ça prend des heures. L'IA de Deviso structure le devis en quelques secondes à partir de votre description.",
         },
         {
           icon: Landmark,

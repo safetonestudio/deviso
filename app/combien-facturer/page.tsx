@@ -21,7 +21,7 @@ export const metadata: Metadata = {
     description:
       "TJM junior/confirmé/senior pour 10 métiers freelance. Simulateur de revenus nets inclus.",
     url: "https://getdeviso.fr/combien-facturer",
-    images: [{ url: "https://getdeviso.fr/opengraph-image" }],
+    images: [{ url: "https://getdeviso.fr/opengraph-image?v=2" }],
   },
 };
 

@@ -11,7 +11,7 @@ export const metadata: Metadata = {
     title: "Devis community manager freelance en 30 secondes | Deviso",
     description: "Forfaits mensuels réseaux sociaux, reporting, création de contenus, devis en 30s, signature électronique. Essai gratuit.",
     url: "https://getdeviso.fr/freelance-community-manager",
-    images: [{ url: "https://getdeviso.fr/opengraph-image", width: 1200, height: 630, alt: "Deviso, logiciel de devis et facturation" }],
+    images: [{ url: "https://getdeviso.fr/opengraph-image?v=2", width: 1200, height: 630, alt: "Deviso, logiciel de devis et facturation" }],
   },
   twitter: {
     title: "Devis community manager freelance en 30 secondes | Deviso",
@@ -23,12 +23,12 @@ export default function Page() {
   return (
     <FreelanceLanding
       metaTitle="Devis et facturation community manager : logiciel et exemple | Deviso"
-      metaDescription="Génère un devis de gestion réseaux sociaux en 30 secondes. Forfaits mensuels, reporting, création de contenus, devis clairs et signés électroniquement."
+      metaDescription="Générez un devis de gestion réseaux sociaux en 30 secondes. Forfaits mensuels, reporting, création de contenus, devis clairs et signés électroniquement."
       canonical="https://getdeviso.fr/freelance-community-manager"
       professionLabel="community manager freelance"
-      heroTitle="Tes devis et factures de community manager,"
+      heroTitle="Vos devis et factures de community manager,"
       heroHighlight="en 30 secondes"
-      heroSubtitle="Tu décris la prestation, plateformes, volume de posts, création de visuels. L'IA structure un devis mensuel clair avec les bons livrables. Ton client signe, tu publies."
+      heroSubtitle="Vous décrivez la prestation, plateformes, volume de posts, création de visuels. L'IA structure un devis mensuel clair avec les bons livrables. Votre client signe, vous publiez."
       painPoints={[
         {
           icon: Smartphone,
@@ -37,13 +37,13 @@ export default function Page() {
         },
         {
           icon: Bell,
-          title: "Tes clients oublient de signer, puis de payer",
+          title: "Vos clients oublient de signer, puis de payer",
           desc: "Un client sans devis signé, c'est un client qui peut tout contester. Avec Deviso, il reçoit un lien sécurisé, signe en quelques secondes depuis son téléphone. Et si ça traîne, les relances partent automatiquement.",
         },
         {
           icon: BarChart3,
-          title: "Suivre ton CA de 10 clients en même temps",
-          desc: "Avec plusieurs forfaits mensuels actifs, savoir exactement ce que tu encaisses pour l'URSSAF devient complexe. Le widget CA de Deviso t'affiche tout en temps réel, mensuel et trimestriel.",
+          title: "Suivre votre CA de 10 clients en même temps",
+          desc: "Avec plusieurs forfaits mensuels actifs, savoir exactement ce que vous encaissez pour l'URSSAF devient complexe. Le widget CA de Deviso vous affiche tout en temps réel, mensuel et trimestriel.",
         },
       ]}
       mockupPrompt="Gestion des réseaux sociaux d'une PME e-commerce de mode (Instagram, LinkedIn, Facebook). 12 posts par mois par plateforme, création des visuels incluse, veille et réponse aux commentaires, 1 reporting mensuel avec KPIs. Durée : 3 mois renouvelables."

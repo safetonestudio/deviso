@@ -5,17 +5,17 @@ import { Banknote, FileText, PenLine } from "lucide-react";
 export const metadata: Metadata = {
   title: "Devis et facturation pour formateurs indépendants",
   description:
-    "Génère un devis de formation en 30 secondes avec tous les éléments OPCO requis. Acompte & solde, Factur-X conforme 2026. Essai gratuit.",
+    "Générez un devis de formation en 30 secondes avec tous les éléments OPCO requis. Acompte & solde, Factur-X conforme 2026. Essai gratuit.",
   alternates: { canonical: "https://getdeviso.fr/freelance-formateur" },
   openGraph: {
     title: "Devis de formateur indépendant en 30 secondes | Deviso",
-    description: "Génère un devis de formation avec mentions OPCO en 30s. Acompte & solde, Factur-X 2026. Essai gratuit.",
+    description: "Générez un devis de formation avec mentions OPCO en 30s. Acompte & solde, Factur-X 2026. Essai gratuit.",
     url: "https://getdeviso.fr/freelance-formateur",
-    images: [{ url: "https://getdeviso.fr/opengraph-image", width: 1200, height: 630, alt: "Deviso, logiciel de devis et facturation" }],
+    images: [{ url: "https://getdeviso.fr/opengraph-image?v=2", width: 1200, height: 630, alt: "Deviso, logiciel de devis et facturation" }],
   },
   twitter: {
     title: "Devis de formateur indépendant en 30 secondes | Deviso",
-    description: "Génère un devis de formation avec mentions OPCO en 30s. Acompte & solde, Factur-X 2026.",
+    description: "Générez un devis de formation avec mentions OPCO en 30s. Acompte & solde, Factur-X 2026.",
   },
 };
 
@@ -23,12 +23,12 @@ export default function Page() {
   return (
     <FreelanceLanding
       metaTitle="Devis et facturation pour formateurs indépendants | Deviso"
-      metaDescription="Génère un devis de formation en 30 secondes avec tous les éléments OPCO requis. Acompte & solde, Factur-X conforme 2026."
+      metaDescription="Générez un devis de formation en 30 secondes avec tous les éléments OPCO requis. Acompte & solde, Factur-X conforme 2026."
       canonical="https://getdeviso.fr/freelance-formateur"
       professionLabel="formateur indépendant"
-      heroTitle="Tes devis de formation,"
+      heroTitle="Vos devis de formation,"
       heroHighlight="en 30 secondes"
-      heroSubtitle="Tu décris la formation, thème, durée, public. L'IA génère un devis avec tous les éléments requis pour les OPCO. Acompte à la signature, solde après la session."
+      heroSubtitle="Vous décrivez la formation, thème, durée, public. L'IA génère un devis avec tous les éléments requis pour les OPCO. Acompte à la signature, solde après la session."
       painPoints={[
         {
           icon: PenLine,

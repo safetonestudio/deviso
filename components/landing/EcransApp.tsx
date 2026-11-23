@@ -61,8 +61,8 @@ function Tableau() {
     <>
       <Entete titre="Tableau de bord" sous="Lundi 16 novembre" />
       <div className="mt-[1.2em] rounded-[0.6em] bg-ds-elevated px-[1em] py-[0.85em]">
-        <div className="text-[0.85em] text-gray-400">Cabinet Martel, ton expert-comptable</div>
-        <div className="mt-[0.2em] text-ink">Le paiement de FAC-2026-027 n&apos;est pas pointé. Tu l&apos;as bien reçu&nbsp;?</div>
+        <div className="text-[0.85em] text-gray-400">Cabinet Martel, votre expert-comptable</div>
+        <div className="mt-[0.2em] text-ink">Le paiement de FAC-2026-027 n&apos;est pas pointé. L&apos;avez-vous bien reçu&nbsp;?</div>
       </div>
       <div className="mt-[0.8em] rounded-[0.6em] bg-indigo-500/10 px-[1.1em] py-[1em]">
         <div className="text-[0.85em] text-gray-300">Chiffre d&apos;affaires encaissé, 2026</div>
@@ -128,7 +128,7 @@ function Recues() {
 function Catalogue() {
   return (
     <>
-      <Entete titre="Catalogue" sous="Tes prestations et tes prix" />
+      <Entete titre="Catalogue" sous="Vos prestations et vos prix" />
       <div className="mt-[1.2em] grid gap-[0.45em]">
         <Ligne a="Audit et arborescence" b="Utilisé dans 9 devis" c={<Puce ton="gris">Forfait</Puce>} d={`500,00${P}`} />
         <Ligne a="Maquette d'une page" b="Utilisé dans 14 devis" c={<Puce ton="gris">À la page</Puce>} d={`280,00${P}`} />

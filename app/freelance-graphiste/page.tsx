@@ -11,7 +11,7 @@ export const metadata: Metadata = {
     title: "Devis graphiste et infographie en 30 secondes | Deviso",
     description: "Devis de graphisme et d'infographie rédigé par l'IA, signature en ligne, factures conformes 2026. Essai gratuit.",
     url: "https://getdeviso.fr/freelance-graphiste",
-    images: [{ url: "https://getdeviso.fr/opengraph-image", width: 1200, height: 630, alt: "Deviso, logiciel de devis et facturation" }],
+    images: [{ url: "https://getdeviso.fr/opengraph-image?v=2", width: 1200, height: 630, alt: "Deviso, logiciel de devis et facturation" }],
   },
   twitter: {
     title: "Devis graphiste et infographie en 30 secondes | Deviso",
@@ -23,17 +23,17 @@ export default function Page() {
   return (
     <FreelanceLanding
       metaTitle="Devis graphiste et infographie : logiciel de devis et facturation | Deviso"
-      metaDescription="Génère un devis de graphiste en 30 secondes grâce à l'IA. Signature électronique, facture Factur-X conforme 2026, relances automatiques."
+      metaDescription="Générez un devis de graphiste en 30 secondes grâce à l'IA. Signature électronique, facture Factur-X conforme 2026, relances automatiques."
       canonical="https://getdeviso.fr/freelance-graphiste"
       professionLabel="graphiste freelance"
-      heroTitle="Tes devis de graphiste et d'infographie,"
+      heroTitle="Vos devis de graphiste et d'infographie,"
       heroHighlight="en 30 secondes"
-      heroSubtitle="Logo, charte, print, web : tu décris ta mission de graphisme, l'IA rédige un devis structuré et chiffré. Ton client signe en ligne, tu factures en un clic."
+      heroSubtitle="Logo, charte, print, web : vous décrivez votre mission de graphisme, l'IA rédige un devis structuré et chiffré. Votre client signe en ligne, vous facturez en un clic."
       painPoints={[
         {
           icon: Palette,
           title: "Chiffrer un projet créatif prend du temps",
-          desc: "Décomposer une identité visuelle en lots, estimer les révisions, structurer les conditions, c'est un travail à part entière. Deviso le fait en 30 secondes à ta place.",
+          desc: "Décomposer une identité visuelle en lots, estimer les révisions, structurer les conditions, c'est un travail à part entière. Deviso le fait en 30 secondes à votre place.",
         },
         {
           icon: Handshake,
@@ -43,7 +43,7 @@ export default function Page() {
         {
           icon: MailOpen,
           title: "Les relances manuelles tombent dans l'oubli",
-          desc: "Tu envoies le devis, le client disparaît. Deviso relance automatiquement après 3, 7 ou 14 jours. Tu ne perds plus une mission par oubli.",
+          desc: "Vous envoyez le devis, le client disparaît. Deviso relance automatiquement après 3, 7 ou 14 jours. Vous ne perdez plus une mission par oubli.",
         },
       ]}
       mockupPrompt="Création de l'identité visuelle complète d'une startup fintech à Paris. Logo, charte graphique, déclinaisons print (carte de visite, papier entête) et digital (bannières, templates réseaux sociaux). Budget client : 3 200€, délai 3 semaines."

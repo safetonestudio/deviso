@@ -27,7 +27,7 @@ export default function ResetPasswordPage() {
     const supabase = createClient();
     const { error } = await supabase.auth.updateUser({ password });
     if (error) {
-      setError("Une erreur est survenue. Réessaie ou demande un nouveau lien.");
+      setError("Une erreur est survenue. Réessayez ou demandez un nouveau lien.");
       setLoading(false);
       return;
     }
@@ -49,7 +49,7 @@ export default function ResetPasswordPage() {
         <div className="bg-ds-surface rounded-2xl border border-ds-border p-8">
           <h1 className="text-2xl font-semibold text-ink mb-1">Nouveau mot de passe</h1>
           <p className="text-gray-400 text-sm mb-6">
-            Choisis un mot de passe robuste, toutes les cases doivent être vertes.
+            Choisissez un mot de passe robuste, toutes les cases doivent être vertes.
           </p>
 
           {error && (

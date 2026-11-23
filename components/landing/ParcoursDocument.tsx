@@ -16,11 +16,11 @@ type Vue = "brief" | EtatDocument | "urssaf";
 type Etape = { titre: string; texte: string; vue: Vue };
 
 const ETAPES: Etape[] = [
-  { titre: "Ton devis, rédigé et chiffré pour toi.", texte: "Tu décris la mission en une phrase ; l'IA la chiffre à partir de ton catalogue, avec la TVA et les mentions obligatoires. Tu relis, tu ajustes, tu envoies.", vue: "devis" },
-  { titre: "Ton client signe en ligne.", texte: "Il reçoit un lien, ouvre le devis sur son téléphone et signe. Tu es prévenu à l'instant.", vue: "signe" },
-  { titre: "Un clic, et c'est une facture.", texte: "Le devis signé devient une facture électronique officielle, transmise pour toi.", vue: "facture" },
-  { titre: "Deviso relance, tu encaisses.", texte: "Facture impayée à l'échéance ? Deviso relance ton client 3, 7 ou 14 jours après, comme tu l'as choisi. Le virement arrivé, tu marques la facture payée en un clic.", vue: "paye" },
-  { titre: "Tes chiffres pour déclarer, déjà calculés.", texte: "Chiffre d'affaires, TVA collectée, échéances : tout est calculé à partir de tes encaissements, selon ton statut.", vue: "urssaf" },
+  { titre: "Votre devis, rédigé et chiffré pour vous.", texte: "Vous décrivez la mission en une phrase ; l'IA la chiffre à partir de votre catalogue, avec la TVA et les mentions obligatoires. Vous relisez, vous ajustez, vous envoyez.", vue: "devis" },
+  { titre: "Votre client signe en ligne.", texte: "Il reçoit un lien, ouvre le devis sur son téléphone et signe. Vous êtes prévenu à l'instant.", vue: "signe" },
+  { titre: "Un clic, et c'est une facture.", texte: "Le devis signé devient une facture électronique officielle, transmise pour vous.", vue: "facture" },
+  { titre: "Deviso relance, vous encaissez.", texte: "Facture impayée à l'échéance ? Deviso relance votre client 3, 7 ou 14 jours après, comme vous l'avez choisi. Le virement arrivé, vous marquez la facture payée en un clic.", vue: "paye" },
+  { titre: "Vos chiffres pour déclarer, déjà calculés.", texte: "Chiffre d'affaires, TVA collectée, échéances : tout est calculé à partir de vos encaissements, selon votre statut.", vue: "urssaf" },
 ];
 
 const LIGNES_BRIEF: [string, string][] = [
@@ -55,7 +55,7 @@ function Brief({ plein = false }: { plein?: boolean }) {
 
   return (
     <div data-ui className="rounded-xl bg-ds-surface p-6 sm:p-8 lg:p-9">
-      <div className="text-[14px] font-medium text-gray-400">Décris ta mission</div>
+      <div className="text-[14px] font-medium text-gray-400">Décrivez votre mission</div>
       <p className={`mt-3 min-h-[9.5em] sm:min-h-[8em] rounded-lg bg-ds-elevated p-5 text-[17px] sm:text-[20px] leading-relaxed text-ink`}>
         {BRIEF.slice(0, n)}
         {!ecrit && <span className="curseur-demo" aria-hidden="true" />}

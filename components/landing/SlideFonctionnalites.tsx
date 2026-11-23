@@ -14,10 +14,10 @@ import { EcranApp } from "@/components/landing/EcransApp";
  * lisibles à toute taille et cohérents avec le parcours.
  */
 const DIAPOS = [
-  { cle: "tableau", titre: "Ton tableau de bord", texte: "Ce que tu as encaissé, ce qui t'attend et les messages de ton comptable, en un coup d'œil.", alt: "Le tableau de bord de Deviso : message de l'expert-comptable, chiffre d'affaires encaissé et seuil de TVA" },
-  { cle: "factures", titre: "Toutes tes factures", texte: "Encaissé, en attente, relancé : chaque facture et son statut, et l'export pour ton comptable en un clic.", alt: "La liste des factures de Deviso, avec les totaux encaissés et en attente" },
-  { cle: "recues", titre: "Les factures de tes fournisseurs", texte: "Elles arrivent d'elles-mêmes par la plateforme agréée. Tu les retrouves au même endroit, et tu en refuses une en un clic.", alt: "Les factures reçues des fournisseurs dans Deviso, avec leur échéance et leur statut" },
-  { cle: "catalogue", titre: "Ton catalogue", texte: "Tes prestations et tes prix, au forfait, à la page ou à la journée, réutilisables en un clic. L'IA s'en sert pour chiffrer.", alt: "Le catalogue de prestations de Deviso" },
+  { cle: "tableau", titre: "Votre tableau de bord", texte: "Ce que vous avez encaissé, ce qui vous attend et les messages de votre comptable, en un coup d'œil.", alt: "Le tableau de bord de Deviso : message de l'expert-comptable, chiffre d'affaires encaissé et seuil de TVA" },
+  { cle: "factures", titre: "Toutes vos factures", texte: "Encaissé, en attente, relancé : chaque facture et son statut, et l'export pour votre comptable en un clic.", alt: "La liste des factures de Deviso, avec les totaux encaissés et en attente" },
+  { cle: "recues", titre: "Les factures de vos fournisseurs", texte: "Elles arrivent d'elles-mêmes par la plateforme agréée. Vous les retrouvez au même endroit, et vous en refusez une en un clic.", alt: "Les factures reçues des fournisseurs dans Deviso, avec leur échéance et leur statut" },
+  { cle: "catalogue", titre: "Votre catalogue", texte: "Vos prestations et vos prix, au forfait, à la page ou à la journée, réutilisables en un clic. L'IA s'en sert pour chiffrer.", alt: "Le catalogue de prestations de Deviso" },
 ] as const;
 
 const DUREE = 6000;

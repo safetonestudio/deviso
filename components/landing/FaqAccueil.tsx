@@ -6,23 +6,23 @@
 const QUESTIONS = [
   {
     q: "Que se passe-t-il à la fin de l'essai ?",
-    r: "Aucun prélèvement : sans carte enregistrée, l'abonnement ne démarre pas et l'accès à ton espace s'arrête. Tu peux t'abonner plus tard, quand tu veux.",
+    r: "Aucun prélèvement : sans carte enregistrée, l'abonnement ne démarre pas et l'accès à votre espace s'arrête. Vous pouvez vous abonner plus tard, quand vous le souhaitez.",
   },
   {
     q: "Puis-je récupérer mes données ?",
-    r: "Oui, à tout moment. Tes factures restent téléchargeables en PDF Factur-X, et tu exportes ta comptabilité au format FEC et en CSV.",
+    r: "Oui, à tout moment. Vos factures restent téléchargeables en PDF Factur-X, et vous exportez votre comptabilité au format FEC et en CSV.",
   },
   {
     q: "Deviso convient-il à mon statut ?",
-    r: "Micro-entreprise, entreprise individuelle au réel ou société, en franchise de TVA ou assujettie : tu indiques ton statut, et le tableau de bord, la TVA et les échéances s'y adaptent.",
+    r: "Micro-entreprise, entreprise individuelle au réel ou société, en franchise de TVA ou assujettie : vous indiquez votre statut, et le tableau de bord, la TVA et les échéances s'y adaptent.",
   },
   {
     q: "Mon expert-comptable peut-il y accéder ?",
-    r: "Oui, gratuitement et sans occuper de place dans ton équipe. Il consulte tout en lecture seule et récupère l'export FEC lui-même.",
+    r: "Oui, gratuitement et sans occuper de place dans votre équipe. Il consulte tout en lecture seule et récupère l'export FEC lui-même.",
   },
   {
     q: "Puis-je facturer en anglais ou à l'étranger ?",
-    r: "Oui. Tes factures peuvent être rédigées en anglais pour tes clients étrangers, et tes ventes comme tes achats à l'international suivent les règles de TVA qui s'appliquent.",
+    r: "Oui. Vos factures peuvent être rédigées en anglais pour vos clients étrangers, et vos ventes comme vos achats à l'international suivent les règles de TVA qui s'appliquent.",
   },
   {
     q: "Mes clients ont-ils besoin d'un compte pour signer ?",
@@ -34,7 +34,7 @@ export function FaqAccueil({ titre }: { titre: string }) {
   return (
     <div className="grid gap-12 lg:grid-cols-12 lg:gap-16">
       <h2 id="titre-faq" className={`reveal lg:col-span-5 ${titre}`}>
-        Tes questions, avant de commencer.
+        Vos questions, avant de commencer.
       </h2>
       <div className="lg:col-span-7 grid gap-2">
         {QUESTIONS.map(({ q, r }) => (

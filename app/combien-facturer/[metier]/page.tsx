@@ -34,7 +34,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       title: `TJM ${data.name} freelance 2026 : combien facturer ?`,
       description: data.description,
       url: `https://getdeviso.fr/combien-facturer/${data.slug}`,
-      images: [{ url: "https://getdeviso.fr/opengraph-image" }],
+      images: [{ url: "https://getdeviso.fr/opengraph-image?v=2" }],
     },
   };
 }

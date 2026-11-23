@@ -12,18 +12,18 @@ import { prix as grille } from "@/lib/grille-tarifaire";
 export const metadata: Metadata = {
   title: "Deviso, logiciel de devis et factures pour indépendants et petites entreprises",
   description:
-    "Tes devis rédigés en 30 secondes, tes factures conformes 2026 envoyées par une plateforme agréée comprise dans l'abonnement, tes relances automatiques. Pour indépendants et petites entreprises. Essai gratuit 14 jours, sans carte.",
+    "Vos devis rédigés en 30 secondes, vos factures conformes 2026 envoyées par une plateforme agréée comprise dans l'abonnement, vos relances automatiques. Pour indépendants et petites entreprises. Essai gratuit 14 jours, sans carte.",
   alternates: {
     canonical: "https://getdeviso.fr",
   },
   openGraph: {
     title: "Deviso, devis et factures pour indépendants et petites entreprises",
-    description: "Tes devis rédigés, tes factures conformes, tes relances envoyées. Plateforme agréée comprise, essai gratuit de 14 jours.",
+    description: "Vos devis rédigés, vos factures conformes, vos relances envoyées. Plateforme agréée comprise, essai gratuit de 14 jours.",
     url: "https://getdeviso.fr",
     siteName: "Deviso",
     locale: "fr_FR",
     type: "website",
-    images: [{ url: "https://getdeviso.fr/opengraph-image", width: 1200, height: 630, alt: "Deviso : tes devis rédigés, tes factures conformes, tes relances envoyées" }],
+    images: [{ url: "https://getdeviso.fr/opengraph-image?v=2", width: 1200, height: 630, alt: "Deviso : vos devis rédigés, vos factures conformes, vos relances envoyées" }],
   },
 };
 
@@ -86,13 +86,13 @@ export default function LandingPage() {
             intro={
               <div>
                 <h1 className="text-[clamp(31px,4.1vw,64px)] leading-[1.04] font-semibold tracking-[-0.04em] text-ink">
-                  <span className="block xl:whitespace-nowrap">Tes devis rédigés,</span>
-                  <span className="block xl:whitespace-nowrap">tes factures conformes,</span>
-                  <span className="block xl:whitespace-nowrap">tes relances envoyées.</span>
+                  <span className="block xl:whitespace-nowrap">Vos devis rédigés,</span>
+                  <span className="block xl:whitespace-nowrap">vos factures conformes,</span>
+                  <span className="block xl:whitespace-nowrap">vos relances envoyées.</span>
                 </h1>
                 <p className={`mt-6 max-w-[48ch] ${LEAD}`}>
                   Pour les indépendants et les petites entreprises, de la micro à la société. La plateforme agréée est
-                  comprise&nbsp;: tes factures électroniques partent sans rien brancher ni payer en plus.
+                  comprise&nbsp;: vos factures électroniques partent sans rien brancher ni payer en plus.
                 </p>
                 <div className="mt-8 flex flex-col sm:flex-row gap-3">
                   <Link href="/signup" className={BOUTON_PLEIN}>Essayer 14 jours gratuitement</Link>
@@ -112,8 +112,8 @@ export default function LandingPage() {
         {/* ── L'application : ce que le parcours ne montre pas ── */}
         <section id="fonctionnalites" className={`${BANDE} scroll-mt-20`}><div className={CADRE}>
           <div className="reveal max-w-[760px]">
-            <h2 className={H2}>Tes ventes, tes achats et tes prix, au même endroit.</h2>
-            <p className={`mt-5 ${LEAD}`}>Tes factures, celles de tes fournisseurs et ton catalogue se répondent&nbsp;: rien à ressaisir, rien à recopier dans un tableur.</p>
+            <h2 className={H2}>Vos ventes, vos achats et vos prix, au même endroit.</h2>
+            <p className={`mt-5 ${LEAD}`}>Vos factures, celles de vos fournisseurs et votre catalogue se répondent&nbsp;: rien à ressaisir, rien à recopier dans un tableur.</p>
           </div>
           <div className="mt-12 sm:mt-16">
             <SlideFonctionnalites />
@@ -126,16 +126,16 @@ export default function LandingPage() {
             <div className="lg:col-span-8">
               <h2 id="titre-reforme" className="text-[clamp(28px,2.6vw,40px)] leading-[1.1] font-semibold tracking-[-0.035em]">La facture électronique, déjà en place.</h2>
               <p className="mt-5 text-[17px] sm:text-[20px] leading-relaxed max-w-[56ch]">
-                Deviso reçoit déjà les factures électroniques de tes fournisseurs et émet les tiennes par la plateforme agréée.
-                Quand ton tour viendra, tu n&apos;auras rien à changer.
+                Deviso reçoit déjà les factures électroniques de vos fournisseurs et émet les vôtres par la plateforme agréée.
+                Quand votre tour viendra, vous n&apos;aurez rien à changer.
               </p>
               <Link href="/conformite" className="mt-6 inline-flex items-center gap-2 text-[17px] font-semibold underline decoration-ink/40 underline-offset-4 hover:decoration-ink transition-colors">
                 Comprendre la réforme <span aria-hidden="true">→</span>
               </Link>
               <ul className="mt-10 grid gap-6 sm:grid-cols-2">
                 {[
-                  ["Le format officiel", "Chaque facture est un Factur-X : un PDF lisible par ton client, qui porte aussi les données lues par les logiciels."],
-                  ["Le secteur public aussi", "Tes factures aux administrations sont déposées pour toi sur Chorus Pro, le portail de l'État."],
+                  ["Le format officiel", "Chaque facture est un Factur-X : un PDF lisible par votre client, qui porte aussi les données lues par les logiciels."],
+                  ["Le secteur public aussi", "Vos factures aux administrations sont déposées pour vous sur Chorus Pro, le portail de l'État."],
                 ].map(([t, d]) => (
                   <li key={t}>
                     <div className="text-[17px] font-semibold">{t}</div>
@@ -164,14 +164,14 @@ export default function LandingPage() {
             par de vrais témoignages, avec accord, quand il y en aura. */}
         <section className={`${BANDE}`} aria-labelledby="titre-fondateur"><div className={CADRE}>
           <div className="reveal grid gap-10 lg:grid-cols-12 lg:gap-16">
-            <h2 id="titre-fondateur" className={`${H2} lg:col-span-5`}>Un fondateur qui te répond.</h2>
+            <h2 id="titre-fondateur" className={`${H2} lg:col-span-5`}>Un fondateur qui vous répond.</h2>
             <div className="lg:col-span-7">
               <p className="text-[20px] sm:text-[24px] leading-[1.5] tracking-[-0.01em] text-ink">
                 J&apos;ai créé Deviso parce que je perdais trop de temps sur mes propres devis et factures, et parce que la réforme
                 de la facturation électronique arrivait sans outil vraiment simple pour les indépendants et les petites entreprises.
               </p>
               <p className="mt-6 text-[17px] leading-relaxed text-gray-300 max-w-[62ch]">
-                Je lis chaque message et j&apos;y réponds moi-même. Écris-moi avant même de t&apos;inscrire.
+                Je lis chaque message et j&apos;y réponds moi-même. Écrivez-moi avant même de vous inscrire.
               </p>
               <div className="mt-8">
                 <div className="text-[17px] font-semibold text-ink">S. Albert, fondateur</div>
@@ -195,7 +195,7 @@ export default function LandingPage() {
         <section className={`${BANDE} ${FOND_2}`} aria-labelledby="titre-action"><div className={CADRE}>
           <div className="reveal rounded-xl bg-ds-surface px-6 py-14 sm:px-12 sm:py-20 lg:px-16 lg:py-24 grid gap-8 lg:grid-cols-12 lg:items-center">
             <div className="lg:col-span-7">
-              <h2 id="titre-action" className={H2}>Essaie Deviso sur ton prochain devis.</h2>
+              <h2 id="titre-action" className={H2}>Essayez Deviso sur votre prochain devis.</h2>
               <p className={`mt-5 ${LEAD}`}>Essai gratuit de 14 jours, sans carte bancaire. Rien ne se déclenche à la fin.</p>
             </div>
             <div className="lg:col-span-5 flex flex-col sm:flex-row lg:justify-end gap-3">

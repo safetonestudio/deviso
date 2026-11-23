@@ -5,17 +5,17 @@ import { BarChart3, Building2, ClipboardList } from "lucide-react";
 export const metadata: Metadata = {
   title: "Devis et facturation pour consultants freelances",
   description:
-    "Génère un devis de mission de conseil en 30 secondes. Facture Factur-X conforme 2026, Chorus Pro B2G, suivi CA en temps réel. Essai gratuit.",
+    "Générez un devis de mission de conseil en 30 secondes. Facture Factur-X conforme 2026, Chorus Pro B2G, suivi CA en temps réel. Essai gratuit.",
   alternates: { canonical: "https://getdeviso.fr/freelance-consultant" },
   openGraph: {
     title: "Devis de consultant freelance en 30 secondes | Deviso",
-    description: "Génère une proposition de mission en 30s grâce à l'IA. Factur-X grands comptes, Chorus Pro, suivi CA. Essai gratuit.",
+    description: "Générez une proposition de mission en 30s grâce à l'IA. Factur-X grands comptes, Chorus Pro, suivi CA. Essai gratuit.",
     url: "https://getdeviso.fr/freelance-consultant",
-    images: [{ url: "https://getdeviso.fr/opengraph-image", width: 1200, height: 630, alt: "Deviso, logiciel de devis et facturation" }],
+    images: [{ url: "https://getdeviso.fr/opengraph-image?v=2", width: 1200, height: 630, alt: "Deviso, logiciel de devis et facturation" }],
   },
   twitter: {
     title: "Devis de consultant freelance en 30 secondes | Deviso",
-    description: "Génère une proposition de mission en 30s grâce à l'IA. Factur-X grands comptes, Chorus Pro, suivi CA.",
+    description: "Générez une proposition de mission en 30s grâce à l'IA. Factur-X grands comptes, Chorus Pro, suivi CA.",
   },
 };
 
@@ -23,27 +23,27 @@ export default function Page() {
   return (
     <FreelanceLanding
       metaTitle="Devis et facturation pour consultants freelances | Deviso"
-      metaDescription="Génère un devis de mission de conseil en 30 secondes. Facture Factur-X conforme 2026, Chorus Pro B2G, suivi CA en temps réel."
+      metaDescription="Générez un devis de mission de conseil en 30 secondes. Facture Factur-X conforme 2026, Chorus Pro B2G, suivi CA en temps réel."
       canonical="https://getdeviso.fr/freelance-consultant"
       professionLabel="consultant indépendant"
-      heroTitle="Tes propositions de mission,"
+      heroTitle="Vos propositions de mission,"
       heroHighlight="en 30 secondes"
-      heroSubtitle="Tu décris la mission, livrables, jours, contexte. L'IA rédige une proposition de conseil complète. Ton client signe en ligne, tu factures en Factur-X conforme."
+      heroSubtitle="Vous décrivez la mission, livrables, jours, contexte. L'IA rédige une proposition de conseil complète. Votre client signe en ligne, vous facturez en Factur-X conforme."
       painPoints={[
         {
           icon: ClipboardList,
           title: "Rédiger une propale prend autant de temps que la mission",
-          desc: "Contexte, objectifs, livrables, jalons, tarif journalier, l'IA de Deviso structure tout ça en quelques secondes à partir d'une simple description de ta mission.",
+          desc: "Contexte, objectifs, livrables, jalons, tarif journalier, l'IA de Deviso structure tout ça en quelques secondes à partir d'une simple description de votre mission.",
         },
         {
           icon: Building2,
           title: "Les grands comptes veulent du Factur-X",
-          desc: "Banques, assurances, grands groupes, la facture électronique B2B devient obligatoire dès 2026. Deviso génère du Factur-X EN 16931 natif, sans effort de ta part.",
+          desc: "Banques, assurances, grands groupes, la facture électronique B2B devient obligatoire dès 2026. Deviso génère du Factur-X EN 16931 natif, sans effort de votre part.",
         },
         {
           icon: BarChart3,
-          title: "Suivre ton CA par mission et par client",
-          desc: "Avec plusieurs missions en parallèle, savoir où tu en es pour l'URSSAF devient complexe. Le widget CA de Deviso t'affiche tout en temps réel, mensuel et trimestriel.",
+          title: "Suivre votre CA par mission et par client",
+          desc: "Avec plusieurs missions en parallèle, savoir où vous en êtes pour l'URSSAF devient complexe. Le widget CA de Deviso vous affiche tout en temps réel, mensuel et trimestriel.",
         },
       ]}
       mockupPrompt="Mission de conseil en transformation digitale pour un cabinet d'expertise comptable de 80 personnes. Audit des outils actuels, benchmark des solutions marché, recommandations et roadmap sur 3 mois. Tarif journalier : 700€."

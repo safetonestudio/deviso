@@ -133,7 +133,7 @@ export const ARTICLES: Article[] = [
     misAJourLe: "2026-09-27",
     dureeLecture: 8,
     carte: {
-      titre: "Micro-entrepreneur : ce que la réforme change pour toi",
+      titre: "Micro-entrepreneur : ce que la réforme change pour vous",
       resume: "Franchise TVA ≠ exemption. Les 3 scénarios selon votre activité B2B/B2C",
       badge: "Micro-entrepreneur",
     },

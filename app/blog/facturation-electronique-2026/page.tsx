@@ -384,7 +384,7 @@ export default function FacturationElectronique2026Page() {
           <p className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-4">Articles du cluster réforme 2026</p>
           <div className="space-y-3">
             {[
-              { href: "/blog/reforme-facturation-micro-entrepreneur", title: "Micro-entrepreneur : ce que la réforme change vraiment pour toi" },
+              { href: "/blog/reforme-facturation-micro-entrepreneur", title: "Micro-entrepreneur : ce que la réforme change vraiment pour vous" },
               { href: "/blog/choisir-plateforme-agreee-freelance", title: "Comment choisir sa plateforme agréée (PDP) quand on est indépendant" },
               { href: "/blog/e-reporting-freelance-2026", title: "E-reporting : l'obligation dont personne ne parle pour les freelances" },
               { href: "/blog/checklist-reforme-facturation-2026", title: "Checklist : êtes-vous prêt pour le 1er septembre 2026 ?" },

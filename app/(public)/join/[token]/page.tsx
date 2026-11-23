@@ -77,7 +77,7 @@ export default function JoinPage() {
             <UsersRound size={22} className="text-emerald-400" />
           </div>
           <h1 className="text-xl font-semibold text-ink mb-2">Invitation déjà acceptée</h1>
-          <p className="text-gray-400 text-sm mb-6">Tu fais déjà partie de cette équipe.</p>
+          <p className="text-gray-400 text-sm mb-6">Vous faites déjà partie de cette équipe.</p>
           <Link
             href="/dashboard"
             className="inline-flex items-center gap-2 px-5 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-ink rounded-lg font-semibold text-sm transition-colors"
@@ -124,7 +124,7 @@ export default function JoinPage() {
           </p>
           <p className="text-ink font-medium text-sm mb-4">{state.inviteeEmail}</p>
           <p className="text-gray-500 text-xs mb-6">
-            Tu es actuellement connecté avec <span className="text-gray-400">{state.currentEmail}</span>.
+            Vous êtes actuellement connecté avec <span className="text-gray-400">{state.currentEmail}</span>.
           </p>
           <div className="flex flex-col gap-3">
             <button
@@ -167,7 +167,7 @@ export default function JoinPage() {
 
         {/* Message d'invitation */}
         <div className="mb-8">
-          <p className="text-gray-400 text-sm mb-1">Tu as été invité par</p>
+          <p className="text-gray-400 text-sm mb-1">Vous avez été invité par</p>
           <p className="text-ink font-semibold text-lg">{state.ownerName}</p>
           <p className="text-gray-400 text-sm mt-3">
             à rejoindre son équipe sur <span className="text-ink font-medium">Deviso</span>.
@@ -197,7 +197,7 @@ export default function JoinPage() {
         </div>
 
         <p className="text-xs text-gray-600 mt-6">
-          En rejoignant, tu auras accès aux devis, factures et clients partagés de l'équipe.
+          En rejoignant, vous aurez accès aux devis, factures et clients partagés de l'équipe.
         </p>
       </div>
     </div>

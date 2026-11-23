@@ -64,10 +64,10 @@ export default function ReformeFacturationMicroEntrepreneurPage() {
             <span className="text-xs text-gray-400">7 min · Mis à jour juillet 2026</span>
           </div>
           <h1 className="text-3xl sm:text-4xl font-bold text-ink leading-tight mb-4">
-            Micro-entrepreneur : ce que la réforme de facturation 2026 change vraiment pour toi
+            Micro-entrepreneur : ce que la réforme de facturation 2026 change vraiment pour vous
           </h1>
           <p className="text-lg text-gray-400 leading-relaxed">
-            La plupart des auto-entrepreneurs croient qu&apos;être en franchise de TVA les exemptent de la réforme. C&apos;est faux. Voici ce qui change concrètement pour toi, et ce que tu dois faire avant septembre 2027.
+            La plupart des auto-entrepreneurs croient qu&apos;être en franchise de TVA les exemptent de la réforme. C&apos;est faux. Voici ce qui change concrètement pour vous, et ce que vous devez faire avant septembre 2027.
           </p>
         </div>
 
@@ -88,59 +88,59 @@ export default function ReformeFacturationMicroEntrepreneurPage() {
           </section>
 
           <section>
-            <h2 className="text-xl font-bold text-ink mb-4">Ta situation selon ton type de clients</h2>
+            <h2 className="text-xl font-bold text-ink mb-4">Votre situation selon votre type de clients</h2>
             <div className="space-y-4">
               <div className="bg-ds-surface border border-indigo-500/30 rounded-xl p-5">
-                <p className="text-sm font-bold text-ink mb-2">Tu factures des entreprises (B2B)</p>
-                <p className="text-sm">→ Tu devras émettre tes factures au format <strong className="text-ink">Factur-X</strong> via une PDP à partir du <strong className="text-ink">1er septembre 2027</strong>. Les factures PDF classiques ne seront plus valides pour les transactions B2B.</p>
+                <p className="text-sm font-bold text-ink mb-2">Vous facturez des entreprises (B2B)</p>
+                <p className="text-sm">→ Vous devrez émettre vos factures au format <strong className="text-ink">Factur-X</strong> via une PDP à partir du <strong className="text-ink">1er septembre 2027</strong>. Les factures PDF classiques ne seront plus valides pour les transactions B2B.</p>
               </div>
               <div className="bg-ds-surface border border-ds-border rounded-xl p-5">
-                <p className="text-sm font-bold text-ink mb-2">Tu factures des particuliers (B2C)</p>
-                <p className="text-sm">→ Tu n&apos;es pas concerné par l&apos;e-invoicing (réservé au B2B). En revanche, tu seras concerné par l&apos;<strong className="text-ink">e-reporting</strong> : obligation de transmettre à la DGFiP les données de tes transactions B2C (montants, dates). Même calendrier : septembre 2027.</p>
+                <p className="text-sm font-bold text-ink mb-2">Vous facturez des particuliers (B2C)</p>
+                <p className="text-sm">→ Vous n&apos;êtes pas concerné par l&apos;e-invoicing (réservé au B2B). En revanche, vous serez concerné par l&apos;<strong className="text-ink">e-reporting</strong> : obligation de transmettre à la DGFiP les données de vos transactions B2C (montants, dates). Même calendrier : septembre 2027.</p>
               </div>
               <div className="bg-ds-surface border border-ds-border rounded-xl p-5">
-                <p className="text-sm font-bold text-ink mb-2">Tu factures les deux</p>
-                <p className="text-sm">→ Double obligation : e-invoicing pour les clients pros, e-reporting pour les clients particuliers. Concrètement, ton logiciel de facturation s&apos;en occupera automatiquement.</p>
+                <p className="text-sm font-bold text-ink mb-2">Vous facturez les deux</p>
+                <p className="text-sm">→ Double obligation : e-invoicing pour les clients pros, e-reporting pour les clients particuliers. Concrètement, votre logiciel de facturation s&apos;en occupera automatiquement.</p>
               </div>
             </div>
           </section>
 
           <section>
-            <h2 className="text-xl font-bold text-ink mb-4">Ce que la franchise TVA change dans les données de ta facture</h2>
+            <h2 className="text-xl font-bold text-ink mb-4">Ce que la franchise TVA change dans les données de votre facture</h2>
             <p>
-              Ta facture Factur-X ne contiendra pas de montant TVA (puisque tu es en franchise). Mais elle devra quand même inclure les <strong className="text-ink">champs TVA</strong> dans ses données structurées, avec le code d&apos;exonération correct : <code className="text-indigo-300 bg-indigo-500/10 px-1.5 py-0.5 rounded-sm text-xs">E</code> (exempté) et la mention &quot;TVA non applicable - article 293B du CGI&quot;.
+              Votre facture Factur-X ne contiendra pas de montant TVA (puisque vous êtes en franchise). Mais elle devra quand même inclure les <strong className="text-ink">champs TVA</strong> dans ses données structurées, avec le code d&apos;exonération correct : <code className="text-indigo-300 bg-indigo-500/10 px-1.5 py-0.5 rounded-sm text-xs">E</code> (exempté) et la mention &quot;TVA non applicable - article 293B du CGI&quot;.
             </p>
             <p className="mt-3">
-              Ce n&apos;est pas toi qui le gères : c&apos;est ton logiciel de facturation. Deviso détecte ton régime TVA (franchisé) et génère automatiquement la bonne catégorie dans le XML Factur-X. Tu n&apos;as rien à faire.
+              Ce n&apos;est pas vous qui le gérez : c&apos;est votre logiciel de facturation. Deviso détecte votre régime TVA (franchisé) et génère automatiquement la bonne catégorie dans le XML Factur-X. Vous n&apos;avez rien à faire.
             </p>
           </section>
 
           <section>
-            <h2 className="text-xl font-bold text-ink mb-4">Le calendrier pour toi, micro-entrepreneur</h2>
+            <h2 className="text-xl font-bold text-ink mb-4">Le calendrier pour vous, micro-entrepreneur</h2>
             <div className="space-y-4">
               {[
                 {
                   date: "Aujourd'hui",
-                  action: "Vérifier que ton logiciel génère du Factur-X",
-                  detail: "Si tu utilises Deviso, c'est déjà le cas. Si tu utilises Word, Excel ou un autre outil, c'est le moment de changer.",
+                  action: "Vérifier que votre logiciel génère du Factur-X",
+                  detail: "Si vous utilisez Deviso, c'est déjà le cas. Si vous utilisez Word, Excel ou un autre outil, c'est le moment de changer.",
                   status: "now",
                 },
                 {
                   date: "Depuis septembre 2026",
-                  action: "Recevoir les e-factures de tes fournisseurs",
-                  detail: "Tes fournisseurs grandes entreprises (opérateur télécom, expert-comptable corporate...) t'envoient déjà des e-factures. Avec Deviso, tu les reçois et tu peux les ouvrir.",
+                  action: "Recevoir les e-factures de vos fournisseurs",
+                  detail: "Vos fournisseurs grandes entreprises (opérateur télécom, expert-comptable corporate...) vous envoient déjà des e-factures. Avec Deviso, vous les recevez et vous pouvez les ouvrir.",
                   status: "soon",
                 },
                 {
                   date: "Début 2027",
-                  action: "Choisir ta PDP",
-                  detail: "Identifie la plateforme agréée par laquelle tu émettras tes factures. Dans la plupart des cas, ce sera intégré à ton logiciel de facturation.",
+                  action: "Choisir votre PDP",
+                  detail: "Identifiez la plateforme agréée par laquelle vous émettrez vos factures. Dans la plupart des cas, ce sera intégré à votre logiciel de facturation.",
                   status: "future",
                 },
                 {
                   date: "1er septembre 2027",
                   action: "Obligation universelle, passer en e-invoicing",
-                  detail: "À partir de cette date, toutes tes factures B2B doivent transiter via une PDP. Les factures PDF par email ne sont plus valides fiscalement.",
+                  detail: "À partir de cette date, toutes vos factures B2B doivent transiter via une PDP. Les factures PDF par email ne sont plus valides fiscalement.",
                   status: "deadline",
                 },
               ].map(({ date, action, detail, status }) => (
@@ -179,7 +179,7 @@ export default function ReformeFacturationMicroEntrepreneurPage() {
               </div>
             </div>
             <p className="mt-3 text-sm">
-              Si tu dépasses ces seuils, tu deviens assujetti à la TVA, mais c&apos;est une question fiscale distincte de la réforme de facturation électronique.
+              Si vous dépassez ces seuils, vous devenez assujetti à la TVA, mais c&apos;est une question fiscale distincte de la réforme de facturation électronique.
             </p>
           </section>
 

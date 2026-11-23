@@ -143,9 +143,9 @@ export function miniatureAccueil() {
       <Colonne largeur={664}>
         <Logo />
         <div style={{ display: "flex", flexDirection: "column", fontSize: 50, fontWeight: 600, lineHeight: 1.08, letterSpacing: -1.6 }}>
-          <div style={{ display: "flex" }}>Tes devis rédigés,</div>
-          <div style={{ display: "flex" }}>tes factures conformes,</div>
-          <div style={{ display: "flex" }}>tes relances envoyées.</div>
+          <div style={{ display: "flex" }}>Vos devis rédigés,</div>
+          <div style={{ display: "flex" }}>vos factures conformes,</div>
+          <div style={{ display: "flex" }}>vos relances envoyées.</div>
         </div>
         <div style={{ display: "flex", fontSize: 24, color: GRIS, lineHeight: 1.4 }}>Plateforme agréée comprise, essai de 14 jours.</div>
       </Colonne>

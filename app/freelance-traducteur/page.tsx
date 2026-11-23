@@ -11,7 +11,7 @@ export const metadata: Metadata = {
     title: "Devis traducteur freelance en 30 secondes | Deviso",
     description: "Tarif au mot ou à la page, paires de langues, révisions, délai, devis de traduction en 30s avec signature électronique. Essai gratuit.",
     url: "https://getdeviso.fr/freelance-traducteur",
-    images: [{ url: "https://getdeviso.fr/opengraph-image", width: 1200, height: 630, alt: "Deviso, logiciel de devis et facturation" }],
+    images: [{ url: "https://getdeviso.fr/opengraph-image?v=2", width: 1200, height: 630, alt: "Deviso, logiciel de devis et facturation" }],
   },
   twitter: {
     title: "Devis traducteur freelance en 30 secondes | Deviso",
@@ -23,17 +23,17 @@ export default function Page() {
   return (
     <FreelanceLanding
       metaTitle="Devis et facturation pour traducteurs freelances | Deviso"
-      metaDescription="Génère un devis de traduction en 30 secondes. Tarif au mot ou à la page, délai, paires de langues, révisions, devis professionnels avec signature électronique."
+      metaDescription="Générez un devis de traduction en 30 secondes. Tarif au mot ou à la page, délai, paires de langues, révisions, devis professionnels avec signature électronique."
       canonical="https://getdeviso.fr/freelance-traducteur"
       professionLabel="traducteur freelance"
-      heroTitle="Tes devis de traduction,"
+      heroTitle="Vos devis de traduction,"
       heroHighlight="en 30 secondes"
-      heroSubtitle="Tu décris la mission, paire de langues, volume, délai. L'IA structure un devis complet avec les conditions de révision et de livraison. Ton client signe, tu traduis."
+      heroSubtitle="Vous décrivez la mission, paire de langues, volume, délai. L'IA structure un devis complet avec les conditions de révision et de livraison. Votre client signe, vous traduisez."
       painPoints={[
         {
           icon: PenLine,
           title: "Tarifer au mot, à la page ou au forfait ?",
-          desc: "Selon le type de document (technique, juridique, marketing) et la paire de langues, le mode de tarification change. L'IA de Deviso structure le devis selon le volume et le type de mission que tu décris.",
+          desc: "Selon le type de document (technique, juridique, marketing) et la paire de langues, le mode de tarification change. L'IA de Deviso structure le devis selon le volume et le type de mission que vous décrivez.",
         },
         {
           icon: Bell,
@@ -43,7 +43,7 @@ export default function Page() {
         {
           icon: BarChart3,
           title: "Jongler entre plusieurs clients et délais serrés",
-          desc: "Traductions express, deadlines multiples, relances, avec Deviso, chaque devis est suivi automatiquement. Tu sais en 1 coup d'œil quels documents attendent encore la signature et lesquels sont en retard de paiement.",
+          desc: "Traductions express, deadlines multiples, relances, avec Deviso, chaque devis est suivi automatiquement. Vous savez en 1 coup d'œil quels documents attendent encore la signature et lesquels sont en retard de paiement.",
         },
       ]}
       mockupPrompt="Traduction de 10 pages web d'un site e-commerce de cosmétiques bio (anglais vers français). Contenu marketing orienté conversion, terminologie beauté/bien-être. Délai : 5 jours ouvrés. 1 cycle de révisions inclus."

@@ -26,7 +26,7 @@ const FAMILLES_IDS: [string, string[]][] = [
   ["Devis et signature", ["aiQuotes", "catalog", "signature", "subdomain", "accentColor", "noBranding"]],
   ["Factures conformes 2026", ["facturX", "plateformeAgreee", "recurring", "chorusPro", "international", "facturesAnglais"]],
   ["Suivi et relances", ["remindersCustom", "urssafWidget", "crm", "livreRecettes"]],
-  ["Ton comptable et tes exports", ["accesComptable", "fecExport", "csvRecap", "historyUnlimited"]],
+  ["Votre comptable et vos exports", ["accesComptable", "fecExport", "csvRecap", "historyUnlimited"]],
 ];
 const libelle = (id: string) => FEATURES.find((f) => f.id === id)?.label;
 const FAMILLES = FAMILLES_IDS.map(([titre, ids]) => ({
@@ -54,11 +54,11 @@ export function TarifsTable() {
   const formules = [
     {
       nom: "Solo",
-      pour: "Pour travailler seul, avec des documents soignés et ta gestion à jour.",
+      pour: "Pour travailler seul, avec des documents soignés et une gestion à jour.",
       prix: annuel ? SOLO.annuelParMois : SOLO.mensuel,
       note: annuel ? `Facturé ${SOLO.annuel} € HT par an, soit ${SOLO.annuelTtc} € TTC` : `Sans engagement, soit ${SOLO.mensuelTtc} € TTC`,
       lien: "/signup?plan=solo",
-      lignes: ["Toutes les fonctions, hors gestion d'équipe", "1 utilisateur" + NB + ": toi"],
+      lignes: ["Toutes les fonctions, hors gestion d'équipe", "1 utilisateur" + NB + ": vous"],
     },
     {
       nom: "Pro",
@@ -75,7 +75,7 @@ export function TarifsTable() {
       <div className="reveal flex flex-wrap items-end justify-between gap-8">
         <div className="max-w-[760px]">
           <h2 className="text-[clamp(28px,2.6vw,40px)] leading-[1.1] font-semibold tracking-[-0.035em] text-ink">Deux formules, une seule différence : l&apos;équipe.</h2>
-          <p className="mt-5 text-[17px] sm:text-[20px] leading-relaxed text-gray-300">{JOURS_ESSAI} jours d&apos;essai complet, puis tu choisis.</p>
+          <p className="mt-5 text-[17px] sm:text-[20px] leading-relaxed text-gray-300">{JOURS_ESSAI} jours d&apos;essai complet, puis vous choisissez.</p>
         </div>
         <div className="grid grid-cols-2 w-full sm:w-auto sm:inline-grid gap-1 p-1 rounded-lg bg-ds-surface" role="group" aria-label="Périodicité de facturation">
           {[

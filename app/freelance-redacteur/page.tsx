@@ -5,17 +5,17 @@ import { BarChart3, Bell, PenLine } from "lucide-react";
 export const metadata: Metadata = {
   title: "Devis et facturation pour rédacteurs freelances",
   description:
-    "Génère un devis de rédaction web ou copywriting en 30 secondes. Relances automatiques, signature électronique, widget CA URSSAF. Essai gratuit.",
+    "Générez un devis de rédaction web ou copywriting en 30 secondes. Relances automatiques, signature électronique, widget CA URSSAF. Essai gratuit.",
   alternates: { canonical: "https://getdeviso.fr/freelance-redacteur" },
   openGraph: {
     title: "Devis de rédacteur freelance en 30 secondes | Deviso",
-    description: "Génère un devis de rédaction web ou copywriting en 30s. Relances auto, widget URSSAF, signature électronique.",
+    description: "Générez un devis de rédaction web ou copywriting en 30s. Relances auto, widget URSSAF, signature électronique.",
     url: "https://getdeviso.fr/freelance-redacteur",
-    images: [{ url: "https://getdeviso.fr/opengraph-image", width: 1200, height: 630, alt: "Deviso, logiciel de devis et facturation" }],
+    images: [{ url: "https://getdeviso.fr/opengraph-image?v=2", width: 1200, height: 630, alt: "Deviso, logiciel de devis et facturation" }],
   },
   twitter: {
     title: "Devis de rédacteur freelance en 30 secondes | Deviso",
-    description: "Génère un devis de rédaction web ou copywriting en 30s. Relances auto, widget URSSAF, signature électronique.",
+    description: "Générez un devis de rédaction web ou copywriting en 30s. Relances auto, widget URSSAF, signature électronique.",
   },
 };
 
@@ -23,12 +23,12 @@ export default function Page() {
   return (
     <FreelanceLanding
       metaTitle="Devis et facturation pour rédacteurs freelances | Deviso"
-      metaDescription="Génère un devis de rédaction web ou copywriting en 30 secondes. Relances automatiques, signature électronique, widget CA URSSAF."
+      metaDescription="Générez un devis de rédaction web ou copywriting en 30 secondes. Relances automatiques, signature électronique, widget CA URSSAF."
       canonical="https://getdeviso.fr/freelance-redacteur"
       professionLabel="rédacteur freelance"
-      heroTitle="Tes devis de rédaction,"
+      heroTitle="Vos devis de rédaction,"
       heroHighlight="en 30 secondes"
-      heroSubtitle="Tu décris la mission, articles, pages web, séquences email. L'IA génère un devis structuré avec les bons volumes et tarifs. Ton client signe, tu encaisses."
+      heroSubtitle="Vous décrivez la mission, articles, pages web, séquences email. L'IA génère un devis structuré avec les bons volumes et tarifs. Votre client signe, vous encaissez."
       painPoints={[
         {
           icon: PenLine,
@@ -38,12 +38,12 @@ export default function Page() {
         {
           icon: Bell,
           title: "Les clients oublient de signer, puis de payer",
-          desc: "Deviso envoie des relances automatiques configurables à 3, 7 ou 14 jours. Tu ne cours plus après tes clients, Deviso le fait poliment à ta place.",
+          desc: "Deviso envoie des relances automatiques configurables à 3, 7 ou 14 jours. Vous ne courez plus après vos clients, Deviso le fait poliment à votre place.",
         },
         {
           icon: BarChart3,
-          title: "Savoir exactement où tu en es pour l'URSSAF",
-          desc: "En auto-entrepreneur, tu dois surveiller ton CA trimestriel de près. Le widget Deviso t'affiche ton CA encaissé en temps réel, mensuel et trimestriel. Pas de mauvaise surprise.",
+          title: "Savoir exactement où vous en êtes pour l'URSSAF",
+          desc: "En auto-entrepreneur, vous devez surveiller votre CA trimestriel de près. Le widget Deviso vous affiche votre CA encaissé en temps réel, mensuel et trimestriel. Pas de mauvaise surprise.",
         },
       ]}
       mockupPrompt="Rédaction du site web d'une agence de recrutement spécialisée en tech. 8 pages (accueil, services, équipe, blog x4, contact), optimisation SEO on-page incluse, livraison en 3 semaines."

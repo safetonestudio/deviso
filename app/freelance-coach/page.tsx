@@ -11,7 +11,7 @@ export const metadata: Metadata = {
     title: "Devis coach freelance en 30 secondes | Deviso",
     description: "Séances, programmes d'accompagnement, ateliers, devis de coaching en 30s avec signature électronique. Essai gratuit.",
     url: "https://getdeviso.fr/freelance-coach",
-    images: [{ url: "https://getdeviso.fr/opengraph-image", width: 1200, height: 630, alt: "Deviso, logiciel de devis et facturation" }],
+    images: [{ url: "https://getdeviso.fr/opengraph-image?v=2", width: 1200, height: 630, alt: "Deviso, logiciel de devis et facturation" }],
   },
   twitter: {
     title: "Devis coach freelance en 30 secondes | Deviso",
@@ -23,12 +23,12 @@ export default function Page() {
   return (
     <FreelanceLanding
       metaTitle="Devis et facturation pour coachs freelances | Deviso"
-      metaDescription="Génère un devis de coaching ou d'accompagnement en 30 secondes. Séances individuelles, programmes, ateliers, signature électronique, relances auto."
+      metaDescription="Générez un devis de coaching ou d'accompagnement en 30 secondes. Séances individuelles, programmes, ateliers, signature électronique, relances auto."
       canonical="https://getdeviso.fr/freelance-coach"
       professionLabel="coach freelance"
-      heroTitle="Tes devis de coaching,"
+      heroTitle="Vos devis de coaching,"
       heroHighlight="en 30 secondes"
-      heroSubtitle="Tu décris l'accompagnement, nombre de séances, durée, objectifs. L'IA génère un devis complet avec les bonnes conditions et modalités de paiement. Ton client signe, tu accompagnes."
+      heroSubtitle="Vous décrivez l'accompagnement, nombre de séances, durée, objectifs. L'IA génère un devis complet avec les bonnes conditions et modalités de paiement. Votre client signe, vous accompagnez."
       painPoints={[
         {
           icon: Target,
@@ -43,7 +43,7 @@ export default function Page() {
         {
           icon: BarChart3,
           title: "Gérer 8 clients en même temps sans se noyer",
-          desc: "Séances individuelles, programmes de groupe, ateliers ponctuels, avec Deviso, chaque devis est généré en 30 secondes et suivi automatiquement. Tu vois d'un coup d'œil qui a signé, qui a payé, qui relancer.",
+          desc: "Séances individuelles, programmes de groupe, ateliers ponctuels, avec Deviso, chaque devis est généré en 30 secondes et suivi automatiquement. Vous voyez d'un coup d'œil qui a signé, qui a payé, qui relancer.",
         },
       ]}
       mockupPrompt="Programme d'accompagnement reconversion professionnelle pour une cadre de 38 ans qui souhaite passer du salariat à l'entrepreneuriat. 10 séances de coaching individuel d'1h en visioconférence sur 3 mois, accès à la bibliothèque de ressources, suivi email entre les séances."

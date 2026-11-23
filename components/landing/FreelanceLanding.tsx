@@ -26,7 +26,7 @@ export interface FreelanceLandingProps {
   canonical: string;
   // Hero
   professionLabel: string; // "graphiste freelance"
-  heroTitle: string; // "Tes devis de graphiste"
+  heroTitle: string; // "Vos devis de graphiste"
   heroHighlight: string; // "en 30 secondes"
   heroSubtitle: string;
   // Pain points section
@@ -42,18 +42,18 @@ export interface FreelanceLandingProps {
 const steps = [
   {
     num: "01",
-    title: "Tu décris, l'IA génère",
-    desc: "Quelques phrases sur ta mission. En 30 secondes, un devis complet avec les lignes, les prix et les conditions. Tu ajustes, tu envoies.",
+    title: "Vous décrivez, l'IA génère",
+    desc: "Quelques phrases sur votre mission. En 30 secondes, un devis complet avec les lignes, les prix et les conditions. Vous ajustez, vous envoyez.",
   },
   {
     num: "02",
-    title: "Ton client reçoit et signe",
-    desc: "Il reçoit un lien sécurisé, ouvre le devis depuis son téléphone, signe en quelques secondes. Tu reçois une notification dès qu'il a signé.",
+    title: "Votre client reçoit et signe",
+    desc: "Il reçoit un lien sécurisé, ouvre le devis depuis son téléphone, signe en quelques secondes. Vous recevez une notification dès qu'il a signé.",
   },
   {
     num: "03",
-    title: "Tu factures, tu encaisses, tu déclares",
-    desc: "1 clic pour convertir en facture Factur-X conforme. Ton CA s'actualise en temps réel. Si ça traîne, Deviso relance ton client à ta place.",
+    title: "Vous facturez, vous encaissez, vous déclarez",
+    desc: "1 clic pour convertir en facture Factur-X conforme. Votre CA s'actualise en temps réel. En cas de retard, Deviso relance votre client à votre place.",
   },
 ];
 
@@ -61,17 +61,17 @@ const features = [
   {
     icon: Zap as LucideIcon,
     title: "Devis par IA en 30 secondes",
-    desc: "Tu décris ta mission en quelques phrases. L'IA génère un devis complet, chiffré, structuré, prêt à envoyer. Aucun logiciel concurrent ne fait ça.",
+    desc: "Vous décrivez votre mission en quelques phrases. L'IA génère un devis complet, chiffré, structuré, prêt à envoyer. Aucun logiciel concurrent ne le fait.",
   },
   {
     icon: PenLine as LucideIcon,
     title: "Signature électronique",
-    desc: "Ton client reçoit un lien sécurisé, ouvre le devis sur son téléphone et signe en quelques secondes. Tu es notifié instantanément.",
+    desc: "Votre client reçoit un lien sécurisé, ouvre le devis sur son téléphone et signe en quelques secondes. Vous êtes notifié instantanément.",
   },
   {
     icon: Bell as LucideIcon,
     title: "Relances automatiques",
-    desc: "Après 3, 7 ou 14 jours sans réponse, Deviso relance ton client à ta place. Tu configures le délai et le message, Deviso s'occupe du reste.",
+    desc: "Après 3, 7 ou 14 jours sans réponse, Deviso relance votre client à votre place. Vous configurez le délai et le message, Deviso s'occupe du reste.",
   },
   {
     icon: FileText as LucideIcon,
@@ -81,7 +81,7 @@ const features = [
   {
     icon: BarChart3 as LucideIcon,
     title: "Widget CA URSSAF",
-    desc: "Ton chiffre d'affaires mensuel et trimestriel affiché en temps réel. Tu sais exactement quoi déclarer, sans calculer.",
+    desc: "Votre chiffre d'affaires mensuel et trimestriel affiché en temps réel. Vous savez exactement quoi déclarer, sans calculer.",
   },
   {
     icon: Receipt as LucideIcon,
@@ -184,7 +184,7 @@ export function FreelanceLanding({
 
           {/* Exemple de devis */}
           <div className="lg:col-span-7 rounded-xl bg-ds-surface p-5 sm:p-7">
-            <p className="text-[14px] font-medium text-gray-400 mb-2">Ce que tu décris</p>
+            <p className="text-[14px] font-medium text-gray-400 mb-2">Ce que vous décrivez</p>
             <div className="rounded-lg bg-ds-elevated p-4 mb-5">
               <p className="text-gray-300 text-[15px] leading-relaxed">{mockupPrompt}</p>
             </div>
@@ -222,7 +222,7 @@ export function FreelanceLanding({
         <div className="grid lg:grid-cols-12 gap-10 lg:gap-14">
           <div className="lg:col-span-5">
             <h2 className={H2}>Fait pour les {pluriel(professionLabel)}</h2>
-            <p className={`${LEAD} mt-5`}>Ces situations te parlent ?&nbsp;Deviso les résout.</p>
+            <p className={`${LEAD} mt-5`}>Ces situations vous concernent-elles ?&nbsp;Deviso les résout.</p>
           </div>
           <div className="lg:col-span-7 grid gap-4">
             {painPoints.map((p) => (
@@ -262,8 +262,8 @@ export function FreelanceLanding({
       {/* Fonctionnalités */}
       <section id="fonctionnalites" className={`${CADRE} ${SECTION}`}>
         <div className="max-w-2xl">
-          <h2 className={H2}>Tout ce dont tu as besoin</h2>
-          <p className={`${LEAD} mt-5`}>Tout ce que tes concurrents font à la main, Deviso le fait automatiquement.</p>
+          <h2 className={H2}>Tout ce dont vous avez besoin</h2>
+          <p className={`${LEAD} mt-5`}>Tout ce que vos concurrents font à la main, Deviso le fait automatiquement.</p>
         </div>
         <div className="mt-10 grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
           {features.map((f) => (
@@ -343,8 +343,8 @@ export function FreelanceLanding({
       <section className={`${CADRE} ${SECTION} pb-24`}>
         <div className="rounded-xl bg-ds-surface p-8 sm:p-12 grid lg:grid-cols-12 gap-8 items-center">
           <div className="lg:col-span-7">
-            <h2 className={H2}>Prêt à envoyer ton prochain devis en 30 secondes ?</h2>
-            <p className={`${LEAD} mt-4`}>Rejoins les {professionLabel}s qui gèrent leur activité commerciale avec Deviso.</p>
+            <h2 className={H2}>Prêt à envoyer votre prochain devis en 30 secondes ?</h2>
+            <p className={`${LEAD} mt-4`}>Rejoignez les {professionLabel}s qui gèrent leur activité commerciale avec Deviso.</p>
           </div>
           <div className="lg:col-span-5 flex flex-col sm:flex-row lg:flex-col gap-3 lg:items-start">
             <Link href="/signup" className={`w-full sm:w-auto ${BOUTON_PLEIN}`}>Essayer 14 jours gratuitement</Link>

@@ -53,10 +53,10 @@ function SignupForm() {
       <div className="min-h-screen bg-site flex items-center justify-center px-4">
         <div className="w-full max-w-md text-center">
           <MailCheck size={44} className="mx-auto mb-4 text-indigo-400" />
-          <h2 className="text-2xl font-bold text-ink mb-2">Vérifie tes emails</h2>
+          <h2 className="text-2xl font-bold text-ink mb-2">Vérifiez vos emails</h2>
           <p className="text-gray-400 mb-6">
-            On a envoyé un lien de confirmation à <strong className="text-ink">{email}</strong>. Clique dessus pour
-            activer ton compte.
+            Nous vous avons envoyé un lien de confirmation à <strong className="text-ink">{email}</strong>. Cliquez dessus pour
+            activer votre compte.
           </p>
           <Link href="/login" className="text-indigo-400 hover:text-indigo-300 font-semibold hover:underline text-sm">
             Retour à la connexion
@@ -98,8 +98,8 @@ function SignupForm() {
 
           <form onSubmit={handleSignup} className="space-y-4">
             <div>
-              <label className="block text-sm font-medium text-gray-300 mb-1.5">Ton prénom et nom</label>
-              <input aria-label="Ton prénom et nom"
+              <label className="block text-sm font-medium text-gray-300 mb-1.5">Votre prénom et nom</label>
+              <input aria-label="Votre prénom et nom"
                 type="text"
                 value={fullName}
                 onChange={(e) => setFullName(e.target.value)}
@@ -141,7 +141,7 @@ function SignupForm() {
             </button>
 
             <p className="text-xs text-gray-500 text-center">
-              En créant un compte, tu acceptes nos{" "}
+              En créant un compte, vous acceptez nos{" "}
               <Link href="/cgu" className="underline hover:text-gray-400">CGU</Link> et notre{" "}
               <Link href="/confidentialite" className="underline hover:text-gray-400">politique de confidentialité</Link>.
             </p>
