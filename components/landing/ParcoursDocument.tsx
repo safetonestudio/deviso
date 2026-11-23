@@ -202,9 +202,15 @@ export function ParcoursDocument({ intro }: { intro: ReactNode }) {
               <ol className="grid w-full">
                 {ETAPES.map((e, k) => {
                   const i = k + 1;
-                  const opacite = i === montree ? (actif === 0 ? "opacity-35" : "opacity-100") : "opacity-0 invisible";
+                  // Une étape passée sort par le haut, une étape à venir attend en
+                  // dessous : en descendant, le texte monte en s'effaçant et le
+                  // suivant arrive par le bas ; en remontant, l'inverse.
+                  const etat =
+                    i === montree
+                      ? `translate-y-0 ${actif === 0 ? "opacity-35" : "opacity-100"}`
+                      : `${i < montree ? "-translate-y-12" : "translate-y-12"} opacity-0 invisible`;
                   return (
-                    <li key={e.titre} aria-current={i === actif ? "step" : undefined} className={`[grid-area:1/1] self-center transition-[opacity,visibility] duration-500 motion-reduce:transition-none ${opacite}`}>
+                    <li key={e.titre} aria-current={i === actif ? "step" : undefined} className={`[grid-area:1/1] self-center transition-[opacity,translate,visibility] duration-500 ease-out motion-reduce:transition-none motion-reduce:translate-y-0 ${etat}`}>
                       <TexteEtape e={e} i={i} />
                     </li>
                   );
