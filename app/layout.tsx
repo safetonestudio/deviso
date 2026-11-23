@@ -54,9 +54,9 @@ export const metadata: Metadata = {
     title: "Deviso",
   },
   openGraph: {
-    title: "Deviso, Logiciel de devis IA pour freelances",
+    title: "Deviso, devis et factures pour indépendants et petites entreprises",
     description:
-      "Créez des devis professionnels en 30 secondes grâce à l'IA. Facturation électronique, signature client en ligne.",
+      "Tes devis rédigés, tes factures conformes, tes relances envoyées. Plateforme agréée comprise, essai gratuit de 14 jours.",
     type: "website",
     locale: "fr_FR",
     url: "https://getdeviso.fr",
@@ -64,9 +64,9 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "Deviso, Logiciel de devis IA pour freelances",
+    title: "Deviso, devis et factures pour indépendants et petites entreprises",
     description:
-      "Créez des devis professionnels en 30 secondes grâce à l'IA. Facturation électronique, signature client en ligne.",
+      "Tes devis rédigés, tes factures conformes, tes relances envoyées. Plateforme agréée comprise, essai gratuit de 14 jours.",
   },
   robots: {
     index: true,

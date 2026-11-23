@@ -17,7 +17,13 @@ export const metadata: Metadata = {
     canonical: "https://getdeviso.fr",
   },
   openGraph: {
-    images: [{ url: "https://getdeviso.fr/opengraph-image", width: 1200, height: 630, alt: "Deviso, logiciel de devis et facturation" }],
+    title: "Deviso, devis et factures pour indépendants et petites entreprises",
+    description: "Tes devis rédigés, tes factures conformes, tes relances envoyées. Plateforme agréée comprise, essai gratuit de 14 jours.",
+    url: "https://getdeviso.fr",
+    siteName: "Deviso",
+    locale: "fr_FR",
+    type: "website",
+    images: [{ url: "https://getdeviso.fr/opengraph-image", width: 1200, height: 630, alt: "Deviso : tes devis rédigés, tes factures conformes, tes relances envoyées" }],
   },
 };
 

@@ -44,7 +44,7 @@ export function metadonneesArticle(slug: string): Metadata {
       modifiedTime: a.misAJourLe,
       images: [
         {
-          url: `${SITE}/opengraph-image`,
+          url: `${SITE}/miniatures/blog/${slug}`,
           width: 1200,
           height: 630,
           alt: a.h1,

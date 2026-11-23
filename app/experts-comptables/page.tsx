@@ -24,7 +24,7 @@ export const metadata: Metadata = {
     description:
       "Vos clients micro et TPE conformes à la réforme, suivis depuis un seul cockpit. Gratuit pour votre cabinet. Programme pilote.",
     url: "https://getdeviso.fr/experts-comptables",
-    images: [{ url: "https://getdeviso.fr/opengraph-image", width: 1200, height: 630, alt: "Deviso pour les experts-comptables" }],
+    images: [{ url: "https://getdeviso.fr/experts-comptables/opengraph-image", width: 1200, height: 630, alt: "Deviso pour les experts-comptables : vos clients micro et TPE suivis depuis un seul cockpit" }],
   },
 };
 
