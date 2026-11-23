@@ -4,6 +4,7 @@ import { lireEntreprise } from "@/lib/superpdp-entreprise";
 import { getWorkspaceProfile } from "@/lib/workspace";
 import { resolveVatNumber } from "@/lib/facturx-helpers";
 import { paysFrancais } from "@/lib/superpdp-nature";
+import { cadreFacturation } from "@/lib/cadre-facturation";
 import { estCompteDemo } from "@/lib/garde-demo";
 import { estNatureTva, estTauxFrancais, estImportation, motifHorsChamp, natureTva, PAYS_UE, TAUX_FRANCAIS, type NatureTva } from "@/lib/achats-tva";
 import type { SupabaseClient } from "@supabase/supabase-js";
@@ -440,7 +441,18 @@ export function construirePayloadB2bint(
         // « missing type_code for b2bint invoice ».)
         // Avoir du fournisseur : 381, montants positifs (BR-27), le type porte le sens.
         type_code: achat.est_avoir ? "381" : "380",
-        business_process: { id: "B1", type_id: "urn:cen.eu:en16931:2017" },
+        // TT-28, cadre de facturation (annexe 6 v3.2, flux 10.1, règle G1.02).
+        // Était `B1` (bien) en dur, y compris pour un achat de services, le cas
+        // le plus fréquent. Même règle que nos factures : lib/cadre-facturation.ts.
+        // Ni « déjà payé » ni « après acompte » : Deviso ne suit pas le
+        // règlement d'un fournisseur étranger, il n'affirme donc rien.
+        business_process: {
+          id: cadreFacturation({
+            categorie: achat.categorie === "biens" ? "goods" : "services",
+            typeCode: achat.est_avoir ? "381" : "380",
+          }),
+          type_id: "urn:cen.eu:en16931:2017",
+        },
         seller,
         buyer,
         tax_due_date_type_code: "72",

@@ -128,12 +128,19 @@ export async function POST(req: NextRequest, ctx: { params: Promise<{ id: string
   // c'est la seule façon de vérifier que l'exigibilité déclarée correspond au
   // régime coché, et ce code était inversé jusqu'au 30/08/2026.
   const exigibilite = xml.match(/<ram:DueDateTypeCode>(\d+)<\/ram:DueDateTypeCode>/)?.[1] ?? null;
+  // BT-23 (cadre de facturation) tel qu'il part, pour la même raison : il
+  // était écrit `B1` (bien) en dur jusqu'au 23/11/2026, et le validateur ne le
+  // voit pas (un B1 sur une facture de services est « conforme »). Seule une
+  // lecture du document le vérifie. Règle : lib/cadre-facturation.ts.
+  const cadre =
+    xml.match(/<ram:BusinessProcessSpecifiedDocumentContextParameter><ram:ID>([^<]*)<\/ram:ID>/)?.[1] ?? null;
 
   return NextResponse.json({
     transmissible: transmissible(facture),
     nature,
     manques,
     exigibilite,
+    cadre,
     conforme: rapport.valide && manques.length === 0 && transmissible(facture),
     validation: {
       valide: rapport.valide,

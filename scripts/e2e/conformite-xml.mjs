@@ -114,7 +114,7 @@ function facture(nom, extra) {
   // `attendu` pilote la traversee, il n'appartient pas au corps de la facture :
   // le laisser passer faisait rejeter la creation par la route (« Could not
   // find the 'attendu' column »).
-  const { attendu, ...champs } = extra;
+  const { attendu, cadre, ...champs } = extra;
   const items = champs.items ?? [ligne("Prestation de conseil", 500)];
   const ht = Math.round(items.reduce((s, i) => s + i.total, 0) * 100) / 100;
   const taux = champs.tva_rate ?? 20;
@@ -122,6 +122,7 @@ function facture(nom, extra) {
   return {
     nom,
     attendu,
+    cadre,
     corps: {
       ...VENDEUR,
       ...CLIENT_PRO,
@@ -144,9 +145,14 @@ function facture(nom, extra) {
  * La matrice. Chaque entree est une situation qu'un utilisateur rencontrera.
  */
 const CAS = [
-  facture("B2B France, services, TVA 20 %", {}),
+  // `cadre` : BT-23 attendu (lib/cadre-facturation.ts). Il etait `B1` (bien)
+  // en dur jusqu'au 23/11/2026, et le validateur ne le voit pas : un B1 sur une
+  // facture de services est « conforme ». D'ou la lecture du document, via la
+  // reponse de la route. Echoue tant que la correction n'est pas deployee.
+  facture("B2B France, services, TVA 20 %", { cadre: "S1" }),
 
   facture("B2B France, vente de biens", {
+    cadre: "B1",
     operation_category: "goods",
     items: [ligne("Cartons d'emballage compostables", 24.9, 40)],
   }),
@@ -306,8 +312,15 @@ for (const cas of CAS) {
   if (manques.length) {
     console.log(`       pré-contrôle : ${manques.join(" · ")}`);
   }
+  if (cas.cadre) {
+    verifier(
+      `${cas.nom}, cadre de facturation BT-23 = ${cas.cadre}`,
+      r.body?.cadre === cas.cadre,
+      `obtenu ${r.body?.cadre ?? "absent de la réponse (correction non déployée ?)"}`,
+    );
+  }
   if (r.body?.nature) {
-    console.log(`       nature ${r.body.nature} · exigibilité BT-8 = ${r.body.exigibilite ?? "absente"}`);
+    console.log(`       nature ${r.body.nature} · exigibilité BT-8 = ${r.body.exigibilite ?? "absente"} · cadre BT-23 = ${r.body.cadre ?? "absent"}`);
   }
 }
 

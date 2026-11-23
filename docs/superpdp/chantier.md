@@ -127,7 +127,9 @@ double déclaration pour un cas d'usage qui n'existe pas ici.
 facturant. Or ce n'est pas le cas. » Deviso agit par délégation du compte de son
 client. Ce point n'aurait jamais dû figurer sur une liste de travail.
 
-**Biens contre services** reste la seule inconnue, et son impact est étroit :
+**Biens contre services : résolue et corrigée le 23/11/2026, voir « La seule
+qui reste ouverte » plus bas.** Ce qui suit est l'analyse d'avant :
+**Biens contre services** restait la seule inconnue, et son impact est étroit :
 elle ne joue que sur les factures **B2C**. Pour une facture B2B, l'essentiel du
 travail d'un freelance, transmettre la facture satisfait les deux obligations,
 et la question ne se pose pas. En B2C, l'encaissement est déclaré de toute
@@ -162,7 +164,41 @@ chercher dans les quatorze sections d'un coup.
 | Achats internationaux | « Il n'est pas possible d'envoyer directement des factures, il faut déclarer les données d'e-reporting » via `b2bint_invoices`. Les **ventes** internationales passent bien par l'API `invoices`, ce que Deviso fait |
 | Périodicité de déclaration | Décadaire pour le régime mensuel (« déclarer tous les 10 jours »). Le trimestriel et le simplifié ne sont pas détaillés, sans conséquence : Deviso ne calcule aucune période, il passe la date et laisse la plateforme décider |
 
-### La seule qui reste ouverte
+### La seule qui restait ouverte, fermée le 23/11/2026
+
+**Réponse : par le cadre de facturation BT-23, que Deviso écrivait `B1` (bien)
+en dur.** Super PDP n'avait rien à nous répondre : c'est la DGFiP qui fixe la
+correspondance (paquet v3.2, annexe 6, onglet « E-REPORTING - Correspondance » :
+`B1` → `TLB1`, `S1` → `TPS1`, `M1` → les deux ; annexe 1 : « Cadre de
+facturation à renseigner par le vendeur » ; annexe 7, G1.02 et G1.60).
+Trouvé par la recherche documentaire du 23/11 (`reponses-documentation.md` §6,
+branche `claude/beautiful-kilby-23ff2d`).
+
+Corrigé dans `lib/cadre-facturation.ts`, règle unique appelée par
+`lib/invoice-xml.ts` (Factur-X transmis, PDF, Chorus Pro) et
+`lib/superpdp-achats.ts` (déclaration d'achat à l'étranger, TT-28, même règle) :
+
+| Facture | BT-23 |
+|---|---|
+| services (ou catégorie absente, défaut en base) | `S1` |
+| biens | `B1` |
+| mixte (refusée par le pré-contrôle avant toute transmission) | `M1` |
+| solde qui renvoie à son acompte (BT-25 écrit) | `S4` / `B4` / `M4` |
+| acompte (386), avoir (381) | chiffre 1 (G1.60 interdit le 4 sur un 386 et un 503) |
+| déjà payée | **chiffre 1, pas 2** : le validateur officiel refuse S2/B2 si le net à payer n'est pas nul (« BR-FR-CO-09/BT-23 », constaté le 23/11), et Deviso écrit le net à payer égal au TTC. La catégorie d'e-reporting est la même, l'encaissement part par `fr:212` |
+
+Garde : `npm run test:cadre-facturation` (règle, XML produit, déclaration
+d'achat, validateur officiel public pour chaque code produit, contre-épreuves :
+S2 refusé, code hors liste refusé ; avec `B1` remis en dur, 7 échecs).
+`test:conformite` lit aussi BT-23 dans la réponse de la route « Vérifier »
+(cas services → `S1`, cas biens → `B1`) : le validateur seul ne voit pas
+l'erreur, un `B1` sur une facture de services lui paraît conforme.
+
+**Non vu :** une facture de services réellement transmise ressortant en `TPS1`
+dans `GET /b2c_transactions` (exige une émission en bac à sable, jeton du
+compte de test à reconnecter). Les factures déjà transmises gardent leur `B1`.
+
+L'analyse d'origine, conservée :
 
 **Comment déclarer qu'une facture porte des services et non des biens ?**
 

@@ -21,6 +21,7 @@ import {
 import type { PaymentInfo } from "./invoice-pdf";
 import { resolveAddress } from "@/lib/address";
 import { motifExoneration } from "@/lib/exoneration";
+import { cadreFacturation } from "@/lib/cadre-facturation";
 
 function xmlDate(dateStr: string): string {
   return dateStr.replace(/-/g, "");
@@ -373,10 +374,23 @@ export function generateFacturXml(
       }</ram:InvoiceReferencedDocument>`
     : "";
 
+  // BT-23, cadre de facturation. Était `B1` (bien) en dur pour toutes les
+  // factures : les prestations de services ressortaient en `TLB1` dans
+  // l'e-reporting au lieu de `TPS1`. Règle et sources : lib/cadre-facturation.ts.
+  // « Renvoie à l'acompte » se lit sur ce que ce document écrit vraiment
+  // (la référence BT-25 ci-dessus), pas sur une intention. Une facture déjà
+  // payée garde le chiffre 1 : S2 exige un net à payer nul (BR-FR-CO-09).
+  const cadre = cadreFacturation({
+    categorie: invoice.operation_category,
+    typeFacture: invoice.invoice_type,
+    typeCode: invoice.type_code,
+    renvoieAcompte: invoice.invoice_type === "solde" && Boolean(referencedDoc),
+  });
+
   return `<?xml version="1.0" encoding="UTF-8"?>
 <rsm:CrossIndustryInvoice xmlns:rsm="urn:un:unece:uncefact:data:standard:CrossIndustryInvoice:100" xmlns:qdt="urn:un:unece:uncefact:data:standard:QualifiedDataType:100" xmlns:ram="urn:un:unece:uncefact:data:standard:ReusableAggregateBusinessInformationEntity:100" xmlns:udt="urn:un:unece:uncefact:data:standard:UnqualifiedDataType:100" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
   <rsm:ExchangedDocumentContext>
-    <ram:BusinessProcessSpecifiedDocumentContextParameter><ram:ID>B1</ram:ID></ram:BusinessProcessSpecifiedDocumentContextParameter>
+    <ram:BusinessProcessSpecifiedDocumentContextParameter><ram:ID>${cadre}</ram:ID></ram:BusinessProcessSpecifiedDocumentContextParameter>
     <ram:GuidelineSpecifiedDocumentContextParameter><ram:ID>urn:cen.eu:en16931:2017</ram:ID></ram:GuidelineSpecifiedDocumentContextParameter>
   </rsm:ExchangedDocumentContext>
   <rsm:ExchangedDocument>
