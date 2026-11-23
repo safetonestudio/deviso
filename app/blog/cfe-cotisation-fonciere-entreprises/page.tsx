@@ -11,7 +11,7 @@ const SECTIONS: Section[] = [
     titre: "La CFE, c&rsquo;est quoi&nbsp;?",
     paragraphes: [
       "La <strong>cotisation foncière des entreprises</strong> (CFE) est un impôt local, perçu par la commune où vous exercez. Elle concerne toute personne qui exerce une activité professionnelle non salariée de façon habituelle au 1<sup>er</sup> janvier de l&rsquo;année&nbsp;: sociétés, entreprises individuelles au réel, et micro-entrepreneurs compris.",
-      "Elle est calculée sur la <strong>valeur locative des locaux</strong> que vous utilisez pour votre activité. Et c&rsquo;est là que beaucoup d&rsquo;indépendants sont surpris&nbsp;: même sans local, en travaillant chez soi ou depuis une adresse de domiciliation, une <strong>cotisation minimum</strong> reste due.",
+      "Elle est calculée sur la <strong>valeur locative des locaux</strong> que vous utilisez pour votre activité. Et c&rsquo;est là que beaucoup d&rsquo;entreprises sont surprises&nbsp;: même sans local, en travaillant chez soi ou depuis une adresse de domiciliation, une <strong>cotisation minimum</strong> reste due.",
     ],
   },
   {
@@ -31,7 +31,7 @@ const SECTIONS: Section[] = [
     titre: "Sans local : la cotisation minimum",
     paragraphes: [
       "Quand la valeur locative de vos locaux est faible ou nulle, le fisc applique une <strong>base minimum</strong>. Chaque commune la fixe dans une fourchette prévue par la loi, qui dépend de votre chiffre d&rsquo;affaires&nbsp;: plus il est élevé, plus le plafond de la fourchette monte. La cotisation à payer est ensuite cette base multipliée par le taux voté par la commune.",
-      "Conséquence pratique&nbsp;: deux indépendants au même chiffre d&rsquo;affaires, l&rsquo;un dans une petite commune, l&rsquo;autre dans une grande ville, peuvent payer des montants très différents. Les fourchettes changent chaque année&nbsp;; la fiche officielle de service-public.fr donne les montants en vigueur.",
+      "Conséquence pratique&nbsp;: deux entreprises au même chiffre d&rsquo;affaires, l&rsquo;un dans une petite commune, l&rsquo;autre dans une grande ville, peuvent payer des montants très différents. Les fourchettes changent chaque année&nbsp;; la fiche officielle de service-public.fr donne les montants en vigueur.",
     ],
   },
   {
@@ -142,7 +142,7 @@ export default function Page() {
   return (
     <ArticleLong
       slug={SLUG}
-      chapeau="Chaque fin d&rsquo;année, des milliers d&rsquo;indépendants découvrent la CFE, souvent après l&rsquo;échéance&nbsp;: l&rsquo;avis n&rsquo;arrive pas par la poste. Qui la paie, combien, quelles exonérations, et ce qu&rsquo;il faut faire avant le 15 décembre."
+      chapeau="Chaque fin d&rsquo;année, de nombreuses entreprises, sociétés comme indépendants, découvrent la CFE, souvent après l&rsquo;échéance&nbsp;: l&rsquo;avis n&rsquo;arrive pas par la poste. Qui la paie, combien, quelles exonérations, et ce qu&rsquo;il faut faire avant le 15 décembre."
       enBref={[
         "La CFE concerne <strong>toutes les entreprises</strong>, micro-entrepreneurs compris, même sans local.",
         "<strong>Pas de CFE l&rsquo;année de création</strong>, puis une base réduite de moitié l&rsquo;année suivante.",

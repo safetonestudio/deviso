@@ -120,7 +120,7 @@ export default function Page() {
       cta={{
         titre: "Votre CA prêt à chaque échéance",
         texte:
-          "Deviso totalise votre chiffre d&rsquo;affaires encaissé en continu : quand une déclaration arrive, le montant est déjà là, par période et par catégorie.",
+          "Deviso totalise votre chiffre d&rsquo;affaires encaissé en continu : quand une déclaration arrive, le montant est déjà là, par période et par catégorie. Si votre entreprise passe un jour au régime réel ou en société, vous changez son statut dans Deviso, qui adapte alors le tableau de bord, la TVA et les exports FEC et Quadra.",
       }}
     />
   );

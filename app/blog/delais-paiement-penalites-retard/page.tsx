@@ -140,7 +140,7 @@ export default function Page() {
   return (
     <ArticleLong
       slug={SLUG}
-      chapeau="Un client qui paie en retard, c&rsquo;est votre trésorerie qui finance la sienne. Entre professionnels, la loi encadre pourtant strictement les délais et prévoit des pénalités automatiques. Encore faut-il les connaître, et les écrire sur vos factures."
+      chapeau="Un client qui paie en retard, c&rsquo;est la trésorerie de votre entreprise qui finance la sienne. Entre professionnels, la loi encadre pourtant strictement les délais et prévoit des pénalités automatiques. Encore faut-il les connaître, et les écrire sur vos factures."
       enBref={[
         "Sans clause, le client paie sous <strong>30 jours</strong>&nbsp;; avec clause, jamais plus de <strong>60 jours</strong> ou <strong>45 jours fin de mois</strong>.",
         "Les <strong>pénalités de retard</strong> courent dès le lendemain de l&rsquo;échéance, sans relance.",

@@ -9,13 +9,13 @@ export default function Page() {
   return (
     <BlogPost
       slug={SLUG}
-      intro="Créer un devis professionnel est une étape essentielle pour tout graphiste freelance. Un bon devis protège juridiquement, clarifie les attentes des deux côtés et accélère le paiement. Voici tout ce qu'il faut savoir pour rédiger un devis graphique conforme et efficace en 2026."
+      intro="Créer un devis professionnel est une étape essentielle pour tout graphiste, qu'il soit indépendant, en société ou en agence. Un bon devis protège juridiquement, clarifie les attentes des deux côtés et accélère le paiement. Voici tout ce qu'il faut savoir pour rédiger un devis graphique conforme et efficace en 2026."
       mandatoryTitle="Les mentions obligatoires d'un devis de graphiste"
-      mandatoryIntro="En tant que graphiste freelance, votre devis est un document juridique. Ces mentions sont obligatoires ou fortement recommandées pour éviter tout litige :"
+      mandatoryIntro="Que vous soyez graphiste indépendant, en société ou en agence, votre devis est un document juridique. Ces mentions sont obligatoires ou fortement recommandées pour éviter tout litige :"
       mandatoryItems={[
         {
           title: "Vos coordonnées complètes",
-          desc: "Nom/raison sociale, adresse, numéro SIRET, et si applicable votre numéro de TVA intracommunautaire. En franchise de TVA, indiquez 'TVA non applicable, art. 293 B du CGI'.",
+          desc: "Nom/raison sociale, adresse, numéro SIRET, et si applicable votre numéro de TVA intracommunautaire. En société, indiquez aussi la forme juridique et le capital social. En franchise de TVA, indiquez 'TVA non applicable, art. 293 B du CGI'.",
         },
         {
           title: "Coordonnées du client",
@@ -77,7 +77,7 @@ export default function Page() {
         },
         {
           q: "Combien d'acompte demander sur un devis de graphiste ?",
-          a: "Entre 30% et 50% à la commande est la pratique standard en graphisme freelance. L'acompte couvre vos premiers travaux de recherche et sécurise la mission. Pour les missions courtes (logo simple), 50% est raisonnable. Pour les projets longs (identité complète), 30% à la commande + 30% à mi-projet + 40% à la livraison est courant.",
+          a: "Entre 30% et 50% à la commande est la pratique standard en graphisme. L'acompte couvre vos premiers travaux de recherche et sécurise la mission. Pour les missions courtes (logo simple), 50% est raisonnable. Pour les projets longs (identité complète), 30% à la commande + 30% à mi-projet + 40% à la livraison est courant.",
         },
         {
           q: "Comment gérer un devis graphiste en franchise de TVA ?",

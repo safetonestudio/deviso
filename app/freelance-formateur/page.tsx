@@ -43,7 +43,7 @@ export default function Page() {
         {
           icon: FileText,
           title: "Facture électronique pour les organismes financeurs",
-          desc: "OPCO, Pôle Emploi, collectivités, la facturation électronique Factur-X est déjà obligatoire pour certains et le devient pour tous en 2026. Deviso est déjà conforme.",
+          desc: "OPCO, France Travail, collectivités, la facturation électronique Factur-X est déjà obligatoire pour certains et le devient pour tous en 2026. Deviso est déjà conforme.",
         },
       ]}
       mockupPrompt="Formation management d'équipe pour un groupe de 12 managers intermédiaires dans une PME de 200 personnes à Lyon. 2 jours en présentiel + 1 heure de suivi individuel par participant. Prise en charge OPCO Atlas."

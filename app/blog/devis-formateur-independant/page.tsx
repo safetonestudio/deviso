@@ -9,7 +9,7 @@ export default function Page() {
   return (
     <BlogPost
       slug={SLUG}
-      intro="Un devis de formation professionnelle n'est pas un devis ordinaire. Si votre client finance via un OPCO (Atlas, Constructys, Opco EP…), certaines mentions sont obligatoires sous peine de refus de prise en charge. Voici comment rédiger un devis conforme qui simplifie la vie de votre client, et la vôtre."
+      intro="Un devis de formation professionnelle n'est pas un devis ordinaire. Si votre client finance via un OPCO (Atlas, Constructys, Opco EP…), certaines mentions sont obligatoires sous peine de refus de prise en charge. Voici comment rédiger un devis conforme qui simplifie la vie de votre client, et la vôtre, que vous soyez formateur indépendant ou organisme de formation."
       mandatoryTitle="Les mentions obligatoires d'un devis de formation professionnelle"
       mandatoryIntro="Au-delà des mentions légales classiques, un devis de formation doit répondre aux exigences des OPCO et de la réglementation sur la formation professionnelle :"
       mandatoryItems={[

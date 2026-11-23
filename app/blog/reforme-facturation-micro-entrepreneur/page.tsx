@@ -67,7 +67,7 @@ export default function ReformeFacturationMicroEntrepreneurPage() {
             Micro-entrepreneur : ce que la réforme de facturation 2026 change vraiment pour vous
           </h1>
           <p className="text-lg text-gray-400 leading-relaxed">
-            La plupart des auto-entrepreneurs croient qu&apos;être en franchise de TVA les exemptent de la réforme. C&apos;est faux. Voici ce qui change concrètement pour vous, et ce que vous devez faire avant septembre 2027.
+            La plupart des auto-entrepreneurs croient qu&apos;être en franchise de TVA les exemptent de la réforme. C&apos;est faux. Voici ce qui change concrètement pour vous, et ce que vous devez faire avant septembre 2027. Si vous dirigez une société (SARL, SAS, EURL, SASU), le calendrier est le même : l&apos;obligation de recevoir s&apos;applique déjà, celle d&apos;émettre arrive en septembre 2027 pour les PME et TPE.
           </p>
         </div>
 

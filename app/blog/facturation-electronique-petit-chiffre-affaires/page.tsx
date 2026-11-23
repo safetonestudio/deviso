@@ -12,7 +12,7 @@ const SECTIONS: Section[] = [
     paragraphes: [
       "Sur les forums de micro-entrepreneurs, la même inquiétude revient, formulée presque toujours de la même façon : <em>je fais 800 € de chiffre d&rsquo;affaires dans l&rsquo;année, on me parle d&rsquo;un abonnement à 15 ou 20 € par mois, est-ce que je ne devrais pas simplement arrêter ?</em>",
       "C&rsquo;est une question légitime, et la réponse est non, mais pas parce qu&rsquo;il faudrait « faire un effort ». Parce que le calcul sur lequel repose l&rsquo;inquiétude est faux : une grande partie des très petites activités n&rsquo;a, en réalité, <strong>aucun abonnement à payer</strong>, et certaines ne sont même pas concernées par l&rsquo;obligation d&rsquo;émettre.",
-      "Le problème est que la réforme est presque toujours présentée en bloc. Découpée correctement, elle se réduit à deux ou trois questions simples.",
+      "Le problème est que la réforme est presque toujours présentée en bloc. Découpée correctement, elle se réduit à deux ou trois questions simples. Le raisonnement vaut aussi pour une petite société dont l&rsquo;activité et le volume de factures restent faibles.",
     ],
   },
   {

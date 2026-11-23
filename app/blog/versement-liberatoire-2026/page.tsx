@@ -138,7 +138,7 @@ export default function Page() {
       cta={{
         titre: "Votre chiffre d&rsquo;affaires sous les yeux pour décider",
         texte:
-          "Deviso suit votre CA encaissé par catégorie en temps réel : de quoi estimer l&rsquo;impact du versement libératoire avant d&rsquo;opter, et le réévaluer chaque année.",
+          "Deviso suit votre CA encaissé par catégorie en temps réel : de quoi estimer l&rsquo;impact du versement libératoire avant d&rsquo;opter, et le réévaluer chaque année. Et si votre entreprise passe au régime réel ou en société, son statut se modifie dans Deviso, sans repartir de zéro.",
       }}
     />
   );

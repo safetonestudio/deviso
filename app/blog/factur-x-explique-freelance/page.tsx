@@ -30,7 +30,7 @@ const FAQ = [
   },
   {
     q: "Quelle est la différence entre Factur-X, UBL et CII ?",
-    a: "Ce sont les trois formats acceptés par la réforme. Factur-X est le format hybride : un PDF lisible plus les données. UBL et CII sont des formats de données seuls, sans page lisible sans outil. Pour un indépendant, Factur-X est le plus confortable, mais vous n'avez pas à choisir : votre plateforme s'en occupe.",
+    a: "Ce sont les trois formats acceptés par la réforme. Factur-X est le format hybride : un PDF lisible plus les données. UBL et CII sont des formats de données seuls, sans page lisible sans outil. Pour une entreprise de petite taille ou un indépendant, Factur-X est le plus confortable, mais vous n'avez pas à choisir : votre plateforme s'en occupe.",
   },
   {
     q: "Ce format est-il obligatoire pour moi ?",

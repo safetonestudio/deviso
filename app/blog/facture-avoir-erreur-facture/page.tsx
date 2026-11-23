@@ -218,7 +218,7 @@ export default function Page() {
   return (
     <ArticleLong
       slug={SLUG}
-      chapeau="Mauvais montant, mauvais taux de TVA, mauvais client. Le réflexe est de rouvrir le document et de corriger, et c&rsquo;est précisément ce qu&rsquo;il ne faut pas faire. Voici le bon geste, et ce que la facturation électronique y change."
+      chapeau="Mauvais montant, mauvais taux de TVA, mauvais client : cela arrive dans toute entreprise, de l&rsquo;indépendant à la société. Le réflexe est de rouvrir le document et de corriger, et c&rsquo;est précisément ce qu&rsquo;il ne faut pas faire. Voici le bon geste, et ce que la facturation électronique y change."
       enBref={[
         "Une facture émise ne se modifie pas et ne se supprime pas : on émet un <strong>avoir</strong> qui l&rsquo;annule.",
         "L&rsquo;avoir prend un numéro de votre série continue, et <strong>référence la facture annulée</strong> par son numéro et sa date.",

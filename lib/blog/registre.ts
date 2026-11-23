@@ -92,15 +92,15 @@ export const ARTICLES: Article[] = [
     categorie: "reforme",
     titre: "Facturation électronique 2026 : le guide",
     description:
-      "Réforme facturation électronique : ce qui s'applique déjà depuis le 1er septembre 2026, ce qui arrive en 2027, formats et plateformes agréées. Guide pour freelances.",
-    h1: "Facturation électronique 2026 : le guide complet pour freelances et indépendants",
+      "Facturation électronique : ce qui s'applique depuis le 1er septembre 2026, ce qui arrive en 2027, formats et plateformes agréées, pour toute entreprise.",
+    h1: "Facturation électronique 2026 : le guide complet pour les entreprises, des indépendants aux PME",
     og: {
-      titre: "Facturation électronique 2026 : le guide complet pour freelances",
+      titre: "Facturation électronique 2026 : le guide complet pour les entreprises",
       description:
         "Calendrier, formats Factur-X, plateformes agréées, e-reporting, tout comprendre en 10 minutes.",
     },
     publieLe: "2026-07-10",
-    misAJourLe: "2026-09-27",
+    misAJourLe: "2026-11-23",
     dureeLecture: 10,
     carte: {
       titre: "Guide complet réforme facturation électronique 2026",
@@ -130,7 +130,7 @@ export const ARTICLES: Article[] = [
         "La franchise TVA ne vous exempte pas. Voici ce que vous devez savoir et faire avant septembre 2027.",
     },
     publieLe: "2026-07-10",
-    misAJourLe: "2026-09-27",
+    misAJourLe: "2026-11-23",
     dureeLecture: 8,
     carte: {
       titre: "Micro-entrepreneur : ce que la réforme change pour vous",
@@ -142,17 +142,17 @@ export const ARTICLES: Article[] = [
   {
     slug: "choisir-plateforme-agreee-freelance",
     categorie: "reforme",
-    titre: "Choisir sa plateforme agréée en freelance",
+    titre: "Choisir sa plateforme agréée (freelance, TPE, PME)",
     description:
-      "Le portail public (PPF) est abandonné : seules les plateformes agréées privées subsistent. 5 critères pour choisir la bonne quand on est freelance.",
-    h1: "Comment choisir sa plateforme agréée quand on est freelance",
+      "Le portail public (PPF) est abandonné : seules les plateformes agréées privées subsistent. 5 critères pour choisir la bonne, en freelance comme en entreprise.",
+    h1: "Comment choisir sa plateforme agréée : freelance, indépendant ou dirigeant de petite entreprise",
     og: {
-      titre: "Comment choisir sa plateforme agréée en tant que freelance",
+      titre: "Comment choisir sa plateforme agréée : freelance, TPE ou PME",
       description:
         "PPF abandonné, plateforme agréée obligatoire. Critères de choix, questions à poser, intégration avec votre logiciel de facturation.",
     },
     publieLe: "2026-07-10",
-    misAJourLe: "2026-09-11",
+    misAJourLe: "2026-11-23",
     dureeLecture: 8,
     carte: {
       titre: "Choisir sa plateforme agréée : guide comparatif",
@@ -196,17 +196,17 @@ export const ARTICLES: Article[] = [
   {
     slug: "e-reporting-freelance-2026",
     categorie: "reforme",
-    titre: "E-reporting freelance : l'obligation B2C",
+    titre: "E-reporting 2026 : l'obligation B2C",
     description:
-      "La facturation électronique ne concerne pas que le B2B. Si vous facturez des particuliers, l'e-reporting vous oblige aussi. Ce qu'il faut faire avant 2027.",
-    h1: "E-reporting freelance : l'obligation B2C dont personne ne parle",
+      "La facturation électronique ne concerne pas que le B2B. Si votre entreprise facture des particuliers, l'e-reporting s'applique aussi. À faire avant 2027.",
+    h1: "E-reporting 2026 : l'obligation B2C dont personne ne parle",
     og: {
-      titre: "E-reporting freelance : l'obligation B2C oubliée",
+      titre: "E-reporting 2026 : l'obligation B2C oubliée des entreprises",
       description:
         "Vous avez des clients particuliers ? L'e-reporting TVA vous concerne, même si vous n'émettez pas d'e-factures. Calendrier, obligations, amendes.",
     },
     publieLe: "2026-07-10",
-    misAJourLe: "2026-09-11",
+    misAJourLe: "2026-11-23",
     dureeLecture: 7,
     carte: {
       titre: "E-reporting : l'obligation B2C dont personne ne parle",
@@ -278,12 +278,12 @@ export const ARTICLES: Article[] = [
       "Réforme facturation électronique : 7 points à vérifier pour être prêt. Logiciel, format Factur-X, plateforme agréée, e-reporting, mentions légales.",
     h1: "Checklist réforme facturation 2026 : êtes-vous prêt ?",
     og: {
-      titre: "Checklist réforme facturation 2026 pour freelances",
+      titre: "Checklist réforme facturation 2026 pour votre entreprise",
       description:
         "7 points à vérifier pour être en conformité avec la réforme de facturation électronique.",
     },
     publieLe: "2026-07-10",
-    misAJourLe: "2026-09-27",
+    misAJourLe: "2026-11-23",
     dureeLecture: 10,
     carte: {
       titre: "Checklist réforme 2026 : êtes-vous prêt ?",
@@ -382,7 +382,7 @@ export const ARTICLES: Article[] = [
     og: {
       titre: "Factur-X expliqué à quelqu'un qui n'est pas comptable",
       description:
-        "Un PDF que l'humain lit et que la machine lit aussi. Ce qu'est vraiment Factur-X, sans jargon, et ce que ça change pour un freelance.",
+        "Un PDF que l'humain lit et que la machine lit aussi. Ce qu'est vraiment Factur-X, sans jargon, et ce que ça change pour votre entreprise.",
     },
     publieLe: "2026-09-27",
     misAJourLe: "2026-09-27",
@@ -680,7 +680,7 @@ export const ARTICLES: Article[] = [
         "Un frais refacturé entre dans votre chiffre d'affaires et donc dans l'assiette de vos cotisations. Sauf s'il remplit les conditions du débours.",
     },
     publieLe: "2026-09-12",
-    misAJourLe: "2026-09-12",
+    misAJourLe: "2026-11-23",
     dureeLecture: 9,
     carte: {
       titre: "Refacturer ses frais sans gonfler son CA",
@@ -1041,7 +1041,7 @@ export const ARTICLES: Article[] = [
     categorie: "comptables",
     titre: "Experts-comptables : équiper ses clients micro",
     description:
-      "Le dossier micro est peu rentable non parce qu'il est simple, mais parce qu'il arrive en désordre. L'équiper à la source, et ce que la réforme y change.",
+      "Le dossier micro est peu rentable non parce qu'il est simple, mais parce qu'il arrive en désordre. L'équiper à la source, et la place des clients sociétés.",
     h1: "Experts-comptables : équiper ses clients micro d'un outil de facturation conforme",
     og: {
       titre: "Experts-comptables : équiper ses clients micro",
@@ -1049,7 +1049,7 @@ export const ARTICLES: Article[] = [
         "Ressaisie, relances, non-conformité : ce que le dossier micro mal tenu coûte au cabinet, et pourquoi la réforme rend l'équipement incontournable.",
     },
     publieLe: "2026-11-02",
-    misAJourLe: "2026-11-02",
+    misAJourLe: "2026-11-23",
     dureeLecture: 8,
     carte: {
       titre: "Experts-comptables : équiper ses clients micro",
@@ -1059,6 +1059,75 @@ export const ARTICLES: Article[] = [
       "quand-prendre-expert-comptable-micro",
       "deviso-solution-comptable-marche",
       "reforme-facturation-micro-entrepreneur",
+    ],
+  },
+  {
+    slug: "trajectoire-conformite-facturation-electronique-cabinet",
+    categorie: "comptables",
+    titre: "Réforme : documenter la conformité de vos clients",
+    description: "Le guide de démarrage de la DGFiP tient compte des difficultés documentées. Les preuves qu'il attend, et comment le cabinet aide chaque client à les réunir.",
+    h1: "Facturation électronique : aider vos clients à documenter leur trajectoire de conformité",
+    og: {
+      titre: "Réforme : documenter la trajectoire de conformité de vos clients",
+      description: "Ni report ni suspension : la DGFiP apprécie les difficultés réelles, documentées et suivies. Les preuves à réunir, dossier par dossier, avec le cabinet.",
+    },
+    publieLe: "2026-11-23",
+    misAJourLe: "2026-11-23",
+    dureeLecture: 8,
+    carte: {
+      titre: "Documenter la trajectoire de conformité",
+      resume: "Les preuves que la DGFiP attend au démarrage, et le rôle du cabinet",
+    },
+    lies: [
+      "portefeuille-clients-echeance-septembre-2027",
+      "amendes-facturation-electronique-2026",
+      "facture-electronique-refusee-que-faire",
+    ],
+  },
+  {
+    slug: "mandat-facturation-electronique-expert-comptable",
+    categorie: "comptables",
+    titre: "Mandat et facture électronique : le rôle du cabinet",
+    description: "Choix de plateforme, raccordement, émission pour le client : ce que l'expert-comptable peut faire sous mandat, et ce que la lettre de mission doit préciser.",
+    h1: "Facturation électronique : ce que le cabinet peut faire sous mandat pour ses clients",
+    og: {
+      titre: "Facture électronique : ce que le cabinet peut faire sous mandat",
+      description: "Le choix de la plateforme reste une décision du client. Mandat de facturation, mandat présumé, lettre de mission : les règles, et les points à écrire.",
+    },
+    publieLe: "2026-11-23",
+    misAJourLe: "2026-11-23",
+    dureeLecture: 9,
+    carte: {
+      titre: "Le mandat entre le cabinet et son client",
+      resume: "Plateforme, émission sous mandat, lettre de mission : qui fait quoi",
+    },
+    lies: [
+      "choisir-plateforme-agreee-freelance",
+      "plateforme-agreee-ou-solution-compatible",
+      "experts-comptables-equiper-clients-micro",
+    ],
+  },
+  {
+    slug: "portefeuille-clients-echeance-septembre-2027",
+    categorie: "comptables",
+    titre: "Septembre 2027 : préparer son portefeuille clients",
+    description: "Au 1er septembre 2027, PME, TPE et micro émettent en électronique et font leur e-reporting. Trier le portefeuille par profil et préparer chaque dossier.",
+    h1: "Échéance de septembre 2027 : préparer le portefeuille de clients PME, TPE et micro",
+    og: {
+      titre: "Septembre 2027 : préparer le portefeuille de clients du cabinet",
+      description: "Taille appréciée au 1er janvier 2025, profils prioritaires, rythme du e-reporting selon le régime de TVA, nouvelles mentions : le plan du cabinet.",
+    },
+    publieLe: "2026-11-23",
+    misAJourLe: "2026-11-23",
+    dureeLecture: 9,
+    carte: {
+      titre: "Préparer le portefeuille pour septembre 2027",
+      resume: "Trier les dossiers par profil avant l'émission des PME et micro",
+    },
+    lies: [
+      "e-reporting-freelance-2026",
+      "checklist-reforme-facturation-2026",
+      "experts-comptables-equiper-clients-micro",
     ],
   },
   {
@@ -1091,15 +1160,15 @@ export const ARTICLES: Article[] = [
     categorie: "gestion",
     titre: "Deviso face au marché : notre solution comptable",
     description:
-      "Le marché des outils déborde, et pourtant le micro reste mal servi. Où Deviso se place, les points de douleur qu'il règle, et ce qu'il ne prétend pas être.",
-    h1: "Deviso face au marché : notre place et les points de douleur que nous réglons",
+      "Le marché de la facturation laisse des trous aux petites entreprises. Où se place Deviso, du micro-entrepreneur à la société, et ce qu'il ne prétend pas être.",
+    h1: "Deviso face au marché : notre place et les points de douleur que nous réglons pour votre entreprise",
     og: {
       titre: "Deviso face au marché de la facturation",
       description:
-        "Entre outils grand public imprécis et plateformes cabinet trop lourdes : où Deviso se place pour le micro-entrepreneur et son expert-comptable.",
+        "Du micro-entrepreneur à la société : où se place Deviso, et ce qu'il ne prétend pas être.",
     },
     publieLe: "2026-11-02",
-    misAJourLe: "2026-11-02",
+    misAJourLe: "2026-11-23",
     dureeLecture: 7,
     carte: {
       titre: "Deviso face au marché : notre solution comptable",

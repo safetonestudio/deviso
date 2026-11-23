@@ -9,13 +9,13 @@ export default function Page() {
   return (
     <BlogPost
       slug={SLUG}
-      intro="Un devis de travaux mal rédigé, c'est un redressement fiscal possible (mauvais taux de TVA), une mise en cause juridique (garantie décennale absente) ou un litige client (périmètre flou). Voici comment rédiger un devis artisan BTP conforme, qui vous protège et accélère vos paiements."
+      intro="Un devis de travaux mal rédigé, c'est un redressement fiscal possible (mauvais taux de TVA), une mise en cause juridique (garantie décennale absente) ou un litige client (périmètre flou). Voici comment rédiger un devis artisan BTP conforme, qui protège votre entreprise, artisan indépendant ou société et accélère vos paiements."
       mandatoryTitle="Les mentions obligatoires d'un devis artisan BTP"
       mandatoryIntro="Au-delà des mentions légales classiques, un devis de travaux a des exigences spécifiques imposées par la réglementation BTP :"
       mandatoryItems={[
         {
           title: "Vos coordonnées et numéro SIRET",
-          desc: "Raison sociale ou nom, adresse, numéro SIRET, et si applicable numéro de TVA intracommunautaire. Pour les auto-entrepreneurs en franchise, mentionnez 'TVA non applicable, art. 293 B du CGI'.",
+          desc: "Raison sociale ou nom, adresse, numéro SIRET, et si applicable numéro de TVA intracommunautaire. Pour les micro-entrepreneurs en franchise, mentionnez 'TVA non applicable, art. 293 B du CGI'.",
         },
         {
           title: "Qualifications professionnelles",

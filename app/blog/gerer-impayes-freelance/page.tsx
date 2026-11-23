@@ -17,11 +17,11 @@ export const metadata = metadonneesArticle(SLUG);
  */
 const FAQ = [
   {
-    q: "Quel est le délai de prescription pour les factures impayées en freelance ?",
+    q: "Quel est le délai de prescription pour les factures impayées ?",
     a: "En France, les créances professionnelles se prescrivent en 5 ans à compter de la date d'exigibilité de la facture (date d'échéance). Vous avez donc 5 ans pour agir juridiquement. Mais plus vous attendez, plus le recouvrement est difficile : agissez dès le premier mois de retard.",
   },
   {
-    q: "Comment fonctionne l'injonction de payer pour un freelance ?",
+    q: "Comment fonctionne l'injonction de payer ?",
     a: "L'injonction de payer est une procédure judiciaire simplifiée, sans audience. Vous déposez une requête au tribunal compétent avec vos justificatifs (devis signé, facture, relances). Si le juge l'accorde, le débiteur a 1 mois pour contester. Si ce délai passe sans contestation, l'ordonnance devient exécutoire et un huissier peut saisir les biens du débiteur.",
   },
 ];
@@ -60,14 +60,14 @@ export default function Page() {
 
           <div className="mb-10">
             <div className="flex items-center gap-3 mb-4">
-              <span className="text-xs px-2.5 py-1 rounded-full bg-rose-500/10 text-rose-300 border border-rose-500/20 font-medium">Problèmes freelance</span>
+              <span className="text-xs px-2.5 py-1 rounded-full bg-rose-500/10 text-rose-300 border border-rose-500/20 font-medium">Problèmes courants</span>
               <span className="text-xs text-gray-400">29 juin 2026 · 7 min</span>
             </div>
             <h1 className="text-3xl sm:text-4xl font-semibold text-ink leading-tight mb-4">
               Gérer les impayés en freelance : de la relance à l&apos;injonction de payer
             </h1>
             <p className="text-lg text-gray-400 leading-relaxed">
-              1 freelance sur 3 a déjà subi un impayé. La bonne nouvelle : la loi vous protège. La mauvaise : vous devez connaître les étapes pour l&apos;activer efficacement, et ne pas attendre 6 mois avant d&apos;agir.
+              Un impayé peut toucher n&apos;importe quelle entreprise, de l&apos;indépendant à la société. La bonne nouvelle : la loi vous protège. La mauvaise : vous devez connaître les étapes pour l&apos;activer efficacement, et ne pas attendre 6 mois avant d&apos;agir.
             </p>
           </div>
 
@@ -104,7 +104,7 @@ export default function Page() {
                   content: [
                     "Dès le premier jour de retard, envoyez une relance, par email d'abord, par téléphone ensuite. Ne laissez pas trainer : plus vous attendez, plus le client considère que l'impayé est acceptable.",
                     "Ton : professionnel et neutre. Ne culpabilisez pas, ne vous excusez pas. Rappelez simplement le fait : \"La facture n°XXX de X€, arrivée à échéance le [date], n'apparaît pas encore dans nos paiements reçus. Pouvez-vous confirmer sa mise en règlement ?\"",
-                    "Si pas de réponse sous 48h : relancez par téléphone. Dans 80% des cas, l'impayé se résout à cette étape, c'est simplement un oubli ou un problème de trésorerie ponctuel.",
+                    "Si pas de réponse sous 48h : relancez par téléphone. Souvent, l'impayé se résout à cette étape : il s'agit d'un oubli ou d'un problème de trésorerie ponctuel.",
                   ],
                 },
                 {

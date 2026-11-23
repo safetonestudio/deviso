@@ -20,8 +20,8 @@ const FAQ = [
     a: "L'e-reporting est l'obligation de transmettre à la DGFiP les données de transactions commerciales qui ne font pas l'objet d'une e-facture. Cela concerne principalement les ventes aux particuliers (B2C) et les ventes à l'étranger. Contrairement à l'e-invoicing (envoi de la facture structurée au client), l'e-reporting n'est pas une facture, c'est une déclaration de données fiscales.",
   },
   {
-    q: "L'e-reporting concerne-t-il les freelances en franchise de TVA ?",
-    a: "La franchise de TVA (article 293B CGI) exonère les micro-entrepreneurs de la collecte et du versement de TVA. Elle n'exempte pas des obligations d'e-reporting. Cependant, comme les données d'e-reporting concernent principalement la TVA, les franchisés auront des déclarations simplifiées (montants HT uniquement). La DGFiP doit préciser les modalités exactes pour les franchisés.",
+    q: "L'e-reporting concerne-t-il les entreprises en franchise de TVA ?",
+    a: "La franchise de TVA (article 293B CGI) exonère les entreprises concernées (notamment les micro-entrepreneurs) de la collecte et du versement de TVA. Elle n'exempte pas des obligations d'e-reporting. Cependant, comme les données d'e-reporting concernent principalement la TVA, les franchisés auront des déclarations simplifiées (montants HT uniquement). La DGFiP doit préciser les modalités exactes pour les franchisés.",
   },
   {
     q: "Quelle est l'amende en cas de non-respect de l'e-reporting ?",
@@ -36,7 +36,7 @@ export default function EReportingFreelancePage() {
 
       <div className="bg-amber-950/90 backdrop-blur-xs border-b border-amber-500/20 py-2 px-4 text-center text-sm">
         <span className="text-amber-400 font-semibold">Angle mort de la réforme&nbsp;:</span>
-        <span className="text-gray-300 ml-1.5">L&apos;e-reporting B2C est rarement mentionné, mais il concerne aussi les freelances qui vendent aux particuliers.</span>
+        <span className="text-gray-300 ml-1.5">L&apos;e-reporting B2C est rarement mentionné, mais il concerne aussi les entreprises, sociétés comme indépendants, qui vendent aux particuliers.</span>
       </div>
 
 
@@ -57,7 +57,7 @@ export default function EReportingFreelancePage() {
             <span className="text-xs text-gray-400">7 min · Mis à jour juillet 2026</span>
           </div>
           <h1 className="text-3xl sm:text-4xl font-bold text-ink leading-tight mb-4">
-            E-reporting freelance 2026 : l&apos;obligation B2C dont personne ne parle
+            E-reporting 2026 : l&apos;obligation B2C dont personne ne parle
           </h1>
           <p className="text-lg text-gray-400 leading-relaxed">
             Tout le monde parle de la facturation électronique pour les transactions B2B. Mais si vous avez des clients particuliers, ou si vous vendez à l&apos;étranger, vous avez une deuxième obligation : l&apos;<strong className="text-ink">e-reporting</strong>. Tour d&apos;horizon complet.
@@ -98,10 +98,10 @@ export default function EReportingFreelancePage() {
             <p>L&apos;e-reporting concerne toutes les entreprises assujetties à la TVA qui réalisent des opérations non couvertes par l&apos;e-invoicing :</p>
             <div className="mt-4 space-y-3">
               {[
-                { icon: "✓", color: "text-amber-400", label: "Freelances avec des clients particuliers (B2C)", desc: "Photographe de mariage, coach personnel, rédacteur pour des blogueurs indépendants, etc." },
+                { icon: "✓", color: "text-amber-400", label: "Entreprises avec des clients particuliers (B2C)", desc: "Commerce de détail, restaurant, photographe de mariage, coach personnel, cabinet de conseil ou de formation aux particuliers, etc." },
                 { icon: "✓", color: "text-amber-400", label: "Exportateurs et prestataires de services à l'étranger", desc: "Clients en dehors de l'UE, mais aussi clients professionnels hors de France." },
                 { icon: "✓", color: "text-amber-400", label: "Ventes à des associations ou entités non-TVA", desc: "Les associations qui ne récupèrent pas la TVA sont traitées comme des particuliers pour l'e-reporting." },
-                { icon: "×", color: "text-gray-600", label: "Non concerné : freelance 100% B2B avec des entreprises françaises", desc: "Dans ce cas, toutes les transactions sont couvertes par l'e-invoicing. Pas d'e-reporting supplémentaire." },
+                { icon: "×", color: "text-gray-600", label: "Non concerné : entreprise 100% B2B avec des entreprises françaises", desc: "Dans ce cas, toutes les transactions sont couvertes par l'e-invoicing. Pas d'e-reporting supplémentaire." },
               ].map(({ icon, color, label, desc }) => (
                 <div key={label} className="flex gap-3 bg-ds-surface border border-ds-border rounded-xl p-4">
                   <span className={`font-bold shrink-0 ${color}`}>{icon}</span>
@@ -173,7 +173,7 @@ export default function EReportingFreelancePage() {
                 {
                   date: "1er septembre 2027",
                   qui: "PME, TPE, micro-entrepreneurs",
-                  obligation: "E-reporting obligatoire, tous les freelances concernés",
+                  obligation: "E-reporting obligatoire, toutes les entreprises concernées",
                   urgency: "low",
                 },
               ].map(({ date, qui, obligation, urgency }) => (

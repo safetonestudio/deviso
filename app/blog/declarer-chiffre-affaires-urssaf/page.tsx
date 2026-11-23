@@ -127,7 +127,7 @@ export default function Page() {
       cta={{
         titre: "Votre CA à déclarer, déjà calculé",
         texte:
-          "Deviso totalise votre chiffre d&rsquo;affaires encaissé par période et par catégorie : au moment de déclarer à l&rsquo;URSSAF, vous n&rsquo;avez plus qu&rsquo;à recopier les montants.",
+          "Deviso totalise votre chiffre d&rsquo;affaires encaissé par période et par catégorie : au moment de déclarer à l&rsquo;URSSAF, vous n&rsquo;avez plus qu&rsquo;à recopier les montants. Et si votre entreprise passe au régime réel ou en société, son statut se modifie dans Deviso, sans repartir de zéro.",
       }}
     />
   );

@@ -23,7 +23,7 @@ const CHECKLIST: ChecklistItem[] = [
   {
     num: "01",
     title: "Identifier si vous êtes une grande entreprise, ETI ou PME/TPE",
-    description: "Votre date d'obligation d'émettre dépend de votre taille : pour un freelance ou un micro-entrepreneur, c'est le 1er septembre 2027. Mais l'obligation de pouvoir RECEVOIR une facture électronique via une plateforme agréée s'applique déjà, depuis le 1er septembre 2026, quelle que soit votre taille.",
+    description: "Votre date d'obligation d'émettre dépend de votre taille : pour une PME, une TPE, un indépendant ou un micro-entrepreneur, c'est le 1er septembre 2027. Mais l'obligation de pouvoir RECEVOIR une facture électronique via une plateforme agréée s'applique déjà, depuis le 1er septembre 2026, quelle que soit votre taille.",
     urgency: "high",
     action: "Vérifier votre catégorie dans le portail impots.gouv.fr ou avec votre expert-comptable.",
     details: [
@@ -36,11 +36,11 @@ const CHECKLIST: ChecklistItem[] = [
   {
     num: "02",
     title: "Vérifier que votre logiciel de facturation supporte le Factur-X",
-    description: "Le format Factur-X (PDF/A-3 + XML EN 16931) est le format pivot de la réforme pour les PME et indépendants. Si votre logiciel génère des PDF classiques ou des factures Word, il n'est pas conforme.",
+    description: "Le format Factur-X (PDF/A-3 + XML EN 16931) est le format pivot de la réforme pour les PME, les TPE et les indépendants. Si votre logiciel génère des PDF classiques ou des factures Word, il n'est pas conforme.",
     urgency: "high",
     action: "Contacter l'éditeur de votre logiciel et demander : « Générez-vous des factures Factur-X au profil EN 16931 ? »",
     details: [
-      "Factur-X EN 16931 = le profil recommandé pour les PME et indépendants",
+      "Factur-X EN 16931 = le profil recommandé pour les PME, les TPE et les indépendants",
       "Factur-X MINIMUM = très simplifié, limité à certains cas",
       "XRechnung, UBL = autres formats admis mais moins courants en France",
     ],
@@ -86,7 +86,7 @@ const CHECKLIST: ChecklistItem[] = [
   {
     num: "06",
     title: "Vérifier la gestion de la TVA et votre statut franchise",
-    description: "Si vous êtes en franchise de TVA (micro-entrepreneur sous seuils), vous devrez probablement faire de l'e-reporting simplifié. Si vous avez dépassé les seuils et êtes passé au régime réel, vous êtes pleinement concerné par l'e-invoicing.",
+    description: "Si vous êtes en franchise de TVA (micro-entrepreneur ou petite entreprise sous les seuils), vous devrez probablement faire de l'e-reporting simplifié. Si vous avez dépassé les seuils et êtes passé au régime réel, vous êtes pleinement concerné par l'e-invoicing.",
     urgency: "medium",
     action: "Vérifier votre statut TVA actuel (franchise 293B CGI vs assujetti) et les seuils applicables à votre activité pour 2026-2027.",
     details: [

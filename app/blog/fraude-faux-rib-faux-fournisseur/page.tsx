@@ -11,7 +11,7 @@ const SECTIONS: Section[] = [
     titre: "Comment se déroule l&rsquo;arnaque",
     paragraphes: [
       "Le scénario est presque toujours le même. Vous recevez un message qui semble venir d&rsquo;un fournisseur habituel, ou d&rsquo;un client que vous facturez&nbsp;: ses coordonnées bancaires ont changé, merci de régler la prochaine facture sur ce nouveau RIB. Le logo est le bon, la signature aussi, parfois même la facture jointe est authentique.",
-      "Derrière, un escroc qui a usurpé l&rsquo;adresse du fournisseur, piraté sa messagerie, ou simplement intercepté un échange. Le virement part sur son compte, et l&rsquo;argent disparaît en quelques heures. Les petites entreprises sont des cibles de choix&nbsp;: elles ont rarement une procédure de validation des paiements.",
+      "Derrière, un escroc qui a usurpé l&rsquo;adresse du fournisseur, piraté sa messagerie, ou simplement intercepté un échange. Le virement part sur son compte, et l&rsquo;argent disparaît en quelques heures. Les petites entreprises, indépendants compris, sont des cibles de choix&nbsp;: elles ont rarement une procédure de validation des paiements.",
     ],
   },
   {
@@ -136,7 +136,7 @@ export default function Page() {
   return (
     <ArticleLong
       slug={SLUG}
-      chapeau="Un e-mail d&rsquo;un fournisseur habituel annonce un changement de coordonnées bancaires, la facture jointe est authentique, et pourtant l&rsquo;argent part chez un escroc. La fraude au faux RIB vise de plus en plus les petites entreprises. Quelques réflexes suffisent à s&rsquo;en protéger."
+      chapeau="Un e-mail d&rsquo;un fournisseur habituel annonce un changement de coordonnées bancaires, la facture jointe est authentique, et pourtant l&rsquo;argent part chez un escroc. La fraude au faux RIB peut viser toute entreprise, et d&rsquo;abord les petites structures, qui n&rsquo;ont pas toujours de procédure de validation des paiements. Quelques réflexes suffisent à s&rsquo;en protéger."
       enBref={[
         "L&rsquo;arnaque type&nbsp;: un <strong>faux changement de RIB</strong> envoyé au nom d&rsquo;un fournisseur ou d&rsquo;un client.",
         "Signaux&nbsp;: changement de RIB par e-mail, <strong>urgence</strong>, adresse légèrement différente, compte à l&rsquo;étranger.",

@@ -9,7 +9,7 @@ export default function Page() {
   return (
     <BlogPost
       slug={SLUG}
-      intro="Un devis photo sans clause sur les droits d'utilisation, c'est une source de litige quasi garantie. Et oublier les frais de déplacement, c'est travailler à perte. Voici comment rédiger un devis de photographe freelance complet, qui protège vos droits et accélère vos paiements."
+      intro="Un devis photo sans clause sur les droits d'utilisation, c'est une source de litige quasi garantie. Et oublier les frais de déplacement, c'est travailler à perte. Voici comment rédiger un devis de photographe freelance complet, que vous exerciez en indépendant ou au sein d'une société, qui protège vos droits et accélère vos paiements."
       mandatoryTitle="Les mentions indispensables d'un devis photo"
       mandatoryIntro="La photographie cumule deux enjeux spécifiques : les droits d'auteur (propriété intellectuelle) et les frais variables (déplacement, matériel). Voici ce que votre devis doit absolument mentionner :"
       mandatoryItems={[

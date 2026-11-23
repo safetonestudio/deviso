@@ -198,7 +198,7 @@ export default function Page() {
       cta={{
         titre: "Savoir où vous en êtes, sans tenir un tableur",
         texte:
-          "Deviso suit votre chiffre d&rsquo;affaires encaissé depuis le 1<sup>er</sup> janvier et affiche la distance au seuil qui compte pour vous, pas seulement au plafond du régime micro.",
+          "Deviso suit votre chiffre d&rsquo;affaires encaissé depuis le 1<sup>er</sup> janvier et affiche la distance au seuil qui compte pour vous, pas seulement au plafond du régime micro. Et si votre entreprise passe au régime réel ou en société, son statut se modifie dans Deviso, sans repartir de zéro.",
       }}
     />
   );

@@ -50,7 +50,7 @@ const SECTIONS: Section[] = [
     ton: "info",
     titre: "Ce que vous pouvez garder pour vous",
     texte:
-      "Tant que vous restez au micro, en franchise de TVA, sans salarié, l&rsquo;essentiel est à votre portée : tenir le livre des recettes, émettre des factures conformes, déclarer votre CA à l&rsquo;URSSAF. Un bon <strong>outil de facturation</strong> couvre déjà la majeure partie de ces gestes. L&rsquo;expert-comptable prend le relais sur le conseil et les opérations complexes, pas sur la saisie du quotidien.",
+      "Tant que vous restez au micro, en franchise de TVA, sans salarié, l&rsquo;essentiel est à votre portée : tenir le livre des recettes, émettre des factures conformes, déclarer votre CA à l&rsquo;URSSAF. Un bon <strong>outil de facturation</strong> couvre déjà la majeure partie de ces gestes. L&rsquo;expert-comptable prend le relais sur le conseil et les opérations complexes, pas sur la saisie du quotidien. Pour une société, qui doit produire des comptes annuels, le recours à un expert-comptable est plus courant ; l&rsquo;accès comptable de Deviso, gratuit et en lecture seule, lui donne la même vue sur la facturation.",
   },
   {
     type: "tableau",

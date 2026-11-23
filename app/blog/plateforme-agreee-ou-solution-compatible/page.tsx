@@ -26,7 +26,7 @@ const FAQ = [
   },
   {
     q: "Est-ce moins bien d'utiliser une solution compatible ?",
-    a: "Pas en soi. Ce qui compte, c'est que la chaîne soit complète et que vous puissiez la vérifier. Beaucoup d'éditeurs de logiciels de facturation, y compris parmi les plus utilisés par les indépendants, sont des solutions compatibles adossées à une plateforme agréée. Le vrai critère n'est pas le statut de l'éditeur, c'est sa capacité à vous dire lequel il a.",
+    a: "Pas en soi. Ce qui compte, c'est que la chaîne soit complète et que vous puissiez la vérifier. Beaucoup d'éditeurs de logiciels de facturation, y compris parmi les plus utilisés par les PME, les TPE et les indépendants, sont des solutions compatibles adossées à une plateforme agréée. Le vrai critère n'est pas le statut de l'éditeur, c'est sa capacité à vous dire lequel il a.",
   },
   {
     q: "Que signifie « immatriculation sous réserve » sur la liste officielle ?",

@@ -23,7 +23,7 @@ const clauses = [
     title: "Clause de périmètre",
     risk: "Scope creep",
     color: "indigo",
-    desc: "C'est la clause la plus importante pour la majorité des freelances. Elle définit exactement ce que couvre la mission, et implicitement, tout ce qui n'en fait pas partie. Sans elle, votre client peut légitimement considérer que \"une page de plus\", \"un onglet supplémentaire\" ou \"juste une petite modification\" sont inclus dans le prix.",
+    desc: "C'est la clause la plus importante pour toute entreprise de services. Elle définit exactement ce que couvre la mission, et implicitement, tout ce qui n'en fait pas partie. Sans elle, votre client peut légitimement considérer que \"une page de plus\", \"un onglet supplémentaire\" ou \"juste une petite modification\" sont inclus dans le prix.",
     formulation: "La présente mission couvre exclusivement les prestations décrites ci-dessus. Toute demande supplémentaire non prévue dans ce devis fera l'objet d'un avenant tarifé, établi et accepté avant toute exécution.",
     professions: [
       { label: "Développeur web", href: "/freelance-developpeur" },
@@ -205,8 +205,8 @@ const metierLinks = [
  */
 const FAQ = [
   {
-    q: "Un devis freelance a-t-il la même valeur juridique qu'un contrat ?",
-    a: "Oui. Un devis signé des deux parties constitue un contrat au sens juridique. Il engage le freelance à réaliser la prestation aux conditions décrites, et le client à payer le prix convenu. Les clauses que vous incluez ont donc une valeur contractuelle pleine et entière, d'où l'importance de les rédiger avec soin.",
+    q: "Un devis a-t-il la même valeur juridique qu'un contrat ?",
+    a: "Oui. Un devis signé des deux parties constitue un contrat au sens juridique. Il engage le prestataire, indépendant ou société, à réaliser la prestation aux conditions décrites, et le client à payer le prix convenu. Les clauses que vous incluez ont donc une valeur contractuelle pleine et entière, d'où l'importance de les rédiger avec soin.",
   },
   {
     q: "Les pénalités de retard sont-elles obligatoires ?",
@@ -262,7 +262,7 @@ export default function Page() {
               Les clauses indispensables dans un devis freelance
             </h1>
             <p className="text-lg text-gray-400 leading-relaxed">
-              Un devis signé est un contrat. Sans les bonnes clauses, il peut se retourner contre vous. Voici les 9 clauses à inclure systématiquement, avec des formulations prêtes à l'emploi.
+              Un devis signé est un contrat. Sans les bonnes clauses, il peut se retourner contre votre entreprise. Voici les 9 clauses à inclure systématiquement, avec des formulations prêtes à l'emploi.
             </p>
           </div>
 
@@ -285,10 +285,10 @@ export default function Page() {
           {/* Intro */}
           <div className="prose prose-invert max-w-none mb-12">
             <p className="text-gray-300 leading-relaxed text-base mb-4">
-              La plupart des litiges entre freelances et clients ne viennent pas d&apos;une mauvaise volonté, mais d&apos;un malentendu sur ce qui était convenu. Le devis vague est l&apos;origine de 90% des conflits : le freelance pensait que &quot;le projet&quot; couvrait X, le client pensait que Y était inclus aussi.
+              La plupart des litiges entre une entreprise et ses clients ne viennent pas d&apos;une mauvaise volonté, mais d&apos;un malentendu sur ce qui était convenu. Un devis vague en est l&apos;origine fréquente : le prestataire pensait que &quot;le projet&quot; couvrait X, le client pensait que Y était inclus aussi.
             </p>
             <p className="text-gray-300 leading-relaxed text-base mb-4">
-              La solution ? Des clauses claires, rédigées en français simple, qui définissent les règles du jeu avant que la mission commence. Chaque clause ci-dessous correspond à un risque réel que des freelances ont subi, et que vous pouvez éviter.
+              La solution ? Des clauses claires, rédigées en français simple, qui définissent les règles du jeu avant que la mission commence. Chaque clause ci-dessous correspond à un risque réel auquel les entreprises de services sont exposées, et que vous pouvez éviter.
             </p>
           </div>
 

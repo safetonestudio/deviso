@@ -90,7 +90,7 @@ export default function CombienFacturerPage() {
           <h1 className={H1}>Combien facturer en freelance&nbsp;?</h1>
           <p className={`${LEAD} mt-6`}>
             TJM par métier, calcul de revenu net et simulateur interactif. Des données de marché réelles
-            pour fixer votre tarif journalier avec confiance.
+            pour fixer le tarif journalier de votre activité avec confiance, que vous exerciez en indépendant, en société ou avec une équipe.
           </p>
         </div>
       </section>
@@ -146,6 +146,8 @@ export default function CombienFacturerPage() {
               d&apos;affaires (
               {(TAUX_COTISATIONS_BNC_CIPAV * 100).toLocaleString("fr-FR", { maximumFractionDigits: 1 })}&nbsp;% si
               vous relevez de la Cipav). Le reste est votre revenu net avant impôt sur le revenu.
+              En société (SASU, EURL, SAS, SARL), le calcul est différent : il dépend de la rémunération
+              du dirigeant et des charges de l&apos;entreprise, à valider avec votre expert-comptable.
             </p>
             <div className="space-y-3 text-[15px] text-gray-300">
               <div className="flex items-start gap-3 rounded-lg bg-ds-surface p-4">
@@ -203,13 +205,13 @@ export default function CombienFacturerPage() {
       <section className={`${CADRE} ${SECTION}`}>
         <div className="grid lg:grid-cols-12 gap-10 lg:gap-14">
           <div className="lg:col-span-5">
-            <h2 className={H2}>Les erreurs universelles de pricing en freelance</h2>
+            <h2 className={H2}>Les erreurs universelles de pricing, en indépendant comme en entreprise</h2>
           </div>
           <div className="lg:col-span-7 grid sm:grid-cols-2 gap-4">
             {[
               {
                 t: "Facturer son temps, pas sa valeur",
-                d: "Un développeur qui économise 50 k€ de coût de recrutement crée plus de valeur qu'une journée de travail. Apprenez à quantifier l'impact de vos livrables.",
+                d: "Un développeur qui économise 50 k€ de coût de recrutement crée plus de valeur qu'une journée de travail. Apprenez à quantifier l'impact de vos livrables, que vous facturiez seul ou au nom de votre société.",
               },
               {
                 t: "S'aligner sur le moins-disant",
@@ -217,7 +219,7 @@ export default function CombienFacturerPage() {
               },
               {
                 t: "Ignorer les jours non facturables",
-                d: "Prospection, admin, congés, formation : sur 220 jours ouvrables/an, vous n'en facturez que 150–180. Votre TJM doit couvrir ces jours 'gratuits'.",
+                d: "Prospection, admin, congés, formation : sur 220 jours ouvrables/an, vous n'en facturez que 150–180. Votre TJM doit couvrir ces jours non facturés.",
               },
               {
                 t: "Ne pas distinguer TJM et tarif horaire",
@@ -239,8 +241,8 @@ export default function CombienFacturerPage() {
           <div className="lg:col-span-7">
             <h2 className={H2}>Vos devis et factures en 30 secondes</h2>
             <p className={`${LEAD} mt-4`}>
-              Une fois votre TJM défini, Deviso génère vos devis par IA, les envoie avec e-signature et
-              transforme les devis signés en factures Factur-X en 1 clic.
+              Une fois votre TJM défini, Deviso génère vos devis par IA, les envoie avec signature en ligne et
+              transforme les devis signés en factures Factur-X en 1 clic. La formule Pro gère l'équipe, les rôles et la validation des devis.
             </p>
           </div>
           <div className="lg:col-span-5 flex flex-col sm:flex-row lg:flex-col gap-3 lg:items-start">

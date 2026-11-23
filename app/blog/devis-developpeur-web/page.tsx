@@ -9,13 +9,13 @@ export default function Page() {
   return (
     <BlogPost
       slug={SLUG}
-      intro="Un devis de développement web mal rédigé peut transformer une mission rentable en enfer : périmètre flou, modifications en cascade, litige sur la propriété du code. Voici comment rédiger un devis développeur web freelance qui vous protège, avec un exemple concret et les erreurs classiques à éviter."
+      intro="Un devis de développement web mal rédigé peut transformer une mission rentable en enfer : périmètre flou, modifications en cascade, litige sur la propriété du code. Voici comment rédiger un devis développeur web freelance qui protège votre entreprise, que vous exerciez seul ou en équipe, avec un exemple concret et les erreurs classiques à éviter."
       mandatoryTitle="Les mentions obligatoires d'un devis de développement web"
       mandatoryIntro="Au-delà des mentions légales classiques, un devis de développeur doit couvrir des points techniques spécifiques pour éviter tout désaccord en cours de mission :"
       mandatoryItems={[
         {
           title: "Vos coordonnées et statut",
-          desc: "Nom/raison sociale, SIRET, adresse, TVA intracommunautaire ou mention de franchise. En SASU ou EURL, indiquez votre capital social.",
+          desc: "Nom/raison sociale, SIRET, adresse, TVA intracommunautaire ou mention de franchise. En société (SASU, EURL, SARL, SAS), indiquez la forme juridique et le capital social.",
         },
         {
           title: "Description technique précise",
@@ -73,8 +73,8 @@ export default function Page() {
       ]}
       faq={[
         {
-          q: "Vaut-il mieux facturer en TJM ou au forfait en tant que développeur freelance ?",
-          a: "Le TJM (Taux Journalier Moyen) est adapté aux missions longues avec périmètre évolutif : développement itératif, sprints agiles, maintenance. Le forfait convient aux projets bien définis avec des livrables précis : site vitrine, MVP documenté, intégration API. En pratique, beaucoup de développeurs mixent : forfait pour la phase de cadrage et TJM pour les phases de développement itératives.",
+          q: "Vaut-il mieux facturer en TJM ou au forfait pour une prestation de développement web ?",
+          a: "Le TJM (Taux Journalier Moyen) est adapté aux missions longues avec périmètre évolutif : développement itératif, sprints agiles, maintenance. Le forfait convient aux projets bien définis avec des livrables précis : site vitrine, MVP documenté, intégration API. En pratique, beaucoup de développeurs et d'agences mixent : forfait pour la phase de cadrage et TJM pour les phases de développement itératives.",
         },
         {
           q: "Comment éviter le scope creep dans un devis de développement web ?",

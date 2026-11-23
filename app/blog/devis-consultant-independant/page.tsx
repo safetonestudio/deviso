@@ -9,7 +9,7 @@ export default function Page() {
   return (
     <BlogPost
       slug={SLUG}
-      intro="La proposition commerciale, ou propale, est le document pivot de toute mission de conseil. Trop floue, elle génère des désaccords sur les livrables. Trop longue, elle ralentit la décision. Voici comment rédiger un devis de consultant indépendant qui convainc et vous protège juridiquement."
+      intro="La proposition commerciale, ou propale, est le document pivot de toute mission de conseil. Trop floue, elle génère des désaccords sur les livrables. Trop longue, elle ralentit la décision. Voici comment rédiger un devis de consultant, indépendant ou cabinet de conseil, qui convainc et vous protège juridiquement."
       mandatoryTitle="Les mentions clés d'une propale de consultant"
       mandatoryIntro="Au-delà des mentions légales obligatoires, une proposition commerciale de conseil doit couvrir ces points spécifiques :"
       mandatoryItems={[

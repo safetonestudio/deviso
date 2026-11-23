@@ -9,7 +9,7 @@ export default function Page() {
   return (
     <BlogPost
       slug={SLUG}
-      intro="Un devis de traduction sans le volume exact (le client envoie le document après avoir signé), sans clause de révision, sans mention des droits d'auteur, c'est la recette des litiges. Voici comment structurer un devis de traduction freelance qui vous protège et rassure vos clients professionnels."
+      intro="Un devis de traduction sans le volume exact (le client envoie le document après avoir signé), sans clause de révision, sans mention des droits d'auteur, c'est la recette des litiges. Voici comment structurer un devis de traduction freelance qui vous protège, que vous soyez traducteur indépendant ou agence, et rassure vos clients professionnels."
       mandatoryTitle="Les mentions obligatoires d'un devis de traduction freelance"
       mandatoryIntro="En plus des mentions légales classiques, un devis de traduction doit préciser les éléments spécifiques à la mission :"
       mandatoryItems={[

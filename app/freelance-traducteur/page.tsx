@@ -38,7 +38,7 @@ export default function Page() {
         {
           icon: Bell,
           title: "Clients qui envoient le document après le devis",
-          desc: "Impossible de chiffrer exactement sans voir le document, mais le client veut un prix avant. Avec Deviso, génère un devis estimatif signé en 30 secondes, puis émets un avenant si le volume réel s'écarte.",
+          desc: "Impossible de chiffrer exactement sans voir le document, mais le client veut un prix avant. Avec Deviso, vous générez un devis estimatif signé en 30 secondes, puis vous émettez un avenant si le volume réel s'écarte.",
         },
         {
           icon: BarChart3,

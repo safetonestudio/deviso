@@ -16,12 +16,12 @@ export const metadata = metadonneesArticle(SLUG);
  */
 const FAQ = [
   {
-    q: "Comment calculer son TJM en freelance ?",
+    q: "Comment calculer son TJM ?",
     a: "La méthode la plus fiable : (1) Estimez votre revenu net mensuel cible, (2) Ajoutez vos charges (URSSAF, mutuelle, retraite, frais professionnels, environ 45-55% du CA pour un auto-entrepreneur), (3) Divisez par votre nombre de jours facturables réels par mois (généralement 15-18 jours sur 20 jours ouvrés, en comptant les congés, la prospection, l'admin). Le résultat est votre TJM minimum. Ajoutez une marge selon votre positionnement et la demande.",
   },
   {
-    q: "Faut-il afficher ses tarifs publiquement en freelance ?",
-    a: "Il n'y a pas de règle universelle. Afficher une fourchette de tarifs sur son site filtre les clients qui n'ont pas le budget et réduit le temps passé à faire des devis non convertis. Garder ses tarifs confidentiels permet plus de flexibilité selon le client et la mission. La plupart des freelances B2B choisissent de ne pas afficher de tarifs mais de mentionner une fourchette dans les premiers échanges.",
+    q: "Faut-il afficher ses tarifs publiquement ?",
+    a: "Il n'y a pas de règle universelle. Afficher une fourchette de tarifs sur son site filtre les clients qui n'ont pas le budget et réduit le temps passé à faire des devis non convertis. Garder ses tarifs confidentiels permet plus de flexibilité selon le client et la mission. La plupart des prestataires B2B choisissent de ne pas afficher de tarifs mais de mentionner une fourchette dans les premiers échanges.",
   },
 ];
 
@@ -59,14 +59,14 @@ export default function Page() {
 
           <div className="mb-10">
             <div className="flex items-center gap-3 mb-4">
-              <span className="text-xs px-2.5 py-1 rounded-full bg-emerald-500/10 text-emerald-300 border border-emerald-500/20 font-medium">Problèmes freelance</span>
+              <span className="text-xs px-2.5 py-1 rounded-full bg-emerald-500/10 text-emerald-300 border border-emerald-500/20 font-medium">Tarification</span>
               <span className="text-xs text-gray-400">29 juin 2026 · 7 min</span>
             </div>
             <h1 className="text-3xl sm:text-4xl font-semibold text-ink leading-tight mb-4">
               Comment fixer ses tarifs en freelance : TJM, méthodes et erreurs à éviter
             </h1>
             <p className="text-lg text-gray-400 leading-relaxed">
-              Sous-facturer, c&apos;est travailler pour rien. Sur-facturer sans le prouver, c&apos;est perdre des clients. La vérité : il existe une méthode rationnelle pour trouver le bon tarif, et elle n&apos;a rien à voir avec ce que pratique le voisin.
+              Pour un indépendant comme pour une société de services, sous-facturer, c&apos;est travailler pour rien. Sur-facturer sans le prouver, c&apos;est perdre des clients. La vérité : il existe une méthode rationnelle pour trouver le bon tarif, et elle n&apos;a rien à voir avec ce que pratique le voisin.
             </p>
           </div>
 
@@ -105,7 +105,7 @@ export default function Page() {
                     <span className="text-indigo-400 font-bold font-mono text-sm">03</span>
                     <h3 className="font-semibold text-ink">La méthode de la valeur délivrée (value-based pricing)</h3>
                   </div>
-                  <p className="text-gray-400 text-sm leading-relaxed mb-3">Au lieu de facturer votre temps, vous facturez la valeur que vous créez pour le client. Un consultant qui aide une PME à gagner 100 000€ de CA supplémentaire peut facturer 20 000€ de mission, même si ça lui a pris 20 jours. C&apos;est la méthode la plus rentable, mais elle requiert une bonne compréhension de l&apos;impact de votre travail et la capacité à le quantifier.</p>
+                  <p className="text-gray-400 text-sm leading-relaxed mb-3">Au lieu de facturer votre temps, vous facturez la valeur que vous créez pour le client. Un consultant, ou une société de conseil, qui aide une PME à gagner 100 000€ de CA supplémentaire peut facturer 20 000€ de mission, même si ça lui a pris 20 jours. C&apos;est la méthode la plus rentable, mais elle requiert une bonne compréhension de l&apos;impact de votre travail et la capacité à le quantifier.</p>
                   <p className="text-xs text-gray-400">Particulièrement adaptée aux consultants, coachs business, spécialistes SEO, experts en conversion.</p>
                 </div>
               </div>
@@ -118,7 +118,7 @@ export default function Page() {
                 {[
                   {
                     title: "Se comparer au salaire d'un salarié",
-                    desc: "Un développeur salarié à 45 000€/an brut ne coûte pas 45 000€ à son employeur, il coûte environ 67 000€ avec les charges patronales. Et le freelance, lui, doit financer sa propre protection sociale, sa retraite, ses congés, sa formation. Un TJM de 450€ pour un dev senior n'est pas \"cher\", c'est l'équivalent d'un salarié à 50k brut, sans les avantages.",
+                    desc: "Un développeur salarié à 45 000€/an brut ne coûte pas 45 000€ à son employeur, il coûte environ 67 000€ avec les charges patronales. Et l'indépendant, lui, doit financer sa propre protection sociale, sa retraite, ses congés, sa formation. Un TJM de 450€ pour un dev senior n'est pas \"cher\", c'est l'équivalent d'un salarié à 50k brut, sans les avantages.",
                   },
                   {
                     title: "Oublier les temps non facturables",
@@ -126,7 +126,7 @@ export default function Page() {
                   },
                   {
                     title: "Le syndrome de l'imposteur tarifaire",
-                    desc: "\"Je ne peux pas facturer autant, je ne suis pas assez expérimenté / les clients ne vont pas accepter / il y a des gens meilleurs que moi.\" Ce discours intérieur pousse des milliers de freelances à sous-facturer pendant des années. La réalité : si un client vous propose une mission, c'est qu'il croit que vous pouvez la faire. Il vous a déjà validé.",
+                    desc: "\"Je ne peux pas facturer autant, je ne suis pas assez expérimenté / les clients ne vont pas accepter / il y a des gens meilleurs que moi.\" Ce discours intérieur pousse de nombreux prestataires à sous-facturer pendant des années. La réalité : si un client vous propose une mission, c'est qu'il croit que vous pouvez la faire. Il vous a déjà validé.",
                   },
                   {
                     title: "Baisser ses tarifs pour \"ne pas perdre le client\"",
@@ -143,7 +143,7 @@ export default function Page() {
 
             <section>
               <h2 className="text-xl font-semibold text-ink mb-4">Comment augmenter ses tarifs sans perdre ses clients</h2>
-              <p className="mb-4 text-gray-400">L&apos;augmentation de tarifs est inévitable, l&apos;inflation, la progression de vos compétences, et la demande croissante l&apos;exigent. La plupart des freelances repoussent cette conversation indéfiniment. Voici comment l&apos;aborder.</p>
+              <p className="mb-4 text-gray-400">L&apos;augmentation de tarifs est inévitable, l&apos;inflation, la progression de vos compétences, et la demande croissante l&apos;exigent. La plupart des prestataires repoussent cette conversation indéfiniment. Voici comment l&apos;aborder.</p>
               <div className="space-y-3">
                 {[
                   { tip: "Annoncez la hausse 1 à 3 mois à l'avance, par email. Pas d'excuse, pas d'explication longue : \"À partir du [date], mes tarifs passent de X à Y€/jour. Je souhaitais vous en informer en avance pour que vous puissiez anticiper.\"" },

@@ -42,8 +42,8 @@ export default function Page() {
         },
         {
           icon: BarChart3,
-          title: "Suivre votre CA de 10 clients en même temps",
-          desc: "Avec plusieurs forfaits mensuels actifs, savoir exactement ce que vous encaissez pour l'URSSAF devient complexe. Le widget CA de Deviso vous affiche tout en temps réel, mensuel et trimestriel.",
+          title: "Suivre votre chiffre d'affaires sur 10 clients en même temps",
+          desc: "Avec plusieurs forfaits mensuels actifs, savoir exactement ce que vous encaissez devient complexe, que vous soyez micro-entrepreneur (déclaration URSSAF) ou agence avec une équipe. Deviso affiche votre chiffre d'affaires en temps réel, mensuel et trimestriel.",
         },
       ]}
       mockupPrompt="Gestion des réseaux sociaux d'une PME e-commerce de mode (Instagram, LinkedIn, Facebook). 12 posts par mois par plateforme, création des visuels incluse, veille et réponse aux commentaires, 1 reporting mensuel avec KPIs. Durée : 3 mois renouvelables."

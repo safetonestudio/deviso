@@ -129,7 +129,7 @@ export default function Page() {
       cta={{
         titre: "Biens et services, séparés automatiquement",
         texte:
-          "Deviso marque chaque facture en vente ou en prestation et tient la répartition dans votre livre des recettes, prête pour vos déclarations et pour votre comptable.",
+          "Deviso marque chaque facture en vente ou en prestation et tient la répartition dans votre livre des recettes, prête pour vos déclarations et pour votre comptable. Et si votre entreprise passe au régime réel ou en société, son statut se modifie dans Deviso, sans repartir de zéro.",
       }}
     />
   );

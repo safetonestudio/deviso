@@ -13,7 +13,7 @@ import {
   ShieldCheck, Smartphone, Stamp, Target,
   Ban, FileCode, Gavel,
   Briefcase, CalendarDays, ClipboardList, Compass, Landmark, Percent, PiggyBank, Scale, Split, UserCheck,
-  Zap, Clock, ShieldAlert, Building2, MapPin, type LucideIcon,
+  Zap, Clock, ShieldAlert, Building2, MapPin, Route, FileCheck2, CalendarClock, type LucideIcon,
 } from "lucide-react";
 
 /**
@@ -62,6 +62,9 @@ const ICONES: Record<string, LucideIcon> = {
   "micro-ou-reel-quand-basculer": Scale,
   "quand-prendre-expert-comptable-micro": UserCheck,
   "experts-comptables-equiper-clients-micro": Briefcase,
+  "trajectoire-conformite-facturation-electronique-cabinet": Route,
+  "mandat-facturation-electronique-expert-comptable": FileCheck2,
+  "portefeuille-clients-echeance-septembre-2027": CalendarClock,
   "calendrier-fiscal-social-micro": CalendarDays,
   "deviso-solution-comptable-marche": Compass,
   "plafonds-micro-entreprise-2026": Coins,

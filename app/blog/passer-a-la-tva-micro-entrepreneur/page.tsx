@@ -133,7 +133,7 @@ export default function Page() {
       cta={{
         titre: "Vos factures prêtes pour la TVA, le jour venu",
         texte:
-          "Deviso suit votre chiffre d&rsquo;affaires par rapport aux seuils et bascule vos factures en TVA quand vous passez le cap, mentions et numéro intracommunautaire compris.",
+          "Deviso suit votre chiffre d&rsquo;affaires par rapport aux seuils et bascule vos factures en TVA quand vous passez le cap, mentions et numéro intracommunautaire compris. Si votre entreprise passe un jour au régime réel ou en société, vous changez son statut dans Deviso, qui adapte alors le tableau de bord, la TVA et les exports FEC et Quadra.",
       }}
     />
   );

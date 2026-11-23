@@ -20,11 +20,11 @@ const FAQ = [
     a: "Une PDP est une plateforme privée certifiée par la DGFiP pour transmettre les factures électroniques entre entreprises et déclarer les données fiscales à l'administration. Depuis l'abandon du PPF (portail public) en octobre 2024, seules les PDP privées sont habilitées pour la réforme de facturation électronique.",
   },
   {
-    q: "Un freelance doit-il choisir sa propre PDP ?",
+    q: "Une entreprise ou un indépendant doit-il choisir sa propre PDP ?",
     a: "Pas nécessairement. Si votre logiciel de facturation est lui-même une PDP ou est connecté à une PDP, c'est transparent pour vous. Vous utilisez votre logiciel comme d'habitude, et la transmission à la DGFiP se fait automatiquement. Deviso est raccordé à une Plateforme Agréée (Super PDP) et émet et reçoit déjà vos factures électroniques, en conformité avec la réforme.",
   },
   {
-    q: "Combien coûte une PDP pour un freelance ?",
+    q: "Combien coûte une PDP pour une petite entreprise ou un indépendant ?",
     a: "Le coût varie selon les prestataires. Certaines PDP facturent à la transaction (0,05 à 0,30 € par facture), d'autres proposent des abonnements mensuels. Beaucoup de logiciels de facturation incluront l'accès à une PDP dans leur abonnement existant, sans surcoût.",
   },
 ];
@@ -58,10 +58,10 @@ export default function ChoisirPlateformeAgreeePage() {
             <span className="text-xs text-gray-400">8 min · Mis à jour juillet 2026</span>
           </div>
           <h1 className="text-3xl sm:text-4xl font-bold text-ink leading-tight mb-4">
-            Comment choisir sa plateforme agréée (PDP) quand on est freelance ou indépendant
+            Comment choisir sa plateforme agréée (PDP) quand on est freelance, indépendant ou dirigeant de petite entreprise
           </h1>
           <p className="text-lg text-gray-400 leading-relaxed">
-            Le portail public de facturation (PPF) a abandonné son rôle de plateforme d'échange en octobre 2024. Depuis le 1er septembre 2026, toute entreprise assujettie à la TVA, freelances compris, passe par une plateforme agréée privée. Voici comment choisir la vôtre.
+            Le portail public de facturation (PPF) a abandonné son rôle de plateforme d'échange en octobre 2024. Depuis le 1er septembre 2026, toute entreprise assujettie à la TVA, sociétés comme indépendants, passe par une plateforme agréée privée. Voici comment choisir la vôtre.
           </p>
         </div>
 
@@ -103,7 +103,7 @@ export default function ChoisirPlateformeAgreeePage() {
           </section>
 
           <section>
-            <h2 className="text-xl font-bold text-ink mb-4">5 critères pour choisir sa PDP en tant qu&apos;indépendant</h2>
+            <h2 className="text-xl font-bold text-ink mb-4">5 critères pour choisir sa PDP, société ou indépendant</h2>
             <div className="space-y-4">
               {[
                 {
@@ -114,12 +114,12 @@ export default function ChoisirPlateformeAgreeePage() {
                 {
                   num: "02",
                   titre: "Gestion du Factur-X",
-                  desc: "Assurez-vous que la PDP accepte le format Factur-X (le plus simple pour les indépendants). Certaines PDP visent surtout les grandes entreprises et proposent des formats complexes inadaptés aux TPE.",
+                  desc: "Assurez-vous que la PDP accepte le format Factur-X (le plus simple pour la plupart des entreprises). Certaines PDP visent surtout les grandes entreprises et proposent des formats complexes inadaptés aux TPE et aux PME.",
                 },
                 {
                   num: "03",
                   titre: "Tarif adapté aux petits volumes",
-                  desc: "Un freelance émet en moyenne 5 à 30 factures par mois. Méfiez-vous des PDP avec abonnement cher conçu pour des volumes de milliers de factures. Comparez le coût par facture ou les offres dédiées TPE.",
+                  desc: "Une petite entreprise ou un indépendant n'émet pas des milliers de factures par mois. Méfiez-vous des PDP avec abonnement cher conçu pour des volumes de milliers de factures. Comparez le coût par facture ou les offres dédiées TPE.",
                 },
                 {
                   num: "04",
@@ -182,7 +182,7 @@ export default function ChoisirPlateformeAgreeePage() {
               {[
                 {
                   q: "Peut-on utiliser plusieurs PDP ?",
-                  a: "Oui. Rien n'interdit d'émettre via une PDP et de recevoir via une autre (ou la même). Mais c'est une complexité inutile pour un freelance. Mieux vaut une PDP unique intégrée à votre logiciel.",
+                  a: "Oui. Rien n'interdit d'émettre via une PDP et de recevoir via une autre (ou la même). Mais c'est une complexité inutile pour une petite structure. Mieux vaut une PDP unique intégrée à votre logiciel.",
                 },
                 {
                   q: "Le PPF est-il vraiment abandonné ? Ne pourrait-il pas être rétabli ?",

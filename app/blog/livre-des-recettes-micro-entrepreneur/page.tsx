@@ -152,7 +152,7 @@ export default function Page() {
       cta={{
         titre: "Votre livre des recettes, tenu tout seul",
         texte:
-          "Deviso construit votre livre des recettes à partir des factures que vous marquez payées : à l&rsquo;encaissement, avec le mode de règlement et la distinction biens / services, prêt à exporter pour votre comptable.",
+          "Deviso construit votre livre des recettes à partir des factures que vous marquez payées : à l&rsquo;encaissement, avec le mode de règlement et la distinction biens / services, prêt à exporter pour votre comptable. Si votre entreprise passe un jour au régime réel ou en société, vous changez son statut dans Deviso, qui adapte alors le tableau de bord, la TVA et les exports FEC et Quadra.",
       }}
     />
   );

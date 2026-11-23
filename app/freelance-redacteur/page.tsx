@@ -5,17 +5,17 @@ import { BarChart3, Bell, PenLine } from "lucide-react";
 export const metadata: Metadata = {
   title: "Devis et facturation pour rédacteurs freelances",
   description:
-    "Générez un devis de rédaction web ou copywriting en 30 secondes. Relances automatiques, signature électronique, widget CA URSSAF. Essai gratuit.",
+    "Générez un devis de rédaction web ou copywriting en 30 secondes. Relances automatiques, signature électronique, suivi du chiffre d'affaires. Essai gratuit.",
   alternates: { canonical: "https://getdeviso.fr/freelance-redacteur" },
   openGraph: {
     title: "Devis de rédacteur freelance en 30 secondes | Deviso",
-    description: "Générez un devis de rédaction web ou copywriting en 30s. Relances auto, widget URSSAF, signature électronique.",
+    description: "Générez un devis de rédaction web ou copywriting en 30s. Relances auto, suivi du chiffre d'affaires, signature électronique.",
     url: "https://getdeviso.fr/freelance-redacteur",
     images: [{ url: "https://getdeviso.fr/opengraph-image?v=2", width: 1200, height: 630, alt: "Deviso, logiciel de devis et facturation" }],
   },
   twitter: {
     title: "Devis de rédacteur freelance en 30 secondes | Deviso",
-    description: "Générez un devis de rédaction web ou copywriting en 30s. Relances auto, widget URSSAF, signature électronique.",
+    description: "Générez un devis de rédaction web ou copywriting en 30s. Relances auto, suivi du chiffre d'affaires, signature électronique.",
   },
 };
 
@@ -23,7 +23,7 @@ export default function Page() {
   return (
     <FreelanceLanding
       metaTitle="Devis et facturation pour rédacteurs freelances | Deviso"
-      metaDescription="Générez un devis de rédaction web ou copywriting en 30 secondes. Relances automatiques, signature électronique, widget CA URSSAF."
+      metaDescription="Générez un devis de rédaction web ou copywriting en 30 secondes. Relances automatiques, signature électronique, suivi du chiffre d'affaires."
       canonical="https://getdeviso.fr/freelance-redacteur"
       professionLabel="rédacteur freelance"
       heroTitle="Vos devis de rédaction,"
@@ -32,7 +32,7 @@ export default function Page() {
       painPoints={[
         {
           icon: PenLine,
-          title: "Gérer 10 petits clients en même temps",
+          title: "Gérer 10 petits clients en même temps, seul ou en équipe",
           desc: "Beaucoup de clients, des petits budgets, des délais serrés. Avec Deviso, chaque devis prend 30 secondes, et les relances partent automatiquement si le client ne répond pas.",
         },
         {
@@ -42,8 +42,8 @@ export default function Page() {
         },
         {
           icon: BarChart3,
-          title: "Savoir exactement où vous en êtes pour l'URSSAF",
-          desc: "En auto-entrepreneur, vous devez surveiller votre CA trimestriel de près. Le widget Deviso vous affiche votre CA encaissé en temps réel, mensuel et trimestriel. Pas de mauvaise surprise.",
+          title: "Savoir exactement où vous en êtes sur votre chiffre d'affaires",
+          desc: "Micro-entrepreneur, vous surveillez votre chiffre d'affaires de près pour vos déclarations URSSAF ; en société, vous pilotez votre activité. Deviso affiche le chiffre d'affaires encaissé en temps réel, mensuel et trimestriel. Pas de mauvaise surprise.",
         },
       ]}
       mockupPrompt="Rédaction du site web d'une agence de recrutement spécialisée en tech. 8 pages (accueil, services, équipe, blog x4, contact), optimisation SEO on-page incluse, livraison en 3 semaines."

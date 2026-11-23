@@ -181,7 +181,7 @@ export default function Page() {
   return (
     <ArticleLong
       slug={SLUG}
-      chapeau="Votre client bloque le paiement en réclamant une « attestation de vigilance », vous n&rsquo;avez jamais entendu parler de ce document, et vous vous demandez s&rsquo;il cherche à gagner du temps. Non : il applique une obligation légale, et vous pouvez la satisfaire en cinq minutes."
+      chapeau="Un client bloque le règlement d&rsquo;une facture en réclamant une « attestation de vigilance ». Entreprise individuelle, société ou micro-entrepreneur, beaucoup de prestataires découvrent ce document à cette occasion et se demandent si le client cherche à gagner du temps. Non : il applique une obligation légale, et vous pouvez la satisfaire en cinq minutes."
       enBref={[
         "Obligation de <strong>votre client</strong>, pas de vous : au-delà de <strong>5 000 € HT</strong> de contrat, il doit vérifier votre situation.",
         "Elle se télécharge dans votre <strong>espace URSSAF</strong>, en quelques clics, et vous seul pouvez l&rsquo;obtenir.",

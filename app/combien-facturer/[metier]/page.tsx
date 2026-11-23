@@ -151,7 +151,8 @@ export default async function MetierTarifsPage({ params }: Props) {
               {data.label}s), vous versez{" "}
               <strong className="text-ink">{pctCotisations}&nbsp;% de cotisations URSSAF</strong> sur votre
               CA. Le simulateur ci-contre calcule votre revenu net mensuel avant impôt, ou le TJM à
-              atteindre pour un revenu cible.
+              atteindre pour un revenu cible. En société, le calcul dépend de votre rémunération de
+              dirigeant et des charges de l&apos;entreprise : validez-le avec votre expert-comptable.
             </p>
             <div className="rounded-xl bg-ds-surface p-5 space-y-3 text-[15px]">
               <div className="flex justify-between gap-4">
@@ -226,7 +227,8 @@ export default async function MetierTarifsPage({ params }: Props) {
             <p className="text-[16px] text-gray-300 leading-relaxed mt-4">
               Deviso génère un devis complet par IA à partir d&apos;une description de mission, avec vos
               lignes de prestation, votre TJM et vos conditions de paiement. Le client signe
-              électroniquement, la facture Factur-X est émise en 1 clic.
+              en ligne, la facture Factur-X est émise en 1 clic. Indépendant, société ou équipe
+              de plusieurs personnes : la formule Pro gère les utilisateurs, les rôles et la validation des devis.
             </p>
           </div>
           <div className="lg:col-span-5 flex flex-col sm:flex-row lg:flex-col gap-3 lg:items-start">

@@ -9,13 +9,13 @@ export default function Page() {
   return (
     <BlogPost
       slug={SLUG}
-      intro="Le coaching est une prestation à valeur élevée, souvent intangible, sur laquelle les litiges sont fréquents : client qui abandonne après 2 séances et refuse de payer le reste, TVA mal gérée, absence de conditions claires. Voici comment rédiger un devis de coaching freelance qui vous protège et rassure votre client dès la signature."
+      intro="Le coaching est une prestation à valeur élevée, souvent intangible, sur laquelle les litiges sont fréquents : client qui abandonne après 2 séances et refuse de payer le reste, TVA mal gérée, absence de conditions claires. Voici comment rédiger un devis de coaching freelance qui protège votre activité, indépendante ou en société, et rassure votre client dès la signature."
       mandatoryTitle="Les mentions obligatoires d'un devis de coaching freelance"
       mandatoryIntro="Un devis de coaching doit contenir les mentions légales classiques mais aussi des clauses spécifiques à la nature de la prestation :"
       mandatoryItems={[
         {
           title: "Vos coordonnées et statut juridique",
-          desc: "Nom ou raison sociale, SIRET, adresse. Indiquez votre statut : auto-entrepreneur, EURL, SASU. Si vous êtes certifié (ICF, EMCC, RNCP...), mentionnez vos certifications, elles justifient vos tarifs et rassurent les clients professionnels.",
+          desc: "Nom ou raison sociale, SIRET, adresse. Indiquez votre statut : micro-entrepreneur, EURL, SASU, SAS. Si vous êtes certifié (ICF, EMCC, RNCP...), mentionnez vos certifications, elles justifient vos tarifs et rassurent les clients professionnels.",
         },
         {
           title: "Régime de TVA et mention obligatoire",

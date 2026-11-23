@@ -12,7 +12,7 @@ const SECTIONS: Section[] = [
     paragraphes: [
       "La mention à porter sur votre facture ne dépend pas du pays du client. Elle dépend de deux choses, et il faut les trancher dans l&rsquo;ordre : <strong>votre client est-il un professionnel ou un particulier ?</strong> puis <strong>est-il dans l&rsquo;Union européenne ou hors UE ?</strong>",
       "Deux réponses, quatre combinaisons, quatre traitements différents. Les inverser est l&rsquo;erreur la plus fréquente : on regarde d&rsquo;abord le drapeau, alors que c&rsquo;est la qualité du client qui commande.",
-      "Tout ce qui suit concerne les <strong>prestations de services</strong>, le cas de l&rsquo;immense majorité des freelances. La vente de biens suit des règles distinctes (livraisons intracommunautaires, exportations, DEB) qui ne sont pas traitées ici.",
+      "Tout ce qui suit concerne les <strong>prestations de services</strong>, le cas de l&rsquo;immense majorité des entreprises de services, indépendants et sociétés. La vente de biens suit des règles distinctes (livraisons intracommunautaires, exportations, DEB) qui ne sont pas traitées ici.",
     ],
   },
   {
@@ -60,7 +60,7 @@ const SECTIONS: Section[] = [
     titre: "Cas 1, Un professionnel dans l&rsquo;Union européenne",
     paragraphes: [
       "C&rsquo;est le cas le plus courant et celui qui réserve la plus grosse surprise. La prestation est imposable dans <strong>le pays du client</strong>, pas en France. Vous facturez donc hors taxe, et c&rsquo;est lui qui déclare et paie la TVA chez lui : c&rsquo;est l&rsquo;autoliquidation.",
-      "La surprise : <strong>cela s&rsquo;applique même si vous êtes en franchise en base de TVA</strong>. Être dispensé de TVA en France ne vous dispense pas du mécanisme européen. Concrètement, un micro-entrepreneur en franchise qui facture un client professionnel allemand doit demander un <strong>numéro de TVA intracommunautaire</strong> à son service des impôts des entreprises, sans pour autant devenir assujetti en France, ni facturer de TVA à ses clients français.",
+      "La surprise : <strong>cela s&rsquo;applique même si vous êtes en franchise en base de TVA</strong>. Être dispensé de TVA en France ne vous dispense pas du mécanisme européen. Concrètement, une entreprise en franchise, par exemple un micro-entrepreneur, qui facture un client professionnel allemand doit demander un <strong>numéro de TVA intracommunautaire</strong> à son service des impôts des entreprises, sans pour autant devenir assujetti en France, ni facturer de TVA à ses clients français.",
       "Et il doit déposer une <strong>Déclaration européenne de services</strong>, la DES, auprès de la douane : tous les mois où il a facturé un client pro de l&rsquo;UE, au plus tard le <strong>10<sup>e</sup> jour ouvrable du mois suivant</strong>. La déclaration se fait en ligne sur le portail pro.douane. Elle est courte, numéro de TVA du client, montant HT, mais elle est obligatoire et son oubli est sanctionné.",
     ],
   },
@@ -223,7 +223,7 @@ export default function Page() {
   return (
     <ArticleLong
       slug={SLUG}
-      chapeau="La mention à porter ne dépend pas du pays du client, mais de deux questions dans cet ordre : professionnel ou particulier, puis UE ou hors UE. Quatre combinaisons, quatre traitements, et une obligation que presque personne n&rsquo;anticipe en micro-entreprise."
+      chapeau="La mention à porter ne dépend pas du pays du client, mais de deux questions dans cet ordre : professionnel ou particulier, puis UE ou hors UE. Quatre combinaisons, quatre traitements, valables pour toute entreprise, et une obligation que presque personne n&rsquo;anticipe en micro-entreprise."
       enBref={[
         "<strong>Pro dans l&rsquo;UE</strong> : hors taxe, mention d&rsquo;autoliquidation, et <strong>DES mensuelle</strong> avant le 10<sup>e</sup> jour ouvrable.",
         "Un micro-entrepreneur <strong>en franchise</strong> doit quand même obtenir un numéro de TVA intracommunautaire pour ces factures.",
@@ -237,7 +237,7 @@ export default function Page() {
       cta={{
         titre: "La bonne mention, sans la chercher",
         texte:
-          "Deviso déduit le traitement TVA du statut de votre client et porte la mention exacte sur la facture, autoliquidation, hors champ, franchise, sans que vous ayez à trancher à chaque fois.",
+          "Deviso déduit le traitement TVA du statut de votre client, quel que soit le régime de votre entreprise, et porte la mention exacte sur la facture, autoliquidation, hors champ, franchise, sans que vous ayez à trancher à chaque fois.",
       }}
     />
   );

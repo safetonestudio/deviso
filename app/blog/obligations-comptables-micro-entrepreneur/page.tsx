@@ -130,7 +130,7 @@ export default function Page() {
       cta={{
         titre: "Toutes vos obligations tenues au même endroit",
         texte:
-          "Deviso produit vos factures conformes et numérotées, tient votre livre des recettes et vos exports comptables, et archive vos pièces : l&rsquo;essentiel de vos obligations micro, sans tableur.",
+          "Deviso produit vos factures conformes et numérotées, tient votre livre des recettes et vos exports comptables, et archive vos pièces : l&rsquo;essentiel de vos obligations micro, sans tableur. Si votre entreprise passe un jour au régime réel ou en société, vous changez son statut dans Deviso, qui adapte alors le tableau de bord, la TVA et les exports FEC et Quadra.",
       }}
     />
   );

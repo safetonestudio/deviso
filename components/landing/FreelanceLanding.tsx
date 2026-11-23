@@ -43,7 +43,7 @@ const steps = [
   {
     num: "01",
     title: "Vous décrivez, l'IA génère",
-    desc: "Quelques phrases sur votre mission. En 30 secondes, un devis complet avec les lignes, les prix et les conditions. Vous ajustez, vous envoyez.",
+    desc: "Quelques phrases sur la mission. En 30 secondes, un devis complet avec les lignes, les prix et les conditions. Vous ajustez, vous envoyez.",
   },
   {
     num: "02",
@@ -52,8 +52,8 @@ const steps = [
   },
   {
     num: "03",
-    title: "Vous facturez, vous encaissez, vous déclarez",
-    desc: "1 clic pour convertir en facture Factur-X conforme. Votre CA s'actualise en temps réel. En cas de retard, Deviso relance votre client à votre place.",
+    title: "Vous facturez, vous encaissez, vous suivez",
+    desc: "1 clic pour convertir en facture Factur-X conforme. Votre chiffre d'affaires s'actualise en temps réel. En cas de retard, Deviso relance votre client à votre place.",
   },
 ];
 
@@ -80,8 +80,8 @@ const features = [
   },
   {
     icon: BarChart3 as LucideIcon,
-    title: "Widget CA URSSAF",
-    desc: "Votre chiffre d'affaires mensuel et trimestriel affiché en temps réel. Vous savez exactement quoi déclarer, sans calculer.",
+    title: "Chiffre d'affaires en temps réel",
+    desc: "Votre chiffre d'affaires mensuel et trimestriel est affiché en temps réel. Micro-entrepreneur, vous savez exactement quoi déclarer à l'URSSAF ; en société, vous suivez votre activité sans tableur.",
   },
   {
     icon: Receipt as LucideIcon,
@@ -263,7 +263,7 @@ export function FreelanceLanding({
       <section id="fonctionnalites" className={`${CADRE} ${SECTION}`}>
         <div className="max-w-2xl">
           <h2 className={H2}>Tout ce dont vous avez besoin</h2>
-          <p className={`${LEAD} mt-5`}>Tout ce que vos concurrents font à la main, Deviso le fait automatiquement.</p>
+          <p className={`${LEAD} mt-5`}>Ce qui se fait encore à la main dans la plupart des entreprises, Deviso le fait automatiquement.</p>
         </div>
         <div className="mt-10 grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
           {features.map((f) => (
@@ -289,7 +289,7 @@ export function FreelanceLanding({
           <div className="lg:col-span-7 grid sm:grid-cols-2 gap-4">
             {[
               { name: "Solo", price: `${grille("solo").mensuel}€/mois`, desc: "Factur-X, Chorus Pro, acompte/solde, export FEC, sans branding Deviso. 14 jours d'essai gratuit." },
-              { name: "Pro", price: `${grille("pro").mensuel}€/mois`, desc: "Relances auto, CRM, équipe, exports CSV et récap, sous-domaine de partage. 14 jours d'essai gratuit." },
+              { name: "Pro", price: `${grille("pro").mensuel}€/mois`, desc: "Relances auto, CRM, équipe (3 utilisateurs inclus, rôles et validation des devis), exports CSV et récap, sous-domaine de partage. 14 jours d'essai gratuit." },
             ].map((p) => (
               <div key={p.name} className="rounded-xl bg-ds-surface p-6">
                 <div className="text-[18px] font-semibold text-ink mb-1">{p.name}</div>
@@ -307,7 +307,7 @@ export function FreelanceLanding({
           <div className="grid lg:grid-cols-12 gap-10 lg:gap-14">
             <div className="lg:col-span-5">
               <h2 className={H2}>Pour aller plus loin</h2>
-              <p className={`${LEAD} mt-5`}>Deux guides gratuits, écrits pour les {professionLabel}s.</p>
+              <p className={`${LEAD} mt-5`}>Deux guides gratuits, écrits pour les {professionLabel}s, qu&apos;ils exercent seuls, en société ou en équipe.</p>
             </div>
             <div className="lg:col-span-7 grid gap-4 sm:grid-cols-2">
               {metier.article && (
@@ -344,7 +344,7 @@ export function FreelanceLanding({
         <div className="rounded-xl bg-ds-surface p-8 sm:p-12 grid lg:grid-cols-12 gap-8 items-center">
           <div className="lg:col-span-7">
             <h2 className={H2}>Prêt à envoyer votre prochain devis en 30 secondes ?</h2>
-            <p className={`${LEAD} mt-4`}>Rejoignez les {professionLabel}s qui gèrent leur activité commerciale avec Deviso.</p>
+            <p className={`${LEAD} mt-4`}>Rejoignez les {professionLabel}s, indépendants comme entreprises avec équipe, qui gèrent leur activité commerciale avec Deviso.</p>
           </div>
           <div className="lg:col-span-5 flex flex-col sm:flex-row lg:flex-col gap-3 lg:items-start">
             <Link href="/signup" className={`w-full sm:w-auto ${BOUTON_PLEIN}`}>Essayer 14 jours gratuitement</Link>

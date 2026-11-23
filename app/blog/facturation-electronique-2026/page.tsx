@@ -22,12 +22,12 @@ const FAQ = [
     a: "La réforme oblige les entreprises françaises à émettre et recevoir leurs factures B2B dans un format électronique structuré (Factur-X, UBL, CII) via une plateforme agréée par la DGFiP. Elle est entrée en application le 1er septembre 2026. Le calendrier officiel ne comporte que deux dates d'émission : le 1er septembre 2026 pour les grandes entreprises et les ETI, et le 1er septembre 2027 pour les TPE, PME et micro-entreprises. En revanche, l'obligation de pouvoir RECEVOIR une facture électronique via une plateforme agréée s'applique depuis le 1er septembre 2026 à toute entreprise assujettie à la TVA, sans exception de taille ni de régime.",
   },
   {
-    q: "Les freelances et micro-entrepreneurs sont-ils concernés par la réforme 2026 ?",
-    a: "Oui, et à deux dates différentes. L'obligation d'ÉMETTRE en électronique arrive le 1er septembre 2027. Mais l'obligation de pouvoir RECEVOIR une facture électronique via une plateforme agréée s'applique DÉJÀ, depuis le 1er septembre 2026 : elle concerne toute entreprise assujettie à la TVA, quelle que soit sa taille. La franchise en base de TVA ne vous en exempte pas, le régime fiscal et l'obligation de facturation électronique sont deux choses indépendantes.",
+    q: "Une société, un indépendant ou un micro-entrepreneur est-il concerné par la réforme 2026 ?",
+    a: "Oui, quelle que soit la forme de l'entreprise (SARL, SAS, EURL, SASU, entreprise individuelle, micro-entreprise), et à deux dates différentes. Pour une PME, une TPE ou une micro-entreprise, l'obligation d'ÉMETTRE en électronique arrive le 1er septembre 2027. Mais l'obligation de pouvoir RECEVOIR une facture électronique via une plateforme agréée s'applique DÉJÀ, depuis le 1er septembre 2026 : elle concerne toute entreprise assujettie à la TVA, quelle que soit sa taille. Une franchise en base de TVA ne vous en exempte pas, le régime fiscal et l'obligation de facturation électronique sont deux choses indépendantes.",
   },
   {
     q: "Qu'est-ce que le format Factur-X ?",
-    a: "Factur-X est le format hybride franco-allemand (PDF lisible + données XML structurées intégrées) reconnu comme standard en France. C'est le format accepté par la DGFiP et le plus simple à adopter pour les indépendants. Deviso génère automatiquement des factures au format Factur-X EN 16931, aucune action n'est requise de votre part.",
+    a: "Factur-X est le format hybride franco-allemand (PDF lisible + données XML structurées intégrées) reconnu comme standard en France. C'est le format accepté par la DGFiP et le plus simple à adopter pour les petites structures comme pour les PME. Deviso génère automatiquement des factures au format Factur-X EN 16931, aucune action n'est requise de votre part.",
   },
   {
     q: "Le portail public de facturation (PPF) existe-t-il encore ?",
@@ -76,7 +76,7 @@ const ECHEANCES = [
   {
     iso: "2027-09-01",
     date: "1er septembre 2027",
-    entreprises: "TPE, PME, micro-entrepreneurs",
+    entreprises: "PME, TPE et micro-entreprises",
     obligation: "Obligation d'ÉMETTRE en format électronique structuré, et e-reporting des opérations B2C",
   },
 ];
@@ -116,7 +116,7 @@ export default function FacturationElectronique2026Page() {
             </span>
           </div>
           <h1 className="text-3xl sm:text-4xl font-bold text-ink leading-tight mb-4">
-            Facturation électronique 2026 : le guide complet pour freelances et indépendants
+            Facturation électronique 2026 : le guide complet pour les entreprises, des indépendants aux PME
           </h1>
           <p className="text-lg text-gray-400 leading-relaxed">
             La réforme de la facturation électronique change la façon dont toutes les entreprises françaises facturent leurs clients B2B. Voici ce qui change, pour qui, et quand, expliqué simplement.
@@ -127,7 +127,7 @@ export default function FacturationElectronique2026Page() {
             C'est l'encadré le plus utile de la page, et celui que personne d'autre
             n'écrit : tout l'écosystème parle de la réforme au futur alors que sa
             première obligation est entrée en application. La distinction recevoir /
-            émettre est la seule information dont un indépendant a besoin pour savoir
+            émettre est la seule information dont une entreprise a besoin pour savoir
             s'il est en retard ou non. ── */}
         <div className="bg-[#241d11] border border-amber-500/30 rounded-2xl p-6 mb-6">
           <p className="text-xs font-semibold text-amber-400 uppercase tracking-wider mb-3">
@@ -145,15 +145,15 @@ export default function FacturationElectronique2026Page() {
               <p className="text-sm text-gray-300 leading-relaxed">
                 Depuis le 1<sup>er</sup> septembre 2026, toute entreprise assujettie à la TVA doit
                 être en mesure de recevoir une facture électronique via une plateforme agréée. Sans
-                exception de taille, de statut ni de régime : micro-entrepreneurs et franchise en base
-                comprises.
+                exception de taille, de statut ni de régime : sociétés, entreprises individuelles,
+                micro-entrepreneurs et franchise en base comprises.
               </p>
             </div>
             <div className="bg-ds-surface border border-ds-border rounded-xl p-4">
               <p className="text-xs font-semibold text-gray-300 mb-2">ÉMETTRE, selon votre taille</p>
               <p className="text-sm text-gray-400 leading-relaxed">
-                Grandes entreprises et ETI : depuis le 1<sup>er</sup> septembre 2026. TPE, PME et
-                micro-entrepreneurs : <strong className="text-ink">1<sup>er</sup> septembre 2027</strong>,
+                Grandes entreprises et ETI : depuis le 1<sup>er</sup> septembre 2026. PME, TPE et
+                micro-entreprises : <strong className="text-ink">1<sup>er</sup> septembre 2027</strong>,
                 avec l&apos;e-reporting en plus pour les opérations B2C.
               </p>
             </div>
@@ -165,7 +165,7 @@ export default function FacturationElectronique2026Page() {
           <p className="text-xs font-semibold text-indigo-400 uppercase tracking-wider mb-3">L&apos;essentiel en 30 secondes</p>
           <ul className="space-y-2 text-sm text-gray-300">
             <li className="flex gap-2"><span className="text-indigo-400 shrink-0">→</span> <span>Une facture électronique au sens de la réforme n&apos;est <strong className="text-ink">pas un PDF envoyé par email</strong> : c&apos;est un format structuré qui transite par une plateforme agréée</span></li>
-            <li className="flex gap-2"><span className="text-indigo-400 shrink-0">→</span> <span>Freelances et micro-entrepreneurs : obligation d&apos;<strong className="text-ink">émettre</strong> au 1<sup>er</sup> septembre 2027, obligation de <strong className="text-ink">recevoir</strong> déjà en vigueur</span></li>
+            <li className="flex gap-2"><span className="text-indigo-400 shrink-0">→</span> <span>PME, TPE, indépendants et micro-entrepreneurs : obligation d&apos;<strong className="text-ink">émettre</strong> au 1<sup>er</sup> septembre 2027, obligation de <strong className="text-ink">recevoir</strong> déjà en vigueur</span></li>
             <li className="flex gap-2"><span className="text-indigo-400 shrink-0">→</span> <span>La <strong className="text-ink">franchise en base de TVA n&apos;exempte de rien</strong> : régime fiscal et obligation de facturation électronique sont indépendants</span></li>
             <li className="flex gap-2"><span className="text-indigo-400 shrink-0">→</span> <span>Format requis : Factur-X, UBL ou CII, Deviso génère Factur-X <strong className="text-ink">nativement</strong></span></li>
             <li className="flex gap-2"><span className="text-indigo-400 shrink-0">→</span> <span>Le portail public (PPF) n&apos;est <strong className="text-ink">plus une plateforme d&apos;échange</strong> : il n&apos;existe aucune option gratuite de l&apos;État</span></li>
@@ -232,7 +232,7 @@ export default function FacturationElectronique2026Page() {
 
             <div className="mt-6 bg-[#14211a] border border-emerald-500/20 rounded-xl p-4">
               <p className="text-sm text-emerald-300">
-                <strong>Ce que ça signifie pour vous aujourd&apos;hui</strong> : même si votre obligation d&apos;émettre ne commence qu&apos;en septembre 2027, l&apos;obligation de pouvoir <strong>recevoir</strong> une facture électronique via une plateforme agréée s&apos;applique <strong>depuis le 1<sup>er</sup> septembre 2026</strong>, à toute entreprise assujettie à la TVA. Ce n&apos;est pas une échéance à préparer, c&apos;est une obligation en cours.
+                <strong>Ce que ça signifie pour votre entreprise aujourd&apos;hui</strong> : même si votre obligation d&apos;émettre ne commence qu&apos;en septembre 2027, l&apos;obligation de pouvoir <strong>recevoir</strong> une facture électronique via une plateforme agréée s&apos;applique <strong>depuis le 1<sup>er</sup> septembre 2026</strong>, à toute entreprise assujettie à la TVA. Ce n&apos;est pas une échéance à préparer, c&apos;est une obligation en cours.
               </p>
             </div>
           </section>
@@ -245,12 +245,12 @@ export default function FacturationElectronique2026Page() {
             </p>
             <div className="mt-4 space-y-3">
               <div className="bg-ds-surface border border-ds-border rounded-xl p-4">
-                <p className="text-sm font-semibold text-ink mb-1">Factur-X (recommandé pour les indépendants)</p>
+                <p className="text-sm font-semibold text-ink mb-1">Factur-X (recommandé pour la plupart des entreprises)</p>
                 <p className="text-sm">Format hybride : un PDF lisible par l&apos;humain, dans lequel sont intégrées des données XML structurées lisibles par les machines. Développé conjointement par la France et l&apos;Allemagne (norme EN 16931). C&apos;est le format le plus simple à adopter : votre facture ressemble à un PDF normal, mais contient toutes les données structurées. <strong className="text-ink">C&apos;est ce que génère Deviso.</strong></p>
               </div>
               <div className="bg-ds-surface border border-ds-border rounded-xl p-4">
                 <p className="text-sm font-semibold text-ink mb-1">UBL 2.1 (Universal Business Language)</p>
-                <p className="text-sm">Format XML pur, standard européen. Plus utilisé dans les échanges B2B automatisés entre grands groupes, ERP à ERP. Peu adapté aux indépendants.</p>
+                <p className="text-sm">Format XML pur, standard européen. Plus utilisé dans les échanges B2B automatisés entre grands groupes, ERP à ERP. Peu adapté aux petites et moyennes structures.</p>
               </div>
               <div className="bg-ds-surface border border-ds-border rounded-xl p-4">
                 <p className="text-sm font-semibold text-ink mb-1">CII (Cross Industry Invoice)</p>
@@ -285,7 +285,7 @@ export default function FacturationElectronique2026Page() {
               C&apos;est faux. La franchise en base de TVA (auto-entrepreneurs sous 37 500 € de CA, ou TPE sous seuil) est un régime fiscal. L&apos;obligation de facturation électronique est une obligation administrative distincte.
             </p>
             <p className="mt-3">
-              Un freelance en franchise de TVA devra quand même :
+              Une entreprise en franchise de TVA, micro-entrepreneur ou société, devra quand même :
             </p>
             <ul className="mt-3 space-y-1.5">
               <li className="flex gap-2"><span className="text-indigo-400 shrink-0">✓</span> Émettre ses factures B2B au format Factur-X (ou équivalent) via une PDP dès septembre 2027</li>
@@ -341,7 +341,7 @@ export default function FacturationElectronique2026Page() {
               {[
                 {
                   q: "Ma facture PDF actuelle est-elle encore valide ?",
-                  a: "Oui, jusqu'au 31 août 2027 pour les PME et micro-entrepreneurs. Après cette date, les factures PDF envoyées par email ne seront plus acceptées comme factures légales pour les transactions B2B. Pour le B2C (clients particuliers), la facture PDF reste valide.",
+                  a: "Oui, jusqu'au 31 août 2027 pour les PME, TPE et micro-entreprises. Après cette date, les factures PDF envoyées par email ne seront plus acceptées comme factures légales pour les transactions B2B. Pour le B2C (clients particuliers), la facture PDF reste valide.",
                 },
                 {
                   q: "Est-ce que je risque une amende si je ne suis pas prêt en septembre 2027 ?",
@@ -385,7 +385,7 @@ export default function FacturationElectronique2026Page() {
           <div className="space-y-3">
             {[
               { href: "/blog/reforme-facturation-micro-entrepreneur", title: "Micro-entrepreneur : ce que la réforme change vraiment pour vous" },
-              { href: "/blog/choisir-plateforme-agreee-freelance", title: "Comment choisir sa plateforme agréée (PDP) quand on est indépendant" },
+              { href: "/blog/choisir-plateforme-agreee-freelance", title: "Comment choisir sa plateforme agréée (PDP) quand on est indépendant ou dirigeant de PME" },
               { href: "/blog/e-reporting-freelance-2026", title: "E-reporting : l'obligation dont personne ne parle pour les freelances" },
               { href: "/blog/checklist-reforme-facturation-2026", title: "Checklist : êtes-vous prêt pour le 1er septembre 2026 ?" },
             ].map(({ href, title }) => (

@@ -61,7 +61,7 @@ const SECTIONS: Section[] = [
     ton: "alerte",
     titre: "Le réel, c&rsquo;est une vraie comptabilité",
     texte:
-      "Passer au réel, ce n&rsquo;est pas cocher une case : c&rsquo;est tenir une comptabilité d&rsquo;engagement, produire un bilan et une liasse fiscale, et le plus souvent travailler avec un <strong>expert-comptable</strong>. Le gain d&rsquo;impôt doit couvrir ce surcoût et ce temps. Pour beaucoup, le seuil réel de bascule n&rsquo;est pas l&rsquo;arithmétique, mais le moment où l&rsquo;activité est assez grosse pour le justifier.",
+      "Passer au réel, ce n&rsquo;est pas cocher une case : c&rsquo;est tenir une comptabilité d&rsquo;engagement, produire un bilan et une liasse fiscale, et le plus souvent travailler avec un <strong>expert-comptable</strong>. Le gain d&rsquo;impôt doit couvrir ce surcoût et ce temps. Pour beaucoup, le seuil réel de bascule n&rsquo;est pas l&rsquo;arithmétique, mais le moment où l&rsquo;activité est assez grosse pour le justifier. Une société soumise à l&rsquo;impôt sur les sociétés relève, elle, d&rsquo;un régime réel d&rsquo;imposition : cette question de bascule concerne l&rsquo;entreprise individuelle.",
   },
   {
     type: "liste",

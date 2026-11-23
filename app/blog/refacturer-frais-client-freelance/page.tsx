@@ -10,8 +10,8 @@ const SECTIONS: Section[] = [
     type: "texte",
     titre: "Le problème que personne ne vous explique",
     paragraphes: [
-      "Vous prenez un train à 90 €, une nuit d&rsquo;hôtel à 110 €, et votre client a accepté de vous les rembourser. Vous ajoutez donc 200 € sur votre facture. Tout le monde est content.",
-      "Sauf que ces 200 € viennent d&rsquo;entrer dans votre <strong>chiffre d&rsquo;affaires encaissé</strong>. Et en micro-entreprise, le chiffre d&rsquo;affaires encaissé est exactement ce sur quoi l&rsquo;URSSAF calcule vos cotisations. Vous ne gagnez pas un centime sur ce train, mais vous payez des cotisations dessus, autour de 21 % à 25 % selon votre activité. Sur 200 €, cela fait 45 à 51 € qui sortent de votre poche pour un déplacement que vous avez avancé.",
+      "Votre entreprise avance un train à 90 €, une nuit d&rsquo;hôtel à 110 €, et votre client a accepté de les rembourser. Vous ajoutez donc 200 € sur votre facture. Tout le monde est content.",
+      "Sauf que ces 200 € viennent d&rsquo;entrer dans votre <strong>chiffre d&rsquo;affaires</strong>. Dans une société ou une entreprise au régime réel, la dépense correspondante est comptabilisée en charge : l&rsquo;effet sur le résultat est nul, mais le chiffre d&rsquo;affaires et la TVA, eux, bougent. En micro-entreprise, en revanche, le chiffre d&rsquo;affaires encaissé est exactement ce sur quoi l&rsquo;URSSAF calcule vos cotisations. Vous ne gagnez pas un centime sur ce train, mais vous payez des cotisations dessus, autour de 21 % à 25 % selon votre activité. Sur 200 €, cela fait 45 à 51 € qui sortent de votre poche pour un déplacement que vous avez avancé.",
       "C&rsquo;est la partie que la plupart des pages sur la refacturation de frais passent sous silence : elles expliquent le mécanisme comptable, jamais la facture URSSAF au bout. Et l&rsquo;effet se cumule : les mêmes 200 € comptent aussi dans votre plafond de régime micro et dans votre seuil de TVA.",
     ],
   },
@@ -91,7 +91,7 @@ const SECTIONS: Section[] = [
         sousTitre: "souvent la meilleure",
         ton: "neutre",
         texte:
-          "Le client réserve et paie lui-même le train et l&rsquo;hôtel. Rien ne transite par vous : ni avance de trésorerie, ni question de qualification, ni risque. C&rsquo;est la solution la plus simple, et celle que trop peu de freelances proposent.",
+          "Le client réserve et paie lui-même le train et l&rsquo;hôtel. Rien ne transite par vous : ni avance de trésorerie, ni question de qualification, ni risque. C&rsquo;est la solution la plus simple, et celle que trop peu de prestataires proposent.",
       },
     ],
   },
@@ -143,7 +143,7 @@ const SECTIONS: Section[] = [
     type: "texte",
     titre: "La solution la moins risquée : les intégrer au prix",
     paragraphes: [
-      "Le débours est propre mais exigeant. Le frais refacturé est simple mais coûteux. Il existe une troisième approche, et c&rsquo;est souvent celle des freelances expérimentés : <strong>ne pas refacturer du tout</strong>.",
+      "Le débours est propre mais exigeant. Le frais refacturé est simple mais coûteux. Il existe une troisième approche, et c&rsquo;est souvent celle des prestataires expérimentés : <strong>ne pas refacturer du tout</strong>.",
       "Vous annoncez un prix qui contient vos déplacements. « Mission à Lyon, 2 jours sur site, frais compris : 1 400 € ». Vous portez le risque sur le coût réel du train, mais vous récupérez trois choses : un devis plus lisible pour le client, aucune discussion de justificatifs, et un prix dont vous contrôlez la marge.",
       "L&rsquo;argument commercial est d&rsquo;ailleurs meilleur. Un client compare plus facilement deux prix fermes que deux prix plus des frais variables à venir.",
     ],
@@ -206,7 +206,7 @@ export default function Page() {
   return (
     <ArticleLong
       slug={SLUG}
-      chapeau="Un train à 90 €, un hôtel à 110 €, et votre client vous les rembourse : vous venez d&rsquo;ajouter 200 € à votre chiffre d&rsquo;affaires et de payer des cotisations sur de l&rsquo;argent que vous ne gardez pas. Il existe une sortie, le débours, mais elle a quatre conditions, et elles sont strictes."
+      chapeau="Un train à 90 €, un hôtel à 110 €, et votre client rembourse ces frais à votre entreprise : vous venez d&rsquo;ajouter 200 € à votre chiffre d&rsquo;affaires. Pour une société ou une entreprise au réel, l&rsquo;opération reste neutre sur le résultat ; en micro-entreprise, elle vous fait payer des cotisations sur de l&rsquo;argent que vous ne gardez pas. Il existe une sortie, le débours, mais elle a quatre conditions, et elles sont strictes."
       enBref={[
         "Un frais refacturé est une <strong>recette</strong> : il entre dans le CA, supporte les cotisations, compte dans les plafonds.",
         "Seul le <strong>débours</strong> échappe à cette règle : dépense engagée au nom du client, sur mandat préalable écrit, au montant exact, hors livre des recettes.",

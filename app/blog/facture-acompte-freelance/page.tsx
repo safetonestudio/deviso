@@ -126,7 +126,7 @@ const SECTIONS: Section[] = [
     ton: "info",
     titre: "Acompte, arrhes, dépôt de garantie : ce ne sont pas des synonymes",
     texte:
-      "L&rsquo;<strong>acompte</strong> engage les deux parties : le contrat est formé, et celui qui renonce peut devoir des dommages. Les <strong>arrhes</strong> permettent au client de se dédire en les abandonnant, et à vous de vous dédire en les restituant au double. Le <strong>dépôt de garantie</strong> est une somme conservée puis rendue, qui ne paie rien. Ces trois mots n&rsquo;ont pas les mêmes effets : écrivez celui que vous voulez vraiment. Dans 95 % des missions freelance, c&rsquo;est un acompte.",
+      "L&rsquo;<strong>acompte</strong> engage les deux parties : le contrat est formé, et celui qui renonce peut devoir des dommages. Les <strong>arrhes</strong> permettent au client de se dédire en les abandonnant, et à vous de vous dédire en les restituant au double. Le <strong>dépôt de garantie</strong> est une somme conservée puis rendue, qui ne paie rien. Ces trois mots n&rsquo;ont pas les mêmes effets : écrivez celui que vous voulez vraiment. Dans la grande majorité des commandes de prestations, c&rsquo;est un acompte.",
   },
 ];
 
@@ -184,13 +184,13 @@ export default function Page() {
   return (
     <ArticleLong
       slug={SLUG}
-      chapeau="Votre devis est signé, le client vous verse 30 % pour démarrer, et personne ne vous a jamais dit quel document émettre. C&rsquo;est une facture, une vraie, avec un numéro dans votre série, et deux ou trois détails décident de sa validité."
+      chapeau="Le devis de votre entreprise est signé, le client verse 30 % pour démarrer, et la question se pose : quel document émettre ? La réponse est une facture, une vraie, avec un numéro dans votre série, et deux ou trois détails décident de sa validité, que vous soyez en société ou indépendant."
       enBref={[
         "Un acompte encaissé exige une <strong>facture d&rsquo;acompte</strong> : le devis signé n&rsquo;est pas une pièce comptable.",
         "Elle prend un numéro dans votre <strong>série unique et continue</strong>, jamais dans une série parallèle.",
         "La facture de solde doit <strong>déduire explicitement</strong> l&rsquo;acompte, en citant son numéro et sa date.",
         "En prestation de services assujettie, la <strong>TVA sur l&rsquo;acompte est due à l&rsquo;encaissement</strong>, pas à la livraison.",
-        "En micro-entreprise, l&rsquo;acompte se déclare sur la période où il a été <strong>encaissé</strong>.",
+        "Pour une entreprise assujettie, la TVA suit l&rsquo;encaissement ; en micro-entreprise, l&rsquo;acompte se déclare sur la période où il a été <strong>encaissé</strong>.",
       ]}
       sections={SECTIONS}
       faq={FAQ}

@@ -42,8 +42,8 @@ export default function Page() {
         },
         {
           icon: BarChart3,
-          title: "Suivre votre CA par mission et par client",
-          desc: "Avec plusieurs missions en parallèle, savoir où vous en êtes pour l'URSSAF devient complexe. Le widget CA de Deviso vous affiche tout en temps réel, mensuel et trimestriel.",
+          title: "Suivre votre chiffre d'affaires par mission et par client",
+          desc: "Avec plusieurs missions en parallèle, savoir où vous en êtes devient complexe, en indépendant comme en cabinet de conseil avec une équipe. Deviso affiche votre chiffre d'affaires en temps réel, mensuel et trimestriel, et la formule Pro gère l'équipe, les rôles et la validation des devis.",
         },
       ]}
       mockupPrompt="Mission de conseil en transformation digitale pour un cabinet d'expertise comptable de 80 personnes. Audit des outils actuels, benchmark des solutions marché, recommandations et roadmap sur 3 mois. Tarif journalier : 700€."

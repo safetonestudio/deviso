@@ -66,7 +66,7 @@ const SECTIONS: Section[] = [
       "La doctrine fiscale admet plusieurs séries de numérotation en parallèle, lorsque les conditions d&rsquo;exercice de l&rsquo;activité le justifient. Les exemples qu&rsquo;elle retient : plusieurs sites de facturation, plusieurs catégories de clients soumis à des règles différentes, ou plusieurs modalités d&rsquo;émission, papier, électronique, autofacturation.",
       "Dans ce cas, chaque série doit recevoir un <strong>préfixe distinct</strong> écartant toute confusion, chaque série reste chronologique et continue pour elle-même, et deux factures de la même année ne peuvent pas porter le même numéro, toutes séries confondues.",
       "Ce que la doctrine <strong>refuse</strong> explicitement : créer une série par client ou par État membre au seul motif que vos clients sont dans plusieurs pays. Ce n&rsquo;est pas une condition d&rsquo;exercice, c&rsquo;est une commodité de classement.",
-      "Pour un freelance seul, la réponse est presque toujours la même : <strong>une seule série</strong>. Le besoin de séries multiples apparaît avec plusieurs établissements, pas avec plusieurs types de missions.",
+      "Pour un indépendant ou une société avec un seul lieu d&rsquo;activité, la réponse est presque toujours la même : <strong>une seule série</strong>. Le besoin de séries multiples apparaît avec plusieurs établissements, pas avec plusieurs types de missions.",
     ],
   },
   {
@@ -214,7 +214,7 @@ export default function Page() {
   return (
     <ArticleLong
       slug={SLUG}
-      chapeau="Unique, chronologique, continue : trois mots du Code général des impôts qui font toute la règle. Le format, lui, est libre. Voici ceux qui tiennent dans le temps, les cinq façons de casser une série sans le vouloir, et la conduite à tenir quand c&rsquo;est déjà fait."
+      chapeau="Unique, chronologique, continue : trois mots du Code général des impôts qui font toute la règle. Le format, lui, est libre. Voici, pour toute entreprise, ceux qui tiennent dans le temps, les cinq façons de casser une série sans le vouloir, et la conduite à tenir quand c&rsquo;est déjà fait."
       enBref={[
         "La loi exige un <strong>numéro unique fondé sur une séquence chronologique et continue</strong>. Le format est libre.",
         "Le format <code>AAAA-NNN</code> est le meilleur choix par défaut ; la remise à zéro annuelle est permise si l&rsquo;année figure dans le numéro.",

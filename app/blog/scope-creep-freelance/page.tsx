@@ -17,11 +17,11 @@ export const metadata = metadonneesArticle(SLUG);
  */
 const FAQ = [
   {
-    q: "Qu'est-ce que le scope creep en freelance ?",
-    a: "Le scope creep (ou dérive de périmètre) désigne le phénomène par lequel le périmètre d'une mission freelance s'étend progressivement au-delà de ce qui était prévu initialement, sans ajustement du prix ni de la durée. C'est souvent le résultat d'un brief flou, de demandes clients non formalisées, ou d'un devis sans clause de périmètre.",
+    q: "Qu'est-ce que le scope creep ?",
+    a: "Le scope creep (ou dérive de périmètre) désigne le phénomène par lequel le périmètre d'une mission s'étend progressivement au-delà de ce qui était prévu initialement, sans ajustement du prix ni de la durée. C'est souvent le résultat d'un brief flou, de demandes clients non formalisées, ou d'un devis sans clause de périmètre.",
   },
   {
-    q: "Comment éviter le scope creep dans un devis freelance ?",
+    q: "Comment éviter le scope creep dans un devis ?",
     a: "La protection la plus efficace est une clause de périmètre explicite dans le devis : 'La présente mission couvre exclusivement les prestations décrites ci-dessus. Toute demande supplémentaire fera l'objet d'un avenant tarifé.' Complétez avec un brief détaillé signé avant le démarrage et une procédure d'avenant claire.",
   },
 ];
@@ -65,14 +65,14 @@ export default function Page() {
 
           <div className="mb-10">
             <div className="flex items-center gap-3 mb-4">
-              <span className="text-xs px-2.5 py-1 rounded-full bg-rose-500/10 text-rose-300 border border-rose-500/20 font-medium">Problèmes freelance</span>
+              <span className="text-xs px-2.5 py-1 rounded-full bg-rose-500/10 text-rose-300 border border-rose-500/20 font-medium">Problèmes courants</span>
               <span className="text-xs text-gray-400">29 juin 2026 · 6 min</span>
             </div>
             <h1 className="text-3xl sm:text-4xl font-semibold text-ink leading-tight mb-4">
               Scope creep freelance : qu&apos;est-ce que c&apos;est et comment s&apos;en protéger dans son devis
             </h1>
             <p className="text-lg text-gray-400 leading-relaxed">
-              Vous avez accepté de créer un site de 5 pages. Vous en livrez 8. Vous avez proposé 2 logos, vous en avez fait 12. Bienvenue dans le scope creep, la première cause de perte de rentabilité chez les freelances.
+              Vous avez accepté de créer un site de 5 pages. Vous en livrez 8. Vous avez proposé 2 logos, vous en avez fait 12. Bienvenue dans le scope creep, une cause fréquente de perte de rentabilité, pour un indépendant comme pour une société de services.
             </p>
           </div>
 
@@ -94,7 +94,7 @@ export default function Page() {
               <div className="space-y-4">
                 {[
                   { title: "Le brief qui évolue en cours de route", desc: "Le client change d'avis sur la direction créative, le positionnement, la cible. Ce qui était prévu ne colle plus, et il faut refaire. Sans clause de révision, vous absorbez ce coût." },
-                  { title: "Les \"petites\" demandes qui s'accumulent", desc: "\"Tu peux juste ajouter...\" est la phrase la plus dangereuse en freelance. Chaque demande prise individuellement semble mineure. Ensemble, elles représentent des heures non facturées." },
+                  { title: "Les \"petites\" demandes qui s'accumulent", desc: "\"Tu peux juste ajouter...\" est la phrase la plus dangereuse dans une activité de services. Chaque demande prise individuellement semble mineure. Ensemble, elles représentent des heures non facturées." },
                   { title: "L'absence de livrable défini", desc: "\"Refonte du site\" sans préciser le nombre de pages, les fonctionnalités, les intégrations. Le client a imaginé quelque chose, vous avez imaginé autre chose, et c'est vous qui vous alignez." },
                   { title: "La pression relationnelle", desc: "Vous ne voulez pas décevoir. Vous voulez que le client soit content. Alors vous faites ce qu'il demande, même si c'est hors périmètre. Et le prix reste le même." },
                 ].map((item) => (

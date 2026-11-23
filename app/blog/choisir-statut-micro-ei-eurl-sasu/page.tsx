@@ -160,7 +160,7 @@ export default function Page() {
   return (
     <ArticleLong
       slug={SLUG}
-      chapeau="Micro-entreprise, entreprise individuelle au réel, EURL ou SASU&nbsp;: quatre façons d&rsquo;exercer seul, avec des impôts, des cotisations et une protection sociale très différents. Le bon choix dépend moins de la mode que de vos charges, de votre façon de vous rémunérer et de vos projets."
+      chapeau="Micro-entreprise, entreprise individuelle au réel, EURL ou SASU&nbsp;: quatre façons d&rsquo;exercer seul, avec des impôts, des cotisations et une protection sociale très différents. Si vous vous associez, les mêmes critères valent pour une SARL ou une SAS. Le bon choix dépend moins de la mode que de vos charges, de votre façon de vous rémunérer et de vos projets."
       enBref={[
         "<strong>Micro</strong>&nbsp;: le plus simple, mais plafonné et sans déduction des charges réelles.",
         "<strong>EI au réel</strong>&nbsp;: impôt sur le vrai bénéfice, patrimoine personnel protégé depuis 2022.",
