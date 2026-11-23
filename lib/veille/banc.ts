@@ -130,9 +130,14 @@ export async function jouerScenario(
     const cree = await appel("/api/invoices", client.cookie, { method: "POST", body: JSON.stringify({
       client_name: v.client, client_company: v.client, client_email: "banc@example.fr", client_siren: v.siren ?? null,
       client_street: "1 rue du Banc", client_postcode: "33000", client_city: "Bordeaux",
-      items: [{ description: "Prestation", quantity: 1, unit: "forfait", unit_price: v.ht, total: v.ht, nature: v.categorie === "goods" ? "goods" : "services" }],
+      // Même construction que le banc local (scripts/e2e/scenarios.ts) : une vente
+      // détaillée en lignes porte la nature de chacune, et la route en déduit la catégorie.
+      items: v.lignes
+        ? v.lignes.map((l, k) => ({ description: `${l.nature === "goods" ? "Article" : "Prestation"} ${k + 1}`, quantity: 1, unit: "forfait", unit_price: l.ht, total: l.ht, nature: l.nature }))
+        : [{ description: "Prestation", quantity: 1, unit: "forfait", unit_price: v.ht, total: v.ht, nature: v.categorie === "goods" ? "goods" : "services" }],
       total_ht: v.ht, tva_rate: v.taux, total_ttc: Math.round(v.ht * (1 + v.taux / 100) * 100) / 100,
-      issue_date: v.date, due_date: v.date, operation_category: v.categorie ?? "services", type_code: "380", invoice_type: "standard",
+      issue_date: v.date, due_date: v.date, type_code: "380", invoice_type: "standard",
+      ...(v.lignes ? {} : { operation_category: v.categorie ?? "services" }),
     }) });
     const corps = await json(cree);
     const id = corps?.invoice?.id;
