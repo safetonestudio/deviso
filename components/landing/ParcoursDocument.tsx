@@ -90,7 +90,7 @@ function Brief({ plein = false }: { plein?: boolean }) {
       )}
       <button
         type="button"
-        onClick={() => document.querySelector('[data-i="1"]')?.scrollIntoView({ behavior: "smooth", block: "center" })}
+        onClick={() => document.getElementById("etapes")?.scrollIntoView({ behavior: "smooth", block: "start" })}
         className={`mt-4 w-full h-12 rounded-lg grid place-items-center text-[17px] font-semibold transition-colors duration-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-500 ${ecrit ? "bg-indigo-600 hover:bg-indigo-700 text-on-accent" : "bg-ds-elevated text-gray-500"}`}
       >
         Générer le devis
@@ -105,71 +105,120 @@ function Visuel({ vue }: { vue: Vue }) {
   return <DocumentDevis etat={vue} />;
 }
 
+/** Hauteur du panneau fixe (texte à gauche, visuel à droite) et défilement par étape. */
+const HAUT_PANNEAU = "calc(100vh / var(--zoom, 1) - 112px)";
+const PAS_ETAPE = "calc(64vh / var(--zoom, 1))";
+
+function TexteEtape({ e, i }: { e: Etape; i: number }) {
+  return (
+    <>
+      <div className="mb-3 text-[14px] font-medium text-gray-500 tabular-nums">Étape {i} sur {ETAPES.length}</div>
+      <h3 className="text-[clamp(24px,2vw,30px)] leading-[1.15] font-semibold tracking-[-0.025em] text-ink">{e.titre}</h3>
+      <p className="mt-4 text-[17px] sm:text-[20px] leading-relaxed text-gray-300 max-w-[42ch]">{e.texte}</p>
+    </>
+  );
+}
+
+/**
+ * L'étape active se déduit de la seule position de défilement dans la piste :
+ * un seuil fixe par étape, le même à l'aller et au retour. Texte (gauche) et
+ * visuel (droite) lisent ce même état et changent par le même fondu, au même
+ * instant. Mesures en coordonnées d'écran seulement, donc justes quel que soit
+ * l'agrandissement (--zoom).
+ */
+function etapeActive(piste: HTMLElement, panneau: HTMLElement, repere: HTMLElement): number {
+  const p = piste.getBoundingClientRect();
+  const t = panneau.getBoundingClientRect();
+  const fixe = repere.getBoundingClientRect().top; // où le panneau se fixe
+  if (t.top - fixe > t.height * 0.25) return 0; // la piste arrive à peine : haut de page
+  const pas = (p.height - t.height) / ETAPES.length;
+  if (pas <= 0) return 1;
+  return Math.min(ETAPES.length, Math.floor((t.top - p.top) / pas) + 1);
+}
+
 export function ParcoursDocument({ intro }: { intro: ReactNode }) {
   const [actif, setActif] = useState(0);
-  const blocs = useRef<(HTMLLIElement | null)[]>([]);
+  const piste = useRef<HTMLDivElement>(null);
+  const panneau = useRef<HTMLDivElement>(null);
+  const repere = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    if (!("IntersectionObserver" in window)) return;
-    const obs = new IntersectionObserver(
-      (entrees) => {
-        for (const e of entrees) {
-          if (e.isIntersecting) setActif(Number((e.target as HTMLElement).dataset.i));
-        }
-      },
-      { rootMargin: "-45% 0px -45% 0px" }
-    );
-    blocs.current.forEach((el) => {
-      if (!el) return;
-      const cible = el.querySelector<HTMLElement>("[data-cible]") ?? el;
-      cible.dataset.i = el.dataset.i;
-      obs.observe(cible);
-    });
-    return () => obs.disconnect();
+    let image = 0;
+    const calculer = () => {
+      image = 0;
+      if (!piste.current || !panneau.current || !repere.current) return;
+      if (piste.current.offsetParent === null) return; // téléphone : piste masquée
+      setActif(etapeActive(piste.current, panneau.current, repere.current));
+    };
+    const demander = () => {
+      if (!image) image = requestAnimationFrame(calculer);
+    };
+    calculer();
+    window.addEventListener("scroll", demander, { passive: true });
+    window.addEventListener("resize", demander);
+    return () => {
+      window.removeEventListener("scroll", demander);
+      window.removeEventListener("resize", demander);
+      if (image) cancelAnimationFrame(image);
+    };
   }, []);
 
   // 0 = le haut de page (brief) ; 1 à 5 = les étapes.
   const vue: Vue = actif === 0 ? "brief" : ETAPES[actif - 1].vue;
-  const enregistrer = (i: number) => (el: HTMLLIElement | null) => {
-    blocs.current[i] = el;
-  };
+  // Avant la première étape, l'étape 1 s'annonce, atténuée.
+  const montree = Math.max(actif, 1);
 
   return (
     <div className="grid grid-cols-1 lg:grid-cols-12 lg:gap-16">
       <h2 className="sr-only">Comment ça marche</h2>
-      <ol className="lg:col-span-5 lg:pb-[42vh]">
+      <div className="lg:col-span-5">
         {/* Le haut de page : la promesse, et sur téléphone le brief dessous. */}
-        <li ref={enregistrer(0)} data-i={0} className="pt-12 pb-16 sm:pt-16 lg:py-0 lg:min-h-(--haut-ecran) flex flex-col justify-center" style={{ ["--haut-ecran" as string]: "calc(100vh / var(--zoom, 1) - 80px)" }}>
-          <div data-cible className="relative z-10 xl:w-[122%]">{intro}</div>
+        <div className="pt-12 pb-16 sm:pt-16 lg:py-0 lg:min-h-(--haut-ecran) flex flex-col justify-center" style={{ ["--haut-ecran" as string]: "calc(100vh / var(--zoom, 1) - 80px)" }}>
+          <div className="relative z-10 xl:w-[122%]">{intro}</div>
           <div className="mt-10 lg:hidden">
             <Brief />
           </div>
-        </li>
+        </div>
 
-        {ETAPES.map((e, k) => {
-          const i = k + 1;
-          return (
-            <li key={e.titre} id={i === 1 ? "etapes" : undefined} ref={enregistrer(i)} data-i={i} className="scroll-mt-40 py-10 lg:py-0 lg:min-h-(--haut-etape) flex flex-col justify-center" style={{ ["--haut-etape" as string]: "calc(64vh / var(--zoom, 1))" }}>
-              <div data-cible className={`transition-opacity duration-500 ${i === actif ? "lg:opacity-100" : "lg:opacity-35"}`}>
-                <div className="mb-3 text-[14px] font-medium text-gray-500 tabular-nums">Étape {i} sur {ETAPES.length}</div>
-                <h3 className="text-[clamp(24px,2vw,30px)] leading-[1.15] font-semibold tracking-[-0.025em] text-ink">{e.titre}</h3>
-                <p className="mt-4 text-[17px] sm:text-[20px] leading-relaxed text-gray-300 max-w-[42ch]">{e.texte}</p>
-              </div>
-              {/* Téléphone : chaque étape montre ce qui change. Le devis entier
-                  une fois ; ensuite, le bas du document (signature, facture,
-                  tampon), puis la carte des déclarations. */}
-              <div className="mt-8 lg:hidden">
-                {e.vue === "urssaf" ? <Visuel vue={e.vue} /> : <ApercuEtat etat={e.vue as EtatDocument} />}
-              </div>
-            </li>
-          );
-        })}
-      </ol>
+        <div id="etapes" className="scroll-mt-40">
+          {/* Téléphone : les étapes l'une sous l'autre, chacune avec ce qui
+              change. Le devis entier une fois ; ensuite, le bas du document
+              (signature, facture, tampon), puis la carte des déclarations. */}
+          <ol className="lg:hidden">
+            {ETAPES.map((e, k) => (
+              <li key={e.titre} className="py-10">
+                <TexteEtape e={e} i={k + 1} />
+                <div className="mt-8">
+                  {e.vue === "urssaf" ? <Visuel vue={e.vue} /> : <ApercuEtat etat={e.vue as EtatDocument} />}
+                </div>
+              </li>
+            ))}
+          </ol>
+
+          {/* Ordinateur : une piste de défilement ; le texte reste fixe et une
+              étape remplace l'autre par un fondu, en même temps que le visuel. */}
+          <div ref={piste} className="hidden lg:block" style={{ height: `calc(${HAUT_PANNEAU} + ${ETAPES.length} * ${PAS_ETAPE})` }}>
+            <div ref={panneau} className="sticky top-[88px] flex items-center" style={{ height: HAUT_PANNEAU }}>
+              <ol className="grid w-full">
+                {ETAPES.map((e, k) => {
+                  const i = k + 1;
+                  const opacite = i === montree ? (actif === 0 ? "opacity-35" : "opacity-100") : "opacity-0 invisible";
+                  return (
+                    <li key={e.titre} aria-current={i === actif ? "step" : undefined} className={`[grid-area:1/1] self-center transition-[opacity,visibility] duration-500 motion-reduce:transition-none ${opacite}`}>
+                      <TexteEtape e={e} i={i} />
+                    </li>
+                  );
+                })}
+              </ol>
+            </div>
+          </div>
+        </div>
+      </div>
 
       {/* Ordinateur : le visuel, fixe, qui change à chaque étape. Les hauteurs
           sont divisées par l'agrandissement des grands écrans (--zoom). */}
       <div className="hidden lg:block lg:col-span-7">
-        <div className="sticky top-[88px] flex items-center justify-end" style={{ height: "calc(100vh / var(--zoom, 1) - 112px)" }}>
+        <div ref={repere} className="sticky top-[88px] flex items-center justify-end" style={{ height: HAUT_PANNEAU }}>
           <div className="relative w-full" style={{ maxWidth: "calc((100vh / var(--zoom, 1) - 150px) / 1.35)" }}>
             <div aria-hidden={vue === "brief"} className={`transition-[opacity,visibility,transform] duration-500 ${vue === "brief" ? "opacity-0 invisible" : "opacity-100 visible"}`}>
               {vue === "urssaf" ? <FeuilleChiffres /> : <DocumentDevis etat={vue === "brief" ? "devis" : vue} />}

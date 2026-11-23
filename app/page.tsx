@@ -1,6 +1,6 @@
 import Link from "next/link";
 import type { Metadata } from "next";
-import { PageSite, CADRE, SECTION, H2, LEAD, BOUTON, BOUTON_PLEIN, BOUTON_DOUX } from "@/components/site/PageSite";
+import { PageSite, CADRE, H2, LEAD, BOUTON, BOUTON_PLEIN, BOUTON_DOUX } from "@/components/site/PageSite";
 import { DemoButton } from "@/components/landing/DemoButton";
 import { ParcoursDocument } from "@/components/landing/ParcoursDocument";
 import { SlideFonctionnalites } from "@/components/landing/SlideFonctionnalites";
@@ -60,6 +60,11 @@ const jsonLd = {
    distinguées par leur ton ; un seul accent, le vert ; la feuille claire est
    le seul élément clair de la page. */
 
+/* Bandes de section : fond du haut de page, puis un fond légèrement plus
+   clair une section sur deux, pour marquer où l'une finit et l'autre commence. */
+const BANDE = "py-20 sm:py-28 lg:py-32";
+const FOND_2 = "bande-alt";
+
 export default function LandingPage() {
   return (
     <PageSite>
@@ -94,12 +99,12 @@ export default function LandingPage() {
         </section>
 
         {/* ── Pourquoi Deviso, face aux outils gratuits ── */}
-        <section id="pourquoi" className={`${CADRE} ${SECTION} scroll-mt-20`} aria-labelledby="titre-pourquoi">
+        <section id="pourquoi" className={`${BANDE} ${FOND_2} scroll-mt-20`} aria-labelledby="titre-pourquoi"><div className={CADRE}>
           <PourquoiDeviso titre={H2} />
-        </section>
+        </div></section>
 
         {/* ── L'application : ce que le parcours ne montre pas ── */}
-        <section id="fonctionnalites" className={`${CADRE} ${SECTION} scroll-mt-20`}>
+        <section id="fonctionnalites" className={`${BANDE} scroll-mt-20`}><div className={CADRE}>
           <div className="reveal max-w-[760px]">
             <h2 className={H2}>Tes ventes, tes achats et tes prix, au même endroit.</h2>
             <p className={`mt-5 ${LEAD}`}>Tes factures, celles de tes fournisseurs et ton catalogue se répondent&nbsp;: rien à ressaisir, rien à recopier dans un tableur.</p>
@@ -107,10 +112,10 @@ export default function LandingPage() {
           <div className="mt-12 sm:mt-16">
             <SlideFonctionnalites />
           </div>
-        </section>
+        </div></section>
 
         {/* ── Réforme 2026 ── */}
-        <section className={`${CADRE} ${SECTION}`} aria-labelledby="titre-reforme">
+        <section className={`${BANDE} ${FOND_2}`} aria-labelledby="titre-reforme"><div className={CADRE}>
           <div className="reveal rounded-xl bg-blue-800 text-ink px-6 py-12 sm:px-12 sm:py-16 lg:px-16 lg:py-20 grid gap-8 lg:grid-cols-12 lg:items-start">
             <div className="lg:col-span-8">
               <h2 id="titre-reforme" className="text-[clamp(28px,2.6vw,40px)] leading-[1.1] font-semibold tracking-[-0.035em]">La facture électronique, déjà en place.</h2>
@@ -145,13 +150,13 @@ export default function LandingPage() {
               ))}
             </ol>
           </div>
-        </section>
+        </div></section>
 
         {/* ── Le mot du fondateur ──
             Remplace d'anciens témoignages fictifs : sur un produit encore en
             pré-lancement, sans clients réels, on dit la vérité. À remplacer
             par de vrais témoignages, avec accord, quand il y en aura. */}
-        <section className={`${CADRE} ${SECTION}`} aria-labelledby="titre-fondateur">
+        <section className={`${BANDE}`} aria-labelledby="titre-fondateur"><div className={CADRE}>
           <div className="reveal grid gap-10 lg:grid-cols-12 lg:gap-16">
             <h2 id="titre-fondateur" className={`${H2} lg:col-span-5`}>Un fondateur qui te répond.</h2>
             <div className="lg:col-span-7">
@@ -168,20 +173,20 @@ export default function LandingPage() {
               </div>
             </div>
           </div>
-        </section>
+        </div></section>
 
         {/* ── Tarifs ── */}
-        <section id="tarifs" className={`${CADRE} ${SECTION} scroll-mt-20`}>
+        <section id="tarifs" className={`${BANDE} ${FOND_2} scroll-mt-20`}><div className={CADRE}>
           <TarifsTable />
-        </section>
+        </div></section>
 
         {/* ── Questions avant de commencer ── */}
-        <section id="faq" className={`${CADRE} ${SECTION} scroll-mt-20`} aria-labelledby="titre-faq">
+        <section id="faq" className={`${BANDE} scroll-mt-20`} aria-labelledby="titre-faq"><div className={CADRE}>
           <FaqAccueil titre={H2} />
-        </section>
+        </div></section>
 
         {/* ── Dernière action ── */}
-        <section className={`${CADRE} ${SECTION} pb-16 sm:pb-20`} aria-labelledby="titre-action">
+        <section className={`${BANDE} ${FOND_2}`} aria-labelledby="titre-action"><div className={CADRE}>
           <div className="reveal rounded-xl bg-ds-surface px-6 py-14 sm:px-12 sm:py-20 lg:px-16 lg:py-24 grid gap-8 lg:grid-cols-12 lg:items-center">
             <div className="lg:col-span-7">
               <h2 id="titre-action" className={H2}>Essaie Deviso sur ton prochain devis.</h2>
@@ -192,7 +197,7 @@ export default function LandingPage() {
               <DemoButton className={`w-full sm:w-auto ${BOUTON_DOUX}`} />
             </div>
           </div>
-        </section>
+        </div></section>
       </main>
 
     </PageSite>
