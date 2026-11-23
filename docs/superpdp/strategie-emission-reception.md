@@ -271,6 +271,62 @@ d'ailleurs, au lieu de sortir un journal vide qu'on croirait complet.
 *Tests :* `test:fec` et `test:quadra` sur un dossier en émission seule (pas de journal HA,
 note explicite) ; `test:scenarios` avec un scénario « émission seule ».
 
+---
+
+## 6. Et avec le rapprochement bancaire automatique ? (ajout du 23/11, question de Selim)
+
+Selim : le rapprochement bancaire, futur argument auprès des cabinets, rendra
+l'envoi à la plateforme automatique. C'est la raison pour laquelle il a posé la question.
+
+Rien n'est encore écrit sur ce chantier dans le dépôt. Aujourd'hui, le pointage est
+manuel (`CLAUDE.md`, « Paiements »). Ce qui suit ne dépend que des règles lues en §1.
+
+**Ce que l'automatisation change :**
+
+1. **Le volume d'appels augmente, mais le coût reste négligeable.** Si toute facture
+   validée part à Super PDP, et si chaque paiement rapproché déclenche un `fr:212`, un
+   client type passe de ~0,15 € (émission au clic) à ~0,30 € par mois. On ajoute au plus
+   ~0,15 € si les événements d'encaissement sont facturés comme des factures, ce qu'il
+   faut demander (question 1 du §1.6). Le coût ne décide toujours rien.
+2. **Le rapprochement n'a d'effet fiscal que si Deviso a émis la facture.** L'encaissement
+   se déclare par un statut rattaché à la facture, sur le chemin de la facture (§1.3).
+   Si Deviso a émis par Super PDP, un paiement reconnu sur le relevé peut déclarer seul
+   l'encaissement, à la vraie date. C'est le « statut encaissée manquant » que les
+   cabinets citent parmi leurs besoins (`besoins_cabinets.md`). Si la plateforme du
+   cabinet a émis (option B), le rapprochement de Deviso ne peut rien déclarer. Il ne
+   sert plus qu'à la trésorerie, et le cabinet doit déclarer ailleurs. **Le rapprochement
+   renforce donc la position du §4 au lieu de la remettre en cause.**
+3. **L'automatisation rend la règle « une facture, une seule plateforme d'émission »
+   impérative.** Tant que l'envoi se fait au clic, une double émission demande deux
+   erreurs humaines. Une fois automatique, il suffit qu'un client dont le cabinet émet
+   lui-même ait laissé l'envoi automatique actif. L'envoi automatique doit donc être
+   coupé, au niveau du compte, dès que l'utilisateur ou son cabinet déclare qu'une autre
+   plateforme émet. C'est le seul réglage de « choix » qui mérite d'exister.
+4. **Côté achats, la tension est réelle, mais limitée.** Rapprocher un paiement
+   fournisseur demande la facture reçue. En option C (le cabinet reçoit), Deviso ne l'a
+   pas, sauf achat saisi ou lu par photo. Ce rapprochement n'a toutefois aucun effet
+   fiscal. L'obligation de déclarer le paiement pèse sur le fournisseur, pas sur
+   l'acheteur (FAQ « Je découvre », question 10.2). Le cabinet le fait déjà dans son
+   logiciel de production, qui récupère la banque automatiquement dans 90 % des cabinets
+   (chiffre Shine, source éditeur, `besoins_cabinets.md`). Le rapprochement de Deviso
+   vaut d'abord pour les **ventes**.
+
+**Position, précisée :**
+- Deviso émet par Super PDP, automatiquement à la validation une fois le rapprochement en
+  place, et déclare seul l'encaissement des paiements reconnus. C'est ce qui donne au
+  rapprochement sa valeur pour le cabinet.
+- La réception reste là où le cabinet l'a mise (option C), sans changement.
+- Un seul interrupteur côté compte : « une autre plateforme émet mes factures ». Il coupe
+  tout envoi et tout `fr:212`, et Deviso le signale au cabinet dans la fiche dossier. Pas
+  de mode « réception seule » à développer.
+
+**Ajout au plan du §5 (étape 5, avec le rapprochement) :** envoi automatique et `fr:212`
+automatique conditionnés à cet interrupteur. *Tests :* compte avec l'interrupteur actif,
+aucun appel `emettre` ni `invoice_events` même avec un paiement rapproché (contre-épreuve :
+l'interrupteur inactif déclenche bien les deux) ; un paiement rapproché sur une facture
+transmise déclare `fr:212` une seule fois, à la date du relevé (même garde que
+`test:date-encaissement`).
+
 **Hors périmètre, volontairement :** l'option B (état « émise par une autre plateforme »,
 import de ses statuts). À rouvrir seulement si le cabinet pilote le demande avec un vrai
 besoin.
