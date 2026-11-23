@@ -21,7 +21,7 @@ const facture = await s.call("/api/invoices", {
     client_email: "ceci n est pas une adresse",
     client_company: "X",
     seller_company: "Atelier Traversee", seller_siren: "103340857",
-    items: [{ description: "X", quantity: 1, unit: "forfait", unit_price: 10, total: 10 }],
+    items: [{ description: "X", quantity: 1, unit: "forfait", unit_price: 10, total: 10, nature: "services" }],
     total_ht: 10, tva_rate: 0, total_ttc: 10,
     issue_date: "2026-08-12", operation_category: "services",
     type_code: "380", invoice_type: "standard",

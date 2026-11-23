@@ -130,7 +130,7 @@ async function venteEchue(base: string, c: CompteJetable, emise: string, echeanc
     body: JSON.stringify({
       client_name: "Client Veille", client_company: "Veille SARL", client_email: "veille-client@example.fr",
       client_street: "1 rue du Banc", client_postcode: "33000", client_city: "Bordeaux",
-      items: [{ description: "Prestation", quantity: 1, unit: "forfait", unit_price: 500, total: 500 }],
+      items: [{ description: "Prestation", quantity: 1, unit: "forfait", unit_price: 500, total: 500, nature: "services" }],
       total_ht: 500, tva_rate: 0, total_ttc: 500, issue_date: emise, due_date: echeance,
       operation_category: "services", type_code: "380", invoice_type: "standard",
     }),
@@ -153,7 +153,7 @@ async function devisEnvoye(base: string, c: CompteJetable, titre: string): Promi
     headers: { cookie: c.cookie, "content-type": "application/json" },
     body: JSON.stringify({
       title: titre, client_name: "Client Veille", client_email: "veille-client@example.fr", client_company: "Veille SARL",
-      items: [{ description: "Prestation", quantity: 1, unit: "forfait", unit_price: 300, total: 300 }],
+      items: [{ description: "Prestation", quantity: 1, unit: "forfait", unit_price: 300, total: 300, nature: "services" }],
       total_ht: 300, tva_rate: 0, total_ttc: 300, valid_until: jour(new Date(Date.now() + 30 * JOUR_MS)),
     }),
   });

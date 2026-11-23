@@ -1,5 +1,6 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
 import { natureEffective } from "./nature-operation";
+import { ventilationTva, type LigneMontant } from "./tva";
 
 /**
  * SOURCE UNIQUE DES RECETTES ENCAISSEES.
@@ -47,7 +48,8 @@ export type FactureRecette = {
   issue_date: string | null;
   payment_mode?: string | null;
   operation_category?: string | null;
-  items?: { description?: string | null; total?: unknown; nature?: unknown }[] | null;
+  items?: { description?: string | null; total?: unknown; nature?: unknown; tva_rate?: number | null }[] | null;
+  tva_rate?: number | string | null;
 };
 
 export type LigneRecette = {
@@ -73,31 +75,33 @@ export type LigneRecette = {
 const r2 = (n: number) => Math.round(n * 100) / 100;
 
 /**
- * Repartition biens / services d'une recette. Chaque ligne va a sa nature
- * (lib/nature-operation.ts : la sienne, sinon celle de la facture, une mixte
- * sans detail retombant en services comme le FEC). Le HT des biens est la
- * somme de leurs lignes au prorata du HT facture ; les services prennent le
- * reste, et le TTC suit le meme prorata : la somme des parts vaut la recette.
+ * Repartition biens / services d'une recette, LIGNE PAR LIGNE. Chaque ligne va
+ * a sa nature (lib/nature-operation.ts : la sienne, sinon celle de la
+ * facture, une mixte sans detail retombant en services comme le FEC). La part
+ * des biens est la ventilation de LEURS lignes, chacune a son propre taux de
+ * TVA (lib/tva.ts, meme calcul que la facture) ; les services prennent le
+ * reste, si bien que la somme des parts vaut toujours la recette.
  */
-function repartitionRecette(f: FactureRecette, ht: number, ttc: number): LigneRecette["repartition"] {
+function repartitionRecette(f: FactureRecette, signe: number, ht: number, ttc: number): LigneRecette["repartition"] {
   const lignes = f.items ?? [];
-  let biens = 0;
-  let total = 0;
-  for (const l of lignes) {
-    const m = Number(l?.total) || 0;
-    total += m;
-    if (natureEffective(l, f.operation_category) === "goods") biens += m;
-  }
-  const partBiens = lignes.length === 0 || total === 0 ? (f.operation_category === "goods" ? 1 : 0) : biens / total;
-  const biensHt = r2(ht * partBiens);
-  const biensTtc = r2(ttc * partBiens);
+  const tout = (biens: boolean) => ({
+    biens: { ht: biens ? ht : 0, ttc: biens ? ttc : 0 },
+    services: { ht: biens ? 0 : ht, ttc: biens ? 0 : ttc },
+  });
+  if (lignes.length === 0) return tout(f.operation_category === "goods");
+  const deBiens = lignes.filter((l) => natureEffective(l, f.operation_category) === "goods");
+  if (deBiens.length === lignes.length) return tout(true);
+  if (deBiens.length === 0) return tout(false);
+  const v = ventilationTva(deBiens as LigneMontant[], Number(f.tva_rate) || 0);
+  const biensHt = r2(signe * v.total_ht);
+  const biensTtc = r2(signe * v.total_ttc);
   return {
     biens: { ht: biensHt, ttc: biensTtc },
     services: { ht: r2(ht - biensHt), ttc: r2(ttc - biensTtc) },
   };
 }
 
-const CHAMPS = "id, invoice_number, client_name, client_company, status, invoice_type, total_ht, total_ttc, paid_at, issue_date, payment_mode, operation_category, items";
+const CHAMPS = "id, invoice_number, client_name, client_company, status, invoice_type, total_ht, total_ttc, paid_at, issue_date, payment_mode, tva_rate, operation_category, items";
 
 /** Une facture payee devient une ligne de recette ; sinon null. */
 export function ligneRecette(f: FactureRecette): LigneRecette | null {
@@ -112,7 +116,7 @@ export function ligneRecette(f: FactureRecette): LigneRecette | null {
     .slice(0, 200);
   const ht = signe * Number(f.total_ht ?? 0);
   const ttc = signe * Number(f.total_ttc ?? f.total_ht ?? 0);
-  const repartition = repartitionRecette(f, ht, ttc);
+  const repartition = repartitionRecette(f, signe, ht, ttc);
   const aBiens = repartition.biens.ht !== 0 || repartition.biens.ttc !== 0;
   const aServices = repartition.services.ht !== 0 || repartition.services.ttc !== 0;
   return {

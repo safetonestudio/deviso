@@ -117,7 +117,7 @@ import { openSession, anonymous, linkAsTeamMember, verifier, bilan } from "./lib
       client_street: "3 rue des Tests", client_postcode: "33000", client_city: "Bordeaux", client_siren: "552100554",
       seller_company: "Studio Témoin", seller_siren: "103340857",
       seller_street: "1 rue Vendeur", seller_postcode: "33170", seller_city: "Gradignan",
-      items: [{ description: "Prestation", quantity: 1, unit: "forfait", unit_price: 500, total: 500 }],
+      items: [{ description: "Prestation", quantity: 1, unit: "forfait", unit_price: 500, total: 500, nature: "services" }],
       total_ht: 500, tva_rate: 0, total_ttc: 500,
       issue_date: "2026-09-01", due_date: "2026-10-01",
       operation_category: "services", type_code: "380", invoice_type: "standard",

@@ -45,21 +45,35 @@ const REGIME_TO_RATE: Record<string, number> = {
 };
 
 /**
- * Ligne(s) d'acompte ou de solde tirées d'un devis : une par nature présente
- * dans le devis, au prorata de son HT (lib/nature-operation.ts). Un devis mixte
- * donne donc deux lignes, et la facture reste ventilable biens / prestations.
+ * Ligne(s) d'acompte ou de solde tirées d'un devis : une par couple (nature,
+ * taux de TVA) présent dans le devis, au prorata de son HT
+ * (lib/nature-operation.ts). Chaque ligne reprend le taux de ses lignes
+ * d'origine ; aucune ligne à 0 € n'est produite. Montant nul : une ligne vide
+ * à compléter, plutôt qu'une ligne à 0 €.
  */
 function lignesParNature(lignesDevis: ProposalItem[], montant: number, libelle: string): ProposalItem[] {
   const parts = repartirParNature(lignesDevis, montant);
-  return parts.map((part) => ({
-    id: uuidv4(),
-    description: parts.length > 1 ? `${libelle} (${part.nature === "goods" ? "biens" : part.nature === "services" ? "prestations" : "autres"})` : libelle,
-    quantity: 1,
-    unit: "forfait",
-    unit_price: part.montant,
-    total: part.montant,
-    ...(part.nature ? { nature: part.nature } : {}),
-  }));
+  if (parts.length === 0) {
+    return [{ id: uuidv4(), description: libelle, quantity: 1, unit: "forfait", unit_price: 0, total: 0 }];
+  }
+  const plusieursNatures = new Set(parts.map((p) => p.nature)).size > 1;
+  const plusieursTaux = new Set(parts.map((p) => p.tva_rate)).size > 1;
+  return parts.map((part) => {
+    const precisions = [
+      plusieursNatures ? (part.nature === "goods" ? "biens" : part.nature === "services" ? "prestations" : "autres") : null,
+      plusieursTaux && part.tva_rate !== undefined ? `TVA ${String(part.tva_rate).replace(".", ",")} %` : null,
+    ].filter(Boolean);
+    return {
+      id: uuidv4(),
+      description: precisions.length ? `${libelle} (${precisions.join(", ")})` : libelle,
+      quantity: 1,
+      unit: "forfait",
+      unit_price: part.montant,
+      total: part.montant,
+      ...(part.tva_rate !== undefined ? { tva_rate: part.tva_rate } : {}),
+      ...(part.nature ? { nature: part.nature } : {}),
+    };
+  });
 }
 
 function fmt(n: number) {
@@ -144,10 +158,6 @@ export default function NewInvoicePage() {
   const [tvaRate, setTvaRate] = useState(0);
 
   // Mentions légales 2026
-  // Nature de l'opération : DÉDUITE des lignes (lib/nature-operation.ts), elle
-  // n'est plus choisie à l'aveugle avec « services » par défaut. L'utilisateur
-  // peut la forcer ; `null` = suivre les lignes.
-  const [categorieForcee, setCategorieForcee] = useState<CategorieOperation | null>(null);
   const [paymentOnDebit, setPaymentOnDebit] = useState(false);
 
   // Dates
@@ -171,7 +181,9 @@ export default function NewInvoicePage() {
   const vent = ventilationTva(items, tvaRate);
   const totalTtc = vent.total_ttc;
   const deduction = deduireCategorie(items);
-  const operationCategory: CategorieOperation | null = categorieForcee ?? (deduction.complete ? deduction.categorie : null);
+  // Nature de l'opération : TOUJOURS déduite des lignes (lib/nature-operation.ts),
+  // affichée en lecture seule. Le serveur la recalcule de la même façon.
+  const operationCategory: CategorieOperation | null = deduction.complete ? deduction.categorie : null;
   const lignesSansNature = deduction.sansNature;
 
   const inputCls = "w-full border border-ds-border rounded-lg px-3 py-2 text-sm focus:outline-hidden focus:ring-1 focus:ring-indigo-500/30 focus:border-indigo-500 bg-ds-elevated text-ink placeholder:text-gray-600";
@@ -993,26 +1005,18 @@ export default function NewInvoicePage() {
           <section className="bg-blue-500/10 border border-blue-500/20 rounded-xl p-5 space-y-4">
             <h2 className="font-semibold text-blue-200">Mentions obligatoires 2026</h2>
             <div>
-              <label className="block text-xs font-medium text-blue-300 mb-1">Nature de l&apos;opération</label>
-              <select aria-label="Nature de l'opération" value={categorieForcee ?? ""} onChange={(e) => setCategorieForcee(e.target.value === "" ? null : (e.target.value as CategorieOperation))}
-                className="w-full sm:w-auto border border-ds-border rounded-lg px-3 py-2 text-sm bg-ds-elevated text-ink focus:outline-hidden focus:ring-1 focus:ring-indigo-500/30 focus:border-indigo-500">
-                <option value="">
-                  {deduction.complete && deduction.categorie
-                    ? `D'après les lignes : ${LIBELLE_CATEGORIE[deduction.categorie]}`
-                    : "D'après les lignes : à préciser"}
-                </option>
-                <option value="services">{LIBELLE_CATEGORIE.services}</option>
-                <option value="goods">{LIBELLE_CATEGORIE.goods}</option>
-                <option value="mixed">{LIBELLE_CATEGORIE.mixed}</option>
-              </select>
-              {!categorieForcee && lignesSansNature > 0 && (
+              <span className="block text-xs font-medium text-blue-300 mb-1">Nature de l&apos;opération</span>
+              <p
+                aria-label="Nature de l'opération"
+                data-categorie={operationCategory ?? "a-preciser"}
+                className="text-sm text-ink"
+              >
+                {operationCategory ? LIBELLE_CATEGORIE[operationCategory] : "À préciser"}
+                <span className="block text-xs text-blue-300 mt-0.5">Déduite de la nature de chaque ligne.</span>
+              </p>
+              {lignesSansNature > 0 && (
                 <p className="text-xs text-amber-400 mt-1.5" role="status">
                   {lignesSansNature} ligne{lignesSansNature > 1 ? "s" : ""} sans nature : précise pour chacune « Prestation » ou « Bien ».
-                </p>
-              )}
-              {categorieForcee && deduction.complete && deduction.categorie && categorieForcee !== deduction.categorie && (
-                <p className="text-xs text-amber-400 mt-1.5" role="status">
-                  Les lignes indiquent « {LIBELLE_CATEGORIE[deduction.categorie]} ». Vérifie ce choix : il décide de la déclaration.
                 </p>
               )}
               {operationCategory === "mixed" && (

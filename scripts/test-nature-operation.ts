@@ -37,11 +37,22 @@ import { verifier, bilan } from "./e2e/lib.mjs";
   const r3 = N.resoudreCategorie([B, X], undefined);
   verifier("serveur : nature partielle sans choix => refus NATURE_A_PRECISER", !r3.ok && r3.erreur === "NATURE_A_PRECISER", JSON.stringify(r3));
   const r4 = N.resoudreCategorie([B, X], "goods");
-  verifier("serveur : un choix explicite valide l'emporte", r4.ok && r4.categorie === "goods" && r4.source === "choix");
-  const r5 = N.resoudreCategorie([X], undefined);
-  verifier("serveur : aucune nature => historique services, signalé", r5.ok && r5.categorie === "services" && r5.source === "historique");
-  const r6 = N.resoudreCategorie([B], "n'importe quoi");
-  verifier("serveur : un choix invalide est ignoré, la déduction joue", r6.ok && r6.categorie === "goods" && r6.source === "lignes");
+  verifier("serveur : une catégorie envoyée ne couvre PAS une ligne sans nature", !r4.ok && r4.erreur === "NATURE_A_PRECISER", JSON.stringify(r4));
+  const r5 = N.resoudreCategorie([X], "services");
+  verifier("serveur : aucune nature, même avec catégorie envoyée => refus", !r5.ok);
+  const r6 = N.resoudreCategorie([B], "services");
+  verifier("serveur : catégorie envoyée contraire aux lignes => ignorée, biens", r6.ok && r6.categorie === "goods" && r6.source === "lignes", JSON.stringify(r6));
+  const r7 = N.resoudreCategorie([B, S], "services");
+  verifier("serveur : « services » envoyé sur une facture mixte => mixed", r7.ok && r7.categorie === "mixed");
+  verifier("serveur : aucune ligne => refus", !N.resoudreCategorie([], "services").ok);
+  const m1 = N.resoudreCategorieModele([X, X]);
+  verifier("modèle récurrent ancien sans aucune nature => services historique", m1.ok && m1.categorie === "services" && m1.source === "historique");
+  verifier("modèle récurrent partiellement qualifié => refus (jamais de repli)", !N.resoudreCategorieModele([B, X]).ok);
+  verifier("modèle récurrent qualifié => déduit", (() => { const r = N.resoudreCategorieModele([B, S]); return r.ok && r.categorie === "mixed"; })());
+  verifier("ligne négative détectée (prix)", N.ligneNegative({ quantity: 1, unit_price: -10, total: -10 }));
+  verifier("ligne négative détectée (quantité)", N.ligneNegative({ quantity: -1, unit_price: 10 }));
+  verifier("ligne positive acceptée", !N.ligneNegative({ quantity: 2, unit_price: 10, total: 20 }));
+  verifier("nature invalide nettoyée", !("nature" in N.nettoyerNature({ description: "x", nature: "bien" })));
 
   console.log("── Catalogue et acomptes ──────────────────────────────────────");
   const offres = [{ name: "Tirage photo", nature: "goods" }, { name: "Tirage photo encadré", nature: "goods" }, { name: "Séance photo", nature: "services" }, { name: "Retouche", nature: null }];
@@ -61,6 +72,14 @@ import { verifier, bilan } from "./e2e/lib.mjs";
   const une = N.repartirParNature([{ ...B, total: 100 }, { ...B, total: 50 }], 45);
   verifier("acompte d'un devis de biens : une seule part, biens", une.length === 1 && une[0].nature === "goods" && une[0].montant === 45);
   verifier("devis sans nature : une part sans nature", N.repartirParNature([{ total: 10 }], 3)[0].nature === undefined);
+  const mt = N.repartirParNature([{ ...S, total: 600, tva_rate: 20 }, { ...S, total: 400, tva_rate: 10 }], 300);
+  verifier(
+    "acompte d'un devis multi-taux : une part par taux, chacune à son taux",
+    mt.length === 2 && mt[0].tva_rate === 20 && mt[0].montant === 180 && mt[1].tva_rate === 10 && mt[1].montant === 120,
+    JSON.stringify(mt),
+  );
+  verifier("acompte à 0 € : aucune ligne", N.repartirParNature([{ ...S, total: 600 }], 0).length === 0);
+  verifier("ligne de devis à 0 € : pas de part à 0 €", N.repartirParNature([{ ...S, total: 600 }, { ...B, total: 0 }], 60).length === 1);
   verifier("ligne sans nature d'une facture mixte => services (lecture historique)", N.natureEffective({}, "mixed") === "services");
   verifier("ligne sans nature d'une facture de biens => biens", N.natureEffective({}, "goods") === "goods");
 
@@ -117,6 +136,16 @@ import { verifier, bilan } from "./e2e/lib.mjs";
   const va = ecrituresComptables([avoir as never]).find((e) => e.nature === "vente")!;
   verifier("avoir mixte : 707 débité de 300, 706 de 700", somme(va, "707000", "debit") === 300 && somme(va, "706000", "debit") === 700 && equilibre(va));
 
+  // Donnée ancienne : une remise négative dans une facture mixte. L'écriture
+  // doit rester équilibrée (la route refuse désormais ces lignes).
+  const itemsNeg = [l(1000, "services"), l(-100, "goods")];
+  const vNeg = ventilationTva(itemsNeg, 20);
+  const neg = { ...base, invoice_number: "F-NEG", status: "paid", paid_at: "2026-04-02", total_ht: vNeg.total_ht, total_ttc: vNeg.total_ttc, items: itemsNeg, operation_category: "mixed" };
+  let ecrNeg: ReturnType<typeof ecrituresComptables> = [];
+  try { ecrNeg = ecrituresComptables([neg as never]); } catch (e) { console.log("   ", (e as Error).message); }
+  verifier("ligne négative dans une mixte : écritures produites et équilibrées", ecrNeg.length === 2 && ecrNeg.every(equilibre));
+  verifier("ligne négative : aucun montant négatif écrit", ecrNeg.flatMap((e) => e.lignes).every((x) => x.debit >= 0 && x.credit >= 0));
+
   const fec = genererFec([mixte as never]);
   verifier("FEC : la facture mixte porte une ligne 707 et une ligne 706", /\t707000\t/.test(fec) && /\t706000\t/.test(fec));
   const quadra = genererQuadra([mixte as never]);
@@ -136,6 +165,12 @@ import { verifier, bilan } from "./e2e/lib.mjs";
   verifier("totaux : biens = 300 + 500 = 800 HT", t.biens.ht === 800, JSON.stringify(t));
   verifier("totaux : services = 700 + 1000 (ancienne mixte) = 1700 HT", t.services.ht === 1700);
   verifier("totaux : la mixte compte dans les deux catégories", t.biens.nb === 2 && t.services.nb === 2);
+  // TTC par catégorie, ligne par ligne au taux de chaque ligne : 1000 de
+  // prestations à 20 % et 1000 de biens à 5,5 % => biens 1055, services 1200.
+  const itemsMt = [l(1000, "services", 20), l(1000, "goods", 5.5)];
+  const vMt = ventilationTva(itemsMt, 20);
+  const rMt = lignesRecettes([rec({ invoice_number: "F-MT", total_ht: vMt.total_ht, total_ttc: vMt.total_ttc, items: itemsMt, tva_rate: 20, operation_category: "mixed" })] as never, 2026)[0];
+  verifier("recette mixte multi-taux : TTC biens 1055 (5,5 %), services 1200 (20 %)", rMt.repartition.biens.ttc === 1055 && rMt.repartition.services.ttc === 1200, JSON.stringify(rMt.repartition));
   const av = lignesRecettes([rec({ invoice_number: "AV", invoice_type: "avoir", total_ht: 1000, total_ttc: 1200, items: mixte.items, operation_category: "mixed" })] as never, 2026)[0];
   verifier("avoir mixte : parts négatives", av.repartition.biens.ht === -300 && av.repartition.services.ht === -700);
 

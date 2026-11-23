@@ -3,6 +3,7 @@ import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { can } from "@/lib/plans";
 import { getPlan, type Plan } from "@/lib/stripe";
+import { ligneNegative, nettoyerNature, resoudreCategorie } from "@/lib/nature-operation";
 
 /**
  * Résout l'owner effectif : si l'utilisateur est un collaborateur d'une équipe Pro,
@@ -79,6 +80,20 @@ export async function POST(req: NextRequest) {
   if (!items || items.length === 0) {
     return NextResponse.json({ error: "Au moins un article est requis" }, { status: 400 });
   }
+  // Chaque article porte sa nature (bien / prestation) : la facture émise par
+  // le cron en déduit la nature de l'opération (lib/nature-operation.ts). Un
+  // nouveau modèle sans nature serait émis sans qu'on puisse la demander.
+  const lignes = (Array.isArray(items) ? items : []) as { nature?: unknown; quantity?: unknown; unit_price?: unknown; total?: unknown }[];
+  if (lignes.some(ligneNegative)) {
+    return NextResponse.json({ error: "LIGNE_NEGATIVE", message: "Un article ne peut pas porter de montant négatif." }, { status: 400 });
+  }
+  const resolution = resoudreCategorie(lignes);
+  if (!resolution.ok) {
+    return NextResponse.json(
+      { error: resolution.erreur, message: `${resolution.sansNature} article(s) sans nature : précisez s'il s'agit d'une vente de biens ou d'une prestation de services.` },
+      { status: 400 }
+    );
+  }
   if (!["monthly", "quarterly", "yearly"].includes(interval)) {
     return NextResponse.json({ error: "Intervalle invalide (monthly | quarterly | yearly)" }, { status: 400 });
   }
@@ -95,7 +110,7 @@ export async function POST(req: NextRequest) {
       client_email,
       client_company,
       client_address,
-      items,
+      items: lignes.map((l) => nettoyerNature(l)),
       tva_rate: tva_rate ?? 0,
       payment_terms,
       notes,

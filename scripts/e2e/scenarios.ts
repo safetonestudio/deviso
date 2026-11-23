@@ -202,7 +202,7 @@ const egal = (a: number, b: number) => Math.abs(a - b) < 0.005;
         client_street: "1 rue du Banc", client_postcode: "33000", client_city: "Bordeaux",
         items: v.lignes
           ? v.lignes.map((l, k) => ({ description: `${l.nature === "goods" ? "Article" : "Prestation"} ${k + 1}`, quantity: 1, unit: "forfait", unit_price: l.ht, total: l.ht, nature: l.nature }))
-          : [{ description: "Prestation", quantity: 1, unit: "forfait", unit_price: v.ht, total: v.ht }],
+          : [{ description: "Prestation", quantity: 1, unit: "forfait", unit_price: v.ht, total: v.ht, nature: v.categorie === "goods" ? "goods" : "services" }],
         total_ht: v.ht, tva_rate: v.taux, total_ttc: Math.round(v.ht * (1 + v.taux / 100) * 100) / 100,
         issue_date: v.date, due_date: v.date, type_code: "380", invoice_type: "standard",
         // Lignes avec nature : la route DÉDUIT la catégorie, on ne l'envoie pas.
@@ -220,7 +220,7 @@ const egal = (a: number, b: number) => Math.abs(a - b) < 0.005;
       const rows = Array.from({ length: m.nombre }, (_, k) => ({
         user_id: client.userId, invoice_number: `BANC-${sc.annee}-${String(k + 1).padStart(5, "0")}`,
         client_name: "Client Masse", client_company: "Client Masse", client_email: "banc@example.fr",
-        items: [{ description: "Prestation", quantity: 1, unit: "forfait", unit_price: m.ht, total: m.ht }],
+        items: [{ description: "Prestation", quantity: 1, unit: "forfait", unit_price: m.ht, total: m.ht, nature: "services" }],
         total_ht: m.ht, tva_rate: m.taux, total_ttc: ttc, issue_date: m.date, due_date: m.date,
         status: "sent", operation_category: "services", type_code: "380", invoice_type: "standard",
       }));

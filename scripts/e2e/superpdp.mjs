@@ -104,7 +104,7 @@ const creerFacture = (extra) =>
     method: "POST",
     body: doc({
       ...SELLER,
-      items: [{ description: "Prestation de traversée", quantity: 1, unit: "forfait", unit_price: 500, total: 500 }],
+      items: [{ description: "Prestation de traversée", quantity: 1, unit: "forfait", unit_price: 500, total: 500, nature: "services" }],
       total_ht: 500, tva_rate: 20, total_ttc: 600,
       issue_date: "2026-08-29", due_date: "2026-09-28",
       type_code: "380", invoice_type: "standard",
@@ -381,6 +381,11 @@ const mixte = await creerFacture({
   client_siren: "552100554",
   client_street: "5 rue Bossuet", client_postcode: "33140", client_city: "Villenave-d'Ornon",
   operation_category: "mixed",
+  // La categorie se DEDUIT des lignes : une prestation et un bien.
+  items: [
+    { description: "Prestation de traversée", quantity: 1, unit: "forfait", unit_price: 250, total: 250, nature: "services" },
+    { description: "Fournitures vendues", quantity: 1, unit: "forfait", unit_price: 250, total: 250, nature: "goods" },
+  ],
 });
 const idMixte = mixte.body?.invoice?.id;
 verifier("facture mixte créée (la création n'est pas bloquante)", mixte.status === 201);
@@ -642,6 +647,7 @@ const surDebits = await creerFacture({
   client_siren: "552100554",
   client_street: "3 rue des Débits", client_postcode: "33000", client_city: "Bordeaux",
   operation_category: "goods",
+  items: [{ description: "Marchandises livrées", quantity: 1, unit: "forfait", unit_price: 500, total: 500, nature: "goods" }],
   payment_on_debit: true,
 });
 const idDebits = surDebits.body?.invoice?.id;

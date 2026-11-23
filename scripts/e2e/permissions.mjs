@@ -49,7 +49,7 @@ const mkFacture = async () => {
       client_street: "3 rue des Tests", client_postcode: "33000", client_city: "Bordeaux", client_siren: "552100554",
       seller_company: "Studio Témoin", seller_siren: "103340857",
       seller_street: "1 rue Vendeur", seller_postcode: "33170", seller_city: "Gradignan",
-      items: [{ description: "Prestation", quantity: 1, unit: "forfait", unit_price: 1000, total: 1000 }],
+      items: [{ description: "Prestation", quantity: 1, unit: "forfait", unit_price: 1000, total: 1000, nature: "services" }],
       total_ht: 1000, tva_rate: 0, total_ttc: 1000,
       issue_date: "2026-08-12", due_date: "2026-09-11",
       operation_category: "services", type_code: "380", invoice_type: "standard",
@@ -64,7 +64,7 @@ const mkDevis = async () => {
       title: "Devis Droits", client_name: "Client Droits", client_email: "droits@example.fr",
       client_company: "Droits SARL", client_street: "3 rue des Tests", client_postcode: "33000",
       client_city: "Bordeaux", client_siren: "552100554",
-      items: [{ description: "Prestation", quantity: 1, unit: "forfait", unit_price: 1000, total: 1000 }],
+      items: [{ description: "Prestation", quantity: 1, unit: "forfait", unit_price: 1000, total: 1000, nature: "services" }],
       total_ht: 1000, tva_rate: 0, total_ttc: 1000, valid_until: "2026-12-31", payment_terms: "30 jours net",
     }),
   });

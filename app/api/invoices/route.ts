@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { estNatureLigne, resoudreCategorie } from "@/lib/nature-operation";
+import { ligneNegative, nettoyerNature, resoudreCategorie } from "@/lib/nature-operation";
 import { createClient } from "@/lib/supabase/server";
 import { v4 as uuidv4 } from "uuid";
 import type { ProposalItem } from "@/types";
@@ -90,11 +90,20 @@ export async function POST(req: NextRequest) {
   );
 
   // Nature de l'operation (BT-23, 706/707, exigibilite de la TVA, categorie
-  // du CA micro) : choix explicite, sinon DEDUITE des lignes. Une facture dont
-  // certaines lignes ont une nature et d'autres non, sans choix, est refusee :
-  // on ne suppose pas « services » pour une moitie de facture. Verifie AVANT
-  // la numerotation : un refus apres coup laisserait un trou dans la sequence.
-  const resolution = resoudreCategorie((body.items || []) as ProposalItem[], body.operation_category);
+  // du CA micro) : TOUJOURS DEDUITE des lignes (decision du 23/11/2026).
+  // `operation_category` envoye par l'appelant est ignore, pour que PDF, XML,
+  // FEC, Quadra et livre des recettes disent la meme chose. Toute ligne doit
+  // porter sa nature, et aucun montant ne peut etre negatif (une annulation
+  // passe par un avoir). Verifie AVANT la numerotation : un refus apres coup
+  // laisserait un trou dans la sequence.
+  const lignesRecues = (Array.isArray(body.items) ? body.items : []) as ProposalItem[];
+  if (lignesRecues.some(ligneNegative)) {
+    return NextResponse.json(
+      { error: "LIGNE_NEGATIVE", message: "Une ligne ne peut pas porter de montant négatif : pour annuler ou réduire une facture, créez un avoir." },
+      { status: 400 }
+    );
+  }
+  const resolution = resoudreCategorie(lignesRecues);
   if (!resolution.ok) {
     return NextResponse.json(
       {
@@ -176,12 +185,9 @@ export async function POST(req: NextRequest) {
     const q = Number(item.quantity);
     const pu = Number(item.unit_price);
     const ligne = Number.isFinite(q) && Number.isFinite(pu) ? q * pu : Number(item.total);
-    // Nature de la ligne (biens / services) : gardee si valide, retiree sinon.
-    const { nature: _n, ...reste } = item;
-    void _n;
+    // Nature gardee seulement si valide (toutes le sont : verifie plus haut).
     return {
-      ...reste,
-      ...(estNatureLigne(item.nature) ? { nature: item.nature } : {}),
+      ...nettoyerNature(item),
       id: item.id || uuidv4(),
       total: centimes(ligne),
     };

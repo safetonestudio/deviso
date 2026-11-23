@@ -6,7 +6,7 @@ import { resend } from "@/lib/resend";
 import { piedDePageMarque } from "@/lib/emails/branding";
 import { cronAutorise } from "@/lib/cron-auth";
 import { numeroDocument } from "@/lib/numerotation";
-import { deduireCategorie } from "@/lib/nature-operation";
+import { resoudreCategorieModele } from "@/lib/nature-operation";
 
 // Vercel cron, déclenché quotidiennement à 7h
 // Génère les factures récurrentes dont la date de facturation est arrivée
@@ -71,6 +71,21 @@ export async function GET(req: NextRequest) {
     // continue et sans doublon. Un numéro inventé pour éviter une erreur
     // produit une facture irrégulière, ce qui est plus grave que l'échec qu'il
     // masque : on abandonne cette échéance et on la reprendra demain.
+    // Nature de l'opération, déduite des articles du modèle AVANT de tirer un
+    // numéro (lib/nature-operation.ts). Un modèle dont un article n'a pas de
+    // nature n'est PAS émis : jamais de repli « services ». Seuls les modèles
+    // antérieurs au 23/11/2026, dont AUCUN article ne porte de nature, gardent
+    // leur comportement d'avant. L'échéance n'avance pas : la facture partira
+    // dès que le titulaire aura complété son modèle.
+    const natureModele = resoudreCategorieModele(rec.items as { nature?: unknown }[]);
+    if (!natureModele.ok) {
+      console.error(
+        `[cron/recurring] abonnement ${rec.id} (client ${rec.client_name}) NON émis : ` +
+          `${natureModele.sansNature} article(s) sans nature (bien ou prestation) à préciser dans le modèle.`
+      );
+      continue;
+    }
+
     let number: string;
     try {
       number = await numeroDocument(supabase, rec.user_id, "standard");
@@ -84,7 +99,6 @@ export async function GET(req: NextRequest) {
     // viole BR-CO-10.
     const centimes = (n: number) => Math.round((Number(n) || 0) * 100) / 100;
     const lignes = rec.items.map((it) => ({ ...it, total: centimes(it.total) }));
-    const natureRecurrente = deduireCategorie(lignes as { nature?: unknown }[]);
     const vRec = ventilationTva(lignes, rec.tva_rate);
     const total_ht = vRec.total_ht;
     const total_ttc = vRec.total_ttc;
@@ -155,11 +169,7 @@ export async function GET(req: NextRequest) {
         tva_rate: rec.tva_rate,
         total_ttc,
         type_code: "380",
-        // Deduite des lignes quand toutes portent leur nature
-        // (lib/nature-operation.ts) ; sinon le comportement historique
-        // (services). Le cron ne peut pas demander : le modele recurrent
-        // porte les lignes telles que saisies.
-        operation_category: natureRecurrente.complete && natureRecurrente.categorie ? natureRecurrente.categorie : "services",
+        operation_category: natureModele.categorie,
         payment_on_debit: false,
         issue_date,
         due_date,

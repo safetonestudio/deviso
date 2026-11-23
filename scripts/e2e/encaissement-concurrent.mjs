@@ -96,7 +96,7 @@ function corpsFacture(libelle, extra = {}) {
     client_city: "Chambray-lès-Tours",
     client_country: "FR",
     operation_category: "services",
-    items: [{ description: libelle, quantity: 1, unit: "forfait", unit_price: 250, total: 250 }],
+    items: [{ description: libelle, quantity: 1, unit: "forfait", unit_price: 250, total: 250, nature: "services" }],
     total_ht: 250,
     tva_rate: 20,
     total_ttc: 300,

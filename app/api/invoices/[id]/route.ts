@@ -1,5 +1,5 @@
 import { ventilationTva } from "@/lib/tva";
-import { deduireCategorie, estCategorieOperation, type LigneNature } from "@/lib/nature-operation";
+import { ligneNegative, nettoyerNature, resoudreCategorie, type LigneNature } from "@/lib/nature-operation";
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 import { createClient as createAdminClient } from "@supabase/supabase-js";
@@ -111,8 +111,27 @@ export async function PATCH(req: NextRequest, { params }: Params) {
     Object.entries(body).filter(([k]) => ALLOWED.includes(k as typeof ALLOWED[number]))
   );
 
-  if ("operation_category" in safeUpdate && !estCategorieOperation(safeUpdate.operation_category)) {
-    return NextResponse.json({ error: "NATURE_OPERATION_INVALIDE" }, { status: 400 });
+  // Nature de l'operation : TOUJOURS deduite des lignes (lib/nature-operation.ts,
+  // meme regle que la creation). Une valeur envoyee est ignoree ; des lignes
+  // envoyees doivent toutes porter leur nature, sans montant negatif.
+  delete safeUpdate.operation_category;
+  if ("items" in safeUpdate) {
+    const lignesRecues = (Array.isArray(safeUpdate.items) ? safeUpdate.items : []) as (LigneNature & { quantity?: unknown; unit_price?: unknown; total?: unknown })[];
+    if (lignesRecues.some(ligneNegative)) {
+      return NextResponse.json(
+        { error: "LIGNE_NEGATIVE", message: "Une ligne ne peut pas porter de montant négatif : pour annuler ou réduire une facture, créez un avoir." },
+        { status: 400 }
+      );
+    }
+    const resolution = resoudreCategorie(lignesRecues);
+    if (!resolution.ok) {
+      return NextResponse.json(
+        { error: resolution.erreur, message: `${resolution.sansNature} ligne(s) sans nature : précisez s'il s'agit d'une vente de biens ou d'une prestation de services.` },
+        { status: 400 }
+      );
+    }
+    safeUpdate.items = lignesRecues.map((l) => nettoyerNature(l));
+    safeUpdate.operation_category = resolution.categorie;
   }
 
   if ("payment_mode" in safeUpdate && safeUpdate.payment_mode !== null && !estModeReglement(safeUpdate.payment_mode)) {
@@ -174,16 +193,17 @@ export async function PATCH(req: NextRequest, { params }: Params) {
       return { ...it, total: centimes(ligne) };
     });
     const v = ventilationTva(lignes, taux);
-    // Nature de l'operation : deduite des nouvelles lignes quand elles en
-    // disent assez et que le PATCH ne la fixe pas lui-meme. Sinon, celle en
-    // base est gardee (lib/nature-operation.ts).
-    if ("items" in safeUpdate && !("operation_category" in safeUpdate)) {
-      const d = deduireCategorie(lignes as LigneNature[]);
-      if (d.complete && d.categorie) safeUpdate.operation_category = d.categorie;
-    }
     safeUpdate.items = lignes;
     safeUpdate.total_ht = v.total_ht;
     safeUpdate.total_ttc = v.total_ttc;
+  }
+
+  // Rien à écrire (par exemple une catégorie envoyée seule, ignorée car
+  // toujours déduite des lignes) : on renvoie la facture telle qu'elle est.
+  if (Object.keys(safeUpdate).length === 0) {
+    const { data: inchangee } = await supabase.from("invoices").select("*").eq("id", id).eq("user_id", workspaceId).maybeSingle();
+    if (!inchangee) return NextResponse.json({ error: "Facture introuvable" }, { status: 404 });
+    return NextResponse.json({ invoice: inchangee });
   }
 
   const { data, error } = await supabase

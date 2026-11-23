@@ -68,7 +68,7 @@ const factureSansEmail = await owner.call("/api/invoices", {
     client_siren: "552100554",
     seller_company: "Studio", seller_siren: "103340857",
     seller_street: "2 rue B", seller_postcode: "33170", seller_city: "Gradignan",
-    items: [{ description: "Prestation", quantity: 1, unit: "forfait", unit_price: 100, total: 100 }],
+    items: [{ description: "Prestation", quantity: 1, unit: "forfait", unit_price: 100, total: 100, nature: "services" }],
     total_ht: 100, tva_rate: 0, total_ttc: 100,
     issue_date: "2026-08-29", due_date: "2026-09-28",
     operation_category: "services", type_code: "380", invoice_type: "standard",
@@ -83,7 +83,7 @@ const devisSansEmail = await owner.call("/api/proposals", {
     title: "Devis sans email client",
     client_name: "Client sans adresse", client_company: "Sans Adresse SARL",
     client_street: "1 rue Muette", client_postcode: "33000", client_city: "Bordeaux",
-    items: [{ description: "Prestation", quantity: 1, unit: "forfait", unit_price: 100, total: 100 }],
+    items: [{ description: "Prestation", quantity: 1, unit: "forfait", unit_price: 100, total: 100, nature: "services" }],
     total_ht: 100, tva_rate: 0, total_ttc: 100, valid_until: "2026-12-31",
   }),
 });

@@ -95,7 +95,7 @@ const cre = await emetteur("/api/invoices", { method: "POST", body: doc({
   client_name: "SafeTone Studio", client_company: "SafeTone Studio", client_siren: SIREN_PARTAGE,
   client_directory_address: LIGNE_SAFETONE, client_country: "FR",
   client_street: "12 rue de Test", client_postcode: "33850", client_city: "Leognan",
-  items: [{ description: "Prestation refus fr:210", quantity: 1, unit: "forfait", unit_price: 100, total: 100 }],
+  items: [{ description: "Prestation refus fr:210", quantity: 1, unit: "forfait", unit_price: 100, total: 100, nature: "services" }],
   total_ht: 100, tva_rate: 20, total_ttc: 120,
   issue_date: jour(0), due_date: jour(30), type_code: "380", invoice_type: "standard",
   payment_terms: "30 jours net", operation_category: "services", invoice_number: numero,

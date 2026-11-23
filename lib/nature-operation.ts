@@ -62,30 +62,57 @@ export function deduireCategorie(lignes: LigneNature[] | null | undefined): Dedu
 }
 
 export type ResolutionCategorie =
-  | { ok: true; categorie: CategorieOperation; source: "lignes" | "choix" | "historique" }
+  | { ok: true; categorie: CategorieOperation; source: "lignes" | "historique" }
   | { ok: false; erreur: "NATURE_A_PRECISER"; sansNature: number };
 
 /**
- * Categorie a enregistrer sur une facture, cote serveur.
+ * Categorie a enregistrer sur une facture, cote serveur. Decision du
+ * 23/11/2026 : elle se DEDUIT TOUJOURS des lignes. Une valeur envoyee par
+ * l'appelant (`operation_category`) est ignoree : sans cela, une facture
+ * pouvait dire « services » au PDF et au XML (BT-23) pendant que le FEC et le
+ * livre des recettes, qui lisent les lignes, disaient « biens ». Toute ligne
+ * doit porter sa nature, sinon refus (avant tout numero).
  *
- *   1. un choix explicite valide l'emporte (la nature reste modifiable par
- *      l'utilisateur, qui peut savoir mieux que ses lignes) ;
- *   2. sinon la deduction, si toutes les lignes ont une nature ;
- *   3. aucune ligne n'a de nature (appel ancien, facture recurrente creee
- *      avant le 23/11/2026) : "services", le comportement historique, signale
- *      par `source: "historique"` ;
- *   4. certaines lignes ont une nature et d'autres non, sans choix : refus.
- *      On ne devine pas une moitie de facture.
+ * Le parametre `_ignore` garde la signature des appelants qui recoivent la
+ * valeur envoyee : elle n'entre JAMAIS dans le resultat.
  */
 export function resoudreCategorie(
   lignes: LigneNature[] | null | undefined,
-  choix: unknown,
+  _ignore?: unknown,
 ): ResolutionCategorie {
-  if (estCategorieOperation(choix)) return { ok: true, categorie: choix, source: "choix" };
+  void _ignore;
   const d = deduireCategorie(lignes);
   if (d.complete && d.categorie) return { ok: true, categorie: d.categorie, source: "lignes" };
-  if (d.categorie === null) return { ok: true, categorie: "services", source: "historique" };
-  return { ok: false, erreur: "NATURE_A_PRECISER", sansNature: d.sansNature };
+  return { ok: false, erreur: "NATURE_A_PRECISER", sansNature: Math.max(d.sansNature, 1) };
+}
+
+/**
+ * Meme regle pour un MODELE de facture recurrente, avec une seule tolerance :
+ * un modele cree avant le 23/11/2026 dont AUCUNE ligne ne porte de nature
+ * garde son comportement d'avant (services, `source: "historique"`). Des que
+ * une ligne en porte une, toutes doivent en porter : refus sinon.
+ */
+export function resoudreCategorieModele(lignes: LigneNature[] | null | undefined): ResolutionCategorie {
+  const d = deduireCategorie(lignes);
+  if (d.complete && d.categorie) return { ok: true, categorie: d.categorie, source: "lignes" };
+  if (d.categorie === null && (lignes ?? []).length > 0) return { ok: true, categorie: "services", source: "historique" };
+  return { ok: false, erreur: "NATURE_A_PRECISER", sansNature: Math.max(d.sansNature, 1) };
+}
+
+/**
+ * Montants d'une ligne : aucun negatif (quantite, prix unitaire, total). Une
+ * remise se fait autrement, une annulation par un avoir (dont les montants
+ * restent positifs, BR-27). Une ligne negative dans une facture mixte faisait
+ * passer une TVA negative sous le seuil d'ecriture du FEC.
+ */
+export function ligneNegative(l: { quantity?: unknown; unit_price?: unknown; total?: unknown } | null | undefined): boolean {
+  return [l?.quantity, l?.unit_price, l?.total].some((v) => v !== undefined && v !== null && Number(v) < 0);
+}
+
+/** Ne garde `nature` que si elle est valide. */
+export function nettoyerNature<T extends { nature?: unknown }>(l: T): Omit<T, "nature"> & { nature?: NatureLigne } {
+  const { nature, ...reste } = l;
+  return estNatureLigne(nature) ? { ...reste, nature } : reste;
 }
 
 /**
@@ -142,32 +169,41 @@ export function natureDepuisCatalogue(description: string | null | undefined, of
 }
 
 /**
- * Repartit un montant (acompte, solde) entre les natures des lignes d'un
- * devis, au prorata de leur HT. Une seule nature presente : une seule part.
- * Lignes sans nature : une part sans nature (l'utilisateur tranchera). La
- * derniere part absorbe l'arrondi : la somme des parts vaut le montant.
+ * Repartit un montant (acompte, solde) entre les lignes d'un devis, par NATURE
+ * et par TAUX de TVA, au prorata de leur HT : un devis mixte ou multi-taux
+ * donne une part par couple (nature, taux), chacune reprenant le taux de ses
+ * lignes. Lignes sans nature : une part sans nature (l'utilisateur tranchera).
+ * La derniere part absorbe l'arrondi (la somme des parts vaut le montant), et
+ * aucune part a 0 EUR n'est produite.
  */
 export function repartirParNature(
-  lignes: (LigneNature & { total?: unknown })[] | null | undefined,
+  lignes: (LigneNature & { total?: unknown; tva_rate?: number | null })[] | null | undefined,
   montant: number,
-): { nature: NatureLigne | undefined; montant: number }[] {
-  const bases = new Map<NatureLigne | undefined, number>();
+): { nature: NatureLigne | undefined; tva_rate?: number; montant: number }[] {
+  type Cle = { nature: NatureLigne | undefined; tva_rate?: number };
+  const bases = new Map<string, { cle: Cle; base: number }>();
   for (const l of lignes ?? []) {
-    const n = estNatureLigne(l?.nature) ? l.nature : undefined;
-    bases.set(n, (bases.get(n) ?? 0) + (Number(l?.total) || 0));
+    const nature = estNatureLigne(l?.nature) ? l.nature : undefined;
+    const t = l?.tva_rate;
+    const tva_rate = t === undefined || t === null || Number.isNaN(Number(t)) ? undefined : Number(t);
+    const k = `${nature ?? "-"}|${tva_rate ?? "-"}`;
+    const e = bases.get(k) ?? { cle: { nature, ...(tva_rate !== undefined ? { tva_rate } : {}) }, base: 0 };
+    e.base += Number(l?.total) || 0;
+    bases.set(k, e);
   }
-  const total = [...bases.values()].reduce((s, v) => s + v, 0);
-  const entrees = [...bases.entries()].filter(([, v]) => v !== 0);
-  if (entrees.length <= 1 || total === 0) {
-    return [{ nature: entrees[0]?.[0] ?? (bases.size === 1 ? [...bases.keys()][0] : undefined), montant }];
-  }
-  // Ordre stable : services, biens, puis sans nature.
   const ordre = (n: NatureLigne | undefined) => (n === "services" ? 0 : n === "goods" ? 1 : 2);
-  entrees.sort((a, b) => ordre(a[0]) - ordre(b[0]));
+  const entrees = [...bases.values()]
+    .filter((e) => e.base > 0)
+    .sort((a, b) => ordre(a.cle.nature) - ordre(b.cle.nature) || (b.cle.tva_rate ?? -1) - (a.cle.tva_rate ?? -1));
+  const total = entrees.reduce((s, e) => s + e.base, 0);
+  if (Math.round(montant * 100) <= 0) return [];
+  if (entrees.length === 0 || total === 0) return [{ nature: undefined, montant }];
   let reste = Math.round(montant * 100);
-  return entrees.map(([nature, base], i) => {
-    const c = i === entrees.length - 1 ? reste : Math.round((montant * 100 * base) / total);
-    reste -= c;
-    return { nature, montant: c / 100 };
-  });
+  return entrees
+    .map((e, i) => {
+      const c = i === entrees.length - 1 ? reste : Math.round((montant * 100 * e.base) / total);
+      reste -= c;
+      return { ...e.cle, montant: c / 100 };
+    })
+    .filter((p) => p.montant !== 0);
 }

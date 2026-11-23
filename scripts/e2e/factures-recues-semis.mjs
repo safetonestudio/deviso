@@ -141,7 +141,7 @@ for (let i = 0; i < combien; i++) {
       client_postcode: "37170",
       client_city: "Chambray-lès-Tours",
       operation_category: CATEGORIE,
-      items: [{ description: m.libelle, quantity: m.q, unit: "unité", unit_price: m.pu, total: ht }],
+      items: [{ description: m.libelle, quantity: m.q, unit: "unité", unit_price: m.pu, total: ht, nature: CATEGORIE === "goods" ? "goods" : "services" }],
       total_ht: ht,
       tva_rate: 20,
       total_ttc: ttc,

@@ -105,9 +105,10 @@ const CLIENT_PRO = {
   client_country: "FR",
 };
 
-function ligne(description, pu, q = 1) {
+function ligne(description, pu, q = 1, nature = "services") {
   const total = Math.round(pu * q * 100) / 100;
-  return { description, quantity: q, unit: "unité", unit_price: pu, total };
+  // Nature de la ligne : la route en DEDUIT la categorie (lib/nature-operation.ts).
+  return { description, quantity: q, unit: "unité", unit_price: pu, total, nature };
 }
 
 function facture(nom, extra) {
@@ -154,7 +155,7 @@ const CAS = [
   facture("B2B France, vente de biens", {
     cadre: "B1",
     operation_category: "goods",
-    items: [ligne("Cartons d'emballage compostables", 24.9, 40)],
+    items: [ligne("Cartons d'emballage compostables", 24.9, 40, "goods")],
   }),
 
   facture("B2B, TVA sur les débits", { payment_on_debit: true }),
@@ -167,8 +168,8 @@ const CAS = [
 
   facture("B2B France, deux taux de TVA par ligne (20 % et 10 %)", {
     items: [
-      { description: "Prestation de conseil", quantity: 1, unit: "unité", unit_price: 1000, total: 1000, tva_rate: 20 },
-      { description: "Documentation imprimée", quantity: 1, unit: "unité", unit_price: 300, total: 300, tva_rate: 10 },
+      { description: "Prestation de conseil", quantity: 1, unit: "unité", unit_price: 1000, total: 1000, tva_rate: 20, nature: "services" },
+      { description: "Documentation imprimée", quantity: 1, unit: "unité", unit_price: 300, total: 300, tva_rate: 10, nature: "services" },
     ],
   }),
 

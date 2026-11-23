@@ -71,6 +71,10 @@ async function xmlDuPdf(cookie: string, id: string): Promise<string> {
     { nom: "biens seuls", lignes: [depuisOffre(oB, 3)], attendu: "goods", bt23: "B1", ht: 300 },
     { nom: "mixte", lignes: [depuisOffre(oS, 1), depuisOffre(oB, 3)], attendu: "mixed", bt23: "M1", ht: 1000 },
     { nom: "ligne libre, nature choisie par l'utilisateur", lignes: [{ description: "Frais de déplacement", quantity: 1, unit: "forfait", unit_price: 50, total: 50, nature: "services" }], attendu: "services", bt23: "S1", ht: 50 },
+    // Contre-épreuve de la décision du 23/11 : une catégorie envoyée qui
+    // contredit les lignes est ignorée, jamais S1 sur une ligne de biens.
+    { nom: "« services » envoyé sur des biens", lignes: [depuisOffre(oB, 2)], choix: "services", attendu: "goods", bt23: "B1", ht: 200 },
+    { nom: "« services » envoyé sur une mixte", lignes: [depuisOffre(oS, 1), depuisOffre(oB, 1)], choix: "services", attendu: "mixed", bt23: "M1", ht: 800 },
   ];
 
   const factures: Record<string, { id: string; numero: string }> = {};
@@ -85,6 +89,7 @@ async function xmlDuPdf(cookie: string, id: string): Promise<string> {
     // n'envoie plus de catégorie choisie à l'aveugle.
     const f = await s.call("/api/invoices", { method: "POST", body: doc({
       proposal_id: idD, ...client, items: lignesDevis, tva_rate: 20,
+      ...(c.choix ? { operation_category: c.choix } : {}),
       issue_date: "2024-05-10", due_date: "2024-06-10", type_code: "380", invoice_type: "standard",
       seller_company: "Atelier Nature", seller_siren: "103340857", seller_street: "1 rue du Test", seller_postcode: "33000", seller_city: "Bordeaux",
     }) });
@@ -103,25 +108,47 @@ async function xmlDuPdf(cookie: string, id: string): Promise<string> {
     factures[c.nom] = { id: inv.id, numero: inv.invoice_number };
   }
 
-  console.log("── 3. Ligne sans nature, sans choix ───────────────────────────");
+  console.log("── 3. Refus : nature manquante, montant négatif ───────────────");
   const avant = await s.call("/api/invoices");
   const nbAvant = (avant.body?.invoices ?? []).length;
-  const refus = await s.call("/api/invoices", { method: "POST", body: doc({
-    ...client, items: [depuisOffre(oS, 1), { description: "Ligne libre", quantity: 1, unit: "forfait", unit_price: 20, total: 20 }],
-    tva_rate: 20, issue_date: "2024-05-11", type_code: "380", invoice_type: "standard",
-  }) });
-  verifier("nature manquante sur une ligne, sans choix : refus NATURE_A_PRECISER", refus.status === 400 && refus.body?.error === "NATURE_A_PRECISER", `HTTP ${refus.status} ${JSON.stringify(refus.body)}`);
+  const base3 = { ...client, tva_rate: 20, issue_date: "2024-05-11", type_code: "380", invoice_type: "standard" };
+  const libre = { description: "Ligne libre", quantity: 1, unit: "forfait", unit_price: 20, total: 20 };
+  const refus = await s.call("/api/invoices", { method: "POST", body: doc({ ...base3, items: [depuisOffre(oS, 1), libre] }) });
+  verifier("ligne sans nature : refus NATURE_A_PRECISER", refus.status === 400 && refus.body?.error === "NATURE_A_PRECISER", `HTTP ${refus.status} ${JSON.stringify(refus.body)}`);
+  const refusChoix = await s.call("/api/invoices", { method: "POST", body: doc({ ...base3, items: [libre], operation_category: "goods" }) });
+  verifier("ligne sans nature MÊME avec une catégorie envoyée : refus", refusChoix.status === 400 && refusChoix.body?.error === "NATURE_A_PRECISER", `HTTP ${refusChoix.status}`);
+  const refusNeg = await s.call("/api/invoices", { method: "POST", body: doc({ ...base3, items: [depuisOffre(oS, 1), { ...libre, unit_price: -20, total: -20, nature: "goods" }] }) });
+  verifier("ligne à montant négatif : refus LIGNE_NEGATIVE", refusNeg.status === 400 && refusNeg.body?.error === "LIGNE_NEGATIVE", `HTTP ${refusNeg.status}`);
   const apres = await s.call("/api/invoices");
-  verifier("le refus n'a créé aucune facture", (apres.body?.invoices ?? []).length === nbAvant);
-  const suivante = await s.call("/api/invoices", { method: "POST", body: doc({
-    ...client, items: [{ description: "Ligne libre", quantity: 1, unit: "forfait", unit_price: 20, total: 20 }],
-    tva_rate: 20, issue_date: "2024-05-12", type_code: "380", invoice_type: "standard", operation_category: "goods",
-  }) });
-  verifier("même ligne libre, catégorie choisie par l'utilisateur : acceptée", suivante.status === 201 && suivante.body?.invoice?.operation_category === "goods");
-  const numMixte = Number(String(factures["ligne libre, nature choisie par l'utilisateur"]?.numero ?? "").split("-").pop());
+  verifier("les refus n'ont créé aucune facture", (apres.body?.invoices ?? []).length === nbAvant);
+  const suivante = await s.call("/api/invoices", { method: "POST", body: doc({ ...base3, issue_date: "2024-05-12", items: [{ ...libre, nature: "goods" }] }) });
+  verifier("même ligne libre avec sa nature : acceptée, biens", suivante.status === 201 && suivante.body?.invoice?.operation_category === "goods");
+  const derniere = factures["« services » envoyé sur une mixte"]?.numero ?? "";
   const numSuiv = Number(String(suivante.body?.invoice?.invoice_number ?? "").split("-").pop());
-  verifier("le refus n'a pas consommé de numéro (numérotation continue)", numSuiv === numMixte + 1, `${factures["ligne libre, nature choisie par l'utilisateur"]?.numero} puis ${suivante.body?.invoice?.invoice_number}`);
-  if (suivante.body?.invoice?.id) await s.call(`/api/invoices/${suivante.body.invoice.id}`, { method: "PATCH", body: doc({ status: "cancelled" }) });
+  verifier("les refus n'ont pas consommé de numéro (numérotation continue)", numSuiv === Number(derniere.split("-").pop()) + 1, `${derniere} puis ${suivante.body?.invoice?.invoice_number}`);
+
+  console.log("── 3 bis. Modification (PATCH) : même règle ───────────────────");
+  const idS = suivante.body?.invoice?.id;
+  if (idS) {
+    const pSans = await s.call(`/api/invoices/${idS}`, { method: "PATCH", body: doc({ items: [libre] }) });
+    verifier("PATCH avec une ligne sans nature : refus", pSans.status === 400 && pSans.body?.error === "NATURE_A_PRECISER", `HTTP ${pSans.status}`);
+    const pNeg = await s.call(`/api/invoices/${idS}`, { method: "PATCH", body: doc({ items: [{ ...libre, unit_price: -5, total: -5, nature: "goods" }] }) });
+    verifier("PATCH avec une ligne négative : refus", pNeg.status === 400 && pNeg.body?.error === "LIGNE_NEGATIVE", `HTTP ${pNeg.status}`);
+    const pChoix = await s.call(`/api/invoices/${idS}`, { method: "PATCH", body: doc({ operation_category: "services" }) });
+    verifier("PATCH d'une catégorie contraire aux lignes : ignoré, reste biens", pChoix.status === 200 && pChoix.body?.invoice?.operation_category === "goods", `${pChoix.status} ${pChoix.body?.invoice?.operation_category}`);
+    const pMixte = await s.call(`/api/invoices/${idS}`, { method: "PATCH", body: doc({ items: [{ ...libre, nature: "goods" }, { ...libre, description: "Conseil", nature: "services" }], operation_category: "services" }) });
+    verifier("PATCH de lignes mixtes : catégorie recalculée « mixed »", pMixte.status === 200 && pMixte.body?.invoice?.operation_category === "mixed", `${pMixte.status} ${pMixte.body?.invoice?.operation_category}`);
+    const pInv = await s.call(`/api/invoices/${idS}`, { method: "PATCH", body: doc({ items: [{ ...libre, nature: "bien" }] }) });
+    verifier("PATCH avec une nature invalide : refus (pas de nettoyage silencieux en « sans nature »)", pInv.status === 400);
+    await s.call(`/api/invoices/${idS}`, { method: "PATCH", body: doc({ status: "cancelled" }) });
+  }
+
+  console.log("── 3 ter. Factures récurrentes ────────────────────────────────");
+  const recSans = await s.call("/api/recurring", { method: "POST", body: doc({ client_name: "Client Récurrent", items: [{ description: "Maintenance", quantity: 1, unit_price: 100, total: 100 }], tva_rate: 20, interval: "monthly", day_of_month: 1 }) });
+  verifier("modèle récurrent sans nature : refus", recSans.status === 400 && recSans.body?.error === "NATURE_A_PRECISER", `HTTP ${recSans.status}`);
+  const recOk = await s.call("/api/recurring", { method: "POST", body: doc({ client_name: "Client Récurrent", items: [{ description: "Maintenance", quantity: 1, unit_price: 100, total: 100, nature: "services" }], tva_rate: 20, interval: "monthly", day_of_month: 1 }) });
+  verifier("modèle récurrent avec nature : créé, nature gardée", recOk.status === 201 && recOk.body?.recurring?.items?.[0]?.nature === "services", `HTTP ${recOk.status}`);
+  if (recOk.body?.recurring?.id) await s.call(`/api/recurring?id=${recOk.body.recurring.id}`, { method: "DELETE" });
 
   console.log("── 4. FEC client (2024) ───────────────────────────────────────");
   const r = await fetch(`${BASE}/api/export/fec?year=2024`, { headers: { cookie: s.cookie } });
@@ -138,6 +165,8 @@ async function xmlDuPdf(cookie: string, id: string): Promise<string> {
   verifier(`FEC, facture mixte ${m} : TVA des prestations en attente (44574 = 140)`, surPiece(m, "445740", 12) === 140);
   const b = factures["biens seuls"]?.numero ?? "?";
   verifier(`FEC, biens seuls ${b} : 707 = 300, pas de 706`, surPiece(b, "707000", 12) === 300 && surPiece(b, "706000", 12) === 0);
+  const cb = factures["« services » envoyé sur des biens"]?.numero ?? "?";
+  verifier(`FEC, « services » envoyé sur des biens ${cb} : 707 = 200, pas de 706 (cohérent avec B1)`, surPiece(cb, "707000", 12) === 200 && surPiece(cb, "706000", 12) === 0);
   const sv = factures["prestations seules"]?.numero ?? "?";
   verifier(`FEC, prestations seules ${sv} : 706 = 700, TVA en attente 140`, surPiece(sv, "706000", 12) === 700 && surPiece(sv, "445740", 12) === 140);
   const parEcr = new Map<string, number>();

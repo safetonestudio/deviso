@@ -11,6 +11,8 @@ import { usePlan, useIsMember, usePermission } from "@/components/PlanContext";
 import { canName } from "@/lib/plans";
 import { etatPdp } from "@/lib/superpdp-etat-facture";
 import { InvoicesListe } from "@/components/invoices/InvoicesListe";
+import { ChoixNature } from "@/components/ChoixNature";
+import type { NatureLigne } from "@/lib/nature-operation";
 
 const INTERVAL_LABEL: Record<string, string> = {
   monthly: "Mensuelle",
@@ -39,7 +41,8 @@ type RecurringInvoice = {
   last_billed_at: string | null;
 };
 
-const EMPTY_ITEM = { description: "", quantity: 1, unit: "forfait", unit_price: 0, total: 0 };
+// Pas de nature par défaut : elle se choisit par ligne (lib/nature-operation.ts).
+const EMPTY_ITEM: { description: string; quantity: number; unit: string; unit_price: number; total: number; nature?: NatureLigne } = { description: "", quantity: 1, unit: "forfait", unit_price: 0, total: 0 };
 
 export default function InvoicesPage() {
   const router = useRouter();
@@ -201,6 +204,10 @@ export default function InvoicesPage() {
   async function handleSaveRecurring() {
     if (!rClientName || rItems.some((it) => !it.description)) {
       setRecurringMsg("Remplis le nom client et la description de chaque article.");
+      return;
+    }
+    if (rItems.some((it) => !it.nature)) {
+      setRecurringMsg("Indique pour chaque article s'il s'agit d'une prestation ou d'un bien.");
       return;
     }
     setSavingRecurring(true);
@@ -497,7 +504,7 @@ export default function InvoicesPage() {
                         <label className="text-xs text-gray-400 mb-2 block">Articles</label>
                         <div className="space-y-2">
                           {rItems.map((item, i) => (
-                            <div key={i} className="flex gap-2 items-center">
+                            <div key={i} className="flex flex-wrap gap-2 items-center">
                               <input
                                 value={item.description}
                                 onChange={(e) => updateRItem(i, "description", e.target.value)}
@@ -521,6 +528,14 @@ export default function InvoicesPage() {
                                   <X size={14} />
                                 </button>
                               )}
+                              <div className="basis-full">
+                                <ChoixNature
+                                  compact
+                                  libelle="Nature de l'article"
+                                  valeur={item.nature}
+                                  onChange={(n) => updateRItem(i, "nature", n)}
+                                />
+                              </div>
                             </div>
                           ))}
                         </div>

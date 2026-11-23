@@ -38,7 +38,7 @@ const facture = await s.call("/api/invoices", {
     client_street: "5 rue Bossuet", client_postcode: "33140", client_city: "Villenave-d'Ornon",
     seller_company: "Atelier Traversee", seller_siren: "103340857",
     seller_street: "1 rue du Test", seller_postcode: "33000", seller_city: "Bordeaux",
-    items: [{ description: "Prestation de conseil", quantity: 2, unit: "heure", unit_price: 450, total: 900 }],
+    items: [{ description: "Prestation de conseil", quantity: 2, unit: "heure", unit_price: 450, total: 900, nature: "services" }],
     total_ht: 900, tva_rate: 0, total_ttc: 900,
     issue_date: "2026-08-12", due_date: "2026-09-11",
     operation_category: "services", type_code: "380", invoice_type: "standard",

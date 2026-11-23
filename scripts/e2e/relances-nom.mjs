@@ -29,7 +29,7 @@ const devis = await s.call("/api/proposals", {
     title: "Devis - verification du nom d'expediteur",
     client_name: "Client", client_email: DESTINATAIRE, client_company: "Client SARL",
     client_street: "5 rue Bossuet", client_postcode: "33140", client_city: "Villenave-d'Ornon",
-    items: [{ description: "Prestation", quantity: 1, unit: "forfait", unit_price: 900, total: 900 }],
+    items: [{ description: "Prestation", quantity: 1, unit: "forfait", unit_price: 900, total: 900, nature: "services" }],
     total_ht: 900, tva_rate: 0, total_ttc: 900, valid_until: "2026-12-31",
   }),
 });
@@ -44,7 +44,7 @@ const facture = await s.call("/api/invoices", {
     client_street: "5 rue Bossuet", client_postcode: "33140", client_city: "Villenave-d'Ornon",
     seller_company: NOM_ATTENDU, seller_siren: "103340857",
     seller_street: "1 rue du Test", seller_postcode: "33000", seller_city: "Bordeaux",
-    items: [{ description: "Prestation", quantity: 1, unit: "forfait", unit_price: 900, total: 900 }],
+    items: [{ description: "Prestation", quantity: 1, unit: "forfait", unit_price: 900, total: 900, nature: "services" }],
     total_ht: 900, tva_rate: 0, total_ttc: 900,
     issue_date: "2026-08-12", due_date: "2026-09-11",
     operation_category: "services", type_code: "380", invoice_type: "standard",

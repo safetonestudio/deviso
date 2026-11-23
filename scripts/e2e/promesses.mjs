@@ -36,7 +36,7 @@ const devis = await s.call("/api/proposals", {
     title: "Devis promesse", client_name: "Client", client_email: "c@example.fr",
     client_company: "Cli SARL", client_street: "1 rue A", client_postcode: "33000",
     client_city: "Bordeaux", client_siren: "552100554",
-    items: [{ description: "Prestation", quantity: 1, unit: "forfait", unit_price: 1000, total: 1000 }],
+    items: [{ description: "Prestation", quantity: 1, unit: "forfait", unit_price: 1000, total: 1000, nature: "services" }],
     total_ht: 1000, tva_rate: 0, total_ttc: 1000, valid_until: "2026-12-31",
   }),
 });
@@ -107,7 +107,7 @@ const creerFacture = (type, extra = {}) =>
       client_siren: "552100554",
       seller_company: "Studio", seller_siren: "103340857",
       seller_street: "2 rue B", seller_postcode: "33170", seller_city: "Gradignan",
-      items: [{ description: "Prestation", quantity: 1, unit: "forfait", unit_price: 1000, total: 1000 }],
+      items: [{ description: "Prestation", quantity: 1, unit: "forfait", unit_price: 1000, total: 1000, nature: "services" }],
       total_ht: 1000, tva_rate: 0, total_ttc: 1000,
       issue_date: "2026-08-12", due_date: "2026-09-11",
       operation_category: "services", type_code: "380", invoice_type: type,
@@ -129,7 +129,7 @@ const recur = await s.call("/api/recurring", {
   method: "POST",
   body: doc({
     client_name: "Client", client_email: "c@example.fr",
-    items: [{ description: "Abonnement", quantity: 1, unit: "mois", unit_price: 100, total: 100 }],
+    items: [{ description: "Abonnement", quantity: 1, unit: "mois", unit_price: 100, total: 100, nature: "services" }],
     tva_rate: 0, interval: "monthly", day_of_month: 1,
     next_billing_date: "2026-09-01", active: true,
   }),
