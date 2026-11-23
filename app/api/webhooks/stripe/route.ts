@@ -3,6 +3,8 @@ import { stripe } from "@/lib/stripe";
 import { createAdminClient } from "@/lib/supabase/admin";
 import type Stripe from "stripe";
 import { envoyerCourriel } from "@/lib/resend";
+import { synchroniserSieges } from "@/lib/stripe-seats";
+import { retirerEquipePourSolo } from "@/lib/equipe-solo";
 import { trialEndingEmailHtml } from "@/lib/emails/trial-ending";
 import { trialEndedEmailHtml, OBJET_ESSAI_TERMINE } from "@/lib/emails/trial-ended";
 import {
@@ -262,6 +264,24 @@ export async function POST(req: NextRequest) {
 
       if (error) throw error;
       verifierPortee("checkout.session.completed", touchees, customerId);
+
+      /**
+       * Un nouvel abonnement porte la formule seule, jamais les sièges.
+       *
+       * La résiliation ne retire pas l'équipe : un client Pro qui résilie puis
+       * se réabonne retrouve ses collaborateurs. Sans ce réalignement, ses
+       * sièges au-delà des 3 inclus n'étaient plus facturés tant que personne
+       * n'entrait ni ne sortait de l'équipe (revue indépendante du 23/11/2026).
+       * Erreur journalisée, jamais levée : le plan est déjà écrit, et un rejeu
+       * de l'événement ne réparerait rien de plus.
+       */
+      if (aJour) {
+        for (const { id } of touchees ?? []) {
+          await synchroniserSieges(id).catch((err) =>
+            console.error(`[stripe/webhook] sièges non réalignés à la souscription de ${id} :`, err)
+          );
+        }
+      }
       break;
     }
 
@@ -301,6 +321,30 @@ export async function POST(req: NextRequest) {
 
       if (error) throw error;
       if (isActive) verifierPortee("customer.subscription.updated", touchees, customerId);
+
+      /**
+       * Passage à Solo depuis le portail client Stripe.
+       *
+       * Le portail change la formule sans passer par Deviso, donc sans la
+       * confirmation ni le retrait d'équipe de la page Abonnement. Les
+       * collaborateurs gardaient alors l'accès sur un espace Solo. On applique
+       * ici la même règle (lib/equipe-solo.ts) : équipe retirée, comptable
+       * gardé, sièges réalignés. Sans effet si l'équipe est déjà vide.
+       */
+      if (isActive && plan === "solo") {
+        // Stripe ne garantit pas l'ordre des événements : un « Solo » ancien,
+        // livré après un retour à Pro, supprimerait la nouvelle équipe. On ne
+        // retire donc rien sans relire l'abonnement tel qu'il est MAINTENANT.
+        const actuel = await stripe.subscriptions.retrieve(sub.id);
+        const encoreSolo =
+          planDeAbonnement(actuel) === "solo" &&
+          (actuel.status === "active" || actuel.status === "trialing");
+        for (const { id } of encoreSolo ? touchees ?? [] : []) {
+          const { erreur, retires } = await retirerEquipePourSolo(id);
+          if (erreur) console.error(`[stripe/webhook] passage à Solo de ${id} : ${erreur}`);
+          else if (retires > 0) console.log(`[stripe/webhook] passage à Solo de ${id} : ${retires} collaborateur(s) retiré(s)`);
+        }
+      }
       break;
     }
 

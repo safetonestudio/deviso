@@ -30,7 +30,7 @@
  *
  * Prérequis : `.env.stripe-test.local` (ignoré par git) avec
  * STRIPE_TEST_SECRET_KEY=sk_test_..., et `.env.local`.
- * Usage : npm run test:stripe-horloges [-- --seulement=annuel,siege,siege-annuel,periodicite,essai,ancien]
+ * Usage : npm run test:stripe-horloges [-- --seulement=annuel,siege,siege-annuel,equipe-solo,periodicite,essai,ancien]
  */
 
 import { spawn, execSync } from "node:child_process";
@@ -475,6 +475,75 @@ try {
       JSON.stringify(sB.items.data.map((i) => [i.price.id, i.quantity])));
 
     for (const o of [tA.id, tB.id]) await admin(`/rest/v1/team_members?owner_id=eq.${o}`, { method: "DELETE" });
+  }
+
+  // ── 2 ter. Équipe : réabonnement, portail, expert-comptable ──────────
+  // Revue indépendante du 23/11/2026 : (a) un réabonnement Pro ne refacturait
+  // pas les sièges des collaborateurs restés dans l'équipe ; (b) un passage à
+  // Solo par le portail Stripe laissait l'équipe en place ; (c) le passage à
+  // Solo par la page Abonnement retirait aussi l'expert-comptable.
+  if (joue("equipe-solo")) {
+    console.log("");
+    console.log("── Équipe : réabonnement, portail -> Solo, comptable ──────");
+    const equipe = (owner, nb, avecComptable) => admin("/rest/v1/team_members", {
+      method: "POST",
+      body: JSON.stringify([
+        ...Array.from({ length: nb }, (_, i) => ({ owner_id: owner, email: `m${i}-${RUN}-${owner.slice(0, 6)}@example.com`, status: "active", role: "member" })),
+        ...(avecComptable ? [{ owner_id: owner, email: `compta-${RUN}-${owner.slice(0, 6)}@example.com`, status: "active", role: "comptable" }] : []),
+      ]),
+    });
+    const roles = async (owner) => (await (await admin(`/rest/v1/team_members?owner_id=eq.${owner}&select=role`)).json()).map((m) => m.role).sort();
+
+    // a) Réabonnement Pro : 3 collaborateurs + 1 comptable déjà là -> 1 siège.
+    const tR = await creerCompte("re-titulaire");
+    const hR = await nouvelleHorloge("re");
+    const cR = await clientStripe(tR, hR, true);
+    await equipe(tR.id, 3, true);
+    const subR = await abonnementCommeCheckout(cR, P.STRIPE_PRO_PRICE_ID, "pro", "monthly", { essai: false });
+    const st = await livrer({
+      id: `evt_banc_${RUN}_re`, object: "event", type: "checkout.session.completed", created: Math.floor(Date.now() / 1000),
+      data: { object: { object: "checkout.session", mode: "subscription", customer: cR.id, subscription: subR.id, metadata: { target_plan: "pro", billing: "monthly" } } },
+    });
+    verifier("réabonnement : le webhook accepte la fin de paiement", st === 200, `HTTP ${st}`);
+    const sR = await stripe.subscriptions.retrieve(subR.id);
+    const siegeR = sR.items.data.find((i) => i.price.id === P.STRIPE_SEAT_PRICE_ID);
+    verifier("réabonnement : 1 siège facturé (3 collaborateurs, comptable non compté)", siegeR?.quantity === 1,
+      JSON.stringify(sR.items.data.map((i) => [i.price.id, i.quantity])));
+
+    // b) Portail : Pro -> Solo sans passer par Deviso. Équipe retirée, comptable gardé.
+    const tP = await creerCompte("po-titulaire");
+    const hP = await nouvelleHorloge("po");
+    const cP = await clientStripe(tP, hP, true);
+    const subP = await abonnementCommeCheckout(cP, P.STRIPE_PRO_PRICE_ID, "pro", "monthly", { essai: false });
+    await majProfil(tP.id, { stripe_subscription_id: subP.id, plan: "pro", subscription_status: subP.status });
+    await equipe(tP.id, 2, true);
+    await attendre((e) => e.type === "invoice.paid" && subDeFacture(e.data.object) === subP.id);
+    await stripe.subscriptions.update(subP.id, {
+      items: [{ id: subP.items.data[0].id, price: P.STRIPE_SOLO_PRICE_ID }], proration_behavior: "create_prorations",
+    });
+    await attendre((e) => e.type === "customer.subscription.updated" && e.data.object.id === subP.id
+      && e.data.object.items.data.some((i) => i.price.id === P.STRIPE_SOLO_PRICE_ID));
+    await pause(2000);
+    const pP = await profil(tP.id);
+    verifier("portail -> Solo : le profil passe à Solo", pP.plan === "solo", JSON.stringify(pP));
+    const rP = await roles(tP.id);
+    verifier("portail -> Solo : collaborateurs retirés, expert-comptable gardé", JSON.stringify(rP) === JSON.stringify(["comptable"]), JSON.stringify(rP));
+
+    // c) Page Abonnement : Pro -> Solo, le comptable n'est ni annoncé ni retiré.
+    const tC = await creerCompte("co-titulaire");
+    const hC = await nouvelleHorloge("co");
+    const cC = await clientStripe(tC, hC, true);
+    const subC = await abonnementCommeCheckout(cC, P.STRIPE_PRO_PRICE_ID, "pro", "monthly", { essai: false });
+    await majProfil(tC.id, { stripe_subscription_id: subC.id, plan: "pro", subscription_status: subC.status });
+    await equipe(tC.id, 1, true);
+    const q = await appel(tC, "/api/stripe/checkout", { method: "POST", body: JSON.stringify({ plan: "solo", billing: "monthly" }) });
+    verifier("page Abonnement -> Solo : 1 collaborateur annoncé (comptable exclu)", q.status === 409 && q.body?.nbMembres === 1, `HTTP ${q.status} ${q.texte.slice(0, 160)}`);
+    const okC = await appel(tC, "/api/stripe/checkout", { method: "POST", body: JSON.stringify({ plan: "solo", billing: "monthly", confirmerRetraitMembres: true }) });
+    verifier("page Abonnement -> Solo : changement accepté", okC.body?.changed === true, `HTTP ${okC.status} ${okC.texte.slice(0, 160)}`);
+    const rC = await roles(tC.id);
+    verifier("page Abonnement -> Solo : expert-comptable gardé", JSON.stringify(rC) === JSON.stringify(["comptable"]), JSON.stringify(rC));
+
+    for (const o of [tR.id, tP.id, tC.id]) await admin(`/rest/v1/team_members?owner_id=eq.${o}`, { method: "DELETE" });
   }
 
   // ── 3. Mensuel -> annuel, par la route de Deviso ─────────────────────

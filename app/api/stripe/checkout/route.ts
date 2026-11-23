@@ -2,8 +2,8 @@ import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 import { stripe, PLANS } from "@/lib/stripe";
 import { MESSAGE_DEMO } from "@/lib/stripe-guard";
-import { createAdminClient } from "@/lib/supabase/admin";
-import { synchroniserSieges, prixSiegePour, estPrixSiege } from "@/lib/stripe-seats";
+import { prixSiegePour, estPrixSiege } from "@/lib/stripe-seats";
+import { collaborateursARetirer, retirerEquipePourSolo } from "@/lib/equipe-solo";
 import type Stripe from "stripe";
 
 /**
@@ -150,12 +150,9 @@ export async function POST(req: NextRequest) {
       let membresARetirer = 0;
 
       if (cibleSansEquipe) {
-        const { count } = await supabase
-          .from("team_members")
-          .select("*", { count: "exact", head: true })
-          .eq("owner_id", user.id)
-          .eq("status", "active");
-        membresARetirer = count ?? 0;
+        // L'expert-comptable n'est pas un collaborateur : il reste sur Solo
+        // et n'est ni compté ni retiré (lib/equipe-solo.ts).
+        membresARetirer = await collaborateursARetirer(supabase, user.id);
 
         if (membresARetirer > 0 && body.confirmerRetraitMembres !== true) {
           return NextResponse.json(
@@ -261,28 +258,14 @@ export async function POST(req: NextRequest) {
        * et supprime donc l'article « siège » de lui-même. Aucune quantité n'est
        * écrite à la main.
        */
-      if (cibleSansEquipe && membresARetirer > 0) {
-        const admin = createAdminClient();
-        const { error: erreurPurge } = await admin
-          .from("team_members")
-          .delete()
-          .eq("owner_id", user.id);
-
-        if (erreurPurge) {
+      // Toujours, même sans collaborateur actif : une invitation en attente ou
+      // un siège resté par erreur n'ont pas leur place sur un Solo. Idempotent.
+      if (cibleSansEquipe) {
+        const { erreur } = await retirerEquipePourSolo(user.id);
+        if (erreur) {
           console.error(
-            `[stripe/checkout] passage à Solo de ${user.id} : les ${membresARetirer} ` +
-              `collaborateur(s) n'ont PAS été retirés, ils gardent l'accès et ` +
-              `leurs sièges restent facturés.`,
-            erreurPurge
+            `[stripe/checkout] passage à Solo de ${user.id} (${membresARetirer} collaborateur(s)) : ${erreur}`
           );
-        } else {
-          await synchroniserSieges(user.id).catch((err) => {
-            console.error(
-              `[stripe/checkout] passage à Solo de ${user.id} : équipe retirée mais ` +
-                `sièges NON réalignés, ils continuent d'être facturés.`,
-              err
-            );
-          });
         }
       }
 
