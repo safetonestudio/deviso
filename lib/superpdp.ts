@@ -1,6 +1,7 @@
 import { createHash, randomBytes } from "crypto";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { estCompteDemo, MESSAGE_DEMO_TIERS } from "@/lib/garde-demo";
+import { rotationParUnAutre, MESSAGE_AUTORISATION_PERDUE } from "@/lib/superpdp-rotation";
 
 /**
  * Client Super PDP, notre Plateforme Agréée pour la facturation électronique.
@@ -247,6 +248,12 @@ export async function saveConnection(
 // ─────────────────────── Appels API authentifiés ───────────────────────
 
 export class SuperPdpNotConnected extends Error {}
+/**
+ * Le raccordement appartient à l'AUTRE environnement (bac à sable contre
+ * production). Sous-classe de « non raccordé » : les routes le traitent déjà
+ * comme tel, sans rien écrire.
+ */
+export class SuperPdpAutreEnvironnement extends SuperPdpNotConnected {}
 /** Super PDP vérifie le rattachement utilisateur/entreprise en différé. */
 export class SuperPdpSessionPending extends Error {}
 
@@ -369,6 +376,25 @@ async function accessTokenValide(
     throw new SuperPdpDemo(MESSAGE_DEMO_TIERS);
   }
 
+  // Garde d'environnement, au même point que la garde démonstration.
+  //
+  // Un jeton n'est renouvelable que par le client OAuth qui l'a obtenu : celui
+  // du poste (bac à sable, SUPERPDP_SANDBOX=true) ou celui de la production.
+  // Tenter l'autre échoue à coup sûr en `invalid_grant`, et l'échec marquait le
+  // raccordement « autorisation plus valide » : le 20/11/2026 sur le compte de
+  // Selim (appel lancé depuis le poste), et jusqu'au 23/11 sur le compte de
+  // test Atelier Lumière (bac à sable) chaque fois que le site en ligne
+  // l'utilisait. La tâche horaire filtrait déjà ces raccordements
+  // (app/api/cron/superpdp-sync) ; tout autre appel passe désormais ici.
+  // Aucun appel ne part, rien n'est écrit.
+  if (!estConnexionDeCetEnv(conn.company_number_scheme, isSandbox())) {
+    throw new SuperPdpAutreEnvironnement(
+      conn.company_number_scheme === "sandbox"
+        ? "Ce raccordement appartient au bac à sable de Super PDP : il ne s'utilise que depuis l'environnement de test."
+        : "Ce raccordement est celui de la production : l'environnement de test n'y touche pas."
+    );
+  }
+
   const expiration = conn.access_token_expires_at
     ? new Date(conn.access_token_expires_at).getTime()
     : 0;
@@ -402,17 +428,28 @@ async function accessTokenValide(
     // Le départage est direct : si le refresh token en base n'est plus celui
     // avec lequel on vient d'échouer, quelqu'un d'autre a rotationné avec
     // succès. On se range derrière lui.
+    //
+    // ⚠️ Relire UNE seule fois, tout de suite, ne suffit pas : le gagnant écrit
+    // son nouveau jeton quelques centaines de millisecondes APRÈS sa réponse de
+    // Super PDP. Le 23/11/2026, le perdant a relu avant cette écriture et marqué
+    // en erreur un raccordement qui venait d'être renouvelé (voir
+    // lib/superpdp-rotation.ts). On relit donc plusieurs fois, et l'erreur
+    // n'est écrite que si le jeton en base est TOUJOURS celui qui a échoué.
     const detail = err instanceof Error ? err.message : String(err);
     if (/invalid_grant/i.test(detail)) {
-      const relu = peutReessayer ? await getConnection(conn.user_id).catch(() => null) : null;
-      if (relu && relu.refresh_token !== conn.refresh_token) {
+      const relu = peutReessayer
+        ? await rotationParUnAutre(conn.refresh_token, () => getConnection(conn.user_id))
+        : null;
+      if (relu) {
         return accessTokenValide(relu, false);
       }
-      await saveConnection(conn.user_id, {
-        session_status: "error",
-        last_error:
-          "Votre autorisation Super PDP n'est plus valide. Reconnectez votre entreprise.",
-      }).catch(() => {});
+      const admin = createAdminClient();
+      await admin
+        .from("superpdp_connections")
+        .update({ session_status: "error", last_error: MESSAGE_AUTORISATION_PERDUE })
+        .eq("user_id", conn.user_id)
+        .eq("refresh_token", conn.refresh_token)
+        .then(() => {}, () => {});
     }
     throw err;
   }
@@ -441,7 +478,23 @@ async function accessTokenValide(
       })
       .eq("user_id", conn.user_id)
       .eq("refresh_token", conn.refresh_token);
-  } else {
+  }
+  // Un renouvellement qui RÉUSSIT réfute « autorisation plus valide ». Si un
+  // appel concurrent l'a écrit quand même (course perdue avant ce correctif, ou
+  // écriture arrivée après nos relectures), on l'efface. Seul CE message est
+  // levé : une erreur d'une autre nature (entreprise refusée par Super PDP) n'a
+  // rien à voir avec le jeton et reste affichée.
+  {
+    const admin = createAdminClient();
+    await admin
+      .from("superpdp_connections")
+      .update({ session_status: "verified", last_error: null })
+      .eq("user_id", conn.user_id)
+      .eq("session_status", "error")
+      .eq("last_error", MESSAGE_AUTORISATION_PERDUE)
+      .then(() => {}, () => {});
+  }
+  if (!tokens.refresh_token) {
     // Pas de rotation : on ne met à jour que le jeton d'accès.
     await saveConnection(conn.user_id, {
       access_token: tokens.access_token,

@@ -39,8 +39,13 @@ export async function GET(req: NextRequest) {
   let nonJoues: string[] = [];
   let duree = 0;
   let nettoyage: string[] = [];
+  let horsSurveillance: string[] = [];
   try {
-    if (!essai) resultats.push(...(await comptesReels(admin)));
+    if (!essai) {
+      const reels = await comptesReels(admin);
+      resultats.push(...reels.resultats);
+      horsSurveillance = reels.horsSurveillance;
+    }
     const b = await cheminsCritiques(admin, { base, scenarios, casser, budgetMs: essai ? 120_000 : 170_000 });
     resultats.push(...b.resultats);
     nonJoues = b.nonJoues;
@@ -58,7 +63,7 @@ export async function GET(req: NextRequest) {
     nettoyage,
   };
   try {
-    const issue = await appliquerVeille(admin, essai ? "essai" : "prod", resultats, nonJoues, { envoyer: !essai, bilan });
+    const issue = await appliquerVeille(admin, essai ? "essai" : "prod", resultats, nonJoues, { envoyer: !essai, bilan, horsSurveillance });
     console.log(`[veille] ${JSON.stringify({ ...bilan, alerte: issue.alerte?.genre ?? null, envoi: issue.envoi ?? null })}`);
     return NextResponse.json({
       ...bilan,

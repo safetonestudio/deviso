@@ -6,6 +6,7 @@ import { relancesDues } from "@/lib/relances";
 import { pointagesDus, construirePointage } from "@/lib/pointage-paiement";
 import { creerCompteJetable, supprimerComptes, type CompteJetable } from "./comptes";
 import { jouerScenario } from "./banc";
+import { estConnexionDeCetEnv, isSandbox } from "@/lib/superpdp";
 import type { Resultat } from "./decision";
 
 type Admin = ReturnType<typeof createAdminClient>;
@@ -23,6 +24,12 @@ type Admin = ReturnType<typeof createAdminClient>;
  *      (verrou resté pris : la facture ne partira plus d'elle-même).
  *    Chorus Pro n'a pas d'état de raccordement en base : seuls ses dépôts se
  *    lisent.
+ *    Les raccordements de l'AUTRE environnement (bac à sable de Super PDP, vus
+ *    depuis la production) ne sont pas surveillés : ce sont nos comptes
+ *    d'essai, la tâche horaire de production ne les synchronise jamais
+ *    (estConnexionDeCetEnv) et leur titulaire n'est pas un client. Ils
+ *    alertaient pour rien (23/11/2026). Leurs anciennes pannes sont oubliées
+ *    en silence, ni « réparées » ni réalertées (`horsSurveillance`).
  *
  * 2. Chemins critiques rejoués sur des comptes de démonstration JETABLES,
  *    supprimés à la fin :
@@ -51,12 +58,14 @@ const JOUR_MS = 24 * 60 * 60 * 1000;
 const ilYA = (ms: number) => new Date(Date.now() - ms).toISOString();
 const jour = (d: Date) => d.toISOString().slice(0, 10);
 
-export async function comptesReels(admin: Admin): Promise<Resultat[]> {
+export async function comptesReels(admin: Admin): Promise<{ resultats: Resultat[]; horsSurveillance: string[] }> {
   const resultats: Resultat[] = [];
+  const horsSurveillance: string[] = [];
   const { data: connexions, error } = await admin
     .from("superpdp_connections")
-    .select("user_id, session_status, last_error, last_sync_at, connected_at");
-  if (error) return [{ id: "lecture:superpdp", libelle: "Lecture des raccordements Super PDP", ok: false, detail: error.message }];
+    .select("user_id, session_status, last_error, last_sync_at, connected_at, company_number_scheme");
+  if (error) return { resultats: [{ id: "lecture:superpdp", libelle: "Lecture des raccordements Super PDP", ok: false, detail: error.message }], horsSurveillance };
+  const sandbox = isSandbox();
   const ids = [...new Set((connexions ?? []).map((c) => c.user_id as string))];
   const { data: profils } = ids.length
     ? await admin.from("profiles").select("id, is_demo, company_name, full_name, email").in("id", ids)
@@ -70,6 +79,10 @@ export async function comptesReels(admin: Admin): Promise<Resultat[]> {
   for (const c of connexions ?? []) {
     const p = profil.get(c.user_id);
     if (!p || p.is_demo) continue;
+    if (!estConnexionDeCetEnv(c.company_number_scheme ?? null, sandbox)) {
+      horsSurveillance.push(`superpdp:${c.user_id}`, `superpdp-sync:${c.user_id}`);
+      continue;
+    }
     if (c.session_status === "error") {
       resultats.push({
         id: `superpdp:${c.user_id}`,
@@ -105,7 +118,7 @@ export async function comptesReels(admin: Admin): Promise<Resultat[]> {
       detail: `dépôt commencé le ${d.chorus_pro_depot_debute_at}, aucune référence reçue`,
     });
   }
-  return resultats;
+  return { resultats, horsSurveillance };
 }
 
 /** Crée une facture par l'API, comme un utilisateur, puis la passe à « envoyée ». */

@@ -60,6 +60,31 @@ if (existsSync(".env.local")) {
   verifier("puis silence", decider(repare.pannes, [r("a", true), r("b", true)], t1).alerte === null);
   verifier("aucun tiret cadratin ni emoji dans les messages", [casse, deux, mieux, repare].every((d) => !/[\u{2014}\u{1F300}-\u{1FAFF}]/u.test(`${d.alerte?.sujet}${d.alerte?.texte}`)));
 
+  // ── 1 bis. Comptes d'essai du bac à sable hors surveillance (23/11/2026) ────
+  // Atelier Lumière et Tricatel (raccordés au bac à sable) alertaient en
+  // production pour rien. Ils sortent de la surveillance, et leurs pannes
+  // passées doivent disparaître SANS faux « revenu à la normale ».
+  console.log("── Comptes d'essai hors surveillance ───────────────────────");
+  {
+    const { estConnexionDeCetEnv } = await import("@/lib/superpdp");
+    verifier("en production, un raccordement du bac à sable n'est pas surveillé", !estConnexionDeCetEnv("sandbox", false));
+    verifier("en production, un vrai raccordement l'est", estConnexionDeCetEnv("fr_siren", false));
+    const avant = decider({}, [r("superpdp:essai", false, "autorisation"), r("superpdp:client", true)], t0).pannes;
+    const oublie = { ...avant };
+    delete oublie["superpdp:essai"];
+    verifier("panne oubliée : aucun message le lendemain", decider(oublie, [r("superpdp:client", true)], t1).alerte === null);
+    verifier(
+      "contre-épreuve : sans l'oubli, sa disparition enverrait un faux « retour à la normale »",
+      decider(avant, [r("superpdp:client", true)], t1).alerte?.genre === "retour",
+    );
+    const srcAlerte = readFileSync("lib/veille/alerte.ts", "utf8");
+    const srcControles = readFileSync("lib/veille/controles.ts", "utf8");
+    const srcRoute = readFileSync("app/api/cron/veille/route.ts", "utf8");
+    verifier("appliquerVeille retire les contrôles hors surveillance de l'état relu", /for \(const id of options\.horsSurveillance \?\? \[\]\) delete precedentes\[id\]/.test(srcAlerte));
+    verifier("comptesReels écarte les raccordements de l'autre environnement", /if \(!estConnexionDeCetEnv\(c\.company_number_scheme \?\? null, sandbox\)\)/.test(srcControles));
+    verifier("la route transmet la liste à appliquerVeille", /horsSurveillance \}\)/.test(srcRoute) && /horsSurveillance = reels\.horsSurveillance/.test(srcRoute));
+  }
+
   // ── 2. La route, en mode essai ──────────────────────────────────────────────
   console.log("");
   console.log(`── Route /api/cron/veille, mode essai (${BASE}) ─────────────`);

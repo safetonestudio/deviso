@@ -29,12 +29,18 @@ export async function appliquerVeille(
   cle: "prod" | "essai",
   resultats: Resultat[],
   nonJoues: string[],
-  options: { envoyer: boolean; bilan?: unknown },
+  options: {
+    envoyer: boolean;
+    bilan?: unknown;
+    /** Contrôles retirés de la surveillance : leurs pannes passées sont oubliées sans message (ni « réparé », ni réalerte). */
+    horsSurveillance?: string[];
+  },
 ): Promise<Issue> {
   await admin.from("veille_etat").upsert({ cle }, { onConflict: "cle", ignoreDuplicates: true });
   const { data: ligne, error } = await admin.from("veille_etat").select("pannes, version").eq("cle", cle).single();
   if (error || !ligne) throw new Error(`lecture de l'état de la veille : ${error?.message ?? "absent"}`);
-  const precedentes = (ligne.pannes ?? {}) as Pannes;
+  const precedentes = { ...((ligne.pannes ?? {}) as Pannes) };
+  for (const id of options.horsSurveillance ?? []) delete precedentes[id];
   const version = ligne.version as number;
 
   // Un contrôle qui n'a pas pu être joué cette fois (temps imparti, comptes de
