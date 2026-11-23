@@ -587,10 +587,13 @@ html:has(.ds-app.accueil), body:has(.ds-app.accueil) { background-color: #0E1512
 
 
 /* === Accueil : une section sur deux sur un second fond ===
-   Entre le fond de page (--ds-bg) et celui des cartes (--ds-surface), pour que
-   les cartes restent distinctes sur les deux fonds. Site public, nuit seule. */
+   1,13:1 face au fond de page : la limite se voit, y compris sur téléphone.
+   Les surfaces posées dessus montent d'un cran (cartes 1,16:1 face à la bande)
+   pour ne pas s'y fondre. Site public, nuit seule. */
 .accueil .bande-alt {
-  background-color: #121A16;
+  background-color: #18221C;
+  --ds-surface: #222E28;
+  --ds-elevated: #2A3731;
 }
 
 /* === Cartes DANS l'app posees sur le fond a relief ===
