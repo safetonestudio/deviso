@@ -5,7 +5,7 @@
  *
  * `/api/stripe/checkout` ouvrait un tunnel de paiement quoi qu'il arrive. Un
  * client Solo qui cliquait « Passer à Pro » repartait donc avec DEUX
- * abonnements actifs, 18 € + 34 € tous les mois, et le webhook écrasait
+ * abonnements actifs, Solo + Pro tous les mois, et le webhook écrasait
  * `stripe_subscription_id` au passage : Deviso ne savait même plus que le
  * premier existait.
  *

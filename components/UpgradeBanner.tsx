@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { Zap } from "lucide-react";
+import { prix as grille } from "@/lib/grille-tarifaire";
 
 type BannerVariant = "proposal_limit" | "invoice_blocked" | "logo_blocked";
 
@@ -28,13 +29,13 @@ export function UpgradeBanner({ variant = "proposal_limit", count = 0 }: Upgrade
   const messages: Record<BannerVariant, { title: string; sub: string }> = {
     proposal_limit: {
       title: "Débloque les factures, la signature électronique et le logo",
-      sub: "Factures électroniques, e-signature, relances auto, logo personnalisé, dès 18€/mois",
+      sub: `Factures électroniques, e-signature, relances auto, logo personnalisé, dès ${grille("solo").mensuel}€/mois`,
     },
     // Sans formule, les factures existantes restent consultables (21/11/2026) :
     // seule la CRÉATION est réservée, le texte ne doit pas dire le contraire.
     invoice_blocked: {
       title: "Un abonnement est nécessaire pour créer des factures",
-      sub: "Tes factures existantes restent consultables. Solo à 18€/mois pour en créer de nouvelles, conformes à la réforme",
+      sub: `Tes factures existantes restent consultables. Solo à ${grille("solo").mensuel}€/mois pour en créer de nouvelles, conformes à la réforme`,
     },
     logo_blocked: {
       title: "L'upload de logo est réservé au plan Solo",
@@ -57,7 +58,7 @@ export function UpgradeBanner({ variant = "proposal_limit", count = 0 }: Upgrade
         disabled={loading}
         className="shrink-0 bg-white text-indigo-600 hover:opacity-90 disabled:opacity-50 text-sm font-semibold px-4 py-2 rounded-lg transition-colors whitespace-nowrap"
       >
-        <span className="inline-flex items-center gap-1.5">{!loading && <Zap size={16} className="shrink-0" />}{loading ? "Redirection…" : "Passer Solo à 18€/mois"}</span>
+        <span className="inline-flex items-center gap-1.5">{!loading && <Zap size={16} className="shrink-0" />}{loading ? "Redirection…" : `Passer Solo à ${grille("solo").mensuel}€/mois`}</span>
       </button>
     </div>
   );

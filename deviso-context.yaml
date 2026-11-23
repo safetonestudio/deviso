@@ -28,58 +28,22 @@ target_users:
     - rester conforme légalement sans effort
 
 business_model:
-  type: freemium SaaS
+  type: SaaS par abonnement, essai gratuit de 14 jours, pas de formule gratuite
   currency: EUR
+  # Source unique des prix : lib/grille-tarifaire.ts (grille du 23/11/2026).
+  # Contenu des formules : lib/plans.ts. Ne rien recopier ici d'autre.
   plans:
-    free:
-      price: 0
-      limits:
-        - 10 devis par mois
-        - génération IA incluse
-        - PDF téléchargeable
-        - watermark "Créé avec Deviso"
-      restrictions:
-        - pas de factures
-        - pas de logo personnalisé
-        - pas de signature électronique client
     solo:
-      price: 19
-      period: mois
-      stripe_price_id: price_1TmtlsC7DMFvUE5Oa3dsFvFZ
-      features:
-        - devis illimités
-        - factures illimitées
-        - génération IA illimitée
-        - logo et marque personnalisés
-        - signature électronique client
-        - relances automatiques (J+3)
-        - time tracking vers facture
-        - déclarations URSSAF
-        - email transactionnel facture
-        - support prioritaire
+      price_ht_mensuel: 24
+      price_ht_annuel: 230.40
+      utilisateurs: 1
     pro:
-      price: 29
-      period: mois
-      stripe_price_id: price_1TmtoOC7DMFvUE5ONRi07YgD
-      features:
-        - tout Solo inclus
-        - multi-utilisateurs (jusqu'à 10 sièges)
-        - +15€ par siège supplémentaire
-        - CRM client avec historique complet
-        - catalogue de prestations sauvegardées
-        - templates de devis personnalisés
-        - export comptable CSV FEC-compatible
-        - statistiques avancées (taux de signature, CA prévisionnel)
-    enterprise:
-      price: sur_devis
-      contact: contact@getdeviso.fr
-      features:
-        - équipe >10 personnes
-        - onboarding dédié
-        - contrat annuel
-        - SLA garanti
-        - support prioritaire
-        - facturation centralisée
+      price_ht_mensuel: 44
+      price_ht_annuel: 422.40
+      utilisateurs_inclus: 3
+      siege_supplementaire_ht_mensuel: 8
+  remise_annuelle: 20 %
+  offert: acces expert-comptable (lecture seule, hors siege), plateforme agreee Super PDP
 
 tech_stack:
   framework: Next.js 15 (App Router)

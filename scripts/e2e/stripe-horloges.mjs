@@ -38,6 +38,7 @@ import { createHmac, randomBytes } from "node:crypto";
 import { existsSync, readFileSync } from "node:fs";
 import Stripe from "stripe";
 import { verifier, bilan, secret } from "./lib.mjs";
+import { CENTIMES, euros } from "../../lib/grille-tarifaire.ts";
 
 // ── configuration ────────────────────────────────────────────────────────
 function cleDeTest() {
@@ -72,13 +73,15 @@ const arg = process.argv.find((a) => a.startsWith("--seulement="));
 const SEULEMENT = arg ? new Set(arg.split("=")[1].split(",")) : null;
 const joue = (nom) => !SEULEMENT || SEULEMENT.has(nom);
 
-// ── catalogue de test, aligné sur la grille LIVE ─────────────────────────
+// ── catalogue de test, lu dans la grille LIVE (lib/grille-tarifaire.ts) ──
+// La clé de recherche porte le montant : un changement de grille crée de
+// nouveaux prix de test au lieu de réutiliser ceux de l'ancienne grille.
 const GRILLE = [
-  { cle: "deviso_banc_solo_m", nom: "Solo mensuel (banc)", montant: 1800, intervalle: "month", env: "STRIPE_SOLO_PRICE_ID" },
-  { cle: "deviso_banc_solo_a", nom: "Solo annuel (banc)", montant: 17280, intervalle: "year", env: "STRIPE_SOLO_ANNUAL_PRICE_ID" },
-  { cle: "deviso_banc_pro_m", nom: "Pro mensuel (banc)", montant: 3400, intervalle: "month", env: "STRIPE_PRO_PRICE_ID" },
-  { cle: "deviso_banc_pro_a", nom: "Pro annuel (banc)", montant: 32640, intervalle: "year", env: "STRIPE_PRO_ANNUAL_PRICE_ID" },
-  { cle: "deviso_banc_siege", nom: "Siège supplémentaire (banc)", montant: 500, intervalle: "month", env: "STRIPE_SEAT_PRICE_ID" },
+  { cle: `deviso_banc_solo_m_${CENTIMES.solo.mensuel}`, nom: "Solo mensuel (banc)", montant: CENTIMES.solo.mensuel, intervalle: "month", env: "STRIPE_SOLO_PRICE_ID" },
+  { cle: `deviso_banc_solo_a_${CENTIMES.solo.annuel}`, nom: "Solo annuel (banc)", montant: CENTIMES.solo.annuel, intervalle: "year", env: "STRIPE_SOLO_ANNUAL_PRICE_ID" },
+  { cle: `deviso_banc_pro_m_${CENTIMES.pro.mensuel}`, nom: "Pro mensuel (banc)", montant: CENTIMES.pro.mensuel, intervalle: "month", env: "STRIPE_PRO_PRICE_ID" },
+  { cle: `deviso_banc_pro_a_${CENTIMES.pro.annuel}`, nom: "Pro annuel (banc)", montant: CENTIMES.pro.annuel, intervalle: "year", env: "STRIPE_PRO_ANNUAL_PRICE_ID" },
+  { cle: `deviso_banc_siege_${CENTIMES.siege}`, nom: "Siège supplémentaire (banc)", montant: CENTIMES.siege, intervalle: "month", env: "STRIPE_SEAT_PRICE_ID" },
 ];
 
 async function catalogue() {
@@ -328,7 +331,7 @@ try {
 
   // ── 1. Solo annuel et Pro annuel, avec carte ─────────────────────────
   if (joue("annuel")) {
-    for (const [plan, cle, montant] of [["solo", "STRIPE_SOLO_ANNUAL_PRICE_ID", 17280], ["pro", "STRIPE_PRO_ANNUAL_PRICE_ID", 32640]]) {
+    for (const [plan, cle, montant] of [["solo", "STRIPE_SOLO_ANNUAL_PRICE_ID", CENTIMES.solo.annuel], ["pro", "STRIPE_PRO_ANNUAL_PRICE_ID", CENTIMES.pro.annuel]]) {
       console.log("");
       console.log(`── ${plan === "solo" ? "Solo" : "Pro"} annuel : essai, premier paiement, renouvellement ──`);
       const compte = await creerCompte(`${plan}-annuel`);
@@ -366,7 +369,7 @@ try {
     const sub = await abonnementCommeCheckout(client, P.STRIPE_PRO_PRICE_ID, "pro", "monthly", { essai: false });
     await majProfil(titulaire.id, { stripe_subscription_id: sub.id, plan: "pro", subscription_status: sub.status });
     await attendre((e) => e.type === "invoice.paid" && subDeFacture(e.data.object) === sub.id);
-    verifier("Pro mensuel actif et payé (34 €)", sub.status === "active", sub.status);
+    verifier(`Pro mensuel actif et payé (${euros(CENTIMES.pro.mensuel)} €)`, sub.status === "active", sub.status);
 
     // Deux membres déjà actifs (inclus), puis un troisième accepte son invitation.
     await admin("/rest/v1/team_members", {
@@ -390,7 +393,7 @@ try {
     const { trouve } = await attendre((e) => e.type === "invoice.paid" && subDeFacture(e.data.object) === sub.id && e.data.object.billing_reason === "subscription_cycle");
     const lignesFacture = trouve ? (await stripe.invoices.listLineItems(trouve.data.object.id, { limit: 20 })).data : [];
     const ligneSiege = lignesFacture.find((l) => l.price?.id === P.STRIPE_SEAT_PRICE_ID && !l.proration);
-    verifier("le mois suivant : 34 € + 5 € de siège facturés", ligneSiege?.amount === 500 && trouve.data.object.amount_paid >= 3900,
+    verifier(`le mois suivant : ${euros(CENTIMES.pro.mensuel)} € + ${euros(CENTIMES.siege)} € de siège facturés`, ligneSiege?.amount === CENTIMES.siege && trouve.data.object.amount_paid >= CENTIMES.pro.mensuel + CENTIMES.siege,
       `${trouve?.data.object.amount_paid} ; lignes ${lignesFacture.map((l) => `${l.amount}${l.proration ? "p" : ""}`).join(",")}`);
     const p = await profil(titulaire.id);
     verifier("webhook : toujours Pro malgré deux articles", p.plan === "pro" && p.subscription_status === "active", JSON.stringify(p));
@@ -415,7 +418,7 @@ try {
     verifier("même abonnement, désormais au prix Solo annuel", s.items.data.length === 1 && s.items.data[0].price.id === P.STRIPE_SOLO_ANNUAL_PRICE_ID, s.items.data.map((i) => i.price.id).join(","));
     const { trouve } = await attendre((e) => e.type === "invoice.paid" && subDeFacture(e.data.object) === sub.id && e.data.object.billing_reason === "subscription_update");
     const paye = trouve?.data.object.amount_paid ?? -1;
-    verifier("facture annuelle diminuée du crédit du mois entamé", paye > 15000 && paye < 17280, `${paye}`);
+    verifier("facture annuelle diminuée du crédit du mois entamé", paye > CENTIMES.solo.annuel - CENTIMES.solo.mensuel && paye < CENTIMES.solo.annuel, `${paye}`);
     const autres = (await stripe.subscriptions.list({ customer: client.id, status: "all" })).data.length;
     verifier("un seul abonnement chez le client", autres === 1, `${autres}`);
     const p = await profil(compte.id);

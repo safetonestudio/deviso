@@ -206,7 +206,7 @@ verifier(
   "le trimestre ou le detail mensuel sont absents du rendu",
 );
 aVerifierAlaMain("« Sans branding Deviso sur vos documents »", "différence visuelle dans le PDF, non vérifiée automatiquement.");
-aVerifierAlaMain("« 3 utilisateurs inclus, +5 €/utilisateur »", "dépend de la facturation Stripe réelle, non exercée.");
+aVerifierAlaMain("« 3 utilisateurs inclus, puis un siège par utilisateur »", "dépend de la facturation Stripe réelle, non exercée.");
 aVerifierAlaMain("« Couleur d'accent » appliquée au PDF", "la valeur est enregistrée ; son effet visuel n'est pas contrôlé.");
 
 console.log("");

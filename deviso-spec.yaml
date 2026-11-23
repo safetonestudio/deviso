@@ -344,7 +344,7 @@ modules:
       features:
         - affichage plan actuel avec badge colore
         - bouton "Gerer / Annuler" -> Stripe Customer Portal
-        - cartes upgrade (Solo 19€/mois, Pro 29€/mois)
+        - cartes upgrade Solo et Pro (prix lus dans lib/grille-tarifaire.ts)
         - boutons "Choisir Solo" / "Choisir Pro" -> Stripe Checkout
         - message succes si ?upgraded=1
         - gestion erreur portal (customer ID invalide -> recreation automatique)
@@ -362,8 +362,8 @@ pricing_model:
       team: false
       time_tracking_to_invoice: false
   solo:
-    price_eur: 19
-    stripe_price_id: price_1TmtlsC7DMFvUE5Oa3dsFvFZ
+    # prix : lib/grille-tarifaire.ts ; identifiant Stripe : STRIPE_SOLO_PRICE_ID
+    price_eur_ht: 24
     limits:
       proposals: unlimited
       invoices: true
@@ -376,9 +376,9 @@ pricing_model:
       urssaf: true
       relances_auto: true
   pro:
-    price_eur: 29
-    stripe_price_id: price_1TmtoOC7DMFvUE5ONRi07YgD
-    extra_seat_price_eur: 15
+    # prix : lib/grille-tarifaire.ts ; identifiant Stripe : STRIPE_PRO_PRICE_ID
+    price_eur_ht: 44
+    extra_seat_price_eur_ht: 8
     limits:
       proposals: unlimited
       invoices: true
@@ -649,8 +649,8 @@ removed_or_redundant_features:
   - feature: "startCheckout server action dans dashboard"
     reason: "Remplace par Link vers /billing pour simplifier le flow"
 
-  - feature: "Prix hardcodes '49€' dans plusieurs pages"
-    reason: "Ancien prix, supprime et remplace par redirect vers /billing"
+  - feature: "Prix ecrits en dur dans plusieurs pages"
+    reason: "Remplaces par la source unique lib/grille-tarifaire.ts (check:prix)"
 
 notes:
   technical_observations:

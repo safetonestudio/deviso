@@ -13,7 +13,8 @@
  * Membres inclus dans le plan Pro, **en plus** du titulaire du compte.
  *
  * Source : CGU, article « Plan Pro », « 3 utilisateurs inclus, le titulaire
- * du compte et 2 membres, +5 €/mois/utilisateur supplémentaire ».
+ * du compte et 2 membres », chaque utilisateur supplémentaire au prix du
+ * siège (lib/grille-tarifaire.ts).
  * Ne pas changer cette valeur sans changer les CGU : `npm run test:sieges`
  * compare les deux et échoue si elles divergent.
  */

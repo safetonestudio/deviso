@@ -4,6 +4,7 @@ import { useState } from "react";
 import Link from "next/link";
 import { Check } from "lucide-react";
 import { FEATURES, planFeatures, proOnlyFeatures } from "@/lib/plans";
+import { prix as grille, PRIX_SIEGE, JOURS_ESSAI } from "@/lib/grille-tarifaire";
 
 /**
  * Tarifs de la page d'accueil : deux formules côte à côte, sur deux surfaces
@@ -13,6 +14,10 @@ import { FEATURES, planFeatures, proOnlyFeatures } from "@/lib/plans";
  */
 const COMMUNES = planFeatures("solo");
 const PRO_SEUL = proOnlyFeatures();
+
+// Montants lus dans la source unique (lib/grille-tarifaire.ts), jamais retapés.
+const SOLO = grille("solo");
+const PRO = grille("pro");
 
 /** La liste commune, en familles. Chaque libellé vient de lib/plans.ts ; une
     fonction vendue qui n'est rangée nulle part tombe dans la dernière famille,
@@ -50,18 +55,18 @@ export function TarifsTable() {
     {
       nom: "Solo",
       pour: "Pour travailler seul, avec des documents soignés et ta gestion à jour.",
-      prix: annuel ? "14,40" : "18",
-      note: annuel ? "Facturé 172,80 € HT par an, soit 207,36 € TTC" : "Sans engagement, soit 21,60 € TTC",
+      prix: annuel ? SOLO.annuelParMois : SOLO.mensuel,
+      note: annuel ? `Facturé ${SOLO.annuel} € HT par an, soit ${SOLO.annuelTtc} € TTC` : `Sans engagement, soit ${SOLO.mensuelTtc} € TTC`,
       lien: "/signup?plan=solo",
       lignes: ["Toutes les fonctions, hors gestion d'équipe", "1 utilisateur" + NB + ": toi"],
     },
     {
       nom: "Pro",
       pour: "Pour les petites entreprises qui travaillent à plusieurs.",
-      prix: annuel ? "27,20" : "34",
-      note: annuel ? "Facturé 326,40 € HT par an, soit 391,68 € TTC" : "Sans engagement, soit 40,80 € TTC",
+      prix: annuel ? PRO.annuelParMois : PRO.mensuel,
+      note: annuel ? `Facturé ${PRO.annuel} € HT par an, soit ${PRO.annuelTtc} € TTC` : `Sans engagement, soit ${PRO.mensuelTtc} € TTC`,
       lien: "/signup?plan=pro",
-      lignes: ["Toutes les fonctions de Solo, plus l'équipe", "3 utilisateurs inclus, puis 5 € HT par mois et par personne", ...PRO_SEUL],
+      lignes: ["Toutes les fonctions de Solo, plus l'équipe", `3 utilisateurs inclus, puis ${PRIX_SIEGE} € HT par mois et par personne`, ...PRO_SEUL],
     },
   ];
 
@@ -70,7 +75,7 @@ export function TarifsTable() {
       <div className="reveal flex flex-wrap items-end justify-between gap-8">
         <div className="max-w-[760px]">
           <h2 className="text-[clamp(28px,2.6vw,40px)] leading-[1.1] font-semibold tracking-[-0.035em] text-ink">Deux formules, une seule différence : l&apos;équipe.</h2>
-          <p className="mt-5 text-[17px] sm:text-[20px] leading-relaxed text-gray-300">14 jours d&apos;essai complet, puis tu choisis.</p>
+          <p className="mt-5 text-[17px] sm:text-[20px] leading-relaxed text-gray-300">{JOURS_ESSAI} jours d&apos;essai complet, puis tu choisis.</p>
         </div>
         <div className="grid grid-cols-2 w-full sm:w-auto sm:inline-grid gap-1 p-1 rounded-lg bg-ds-surface" role="group" aria-label="Périodicité de facturation">
           {[

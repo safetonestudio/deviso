@@ -13,9 +13,9 @@ export { siegesDus, MEMBRES_INCLUS };
  * l'acceptation d'une invitation et `quantity - 1` au retrait d'un membre :
  *
  * 1. **Elle facturait dès le premier collaborateur.** Les CGU vendent pourtant
- *    « 3 utilisateurs inclus, le titulaire du compte et 2 membres, +5 €/mois
- *    par utilisateur supplémentaire ». Un client Pro qui invitait deux personnes
- *    payait donc 10 €/mois qui ne lui étaient pas dus, et la page de facturation
+ *    « 3 utilisateurs inclus, le titulaire du compte et 2 membres », chaque
+ *    utilisateur supplémentaire au prix du siège. Un client Pro qui invitait deux
+ *    personnes payait donc deux sièges qui ne lui étaient pas dus, et la page de facturation
  *    lui affichait en même temps la promesse inverse.
  *
  * 2. **Un compteur dérive, un calcul non.** Le double clic sur un lien

@@ -7,6 +7,7 @@ import { SlideFonctionnalites } from "@/components/landing/SlideFonctionnalites"
 import { PourquoiDeviso } from "@/components/landing/PourquoiDeviso";
 import { FaqAccueil } from "@/components/landing/FaqAccueil";
 import { TarifsTable } from "@/components/landing/TarifsTable";
+import { prix as grille } from "@/lib/grille-tarifaire";
 
 export const metadata: Metadata = {
   title: "Deviso, logiciel de devis et factures pour indépendants et petites entreprises",
@@ -30,8 +31,8 @@ const jsonLd = {
   description:
     "Logiciel de devis et facturation pour les indépendants et les petites entreprises en France. Devis IA, Factur-X, relances automatiques.",
   offers: [
-    { "@type": "Offer", name: "Solo", price: "18", priceCurrency: "EUR", billingIncrement: "P1M" },
-    { "@type": "Offer", name: "Pro", price: "34", priceCurrency: "EUR", billingIncrement: "P1M" },
+    { "@type": "Offer", name: "Solo", price: grille("solo").mensuel, priceCurrency: "EUR", billingIncrement: "P1M" },
+    { "@type": "Offer", name: "Pro", price: grille("pro").mensuel, priceCurrency: "EUR", billingIncrement: "P1M" },
   ],
   featureList: [
     "Génération de devis par IA",

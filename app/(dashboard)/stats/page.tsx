@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import useSWR from "swr";
 import { fetcher } from "@/lib/fetcher";
 import { UpgradeButton } from "@/components/UpgradeButton";
+import { prix as grille } from "@/lib/grille-tarifaire";
 import { KpiCard } from "@/components/ui/KpiCard";
 import { GuidedTourBanner } from "@/components/GuidedTourBanner";
 import { TrendingUp, Target, Percent, FileText, BarChart3, Lock, Clock, Zap } from "lucide-react";
@@ -400,7 +401,7 @@ export default function StatsPage() {
                 </div>
                 <p className="text-ink font-semibold text-base mb-1">Analytics avancées</p>
                 <p className="text-gray-400 text-sm mb-4">Funnel de conversion, délai moyen de signature, meilleur mois et efficacité de tes relances.</p>
-                <UpgradeButton plan="solo" label="Passer Solo, 18€/mois" />
+                <UpgradeButton plan="solo" label={`Passer Solo, ${grille("solo").mensuel}€/mois`} />
               </div>
             </div>
           </div>

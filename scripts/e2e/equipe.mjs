@@ -2,7 +2,7 @@
  * Traversée du tunnel d'invitation d'équipe.
  *
  * Le multi-utilisateurs est ce qui justifie l'écart de prix entre Solo et Pro
- * (34 €/mois, 3 sièges inclus puis 5 €/siège). Jusqu'ici, la seule chose qu'on
+ * (3 sièges inclus, puis un siège facturé par personne, voir lib/grille-tarifaire.ts). Jusqu'ici, la seule chose qu'on
  * en testait était la lecture : `two-roles.mjs` emprunte bien le vrai tunnel
  * d'invitation, mais en **préalable**, si l'invitation casse, le script lève
  * une exception au lieu de rendre un échec de vérification, et personne ne teste

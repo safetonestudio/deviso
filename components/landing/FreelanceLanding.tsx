@@ -2,6 +2,7 @@ import { PageSite, CADRE, SECTION, H1, H2, LEAD, BOUTON_PLEIN, BOUTON_DOUX } fro
 import Link from "next/link";
 import type { Metadata } from "next";
 import { DonneesStructurees } from "@/components/DonneesStructurees";
+import { prix as grille } from "@/lib/grille-tarifaire";
 import { metierDeLanding } from "@/lib/blog/metiers";
 import { DemoButton } from "@/components/landing/DemoButton";
 import { Zap, PenLine, Bell, FileText, BarChart3, Receipt, type LucideIcon } from "lucide-react";
@@ -151,8 +152,8 @@ export function FreelanceLanding({
     url: canonical,
     description: metaDescription,
     offers: [
-      { "@type": "Offer", name: "Solo", price: "18", priceCurrency: "EUR", billingIncrement: "P1M" },
-      { "@type": "Offer", name: "Pro", price: "34", priceCurrency: "EUR", billingIncrement: "P1M" },
+      { "@type": "Offer", name: "Solo", price: grille("solo").mensuel, priceCurrency: "EUR", billingIncrement: "P1M" },
+      { "@type": "Offer", name: "Pro", price: grille("pro").mensuel, priceCurrency: "EUR", billingIncrement: "P1M" },
     ],
     inLanguage: "fr",
     audience: {
@@ -287,8 +288,8 @@ export function FreelanceLanding({
           </div>
           <div className="lg:col-span-7 grid sm:grid-cols-2 gap-4">
             {[
-              { name: "Solo", price: "18€/mois", desc: "Factur-X, Chorus Pro, acompte/solde, export FEC, sans branding Deviso. 14 jours d'essai gratuit." },
-              { name: "Pro", price: "34€/mois", desc: "Relances auto, CRM, équipe, exports CSV et récap, sous-domaine de partage. 14 jours d'essai gratuit." },
+              { name: "Solo", price: `${grille("solo").mensuel}€/mois`, desc: "Factur-X, Chorus Pro, acompte/solde, export FEC, sans branding Deviso. 14 jours d'essai gratuit." },
+              { name: "Pro", price: `${grille("pro").mensuel}€/mois`, desc: "Relances auto, CRM, équipe, exports CSV et récap, sous-domaine de partage. 14 jours d'essai gratuit." },
             ].map((p) => (
               <div key={p.name} className="rounded-xl bg-ds-surface p-6">
                 <div className="text-[18px] font-semibold text-ink mb-1">{p.name}</div>

@@ -1,5 +1,6 @@
 import { notFound } from "next/navigation";
 import { MarkAsRead } from "./MarkAsRead";
+import { PRIX_SIEGE } from "@/lib/grille-tarifaire";
 import Link from "next/link";
 import {
   ArrowLeft,
@@ -881,7 +882,7 @@ const ARTICLES: Record<string, Article> = {
       <>
         <Note>
           La gestion d&apos;équipe est disponible sur le plan <B>Pro</B>.
-          Le propriétaire + 2 membres sont inclus. Chaque siège supplémentaire est à 5 €/mois.
+          Le propriétaire + 2 membres sont inclus. Chaque siège supplémentaire est à {PRIX_SIEGE} €/mois.
         </Note>
 
         <Section title="Deux rôles, des autorisations à la carte">

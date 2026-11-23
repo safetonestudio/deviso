@@ -4,7 +4,7 @@
  * Pourquoi cette traversée existe. Le 14/09/2026, `.env.local` référençait pour
  * le plan Pro un prix **inexistant**, et pas seulement périmé : son préfixe de
  * compte n'était même pas celui de Deviso. Pour le plan Solo, il pointait un
- * ancien prix à 15,99 € alors que la grille affiche 18 €. Les trois autres
+ * ancien prix alors périmé, différent de la grille affichée. Les trois autres
  * identifiants (annuels et siège) étaient purement absents. Rien ne le disait :
  * `PLANS` lit `process.env.X!`, le point d'exclamation promet au compilateur
  * une valeur qui n'existe pas, et le défaut ne se voit qu'au moment où un
@@ -29,14 +29,15 @@
  */
 
 import { verifier, bilan, secret } from "./lib.mjs";
+import { CENTIMES } from "../../lib/grille-tarifaire.ts";
 
-/** La grille tarifaire, telle qu'elle est annoncée aux clients. */
+/** La grille tarifaire, lue dans la source unique (lib/grille-tarifaire.ts). */
 const GRILLE = [
-  { env: "STRIPE_SOLO_PRICE_ID",        libelle: "Solo mensuel",   centimes: 1800,  interval: "month" },
-  { env: "STRIPE_SOLO_ANNUAL_PRICE_ID", libelle: "Solo annuel",    centimes: 17280, interval: "year"  },
-  { env: "STRIPE_PRO_PRICE_ID",         libelle: "Pro mensuel",    centimes: 3400,  interval: "month" },
-  { env: "STRIPE_PRO_ANNUAL_PRICE_ID",  libelle: "Pro annuel",     centimes: 32640, interval: "year"  },
-  { env: "STRIPE_SEAT_PRICE_ID",        libelle: "Siège en plus",  centimes: 500,   interval: "month" },
+  { env: "STRIPE_SOLO_PRICE_ID",        libelle: "Solo mensuel",   centimes: CENTIMES.solo.mensuel, interval: "month" },
+  { env: "STRIPE_SOLO_ANNUAL_PRICE_ID", libelle: "Solo annuel",    centimes: CENTIMES.solo.annuel, interval: "year"  },
+  { env: "STRIPE_PRO_PRICE_ID",         libelle: "Pro mensuel",    centimes: CENTIMES.pro.mensuel, interval: "month" },
+  { env: "STRIPE_PRO_ANNUAL_PRICE_ID",  libelle: "Pro annuel",     centimes: CENTIMES.pro.annuel, interval: "year"  },
+  { env: "STRIPE_SEAT_PRICE_ID",        libelle: "Siège en plus",  centimes: CENTIMES.siege, interval: "month" },
 ];
 
 /** Ce que le webhook traite réellement. Sans eux, un abonnement reste invisible. */

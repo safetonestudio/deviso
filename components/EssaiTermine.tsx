@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { CreditCard, FolderOpen, TriangleAlert, Hourglass } from "lucide-react";
+import { prix as grille } from "@/lib/grille-tarifaire";
 
 /**
  * Fin d'essai sans carte : ce que voit le titulaire en se reconnectant.
@@ -20,10 +21,10 @@ import { CreditCard, FolderOpen, TriangleAlert, Hourglass } from "lucide-react";
  */
 
 const PRIX = {
-  monthly: { solo: "18 €", pro: "34 €" },
-  annual: { solo: "14,40 €", pro: "27,20 €" },
+  monthly: { solo: `${grille("solo").mensuel} €`, pro: `${grille("pro").mensuel} €` },
+  annual: { solo: `${grille("solo").annuelParMois} €`, pro: `${grille("pro").annuelParMois} €` },
 } as const;
-const TOTAL_ANNUEL = { solo: "172,80 €", pro: "326,40 €" } as const;
+const TOTAL_ANNUEL = { solo: `${grille("solo").annuel} €`, pro: `${grille("pro").annuel} €` } as const;
 
 export function EcranEssaiTermine() {
   const [formule, setFormule] = useState<"solo" | "pro">("solo");

@@ -1,6 +1,7 @@
 import { PageSite, CADRE, SECTION, H2, LEAD, BOUTON_PLEIN, BOUTON_DOUX } from "@/components/site/PageSite";
 import type { Metadata } from "next";
 import { DonneesStructurees } from "@/components/DonneesStructurees";
+import { prix as grille } from "@/lib/grille-tarifaire";
 import { DemoButton } from "@/components/landing/DemoButton";
 import { OngletsVitrine } from "@/components/landing/OngletsVitrine";
 import { EcranConformite, EcranTva, EcranATraiter, EcranExports, EcranJournal, EcranLectureSeule } from "@/components/landing/EcransCockpit";
@@ -230,7 +231,7 @@ export default function Page() {
           <div className="mt-12 sm:mt-16 grid gap-6 md:grid-cols-3 items-stretch">
             {[
               { filet: "bg-indigo-500", qui: "Votre cabinet", prix: "Gratuit", texte: "Le cockpit, l'accès en lecture seule à chaque dossier, la conformité, le calendrier de TVA et les exports. Aucun coût pour le cabinet." },
-              { filet: "bg-blue-400", qui: "Vos clients", prix: "18 à 34" + NB + "€ par mois", texte: "Deviso complet pour le client" + NB + ": Solo 18" + NB + "€ par mois, Pro 34" + NB + "€ par mois, 14 jours d'essai. Factur-X, raccordement à la plateforme, relances, livre des recettes." },
+              { filet: "bg-blue-400", qui: "Vos clients", prix: grille("solo").mensuel + " à " + grille("pro").mensuel + NB + "€ par mois", texte: "Deviso complet pour le client" + NB + ": Solo " + grille("solo").mensuel + NB + "€ par mois, Pro " + grille("pro").mensuel + NB + "€ par mois, 14 jours d'essai. Factur-X, raccordement à la plateforme, relances, livre des recettes." },
               { filet: "bg-amber-400", qui: "Programme pilote", prix: "Gratuit, sans engagement", texte: "On démarre petit" + NB + ": vous mettez 2 ou 3 clients sur Deviso, gratuitement, et on construit avec vous l'outil dont votre cabinet a vraiment besoin." },
             ].map((o) => (
               <div key={o.qui} className="reveal rounded-xl bg-ds-surface p-7 sm:p-8">

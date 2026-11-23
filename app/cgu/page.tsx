@@ -1,6 +1,12 @@
 ﻿import { PageSite, CADRE_LECTURE, SECTION, H1 } from "@/components/site/PageSite";
 import type { Metadata } from "next";
 import Link from "next/link";
+import { prix as grille, PRIX_SIEGE } from "@/lib/grille-tarifaire";
+
+// Les montants des CGU viennent de la source unique des prix : ils ne
+// peuvent pas diverger de la vitrine ni de Stripe.
+const SOLO = grille("solo");
+const PRO = grille("pro");
 
 export const metadata: Metadata = {
   title: "Conditions Générales d'Utilisation",
@@ -17,7 +23,7 @@ export default function CguPage() {
         <h1 className={`${H1} mb-3`}>
           Conditions Générales d&apos;Utilisation
         </h1>
-        <p className="text-gray-500 text-sm mb-14">Dernière mise à jour : juillet 2026</p>
+        <p className="text-gray-500 text-sm mb-14">Dernière mise à jour : 23 novembre 2026</p>
 
         <section className="mb-10">
           <h2 className="text-[22px] leading-snug font-semibold tracking-[-0.02em] text-ink mb-3">1. Objet</h2>
@@ -52,8 +58,8 @@ export default function CguPage() {
           <p className="text-gray-400 leading-relaxed">
             Deviso propose deux formules :<br /><br />
             Deviso ne propose pas de plan gratuit permanent. Tout abonnement inclut un <strong>essai gratuit de 14 jours</strong> sans carte bancaire requise.<br /><br />
-            <strong>Plan Solo</strong> : 18 €/mois HT (ou 172,80 €/an, soit 14,40 €/mois). Inclut toutes les fonctions de Deviso pour un utilisateur : devis IA, factures Factur-X multi-taux, raccordement à une plateforme agréée et e-reporting, ventes et achats internationaux, factures en anglais, signature électronique, relances automatiques programmables, catalogue de prestations, CRM et analytics, sous-domaine de partage, couleur d&apos;accent, Chorus Pro B2G, exports comptables (FEC et CSV) et livre des recettes.<br /><br />
-            <strong>Plan Pro</strong> : 34 €/mois HT (ou 326,40 €/an, soit 27,20 €/mois). Inclut tout le plan Solo, plus la gestion d&apos;équipe multi-utilisateurs : 3 utilisateurs inclus (le titulaire du compte et 2 membres), +5 €/mois par utilisateur supplémentaire, avec rôles et validation des devis.<br /><br />
+            <strong>Plan Solo</strong> : {SOLO.mensuel} €/mois HT (ou {SOLO.annuel} €/an, soit {SOLO.annuelParMois} €/mois). Inclut toutes les fonctions de Deviso pour un utilisateur : devis IA, factures Factur-X multi-taux, raccordement à une plateforme agréée et e-reporting, ventes et achats internationaux, factures en anglais, signature électronique, relances automatiques programmables, catalogue de prestations, CRM et analytics, sous-domaine de partage, couleur d&apos;accent, Chorus Pro B2G, exports comptables (FEC et CSV) et livre des recettes.<br /><br />
+            <strong>Plan Pro</strong> : {PRO.mensuel} €/mois HT (ou {PRO.annuel} €/an, soit {PRO.annuelParMois} €/mois). Inclut tout le plan Solo, plus la gestion d&apos;équipe multi-utilisateurs : 3 utilisateurs inclus (le titulaire du compte et 2 membres), +{PRIX_SIEGE} €/mois par utilisateur supplémentaire, avec rôles et validation des devis.<br /><br />
             Les tarifs annuels représentent une remise de 20 % par rapport au tarif mensuel.
             Le paiement s&apos;effectue par carte bancaire via la plateforme sécurisée Stripe, à l&apos;issue de la période d&apos;essai.
             L&apos;abonnement est résiliable à tout moment depuis le compte utilisateur, avec effet à la fin de la période en cours.

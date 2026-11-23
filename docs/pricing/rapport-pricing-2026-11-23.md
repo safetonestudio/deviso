@@ -1,6 +1,6 @@
 # Prix de Deviso : où on en est, ce que coûte un client, ce que fait le marché, ce que je recommande
 
-Rapport du 23/11/2026, pour Selim. Rien n'a été modifié : ni Stripe, ni les prix, ni le site, ni les CGU. La décision est la tienne, elle est résumée en fin de document.
+Rapport du 23/11/2026, pour Selim. **Décision prise le jour même : option B appliquée (Solo 24 €, Pro 44 €, siège 8 €), voir `lib/grille-tarifaire.ts`.** Le reste du document décrit la situation au moment du rapport.
 
 **Comment lire ce rapport.** Chaque chiffre porte son niveau de preuve :
 - **Vérifié** : lu aujourd'hui dans le code de Deviso, dans le compte Stripe LIVE, dans la base, ou sur la page officielle d'un éditeur.

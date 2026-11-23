@@ -81,7 +81,7 @@ export async function POST(req: NextRequest) {
    *
    * Cette route ouvrait un tunnel de paiement quoi qu'il arrive. Un client
    * Solo qui cliquait « Passer à Pro » se retrouvait donc avec DEUX
-   * abonnements actifs, 18 € + 34 € tous les mois, et le webhook écrasait
+   * abonnements actifs, Solo + Pro tous les mois, et le webhook écrasait
    * `stripe_subscription_id` au passage, si bien que Deviso ne savait même
    * plus que le premier existait, ni comment l'annuler.
    *
@@ -138,7 +138,7 @@ export async function POST(req: NextRequest) {
        *
        * Le chemin Pro → Solo n'existait pas avant le 15/09 ; en l'ouvrant, on a
        * créé deux situations que rien ne traitait. L'article « siège » reste
-       * sur l'abonnement, donc un abonné Solo continue de payer 5 € par
+       * sur l'abonnement, donc un abonné Solo continue de payer un siège par
        * collaborateur. Et ses collaborateurs gardent leur accès, alors que la
        * page Équipe lui répond « plan insuffisant » : il paie pour des gens
        * qu'il ne peut plus gérer.

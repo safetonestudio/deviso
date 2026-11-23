@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import { PartyPopper, TriangleAlert, Hourglass, Gift } from "lucide-react";
 import { planFeatures, proOnlyFeatures } from "@/lib/plans";
+import { prix as grille, PRIX_SIEGE } from "@/lib/grille-tarifaire";
 import { GuidedTourBanner } from "@/components/GuidedTourBanner";
 
 type Profile = {
@@ -27,13 +28,14 @@ const PLAN_INFO = {
   pro: {
     label: "Pro",
     color: "bg-violet-500/20 text-violet-300",
-    description: `3 utilisateurs inclus · Tout Solo + ${proOnlyFeatures().join(" · ")} · +5€/utilisateur supplémentaire`,
+    description: `3 utilisateurs inclus · Tout Solo + ${proOnlyFeatures().join(" · ")} · +${PRIX_SIEGE} €/utilisateur supplémentaire`,
   },
 };
 
-const MONTHLY_PRICES = { solo: "18€", pro: "34€" };
-const ANNUAL_PRICES = { solo: "14,40€", pro: "27,20€" };
-const ANNUAL_TOTAL = { solo: "172,80€", pro: "326,40€" };
+// Montants lus dans la source unique (lib/grille-tarifaire.ts), jamais retapés.
+const MONTHLY_PRICES = { solo: `${grille("solo").mensuel}€`, pro: `${grille("pro").mensuel}€` };
+const ANNUAL_PRICES = { solo: `${grille("solo").annuelParMois}€`, pro: `${grille("pro").annuelParMois}€` };
+const ANNUAL_TOTAL = { solo: `${grille("solo").annuel}€`, pro: `${grille("pro").annuel}€` };
 
 export default function BillingPage() {
   const [profile, setProfile] = useState<Profile | null>(null);
@@ -363,7 +365,7 @@ export default function BillingPage() {
                   <span className="text-[10px] font-semibold px-1.5 py-0.5 rounded-md bg-violet-500/20 text-violet-300 border border-violet-500/30">RECOMMANDÉ</span>
                 </div>
                 <p className="text-sm text-gray-400">3 utilisateurs inclus · Catalogue, Équipe, CRM, Analytics, sous-domaine</p>
-                <p className="text-xs text-gray-500 mt-0.5">+5€/mois par utilisateur supplémentaire</p>
+                <p className="text-xs text-gray-500 mt-0.5">+{PRIX_SIEGE}€/mois par utilisateur supplémentaire</p>
               </div>
               <button
                 onClick={() => handleUpgrade("pro")}

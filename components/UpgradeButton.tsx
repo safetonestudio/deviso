@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { prix as grille } from "@/lib/grille-tarifaire";
 
 interface UpgradeButtonProps {
   plan?: "solo" | "pro";
@@ -12,7 +13,7 @@ export function UpgradeButton({ plan = "solo", label, className }: UpgradeButton
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const defaultLabel = plan === "pro" ? "Passer Pro à 34€/mois" : "Passer Solo à 18€/mois";
+  const defaultLabel = plan === "pro" ? `Passer Pro à ${grille("pro").mensuel}€/mois` : `Passer Solo à ${grille("solo").mensuel}€/mois`;
 
   async function handleUpgrade() {
     setLoading(true);
