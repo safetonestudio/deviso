@@ -7,6 +7,7 @@ import { resolveAddress } from "@/lib/address";
 import { manquesPourEmission } from "@/lib/superpdp-precontrole";
 import { creerSignalement } from "@/lib/cabinet-signalements";
 import * as Sentry from "@sentry/nextjs";
+import { deduireCategorie, natureDepuisCatalogue, type NatureLigne } from "@/lib/nature-operation";
 
 /**
  * Adresses structurees (rue, code postal, ville, pays), derivees par la MEME
@@ -27,6 +28,45 @@ function avecAdressesStructurees<T extends { seller_address?: string | null; cli
 }
 
 // ─── Helpers date ─────────────────────────────────────────────────────────────
+/**
+ * Nature (bien / prestation) des offres du catalogue de démonstration
+ * (23/11/2026). Studio Créatif MD vend des prestations de design ; une seule
+ * vente de biens, l'impression de cartes de visite, pour que le catalogue et
+ * le devis mixte montrent les deux natures.
+ */
+const NATURES_CATALOGUE_DEMO: { name: string; nature: NatureLigne }[] = [
+  { name: "Création logo + charte graphique", nature: "services" },
+  { name: "Audit UX complet", nature: "services" },
+  { name: "Landing page complète", nature: "services" },
+  { name: "Maquettes Figma (wireframes → haute fidélité)", nature: "services" },
+  { name: "Refonte UI site web", nature: "services" },
+  { name: "Droits de cession (web + print + réseaux)", nature: "services" },
+  { name: "Consulting UX / design", nature: "services" },
+  { name: "Formation design (intra-entreprise)", nature: "services" },
+  { name: "Retouches et révisions", nature: "services" },
+  { name: "Impression cartes de visite (500 ex.)", nature: "goods" },
+];
+const natureDemo = (n: string): NatureLigne => NATURES_CATALOGUE_DEMO.find((o) => o.name === n)?.nature ?? "services";
+
+/**
+ * Chaque ligne semée porte sa nature : celle de l'offre du catalogue dont elle
+ * porte le nom, sinon « prestation », ce que sont toutes les autres lignes de
+ * ce jeu (design, conseil, formation, maintenance). Sur une facture, la nature
+ * de l'opération est DÉDUITE des lignes, comme le fait la route de création.
+ */
+function avecNatures<T extends { items?: { description: string }[]; operation_category?: string }>(docs: T[]): T[] {
+  return docs.map((d) => {
+    if (!d.items) return d;
+    const items = d.items.map((it) => ({ ...it, nature: natureDepuisCatalogue(it.description, NATURES_CATALOGUE_DEMO) ?? "services" }));
+    const out = { ...d, items } as T;
+    if ("operation_category" in d) {
+      const deduite = deduireCategorie(items).categorie;
+      if (deduite) (out as { operation_category?: string }).operation_category = deduite;
+    }
+    return out;
+  });
+}
+
 const now = new Date();
 const daysAgo = (d: number) =>
   new Date(now.getTime() - d * 86400000).toISOString().split("T")[0];
@@ -96,6 +136,7 @@ async function seedDemoData(userId: string): Promise<string[]> {
     {
       user_id: userId,
       name: "Création logo + charte graphique",
+      nature: natureDemo("Création logo + charte graphique"),
       description:
         "Logo vectoriel déclinable + charte complète (typographies, couleurs, règles d'usage). Livrable : fichiers sources AI/PDF + guide de marque.",
       unit: "forfait",
@@ -105,6 +146,7 @@ async function seedDemoData(userId: string): Promise<string[]> {
     {
       user_id: userId,
       name: "Audit UX complet",
+      nature: natureDemo("Audit UX complet"),
       description:
         "Analyse heuristique Nielsen, parcours utilisateur, rapport de recommandations priorisées. Délai : 5 jours ouvrés.",
       unit: "forfait",
@@ -114,6 +156,7 @@ async function seedDemoData(userId: string): Promise<string[]> {
     {
       user_id: userId,
       name: "Landing page complète",
+      nature: natureDemo("Landing page complète"),
       description:
         "Design + intégration HTML/CSS ou CMS (WordPress/Webflow). Responsive, SEO on-page optimisé. Délai : 5 jours ouvrés.",
       unit: "forfait",
@@ -123,6 +166,7 @@ async function seedDemoData(userId: string): Promise<string[]> {
     {
       user_id: userId,
       name: "Maquettes Figma (wireframes → haute fidélité)",
+      nature: natureDemo("Maquettes Figma (wireframes → haute fidélité)"),
       description:
         "Wireframes basse fidélité + maquettes haute fidélité desktop & mobile. Handoff Figma avec tokens de design.",
       unit: "forfait",
@@ -132,6 +176,7 @@ async function seedDemoData(userId: string): Promise<string[]> {
     {
       user_id: userId,
       name: "Refonte UI site web",
+      nature: natureDemo("Refonte UI site web"),
       description:
         "Refonte complète identité visuelle web. De l'audit à la livraison des maquettes Figma. Inclut 2 cycles de révisions.",
       unit: "forfait",
@@ -141,6 +186,7 @@ async function seedDemoData(userId: string): Promise<string[]> {
     {
       user_id: userId,
       name: "Droits de cession (web + print + réseaux)",
+      nature: natureDemo("Droits de cession (web + print + réseaux)"),
       description:
         "Cession des droits d'auteur pour exploitation web, print et réseaux sociaux. Durée illimitée, monde entier.",
       unit: "forfait",
@@ -151,6 +197,7 @@ async function seedDemoData(userId: string): Promise<string[]> {
     {
       user_id: userId,
       name: "Consulting UX / design",
+      nature: natureDemo("Consulting UX / design"),
       description:
         "Session de consulting : audit rapide, recommandations, revue de maquettes. Compte-rendu fourni sous 24h.",
       unit: "heure",
@@ -160,6 +207,7 @@ async function seedDemoData(userId: string): Promise<string[]> {
     {
       user_id: userId,
       name: "Formation design (intra-entreprise)",
+      nature: natureDemo("Formation design (intra-entreprise)"),
       description:
         "Formation UX/UI pour équipes en présentiel ou distanciel. Supports de cours inclus. Minimum 4h.",
       unit: "heure",
@@ -169,16 +217,27 @@ async function seedDemoData(userId: string): Promise<string[]> {
     {
       user_id: userId,
       name: "Retouches et révisions",
+      nature: natureDemo("Retouches et révisions"),
       description:
         "Modifications sur livrables hors forfait. Facturation au temps réel. Délai de livraison : 48h.",
       unit: "heure",
       unit_price: 90,
       type: "hourly",
     },
+    // ── Vente de biens (une seule) ──
+    {
+      user_id: userId,
+      name: "Impression cartes de visite (500 ex.)",
+      nature: natureDemo("Impression cartes de visite (500 ex.)"),
+      description: "Impression offset recto verso, papier 350 g, livrées sous 5 jours ouvrés.",
+      unit: "lot",
+      unit_price: 95,
+      type: "fixed",
+    },
   ]);
 
   // 3. Devis (proposals), mix de statuts pour showcaser toutes les features
-  await admin.from("proposals").insert([
+  await admin.from("proposals").insert(avecNatures([
     // ── DEV-2026-001, Signé avec e-signature ────────────────────────────────
     {
       user_id: userId,
@@ -326,12 +385,40 @@ async function seedDemoData(userId: string): Promise<string[]> {
       created_at: tsAgo(2),
       updated_at: tsAgo(2),
     },
-  ]);
+    // ── DEV-2026-006, Brouillon mixte : prestation + vente de biens ─────────
+    {
+      user_id: userId,
+      created_by: userId,
+      proposal_number: "DEV-2026-006",
+      title: "Logo et cartes de visite, Boutique Élégance",
+      client_name: "Camille Rousseau",
+      client_email: "contact@boutique-elegance.fr",
+      client_company: "Boutique Élégance",
+      client_address: "22 rue du Commerce, 31000 Toulouse",
+      client_siren: "754321896",
+      items: [
+        { id: crypto.randomUUID(), description: "Création logo + charte graphique", quantity: 1, unit: "forfait", unit_price: 1800, total: 1800 },
+        { id: crypto.randomUUID(), description: "Impression cartes de visite (500 ex.)", quantity: 2, unit: "lot", unit_price: 95, total: 190 },
+      ],
+      total_ht: 1990, tva_rate: 0, total_ttc: 1990,
+      status: "draft",
+      valid_until: daysFromNow(30),
+      payment_terms: "30% à la commande, solde à la livraison",
+      notes: "Devis mixte : une prestation de design et une vente de biens (impression). La facture en déduira une opération mixte.",
+      share_token: crypto.randomUUID(),
+      signed_at: null,
+      signer_name: null,
+      viewed_at: null,
+      reminder_count: 0,
+      created_at: tsAgo(1),
+      updated_at: tsAgo(1),
+    },
+  ]));
 
   // 4. Factures, 12 mois (juillet 2025 → juin 2026)
   //    Saisonnalité réaliste : été calme, rentrée forte, hiver modéré, printemps soutenu
   //    CA total ~34 000 € HT sur 12 mois (solo graphiste/UX Pro)
-  const facturesDemo = avecAdressesStructurees([
+  const facturesDemo = avecNatures(avecAdressesStructurees([
     // ═══ H2 2025 ════════════════════════════════════════════════════════════
 
     // ── Juillet 2025, 1 800 € HT ─────────────────────────────────────────
@@ -778,7 +865,7 @@ async function seedDemoData(userId: string): Promise<string[]> {
       reminder_count: 0,
       created_at: new Date().toISOString(), updated_at: new Date().toISOString(),
     },
-  ]);
+  ]));
   // Livre des recettes : une facture payée porte une date et un mode
   // d'encaissement, comme dans la vraie vie, sinon la démo affiche un livre
   // rempli de dates « estimées ».
@@ -899,7 +986,7 @@ async function seedDemoData(userId: string): Promise<string[]> {
   }
 
   // 6. Facture récurrente (maintenance StartupX)
-  await admin.from("recurring_invoices").insert([
+  await admin.from("recurring_invoices").insert(avecNatures([
     {
       user_id: userId,
       client_name: "Lucas Petit",
@@ -918,10 +1005,10 @@ async function seedDemoData(userId: string): Promise<string[]> {
       next_billing_date: daysFromNow(2),
       active: true,
     },
-  ]);
+  ]));
 
   // 7. Modèles de devis (alignés sur le catalogue)
-  await admin.from("proposal_templates").insert([
+  await admin.from("proposal_templates").insert(avecNatures([
     {
       user_id: userId,
       created_by: userId,
@@ -965,7 +1052,7 @@ async function seedDemoData(userId: string): Promise<string[]> {
       payment_terms: "Paiement mensuel, Préavis 1 mois",
       notes: "Engagement minimum 3 mois. Sessions en visio ou présentiel Paris.",
     },
-  ]);
+  ]));
 
   // 8. Plateforme Agréée (Super PDP) : raccordement FICTIF + données pour peupler
   //    les écrans de la réforme 2026 (Factures reçues, Déclarations, Achats à

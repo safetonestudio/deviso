@@ -61,6 +61,11 @@ console.log("── Catalogue, création ─────────────
 const sansNom = await owner.call("/api/catalog", { method: "POST", body: doc({ unit_price: 100 }) });
 verifier("une prestation sans nom est refusée", sansNom.status === 400, `HTTP ${sansNom.status}`);
 
+// Nature (bien / prestation) exigée à la création, sans valeur par défaut
+// (lib/nature-operation.ts, 23/11/2026).
+const sansNature = await owner.call("/api/catalog", { method: "POST", body: doc({ name: "Sans nature", unit_price: 100, type: "fixed" }) });
+verifier("une prestation sans nature est refusée", sansNature.status === 400 && sansNature.body?.error === "NATURE_REQUISE", `HTTP ${sansNature.status}`);
+
 const creationAnonyme = await anonymous.call("/api/catalog", {
   method: "POST",
   headers: { "content-type": "application/json" },
@@ -70,11 +75,11 @@ verifier("un anonyme ne crée pas de prestation", creationAnonyme.status === 401
 
 const forfait = await owner.call("/api/catalog", {
   method: "POST",
-  body: doc({ name: "Prestation de traversée", description: "Créée par la suite e2e", unit: "forfait", unit_price: 750, type: "fixed" }),
+  body: doc({ name: "Prestation de traversée", description: "Créée par la suite e2e", unit: "forfait", unit_price: 750, type: "fixed", nature: "services" }),
 });
 verifier(
   "le propriétaire crée une prestation au forfait",
-  forfait.status === 201 && forfait.body?.item?.unit_price === 750,
+  forfait.status === 201 && forfait.body?.item?.unit_price === 750 && forfait.body?.item?.nature === "services",
   `HTTP ${forfait.status} ${doc(forfait.body).slice(0, 140)}`
 );
 
@@ -82,7 +87,7 @@ verifier(
 // formulaire. Sans ce forçage, un devis afficherait « 3 forfaits à 150 € ».
 const horaire = await owner.call("/api/catalog", {
   method: "POST",
-  body: doc({ name: "Prestation horaire de traversée", unit: "forfait", unit_price: 150, type: "hourly" }),
+  body: doc({ name: "Prestation horaire de traversée", unit: "forfait", unit_price: 150, type: "hourly", nature: "services" }),
 });
 verifier(
   "une prestation horaire est forcée à l'unité « heure », même si le formulaire dit autre chose",
@@ -92,7 +97,7 @@ verifier(
 
 const typeInconnu = await owner.call("/api/catalog", {
   method: "POST",
-  body: doc({ name: "Prestation type inconnu", unit_price: 10, type: "abracadabra" }),
+  body: doc({ name: "Prestation type inconnu", unit_price: 10, type: "abracadabra", nature: "goods" }),
 });
 verifier(
   "un type inconnu retombe sur « fixed » au lieu d'être enregistré tel quel",
@@ -102,7 +107,7 @@ verifier(
 
 const creationMembre = await member.call("/api/catalog", {
   method: "POST",
-  body: doc({ name: "Prestation créée par un membre", unit_price: 200, type: "fixed" }),
+  body: doc({ name: "Prestation créée par un membre", unit_price: 200, type: "fixed", nature: "services" }),
 });
 verifier(
   "un membre d'équipe peut enrichir le catalogue de l'espace",

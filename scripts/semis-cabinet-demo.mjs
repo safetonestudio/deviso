@@ -21,12 +21,24 @@
  *   - le script refuse de toucher un compte existant qui ne serait pas l'un
  *     des siens (is_demo absent ou raison sociale differente).
  *
+ * Nature biens / prestations (23/11/2026) : chaque ligne porte sa nature
+ * (`items[].nature`), la nature de la facture en est DEDUITE comme le fait la
+ * route de creation (lib/nature-operation.ts). La boulangerie vend des biens et
+ * facture aussi des prestations (buffet servi, location de vaisselle) : ses
+ * factures qui melangent les deux sont MIXTES, et ne portent alors aucun statut
+ * de plateforme (la plateforme ne traite pas les factures mixtes,
+ * lib/superpdp-precontrole.ts). Chaque client a un petit catalogue d'offres
+ * avec leur nature.
+ *
  * Usage : node scripts/semis-cabinet-demo.mjs   (lit .env.local)
  */
 import { createClient } from "@supabase/supabase-js";
 import { randomInt, randomUUID } from "node:crypto";
 import { appendFileSync } from "node:fs";
 import { secret } from "./e2e/lib.mjs";
+// Regle unique de la nature d'une operation (23/11/2026). Node 24 lit le
+// TypeScript sans etape de compilation.
+import { deduireCategorie } from "../lib/nature-operation.ts";
 
 const JETON_DEMO = "demo-fictif-jamais-utilise"; // = lib/superpdp.ts
 const admin = createClient(secret("NEXT_PUBLIC_SUPABASE_URL"), secret("SUPABASE_SERVICE_ROLE_KEY"), {
@@ -150,7 +162,7 @@ async function compte(fiche, motDePasse) {
 
 // -- Factures -----------------------------------------------------------------
 function facture(userId, numero, o) {
-  const items = o.lignes.map(([description, quantity, unit_price, tva_rate]) => ({
+  const items = o.lignes.map(([description, quantity, unit_price, tva_rate, nature]) => ({
     id: randomUUID(),
     description,
     quantity,
@@ -158,7 +170,14 @@ function facture(userId, numero, o) {
     unit_price,
     total: r2(quantity * unit_price),
     tva_rate,
+    nature,
   }));
+  if (items.some((l) => l.nature !== "goods" && l.nature !== "services")) {
+    throw new Error(`facture ${numero} : une ligne sans nature, le jeu de demonstration doit la donner`);
+  }
+  const categorie = deduireCategorie(items).categorie;
+  // Facture mixte : jamais transmise (la plateforme ne la traite pas).
+  const pa = categorie === "mixed" ? null : o.pa ?? null;
   const ht = r2(items.reduce((s, l) => s + l.total, 0));
   const parTaux = new Map();
   for (const l of items) parTaux.set(l.tva_rate, (parTaux.get(l.tva_rate) ?? 0) + l.total);
@@ -186,11 +205,11 @@ function facture(userId, numero, o) {
     invoice_type: estAvoir ? "avoir" : "standard",
     type_code: estAvoir ? "381" : "380",
     linked_invoice_id: o.avoirDe ?? null,
-    operation_category: o.biens ? "goods" : "services",
+    operation_category: categorie,
     payment_on_debit: false,
     reminder_count: 0,
-    superpdp_status: o.pa ?? null,
-    superpdp_status_date: o.pa ? tsIso(Math.max(o.jours - 1, 0)) : null,
+    superpdp_status: pa,
+    superpdp_status_date: pa ? tsIso(Math.max(o.jours - 1, 0)) : null,
     created_at: tsIso(o.jours),
     updated_at: tsIso(Math.max(o.jours - 20, 0)),
   };
@@ -245,16 +264,17 @@ function scenario(cle) {
         client: i % 2 ? TREILLE : HOTEL,
         biens: true,
         lignes: [
-          ["Pains et viennoiseries, livraisons du mois", 1, 640 + (i % 4) * 55, 5.5],
-          ...(i % 3 === 0 ? [["Buffet traiteur, séminaire", 1, 480, 10]] : []),
-          ...(i % 4 === 0 ? [["Location de vaisselle", 1, 90, 20]] : []),
+          ["Pains et viennoiseries, livraisons du mois", 1, 640 + (i % 4) * 55, 5.5, "goods"],
+          // Buffet servi sur place et location : des prestations de services.
+          ...(i % 3 === 0 ? [["Buffet traiteur servi, séminaire", 1, 480, 10, "services"]] : []),
+          ...(i % 4 === 0 ? [["Location de vaisselle", 1, 90, 20, "services"]] : []),
         ],
         statut: j > 35 ? "paid" : "sent",
         pa: recent ? (j > 35 ? "fr:212" : "fr:203") : null,
         id: i === 9 ? "AVOIR_CIBLE" : undefined,
       });
     }
-    L.push({ jours: 100, client: HOTEL, biens: true, lignes: [["Geste commercial, livraison incomplète", 1, 120, 5.5]], statut: "paid", avoirDe: "AVOIR_CIBLE" });
+    L.push({ jours: 100, client: HOTEL, biens: true, lignes: [["Geste commercial, livraison incomplète", 1, 120, 5.5, "goods"]], statut: "paid", avoirDe: "AVOIR_CIBLE" });
   }
   if (cle === "studio") {
     // Prestations mensuelles jusqu'il y a deux mois, puis plus rien.
@@ -262,7 +282,7 @@ function scenario(cle) {
       L.push({
         jours: j,
         client: i % 2 ? AGENCE : VIGNOBLE,
-        lignes: [["Identité visuelle et déclinaisons", 1, 1200 + (i % 3) * 300, 20]],
+        lignes: [["Identité visuelle et déclinaisons", 1, 1200 + (i % 3) * 300, 20, "services"]],
         statut: j > 90 ? "paid" : "sent",
         pa: j <= 90 ? (j <= 70 ? "fr:207" : "fr:203") : null,
       });
@@ -274,20 +294,40 @@ function scenario(cle) {
         jours: j,
         client: i % 3 === 2 ? PARTICULIER : AGENCE_IMMO,
         lignes: [
-          ["Travaux de rénovation, salle d'eau", 1, 2400 + (i % 3) * 400, 10],
-          ["Fournitures et matériaux", 1, 650, 20],
+          ["Travaux de rénovation, salle d'eau", 1, 2400 + (i % 3) * 400, 10, "services"],
+          // Fournitures posees dans le cadre des travaux : accessoires de la
+          // prestation, pas une vente de biens distincte.
+          ["Fournitures et matériaux posés", 1, 650, 20, "services"],
         ],
         statut: j > 35 ? "paid" : "sent",
       });
     }
-    L.push({ jours: 12, client: SCI, lignes: [["Réfection de toiture, lot 2", 1, 3800, 10]], statut: "sent" });
+    L.push({ jours: 12, client: SCI, lignes: [["Réfection de toiture, lot 2", 1, 3800, 10, "services"]], statut: "sent" });
   }
   return L;
 }
 
+// Catalogue d'offres de chaque client, avec leur nature.
+const CATALOGUES = {
+  boulangerie: [
+    { name: "Pains et viennoiseries, livraison", unit: "livraison", unit_price: 640, nature: "goods" },
+    { name: "Buffet traiteur servi", unit: "forfait", unit_price: 480, nature: "services" },
+    { name: "Location de vaisselle", unit: "forfait", unit_price: 90, nature: "services" },
+  ],
+  studio: [
+    { name: "Identité visuelle et déclinaisons", unit: "forfait", unit_price: 1200, nature: "services" },
+    { name: "Direction artistique, journée", unit: "jour", unit_price: 550, nature: "services" },
+  ],
+  renovation: [
+    { name: "Travaux de rénovation, salle d'eau", unit: "forfait", unit_price: 2400, nature: "services" },
+    { name: "Réfection de toiture", unit: "forfait", unit_price: 3800, nature: "services" },
+    { name: "Vente de carrelage, sans pose", unit: "m²", unit_price: 38, nature: "goods" },
+  ],
+};
+
 async function semerClient(c, userId, cabinetId) {
   // Remise a zero de CE compte de demonstration uniquement.
-  for (const [table, col] of [["invoices", "user_id"], ["superpdp_connections", "user_id"], ["team_members", "owner_id"], ["document_sequences", "user_id"]]) {
+  for (const [table, col] of [["invoices", "user_id"], ["service_catalog", "user_id"], ["superpdp_connections", "user_id"], ["team_members", "owner_id"], ["document_sequences", "user_id"]]) {
     const { error } = await admin.from(table).delete().eq(col, userId);
     if (error) throw new Error(`${table} : ${error.message}`);
   }
@@ -302,6 +342,10 @@ async function semerClient(c, userId, cabinetId) {
   );
   const { error: errF } = await admin.from("invoices").insert(lignes);
   if (errF) throw new Error(`factures ${c.company_name} : ${errF.message}`);
+  const { error: errC } = await admin.from("service_catalog").insert(
+    (CATALOGUES[c.cle] ?? []).map((o) => ({ user_id: userId, description: null, type: "fixed", ...o })),
+  );
+  if (errC) throw new Error(`catalogue ${c.company_name} : ${errC.message}`);
 
   // Compteurs de numerotation au niveau de ce qui vient d'etre seme.
   const maxParAn = new Map();
@@ -385,7 +429,14 @@ if (studioId) {
 }
 
 // Quelques traces d'activite pour que le journal des acces ne soit pas vide.
-await admin.from("cabinet_journal").delete().eq("cabinet_id", cabinetId);
+// Seules les traces du jeu (dossiers semes ici, actions sans dossier) : un
+// autre dossier rattache au cabinet (compte de test du bac a sable) garde les
+// siennes.
+await admin
+  .from("cabinet_journal")
+  .delete()
+  .eq("cabinet_id", cabinetId)
+  .or(`client_id.is.null,client_id.in.(${[...idsClients.values()].join(",")})`);
 const anneeCourante = MAINTENANT.getFullYear();
 const boulId = idsClients.get("boulangerie");
 const journal = [];
