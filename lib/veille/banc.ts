@@ -1,6 +1,7 @@
 import type { createAdminClient } from "@/lib/supabase/admin";
 import { coursBce } from "@/lib/achats-export";
 import { compteQuadra } from "@/lib/export-quadra";
+import { syntheseDossiers } from "@/lib/cabinet-dossiers";
 import { ligneSuperpdp } from "@/lib/facture-recue-fictive";
 import type { Montant, Scenario } from "@/scripts/scenarios/catalogue";
 import type { CompteJetable } from "./comptes";
@@ -13,6 +14,11 @@ type Admin = ReturnType<typeof createAdminClient>;
  * injecter les pièces dans un compte de démonstration jetable, télécharger le
  * FEC du client, le FEC et le Quadra du cabinet et l'archive du portefeuille,
  * comparer à ce que la comptabilité DOIT dire.
+ *
+ * Attention : copie à tenir alignée sur scripts/e2e/scenarios.ts (alignée sur
+ * `main` le 23/11/2026). `test:veille` joue tout le catalogue et échoue si un
+ * scénario ne passe pas ici : un champ nouveau du catalogue que ce noyau
+ * ignorerait se voit. Mieux, à terme : que le banc appelle ce noyau.
  *
  * Seule différence avec le banc : la forme des factures reçues n'est pas
  * revalidée ici contre le schéma de la plateforme (fichier de 1 Mo, contrôle
@@ -34,6 +40,8 @@ export async function jouerScenario(
     if (!ok) ecarts.push(detail ? `${libelle} (${detail})` : libelle);
   };
   const { client, autre, cabinet } = comptes;
+  // Nom du dossier tel que l'archive le cite (profil du compte jetable).
+  const nomDossier = "Veille, dossier client";
   const appel = (chemin: string, cookie: string, init: RequestInit = {}) =>
     fetch(`${base}${chemin}`, {
       ...init,
@@ -70,13 +78,53 @@ export async function jouerScenario(
     const { error } = await admin.from("superpdp_invoices").insert(lignes);
     if (error) return [`injection des factures reçues (${error.message})`];
   }
-  if (sc.etrangers?.length) {
-    const { error } = await admin.from("superpdp_achats_int").insert(sc.etrangers.map((a) => ({
+  // Taux d'autoliquidation choisis sur des factures reçues, par la route de l'écran.
+  for (const t of sc.tauxAe ?? []) {
+    const { data: fr } = await admin.from("superpdp_invoices").select("id").eq("user_id", client.userId).eq("direction", "in").eq("number", t.numero).maybeSingle();
+    if (!fr) { verifier(`${t.numero} injectée avant le choix du taux`, false); continue; }
+    const r = await appel(`/api/superpdp/factures-recues/${fr.id}`, client.cookie, { method: "PATCH", body: JSON.stringify({ taux_autoliquidation: t.taux }) });
+    verifier(`taux d'autoliquidation de ${t.numero} : HTTP ${t.status}`, r.status === t.status, `HTTP ${r.status}`);
+  }
+  // Achats saisis comme l'écran les envoie : par la route de saisie, le reste injecté en base.
+  for (const a of (sc.etrangers ?? []).filter((x) => x.parRoute)) {
+    const r = await appel("/api/superpdp/achats", client.cookie, { method: "POST", body: JSON.stringify({
+      fournisseur_nom: a.fournisseur, fournisseur_pays: a.pays, fournisseur_tva: a.tva ?? null, numero: a.numero,
+      date_facture: a.date, categorie: a.categorie, devise: a.devise ?? "EUR", montant_ht: a.ht,
+      taux_tva: a.taux_tva ?? 0, montant_tva: a.montant_tva ?? 0,
+      ...(a.tva_facturee ? { tva_facturee: a.tva_facturee } : {}),
+      ...(a.taux_autoliquidation !== undefined ? { taux_autoliquidation: a.taux_autoliquidation } : {}),
+      ...(a.avoir ? { est_avoir: true } : {}),
+    }) });
+    const corps = await json(r);
+    const attendu = a.refuse ?? 200;
+    if (r.status !== attendu) return [`saisie de ${a.numero} par la route : HTTP ${r.status} au lieu de ${attendu} (${JSON.stringify(corps).slice(0, 120)})`];
+    if (a.statutApresSaisie && r.status === 200) {
+      verifier(`${a.numero} : statut « ${a.statutApresSaisie} » après la saisie`, corps?.achat?.transmission_status === a.statutApresSaisie, String(corps?.achat?.transmission_status));
+    }
+  }
+  const enBase = (sc.etrangers ?? []).filter((x) => !x.parRoute);
+  if (enBase.length) {
+    const { error } = await admin.from("superpdp_achats_int").insert(enBase.map((a) => ({
       user_id: client.userId, fournisseur_nom: a.fournisseur, fournisseur_pays: a.pays, fournisseur_tva: a.tva ?? null,
       numero: a.numero, date_facture: a.date, categorie: a.categorie, devise: a.devise ?? "EUR",
-      montant_ht: a.ht, taux_tva: a.taux_tva ?? 0, montant_tva: a.montant_tva ?? 0, transmission_status: "en_attente", retry_count: 0,
+      montant_ht: a.ht, taux_tva: a.taux_tva ?? 0, montant_tva: a.montant_tva ?? 0,
+      transmission_status: a.statut ?? "en_attente", retry_count: 0,
+      ...(a.tva_facturee ? { tva_facturee: a.tva_facturee } : {}),
+      ...(a.taux_autoliquidation !== undefined ? { taux_autoliquidation: a.taux_autoliquidation } : {}),
+      ...(a.avoir ? { est_avoir: true } : {}),
+      ...(a.statut === "transmis" ? { superpdp_id: 700_000_000 + Math.floor(Math.random() * 90_000_000), transmitted_at: new Date().toISOString() } : {}),
+      ...(a.statut === "echec" || a.statut === "action_requise" ? { transmission_error: "Refus simulé par la veille" } : {}),
     })));
     if (error) return [`injection des achats à l'étranger (${error.message})`];
+  }
+  // Suppressions demandées par le titulaire, par la route, comme l'écran.
+  for (const sup of sc.supprimer ?? []) {
+    const { data: cible } = await admin.from("superpdp_achats_int").select("id").eq("user_id", client.userId).eq("numero", sup.numero).maybeSingle();
+    if (!cible) { verifier(`${sup.numero} injecté avant suppression`, false); continue; }
+    const r = await appel(`/api/superpdp/achats/${cible.id}`, client.cookie, { method: "DELETE" });
+    verifier(`suppression de ${sup.numero} : HTTP ${sup.status} attendu`, r.status === sup.status, `HTTP ${r.status}`);
+    const { data: reste } = await admin.from("superpdp_achats_int").select("id").eq("id", cible.id).maybeSingle();
+    verifier(`${sup.numero} ${sup.status === 200 ? "retiré" : "toujours"} en base`, sup.status === 200 ? !reste : !!reste);
   }
   for (const v of sc.ventes ?? []) {
     const cree = await appel("/api/invoices", client.cookie, { method: "POST", body: JSON.stringify({
@@ -91,6 +139,27 @@ export async function jouerScenario(
     if (!id) return [`création d'une vente par l'API (HTTP ${cree.status} ${JSON.stringify(corps).slice(0, 120)})`];
     await appel(`/api/invoices/${id}`, client.cookie, { method: "PATCH", body: JSON.stringify({ status: "sent" }) });
     if (v.payeeLe) await appel(`/api/invoices/${id}`, client.cookie, { method: "PATCH", body: JSON.stringify({ status: "paid", paid_at: v.payeeLe, payment_mode: "virement" }) });
+  }
+
+  if (sc.ventesEnMasse) {
+    const m = sc.ventesEnMasse;
+    const ttc = Math.round(m.ht * (1 + m.taux / 100) * 100) / 100;
+    const rows = Array.from({ length: m.nombre }, (_, k) => ({
+      user_id: client.userId, invoice_number: `BANC-${sc.annee}-${String(k + 1).padStart(5, "0")}`,
+      client_name: "Client Masse", client_company: "Client Masse", client_email: "banc@example.fr",
+      items: [{ description: "Prestation", quantity: 1, unit: "forfait", unit_price: m.ht, total: m.ht }],
+      total_ht: m.ht, tva_rate: m.taux, total_ttc: ttc, issue_date: m.date, due_date: m.date,
+      status: "sent", operation_category: "services", type_code: "380", invoice_type: "standard",
+    }));
+    for (let k = 0; k < rows.length; k += 500) {
+      const { error } = await admin.from("invoices").insert(rows.slice(k, k + 500));
+      if (error) return [`injection des ventes en masse (${error.message})`];
+    }
+  }
+  // Plan de comptes du cabinet, par la route de son écran de réglage.
+  if (sc.planCabinet) {
+    const r = await appel("/api/profile", cabinet.cookie, { method: "PATCH", body: JSON.stringify({ plan_comptes_fec: sc.planCabinet.plan }) });
+    verifier(`plan du cabinet : HTTP ${sc.planCabinet.status} attendu`, r.status === sc.planCabinet.status, `HTTP ${r.status}`);
   }
 
   // Les vrais exports.
@@ -125,8 +194,33 @@ export async function jouerScenario(
   verifier("Quadra : mêmes soldes que le FEC, compte par compte", ecartsQ.length === 0, ecartsQ.map((k) => `${k} FEC ${fParCompte.get(k)} / Quadra ${qParCompte.get(k)}`).join(", "));
   verifier("Quadra : enregistrements M de 251 caractères", mq.every((l) => l.length === 251));
 
-  const alertes = (archive.texte.match(/acompte correspondant non retrouvé/g) ?? []).length;
-  verifier(`alertes « à vérifier » : ${sc.attendu.aVerifier ?? 0} attendue(s)`, alertes === (sc.attendu.aVerifier ?? 0), `${alertes} trouvée(s)`);
+  // Alertes « à vérifier » de la note de l'archive : chacune attendue, aucune autre.
+  const zip = archive.texte;
+  const acomptes = (zip.match(/acompte correspondant non retrouvé/g) ?? []).length;
+  if (sc.attendu.aVerifier !== undefined) verifier(`soldes à vérifier : ${sc.attendu.aVerifier} attendu(s)`, acomptes === sc.attendu.aVerifier, `${acomptes} trouvé(s)`);
+  const note = zip.match(/doit vérifier[^\n]*\r\n((?:- [^\r\n]*\r\n)+)/)?.[1] ?? "";
+  const lignesNote = note.split("\r\n").filter((l) => l.startsWith(`- ${nomDossier} : `));
+  const attendues = sc.attendu.alertes ?? (sc.attendu.aVerifier ? Array(sc.attendu.aVerifier).fill("acompte correspondant non retrouvé") : []);
+  verifier(`alertes « à vérifier » : ${attendues.length} attendue(s)`, lignesNote.length === attendues.length, lignesNote.join(" | ") || "aucune");
+  for (const a of new Set(attendues)) {
+    verifier(`alerte « ${a} »`, lignesNote.filter((l) => l.includes(a)).length === attendues.filter((x) => x === a).length, lignesNote.join(" | ") || "aucune");
+  }
+  // Les mêmes alertes AVANT le téléchargement : la fenêtre d'export et la fiche du dossier.
+  const avantR = await appel(`/api/cabinet/export/alertes?year=${sc.annee}&clients=${client.userId}`, cabinet.cookie);
+  const avant = await json(avantR);
+  const listeAvant: string[] = (avant?.dossiers ?? []).flatMap((d: { aVerifier: string[] }) => d.aVerifier);
+  verifier(
+    "fenêtre d'export : mêmes alertes que l'archive, avant le téléchargement",
+    avantR.status === 200 && listeAvant.length === lignesNote.length && lignesNote.every((l) => listeAvant.some((t) => l.endsWith(t))),
+    `HTTP ${avantR.status}, ${listeAvant.join(" | ") || "aucune"}`,
+  );
+  const [synthese] = await syntheseDossiers(admin, [client.userId], new Date(`${sc.annee}-12-31T12:00:00Z`));
+  const dansAnomalies = (synthese?.anomalies ?? []).filter((x) => x.libelle.startsWith(`Achats ${sc.annee} à vérifier`));
+  verifier(
+    "anomalies du dossier côté cabinet : mêmes alertes",
+    dansAnomalies.length === Math.min(listeAvant.length, 5) && dansAnomalies.every((x) => listeAvant.some((t) => x.libelle.endsWith(t))),
+    dansAnomalies.map((x) => x.libelle).join(" | ") || "aucune",
+  );
 
   // Ce que le scénario attend.
   const somme = (filtre: (c: string[]) => boolean, col: number) => lignes.filter(filtre).reduce((s, c) => s + nb(c[col]), 0);
@@ -150,5 +244,6 @@ export async function jouerScenario(
     await attendre(`fichier · ${compte}`, somme(f, 11), somme(f, 12), sens);
   }
   for (const piece of sc.attendu.absentes ?? []) verifier(`${piece} absente du FEC`, !lignes.some((c) => c[8] === piece));
+  if (sc.planCabinet) await appel("/api/profile", cabinet.cookie, { method: "PATCH", body: JSON.stringify({ plan_comptes_fec: null }) });
   return ecarts;
 }

@@ -87,7 +87,9 @@ export async function supprimerComptes(admin: Admin, comptes: (CompteJetable | n
   for (const c of comptes) {
     if (!c) continue;
     const r = await deleteDemoAccount(admin, c.userId);
-    if (!r.deleted) echecs.push(`${c.userId} : ${r.reason ?? "inconnu"}`);
+    // « introuvable » : déjà parti avec un dossier dont il était membre (le
+    // cabinet est rattaché aux dossiers, deleteDemoAccount emporte ses membres).
+    if (!r.deleted && r.reason !== "compte introuvable") echecs.push(`${c.userId} : ${r.reason ?? "inconnu"}`);
   }
   return echecs;
 }

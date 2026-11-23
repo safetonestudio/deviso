@@ -7,7 +7,9 @@ import { comptesReels, cheminsCritiques } from "@/lib/veille/controles";
 import { appliquerVeille } from "@/lib/veille/alerte";
 import type { Resultat } from "@/lib/veille/decision";
 
-// Le banc d'essai rejoue une douzaine de scénarios par les vraies routes.
+// Le banc d'essai rejoue ses scénarios par les vraies routes. Au-delà de 170 s
+// on n'en lance plus (les suivants passent le lendemain) : une fonction tuée à
+// 300 s n'écrirait ni état ni alerte, la pire des issues pour une veille.
 export const maxDuration = 300;
 
 /**
@@ -39,7 +41,7 @@ export async function GET(req: NextRequest) {
   let nettoyage: string[] = [];
   try {
     if (!essai) resultats.push(...(await comptesReels(admin)));
-    const b = await cheminsCritiques(admin, { base, scenarios, casser, budgetMs: essai ? 120_000 : 200_000 });
+    const b = await cheminsCritiques(admin, { base, scenarios, casser, budgetMs: essai ? 120_000 : 170_000 });
     resultats.push(...b.resultats);
     nonJoues = b.nonJoues;
     duree = b.dureeMs;

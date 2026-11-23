@@ -64,7 +64,8 @@ export async function comptesReels(admin: Admin): Promise<Resultat[]> {
   const profil = new Map((profils ?? []).map((p) => [p.id as string, p]));
   const nom = (id: string) => {
     const p = profil.get(id);
-    return p?.company_name || p?.full_name || p?.email || id.slice(0, 8);
+    // Pas de tiret cadratin dans nos messages, même s'il vient d'un nom saisi.
+    return String(p?.company_name || p?.full_name || p?.email || id.slice(0, 8)).replace(/\s*\u2014\s*/g, ", ");
   };
   for (const c of connexions ?? []) {
     const p = profil.get(c.user_id);
@@ -74,7 +75,7 @@ export async function comptesReels(admin: Admin): Promise<Resultat[]> {
         id: `superpdp:${c.user_id}`,
         libelle: `Super PDP, raccordement en erreur pour ${nom(c.user_id)}`,
         ok: false,
-        detail: `${(c.last_error ?? "sans message").slice(0, 200)}. A refaire par l'écran d'autorisation.`,
+        detail: `${(c.last_error ?? "sans message").slice(0, 200).replace(/[.\s]+$/, "")}. À refaire par l'écran d'autorisation.`,
       });
     } else if (c.session_status === "verified") {
       const depuis = c.last_sync_at ?? c.connected_at;

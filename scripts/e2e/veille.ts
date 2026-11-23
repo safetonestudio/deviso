@@ -58,7 +58,7 @@ if (existsSync(".env.local")) {
   const repare = decider(mieux.pannes, [r("a", true), r("b", true)], t1);
   verifier("tout réparé : « retour à la normale »", repare.alerte?.genre === "retour" && repare.alerte.sujet.includes("retour à la normale"));
   verifier("puis silence", decider(repare.pannes, [r("a", true), r("b", true)], t1).alerte === null);
-  verifier("aucun tiret cadratin ni emoji dans les messages", [casse, deux, mieux, repare].every((d) => !/[—\u{1F300}-\u{1FAFF}]/u.test(`${d.alerte?.sujet}${d.alerte?.texte}`)));
+  verifier("aucun tiret cadratin ni emoji dans les messages", [casse, deux, mieux, repare].every((d) => !/[\u{2014}\u{1F300}-\u{1FAFF}]/u.test(`${d.alerte?.sujet}${d.alerte?.texte}`)));
 
   // ── 2. La route, en mode essai ──────────────────────────────────────────────
   console.log("");
@@ -74,8 +74,8 @@ if (existsSync(".env.local")) {
   const admin = createAdminClient();
   await admin.from("veille_etat").delete().eq("cle", "essai");
 
-  const passer = async (casser: boolean) => {
-    const q = `essai=1&scenarios=achat-simple-assujetti${casser ? "&casser=lien-cabinet" : ""}`;
+  const passer = async (casser: boolean, scenarios = "achat-simple-assujetti") => {
+    const q = `essai=1&scenarios=${scenarios}${casser ? "&casser=lien-cabinet" : ""}`;
     const rep = await fetch(`${BASE}/api/cron/veille?${q}`, { headers: { authorization: `Bearer ${secret}` } });
     const corps = await rep.json().catch(() => ({}));
     if (rep.status !== 200) console.log(JSON.stringify(corps).slice(0, 400));
@@ -102,6 +102,24 @@ if (existsSync(".env.local")) {
 
   const d = await passer(false);
   verifier("tout va bien : silence", d.status === 200 && d.alerte === null && (d.enPanne ?? []).length === 0, JSON.stringify(d.enPanne));
+
+  // ── 3. Tout le catalogue du banc passe aussi par la veille ─────────────────
+  // lib/veille/banc.ts est une copie du banc (scripts/e2e/scenarios.ts) : si le
+  // catalogue gagne un champ que la copie ignore, un scénario échoue ici.
+  console.log("");
+  console.log("── Catalogue du banc rejoué par la veille ───────────────────");
+  const { SCENARIOS } = await import("../scenarios/catalogue");
+  const noms = SCENARIOS.map((x) => x.nom);
+  for (let k = 0; k < noms.length; k += 12) {
+    const lot = noms.slice(k, k + 12);
+    const e = await passer(false, lot.join(","));
+    const ko = (e.resultats ?? []).filter((x) => !x.ok);
+    verifier(
+      `scénarios ${k + 1} à ${k + lot.length} : tous joués, tous passent`,
+      e.status === 200 && ko.length === 0 && (e.nonJoues ?? []).length === 0,
+      `${ko.map((x) => `${x.id}: ${x.detail}`).join(" | ")} ${(e.nonJoues ?? []).length ? `non joués : ${e.nonJoues.join(", ")}` : ""}`,
+    );
+  }
 
   const { data: restes } = await admin.from("profiles").select("id").eq("is_demo", true).like("company_name", "Veille, %");
   verifier("aucun compte jetable de la veille ne reste en base", (restes ?? []).length === 0, `${restes?.length} restant(s)`);
