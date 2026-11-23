@@ -20,7 +20,11 @@ d'annuaire. Ventes B2BInt (client hors France). Tunnel OAuth rejoué en sandbox 
 2. Une exécution `npm run verify` propre (limite 10 comptes démo/h/IP, donc 1 run/h),
    confirmer 0 échec.
 3. Achats internationaux : re-confirmer le CREATE `200` en sandbox via la sonde jetable
-   (compte Burger Queen, company 57701), et geler la table `EAS_TVA_PAR_PAYS`.
+   (compte Burger Queen, company 57701). L'identifiant du fournisseur suit la règle
+   DGFiP G2.19 (annexe 7 v3.2) depuis le 23/11/2026 : `0223` + n° de TVA dans l'UE,
+   `0227` + code pays et 16 premiers caractères de la raison sociale hors UE
+   (`identiteVendeur`, garde `test:identite-vendeur`). La table EAS par pays et le
+   schéma `9999` (`SUPERPDP_SCHEMA_TIERS`) n'existent plus : ne pas poser cette variable.
 
 ## Phase 2, la bascule technique (leviers exacts, vérifiés)
 

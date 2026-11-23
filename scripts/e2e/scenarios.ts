@@ -54,20 +54,22 @@ const egal = (a: number, b: number) => Math.abs(a - b) < 0.005;
       ["achat saisi avant le choix, avec TVA", { ...base, montant_tva: 190, taux_tva: 19, tva_facturee: null }, "S", "190.00"],
     ];
     for (const [nom, achat, code, montant] of cas) {
-      const st = (construirePayloadB2bint(achat as never, nous, "9930").data[0].tax_subtotals[0]) as unknown as { tax_amount: string; tax_category: { code: string } };
+      const st = (construirePayloadB2bint(achat as never, nous, { company_id: "DE811569869", scheme_id: "0223", tva: "DE811569869" }).data[0].tax_subtotals[0]) as unknown as { tax_amount: string; tax_category: { code: string } };
       verifier(`déclaration, ${nom} : catégorie ${code}, TVA ${montant}`, st.tax_category.code === code && st.tax_amount === montant, JSON.stringify(st));
     }
     // Biens de l'UE sans TVA : acquisition intracommunautaire (K) ; avoir : 381.
-    const biensUe = construirePayloadB2bint({ ...base, categorie: "biens", montant_tva: 0, taux_tva: 0, tva_facturee: "aucune" } as never, nous, "9930").data[0];
+    const biensUe = construirePayloadB2bint({ ...base, categorie: "biens", montant_tva: 0, taux_tva: 0, tva_facturee: "aucune" } as never, nous, { company_id: "DE811569869", scheme_id: "0223", tva: "DE811569869" }).data[0];
     verifier("déclaration, biens de l'UE sans TVA : catégorie K (VATEX-EU-IC)", (biensUe.tax_subtotals[0].tax_category as { code?: string }).code === "K" && (biensUe.tax_subtotals[0].tax_category as { exemption_reason_code?: string }).exemption_reason_code === "VATEX-EU-IC", JSON.stringify(biensUe.tax_subtotals[0]));
-    const avoirDecl = construirePayloadB2bint({ ...base, montant_tva: 0, taux_tva: 0, tva_facturee: "aucune", est_avoir: true } as never, nous, "9930").data[0];
+    const avoirDecl = construirePayloadB2bint({ ...base, montant_tva: 0, taux_tva: 0, tva_facturee: "aucune", est_avoir: true } as never, nous, { company_id: "DE811569869", scheme_id: "0223", tva: "DE811569869" }).data[0];
     verifier("déclaration, avoir : type 381, montants positifs", avoirDecl.type_code === "381" && avoirDecl.total.tax_exclusive_amount === "1000.00", JSON.stringify({ t: avoirDecl.type_code, m: avoirDecl.total }));
-    // Schéma du vendeur : celui de l'État qui a attribué son n° de TVA.
-    const { schemaVendeur } = await import("@/lib/superpdp-achats");
-    verifier("schéma du vendeur : n° français d'un fournisseur allemand = schéma français (9957)", schemaVendeur("DE", "FR40303265045") === "9957");
-    verifier("schéma du vendeur : préfixe EL = Grèce (9933)", schemaVendeur("GR", "EL094259216") === "9933");
-    verifier("schéma du vendeur : n° allemand = schéma allemand (9930)", schemaVendeur("DE", "DE811569869") === "9930");
-    verifier("schéma du vendeur : identifiant hors UE sans préfixe d'État = aucun schéma TVA", schemaVendeur("US", "98-7654321") === null);
+    // Schéma du vendeur (G2.19, annexe 7 v3.2) : celui de l'État qui a attribué
+    // son n° de TVA. Cas détaillés dans scripts/e2e/identite-vendeur.ts.
+    const { identiteVendeur } = await import("@/lib/superpdp-achats");
+    const iv = (pays: string, tva: string | null, nom = "Fournisseur") => { const r = identiteVendeur(pays, tva, nom); return r.ok ? `${r.scheme_id}:${r.company_id}` : r.detail; };
+    verifier("schéma du vendeur : n° français d'un fournisseur allemand = SIREN (0002)", iv("DE", "FR40303265045") === "0002:303265045");
+    verifier("schéma du vendeur : préfixe EL = Grèce (0223)", iv("GR", "EL094259216") === "0223:EL094259216");
+    verifier("schéma du vendeur : n° allemand (0223)", iv("DE", "DE811569869") === "0223:DE811569869");
+    verifier("schéma du vendeur : hors UE = code pays + raison sociale (0227)", iv("US", "98-7654321", "Cloud Inc") === "0227:USCloud Inc");
     // Déclaration existante : reconnue au numéro ET au fournisseur, confirmée
     // par la date et le HT ; le numéro seul ne prouve rien.
     const { rapprocherDeclaration } = await import("@/lib/superpdp-achats");
