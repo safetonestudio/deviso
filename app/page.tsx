@@ -174,7 +174,7 @@ export default function LandingPage() {
                 Je lis chaque message et j&apos;y réponds moi-même. Écris-moi avant même de t&apos;inscrire.
               </p>
               <div className="mt-8">
-                <div className="text-[17px] font-semibold text-ink">Selim Albert, fondateur</div>
+                <div className="text-[17px] font-semibold text-ink">S. Albert, fondateur</div>
                 <a href="mailto:support@getdeviso.fr" className="mt-1 inline-block text-[17px] text-indigo-400 hover:text-indigo-300 transition-colors">support@getdeviso.fr</a>
               </div>
             </div>
