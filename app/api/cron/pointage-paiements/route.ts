@@ -3,7 +3,7 @@ import { createAdminClient } from "@/lib/supabase/admin";
 import { cronAutorise } from "@/lib/cron-auth";
 import { envoyerCourriel } from "@/lib/resend";
 import { adresseDeTest } from "@/lib/cabinet-resume";
-import { construirePointage, jourParis, MAX_DEMANDES, pointageDu, type FactureAPointer } from "@/lib/pointage-paiement";
+import { construirePointage, pointagesDus, type FactureAPointer } from "@/lib/pointage-paiement";
 
 // Cron quotidien (9 h) : demande au titulaire si ses factures échues ont été
 // payées. Règles dans `lib/pointage-paiement.ts`. Un seul courriel par
@@ -28,28 +28,10 @@ export async function GET(req: NextRequest) {
   const maintenant = new Date();
   const base = (process.env.NEXT_PUBLIC_APP_URL || "https://getdeviso.fr").replace(/\/$/, "");
 
-  let requete = admin
-    .from("invoices")
-    .select("id, user_id, invoice_number, status, invoice_type, due_date, total_ttc, client_name, client_company, superpdp_invoice_id, pointage_demande_at, pointage_demande_nb, pointage_pas_encore_at")
-    .eq("status", "sent")
-    .neq("invoice_type", "avoir")
-    .lt("due_date", jourParis(maintenant))
-    .lt("pointage_demande_nb", MAX_DEMANDES)
-    .order("due_date", { ascending: true })
-    .limit(5000);
-  if (seulement) requete = requete.eq("user_id", seulement);
-  const { data: factures, error } = await requete;
-  if (error) {
-    console.error("[cron/pointage-paiements] lecture", error);
+  const { erreur, parTitulaire } = await pointagesDus(admin, maintenant, { seulement });
+  if (erreur) {
+    console.error("[cron/pointage-paiements] lecture", erreur);
     return NextResponse.json({ error: "lecture" }, { status: 500 });
-  }
-
-  const parTitulaire = new Map<string, (FactureAPointer & { user_id: string })[]>();
-  for (const f of factures ?? []) {
-    if (!pointageDu(f as FactureAPointer, maintenant)) continue;
-    const liste = parTitulaire.get(f.user_id) ?? [];
-    liste.push(f as FactureAPointer & { user_id: string });
-    parTitulaire.set(f.user_id, liste);
   }
   if (parTitulaire.size === 0) return NextResponse.json({ courriels: 0, factures: 0 });
 

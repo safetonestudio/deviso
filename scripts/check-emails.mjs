@@ -20,7 +20,12 @@
 import { readFileSync } from "node:fs";
 import { globSync } from "node:fs";
 
-const fichiers = globSync("app/api/**/*.ts");
+// lib/relances.ts : les relances clients du cron send-reminders, extraites le
+// 20/11/2026 pour que la veille quotidienne rejoue la même sélection. Elles
+// partent chez le client, la règle les suit.
+const GABARITS_HORS_ROUTE = ["lib/relances.ts"];
+const fichiers = [...globSync("app/api/**/*.ts"), ...GABARITS_HORS_ROUTE];
+const envoie = (f, src) => src.includes("resend.emails.send") || GABARITS_HORS_ROUTE.includes(f.replace(/\\/g, "/"));
 let echecs = 0;
 
 // ── 1. Expéditeur ────────────────────────────────────────────────────────────
@@ -42,7 +47,7 @@ const NOM_DEVISO_LEGITIME = [
 
 for (const f of fichiers) {
   const src = readFileSync(f, "utf8");
-  if (!src.includes("resend.emails.send")) continue;
+  if (!envoie(f, src)) continue;
   const chemin = f.replace(/\\/g, "/");
   if (NOM_DEVISO_LEGITIME.some((l) => chemin.endsWith(l))) continue;
 
@@ -65,7 +70,7 @@ const SANS_ACCENT = [
 
 for (const f of fichiers) {
   const src = readFileSync(f, "utf8");
-  if (!src.includes("resend.emails.send")) continue;
+  if (!envoie(f, src)) continue;
 
   src.split("\n").forEach((ligne, i) => {
     const t = ligne.trim();
@@ -96,7 +101,7 @@ for (const f of fichiers) {
 // la marque chez un client payant, exactement ce qu'on vient de corriger.
 for (const f of fichiers) {
   const src = readFileSync(f, "utf8");
-  if (!src.includes("resend.emails.send")) continue;
+  if (!envoie(f, src)) continue;
   const chemin = f.replace(/\\/g, "/");
   if (NOM_DEVISO_LEGITIME.some((l) => chemin.endsWith(l))) continue;
 

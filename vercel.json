@@ -20,6 +20,10 @@
       "schedule": "0 6 * * *"
     },
     {
+      "path": "/api/cron/veille",
+      "schedule": "15 5 * * *"
+    },
+    {
       "path": "/api/cron/pointage-paiements",
       "schedule": "0 9 * * *"
     },

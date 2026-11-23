@@ -165,3 +165,39 @@ ${reste > 0 ? `<p style="margin:16px 0 0;font-size:14px;color:#64748b;">Et ${res
 
   return { sujet, html, texte };
 }
+
+/**
+ * Les factures dont la question est due aujourd'hui, groupées par titulaire.
+ *
+ * Extrait du cron `pointage-paiements` le 20/11/2026, sans changer la règle :
+ * la veille quotidienne (lib/veille/) rejoue cette sélection sur un compte de
+ * démonstration jetable, sans rien écrire ni envoyer. L'exclusion des comptes
+ * de démonstration et des adresses de test reste dans le cron, au moment de
+ * l'envoi.
+ */
+export async function pointagesDus(
+  admin: ReturnType<typeof import("@/lib/supabase/admin").createAdminClient>,
+  maintenant: Date,
+  options: { seulement?: string | null } = {},
+): Promise<{ erreur: string | null; parTitulaire: Map<string, (FactureAPointer & { user_id: string })[]> }> {
+  let requete = admin
+    .from("invoices")
+    .select("id, user_id, invoice_number, status, invoice_type, due_date, total_ttc, client_name, client_company, superpdp_invoice_id, pointage_demande_at, pointage_demande_nb, pointage_pas_encore_at")
+    .eq("status", "sent")
+    .neq("invoice_type", "avoir")
+    .lt("due_date", jourParis(maintenant))
+    .lt("pointage_demande_nb", MAX_DEMANDES)
+    .order("due_date", { ascending: true })
+    .limit(5000);
+  if (options.seulement) requete = requete.eq("user_id", options.seulement);
+  const { data: factures, error } = await requete;
+  const parTitulaire = new Map<string, (FactureAPointer & { user_id: string })[]>();
+  if (error) return { erreur: error.message ?? String(error), parTitulaire };
+  for (const f of (factures ?? []) as (FactureAPointer & { user_id: string })[]) {
+    if (!pointageDu(f, maintenant)) continue;
+    const liste = parTitulaire.get(f.user_id) ?? [];
+    liste.push(f);
+    parTitulaire.set(f.user_id, liste);
+  }
+  return { erreur: null, parTitulaire };
+}

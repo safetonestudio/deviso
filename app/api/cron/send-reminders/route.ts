@@ -1,42 +1,15 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { resend } from "@/lib/resend";
-import { publicBaseUrl, proposalShareUrl } from "@/lib/public-url";
-import { piedDePageMarque } from "@/lib/emails/branding";
 import { cronAutorise } from "@/lib/cron-auth";
+import { relancesDues } from "@/lib/relances";
 
 // Vercel cron job, déclenché quotidiennement à 8h
 // Protégé par CRON_SECRET (Vercel l'injecte automatiquement)
-
-const SOLO_INTERVALS = [3, 7]; // jours fixes pour Solo
-const DAY_MS = 24 * 60 * 60 * 1000;
-
-type OwnerProfile = {
-  id: string;
-  plan: string;
-  full_name: string | null;
-  company_name: string | null;
-  /** Adresse de réponse des relances automatiques. */
-  email: string | null;
-  subdomain: string | null;
-  reminder_intervals: number[] | null;
-  reminder_message: string | null;
-};
-
-function getIntervals(profile: OwnerProfile): number[] {
-  if (profile.plan !== "free" && profile.reminder_intervals && profile.reminder_intervals.length > 0) {
-    return [...profile.reminder_intervals].sort((a, b) => a - b);
-  }
-  return SOLO_INTERVALS;
-}
-
-/** Renvoie true si une relance est due aujourd'hui pour ce document */
-function isDue(createdAt: string, reminderCount: number, intervals: number[]): boolean {
-  if (reminderCount >= intervals.length) return false;
-  const targetDay = intervals[reminderCount];
-  const targetDate = new Date(createdAt).getTime() + targetDay * DAY_MS;
-  return Date.now() >= targetDate;
-}
+//
+// Ce qui part, et à qui, est décidé par `relancesDues` (lib/relances.ts), qui
+// exclut les comptes de démonstration à la source de sa requête (filtre
+// is_demo). La veille quotidienne rejoue cette même sélection sans envoyer.
 
 export async function GET(req: NextRequest) {
   if (!cronAutorise(req)) {
@@ -45,291 +18,44 @@ export async function GET(req: NextRequest) {
 
   const supabase = createAdminClient();
   const now = new Date().toISOString();
-
-  // ── 1. Récupérer tous les profils Solo/Pro avec leurs config de relance ──
-  const { data: ownerProfiles } = await supabase
-    .from("profiles")
-    .select("id, plan, full_name, company_name, email, subdomain, reminder_intervals, reminder_message")
-    .in("plan", ["solo", "pro"])
-    .neq("is_demo", true);
-
-  if (!ownerProfiles || ownerProfiles.length === 0) {
-    return NextResponse.json({ invoices_sent: 0, proposals_sent: 0 });
-  }
-
-  const profileMap = Object.fromEntries(ownerProfiles.map((p) => [p.id, p])) as Record<string, OwnerProfile>;
-  const eligibleIds = ownerProfiles.map((p) => p.id);
-
-  // ── 2. Factures ──────────────────────────────────────────────────────────
-  const { data: invoices } = await supabase
-    .from("invoices")
-    .select("id, invoice_number, client_name, client_email, client_company, total_ttc, due_date, payment_link_url, reminder_count, seller_name, seller_company, user_id, issue_date")
-    .eq("status", "sent")
-    // Jamais un avoir. C'est un montant qu'on rend : relancer son client pour
-    // qu'il paie l'argent qu'on lui doit est le message le plus gênant que ce
-    // produit puisse envoyer, et il partirait tout seul, la nuit, sans que
-    // personne l'ait demandé. Un avoir porte une échéance au jour de son
-    // émission, il serait donc « en retard » dès le lendemain.
-    .neq("invoice_type", "avoir")
-    .lt("due_date", now)
-    .lt("reminder_count", 10)
-    .in("user_id", eligibleIds);
+  const dues = await relancesDues(supabase);
 
   let invoicesSent = 0;
-
-  for (const invoice of invoices ?? []) {
-    if (!invoice.client_email) continue;
-    const profile = profileMap[invoice.user_id];
-    if (!profile) continue;
-
-    const intervals = getIntervals(profile);
-    // Pour les factures, on utilise issue_date comme point de départ
-    if (!isDue(invoice.issue_date || invoice.due_date, invoice.reminder_count, intervals)) continue;
-
-    const clientName = invoice.client_company || invoice.client_name || "Client";
-    const senderName = profile.company_name || profile.full_name || "Votre prestataire";
-    const amount = new Intl.NumberFormat("fr-FR", { style: "currency", currency: "EUR" }).format(invoice.total_ttc);
-    const daysOverdue = Math.floor((Date.now() - new Date(invoice.due_date).getTime()) / DAY_MS);
-    const reminderNum = (invoice.reminder_count || 0) + 1;
-    const urgency = reminderNum >= 3 ? "Dernier rappel" : reminderNum === 2 ? "2e rappel" : "Rappel de paiement";
-
-    const html = buildInvoiceReminderEmail({
-      clientName, senderName, invoiceNumber: invoice.invoice_number,
-      amount, daysOverdue, paymentLinkUrl: invoice.payment_link_url,
-      reminderNum, urgency,
-      customMessage: profile.plan !== "free" ? profile.reminder_message : null,
-      plan: profile.plan,
-    });
-
-    const { error: emailError } = await resend.emails.send({
-      // Le client a reçu le devis ou la facture au nom de son prestataire.
-      // Recevoir la relance de « Deviso », une société qu'il ne connaît pas,
-      // ressemble à une tentative d'hameçonnage et abîme la crédibilité de
-      // l'émetteur. Le nom commercial doit être le même partout.
-      from: `${senderName} <noreply@getdeviso.fr>`,
-      // Reply-To vers l'émetteur : sans lui, la réponse du client se perd.
-      ...(profile?.email ? { replyTo: profile.email } : {}),
-      to: invoice.client_email,
-      subject: `${urgency} · Facture ${invoice.invoice_number} · ${amount}`,
-      html,
-    });
-
-    if (!emailError) {
-      // Mise à jour CONDITIONNELLE, et on lit ce qu'elle a touché.
-      //
-      // Le retour de cet `update` était ignoré. S'il échouait, coupure
-      // passagère de la base, délai dépassé, `reminder_count` ne bougeait
-      // pas, `isDue` redevenait vrai le lendemain, et la même relance
-      // repartait. Tous les jours, indéfiniment : le garde-fou
-      // `.lt("reminder_count", 10)` ne se déclenche jamais sur un compteur qui
-      // n'avance pas. Le client final reçoit une relance quotidienne au nom du
-      // freelance.
-      //
-      // `.eq("reminder_count", …)` ferme en plus la course entre deux
-      // exécutions du cron, Vercel garantit « au moins une fois ».
-      const { data: majFaite, error: majErreur } = await supabase
-        .from("invoices")
-        .update({ last_reminder_sent_at: now, reminder_count: reminderNum })
-        .eq("id", invoice.id)
-        .eq("reminder_count", invoice.reminder_count ?? 0)
-        .select("id");
-
-      if (majErreur || !majFaite || majFaite.length === 0) {
-        console.error(
-          `[cron/send-reminders] relance ${reminderNum} ENVOYÉE pour la facture ${invoice.invoice_number} ` +
-            `mais compteur non incrémenté : la relance repartira demain.`,
-          majErreur
-        );
-      }
-      invoicesSent++;
-    }
-  }
-
-  // ── 3. Devis ─────────────────────────────────────────────────────────────
-  const { data: proposals } = await supabase
-    .from("proposals")
-    .select("id, proposal_number, title, client_name, client_email, client_company, total_ttc, valid_until, share_token, reminder_count, user_id, created_at")
-    .in("status", ["sent", "viewed"])
-    .lt("reminder_count", 10)
-    .in("user_id", eligibleIds);
-
   let proposalsSent = 0;
 
-  for (const proposal of proposals ?? []) {
-    if (!proposal.client_email) continue;
-    const profile = profileMap[proposal.user_id];
-    if (!profile) continue;
+  for (const r of dues) {
+    const { error: emailError } = await resend.emails.send(r.message);
+    if (emailError) continue;
 
-    const intervals = getIntervals(profile);
-    if (!isDue(proposal.created_at, proposal.reminder_count, intervals)) continue;
+    // Mise à jour CONDITIONNELLE, et on lit ce qu'elle a touché.
+    //
+    // Le retour de cet `update` était ignoré. S'il échouait, coupure
+    // passagère de la base, délai dépassé, `reminder_count` ne bougeait
+    // pas, la relance redevenait due le lendemain, et la même relance
+    // repartait. Tous les jours, indéfiniment : le garde-fou
+    // `.lt("reminder_count", 10)` ne se déclenche jamais sur un compteur qui
+    // n'avance pas. Le client final reçoit une relance quotidienne au nom du
+    // freelance.
+    //
+    // `.eq("reminder_count", …)` ferme en plus la course entre deux
+    // exécutions du cron, Vercel garantit « au moins une fois ».
+    const { data: majFaite, error: majErreur } = await supabase
+      .from(r.table)
+      .update({ last_reminder_sent_at: now, reminder_count: r.reminderNum })
+      .eq("id", r.id)
+      .eq("reminder_count", r.reminderCount)
+      .select("id");
 
-    const clientName = proposal.client_company || proposal.client_name || "Client";
-    const senderName = profile.company_name || profile.full_name || "Votre prestataire";
-    const amount = new Intl.NumberFormat("fr-FR", { style: "currency", currency: "EUR" }).format(proposal.total_ttc);
-    const reminderNum = (proposal.reminder_count || 0) + 1;
-    const signUrl = proposalShareUrl(publicBaseUrl(profile), proposal.share_token);
-    const urgency = reminderNum >= 3 ? "Dernier rappel" : reminderNum === 2 ? "2e rappel" : "Votre devis vous attend";
-    const borderColor = reminderNum >= 3 ? "#dc2626" : reminderNum === 2 ? "#d97706" : "#4f46e5";
-
-    const html = buildProposalReminderEmail({
-      clientName, senderName, proposalTitle: proposal.title,
-      amount, validUntil: proposal.valid_until, signUrl,
-      reminderNum, urgency, borderColor,
-      customMessage: profile.plan !== "free" ? profile.reminder_message : null,
-      plan: profile.plan,
-    });
-
-    const { error: emailError } = await resend.emails.send({
-      // Le client a reçu le devis ou la facture au nom de son prestataire.
-      // Recevoir la relance de « Deviso », une société qu'il ne connaît pas,
-      // ressemble à une tentative d'hameçonnage et abîme la crédibilité de
-      // l'émetteur. Le nom commercial doit être le même partout.
-      from: `${senderName} <noreply@getdeviso.fr>`,
-      // Reply-To vers l'émetteur : sans lui, la réponse du client se perd.
-      ...(profile?.email ? { replyTo: profile.email } : {}),
-      to: proposal.client_email,
-      subject: `${urgency} · ${proposal.title} · ${amount}`,
-      html,
-    });
-
-    if (!emailError) {
-      // Même garde que la boucle factures : incrément CONDITIONNEL + lecture du
-      // résultat. Sans elle, un update raté laissait `reminder_count` figé et la
-      // relance repartait au client tous les jours (le garde-fou `.lt(…, 10)`
-      // ne se déclenche jamais sur un compteur qui n'avance pas). Le
-      // `.eq("reminder_count", …)` ferme aussi la course entre deux exécutions.
-      const { data: majFaite, error: majErreur } = await supabase
-        .from("proposals")
-        .update({ last_reminder_sent_at: now, reminder_count: reminderNum })
-        .eq("id", proposal.id)
-        .eq("reminder_count", proposal.reminder_count ?? 0)
-        .select("id");
-
-      if (majErreur || !majFaite || majFaite.length === 0) {
-        console.error(
-          `[cron/send-reminders] relance ${reminderNum} ENVOYÉE pour le devis ${proposal.id} ` +
-            `mais compteur non incrémenté : la relance repartira demain.`,
-          majErreur
-        );
-      }
-      proposalsSent++;
+    if (majErreur || !majFaite || majFaite.length === 0) {
+      console.error(
+        `[cron/send-reminders] relance ${r.reminderNum} ENVOYÉE pour ${r.table === "invoices" ? "la facture" : "le devis"} ${r.repere} ` +
+          `mais compteur non incrémenté : la relance repartira demain.`,
+        majErreur
+      );
     }
+    if (r.table === "invoices") invoicesSent++;
+    else proposalsSent++;
   }
 
   return NextResponse.json({ invoices_sent: invoicesSent, proposals_sent: proposalsSent });
-}
-
-// ── Email builders ────────────────────────────────────────────────────────────
-
-function buildProposalReminderEmail({ clientName, senderName, proposalTitle, amount, validUntil, signUrl, reminderNum, urgency, borderColor, customMessage, plan }: {
-  clientName: string; senderName: string; proposalTitle: string; amount: string;
-  validUntil: string | null; signUrl: string; reminderNum: number; urgency: string;
-  borderColor: string; customMessage: string | null; plan: string | null;
-}) {
-  const customBlock = customMessage
-    ? `<div style="background:#f0fdf4;border:1px solid #bbf7d0;border-radius:10px;padding:16px;margin-bottom:20px;">
-        <p style="margin:0;font-size:14px;color:#166534;line-height:1.6;">${customMessage.replace(/\n/g, "<br>")}</p>
-       </div>`
-    : "";
-
-  return `<!DOCTYPE html>
-<html lang="fr">
-<head><meta charset="UTF-8"></head>
-<body style="margin:0;padding:0;background:#f8fafc;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;">
-  <table width="100%" cellpadding="0" cellspacing="0" style="background:#f8fafc;padding:40px 20px;">
-    <tr><td align="center">
-      <table width="100%" cellpadding="0" cellspacing="0" style="max-width:560px;background:#ffffff;border-radius:16px;border:2px solid ${borderColor};overflow:hidden;">
-        <tr><td style="background:${borderColor};padding:24px 36px;">
-          <span style="color:#ffffff;font-size:16px;font-weight:700;">${urgency}</span>
-        </td></tr>
-        <tr><td style="padding:36px;">
-          <p style="margin:0 0 6px;font-size:20px;font-weight:700;color:#0f172a;">Bonjour ${clientName},</p>
-          <p style="margin:0 0 24px;font-size:15px;color:#64748b;line-height:1.6;">
-            <strong style="color:#0f172a;">${senderName}</strong> vous rappelle qu'un devis est en attente de votre validation.
-          </p>
-          ${customBlock}
-          <div style="background:#eff6ff;border:1px solid #bfdbfe;border-radius:12px;padding:20px;margin-bottom:28px;">
-            <table width="100%" cellpadding="0" cellspacing="0">
-              <tr><td style="font-size:13px;color:#64748b;">Objet</td><td align="right" style="font-size:13px;font-weight:600;color:#0f172a;">${proposalTitle}</td></tr>
-              <tr><td style="font-size:13px;color:#64748b;padding-top:8px;">Montant</td><td align="right" style="font-size:18px;font-weight:800;color:#1d4ed8;padding-top:8px;">${amount}</td></tr>
-              ${validUntil ? `<tr><td style="font-size:13px;color:#64748b;padding-top:8px;">Valable jusqu'au</td><td align="right" style="font-size:13px;font-weight:600;color:#dc2626;padding-top:8px;">${new Date(validUntil).toLocaleDateString("fr-FR")}</td></tr>` : ""}
-            </table>
-          </div>
-          <table width="100%" cellpadding="0" cellspacing="0" style="margin-bottom:20px;">
-            <tr><td align="center">
-              <a href="${signUrl}" style="display:inline-block;background:#4f46e5;color:#ffffff;font-size:15px;font-weight:700;text-decoration:none;padding:14px 36px;border-radius:12px;">
-                Consulter et signer le devis &rarr;
-              </a>
-            </td></tr>
-          </table>
-        </td></tr>
-        <tr><td style="background:#f8fafc;padding:16px 36px;border-top:1px solid #e2e8f0;">
-          ${piedDePageMarque(plan, "Relance automatique via")}
-        </td></tr>
-      </table>
-    </td></tr>
-  </table>
-</body>
-</html>`;
-}
-
-function buildInvoiceReminderEmail({ clientName, senderName, invoiceNumber, amount, daysOverdue, paymentLinkUrl, reminderNum, urgency, customMessage, plan }: {
-  clientName: string; senderName: string; invoiceNumber: string; amount: string;
-  daysOverdue: number; paymentLinkUrl: string | null; reminderNum: number; urgency: string;
-  customMessage: string | null; plan: string | null;
-}) {
-  const borderColor = reminderNum >= 3 ? "#dc2626" : reminderNum === 2 ? "#d97706" : "#4f46e5";
-  const btnColor = reminderNum >= 3 ? "#dc2626" : "#4f46e5";
-
-  const customBlock = customMessage
-    ? `<div style="background:#f0fdf4;border:1px solid #bbf7d0;border-radius:10px;padding:16px;margin-bottom:20px;">
-        <p style="margin:0;font-size:14px;color:#166534;line-height:1.6;">${customMessage.replace(/\n/g, "<br>")}</p>
-       </div>`
-    : "";
-
-  return `<!DOCTYPE html>
-<html lang="fr">
-<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"></head>
-<body style="margin:0;padding:0;background:#f8fafc;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;">
-  <table width="100%" cellpadding="0" cellspacing="0" style="background:#f8fafc;padding:40px 20px;">
-    <tr><td align="center">
-      <table width="100%" cellpadding="0" cellspacing="0" style="max-width:560px;background:#ffffff;border-radius:16px;border:2px solid ${borderColor};overflow:hidden;">
-        <tr><td style="background:${borderColor};padding:24px 36px;">
-          <span style="color:#ffffff;font-size:16px;font-weight:700;">${urgency}</span>
-        </td></tr>
-        <tr><td style="padding:36px;">
-          <p style="margin:0 0 6px;font-size:20px;font-weight:700;color:#0f172a;">Bonjour ${clientName},</p>
-          <p style="margin:0 0 24px;font-size:15px;color:#64748b;line-height:1.6;">
-            Nous vous contactons au nom de <strong style="color:#0f172a;">${senderName}</strong> concernant la facture suivante, dont le paiement n'a pas encore été reçu.
-          </p>
-          ${customBlock}
-          <div style="background:#fef2f2;border:1px solid #fecaca;border-radius:12px;padding:20px;margin-bottom:28px;">
-            <table width="100%" cellpadding="0" cellspacing="0">
-              <tr><td style="font-size:13px;color:#64748b;">Facture</td><td align="right" style="font-size:13px;font-weight:700;color:#0f172a;">${invoiceNumber}</td></tr>
-              <tr><td style="font-size:13px;color:#64748b;padding-top:8px;">Montant dû</td><td align="right" style="font-size:18px;font-weight:800;color:#dc2626;padding-top:8px;">${amount}</td></tr>
-              <tr><td style="font-size:13px;color:#64748b;padding-top:8px;">En retard de</td><td align="right" style="font-size:13px;font-weight:700;color:#dc2626;padding-top:8px;">${daysOverdue} jour${daysOverdue > 1 ? "s" : ""}</td></tr>
-            </table>
-          </div>
-          ${paymentLinkUrl ? `
-          <table width="100%" cellpadding="0" cellspacing="0" style="margin-bottom:20px;">
-            <tr><td align="center">
-              <a href="${paymentLinkUrl}" style="display:inline-block;background:${btnColor};color:#ffffff;font-size:15px;font-weight:700;text-decoration:none;padding:14px 36px;border-radius:12px;">
-                Payer maintenant &rarr;
-              </a>
-            </td></tr>
-          </table>` : ""}
-          <p style="margin:0;font-size:13px;color:#94a3b8;text-align:center;">
-            En cas de paiement déjà effectué, veuillez ignorer ce message. Merci.
-          </p>
-        </td></tr>
-        <tr><td style="background:#f8fafc;padding:16px 36px;border-top:1px solid #e2e8f0;">
-          <p style="margin:0;font-size:11px;color:#94a3b8;text-align:center;">
-            ${piedDePageMarque(plan, "Relance automatique envoyée via")}
-          </p>
-        </td></tr>
-      </table>
-    </td></tr>
-  </table>
-</body>
-</html>`;
 }

@@ -32,11 +32,13 @@ export async function construireResume(
   reference: Date = new Date(),
   /** Rythme choisi par le cabinet, en clair (« chaque lundi »), cité dans le pied du courriel. */
   rythme = "chaque lundi",
+  /** Veille quotidienne seulement : construire le résumé d'un cabinet de démonstration, sans l'envoyer. */
+  options: { inclureDemo?: boolean } = {},
 ): Promise<Resume | null> {
   const tous = await dossiersDuCabinet(admin, cabinetId);
   if (tous.length === 0) return null;
   const { data: demos } = await admin.from("profiles").select("id").in("id", tous).eq("is_demo", true);
-  const exclus = new Set((demos ?? []).map((d) => d.id as string));
+  const exclus = new Set(options.inclureDemo ? [] : (demos ?? []).map((d) => d.id as string));
   const ownerIds = tous.filter((id) => !exclus.has(id));
   if (ownerIds.length === 0) return null;
 
