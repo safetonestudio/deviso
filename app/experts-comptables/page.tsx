@@ -15,16 +15,16 @@ import {
 } from "lucide-react";
 
 export const metadata: Metadata = {
-  title: "Deviso pour les experts-comptables : vos clients micro et TPE, conformes à la réforme",
+  title: "Deviso pour les experts-comptables : vos clients, de l'indépendant à la PME, conformes à la réforme",
   description:
-    "Un cockpit gratuit pour suivre tous vos clients micro et TPE depuis une seule interface : conformité à la réforme 2026, calendrier TVA, exports FEC et livre des recettes. Programme pilote gratuit.",
+    "Un cockpit gratuit pour suivre tous vos clients, de l'indépendant à la PME, depuis une seule interface : conformité à la réforme 2026, calendrier TVA, exports FEC et livre des recettes. Programme pilote gratuit.",
   alternates: { canonical: "https://getdeviso.fr/experts-comptables" },
   openGraph: {
     title: "Deviso pour les experts-comptables | Deviso",
     description:
-      "Vos clients micro et TPE conformes à la réforme, suivis depuis un seul cockpit. Gratuit pour votre cabinet. Programme pilote.",
+      "Vos clients, de l'indépendant à la PME, conformes à la réforme, suivis depuis un seul cockpit. Gratuit pour votre cabinet. Programme pilote.",
     url: "https://getdeviso.fr/experts-comptables",
-    images: [{ url: "https://getdeviso.fr/experts-comptables/opengraph-image?v=2", width: 1200, height: 630, alt: "Deviso pour les experts-comptables : vos clients micro et TPE suivis depuis un seul cockpit" }],
+    images: [{ url: "https://getdeviso.fr/experts-comptables/opengraph-image?v=3", width: 1200, height: 630, alt: "Deviso pour les experts-comptables : vos clients, de l'indépendant à la PME, suivis depuis un seul cockpit" }],
   },
 };
 
@@ -36,7 +36,7 @@ const douleurs = [
     icon: AlertTriangle,
     filet: "bg-amber-400",
     titre: "La réforme, c'est vous qu'on attend",
-    desc: "La réception des factures électroniques est obligatoire depuis septembre 2026, l'émission arrive, et la tolérance s'arrête le 31 décembre 2026. La plupart de vos clients micro et TPE n'ont encore rien choisi et attendent que vous leur disiez quoi faire.",
+    desc: "La réception des factures électroniques est obligatoire depuis septembre 2026, l'émission arrive, et la tolérance s'arrête le 31 décembre 2026. La plupart de vos clients indépendants et PME n'ont encore rien choisi et attendent que vous leur disiez quoi faire.",
   },
   {
     icon: ShieldCheck,
@@ -157,10 +157,10 @@ export default function Page() {
             <div className="lg:col-span-6">
               <p className="text-[14px] font-medium text-gray-400">Pour les cabinets d&apos;expertise comptable</p>
               <h1 className="mt-4 text-[clamp(34px,3.8vw,58px)] leading-[1.05] font-semibold tracking-[-0.04em] text-ink">
-                Vos clients micro et TPE, conformes à la réforme, suivis depuis un seul cockpit.
+                Vos clients, de l&apos;indépendant à la PME, conformes à la réforme, suivis depuis un seul cockpit.
               </h1>
               <p className={`mt-6 max-w-[50ch] ${LEAD}`}>
-                Deviso est un outil de facturation simple et conforme pour vos clients indépendants, micro et TPE. Vous les
+                Deviso est un outil de facturation simple et conforme pour vos clients, de l&apos;indépendant à la PME. Vous les
                 suivez tous depuis une interface dédiée, en lecture seule. Gratuit pour votre cabinet.
               </p>
               <div className="mt-8 flex flex-col sm:flex-row gap-3">

@@ -84,10 +84,10 @@ export function DocumentDevis({ etat, compact = false, className = "" }: { etat:
         {/* Parties */}
         <div className="grid grid-cols-2" style={{ gap: "2em", marginTop: "2.6em", lineHeight: 1.45 }}>
           <div style={{ fontSize: "0.85em", color: GRIS }}>
-            <div style={{ color: ENCRE, fontWeight: 600, fontSize: "1.1em" }}>Marie Durand, EI</div>
+            <div style={{ color: ENCRE, fontWeight: 600, fontSize: "1.1em" }}>Studio Durand SARL</div>
             12 rue Mercière, 69002 Lyon
             <br />
-            marie@studio-durand.fr
+            contact@studio-durand.fr
           </div>
           <div style={{ fontSize: "0.85em", color: GRIS }}>
             <div style={{ fontSize: "0.9em", marginBottom: "0.2em" }}>Adressé à</div>

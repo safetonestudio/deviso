@@ -25,22 +25,22 @@ import { Analytics } from "@vercel/analytics/next";
 export const metadata: Metadata = {
   metadataBase: new URL("https://getdeviso.fr"),
   title: {
-    default: "Deviso, logiciel de devis et facturation pour freelances",
+    default: "Deviso, logiciel de devis et de facturation pour les entreprises",
     template: "%s | Deviso",
   },
   description:
-    "Créez vos devis en 30 secondes avec l'IA, facturez en Factur-X conforme 2026, relances automatiques, suivi CA URSSAF. Essai gratuit sans carte bancaire.",
+    "Créez vos devis en 30 secondes avec l'IA, facturez en Factur-X conforme 2026, relances automatiques, suivi du chiffre d'affaires et de la TVA. Pour l'indépendant comme pour la société avec son équipe. Essai gratuit sans carte bancaire.",
   keywords: [
-    "logiciel devis freelance",
+    "logiciel devis entreprise",
     "devis en ligne gratuit",
     "logiciel facturation auto-entrepreneur",
     "devis IA",
-    "facture électronique freelance",
+    "facture électronique entreprise",
     "facture électronique 2026",
     "Factur-X",
     "générateur devis professionnel",
     "logiciel devis facture France",
-    "facturation freelance",
+    "logiciel facturation PME",
     "signature électronique devis",
     "devis auto-entrepreneur",
   ],
@@ -54,7 +54,7 @@ export const metadata: Metadata = {
     title: "Deviso",
   },
   openGraph: {
-    title: "Deviso, devis et factures pour indépendants et petites entreprises",
+    title: "Deviso, devis et factures pour les entreprises, de l'indépendant à la société",
     description:
       "Vos devis rédigés, vos factures conformes, vos relances envoyées. Plateforme agréée comprise, essai gratuit de 14 jours.",
     type: "website",
@@ -64,7 +64,7 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "Deviso, devis et factures pour indépendants et petites entreprises",
+    title: "Deviso, devis et factures pour les entreprises, de l'indépendant à la société",
     description:
       "Vos devis rédigés, vos factures conformes, vos relances envoyées. Plateforme agréée comprise, essai gratuit de 14 jours.",
   },

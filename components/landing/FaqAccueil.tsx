@@ -13,12 +13,12 @@ const QUESTIONS = [
     r: "Oui, à tout moment. Vos factures restent téléchargeables en PDF Factur-X, et vous exportez votre comptabilité au format FEC et en CSV.",
   },
   {
-    q: "Deviso convient-il à mon statut ?",
-    r: "Micro-entreprise, entreprise individuelle au réel ou société, en franchise de TVA ou assujettie : vous indiquez votre statut, et le tableau de bord, la TVA et les échéances s'y adaptent.",
+    q: "Deviso convient-il à mon entreprise ?",
+    r: "Oui. Société (SARL, SAS, EURL, SASU), entreprise individuelle au réel ou micro-entreprise, assujettie à la TVA ou en franchise en base : vous indiquez le statut de votre entreprise, et le tableau de bord, la TVA et les échéances s'y adaptent.",
   },
   {
-    q: "Mon expert-comptable peut-il y accéder ?",
-    r: "Oui, gratuitement et sans occuper de place dans votre équipe. Il consulte tout en lecture seule et récupère l'export FEC lui-même.",
+    q: "Mon comptable peut-il y accéder ?",
+    r: "Oui, gratuitement et sans occuper de place parmi vos utilisateurs. Il consulte tout en lecture seule et récupère l'export FEC lui-même.",
   },
   {
     q: "Puis-je facturer en anglais ou à l'étranger ?",

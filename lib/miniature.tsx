@@ -168,7 +168,7 @@ export function miniatureCabinet() {
         <div style={{ display: "flex", flexDirection: "column", gap: 22 }}>
           <Etiquette>Pour les experts-comptables</Etiquette>
           <div style={{ display: "flex", fontSize: 50, fontWeight: 600, lineHeight: 1.08, letterSpacing: -1.6 }}>
-            Vos clients micro et TPE, conformes à la réforme, suivis depuis un seul cockpit.
+            Vos clients, de l'indépendant à la PME, conformes à la réforme, suivis depuis un seul cockpit.
           </div>
         </div>
         <div style={{ display: "flex", fontSize: 24, color: GRIS }}>Gratuit pour votre cabinet. Exports FEC et Quadra.</div>

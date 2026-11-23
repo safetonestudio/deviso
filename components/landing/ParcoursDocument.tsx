@@ -20,7 +20,7 @@ const ETAPES: Etape[] = [
   { titre: "Votre client signe en ligne.", texte: "Il reçoit un lien, ouvre le devis sur son téléphone et signe. Vous êtes prévenu à l'instant.", vue: "signe" },
   { titre: "Un clic, et c'est une facture.", texte: "Le devis signé devient une facture électronique officielle, transmise pour vous.", vue: "facture" },
   { titre: "Deviso relance, vous encaissez.", texte: "Facture impayée à l'échéance ? Deviso relance votre client 3, 7 ou 14 jours après, comme vous l'avez choisi. Le virement arrivé, vous marquez la facture payée en un clic.", vue: "paye" },
-  { titre: "Vos chiffres pour déclarer, déjà calculés.", texte: "Chiffre d'affaires, TVA collectée, échéances : tout est calculé à partir de vos encaissements, selon votre statut.", vue: "urssaf" },
+  { titre: "Vos chiffres pour déclarer, déjà calculés.", texte: "Chiffre d'affaires, TVA collectée ou franchise en base, échéances : tout est calculé à partir de vos encaissements, selon le statut de votre entreprise.", vue: "urssaf" },
 ];
 
 const LIGNES_BRIEF: [string, string][] = [

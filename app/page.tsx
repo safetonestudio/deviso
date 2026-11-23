@@ -10,14 +10,14 @@ import { TarifsTable } from "@/components/landing/TarifsTable";
 import { prix as grille } from "@/lib/grille-tarifaire";
 
 export const metadata: Metadata = {
-  title: "Deviso, logiciel de devis et factures pour indépendants et petites entreprises",
+  title: "Deviso, logiciel de devis et factures pour les entreprises, de l'indépendant à la société",
   description:
-    "Vos devis rédigés en 30 secondes, vos factures conformes 2026 envoyées par une plateforme agréée comprise dans l'abonnement, vos relances automatiques. Pour indépendants et petites entreprises. Essai gratuit 14 jours, sans carte.",
+    "Vos devis rédigés en 30 secondes, vos factures conformes 2026 envoyées par une plateforme agréée comprise dans l'abonnement, vos relances automatiques. Pour votre entreprise, que vous travailliez seul ou à plusieurs. Essai gratuit 14 jours, sans carte.",
   alternates: {
     canonical: "https://getdeviso.fr",
   },
   openGraph: {
-    title: "Deviso, devis et factures pour indépendants et petites entreprises",
+    title: "Deviso, devis et factures pour les entreprises, de l'indépendant à la société",
     description: "Vos devis rédigés, vos factures conformes, vos relances envoyées. Plateforme agréée comprise, essai gratuit de 14 jours.",
     url: "https://getdeviso.fr",
     siteName: "Deviso",
@@ -35,7 +35,7 @@ const jsonLd = {
   operatingSystem: "Web",
   url: "https://getdeviso.fr",
   description:
-    "Logiciel de devis et facturation pour les indépendants et les petites entreprises en France. Devis IA, Factur-X, relances automatiques.",
+    "Logiciel de devis et de facturation pour les entreprises en France, de l'indépendant à la société avec son équipe. Devis IA, Factur-X, relances automatiques.",
   offers: [
     { "@type": "Offer", name: "Solo", price: grille("solo").mensuel, priceCurrency: "EUR", billingIncrement: "P1M" },
     { "@type": "Offer", name: "Pro", price: grille("pro").mensuel, priceCurrency: "EUR", billingIncrement: "P1M" },
@@ -46,13 +46,13 @@ const jsonLd = {
     "Facturation électronique Factur-X",
     "Émission et réception de factures via une plateforme agréée (Super PDP)",
     "Conformité droit français",
-    "Suivi du chiffre d'affaires, de la TVA et des échéances",
+    "Suivi du chiffre d'affaires, de la TVA et des échéances, selon le statut de l'entreprise",
     "Relances automatiques",
   ],
   inLanguage: "fr",
   audience: {
     "@type": "Audience",
-    audienceType: "Indépendants et petites entreprises en France",
+    audienceType: "Entreprises en France, des indépendants et micro-entrepreneurs aux sociétés avec équipe",
   },
 };
 
@@ -91,7 +91,7 @@ export default function LandingPage() {
                   <span className="block xl:whitespace-nowrap">vos relances envoyées.</span>
                 </h1>
                 <p className={`mt-6 max-w-[48ch] ${LEAD}`}>
-                  Pour les indépendants et les petites entreprises, de la micro à la société. La plateforme agréée est
+                  Pour votre entreprise, de l&apos;indépendant à la société avec son équipe. La plateforme agréée est
                   comprise&nbsp;: vos factures électroniques partent sans rien brancher ni payer en plus.
                 </p>
                 <div className="mt-8 flex flex-col sm:flex-row gap-3">
@@ -147,7 +147,7 @@ export default function LandingPage() {
             <ol className="lg:col-span-4 lg:col-start-9 grid gap-4 self-center" aria-label="Calendrier de la réforme">
               {[
                 ["Septembre 2026", "Toute entreprise doit pouvoir recevoir des factures électroniques."],
-                ["Septembre 2027", "Les petites entreprises et les indépendants doivent aussi les émettre."],
+                ["Septembre 2027", "Les petites et moyennes entreprises, les micro-entrepreneurs et les indépendants doivent aussi les émettre."],
               ].map(([d, t]) => (
                 <li key={d} className="rounded-lg bg-ink/10 px-5 py-4">
                   <div className="text-[14px] font-semibold text-blue-200">{d}</div>
@@ -168,7 +168,7 @@ export default function LandingPage() {
             <div className="lg:col-span-7">
               <p className="text-[20px] sm:text-[24px] leading-[1.5] tracking-[-0.01em] text-ink">
                 J&apos;ai créé Deviso parce que je perdais trop de temps sur mes propres devis et factures, et parce que la réforme
-                de la facturation électronique arrivait sans outil vraiment simple pour les indépendants et les petites entreprises.
+                de la facturation électronique arrivait sans outil vraiment simple pour les entreprises, de l&apos;indépendant à la société avec son équipe.
               </p>
               <p className="mt-6 text-[17px] leading-relaxed text-gray-300 max-w-[62ch]">
                 Je lis chaque message et j&apos;y réponds moi-même. Écrivez-moi avant même de vous inscrire.

@@ -54,7 +54,7 @@ export function TarifsTable() {
   const formules = [
     {
       nom: "Solo",
-      pour: "Pour travailler seul, avec des documents soignés et une gestion à jour.",
+      pour: "Pour travailler seul : indépendant, micro-entrepreneur ou dirigeant de société.",
       prix: annuel ? SOLO.annuelParMois : SOLO.mensuel,
       note: annuel ? `Facturé ${SOLO.annuel} € HT par an, soit ${SOLO.annuelTtc} € TTC` : `Sans engagement, soit ${SOLO.mensuelTtc} € TTC`,
       lien: "/signup?plan=solo",
@@ -62,7 +62,7 @@ export function TarifsTable() {
     },
     {
       nom: "Pro",
-      pour: "Pour les petites entreprises qui travaillent à plusieurs.",
+      pour: "Pour les entreprises qui travaillent à plusieurs.",
       prix: annuel ? PRO.annuelParMois : PRO.mensuel,
       note: annuel ? `Facturé ${PRO.annuel} € HT par an, soit ${PRO.annuelTtc} € TTC` : `Sans engagement, soit ${PRO.mensuelTtc} € TTC`,
       lien: "/signup?plan=pro",

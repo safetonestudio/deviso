@@ -33,7 +33,7 @@ export function SiteFooter() {
               <span className="text-[20px] font-semibold tracking-[-0.02em] text-ink">Deviso</span>
             </div>
             <p className="text-sm max-w-xs leading-relaxed">
-              Devis, factures conformes 2026 et relances, pour les indépendants et les petites entreprises en France.
+              Devis, factures conformes 2026 et relances, pour les entreprises en France, de l'indépendant à la société.
             </p>
           </div>
 

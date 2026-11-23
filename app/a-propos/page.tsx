@@ -115,9 +115,9 @@ export default function AProposPage() {
               </p>
               <p className="mb-4">
                 La première, c&apos;est que <strong className="text-ink">les contenus disponibles pour les
-                indépendants sont soit trop vagues, soit écrits pour des directions financières</strong>. Entre
+                indépendants et les petites entreprises sont soit trop vagues, soit écrits pour des directions financières</strong>. Entre
                 « la réforme arrive, préparez-vous » et une note de cabinet sur l&apos;interopérabilité des flux,
-                il n&apos;y a presque rien pour quelqu&apos;un qui facture seul.
+                il n&apos;y a presque rien pour une petite entreprise ou pour quelqu&apos;un qui facture seul.
               </p>
               <p className="mb-4">
                 La seconde, c&apos;est que <strong className="text-ink">beaucoup de ce qui circule est
