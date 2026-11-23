@@ -81,13 +81,13 @@ tranche. Elle est reprise, raccourcie, dans le mail du §5.
   ligne d'annuaire est unique et porte une seule plateforme de réception (dossier
   général v3.2, §3.5.3 : « Une ligne d'annuaire est unique »). Une entreprise peut donc
   partager ses adresses entre plateformes, ligne par ligne (SIREN, SIRET, code de
-  routage, suffixe). — *lu*
+  routage, suffixe). *lu*
 - **L'ancienne ligne.** Elle n'est pas supprimée : elle est réattribuée au matricule de
   la nouvelle plateforme. L'ancienne plateforme garde un an de services minimaux
-  (dossier v3.2, §3.5.5.5 ; décret 2026-677, art. 242 nonies E quater). — *lu*
+  (dossier v3.2, §3.5.5.5 ; décret 2026-677, art. 242 nonies E quater). *lu*
 - **Qui inscrit.** Seule une plateforme « qui a formellement contractualisé » avec
   l'entreprise peut remplacer la ligne par défaut (dossier v3.2, §3.5.5.5, note 83).
-  L'accord formel est conservé et numéroté par la nouvelle plateforme (décret). — *lu*
+  L'accord formel est conservé et numéroté par la nouvelle plateforme (décret). *lu*
 
 ### 6. Les questions déjà ouvertes ailleurs dans le dépôt
 
@@ -100,7 +100,7 @@ en dur** (`lib/invoice-xml.ts:379`), pour toutes ses factures. Voilà pourquoi l
 factures de services ressortaient en `TLB1`. Super PDP n'avait rien à nous répondre : le
 champ existait, nous le remplissions mal. Les codes corrects existent aussi pour une
 facture déjà payée (`B2`, `S2`) et pour une facture définitive après acompte (`B4`,
-`S4`). — *lu dans l'annexe ; défaut constaté dans le code ; correctif non fait,
+`S4`). *lu dans l'annexe ; défaut constaté dans le code ; correctif non fait,
 hors du périmètre de cette recherche.*
 
 **Identifiant d'un fournisseur hors UE (`lib/superpdp-achats.ts`, « LE seul verrou
@@ -110,7 +110,7 @@ schéma est **`0227`** (« HORS_UE (dont Wallis et Futuna) »), et l'identifiant
 Pour un vendeur de l'UE hors France, c'est `0223` avec son numéro de TVA
 intracommunautaire. Deviso envoie aujourd'hui `9999` par défaut (`SCHEMA_GENERIQUE`).
 Cette valeur ne figure pas dans la liste admise par la règle G2.19. Tant que ce n'est pas
-corrigé, la déclaration risque d'être rejetée en production. — *lu dans l'annexe ;
+corrigé, la déclaration risque d'être rejetée en production. *lu dans l'annexe ;
 correctif non fait.*
 
 **Remontée d'un rejet DGFiP pour un achat étranger. Résolue par la spécification.** Une
@@ -118,14 +118,14 @@ déclaration porte `ppf_ereporting_id` (lecture seule). Le `ppf_ereporting` corr
 a des `events`, dont `ppf:ereporting-rejected` et `ppf:ereporting-ack-error` (OpenAPI
 1.41, schéma `ppf_ereporting_event`). Deviso lit déjà ces deux codes sur son écran des
 e-reportings (`app/api/superpdp/ereportings/route.ts`). Il reste à les rattacher à
-l'achat concerné. — *lu.*
+l'achat concerné. *(lu)*
 
 **Changement de comportement à vérifier (OpenAPI 1.34, 22/09/2026).** « invoice with
 buyer electronic adresse as email are not marked B2C anymore » : une adresse e-mail de
 l'acheteur ne suffit plus à classer une facture en B2C, seule la note `BAR` compte
 désormais. `chantier.md` décrit encore les deux critères. Sans conséquence : Deviso pose
 la note `BAR`/`B2C` sur toute facture à un particulier (`lib/invoice-xml.ts:339`).
-— *lu ; vérifié dans le code.*
+*Lu ; vérifié dans le code.*
 
 ---
 

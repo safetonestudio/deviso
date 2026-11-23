@@ -120,7 +120,7 @@ async function valider(xml: string, nom: string) {
   };
   const nous = { number: "552100554", scheme_id: "0002", country: "FR", vat: "FR40552100554" };
   const idAchat = (extra: Record<string, unknown>) =>
-    (A.construirePayloadB2bint({ ...achat, ...extra } as never, nous, "9930").data[0] as { business_process: { id: string } }).business_process.id;
+    (A.construirePayloadB2bint({ ...achat, ...extra } as never, nous, A.identiteVendeur("DE", "DE123456789", "Fournisseur GmbH") as never).data[0] as { business_process: { id: string } }).business_process.id;
   verifier("achat de services à l'étranger : TT-28 = S1", idAchat({ categorie: "services" }) === "S1", idAchat({ categorie: "services" }));
   verifier("achat de biens à l'étranger : TT-28 = B1", idAchat({ categorie: "biens" }) === "B1", idAchat({ categorie: "biens" }));
   verifier("avoir d'un fournisseur de services : S1", idAchat({ categorie: "services", est_avoir: true }) === "S1");
