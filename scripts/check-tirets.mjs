@@ -29,7 +29,8 @@ const CADRATIN = String.fromCharCode(0x2014);
 // fichiers de fournisseurs que leurs mises à jour écraseraient.
 // docs/reference : notes de travail locales, hors Git (.gitignore), dont des
 // extraits de sources tierces cites tels quels.
-const DOSSIERS_TIERS = new Set([join(".claude", "skills"), join("docs", "reference")]);
+// .claude/worktrees : copies du dépôt ouvertes par les sessions parallèles, avec leurs propres outils.
+const DOSSIERS_TIERS = new Set([join(".claude", "skills"), join(".claude", "worktrees"), join("docs", "reference")]);
 // Fichier régénéré par `next dev` à chaque lancement (non suivi par git).
 const FICHIERS_GENERES = new Set(["AGENTS.md"]);
 
