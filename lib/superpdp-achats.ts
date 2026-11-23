@@ -201,112 +201,152 @@ export interface NotreIdentite {
   vat: string | null;
 }
 
-/** ICD 0002 = SIRENE (répertoire des entreprises françaises), schéma du SIREN. */
-const SCHEME_SIREN = "0002";
-
 /**
- * Schéma d'identification d'un vendeur étranger par son numéro de TVA.
+ * Identifiant du vendeur (le fournisseur étranger) dans l'e-reporting d'achat.
  *
  * `POST /b2bint_invoices` exige, pour le vendeur, un `company_id` ET son
- * `company_id_scheme_id` (constaté en bac à sable le 28/09/2026 : sans eux,
- * 400 « missing seller company_id[_scheme_id] for b2bint invoice »). Le seul
- * identifiant stable dont nous disposons pour un fournisseur étranger est son
- * numéro de TVA intracommunautaire ; le schéma correspondant est le code EAS
- * Peppol du pays (« Electronic Address Scheme », liste officielle
- * docs.peppol.eu et liste EAS de l'UE).
+ * `company_id_scheme_id` (constaté en bac à sable le 28/09/2026 et le
+ * 03/11/2026 : sans eux, 400 « missing seller company_id[_scheme_id] for
+ * b2bint invoice »). Le bac à sable accepte n'importe quel schéma : la règle
+ * vient donc des textes, pas des essais.
  *
- * On n'inscrit ici que des codes explicitement libellés « <pays> VAT number »
- * (ou l'équivalent national reconnu). Un pays absent de cette table n'est PLUS
- * bloqué : il part sous le schéma générique de pays tiers (SCHEMA_GENERIQUE),
- * l'achat n'est jamais retenu pour la seule raison du pays. Restent hors table,
- * faute de code EAS « VAT » propre : DK et FI (identifiés en EAS par le CVR et
- * l'OVT, pas par un code TVA) et SI. Ils passent donc par le schéma générique,
- * comme le hors-UE.
+ * Source : spécifications externes DGFiP v3.2 (impots.gouv.fr,
+ * « specifications-externes-b2b », paquet du 30/04/2026), relues le 23/11/2026.
+ *  - Annexe 7 (règles de gestion v1.9), règle G2.19 « Identifiant du Vendeur et
+ *    de l'Acheteur » : l'identifiant du vendeur (TT-33-1) est qualifié par l'un
+ *    des schémas ICD 6523 suivants, et seulement eux :
+ *      0002 : SIREN sur 9 caractères numériques ;
+ *      0223 : UE_HORS_FRANCE, « correspond à l'identifiant de TVA
+ *             intracommunautaire », 18 caractères au maximum ;
+ *      0227 : HORS_UE (dont Wallis et Futuna), « correspond au code Pays et les
+ *             16 premiers caractères de la raison sociale », 18 caractères au
+ *             maximum ;
+ *      0228 : RIDET, 0229 : TAHITI (sans objet ici : fournisseurs étrangers).
+ *  - Annexe 6 (format e-reporting v1.10), TT-33-1 : mêmes valeurs ; TT-33 :
+ *    18 caractères.
+ *  - Annexe 7, onglet des listes de codes, ISO 6523 0227 : « It starts with 2
+ *    characters which must be the Country code of country where the company is
+ *    registered - Followed with the first 16 Characters of the company
+ *    registered name ». 0223 : commence par le code pays d'un État membre.
+ *  - Annexe 7, règle G2.33 : schéma 0002 ou 0223 => le n° de TVA du vendeur
+ *    (TT-34) doit être systématiquement renseigné.
+ *  - Annexe 7, règle G1.65 : un vendeur assujetti à la TVA en France donne son
+ *    SIREN (d'où 0002 pour un fournisseur étranger immatriculé à la TVA
+ *    française).
  *
- * Les 24 codes ci-dessous (24 des 27 États membres) ont été vérifiés le
- * 28/09/2026 puis recoupés le 03/11/2026 sur deux sources indépendantes (liste
- * EAS Peppol officielle et référentiel ISO 6523 Tickstar). Réserve connue :
- * SE 9955 (TVA suédoise) est donné comme RETIRÉ par la liste Peppol et par
- * econnect, mais encore listé par Tickstar : statut conflictuel, à confirmer
- * à la bascule prod (sinon un repli vers le schéma générique est possible).
- * Deux pièges évités :
- *  - Italie : 0211 = Partita IVA (n° de TVA). NE PAS « corriger » en 0210, qui
- *    est le Codice Fiscale (code fiscal), un identifiant différent.
- *  - Espagne, Autriche : identifiés par le schéma fiscal national (Agencia
- *    Tributaria / USt-IdNr.), il n'existe pas de code EAS « Spain/Austria VAT
- *    number » distinct.
- * Reste à confirmer à la bascule prod, quand PPF validera vraiment le schéma :
- * la forme exacte de l'identifiant (n° de TVA avec ou sans préfixe pays) par
- * schéma. Le bac à sable a accepté la forme préfixée (« DE811569869 »).
+ * Jusqu'au 23/11/2026, Deviso envoyait le code EAS Peppol « VAT number » du pays
+ * (9930 pour l'Allemagne, etc.) et 9999 hors UE : aucun de ces codes ne figure
+ * dans la liste de G2.19.
+ *
+ * Ce que le texte ne tranche PAS, et que ce code ne devine donc pas : la
+ * normalisation de la raison sociale (majuscules, espaces, accents,
+ * ponctuation). Le texte dit « les 16 premiers caractères » et, dans la liste
+ * de codes, que l'identifiant est « alphanumeric », sans définir ce mot ni
+ * prévoir de transformation. On prend donc la raison sociale telle que saisie,
+ * débarrassée seulement des espaces de début et de fin, et on en garde les 16
+ * premiers caractères, sans changer la casse ni retirer d'espace intérieur. Si
+ * l'administration refusait un espace ou un accent, le refus remonterait comme
+ * tel sur l'achat (« refusé, à corriger »), il ne serait pas silencieux.
  */
-const EAS_TVA_PAR_PAYS: Record<string, string> = {
-  AT: "9914", // Autriche (USt-IdNr.)
-  BE: "9925", // Belgique (VAT number)
-  BG: "9926", // Bulgarie (VAT number)
-  CY: "9928", // Chypre (VAT number)
-  CZ: "9929", // Tchéquie (VAT number)
-  DE: "9930", // Allemagne (VAT number)
-  EE: "9931", // Estonie (VAT number)
-  ES: "9920", // Espagne (Agencia Tributaria, identifiant fiscal)
-  FR: "9957", // France (VAT number)
-  GR: "9933", // Grèce (VAT number)
-  HR: "9934", // Croatie (VAT number)
-  HU: "9910", // Hongrie (VAT number)
-  IE: "9935", // Irlande (VAT number)
-  IT: "0211", // Italie : Partita IVA (VAT). PAS 0210 = Codice Fiscale.
-  LT: "9937", // Lituanie (VAT number)
-  LU: "9938", // Luxembourg (VAT number)
-  LV: "9939", // Lettonie (VAT number)
-  MT: "9943", // Malte (VAT number)
-  NL: "9944", // Pays-Bas (VAT number)
-  PL: "9945", // Pologne (VAT number)
-  PT: "9946", // Portugal (VAT number)
-  RO: "9947", // Roumanie (VAT number)
-  SE: "9955", // Suède (VAT number) : statut conflictuel, voir réserve ci-dessus
-  SK: "9950", // Slovaquie (VAT number)
-};
+export const SCHEMA_SIREN = "0002";
+export const SCHEMA_UE_HORS_FRANCE = "0223";
+export const SCHEMA_HORS_UE = "0227";
+/** Longueur maximale de l'identifiant pour 0223 et 0227 (G2.19, TT-33). */
+const LONGUEUR_MAX_IDENTIFIANT = 18;
+/** Nombre de caractères de la raison sociale repris pour 0227 (G2.19). */
+const CARACTERES_RAISON_SOCIALE = 16;
 
-/** Code EAS du schéma « n° de TVA » pour un pays (ISO 2 lettres), ou null. */
-export function schemaTvaPays(pays: string | null | undefined): string | null {
+/** Identité du vendeur à déclarer, ou la raison pour laquelle on ne peut pas la construire. */
+export type IdentiteVendeur =
+  | { ok: true; company_id: string; scheme_id: string; tva: string | null }
+  | { ok: false; detail: "tva_absente" | "tva_invalide" | "identite_incomplete"; message: string };
+
+/** Préfixe de TVA d'un État membre : la Grèce utilise EL, pas GR. */
+const prefixeTvaUe = (pays: string) => (pays === "GR" ? "EL" : pays);
+
+/**
+ * Construit l'identifiant du vendeur selon G2.19.
+ *
+ * Ordre de décision :
+ *  1. n° de TVA française (préfixe FR) : SIREN, schéma 0002 (G1.65), le SIREN
+ *     étant les 9 derniers chiffres du n° de TVA français ;
+ *  2. n° de TVA d'un autre État membre (préfixe de l'État, EL pour la Grèce) :
+ *     schéma 0223, identifiant = le n° de TVA. C'est l'État qui a attribué le
+ *     numéro qui compte, pas le pays d'établissement ;
+ *  3. fournisseur établi dans l'UE dont le n° est saisi sans préfixe : on y
+ *     ajoute le préfixe de son pays (forme du n° de TVA intracommunautaire,
+ *     que la liste de codes 0223 impose) ; sans n° du tout, on ne peut pas
+ *     déclarer (0223 suppose le n° de TVA, G2.33 l'exige) ;
+ *  4. fournisseur établi hors UE : schéma 0227, identifiant = code pays + 16
+ *     premiers caractères de la raison sociale. Son éventuel identifiant fiscal
+ *     local n'entre pas dans l'identifiant et n'est pas présenté comme une TVA.
+ */
+export function identiteVendeur(
+  pays: string | null | undefined,
+  tva: string | null | undefined,
+  raisonSociale: string | null | undefined
+): IdentiteVendeur {
   const p = (pays ?? "").trim().toUpperCase();
-  return EAS_TVA_PAR_PAYS[p] ?? null;
-}
+  const numero = normaliserTva(tva);
+  const prefixe = numero.slice(0, 2);
 
-/**
- * Schéma du vendeur : celui de l'État qui a ATTRIBUÉ son n° de TVA (préfixe du
- * numéro, « EL » pour la Grèce), et non celui de son pays d'établissement. Un
- * fournisseur allemand immatriculé en France (FR…) s'identifie sous le schéma
- * français ; le schéma du pays seul aurait déclaré un numéro français sous un
- * schéma allemand. Sans préfixe d'un État membre : le schéma du pays.
- */
-export function schemaVendeur(pays: string | null | undefined, tva: string | null | undefined): string | null {
-  const prefixe = normaliserTva(tva).slice(0, 2);
-  const etat = prefixe === "EL" ? "GR" : prefixe;
-  if (/^[A-Z]{2}$/.test(etat) && (EAS_TVA_PAR_PAYS[etat] || etat === "FR")) return EAS_TVA_PAR_PAYS[etat] ?? null;
-  return schemaTvaPays(pays);
-}
+  if (prefixe === "FR") {
+    const m = numero.match(/^FR[0-9A-Z]{2}(\d{9})$/);
+    if (!m) {
+      return {
+        ok: false,
+        detail: "tva_invalide",
+        message: "Le n° de TVA français du fournisseur est illisible (attendu : FR, deux caractères de clé, puis les 9 chiffres du SIREN).",
+      };
+    }
+    return { ok: true, company_id: m[1], scheme_id: SCHEMA_SIREN, tva: numero };
+  }
 
-/**
- * Schéma d'identifiant pour un vendeur sans n° de TVA intracommunautaire : un
- * fournisseur hors UE identifié par son identifiant fiscal local. La Plateforme
- * Agréée EXIGE un `company_id` ET un `company_id_scheme_id` pour le vendeur,
- * sans exception (vérifié en bac à sable le 03/11/2026 : pays + nom seuls, ou
- * identifiant sans schéma, sont refusés par un 400 « missing seller
- * company_id[_scheme_id] for b2bint invoice »). On ne peut donc PAS omettre le
- * schéma : il faut en poser un, même pour un pays tiers.
- *
- * Le bac à sable accepte n'importe quel schéma (9999, DUNS 0060, LEI 0199) et
- * n'émet jamais de `ppf_ereporting_id` : il ne permet donc PAS de confirmer ce
- * que la DGFiP acceptera réellement pour un fournisseur de pays tiers. Deux
- * lectures restent ouvertes tant qu'on n'a pas la prod : soit l'e-reporting
- * d'acquisition accepte un identifiant libre (9999 passe), soit il valide la
- * liste EAS (9999, absent de cette liste, serait alors rejeté). C'est LE seul
- * verrou prod de l'e-reporting hors UE, à confirmer auprès de Super PDP.
- *
- * Valeur surchargeable SANS redéploiement via `SUPERPDP_SCHEMA_TIERS`, pour
- * poser à la bascule prod le schéma que Super PDP aura confirmé.
- */
-export const SCHEMA_GENERIQUE = process.env.SUPERPDP_SCHEMA_TIERS?.trim() || "9999";
+  // Préfixe d'un État membre (EL pour la Grèce ; GR n'est pas un préfixe de TVA).
+  const etatUe = PAYS_UE.includes(prefixe) && prefixe !== "GR";
+  const paysUe = PAYS_UE.includes(p);
+  if (etatUe || paysUe) {
+    if (!numero) {
+      return {
+        ok: false,
+        detail: "tva_absente",
+        message: "Ajoutez le n° de TVA intracommunautaire du fournisseur : la déclaration repartira automatiquement.",
+      };
+    }
+    // Saisi avec un préfixe de deux lettres qui n'est pas celui d'un État
+    // membre : ce n'est pas un n° de TVA intracommunautaire, on ne le maquille
+    // pas en ajoutant un préfixe devant.
+    if (!etatUe && /^[A-Z]{2}/.test(numero)) {
+      return {
+        ok: false,
+        detail: "tva_invalide",
+        message: "Le n° saisi ne commence pas par le préfixe d'un État de l'UE (EL pour la Grèce) : saisissez le n° de TVA intracommunautaire du fournisseur.",
+      };
+    }
+    const intracom = etatUe ? numero : prefixeTvaUe(p) + numero;
+    if (intracom.length > LONGUEUR_MAX_IDENTIFIANT) {
+      return {
+        ok: false,
+        detail: "tva_invalide",
+        message: `Le n° de TVA du fournisseur dépasse ${LONGUEUR_MAX_IDENTIFIANT} caractères : vérifiez-le.`,
+      };
+    }
+    return { ok: true, company_id: intracom, scheme_id: SCHEMA_UE_HORS_FRANCE, tva: intracom };
+  }
+
+  const nom = (raisonSociale ?? "").trim();
+  if (!/^[A-Z]{2}$/.test(p) || !nom) {
+    return {
+      ok: false,
+      detail: "identite_incomplete",
+      message: "Indiquez le pays (code à deux lettres) et la raison sociale du fournisseur : la déclaration repartira automatiquement.",
+    };
+  }
+  // Array.from compte en caractères (points de code), pas en unités UTF-16 :
+  // une lettre accentuée ou un caractère hors plan de base compte pour un.
+  const id = p + Array.from(nom).slice(0, CARACTERES_RAISON_SOCIALE).join("");
+  return { ok: true, company_id: id, scheme_id: SCHEMA_HORS_UE, tva: null };
+}
 
 /** Normalise un n° de TVA pour servir d'identifiant (majuscules, sans espaces). */
 function normaliserTva(tva: string | null | undefined): string {
@@ -331,7 +371,7 @@ export async function lireNotreIdentite(workspaceId: string): Promise<NotreIdent
 
   return {
     number: entreprise.number,
-    scheme_id: SCHEME_SIREN,
+    scheme_id: SCHEMA_SIREN,
     country: entreprise.country || "FR",
     vat,
   };
@@ -365,10 +405,10 @@ export function construirePayloadB2bint(
     | "id"
   > & { tva_facturee?: NatureTva | null; categorie?: string | null; est_avoir?: boolean | null },
   nous: NotreIdentite,
-  // Code EAS du schéma de TVA du fournisseur (voir EAS_TVA_PAR_PAYS). Résolu et
-  // garanti non vide par l'appelant (transmettreAchat), qui garde l'achat en
-  // attente si le pays n'est pas couvert plutôt que d'envoyer un schéma faux.
-  schemaVendeur: string
+  // Identité du vendeur selon G2.19 (identiteVendeur). Construite et vérifiée
+  // par l'appelant (transmettreAchat), qui garde l'achat en attente quand elle
+  // ne peut pas l'être plutôt que d'envoyer une identité fausse.
+  vendeur: { company_id: string; scheme_id: string; tva: string | null }
 ) {
   const ht = montantStr(achat.montant_ht);
   const tva = montantStr(achat.montant_tva);
@@ -382,20 +422,17 @@ export function construirePayloadB2bint(
   const intracomBiens =
     autoliquidation && achat.categorie === "biens" && !estImportation(achat.categorie, achat.fournisseur_pays) && PAYS_UE.includes(String(achat.fournisseur_pays ?? "").toUpperCase());
 
-  // Le vendeur (fournisseur étranger) doit porter un `company_id` et son
-  // `company_id_scheme_id`, tous deux exigés par l'API. Faute d'autre
-  // identifiant, on l'identifie par son n° de TVA sous le schéma EAS du pays.
-  const idVendeur = normaliserTva(achat.fournisseur_tva);
+  // Le vendeur (fournisseur étranger) porte un `company_id` et son
+  // `company_id_scheme_id`, tous deux exigés par l'API (TT-33 / TT-33-1).
   const seller: Record<string, unknown> = {
     country: achat.fournisseur_pays,
-    company_id: idVendeur,
-    company_id_scheme_id: schemaVendeur,
+    company_id: vendeur.company_id,
+    company_id_scheme_id: vendeur.scheme_id,
   };
-  // `tax_registration_id` = n° de TVA, donc uniquement pour un vrai schéma de
-  // TVA UE. Pour un identifiant fiscal hors UE (schéma générique), on ne le
-  // présente pas comme une TVA : il sert seulement de `company_id`.
-  if (idVendeur && schemaVendeur !== SCHEMA_GENERIQUE) {
-    seller.tax_registration_id = idVendeur;
+  // n° de TVA (TT-34) : obligatoire sous 0002 et 0223 (G2.33), absent sous
+  // 0227 (hors UE), où l'identifiant fiscal local n'est pas une TVA.
+  if (vendeur.tva) {
+    seller.tax_registration_id = vendeur.tva;
     seller.tax_registration_id_qualifying_id = "VA";
   }
 
@@ -558,32 +595,20 @@ export async function transmettreAchat(
     };
   }
 
-  // L'API exige un `company_id` + `company_id_scheme_id` pour le vendeur. On
-  // identifie le fournisseur étranger par son n° de TVA sous le schéma EAS de
-  // son pays. Sans TVA, ou pour un pays dont le schéma n'est pas encore
-  // vérifié, on ne transmet pas : l'achat reste en attente avec un message
-  // clair, plutôt que de partir avec une identité fausse. Best-effort, jamais
-  // « échec » : une saisie à compléter n'est pas une saisie fautive.
-  // Identifiant du vendeur : n° de TVA intracommunautaire pour l'UE, ou
-  // identifiant fiscal du fournisseur pour un pays hors UE. La Plateforme Agréée
-  // exige un identifiant (bac à sable du 03/11/2026 : sans lui, 400 « missing
-  // seller company_id »). On ne bloque JAMAIS sur le pays : l'UE utilise son
-  // schéma EAS, le reste du monde un schéma générique accepté par la plateforme.
-  // Seul l'identifiant manquant garde l'achat en attente, et il est corrigeable
-  // par l'utilisateur depuis l'écran.
-  if (!normaliserTva(achat.fournisseur_tva)) {
-    return {
-      ok: false,
-      suite: "reessayer",
-      message:
-        "Ajoutez l'identifiant fiscal du fournisseur (son n° de TVA, ou son identifiant " +
-        "fiscal pour un pays hors UE) : la déclaration repartira automatiquement.",
-      detail: "identifiant_fournisseur_absent",
-    };
+  // Identité du vendeur selon G2.19 (identiteVendeur) : n° de TVA
+  // intracommunautaire (0223) dans l'UE, code pays + raison sociale (0227) hors
+  // UE, SIREN (0002) pour un n° de TVA française. Quand elle ne peut pas être
+  // construite (n° de TVA manquant ou illisible pour un fournisseur de l'UE),
+  // on ne transmet pas : l'achat reste en attente avec un message clair, plutôt
+  // que de partir avec une identité fausse. Best-effort, jamais « échec » : une
+  // saisie à compléter n'est pas une saisie fautive, et l'utilisateur la corrige
+  // depuis l'écran.
+  const vendeur = identiteVendeur(achat.fournisseur_pays, achat.fournisseur_tva, achat.fournisseur_nom);
+  if (!vendeur.ok) {
+    return { ok: false, suite: "reessayer", message: vendeur.message, detail: vendeur.detail };
   }
-  const schema = schemaVendeur(achat.fournisseur_pays, achat.fournisseur_tva) ?? SCHEMA_GENERIQUE;
 
-  const payload = construirePayloadB2bint(achat, nous, schema);
+  const payload = construirePayloadB2bint(achat, nous, vendeur);
 
   try {
     const res = await superpdpFetch(workspaceId, "/b2bint_invoices", {
@@ -702,16 +727,23 @@ type LigneB2bint = {
  */
 export function rapprocherDeclaration(
   liste: LigneB2bint[],
-  achat: Pick<AchatInternational, "numero" | "id" | "fournisseur_tva" | "date_facture" | "montant_ht">
+  achat: Pick<AchatInternational, "numero" | "id" | "fournisseur_tva" | "date_facture" | "montant_ht"> &
+    Partial<Pick<AchatInternational, "fournisseur_pays" | "fournisseur_nom">>
 ): { etat: "absent" } | { etat: "identique"; id: number | null } | { etat: "ambigu" } {
   const numero = numeroDeclaration(achat);
-  const nous = normaliserTva(achat.fournisseur_tva);
+  // Ce qui peut désigner ce fournisseur dans une déclaration déjà envoyée :
+  // l'identifiant G2.19 que l'on enverrait aujourd'hui, et le n° saisi tel
+  // quel (forme envoyée avant le 23/11/2026, schémas EAS par pays et 9999).
+  const identite = identiteVendeur(achat.fournisseur_pays, achat.fournisseur_tva, achat.fournisseur_nom);
+  const nous = new Set(
+    [normaliserTva(achat.fournisseur_tva), ...(identite.ok ? [normaliserTva(identite.company_id), normaliserTva(identite.tva)] : [])].filter(Boolean)
+  );
   let ambigu = false;
   for (const it of liste) {
     if (it.number !== numero || (it.direction ?? "in") !== "in") continue;
-    const leur = normaliserTva(it.seller?.company_id || it.seller?.tax_registration_id);
-    if (leur && nous && leur !== nous) continue;
-    if (!leur || !nous) { ambigu = true; continue; }
+    const leurs = [it.seller?.company_id, it.seller?.tax_registration_id].map(normaliserTva).filter(Boolean);
+    if (leurs.length && nous.size && !leurs.some((l) => nous.has(l))) continue;
+    if (!leurs.length || !nous.size) { ambigu = true; continue; }
     if (it.issue_date === achat.date_facture && it.total?.tax_exclusive_amount === montantStr(Number(achat.montant_ht))) {
       return { etat: "identique", id: typeof it.id === "number" ? it.id : null };
     }
@@ -767,7 +799,8 @@ async function listerDeclarationsB2bint(workspaceId: string): Promise<LigneB2bin
  */
 export async function declarationExisteChezPa(
   workspaceId: string,
-  achat: Pick<AchatInternational, "numero" | "id" | "fournisseur_tva" | "date_facture" | "montant_ht">
+  achat: Pick<AchatInternational, "numero" | "id" | "fournisseur_tva" | "date_facture" | "montant_ht"> &
+    Partial<Pick<AchatInternational, "fournisseur_pays" | "fournisseur_nom">>
 ): Promise<ReturnType<typeof rapprocherDeclaration> | null> {
   if (await estCompteDemo(workspaceId)) return { etat: "absent" };
   const liste = await listerDeclarationsB2bint(workspaceId);

@@ -103,8 +103,17 @@ async function main() {
     fournisseur_pays: "DK", fournisseur_tva: "DK12345678",
     numero: `E2E-DK-${Date.now()}`, date_facture: today,
   }) as never);
-  verifier("un pays hors table EAS (DK), avec identifiant, est transmis via le schema generique",
+  verifier("un fournisseur danois (ancien trou de la table EAS) est transmis sous 0223",
     paysHorsTable.ok === true, JSON.stringify(paysHorsTable));
+
+  // Hors UE (G2.19, schema 0227) : l'identifiant est le code pays + les 16
+  // premiers caracteres de la raison sociale. Aucun identifiant fiscal a saisir.
+  const horsUe = await transmettreAchat(SANDBOX_USER, base({
+    fournisseur_pays: "US", fournisseur_tva: null, fournisseur_nom: "e2e Cloud Services Incorporated",
+    numero: `E2E-US-${Date.now()}`, date_facture: today,
+  }) as never);
+  verifier("un fournisseur hors UE sans identifiant fiscal est transmis sous 0227",
+    horsUe.ok === true, JSON.stringify(horsUe));
 
   console.log("\n── Garde d'abandon du cron ───────────────────────────────────");
 
