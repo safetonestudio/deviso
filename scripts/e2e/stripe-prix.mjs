@@ -44,6 +44,9 @@ const EVENEMENTS_REQUIS = [
   "checkout.session.completed",
   "customer.subscription.updated",
   "customer.subscription.deleted",
+  // Rappel J-3 de fin d'essai (lib/emails/trial-ending.ts) : sans cet
+  // événement, le rappel ne part jamais, sans aucune erreur nulle part.
+  "customer.subscription.trial_will_end",
 ];
 
 const CLE = secret("STRIPE_SECRET_KEY");
