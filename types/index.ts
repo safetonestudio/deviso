@@ -23,6 +23,12 @@ export interface ProposalItem {
   unit_price: number;
   total: number;
   tva_rate?: number;
+  /**
+   * Nature de la ligne : livraison de biens ou prestation de services
+   * (lib/nature-operation.ts). Reprise de l'offre du catalogue, choisie sinon.
+   * Absente sur les lignes anterieures au 23/11/2026.
+   */
+  nature?: "goods" | "services";
 }
 
 export interface Proposal {

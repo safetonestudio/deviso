@@ -40,6 +40,11 @@ export type AchatEtranger = {
 export type Vente = {
   date: string; client: string; siren?: string; ht: number; taux: number;
   categorie?: "services" | "goods"; payeeLe?: string;
+  /**
+   * Lignes avec leur nature (23/11/2026). Présentes : la vente est créée SANS
+   * `operation_category`, la route la déduit des lignes (lib/nature-operation.ts).
+   */
+  lignes?: { ht: number; nature: "services" | "goods" }[];
 };
 
 export type Scenario = {
@@ -545,6 +550,23 @@ export const SCENARIOS: Scenario[] = [
     },
   },
   // ── Seconde relecture (21/11) : centime, hors de France, devise ─────────
+  {
+    nom: "vente-mixte-ventilee",
+    pourquoi: "Facture de 700 € de prestations et 300 € de biens, nature déduite des lignes par la route : 706 et 707 séparés, TVA des biens exigible tout de suite, celle des prestations au paiement.",
+    dossier: { tva_regime: "normal" },
+    annee: "2023",
+    ventes: [
+      { date: "2023-04-03", client: "Client Mixte", siren: "552100554", ht: 1000, taux: 20, payeeLe: "2023-04-20", lignes: [{ ht: 700, nature: "services" }, { ht: 300, nature: "goods" }] },
+      { date: "2023-04-04", client: "Client Biens", siren: "552100554", ht: 250, taux: 20, lignes: [{ ht: 250, nature: "goods" }] },
+    ],
+    attendu: {
+      comptes: {
+        "706000": { credit: 700 }, "707000": { credit: 550 },
+        "445740": { debit: 140, credit: 140 }, "445710": { credit: 250 },
+        "411000": { debit: 1500, credit: 1200 }, "512000": { debit: 1200 },
+      },
+    },
+  },
   {
     nom: "centime-vente-a-10",
     pourquoi: "Une vente de 10,05 € HT à 10 % : 1,01 € de TVA (l'ancien arrondi en virgule flottante donnait 1,00 €).",

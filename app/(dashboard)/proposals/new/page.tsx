@@ -11,6 +11,8 @@ import { GuidedTourBanner } from "@/components/GuidedTourBanner";
 import { RechercheEntreprise } from "@/components/RechercheEntreprise";
 import { DicteeVocale } from "@/components/DicteeVocale";
 import { pluriel } from "@/lib/pluriel";
+import { ChoixNature } from "@/components/ChoixNature";
+import type { NatureLigne } from "@/lib/nature-operation";
 
 type Step = "brief" | "review" | "client";
 
@@ -21,6 +23,7 @@ interface CatalogItem {
   unit: string | null;
   unit_price: number;
   type: "fixed" | "hourly";
+  nature: NatureLigne | null;
 }
 
 interface ProposalTemplate {
@@ -245,6 +248,7 @@ export default function NewProposalPage() {
       unit: item.unit || "forfait",
       unit_price: item.unit_price,
       total: Math.round(quantity * item.unit_price * 100) / 100,
+      ...(item.nature ? { nature: item.nature } : {}),
     };
     const items = [...generated.items, newItem];
     const total_ht = Math.round(items.reduce((s, i) => s + i.total, 0) * 100) / 100;
@@ -502,6 +506,17 @@ export default function NewProposalPage() {
                   >
                     ×
                   </button>
+                  <div className="col-span-12 -mt-1 flex flex-wrap items-center gap-2">
+                    <ChoixNature
+                      compact
+                      libelle="Nature de la ligne"
+                      valeur={item.nature}
+                      onChange={(n) => updateItem(idx, "nature", n)}
+                    />
+                    {!item.nature && (
+                      <span className="text-xs text-amber-400">Prestation ou bien ? À préciser avant de facturer.</span>
+                    )}
+                  </div>
                 </div>
               ))}
             </div>

@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import { LIBELLE_NATURE } from "@/lib/nature-operation";
 import { ventilationTva } from "@/lib/tva";
 import { useParams, useRouter } from "next/navigation";
 import Link from "next/link";
@@ -897,7 +898,12 @@ export default function InvoiceDetailPage() {
               <tbody>
                 {invoice.items.map((item, i) => (
                   <tr key={i} className="border-b border-ds-border last:border-0">
-                    <td className="px-3 sm:px-5 py-3 text-gray-300 font-medium break-words">{item.description}</td>
+                    <td className="px-3 sm:px-5 py-3 text-gray-300 font-medium break-words">
+                      {item.description}
+                      {item.nature && (
+                        <span className="block text-xs font-normal text-gray-500">{LIBELLE_NATURE[item.nature]}</span>
+                      )}
+                    </td>
                     <td className="px-2 sm:px-4 py-3 text-center text-gray-400">{item.quantity} {item.unit}</td>
                     <td className="px-2 sm:px-4 py-3 text-right text-gray-400 whitespace-nowrap">{fmt(item.unit_price)}</td>
                     <td className="px-3 sm:px-5 py-3 text-right font-semibold text-ink whitespace-nowrap">{fmt(item.total)}</td>

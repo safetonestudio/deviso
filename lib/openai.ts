@@ -20,6 +20,7 @@ export interface CatalogItemContext {
   unit: string | null;
   unit_price: number;
   type: "fixed" | "hourly";
+  nature?: "goods" | "services" | null;
 }
 
 export interface UserContext {
@@ -152,7 +153,7 @@ Ces prix sont ses tarifs réels, utilise-les EN PRIORITÉ et ne les modifie pas.
     }
   }
 
-  section += `\n\nRÈGLE CATALOGUE : Utilise ces tarifs TELS QUELS (ne les arrondis pas, ne les change pas). Adapte uniquement les quantités. Si le projet nécessite une prestation absente du catalogue, ajoute-la avec un prix cohérent avec les tarifs existants.`;
+  section += `\n\nRÈGLE CATALOGUE : Utilise ces tarifs TELS QUELS (ne les arrondis pas, ne les change pas). Adapte uniquement les quantités. Si le projet nécessite une prestation absente du catalogue, ajoute-la avec un prix cohérent avec les tarifs existants. Pour une ligne tirée du catalogue, commence sa description par le NOM EXACT de l'offre (tu peux préciser après une virgule).`;
 
   return section;
 }

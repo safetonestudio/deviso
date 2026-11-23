@@ -5,6 +5,8 @@ import { Clock, Package, Tag, Timer, type LucideIcon } from "lucide-react";
 import { UpgradeButton } from "@/components/UpgradeButton";
 import { GuidedTourBanner } from "@/components/GuidedTourBanner";
 import { usePlan, useIsMember } from "@/components/PlanContext";
+import { ChoixNature, PastilleNature } from "@/components/ChoixNature";
+import type { NatureLigne } from "@/lib/nature-operation";
 
 interface CatalogItem {
   id: string;
@@ -13,14 +15,18 @@ interface CatalogItem {
   unit: string;
   unit_price: number;
   type: "fixed" | "hourly";
+  nature: NatureLigne | null;
 }
 
 function fmt(n: number) {
   return new Intl.NumberFormat("fr-FR", { style: "currency", currency: "EUR" }).format(n);
 }
 
-const EMPTY_FIXED = { name: "", description: "", unit: "forfait", unit_price: 0 };
-const EMPTY_HOURLY = { name: "", description: "", unit: "heure", unit_price: 0 };
+// Pas de nature par défaut : elle décide de la déclaration (biens ou
+// prestations), on la fait choisir. Voir lib/nature-operation.ts.
+type FormState = { name: string; description: string; unit: string; unit_price: number; nature: NatureLigne | null };
+const EMPTY_FIXED: FormState = { name: "", description: "", unit: "forfait", unit_price: 0, nature: null };
+const EMPTY_HOURLY: FormState = { name: "", description: "", unit: "heure", unit_price: 0, nature: null };
 
 export default function CataloguePage() {
   const plan = usePlan();       // plan workspace (owner) depuis le layout
@@ -31,7 +37,7 @@ export default function CataloguePage() {
   // Form state, shared for create/edit
   const [showForm, setShowForm] = useState(false);
   const [formType, setFormType] = useState<"fixed" | "hourly">("fixed");
-  const [form, setForm] = useState(EMPTY_FIXED);
+  const [form, setForm] = useState<FormState>(EMPTY_FIXED);
   const [editId, setEditId] = useState<string | null>(null);
   const [saving, setSaving] = useState(false);
 
@@ -56,7 +62,7 @@ export default function CataloguePage() {
   function openEdit(item: CatalogItem) {
     setEditId(item.id);
     setFormType(item.type);
-    setForm({ name: item.name, description: item.description || "", unit: item.unit, unit_price: item.unit_price });
+    setForm({ name: item.name, description: item.description || "", unit: item.unit, unit_price: item.unit_price, nature: item.nature ?? null });
     setShowForm(true);
   }
 
@@ -66,7 +72,7 @@ export default function CataloguePage() {
   }
 
   async function handleSave() {
-    if (!form.name.trim()) return;
+    if (!form.name.trim() || !form.nature) return;
     setSaving(true);
     const isEdit = !!editId;
     const url = isEdit ? `/api/catalog/${editId}` : "/api/catalog";
@@ -174,6 +180,19 @@ export default function CataloguePage() {
                 className={`${inputCls} resize-none`}
               />
             </div>
+            <div>
+              <span className="block text-xs font-medium text-gray-400 mb-1">Nature *</span>
+              <ChoixNature
+                libelle="Nature de l'offre"
+                valeur={form.nature}
+                onChange={(n) => setForm((f) => ({ ...f, nature: n }))}
+              />
+              <p className="text-xs text-gray-500 mt-1.5">
+                {form.nature
+                  ? "Reprise sur chaque ligne de devis et de facture tirée de cette offre."
+                  : "À choisir : services et ventes de biens ne se déclarent pas pareil (TVA, comptabilité, chiffre d'affaires)."}
+              </p>
+            </div>
             <div className={formType === "hourly" ? "" : "grid grid-cols-2 gap-3"}>
               {formType === "fixed" && (
                 <div>
@@ -216,7 +235,7 @@ export default function CataloguePage() {
             </button>
             <button
               onClick={handleSave}
-              disabled={saving || !form.name.trim()}
+              disabled={saving || !form.name.trim() || !form.nature}
               className="px-4 py-2 text-sm font-semibold bg-indigo-600 text-ink rounded-lg hover:bg-indigo-700 disabled:opacity-50 transition-colors"
             >
               {saving ? "Enregistrement…" : editId ? "Mettre à jour" : "Ajouter"}
@@ -367,6 +386,7 @@ function ItemRow({ item, badge, priceLabel, onEdit, onDelete }: {
         <div className="flex flex-wrap items-center gap-x-2 gap-y-1">
           <span className="font-medium text-ink text-sm">{item.name}</span>
           {badge}
+          <PastilleNature nature={item.nature} />
         </div>
         {item.description && (
           <div className="text-gray-500 text-xs mt-0.5 break-words sm:truncate">{item.description}</div>

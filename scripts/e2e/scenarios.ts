@@ -200,9 +200,13 @@ const egal = (a: number, b: number) => Math.abs(a - b) < 0.005;
       const cree = await client.call("/api/invoices", { method: "POST", body: JSON.stringify({
         client_name: v.client, client_company: v.client, client_email: "banc@example.fr", client_siren: v.siren ?? null,
         client_street: "1 rue du Banc", client_postcode: "33000", client_city: "Bordeaux",
-        items: [{ description: "Prestation", quantity: 1, unit: "forfait", unit_price: v.ht, total: v.ht }],
+        items: v.lignes
+          ? v.lignes.map((l, k) => ({ description: `${l.nature === "goods" ? "Article" : "Prestation"} ${k + 1}`, quantity: 1, unit: "forfait", unit_price: l.ht, total: l.ht, nature: l.nature }))
+          : [{ description: "Prestation", quantity: 1, unit: "forfait", unit_price: v.ht, total: v.ht }],
         total_ht: v.ht, tva_rate: v.taux, total_ttc: Math.round(v.ht * (1 + v.taux / 100) * 100) / 100,
-        issue_date: v.date, due_date: v.date, operation_category: v.categorie ?? "services", type_code: "380", invoice_type: "standard",
+        issue_date: v.date, due_date: v.date, type_code: "380", invoice_type: "standard",
+        // Lignes avec nature : la route DÉDUIT la catégorie, on ne l'envoie pas.
+        ...(v.lignes ? {} : { operation_category: v.categorie ?? "services" }),
       }) });
       const id = cree.body?.invoice?.id;
       if (!id) { verifier("création d'une vente par l'API", false, `HTTP ${cree.status} ${JSON.stringify(cree.body).slice(0, 120)}`); continue; }

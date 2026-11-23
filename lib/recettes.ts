@@ -1,4 +1,5 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
+import { natureEffective } from "./nature-operation";
 
 /**
  * SOURCE UNIQUE DES RECETTES ENCAISSEES.
@@ -46,7 +47,7 @@ export type FactureRecette = {
   issue_date: string | null;
   payment_mode?: string | null;
   operation_category?: string | null;
-  items?: { description?: string | null }[] | null;
+  items?: { description?: string | null; total?: unknown; nature?: unknown }[] | null;
 };
 
 export type LigneRecette = {
@@ -62,8 +63,39 @@ export type LigneRecette = {
   // Ventes de biens ou prestations de services : abattements et seuils micro
   // differents (71 %/203 100 EUR vs 50 %/83 600 EUR, plafonds 2026), la declaration se fait
   // par categorie. Lu de invoices.operation_category (meme source que le FEC).
-  categorie: "biens" | "services";
+  // « mixte » : facture dont les lignes portent les deux natures ; le detail
+  // est dans `repartition`, ventile LIGNE PAR LIGNE (23/11/2026).
+  categorie: "biens" | "services" | "mixte";
+  /** HT et TTC encaisses par categorie, signes comme `ht` / `ttc`. */
+  repartition: { biens: { ht: number; ttc: number }; services: { ht: number; ttc: number } };
 };
+
+const r2 = (n: number) => Math.round(n * 100) / 100;
+
+/**
+ * Repartition biens / services d'une recette. Chaque ligne va a sa nature
+ * (lib/nature-operation.ts : la sienne, sinon celle de la facture, une mixte
+ * sans detail retombant en services comme le FEC). Le HT des biens est la
+ * somme de leurs lignes au prorata du HT facture ; les services prennent le
+ * reste, et le TTC suit le meme prorata : la somme des parts vaut la recette.
+ */
+function repartitionRecette(f: FactureRecette, ht: number, ttc: number): LigneRecette["repartition"] {
+  const lignes = f.items ?? [];
+  let biens = 0;
+  let total = 0;
+  for (const l of lignes) {
+    const m = Number(l?.total) || 0;
+    total += m;
+    if (natureEffective(l, f.operation_category) === "goods") biens += m;
+  }
+  const partBiens = lignes.length === 0 || total === 0 ? (f.operation_category === "goods" ? 1 : 0) : biens / total;
+  const biensHt = r2(ht * partBiens);
+  const biensTtc = r2(ttc * partBiens);
+  return {
+    biens: { ht: biensHt, ttc: biensTtc },
+    services: { ht: r2(ht - biensHt), ttc: r2(ttc - biensTtc) },
+  };
+}
 
 const CHAMPS = "id, invoice_number, client_name, client_company, status, invoice_type, total_ht, total_ttc, paid_at, issue_date, payment_mode, operation_category, items";
 
@@ -78,6 +110,11 @@ export function ligneRecette(f: FactureRecette): LigneRecette | null {
     .filter(Boolean)
     .join(" ; ")
     .slice(0, 200);
+  const ht = signe * Number(f.total_ht ?? 0);
+  const ttc = signe * Number(f.total_ttc ?? f.total_ht ?? 0);
+  const repartition = repartitionRecette(f, ht, ttc);
+  const aBiens = repartition.biens.ht !== 0 || repartition.biens.ttc !== 0;
+  const aServices = repartition.services.ht !== 0 || repartition.services.ttc !== 0;
   return {
     id: f.id,
     date: String(brute).slice(0, 10),
@@ -85,10 +122,11 @@ export function ligneRecette(f: FactureRecette): LigneRecette | null {
     numero: f.invoice_number ?? "",
     client: f.client_company || f.client_name || "",
     nature: nature || (f.invoice_type === "avoir" ? "Avoir" : "Prestation"),
-    ht: signe * Number(f.total_ht ?? 0),
-    ttc: signe * Number(f.total_ttc ?? f.total_ht ?? 0),
+    ht,
+    ttc,
     mode: estModeReglement(f.payment_mode) ? f.payment_mode : null,
-    categorie: f.operation_category === "goods" ? "biens" : "services",
+    categorie: aBiens && aServices ? "mixte" : aBiens ? "biens" : aServices ? "services" : f.operation_category === "goods" ? "biens" : "services",
+    repartition,
   };
 }
 
@@ -102,12 +140,14 @@ export function totauxParCategorie(lignes: LigneRecette[]): { biens: TotalCatego
   const vide = (): TotalCategorie => ({ ht: 0, ttc: 0, nb: 0 });
   const acc = { biens: vide(), services: vide() };
   for (const l of lignes) {
-    const t = acc[l.categorie];
-    t.ht += l.ht;
-    t.ttc += l.ttc;
-    t.nb += 1;
+    for (const cle of ["biens", "services"] as const) {
+      const part = l.repartition[cle];
+      if (part.ht === 0 && part.ttc === 0 && l.categorie !== (cle === "biens" ? "biens" : "services")) continue;
+      acc[cle].ht += part.ht;
+      acc[cle].ttc += part.ttc;
+      acc[cle].nb += 1;
+    }
   }
-  const r2 = (n: number) => Math.round(n * 100) / 100;
   acc.biens.ht = r2(acc.biens.ht); acc.biens.ttc = r2(acc.biens.ttc);
   acc.services.ht = r2(acc.services.ht); acc.services.ttc = r2(acc.services.ttc);
   return acc;

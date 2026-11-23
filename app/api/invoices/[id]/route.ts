@@ -1,4 +1,5 @@
 import { ventilationTva } from "@/lib/tva";
+import { deduireCategorie, estCategorieOperation, type LigneNature } from "@/lib/nature-operation";
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 import { createClient as createAdminClient } from "@supabase/supabase-js";
@@ -110,6 +111,10 @@ export async function PATCH(req: NextRequest, { params }: Params) {
     Object.entries(body).filter(([k]) => ALLOWED.includes(k as typeof ALLOWED[number]))
   );
 
+  if ("operation_category" in safeUpdate && !estCategorieOperation(safeUpdate.operation_category)) {
+    return NextResponse.json({ error: "NATURE_OPERATION_INVALIDE" }, { status: 400 });
+  }
+
   if ("payment_mode" in safeUpdate && safeUpdate.payment_mode !== null && !estModeReglement(safeUpdate.payment_mode)) {
     return NextResponse.json({ error: "MODE_REGLEMENT_INVALIDE" }, { status: 400 });
   }
@@ -169,6 +174,13 @@ export async function PATCH(req: NextRequest, { params }: Params) {
       return { ...it, total: centimes(ligne) };
     });
     const v = ventilationTva(lignes, taux);
+    // Nature de l'operation : deduite des nouvelles lignes quand elles en
+    // disent assez et que le PATCH ne la fixe pas lui-meme. Sinon, celle en
+    // base est gardee (lib/nature-operation.ts).
+    if ("items" in safeUpdate && !("operation_category" in safeUpdate)) {
+      const d = deduireCategorie(lignes as LigneNature[]);
+      if (d.complete && d.categorie) safeUpdate.operation_category = d.categorie;
+    }
     safeUpdate.items = lignes;
     safeUpdate.total_ht = v.total_ht;
     safeUpdate.total_ttc = v.total_ttc;

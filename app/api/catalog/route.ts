@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { getWorkspaceUserId, getWorkspaceProfile } from "@/lib/workspace";
+import { estNatureLigne } from "@/lib/nature-operation";
 
 export async function GET() {
   const supabase = await createClient();
@@ -37,8 +38,17 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "PLAN_REQUIRED", message: "Le catalogue nécessite un plan payant (Solo ou Pro)." }, { status: 403 });
   }
 
-  const { name, description, unit, unit_price, type } = await req.json();
+  const { name, description, unit, unit_price, type, nature } = await req.json();
   if (!name) return NextResponse.json({ error: "Nom requis" }, { status: 400 });
+  // La nature (bien ou prestation) est exigee a la creation : c'est elle qui
+  // suit chaque ligne de devis et de facture tiree de cette offre, et decide
+  // de la declaration (lib/nature-operation.ts). Pas de valeur par defaut.
+  if (!estNatureLigne(nature)) {
+    return NextResponse.json(
+      { error: "NATURE_REQUISE", message: "Précisez s'il s'agit d'une vente de biens ou d'une prestation de services." },
+      { status: 400 }
+    );
+  }
 
   const itemType = type === "hourly" ? "hourly" : "fixed";
   // Pour les items horaires, l'unité est forcée à "heure"
@@ -46,7 +56,7 @@ export async function POST(req: NextRequest) {
 
   const { data, error } = await supabase
     .from("service_catalog")
-    .insert({ user_id: workspaceId, name, description, unit: itemUnit, unit_price: unit_price || 0, type: itemType })
+    .insert({ user_id: workspaceId, name, description, unit: itemUnit, unit_price: unit_price || 0, type: itemType, nature })
     .select()
     .single();
 

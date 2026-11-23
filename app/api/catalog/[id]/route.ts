@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 import { getWorkspaceUserId } from "@/lib/workspace";
+import { estNatureLigne } from "@/lib/nature-operation";
 
 type Params = { params: Promise<{ id: string }> };
 
@@ -16,8 +17,15 @@ export async function PATCH(req: NextRequest, { params }: Params) {
   const workspaceId = await getWorkspaceUserId(user.id);
 
   const body = await req.json();
-  const allowed = ["name", "description", "unit", "unit_price", "type"];
+  const allowed = ["name", "description", "unit", "unit_price", "type", "nature"];
   const updates = Object.fromEntries(Object.entries(body).filter(([k]) => allowed.includes(k)));
+  // Une nature se corrige, elle ne s'efface pas (lib/nature-operation.ts).
+  if ("nature" in updates && !estNatureLigne(updates.nature)) {
+    return NextResponse.json(
+      { error: "NATURE_INVALIDE", message: "Nature attendue : vente de biens ou prestation de services." },
+      { status: 400 }
+    );
+  }
 
   const { data, error } = await supabase
     .from("service_catalog")

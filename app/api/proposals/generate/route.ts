@@ -9,6 +9,24 @@ import {
 } from "@/lib/openai";
 import { getWorkspaceUserId } from "@/lib/workspace";
 import type { GeneratedProposal } from "@/types";
+import { natureDepuisCatalogue, type OffreNature } from "@/lib/nature-operation";
+
+/**
+ * Chaque ligne generee reprend la nature (bien / prestation) de l'offre du
+ * catalogue dont elle porte le nom ; sinon elle reste sans nature et l'ecran
+ * la fait preciser. La nature ne se demande pas a l'IA, elle se lit.
+ */
+function avecNatures<T extends { items: { description: string }[] }>(p: T, offres: OffreNature[]): T {
+  return {
+    ...p,
+    items: p.items.map((it) => {
+      const nature = natureDepuisCatalogue(it.description, offres);
+      const { nature: _ancienne, ...reste } = it as typeof it & { nature?: unknown };
+      void _ancienne;
+      return nature ? { ...reste, nature } : reste;
+    }),
+  };
+}
 
 const DAILY_LIMIT = 20;
 
@@ -172,6 +190,10 @@ export async function POST(req: NextRequest) {
       .single();
 
     if (demoCheck?.is_demo) {
+      const { data: offresDemo } = await supabaseAdmin
+        .from("service_catalog")
+        .select("name, nature")
+        .eq("user_id", await getWorkspaceUserId(user.id));
       const mockProposal = isRefinement
         ? {
             ...(existingProposal!),
@@ -196,7 +218,7 @@ export async function POST(req: NextRequest) {
             notes:
               "Délai de réalisation : 5 semaines. Inclut 2 cycles de révisions. Fichiers sources livrés à réception du solde. TVA 20% applicable.",
           };
-      return NextResponse.json({ proposal: mockProposal, demo: true });
+      return NextResponse.json({ proposal: avecNatures(mockProposal, (offresDemo ?? []) as OffreNature[]), demo: true });
     }
 
     // Workspace routing, les membres utilisent le profil + catalogue de l'owner
@@ -218,7 +240,7 @@ export async function POST(req: NextRequest) {
         .limit(8),
       supabaseAdmin
         .from("service_catalog")
-        .select("name, description, unit, unit_price, type")
+        .select("name, description, unit, unit_price, type, nature")
         .eq("user_id", workspaceUserId)
         .order("name", { ascending: true }),
     ]);
@@ -269,7 +291,7 @@ export async function POST(req: NextRequest) {
       generated = await generateProposalWithContext(brief!.trim(), userContext);
     }
 
-    return NextResponse.json({ proposal: generated });
+    return NextResponse.json({ proposal: avecNatures(generated, catalogItems as OffreNature[]) });
   } catch (error) {
     console.error("[generate-proposal]", error);
     return NextResponse.json(

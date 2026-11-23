@@ -227,7 +227,12 @@ export default async function LivreRecettes({ searchParams }: { searchParams: Pr
                           <td className="px-4 py-2.5 text-gray-300 whitespace-nowrap font-mono text-xs leading-5">{l.numero}</td>
                           <td className="px-4 py-2.5 text-ink truncate" title={l.client}>{l.client}</td>
                           <td className="px-4 py-2.5 text-gray-400"><span className="line-clamp-2" title={l.nature}>{l.nature}</span></td>
-                          <td className="px-4 py-2.5 text-gray-300 whitespace-nowrap">{l.categorie === "biens" ? "Biens" : "Services"}</td>
+                          <td className="px-4 py-2.5 text-gray-300 whitespace-nowrap">
+                            {l.categorie === "biens" ? "Biens" : l.categorie === "mixte" ? "Mixte" : "Services"}
+                            {l.categorie === "mixte" && (
+                              <span className="block text-xs text-gray-500">biens {eur(l.repartition.biens.ht)} · services {eur(l.repartition.services.ht)}</span>
+                            )}
+                          </td>
                           <td className="px-4 py-2.5 text-gray-300 text-right tabular-nums whitespace-nowrap">{eur(l.ht)}</td>
                           <td className="px-4 py-2.5 text-ink text-right tabular-nums whitespace-nowrap font-medium">{eur(l.ttc)}</td>
                           <td className="px-4 py-2.5 text-gray-400 truncate" title={l.mode ? MODES_REGLEMENT[l.mode] : undefined}>

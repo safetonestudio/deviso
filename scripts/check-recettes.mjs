@@ -27,11 +27,15 @@ const lib = lire(join("lib", "recettes.ts"));
 const route = lire(join("app", "api", "export", "livre-recettes", "route.ts"));
 const page = lire(join("app", "(dashboard)", "livre-recettes", "page.tsx"));
 
-// 1. Categorie calculee depuis operation_category, et ce champ est bien lu.
-const mappe = (s) => /categorie: f\.operation_category === "goods" \? "biens" : "services"/.test(s);
-const champLu = /const CHAMPS[^;]*operation_category/.test(lib);
-exige("recettes, catégorie calculée depuis operation_category", mappe(lib) && champLu, "sans operation_category dans la lecture ET le mapping, toute recette passerait en services");
-contre("une catégorie figée en services", !mappe(lib.replace('f.operation_category === "goods" ? "biens" : "services"', '"services"')));
+// 1. Categorie calculee ligne par ligne (23/11/2026) : chaque ligne prend sa
+//    nature (items[].nature), a defaut celle de la facture (operation_category),
+//    via la regle unique natureEffective (lib/nature-operation.ts), la meme que
+//    le FEC. Les deux champs doivent etre lus.
+const mappe = (s) => /natureEffective\(l, f\.operation_category\) === "goods"/.test(s) && /repartition/.test(s);
+const champLu = /const CHAMPS[^;]*operation_category[^;]*items/.test(lib);
+exige("recettes, catégorie calculée ligne par ligne (nature de ligne, sinon operation_category)", mappe(lib) && champLu, "sans items et operation_category dans la lecture ET la ventilation par ligne, une facture mixte passerait en entier en services");
+contre("une ventilation qui ignore la nature des lignes", !mappe(lib.replace('natureEffective(l, f.operation_category) === "goods"', 'f.operation_category === "goods"')));
+contre("une lecture sans les lignes", !/const CHAMPS[^;]*operation_category[^;]*items/.test(lib.replace(', items";', '";')));
 
 // 2. Totaux par categorie exposes.
 exige("recettes, totaux par catégorie exposés", /export function totauxParCategorie/.test(lib), "la déclaration micro a besoin du CA ventilé par catégorie");
@@ -41,6 +45,11 @@ exige(
   "export livre des recettes, colonne Catégorie présente",
   /"Catégorie"/.test(route) && /Vente de biens/.test(route) && /Prestation de services/.test(route),
   "le CSV du livre doit distinguer ventes de biens et prestations de services",
+);
+exige(
+  "export livre des recettes, détail HT biens / services (factures mixtes)",
+  /"dont HT biens"/.test(route) && /repartition\.biens\.ht/.test(route) && /repartition\.services\.ht/.test(route),
+  "une recette mixte doit montrer sa part biens et sa part services",
 );
 contre("un export sans colonne catégorie", !/"Catégorie"/.test(route.replace('"Catégorie", ', "")));
 

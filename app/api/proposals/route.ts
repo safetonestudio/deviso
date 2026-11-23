@@ -79,7 +79,14 @@ export async function POST(req: NextRequest) {
   const itemsWithIds = ((items || []) as ProposalItem[]).map((item) => {
     const q = Number(item.quantity), pu = Number(item.unit_price);
     const ligne = Number.isFinite(q) && Number.isFinite(pu) ? q * pu : Number(item.total);
-    return { ...item, id: item.id || uuidv4(), total: centimes(ligne) };
+    // Nature de la ligne gardee seulement si valide (lib/nature-operation.ts).
+    const { nature, ...reste } = item;
+    return {
+      ...reste,
+      ...(nature === "goods" || nature === "services" ? { nature } : {}),
+      id: item.id || uuidv4(),
+      total: centimes(ligne),
+    };
   });
   const tauxDevis = Number(tva_rate) || 0;
   const vDevis = ventilationTva(itemsWithIds, tauxDevis);

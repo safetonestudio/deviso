@@ -6,6 +6,7 @@ import { resend } from "@/lib/resend";
 import { piedDePageMarque } from "@/lib/emails/branding";
 import { cronAutorise } from "@/lib/cron-auth";
 import { numeroDocument } from "@/lib/numerotation";
+import { deduireCategorie } from "@/lib/nature-operation";
 
 // Vercel cron, déclenché quotidiennement à 7h
 // Génère les factures récurrentes dont la date de facturation est arrivée
@@ -83,6 +84,7 @@ export async function GET(req: NextRequest) {
     // viole BR-CO-10.
     const centimes = (n: number) => Math.round((Number(n) || 0) * 100) / 100;
     const lignes = rec.items.map((it) => ({ ...it, total: centimes(it.total) }));
+    const natureRecurrente = deduireCategorie(lignes as { nature?: unknown }[]);
     const vRec = ventilationTva(lignes, rec.tva_rate);
     const total_ht = vRec.total_ht;
     const total_ttc = vRec.total_ttc;
@@ -153,7 +155,11 @@ export async function GET(req: NextRequest) {
         tva_rate: rec.tva_rate,
         total_ttc,
         type_code: "380",
-        operation_category: "services",
+        // Deduite des lignes quand toutes portent leur nature
+        // (lib/nature-operation.ts) ; sinon le comportement historique
+        // (services). Le cron ne peut pas demander : le modele recurrent
+        // porte les lignes telles que saisies.
+        operation_category: natureRecurrente.complete && natureRecurrente.categorie ? natureRecurrente.categorie : "services",
         payment_on_debit: false,
         issue_date,
         due_date,

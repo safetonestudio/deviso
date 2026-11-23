@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { estNatureLigne, resoudreCategorie } from "@/lib/nature-operation";
 import { createClient } from "@/lib/supabase/server";
 import { v4 as uuidv4 } from "uuid";
 import type { ProposalItem } from "@/types";
@@ -88,6 +89,22 @@ export async function POST(req: NextRequest) {
     Object.entries(body as Record<string, unknown>).filter(([k]) => CHAMPS_FACTURE.has(k))
   );
 
+  // Nature de l'operation (BT-23, 706/707, exigibilite de la TVA, categorie
+  // du CA micro) : choix explicite, sinon DEDUITE des lignes. Une facture dont
+  // certaines lignes ont une nature et d'autres non, sans choix, est refusee :
+  // on ne suppose pas « services » pour une moitie de facture. Verifie AVANT
+  // la numerotation : un refus apres coup laisserait un trou dans la sequence.
+  const resolution = resoudreCategorie((body.items || []) as ProposalItem[], body.operation_category);
+  if (!resolution.ok) {
+    return NextResponse.json(
+      {
+        error: resolution.erreur,
+        message: `${resolution.sansNature} ligne(s) sans nature : précisez s'il s'agit d'une vente de biens ou d'une prestation de services.`,
+      },
+      { status: 400 }
+    );
+  }
+
   // Génère le numéro de facture auto si absent. La règle vit dans
   // lib/numerotation.ts, partagée avec la création d'avoir, voir ce fichier
   // pour le pourquoi du refus plutôt que du repli.
@@ -159,8 +176,17 @@ export async function POST(req: NextRequest) {
     const q = Number(item.quantity);
     const pu = Number(item.unit_price);
     const ligne = Number.isFinite(q) && Number.isFinite(pu) ? q * pu : Number(item.total);
-    return { ...item, id: item.id || uuidv4(), total: centimes(ligne) };
+    // Nature de la ligne (biens / services) : gardee si valide, retiree sinon.
+    const { nature: _n, ...reste } = item;
+    void _n;
+    return {
+      ...reste,
+      ...(estNatureLigne(item.nature) ? { nature: item.nature } : {}),
+      id: item.id || uuidv4(),
+      total: centimes(ligne),
+    };
   });
+
 
   const tvaRate = Number(body.tva_rate) || 0;
   const ventilation = ventilationTva(itemsWithIds, tvaRate);
@@ -185,6 +211,7 @@ export async function POST(req: NextRequest) {
       created_by: user.id,
       invoice_number: invoiceNumber,
       items: itemsWithIds,
+      operation_category: resolution.categorie,
       tva_rate: tvaRate,
       total_ht: totalHtCalcule,
       total_ttc: totalTtcCalcule,

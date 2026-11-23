@@ -1,5 +1,6 @@
-import { arrondi2 } from "./montants";
-import { ventilationTva, type LigneMontant } from "./tva";
+import { arrondi2, tvaSurBase } from "./montants";
+import { ventilationTva, tauxLigne, type LigneMontant } from "./tva";
+import { estNatureLigne } from "./nature-operation";
 import { PLAN_PAR_DEFAUT, type PlanComptesFec } from "./plan-comptes-fec";
 
 /**
@@ -198,6 +199,79 @@ function tvaSurEncaissements(inv: FactureExport): boolean {
   return services && !inv.payment_on_debit;
 }
 
+/**
+ * Ventilation d'une facture entre ventes de biens et prestations, LIGNE PAR
+ * LIGNE (23/11/2026). Avant, une facture mixte partait en entier en 706 avec
+ * sa TVA exigible a la facturation ; desormais chaque ligne qui porte sa
+ * nature (`items[].nature`, lib/nature-operation.ts) va a son compte (707 /
+ * 706), et la TVA de ses prestations suit la regle des prestations
+ * (exigible a l'encaissement, compte d'attente 44574, sauf option debits).
+ *
+ * Ligne SANS nature : lecture historique, inchangee. Elle prend la nature de
+ * la facture ; sur une facture mixte, elle part en 706 avec TVA exigible a la
+ * facturation, comme avant. On ne reclasse pas un passe qu'on ne connait pas.
+ *
+ * L'equilibre est garanti par construction : le HT des prestations est le HT
+ * de la facture MOINS celui des biens, et pour chaque taux la TVA mise en
+ * attente est la TVA du taux MOINS la part exigible. Les totaux de la facture
+ * (client, TVA par taux) sont donc ceux d'avant, seule leur repartition change.
+ */
+export type VentilationNature = {
+  biensHt: number;
+  servicesHt: number;
+  /** Par taux : TVA exigible a la facturation et TVA en attente d'encaissement. */
+  tvas: { taux: number; exigible: number; attente: number }[];
+};
+
+export function ventilationParNature(inv: FactureExport): VentilationNature {
+  const ht = arrondi2(inv.total_ht ?? 0);
+  const lignes = ((inv.items ?? []) as (LigneMontant & { nature?: unknown })[]);
+  const vent = ventilationTva(lignes, inv.tva_rate);
+  const attenteFacture = tvaSurEncaissements(inv);
+  const debits = !!inv.payment_on_debit;
+  const cat = inv.operation_category;
+
+  // Nature et exigibilite de chaque ligne.
+  const parts = lignes.map((l) => {
+    const total = arrondi2(Number(l.total) || 0);
+    const taux = tauxLigne(l, inv.tva_rate);
+    if (estNatureLigne(l.nature)) {
+      const biens = l.nature === "goods";
+      return { total, taux, biens, attente: !biens && !debits };
+    }
+    return { total, taux, biens: cat === "goods", attente: attenteFacture };
+  });
+
+  let biensHt: number;
+  let servicesHt: number;
+  if (parts.length === 0) {
+    biensHt = cat === "goods" ? ht : 0;
+    servicesHt = arrondi2(ht - biensHt);
+  } else if (parts.every((p) => p.biens)) {
+    biensHt = ht;
+    servicesHt = 0;
+  } else {
+    biensHt = arrondi2(parts.filter((p) => p.biens).reduce((s, p) => s + p.total, 0));
+    servicesHt = arrondi2(ht - biensHt);
+  }
+
+  const tvas = vent.groupes
+    .filter((g) => g.montant_tva > 0)
+    .map((g) => {
+      const duTaux = parts.filter((p) => p.taux === g.taux);
+      const total = arrondi2(g.montant_tva);
+      // Pas de lignes lisibles (facture sans detail) : regle de la facture.
+      if (duTaux.length === 0) return { taux: g.taux, exigible: attenteFacture ? 0 : total, attente: attenteFacture ? total : 0 };
+      if (duTaux.every((p) => p.attente)) return { taux: g.taux, exigible: 0, attente: total };
+      if (duTaux.every((p) => !p.attente)) return { taux: g.taux, exigible: total, attente: 0 };
+      const baseExigible = arrondi2(duTaux.filter((p) => !p.attente).reduce((s, p) => s + p.total, 0));
+      const exigible = Math.min(total, tvaSurBase(baseExigible, g.taux));
+      return { taux: g.taux, exigible, attente: arrondi2(total - exigible) };
+    });
+
+  return { biensHt, servicesHt, tvas };
+}
+
 export type LigneEcriture = {
   compte: string; compteLib: string; auxNum: string; auxLib: string; debit: number; credit: number;
   lettrage?: string; dateLet?: string;
@@ -262,37 +336,38 @@ export function ecrituresComptables(
     const cCode = clientCode(inv.client_siren, clientLib);
     const ht = arrondi2(inv.total_ht ?? 0);
     const ttc = arrondi2(inv.total_ttc ?? 0);
-    const ventFec = ventilationTva((inv.items ?? []) as LigneMontant[], inv.tva_rate);
-    const attente = tvaSurEncaissements(inv);
+    const ventNat = ventilationParNature(inv);
     const payee = inv.status === "paid";
     const payDate = payee ? fecDate(inv.paid_at || inv.updated_at || inv.issue_date) : "";
     const rang = nLettrage;
     const lettre = payee ? codeLettrage(nLettrage++) : undefined;
 
-    // 706 « prestations de services » ou 707 « ventes de marchandises ».
-    const compteVente = inv.operation_category === "goods" ? plan.ventesBiens : plan.ventesServices;
-    const libelleVente =
-      inv.operation_category === "goods" ? "Ventes de marchandises" : "Prestations de services";
 
     // Sens d'une ligne : `debitSurFacture` dit si elle est au debit sur une
     // facture ; un avoir inverse tout.
     const sens = (montant: number, debitSurFacture: boolean) =>
       debitSurFacture !== avoir ? { debit: montant, credit: 0 } : { debit: 0, credit: montant };
 
-    const tvas = ventFec.groupes
-      .filter((g) => g.montant_tva > 0)
-      .map((g) => ({ taux: g.taux, montant: arrondi2(g.montant_tva) }));
+    // Produits : 707 « ventes de marchandises » et/ou 706 « prestations de
+    // services », ventiles ligne par ligne (ventilationParNature). Credites sur
+    // une facture, debites sur un avoir. Toujours au moins une ligne produit.
+    const produits: Ligne[] = [];
+    if (ventNat.biensHt !== 0) produits.push({ compte: plan.ventesBiens, compteLib: "Ventes de marchandises", auxNum: "", auxLib: "", ...sens(ventNat.biensHt, false) });
+    if (ventNat.servicesHt !== 0) produits.push({ compte: plan.ventesServices, compteLib: "Prestations de services", auxNum: "", auxLib: "", ...sens(ventNat.servicesHt, false) });
+    if (produits.length === 0) {
+      const biens = inv.operation_category === "goods";
+      produits.push({ compte: biens ? plan.ventesBiens : plan.ventesServices, compteLib: biens ? "Ventes de marchandises" : "Prestations de services", auxNum: "", auxLib: "", ...sens(ht, false) });
+    }
+    const tvasAttente = ventNat.tvas.filter((t) => t.attente > 0);
 
     const lignesVente: Ligne[] = [
       // Client : debite sur une facture (il doit), credite sur un avoir.
       { compte: plan.clients, compteLib: "Clients", auxNum: cCode, auxLib: clientLib, ...sens(ttc, true), lettrage: lettre, dateLet: lettre ? payDate : undefined, rangLettrage: lettre ? rang : undefined, siren: inv.client_siren, tiers: "client" },
-      // Produit : credite sur une facture, debite sur un avoir.
-      { compte: compteVente, compteLib: libelleVente, auxNum: "", auxLib: "", ...sens(ht, false) },
-      ...tvas.map((t) => ({
-        compte: attente ? plan.tvaNonExigible : plan.tvaCollectee,
-        compteLib: attente ? `TVA collectee non exigible ${t.taux}%` : `TVA collectee ${t.taux}%`,
-        auxNum: "", auxLib: "", ...sens(t.montant, false),
-      })),
+      ...produits,
+      ...ventNat.tvas.flatMap((t) => [
+        ...(t.exigible > 0 ? [{ compte: plan.tvaCollectee, compteLib: `TVA collectee ${t.taux}%`, auxNum: "", auxLib: "", ...sens(t.exigible, false) }] : []),
+        ...(t.attente > 0 ? [{ compte: plan.tvaNonExigible, compteLib: `TVA collectee non exigible ${t.taux}%`, auxNum: "", auxLib: "", ...sens(t.attente, false) }] : []),
+      ]),
     ];
     ecritures.push({ journal: plan.journalVentes, journalLib: "Ventes", date, ref, lib, nature: "vente", lignes: lignesVente, ordre: i * 2 });
 
@@ -304,11 +379,9 @@ export function ecrituresComptables(
         { compte: plan.clients, compteLib: "Clients", auxNum: cCode, auxLib: clientLib, ...sens(ttc, false), lettrage: lettre, dateLet: payDate, rangLettrage: rang, siren: inv.client_siren, tiers: "client" },
       ];
       // Le paiement rend la TVA exigible : du compte d'attente au 44571.
-      if (attente) {
-        for (const t of tvas) {
-          lignesBanque.push({ compte: plan.tvaNonExigible, compteLib: `TVA collectee non exigible ${t.taux}%`, auxNum: "", auxLib: "", ...sens(t.montant, true) });
-          lignesBanque.push({ compte: plan.tvaCollectee, compteLib: `TVA collectee ${t.taux}%`, auxNum: "", auxLib: "", ...sens(t.montant, false) });
-        }
+      for (const t of tvasAttente) {
+        lignesBanque.push({ compte: plan.tvaNonExigible, compteLib: `TVA collectee non exigible ${t.taux}%`, auxNum: "", auxLib: "", ...sens(t.attente, true) });
+        lignesBanque.push({ compte: plan.tvaCollectee, compteLib: `TVA collectee ${t.taux}%`, auxNum: "", auxLib: "", ...sens(t.attente, false) });
       }
       ecritures.push({ journal: plan.journalBanque, journalLib: "Banque", date: payDate, ref, lib: payLib, nature: "reglement", lignes: lignesBanque, ordre: i * 2 + 1 });
     }

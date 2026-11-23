@@ -12,6 +12,11 @@ import { produitArrondi } from "@/lib/montants";
 import { Clock, Package, FileText, Coins, CircleCheck, TriangleAlert, type LucideIcon } from "lucide-react";
 import { GuidedTourBanner } from "@/components/GuidedTourBanner";
 import { splitAddress } from "@/lib/address";
+import { ChoixNature } from "@/components/ChoixNature";
+import {
+  deduireCategorie, repartirParNature, LIBELLE_CATEGORIE,
+  type CategorieOperation, type NatureLigne,
+} from "@/lib/nature-operation";
 
 interface CatalogItem {
   id: string;
@@ -20,6 +25,7 @@ interface CatalogItem {
   unit: string | null;
   unit_price: number;
   type: "fixed" | "hourly";
+  nature: NatureLigne | null;
 }
 
 const TVA_OPTIONS = [
@@ -37,6 +43,24 @@ const REGIME_TO_RATE: Record<string, number> = {
   reduit:       5.5,
   super_reduit: 2.1,
 };
+
+/**
+ * Ligne(s) d'acompte ou de solde tirées d'un devis : une par nature présente
+ * dans le devis, au prorata de son HT (lib/nature-operation.ts). Un devis mixte
+ * donne donc deux lignes, et la facture reste ventilable biens / prestations.
+ */
+function lignesParNature(lignesDevis: ProposalItem[], montant: number, libelle: string): ProposalItem[] {
+  const parts = repartirParNature(lignesDevis, montant);
+  return parts.map((part) => ({
+    id: uuidv4(),
+    description: parts.length > 1 ? `${libelle} (${part.nature === "goods" ? "biens" : part.nature === "services" ? "prestations" : "autres"})` : libelle,
+    quantity: 1,
+    unit: "forfait",
+    unit_price: part.montant,
+    total: part.montant,
+    ...(part.nature ? { nature: part.nature } : {}),
+  }));
+}
 
 function fmt(n: number) {
   return new Intl.NumberFormat("fr-FR", { style: "currency", currency: "EUR" }).format(n);
@@ -120,7 +144,10 @@ export default function NewInvoicePage() {
   const [tvaRate, setTvaRate] = useState(0);
 
   // Mentions légales 2026
-  const [operationCategory, setOperationCategory] = useState<"services" | "goods" | "mixed">("services");
+  // Nature de l'opération : DÉDUITE des lignes (lib/nature-operation.ts), elle
+  // n'est plus choisie à l'aveugle avec « services » par défaut. L'utilisateur
+  // peut la forcer ; `null` = suivre les lignes.
+  const [categorieForcee, setCategorieForcee] = useState<CategorieOperation | null>(null);
   const [paymentOnDebit, setPaymentOnDebit] = useState(false);
 
   // Dates
@@ -143,6 +170,9 @@ export default function NewInvoicePage() {
   const totalHt = centimes(items.reduce((sum, item) => sum + centimes(item.total), 0));
   const vent = ventilationTva(items, tvaRate);
   const totalTtc = vent.total_ttc;
+  const deduction = deduireCategorie(items);
+  const operationCategory: CategorieOperation | null = categorieForcee ?? (deduction.complete ? deduction.categorie : null);
+  const lignesSansNature = deduction.sansNature;
 
   const inputCls = "w-full border border-ds-border rounded-lg px-3 py-2 text-sm focus:outline-hidden focus:ring-1 focus:ring-indigo-500/30 focus:border-indigo-500 bg-ds-elevated text-ink placeholder:text-gray-600";
 
@@ -185,7 +215,8 @@ export default function NewInvoicePage() {
     if (rawItems) {
       try {
         const parsed = JSON.parse(rawItems);
-        setItems(parsed.map((i: Omit<ProposalItem, "id">) => ({ ...i, id: uuidv4() })));
+        // Du temps passé : une prestation de services, par nature.
+        setItems(parsed.map((i: Omit<ProposalItem, "id">) => ({ ...i, nature: i.nature ?? "services", id: uuidv4() })));
       } catch { /* ignore */ }
     }
     setPaymentTerms("30 jours net");
@@ -225,14 +256,7 @@ export default function NewInvoicePage() {
     if (type === "acompte") {
       const fullHt = p.items.reduce((s: number, i: ProposalItem) => s + i.total, 0);
       const acompteHt = Math.round(fullHt * pct) / 100;
-      setItems([{
-        id: uuidv4(),
-        description: `Acompte ${pct}%, ${p.title}`,
-        quantity: 1,
-        unit: "forfait",
-        unit_price: acompteHt,
-        total: acompteHt,
-      }]);
+      setItems(lignesParNature(p.items, acompteHt, `Acompte ${pct}%, ${p.title}`));
     } else if (type === "solde") {
       const invRes = await fetch("/api/invoices");
       const invData = await invRes.json();
@@ -265,14 +289,7 @@ export default function NewInvoicePage() {
         // « prestation totale » pour un devis à 12 000 € réglé à 50 %.
         const foundPct = fullHt > 0 ? Math.round((totalAcomptesHt / fullHt) * 100) : 0;
         setDepositPct(foundPct);
-        setItems([{
-          id: uuidv4(),
-          description: `Solde ${100 - foundPct}%, ${p.title}`,
-          quantity: 1,
-          unit: "forfait",
-          unit_price: soldeHt,
-          total: soldeHt,
-        }]);
+        setItems(lignesParNature(p.items, soldeHt, `Solde ${100 - foundPct}%, ${p.title}`));
       } else {
         setLinkedInvoiceId(null);
         setLinkedInvoiceNumber(null);
@@ -319,14 +336,7 @@ export default function NewInvoicePage() {
     if (proposal && invoiceType === "acompte") {
       const fullHt = proposal.items.reduce((s, i) => s + i.total, 0);
       const acompteHt = Math.round(fullHt * newPct) / 100;
-      setItems([{
-        id: uuidv4(),
-        description: `Acompte ${newPct}%, ${proposal.title}`,
-        quantity: 1,
-        unit: "forfait",
-        unit_price: acompteHt,
-        total: acompteHt,
-      }]);
+      setItems(lignesParNature(proposal.items, acompteHt, `Acompte ${newPct}%, ${proposal.title}`));
     }
   }
 
@@ -377,6 +387,7 @@ export default function NewInvoicePage() {
       unit: item.unit || "forfait",
       unit_price: item.unit_price,
       total: produitArrondi(quantity, item.unit_price),
+      ...(item.nature ? { nature: item.nature } : {}),
     };
     setItems((prev) => [...prev, newItem]);
   }
@@ -390,8 +401,14 @@ export default function NewInvoicePage() {
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
-    setLoading(true);
     setError("");
+    if (!operationCategory) {
+      setError(
+        `${lignesSansNature} ligne${lignesSansNature > 1 ? "s" : ""} sans nature : indique pour chacune s'il s'agit d'une prestation ou d'un bien.`
+      );
+      return;
+    }
+    setLoading(true);
 
     const res = await fetch("/api/invoices", {
       method: "POST",
@@ -852,6 +869,17 @@ export default function NewInvoicePage() {
                       ×
                     </button>
                   </div>
+                  <div className="col-span-12 -mt-1 flex flex-wrap items-center gap-2">
+                    <ChoixNature
+                      compact
+                      libelle="Nature de la ligne"
+                      valeur={item.nature}
+                      onChange={(n) => updateItem(item.id, "nature", n)}
+                    />
+                    {!item.nature && (
+                      <span className="text-xs text-amber-400">Prestation ou bien ? À préciser.</span>
+                    )}
+                  </div>
                 </div>
               ))}
             </div>
@@ -966,12 +994,32 @@ export default function NewInvoicePage() {
             <h2 className="font-semibold text-blue-200">Mentions obligatoires 2026</h2>
             <div>
               <label className="block text-xs font-medium text-blue-300 mb-1">Nature de l&apos;opération</label>
-              <select aria-label="Nature de l'opération" value={operationCategory} onChange={(e) => setOperationCategory(e.target.value as "services" | "goods" | "mixed")}
-                className="border border-ds-border rounded-lg px-3 py-2 text-sm bg-ds-elevated text-ink focus:outline-hidden focus:ring-1 focus:ring-indigo-500/30 focus:border-indigo-500">
-                <option value="services">Prestation de services</option>
-                <option value="goods">Livraison de biens</option>
-                <option value="mixed">Mixte (biens + services)</option>
+              <select aria-label="Nature de l'opération" value={categorieForcee ?? ""} onChange={(e) => setCategorieForcee(e.target.value === "" ? null : (e.target.value as CategorieOperation))}
+                className="w-full sm:w-auto border border-ds-border rounded-lg px-3 py-2 text-sm bg-ds-elevated text-ink focus:outline-hidden focus:ring-1 focus:ring-indigo-500/30 focus:border-indigo-500">
+                <option value="">
+                  {deduction.complete && deduction.categorie
+                    ? `D'après les lignes : ${LIBELLE_CATEGORIE[deduction.categorie]}`
+                    : "D'après les lignes : à préciser"}
+                </option>
+                <option value="services">{LIBELLE_CATEGORIE.services}</option>
+                <option value="goods">{LIBELLE_CATEGORIE.goods}</option>
+                <option value="mixed">{LIBELLE_CATEGORIE.mixed}</option>
               </select>
+              {!categorieForcee && lignesSansNature > 0 && (
+                <p className="text-xs text-amber-400 mt-1.5" role="status">
+                  {lignesSansNature} ligne{lignesSansNature > 1 ? "s" : ""} sans nature : précise pour chacune « Prestation » ou « Bien ».
+                </p>
+              )}
+              {categorieForcee && deduction.complete && deduction.categorie && categorieForcee !== deduction.categorie && (
+                <p className="text-xs text-amber-400 mt-1.5" role="status">
+                  Les lignes indiquent « {LIBELLE_CATEGORIE[deduction.categorie]} ». Vérifie ce choix : il décide de la déclaration.
+                </p>
+              )}
+              {operationCategory === "mixed" && (
+                <p className="text-xs text-blue-300 mt-1.5">
+                  Facture mixte : la plateforme de facturation électronique ne traite pas encore les factures qui mélangent biens et services. Pour la transmettre, fais plutôt une facture par nature.
+                </p>
+              )}
             </div>
             {tvaRate > 0 && (
               <div className="flex items-center gap-2">
