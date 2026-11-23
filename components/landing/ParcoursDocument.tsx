@@ -107,8 +107,8 @@ function Visuel({ vue }: { vue: Vue }) {
 
 /** Hauteur du panneau fixe (texte à gauche, visuel à droite) et défilement par étape. */
 const HAUT_PANNEAU = "calc(100vh / var(--zoom, 1) - 112px)";
-// 40 % d'écran par étape : assez pour lire chaque étape, sans freiner le défilement.
-const PAS_ETAPE = "calc(40vh / var(--zoom, 1))";
+// 32 % d'écran par étape : assez pour lire chaque étape, sans freiner le défilement.
+const PAS_ETAPE = "calc(32vh / var(--zoom, 1))";
 
 function TexteEtape({ e, i }: { e: Etape; i: number }) {
   return (
