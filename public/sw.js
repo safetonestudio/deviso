@@ -6,6 +6,13 @@ const CACHE_NAME = "deviso-v2";
 // Pages servies hors ligne en dernier recours.
 const STATIC_ASSETS = ["/", "/login", "/signup"];
 
+// En local (next dev), les fichiers /_next/static/ gardent le meme nom quand leur
+// contenu change : les servir depuis le cache faisait tourner l'ancien code face a
+// un rendu serveur neuf (erreur d'hydratation, rechargements). Sur un hote local, le
+// service worker n'intercepte rien, vide ses caches et se desinstalle.
+const h = self.location.hostname;
+const LOCAL = h === "localhost" || h === "127.0.0.1" || h === "[::1]" || h.endsWith(".localhost");
+
 // Ne garde que les reponses saines du site lui-meme.
 const cachable = (res) => res && res.ok && res.type === "basic";
 
@@ -16,6 +23,10 @@ function mettreEnCache(request, res) {
 }
 
 self.addEventListener("install", (event) => {
+  if (LOCAL) {
+    self.skipWaiting();
+    return;
+  }
   event.waitUntil(
     caches.open(CACHE_NAME).then((cache) => cache.addAll(STATIC_ASSETS)).catch(() => {})
   );
@@ -23,6 +34,14 @@ self.addEventListener("install", (event) => {
 });
 
 self.addEventListener("activate", (event) => {
+  if (LOCAL) {
+    event.waitUntil(
+      caches.keys()
+        .then((keys) => Promise.all(keys.map((k) => caches.delete(k))))
+        .then(() => self.registration.unregister())
+    );
+    return;
+  }
   // Supprime les anciens caches
   event.waitUntil(
     caches.keys().then((keys) =>
@@ -35,6 +54,7 @@ self.addEventListener("activate", (event) => {
 });
 
 self.addEventListener("fetch", (event) => {
+  if (LOCAL) return;
   const { request } = event;
   if (request.method !== "GET") return;
   const url = new URL(request.url);
