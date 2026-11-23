@@ -83,6 +83,7 @@
     "test:banc": "node scripts/e2e/banc.mjs",
     "test:abonnement": "node scripts/e2e/abonnement.mjs",
     "test:webhook": "node scripts/e2e/webhook.mjs",
+    "test:stripe-horloges": "node scripts/e2e/stripe-horloges.mjs",
     "check:rendu": "node scripts/check-rendu.mjs",
     "verify:rendu": "npm run build && node scripts/check-rendu.mjs",
     "build:quiet": "node scripts/build-quiet.mjs",

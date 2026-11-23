@@ -343,7 +343,23 @@ export async function POST(req: NextRequest) {
       cancel_url: `${baseUrl}/billing`,
       locale: "fr",
       subscription_data: {
-        ...(aDejaEuUnAbonnement ? {} : { trial_period_days: 14 }),
+        /**
+         * Essai sans carte qui se termine : résiliation nette, pas de facture.
+         *
+         * Le défaut de Stripe (`create_invoice`) émettait une facture que
+         * personne ne pouvait payer, passait l'abonnement en impayé et le
+         * laissait traîner trois semaines dans les relances Stripe avant de le
+         * résilier : c'est ce qu'ont vécu les trois abonnements de juillet. Avec
+         * `cancel`, l'abonnement s'arrête à l'heure de fin d'essai ; le webhook
+         * le reconnaît (lib/fin-essai.ts), coupe, écrit au titulaire, et l'écran
+         * de reprise propose une carte via un NOUVEL abonnement, sans essai.
+         */
+        ...(aDejaEuUnAbonnement
+          ? {}
+          : {
+              trial_period_days: 14,
+              trial_settings: { end_behavior: { missing_payment_method: "cancel" as const } },
+            }),
         metadata: { target_plan: targetPlan, billing },
       },
       metadata: { target_plan: targetPlan, billing },

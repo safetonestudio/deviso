@@ -30,9 +30,11 @@ export function UpgradeBanner({ variant = "proposal_limit", count = 0 }: Upgrade
       title: "Débloque les factures, la signature électronique et le logo",
       sub: "Factures électroniques, e-signature, relances auto, logo personnalisé, dès 18€/mois",
     },
+    // Sans formule, les factures existantes restent consultables (21/11/2026) :
+    // seule la CRÉATION est réservée, le texte ne doit pas dire le contraire.
     invoice_blocked: {
-      title: "Les factures sont réservées au plan Solo",
-      sub: "Passe à Solo à 18€/mois pour créer des factures électroniques conformes",
+      title: "Un abonnement est nécessaire pour créer des factures",
+      sub: "Tes factures existantes restent consultables. Solo à 18€/mois pour en créer de nouvelles, conformes à la réforme",
     },
     logo_blocked: {
       title: "L'upload de logo est réservé au plan Solo",
@@ -43,10 +45,12 @@ export function UpgradeBanner({ variant = "proposal_limit", count = 0 }: Upgrade
   const { title, sub } = messages[variant];
 
   return (
-    <div className="mb-6 bg-linear-to-r/srgb from-indigo-600 to-violet-600 rounded-xl p-5 flex items-center justify-between gap-4 text-ink">
+    <div className="mb-6 bg-linear-to-r/srgb from-indigo-600 to-violet-600 rounded-xl p-5 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 text-ink">
       <div>
         <div className="font-semibold text-sm">{title}</div>
-        <div className="text-xs text-indigo-200 mt-0.5">{sub}</div>
+        {/* Même couleur que le titre, atténuée : `text-indigo-200` disparaissait
+            sur le fond vert du thème clair. */}
+        <div className="text-xs opacity-85 mt-0.5">{sub}</div>
       </div>
       <button
         onClick={handleUpgrade}

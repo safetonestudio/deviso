@@ -148,6 +148,9 @@ export default function BillingPage() {
 
   const plan = profile?.plan ?? "free";
   const isTrialing = profile?.subscription_status === "trialing";
+  // Essai déjà consommé et terminé sans carte (lib/fin-essai.ts) : plus de
+  // second essai, la carte est demandée tout de suite.
+  const essaiTermine = plan === "free" && profile?.subscription_status === "essai_termine";
   const info = PLAN_INFO[plan];
   const prices = billing === "annual" ? ANNUAL_PRICES : MONTHLY_PRICES;
 
@@ -268,7 +271,7 @@ export default function BillingPage() {
       <div className="carte p-6">
           <div className="flex items-center justify-between mb-5">
             <p className="text-xs font-semibold text-gray-500">
-              {plan === "free" ? "Commencer ton essai gratuit" : "Changer de formule"}
+              {plan === "free" ? (essaiTermine ? "Reprendre ton abonnement" : "Commencer ton essai gratuit") : "Changer de formule"}
             </p>
             {/* Toggle mensuel / annuel */}
             <div className="flex items-center gap-1 bg-ds-elevated rounded-lg p-0.5">
@@ -293,7 +296,15 @@ export default function BillingPage() {
           </div>
 
           {/* Bandeau essai, seulement pour qui n'a pas encore d'abonnement */}
-          {plan === "free" ? (
+          {essaiTermine ? (
+            <div className="bg-amber-500/10 border border-amber-500/30 rounded-xl px-4 py-3 mb-4 flex items-center gap-3">
+              <Hourglass size={18} className="shrink-0 text-amber-400" />
+              <p className="text-sm text-amber-200">
+                Ton essai est terminé. Choisis ta formule et ajoute une carte : l&apos;accès reprend
+                dès le paiement validé, et tu peux résilier à tout moment.
+              </p>
+            </div>
+          ) : plan === "free" ? (
             <div className="bg-indigo-500/10 border border-indigo-500/20 rounded-xl px-4 py-3 mb-4 flex items-center gap-3">
               <Gift size={18} className="shrink-0 text-indigo-400" />
               <p className="text-sm text-indigo-300">
@@ -330,7 +341,9 @@ export default function BillingPage() {
                 >
                   {acting
                     ? "Un instant…"
-                    : plan === "free"
+                    : essaiTermine
+                      ? "Continuer avec Solo →"
+                      : plan === "free"
                       ? "Essayer Solo →"
                       : plan === "pro"
                         ? "Revenir à Solo →"
@@ -359,7 +372,9 @@ export default function BillingPage() {
               >
                 {acting
                   ? "Un instant…"
-                  : plan === "free"
+                  : essaiTermine
+                    ? "Continuer avec Pro →"
+                    : plan === "free"
                     ? "Essayer Pro →"
                     : plan === "pro"
                       ? "Appliquer à Pro →"

@@ -19,6 +19,8 @@ import { estCabinet } from "@/lib/cabinet-acces";
 import { SupportButton } from "@/components/SupportButton";
 import { PlanProvider } from "@/components/PlanContext";
 import Script from "next/script";
+import { EcranEssaiTermine, BandeauEssaiTermine } from "@/components/EssaiTermine";
+import { STATUT_ESSAI_TERMINE } from "@/lib/fin-essai";
 
 // Pages inaccessibles aux membres invités
 const MEMBER_RESTRICTED_PATHS = ["/billing", "/paiements", "/stats", "/crm"];
@@ -37,7 +39,7 @@ export default async function DashboardLayout({ children }: { children: React.Re
   const droits = await droitsDe(user.id, workspaceUserId);
 
   const [{ data: profile }, { data: workspacePlan }, { data: raccordement }] = await Promise.all([
-    supabase.from("profiles").select("full_name, company_name, is_demo").eq("id", user.id).single(),
+    supabase.from("profiles").select("full_name, company_name, is_demo, subscription_status").eq("id", user.id).single(),
     // Le plan est lu sur la ligne du PROPRIÉTAIRE de l'espace. profiles est en
     // RLS « auth.uid() = id » : un invité ne peut pas lire cette ligne avec son
     // propre client, la lecture reviendrait vide et le plan retomberait sur
@@ -177,6 +179,20 @@ export default async function DashboardLayout({ children }: { children: React.Re
 
   const isDemo = !!profile?.is_demo;
 
+  /**
+   * Essai terminé sans carte (lib/fin-essai.ts) : le titulaire voit pourquoi son
+   * accès est réduit et comment le rétablir, au lieu d'un espace amputé sans
+   * explication. Écran complet sur le tableau de bord (là où mènent la connexion
+   * et le courriel de fin d'essai), bandeau sur les autres pages, qui restent
+   * consultables. Rien sur Abonnement, qui porte déjà le choix de formule.
+   * Un membre d'équipe n'est pas concerné : il voit « Cet espace n'est plus
+   * partagé » plus haut, l'ajout de carte appartient au titulaire.
+   */
+  const essaiTermine =
+    !isMember && !isDemo && plan === "free" && profile?.subscription_status === STATUT_ESSAI_TERMINE;
+  const surTableauDeBord = pathname === "/dashboard";
+  const surAbonnement = pathname.startsWith("/billing");
+
   return (
     <DashboardThemeProvider className={policesApp}>
     <PlanProvider plan={plan} isMember={isMember} droits={droits}>
@@ -266,7 +282,8 @@ export default async function DashboardLayout({ children }: { children: React.Re
               était auparavant dans la barre latérale, invisible sur mobile et
               noyé parmi les réglages sur ordinateur. */}
           {isDemo && <DemoBanner />}
-          {children}
+          {essaiTermine && !surTableauDeBord && !surAbonnement && <BandeauEssaiTermine />}
+          {essaiTermine && surTableauDeBord ? <EcranEssaiTermine /> : children}
           </div>
         </main>
       </div>
