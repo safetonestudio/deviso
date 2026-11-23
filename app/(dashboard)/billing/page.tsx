@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import { PartyPopper, TriangleAlert, Hourglass, Gift } from "lucide-react";
 import { planFeatures, proOnlyFeatures } from "@/lib/plans";
-import { prix as grille, PRIX_SIEGE } from "@/lib/grille-tarifaire";
+import { prix as grille, PRIX_SIEGE, PRIX_SIEGE_ANNUEL } from "@/lib/grille-tarifaire";
 import { GuidedTourBanner } from "@/components/GuidedTourBanner";
 
 type Profile = {
@@ -365,7 +365,7 @@ export default function BillingPage() {
                   <span className="text-[10px] font-semibold px-1.5 py-0.5 rounded-md bg-violet-500/20 text-violet-300 border border-violet-500/30">RECOMMANDÉ</span>
                 </div>
                 <p className="text-sm text-gray-400">3 utilisateurs inclus · Catalogue, Équipe, CRM, Analytics, sous-domaine</p>
-                <p className="text-xs text-gray-500 mt-0.5">+{PRIX_SIEGE}€/mois par utilisateur supplémentaire</p>
+                <p className="text-xs text-gray-500 mt-0.5">{billing === "annual" ? `+${PRIX_SIEGE_ANNUEL}€/an par utilisateur supplémentaire` : `+${PRIX_SIEGE}€/mois par utilisateur supplémentaire`}</p>
               </div>
               <button
                 onClick={() => handleUpgrade("pro")}

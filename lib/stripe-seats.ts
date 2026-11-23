@@ -30,6 +30,41 @@ export { siegesDus, MEMBRES_INCLUS };
  */
 
 /**
+ * Le prix du siège qui a la même périodicité que l'abonnement.
+ *
+ * Stripe, dans la version d'API de Deviso (2025-02-24), refuse deux
+ * périodicités sur un même abonnement : un siège MENSUEL ne peut pas s'ajouter
+ * à un Pro ANNUEL, et un Pro mensuel qui a déjà un siège ne peut pas passer à
+ * l'annuel. Constaté le 23/11/2026 en mode test, avec la version de l'app.
+ * Avant cette date, le siège était mensuel seulement : chez un abonné annuel,
+ * l'invitation était acceptée, l'appel à Stripe échouait en silence, et le
+ * collaborateur n'était jamais facturé.
+ *
+ * D'où deux prix de siège, l'un au mois, l'autre à l'année (même remise que
+ * l'abonnement annuel, voir lib/grille-tarifaire.ts).
+ */
+export function prixSiegePour(intervalle: string | null | undefined): string {
+  const id =
+    intervalle === "year"
+      ? process.env.STRIPE_SEAT_ANNUAL_PRICE_ID
+      : process.env.STRIPE_SEAT_PRICE_ID;
+  if (!id) {
+    // Lever plutôt que se taire : l'appelant journalise, et un siège non
+    // facturé ne doit jamais passer inaperçu.
+    throw new Error(`Prix du siège ${intervalle === "year" ? "annuel" : "mensuel"} non configuré`);
+  }
+  return id;
+}
+
+/** Cet identifiant est-il un prix de siège (mensuel ou annuel) ? */
+export function estPrixSiege(priceId: string): boolean {
+  return (
+    priceId === process.env.STRIPE_SEAT_PRICE_ID ||
+    priceId === process.env.STRIPE_SEAT_ANNUAL_PRICE_ID
+  );
+}
+
+/**
  * Aligne la quantité de sièges facturés sur le nombre réel de membres actifs.
  *
  * Silencieuse et sans effet quand il n'y a rien à faire : compte de
@@ -51,9 +86,6 @@ export async function synchroniserSieges(ownerId: string): Promise<void> {
   const subId = profile?.stripe_subscription_id;
   if (!subId) return; // pas d'abonnement Stripe (compte de test, plan gratuit)
 
-  const seatPriceId = process.env.STRIPE_SEAT_PRICE_ID;
-  if (!seatPriceId) return;
-
   // On compte les membres ACTIFS. Une invitation en attente n'est pas un siège
   // occupé : elle peut n'être jamais acceptée, et la facturer reviendrait à
   // faire payer une intention.
@@ -68,10 +100,8 @@ export async function synchroniserSieges(ownerId: string): Promise<void> {
   const voulue = siegesDus(count ?? 0);
 
   const subscription = await stripe.subscriptions.retrieve(subId, { expand: ["items"] });
-  const seatItem = subscription.items.data.find((item) => item.price.id === seatPriceId);
+  const seatItem = subscription.items.data.find((item) => estPrixSiege(item.price.id));
   const actuelle = seatItem ? seatItem.quantity ?? 0 : 0;
-
-  if (voulue === actuelle) return;
 
   if (voulue === 0) {
     if (seatItem) {
@@ -82,8 +112,17 @@ export async function synchroniserSieges(ownerId: string): Promise<void> {
     return;
   }
 
+  // La périodicité de l'abonnement est celle de l'article de formule (le seul
+  // qui ne soit pas un siège).
+  const articleFormule = subscription.items.data.find((item) => !estPrixSiege(item.price.id));
+  const seatPriceId = prixSiegePour(articleFormule?.price.recurring?.interval);
+
   if (seatItem) {
+    // Rien à faire seulement si la quantité ET la périodicité sont justes : un
+    // siège resté mensuel sur un abonnement annuel est réaligné ici.
+    if (voulue === actuelle && seatItem.price.id === seatPriceId) return;
     await stripe.subscriptionItems.update(seatItem.id, {
+      price: seatPriceId,
       quantity: voulue,
       proration_behavior: "create_prorations",
     });

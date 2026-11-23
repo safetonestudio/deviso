@@ -42,6 +42,7 @@ business_model:
       price_ht_annuel: 422.40
       utilisateurs_inclus: 3
       siege_supplementaire_ht_mensuel: 8
+      siege_supplementaire_ht_annuel: 76.80
   remise_annuelle: 20 %
   offert: acces expert-comptable (lecture seule, hors siege), plateforme agreee Super PDP
 

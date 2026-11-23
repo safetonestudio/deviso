@@ -22,7 +22,7 @@
 
 import { readFileSync, readdirSync, statSync } from "node:fs";
 import { join } from "node:path";
-import { prix, PRIX_SIEGE } from "../lib/grille-tarifaire.ts";
+import { prix, PRIX_SIEGE, PRIX_SIEGE_ANNUEL } from "../lib/grille-tarifaire.ts";
 
 const RACINES = ["app", "components", "lib"];
 const SOURCE = join("lib", "grille-tarifaire.ts");
@@ -36,6 +36,7 @@ const MONTANT = /(?<![\w${])\d+(?:[,.]\d+)?(?:\s| | |"\s*\+\s*NB\s*\+\s*")?(?
 const GRILLE = [...new Set([
   ...["solo", "pro"].flatMap((f) => Object.values(prix(f))),
   PRIX_SIEGE,
+  PRIX_SIEGE_ANNUEL,
 ])].filter((m) => m.length > 1 || m === PRIX_SIEGE);
 const ECHAP = (s) => s.replace(/[.,]/g, (c) => "\\" + c);
 const MONTANT_GRILLE = new RegExp(String.raw`(?<![\d,.])(?:${GRILLE.map(ECHAP).join("|")})(?![\d,.])[\s  ]?(?:€|euros?\b)`);

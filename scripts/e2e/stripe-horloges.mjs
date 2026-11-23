@@ -30,7 +30,7 @@
  *
  * Prérequis : `.env.stripe-test.local` (ignoré par git) avec
  * STRIPE_TEST_SECRET_KEY=sk_test_..., et `.env.local`.
- * Usage : npm run test:stripe-horloges [-- --seulement=annuel,siege,periodicite,essai,ancien]
+ * Usage : npm run test:stripe-horloges [-- --seulement=annuel,siege,siege-annuel,periodicite,essai,ancien]
  */
 
 import { spawn, execSync } from "node:child_process";
@@ -82,6 +82,7 @@ const GRILLE = [
   { cle: `deviso_banc_pro_m_${CENTIMES.pro.mensuel}`, nom: "Pro mensuel (banc)", montant: CENTIMES.pro.mensuel, intervalle: "month", env: "STRIPE_PRO_PRICE_ID" },
   { cle: `deviso_banc_pro_a_${CENTIMES.pro.annuel}`, nom: "Pro annuel (banc)", montant: CENTIMES.pro.annuel, intervalle: "year", env: "STRIPE_PRO_ANNUAL_PRICE_ID" },
   { cle: `deviso_banc_siege_${CENTIMES.siege}`, nom: "Siège supplémentaire (banc)", montant: CENTIMES.siege, intervalle: "month", env: "STRIPE_SEAT_PRICE_ID" },
+  { cle: `deviso_banc_siege_a_${CENTIMES.siegeAnnuel}`, nom: "Siège supplémentaire annuel (banc)", montant: CENTIMES.siegeAnnuel, intervalle: "year", env: "STRIPE_SEAT_ANNUAL_PRICE_ID" },
 ];
 
 async function catalogue() {
@@ -323,7 +324,7 @@ try {
   }
 
   P = await catalogue();
-  verifier("catalogue de test prêt (5 prix)", Object.keys(P).length === 5);
+  verifier(`catalogue de test prêt (${GRILLE.length} prix)`, Object.keys(P).length === GRILLE.length);
   console.log("   démarrage de l'application locale (mode test)...");
   const demarree = await demarrerApp(P);
   verifier("application locale démarrée", demarree, journalApp.slice(-5).join(" | "));
@@ -398,6 +399,82 @@ try {
     const p = await profil(titulaire.id);
     verifier("webhook : toujours Pro malgré deux articles", p.plan === "pro" && p.subscription_status === "active", JSON.stringify(p));
     await admin(`/rest/v1/team_members?owner_id=eq.${titulaire.id}`, { method: "DELETE" });
+  }
+
+  // ── 2 bis. Siège sur un abonnement ANNUEL ────────────────────────────
+  // Stripe refuse deux périodicités sur un abonnement : avant le 23/11/2026,
+  // le siège mensuel ne s'ajoutait jamais à un Pro annuel (collaborateur non
+  // facturé), et un Pro mensuel avec siège ne pouvait pas passer à l'annuel.
+  if (joue("siege-annuel")) {
+    console.log("");
+    console.log("── Pro annuel + siège, et passage à l'annuel avec siège ───");
+    const deuxInclus = (owner) => admin("/rest/v1/team_members", {
+      method: "POST",
+      body: JSON.stringify([
+        { owner_id: owner, email: `inclus1-${RUN}-${owner.slice(0, 6)}@example.com`, status: "active", role: "member" },
+        { owner_id: owner, email: `inclus2-${RUN}-${owner.slice(0, 6)}@example.com`, status: "active", role: "member" },
+      ]),
+    });
+    const inviter = async (owner, membre) => {
+      const inv = await (await admin("/rest/v1/team_members", {
+        method: "POST",
+        body: JSON.stringify({ owner_id: owner, email: membre.email, status: "pending", role: "member" }),
+      })).json();
+      return appel(membre, `/api/team/accept/${inv[0].invite_token}`);
+    };
+
+    // a) Pro annuel : le 3e collaborateur doit être facturé au siège ANNUEL.
+    const tA = await creerCompte("sa-titulaire");
+    const mA = await creerCompte("sa-membre");
+    const hA = await nouvelleHorloge("sa");
+    const cA = await clientStripe(tA, hA, true);
+    const subA = await abonnementCommeCheckout(cA, P.STRIPE_PRO_ANNUAL_PRICE_ID, "pro", "annual", { essai: false });
+    await majProfil(tA.id, { stripe_subscription_id: subA.id, plan: "pro", subscription_status: subA.status });
+    await deuxInclus(tA.id);
+    const accA = await inviter(tA.id, mA);
+    verifier("Pro annuel : le 3e collaborateur accepte l'invitation", accA.status === 307 || accA.status === 302, `HTTP ${accA.status}`);
+    const sA = await stripe.subscriptions.retrieve(subA.id);
+    const siegeA = sA.items.data.find((i) => i.price.id === P.STRIPE_SEAT_ANNUAL_PRICE_ID);
+    verifier(`Pro annuel : un siège ANNUEL (${euros(CENTIMES.siegeAnnuel)} €) est ajouté, quantité 1`, siegeA?.quantity === 1,
+      JSON.stringify(sA.items.data.map((i) => [i.price.id, i.quantity])));
+    verifier("Pro annuel : aucun siège mensuel sur l'abonnement", !sA.items.data.some((i) => i.price.id === P.STRIPE_SEAT_PRICE_ID));
+
+    // a bis) Ce même Pro annuel avec siège redescend en Solo MENSUEL : le siège
+    // doit disparaître dans le même appel, et la facture immédiate (changement
+    // de périodicité) ne doit porter aucun siège.
+    const rS = await appel(tA, "/api/stripe/checkout", { method: "POST", body: JSON.stringify({ plan: "solo", billing: "monthly", confirmerRetraitMembres: true }) });
+    verifier("Pro annuel avec siège -> Solo mensuel accepté", rS.body?.changed === true, `HTTP ${rS.status} ${rS.texte.slice(0, 200)}`);
+    const sS = await stripe.subscriptions.retrieve(subA.id);
+    verifier("après passage à Solo : seul l'article Solo mensuel reste", sS.items.data.length === 1 && sS.items.data[0].price.id === P.STRIPE_SOLO_PRICE_ID,
+      JSON.stringify(sS.items.data.map((i) => [i.price.id, i.quantity])));
+    const facturesS = (await stripe.invoices.list({ subscription: subA.id, limit: 5 })).data;
+    const lignesS = (await Promise.all(facturesS.map((fa) => stripe.invoices.listLineItems(fa.id, { limit: 50 })))).flatMap((l) => l.data);
+    verifier("aucune ligne de siège mensuel facturée au passage à Solo", !lignesS.some((l) => l.price?.id === P.STRIPE_SEAT_PRICE_ID && l.amount > 0),
+      lignesS.map((l) => `${l.price?.id}:${l.amount}`).join(","));
+    const membresRestants = await (await admin(`/rest/v1/team_members?owner_id=eq.${tA.id}&select=id`)).json();
+    verifier("après passage à Solo : collaborateurs retirés", Array.isArray(membresRestants) && membresRestants.length === 0, JSON.stringify(membresRestants).slice(0, 120));
+
+    // b) Pro mensuel avec un siège, passage à l'annuel par la route de Deviso.
+    const tB = await creerCompte("sb-titulaire");
+    const mB = await creerCompte("sb-membre");
+    const hB = await nouvelleHorloge("sb");
+    const cB = await clientStripe(tB, hB, true);
+    const subB = await abonnementCommeCheckout(cB, P.STRIPE_PRO_PRICE_ID, "pro", "monthly", { essai: false });
+    await majProfil(tB.id, { stripe_subscription_id: subB.id, plan: "pro", subscription_status: subB.status });
+    await deuxInclus(tB.id);
+    await inviter(tB.id, mB);
+    let sB = await stripe.subscriptions.retrieve(subB.id);
+    verifier("Pro mensuel : un siège mensuel est en place", sB.items.data.some((i) => i.price.id === P.STRIPE_SEAT_PRICE_ID && i.quantity === 1),
+      JSON.stringify(sB.items.data.map((i) => [i.price.id, i.quantity])));
+    const r = await appel(tB, "/api/stripe/checkout", { method: "POST", body: JSON.stringify({ plan: "pro", billing: "annual" }) });
+    verifier("passage à l'annuel accepté par la route", r.body?.changed === true, `HTTP ${r.status} ${r.texte.slice(0, 200)}`);
+    sB = await stripe.subscriptions.retrieve(subB.id);
+    const ids = sB.items.data.map((i) => i.price.id);
+    verifier("après passage : formule Pro ANNUELLE et siège ANNUEL, quantité 1",
+      ids.includes(P.STRIPE_PRO_ANNUAL_PRICE_ID) && sB.items.data.some((i) => i.price.id === P.STRIPE_SEAT_ANNUAL_PRICE_ID && i.quantity === 1) && sB.items.data.length === 2,
+      JSON.stringify(sB.items.data.map((i) => [i.price.id, i.quantity])));
+
+    for (const o of [tA.id, tB.id]) await admin(`/rest/v1/team_members?owner_id=eq.${o}`, { method: "DELETE" });
   }
 
   // ── 3. Mensuel -> annuel, par la route de Deviso ─────────────────────

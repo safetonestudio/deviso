@@ -22,6 +22,11 @@ export const CENTIMES = {
   pro: { mensuel: 4400, annuel: 42240 },
   /** Utilisateur au-delà des 3 inclus dans Pro, par mois. */
   siege: 800,
+  /**
+   * Le même, sur un abonnement annuel : 12 mois avec la remise annuelle.
+   * Stripe refuse un siège mensuel sur un abonnement annuel (lib/stripe-seats.ts).
+   */
+  siegeAnnuel: 7680,
 } as const;
 
 /** Remise de l'abonnement annuel, en pourcentage. */
@@ -63,3 +68,6 @@ export function prix(formule: FormulePayante) {
 
 /** Prix d'un utilisateur supplémentaire, HT par mois, ex. "8". */
 export const PRIX_SIEGE = euros(CENTIMES.siege);
+
+/** Prix d'un utilisateur supplémentaire sur un abonnement annuel, HT par an, ex. "76,80". */
+export const PRIX_SIEGE_ANNUEL = euros(CENTIMES.siegeAnnuel);

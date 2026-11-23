@@ -3,7 +3,7 @@ import { createClient } from "@/lib/supabase/server";
 import { stripe, PLANS } from "@/lib/stripe";
 import { MESSAGE_DEMO } from "@/lib/stripe-guard";
 import { createAdminClient } from "@/lib/supabase/admin";
-import { synchroniserSieges } from "@/lib/stripe-seats";
+import { synchroniserSieges, prixSiegePour, estPrixSiege } from "@/lib/stripe-seats";
 import type Stripe from "stripe";
 
 /**
@@ -183,9 +183,41 @@ export async function POST(req: NextRequest) {
         );
       }
 
+      /**
+       * Le siège suit la périodicité de la formule, dans le MÊME appel.
+       *
+       * Stripe refuse deux périodicités sur un abonnement (version d'API de
+       * Deviso). Un Pro mensuel avec un siège ne pouvait donc pas passer à
+       * l'annuel : l'appel échouait et le client restait bloqué au mensuel
+       * (constaté en mode test le 23/11/2026). On change les deux articles
+       * ensemble ; la quantité, elle, reste celle de synchroniserSieges.
+       */
+      const articleSiege = sub.items.data.find((a) => estPrixSiege(a.price.id));
+      const articles: Stripe.SubscriptionUpdateParams.Item[] = [{ id: articlePlan.id, price: priceId }];
+      if (articleSiege && cibleSansEquipe) {
+        // Solo n'a pas d'équipe : le siège disparaît dans le même appel. Le
+        // convertir à la nouvelle périodicité le ferait figurer sur la facture
+        // immédiate qu'émet Stripe à un changement de périodicité, puis
+        // rembourser au cycle suivant : le client avancerait de l'argent pour
+        // des sièges qu'il n'a plus (relevé en revue indépendante le 23/11).
+        articles.push({ id: articleSiege.id, deleted: true });
+      } else if (articleSiege) {
+        let prixSiege: string;
+        try {
+          prixSiege = prixSiegePour(billing === "annual" ? "year" : "month");
+        } catch (err) {
+          console.error("[stripe/checkout] prix du siège introuvable, changement refusé :", err);
+          return NextResponse.json(
+            { error: "Changement de formule impossible pour le moment. Écrivez-nous à support@getdeviso.fr." },
+            { status: 500 }
+          );
+        }
+        if (articleSiege.price.id !== prixSiege) articles.push({ id: articleSiege.id, price: prixSiege });
+      }
+
       try {
         await stripe.subscriptions.update(sub.id, {
-          items: [{ id: articlePlan.id, price: priceId }],
+          items: articles,
           // La proration est calculée et REPORTÉE sur la prochaine facture.
           // `always_invoice` facturerait sur-le-champ, impossible pendant un
           // essai sans carte, et brutal juste après.

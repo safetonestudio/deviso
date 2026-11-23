@@ -11,7 +11,7 @@
  * client clique sur « S'abonner ».
  *
  * Ce que ce script vérifie, et qu'aucune relecture ne peut donner :
- *   · les cinq identifiants existent et désignent un prix ACTIF du compte ;
+ *   · les six identifiants existent et désignent un prix ACTIF du compte ;
  *   · chaque prix porte le montant, la devise et la périodicité de la grille ;
  *   · l'endpoint webhook est enregistré, actif, pointe vers la production et
  *     couvre les événements dont le code dépend.
@@ -38,6 +38,7 @@ const GRILLE = [
   { env: "STRIPE_PRO_PRICE_ID",         libelle: "Pro mensuel",    centimes: CENTIMES.pro.mensuel, interval: "month" },
   { env: "STRIPE_PRO_ANNUAL_PRICE_ID",  libelle: "Pro annuel",     centimes: CENTIMES.pro.annuel, interval: "year"  },
   { env: "STRIPE_SEAT_PRICE_ID",        libelle: "Siège en plus",  centimes: CENTIMES.siege, interval: "month" },
+  { env: "STRIPE_SEAT_ANNUAL_PRICE_ID", libelle: "Siège en plus, annuel", centimes: CENTIMES.siegeAnnuel, interval: "year" },
 ];
 
 /** Ce que le webhook traite réellement. Sans eux, un abonnement reste invisible. */

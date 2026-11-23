@@ -4,7 +4,7 @@ import { useState } from "react";
 import Link from "next/link";
 import { Check } from "lucide-react";
 import { FEATURES, planFeatures, proOnlyFeatures } from "@/lib/plans";
-import { prix as grille, PRIX_SIEGE, JOURS_ESSAI } from "@/lib/grille-tarifaire";
+import { prix as grille, PRIX_SIEGE, PRIX_SIEGE_ANNUEL, JOURS_ESSAI } from "@/lib/grille-tarifaire";
 
 /**
  * Tarifs de la page d'accueil : deux formules côte à côte, sur deux surfaces
@@ -66,7 +66,7 @@ export function TarifsTable() {
       prix: annuel ? PRO.annuelParMois : PRO.mensuel,
       note: annuel ? `Facturé ${PRO.annuel} € HT par an, soit ${PRO.annuelTtc} € TTC` : `Sans engagement, soit ${PRO.mensuelTtc} € TTC`,
       lien: "/signup?plan=pro",
-      lignes: ["Toutes les fonctions de Solo, plus l'équipe", `3 utilisateurs inclus, puis ${PRIX_SIEGE} € HT par mois et par personne`, ...PRO_SEUL],
+      lignes: ["Toutes les fonctions de Solo, plus l'équipe", annuel ? `3 utilisateurs inclus, puis ${PRIX_SIEGE_ANNUEL} € HT par an et par personne` : `3 utilisateurs inclus, puis ${PRIX_SIEGE} € HT par mois et par personne`, ...PRO_SEUL],
     },
   ];
 
