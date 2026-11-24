@@ -26,6 +26,11 @@ const ACTES = [
   ["superpdp/invoices/[id]/emettre/route.ts", "transmettre_pa"],
   ["invoices/[id]/chorus-pro/route.ts", "deposer_chorus"],
   ["superpdp/invoices/[id]/refuser/route.ts", "refuser_facture_recue"],
+  // Décision de Selim du 24/11/2026 (revient sur celle du 29/09, où la relance
+  // était libre) : relancer et remettre un lien de paiement sont des envois.
+  ["proposals/[id]/remind/route.ts", "envoyer_devis"],
+  ["invoices/[id]/send-reminder/route.ts", "envoyer_facture"],
+  ["invoices/[id]/payment-link/route.ts", "envoyer_facture"],
 ];
 for (const [f, acte] of ACTES) {
   const src = lire(`${R}/${f}`);
@@ -65,6 +70,7 @@ const TITULAIRE = [
   "invoices/[id]/route.ts",        // DELETE + PATCH (paiement)
   "team/route.ts",                 // POST (inviter)
   "team/[memberId]/route.ts",      // DELETE (retirer) + PATCH (permissions)
+  "invoices/[id]/avoir/route.ts",  // POST (un avoir est numéroté dès sa création, 24/11/2026)
 ];
 for (const f of TITULAIRE) {
   const src = lire(`${R}/${f}`);

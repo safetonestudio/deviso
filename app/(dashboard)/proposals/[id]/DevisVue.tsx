@@ -6,11 +6,11 @@
  *
  * Reprend toutes les fonctions des anciens ProposalActions et ShareSection,
  * avec les mêmes droits :
- * - envoyer par e-mail, marquer envoyé, copier le lien de partage : acte
- *   « envoyer_devis » (le titulaire l'a toujours) ;
- * - relancer, convertir en facture, télécharger le PDF : visibles comme avant (voir le
- *   point 5 du rapport du 24/11 : la relance n'est gardée ni ici ni côté
- *   serveur, correction proposée à part) ;
+ * - envoyer par e-mail, marquer envoyé, copier le lien de partage, relancer :
+ *   acte « envoyer_devis » (le titulaire l'a toujours ; relance gardée aussi
+ *   côté serveur, décision de Selim du 24/11/2026) ;
+ * - convertir en facture, télécharger le PDF : tout membre (créer une facture
+ *   est ouvert à tout membre) ;
  * - supprimer : titulaire seul.
  */
 import { useEffect, useRef, useState } from "react";
@@ -179,7 +179,7 @@ export default function DevisVue({ proposal, profile, shareUrl, isOwner }: Props
   const estBrouillon = statut === "draft";
   const peutMarquerEnvoye = estBrouillon && peutEnvoyer;
   const peutConvertir = ["signed", "sent", "viewed"].includes(statut);
-  const peutRelancer = ["sent", "viewed"].includes(statut) && !!proposal.client_email;
+  const peutRelancer = ["sent", "viewed"].includes(statut) && !!proposal.client_email && peutEnvoyer;
   const libelleRelance = relance ? "Envoi…" : nbRelances > 0 ? `Relancer le client (${nbRelances}/3)` : "Relancer le client";
 
   // ── Le geste attendu : un seul bouton plein ──

@@ -113,8 +113,12 @@ const routes = [
   { m: "GET",  p: () => `/api/proposals/${devisId}` },
   // Sans lien de paiement configuré, 400 est la bonne réponse. Ce qui serait
   // faux, c'est un 404 : il signifierait « facture introuvable pour vous ».
-  { m: "POST", p: () => `/api/invoices/${factureId}/payment-link`, attendu: [200, 400] },
-  { m: "POST", p: () => `/api/proposals/${devisId}/remind`, attendu: [200, 400] },
+  // Depuis le 24/11/2026 (décision de Selim), lien de paiement et relance
+  // exigent le droit d'envoi : un membre sans ce droit reçoit 403, et c'est
+  // scripts/e2e/permissions.mjs qui vérifie le détail des droits. Ce qui
+  // reste faux ici, c'est un 404.
+  { m: "POST", p: () => `/api/invoices/${factureId}/payment-link`, attendu: [200, 400], membreAttendu: [200, 400, 403] },
+  { m: "POST", p: () => `/api/proposals/${devisId}/remind`, attendu: [200, 400], membreAttendu: [200, 400, 403] },
 ];
 
 for (const r of routes) {

@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 import { getWorkspaceUserId } from "@/lib/workspace";
+import { exigerTitulaire } from "@/lib/droits";
 import { numeroDocument } from "@/lib/numerotation";
 import { verdictAvoir } from "@/lib/superpdp-avoir";
 
@@ -44,6 +45,12 @@ export async function POST(_req: NextRequest, ctx: { params: Promise<{ id: strin
   }
 
   const workspaceId = await getWorkspaceUserId(user.id);
+
+  // Droits des membres (décision de Selim, 24/11/2026) : un avoir reçoit son
+  // numéro définitif dès sa création, comme une écriture comptable. Titulaire
+  // seul, comme la suppression d'une facture et l'encaissement.
+  const refusTitulaire = exigerTitulaire(user.id, workspaceId);
+  if (refusTitulaire) return refusTitulaire;
 
   const { data: origine, error: lecture } = await supabase
     .from("invoices")

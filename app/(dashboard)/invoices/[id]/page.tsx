@@ -9,12 +9,12 @@
  * lib/invoice-pdf.tsx). À droite : Actions, Suivi, Facture électronique.
  *
  * Toutes les actions de l'ancien panneau sont reprises, avec leurs droits :
- * - envoyer, marquer envoyée : acte « envoyer_facture » ;
+ * - envoyer, marquer envoyée, relancer, lien de paiement : acte « envoyer_facture » ;
  * - transmettre à la plateforme agréée : « transmettre_pa » ;
  * - déposer sur Chorus Pro : « deposer_chorus » ;
- * - marquer payée, pointage, supprimer : titulaire seul ;
- * - lien de paiement, relance, avoir : visibles comme avant (point 5 du
- *   rapport du 24/11 : non gardés côté serveur, correction proposée à part).
+ * - marquer payée, pointage, établir un avoir, supprimer : titulaire seul.
+ * Relance, lien de paiement et avoir sont gardés de la même façon côté serveur
+ * (décision de Selim du 24/11/2026).
  */
 import { useEffect, useState, type ReactNode } from "react";
 import { useParams, useRouter } from "next/navigation";
@@ -397,11 +397,11 @@ function FactureVue({ invoice, id, hasChorusPro, feuille, feuilleKo }: {
   // Un avoir n'appelle aucun règlement : ni lien de paiement, ni « payée », ni relance.
   const estAvoir = inv.invoice_type === "avoir";
   const canSendEmail = !!inv.client_email && inv.status !== "cancelled" && peutEnvoyerFacture;
-  const canPaymentLink = !estAvoir && inv.status !== "paid" && inv.status !== "cancelled";
+  const canPaymentLink = !estAvoir && inv.status !== "paid" && inv.status !== "cancelled" && peutEnvoyerFacture;
   const canMarkPaid = !estAvoir && inv.status !== "paid" && inv.status !== "cancelled" && !isMember;
   const canMarkSent = inv.status === "draft" && peutEnvoyerFacture;
-  const canRemind = !estAvoir && inv.status === "sent" && !!inv.client_email;
-  const canAvoir = inv.status !== "draft" && !estAvoir;
+  const canRemind = !estAvoir && inv.status === "sent" && !!inv.client_email && peutEnvoyerFacture;
+  const canAvoir = inv.status !== "draft" && !estAvoir && !isMember;
   const canChorus = inv.status === "sent" && !chorusRef && hasChorusPro && peutDeposerChorus;
   // Une facture ne se transmet qu'une fois : un second envoi arriverait en
   // double chez le client, qui la refuserait pour « DOUBLON ».
