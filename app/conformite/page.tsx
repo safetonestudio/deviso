@@ -1,4 +1,5 @@
 import { PageSite, CADRE_LECTURE, SECTION, H1, H2, LEAD, BOUTON_PLEIN, BOUTON_DOUX } from "@/components/site/PageSite";
+import { APPEL } from "@/lib/beta";
 import { DemoButton } from "@/components/landing/DemoButton";
 import type { Metadata } from "next";
 import Link from "next/link";
@@ -276,9 +277,9 @@ export default function ConformitePage() {
 
             <section className="rounded-xl bg-ds-surface p-6 sm:p-8">
               <h2 className={`${H2} mb-4`}>Essayer Deviso</h2>
-              <p className="text-gray-400 mb-6">Essai gratuit de 14 jours, sans carte bancaire.</p>
+              <p className="text-gray-400 mb-6">{APPEL.phrase}</p>
               <div className="flex flex-col sm:flex-row gap-3">
-                <Link href="/signup" className={`w-full sm:w-auto ${BOUTON_PLEIN}`}>Essayer 14 jours gratuitement</Link>
+                <Link href={APPEL.lien} className={`w-full sm:w-auto ${BOUTON_PLEIN}`}>{APPEL.libelle}</Link>
                 <DemoButton className={`w-full sm:w-auto ${BOUTON_DOUX}`} />
               </div>
             </section>

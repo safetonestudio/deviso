@@ -1,6 +1,7 @@
 ﻿import { PageSite, CADRE_LECTURE, SECTION, H1 } from "@/components/site/PageSite";
 import type { Metadata } from "next";
 import Link from "next/link";
+import { BETA, BETA_OUVERTE } from "@/lib/beta";
 import { prix as grille, PRIX_SIEGE, PRIX_SIEGE_ANNUEL } from "@/lib/grille-tarifaire";
 
 // Les montants des CGU viennent de la source unique des prix : ils ne
@@ -23,7 +24,7 @@ export default function CguPage() {
         <h1 className={`${H1} mb-3`}>
           Conditions Générales d&apos;Utilisation
         </h1>
-        <p className="text-gray-500 text-sm mb-14">Dernière mise à jour : 23 novembre 2026</p>
+        <p className="text-gray-500 text-sm mb-14">Dernière mise à jour : 24 novembre 2026</p>
 
         <section className="mb-10">
           <h2 className="text-[22px] leading-snug font-semibold tracking-[-0.02em] text-ink mb-3">1. Objet</h2>
@@ -55,6 +56,17 @@ export default function CguPage() {
 
         <section className="mb-10">
           <h2 className="text-[22px] leading-snug font-semibold tracking-[-0.02em] text-ink mb-3">4. Plans tarifaires</h2>
+          {/* Bêta (lib/beta.ts) : conditions de la bêta à la place de la grille ;
+              la grille revient telle quelle quand la bêta se ferme. */}
+          {BETA_OUVERTE ? (
+          <p className="text-gray-400 leading-relaxed">
+            Deviso est actuellement en <strong>phase bêta</strong>. L&apos;accès est ouvert sur invitation, après acceptation d&apos;une candidature.<br /><br />
+            Chaque bêta-testeur dispose gratuitement, pendant <strong>{BETA.dureeMois} mois à compter de la création de son compte</strong>, de l&apos;ensemble des fonctions de Deviso, pour {BETA.utilisateursMax} utilisateurs au plus (le titulaire du compte et {BETA.utilisateursMax - 1} membres). Aucune carte bancaire n&apos;est demandée et rien n&apos;est prélevé à l&apos;issue de cette période sans souscription expresse.<br /><br />
+            À l&apos;issue de sa bêta, le bêta-testeur peut souscrire un abonnement payant ; il bénéficie alors d&apos;une <strong>remise de {BETA.remise} % pendant les 12 premiers mois</strong> de cet abonnement. Les tarifs en vigueur lui sont communiqués avant toute souscription. À défaut de souscription, ses devis, factures et clients restent consultables, les fonctions de l&apos;abonnement (dont la création de factures) sont suspendues, et la réception des factures électroniques est maintenue pendant {BETA.joursReceptionApres} jours avant la fermeture de son adresse de réception.<br /><br />
+            Le paiement s&apos;effectue par carte bancaire via la plateforme sécurisée Stripe.
+            L&apos;abonnement est résiliable à tout moment depuis le compte utilisateur, avec effet à la fin de la période en cours.
+          </p>
+          ) : (
           <p className="text-gray-400 leading-relaxed">
             Deviso propose deux formules :<br /><br />
             Deviso ne propose pas de plan gratuit permanent. Tout abonnement inclut un <strong>essai gratuit de 14 jours</strong> sans carte bancaire requise.<br /><br />
@@ -64,6 +76,7 @@ export default function CguPage() {
             Le paiement s&apos;effectue par carte bancaire via la plateforme sécurisée Stripe, à l&apos;issue de la période d&apos;essai.
             L&apos;abonnement est résiliable à tout moment depuis le compte utilisateur, avec effet à la fin de la période en cours.
           </p>
+          )}
         </section>
 
         <section className="mb-10">

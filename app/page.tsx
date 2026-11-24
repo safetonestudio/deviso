@@ -7,18 +7,20 @@ import { SlideFonctionnalites } from "@/components/landing/SlideFonctionnalites"
 import { PourquoiDeviso } from "@/components/landing/PourquoiDeviso";
 import { FaqAccueil } from "@/components/landing/FaqAccueil";
 import { TarifsTable } from "@/components/landing/TarifsTable";
+import { AppelBetaTesteurs } from "@/components/landing/AppelBetaTesteurs";
+import { APPEL, BETA, BETA_OUVERTE } from "@/lib/beta";
 import { prix as grille } from "@/lib/grille-tarifaire";
 
 export const metadata: Metadata = {
   title: "Deviso, logiciel de devis et factures pour les entreprises, de l'indépendant à la société",
   description:
-    "Vos devis rédigés en 30 secondes, vos factures conformes 2026 envoyées par une plateforme agréée comprise dans l'abonnement, vos relances automatiques. Pour votre entreprise, que vous travailliez seul ou à plusieurs. Essai gratuit 14 jours, sans carte.",
+    "Vos devis rédigés en 30 secondes, vos factures conformes 2026 envoyées par une plateforme agréée comprise dans l'abonnement, vos relances automatiques. Pour votre entreprise, que vous travailliez seul ou à plusieurs. " + (BETA_OUVERTE ? `Bêta gratuite ${BETA.dureeMois} mois, sans carte.` : "Essai gratuit 14 jours, sans carte."),
   alternates: {
     canonical: "https://getdeviso.fr",
   },
   openGraph: {
     title: "Deviso, devis et factures pour les entreprises, de l'indépendant à la société",
-    description: "Vos devis rédigés, vos factures conformes, vos relances envoyées. Plateforme agréée comprise, essai gratuit de 14 jours.",
+    description: "Vos devis rédigés, vos factures conformes, vos relances envoyées. Plateforme agréée comprise, " + (BETA_OUVERTE ? `bêta gratuite ${BETA.dureeMois} mois.` : "essai gratuit de 14 jours."),
     url: "https://getdeviso.fr",
     siteName: "Deviso",
     locale: "fr_FR",
@@ -36,10 +38,15 @@ const jsonLd = {
   url: "https://getdeviso.fr",
   description:
     "Logiciel de devis et de facturation pour les entreprises en France, de l'indépendant à la société avec son équipe. Devis IA, Factur-X, relances automatiques.",
-  offers: [
-    { "@type": "Offer", name: "Solo", price: grille("solo").mensuel, priceCurrency: "EUR", billingIncrement: "P1M" },
-    { "@type": "Offer", name: "Pro", price: grille("pro").mensuel, priceCurrency: "EUR", billingIncrement: "P1M" },
-  ],
+  // Bêta (lib/beta.ts) : aucun prix publié, ni sur la page ni pour Google.
+  ...(BETA_OUVERTE
+    ? {}
+    : {
+        offers: [
+          { "@type": "Offer", name: "Solo", price: grille("solo").mensuel, priceCurrency: "EUR", billingIncrement: "P1M" },
+          { "@type": "Offer", name: "Pro", price: grille("pro").mensuel, priceCurrency: "EUR", billingIncrement: "P1M" },
+        ],
+      }),
   featureList: [
     "Génération de devis par IA",
     "Signature électronique client",
@@ -95,10 +102,10 @@ export default function LandingPage() {
                   comprise&nbsp;: vos factures électroniques partent sans rien brancher ni payer en plus.
                 </p>
                 <div className="mt-8 flex flex-col sm:flex-row gap-3">
-                  <Link href="/signup" className={BOUTON_PLEIN}>Essayer 14 jours gratuitement</Link>
+                  <Link href={APPEL.lien} className={BOUTON_PLEIN}>{APPEL.libelle}</Link>
                   <DemoButton className={`w-full sm:w-auto ${BOUTON_DOUX}`} />
                 </div>
-                <p className="mt-4 text-[14px] text-gray-400">Sans carte bancaire. La démo s&apos;ouvre en un clic, sans inscription.</p>
+                <p className="mt-4 text-[14px] text-gray-400">{BETA_OUVERTE ? `${BETA.dureeMois} mois gratuits pour nos bêta-testeurs, sans carte bancaire.` : "Sans carte bancaire."} La démo s&apos;ouvre en un clic, sans inscription.</p>
               </div>
             }
           />
@@ -183,7 +190,7 @@ export default function LandingPage() {
 
         {/* ── Tarifs ── */}
         <section id="tarifs" className={`${BANDE} ${FOND_2} scroll-mt-20`}><div className={CADRE}>
-          <TarifsTable />
+          {BETA_OUVERTE ? <AppelBetaTesteurs /> : <TarifsTable />}
         </div></section>
 
         {/* ── Questions avant de commencer ── */}
@@ -196,10 +203,10 @@ export default function LandingPage() {
           <div className="reveal rounded-xl bg-ds-surface px-6 py-14 sm:px-12 sm:py-20 lg:px-16 lg:py-24 grid gap-8 lg:grid-cols-12 lg:items-center">
             <div className="lg:col-span-7">
               <h2 id="titre-action" className={H2}>Essayez Deviso sur votre prochain devis.</h2>
-              <p className={`mt-5 ${LEAD}`}>Essai gratuit de 14 jours, sans carte bancaire. Rien ne se déclenche à la fin.</p>
+              <p className={`mt-5 ${LEAD}`}>{BETA_OUVERTE ? APPEL.phrase : "Essai gratuit de 14 jours, sans carte bancaire. Rien ne se déclenche à la fin."}</p>
             </div>
             <div className="lg:col-span-5 flex flex-col sm:flex-row lg:justify-end gap-3">
-              <Link href="/signup" className={BOUTON_PLEIN}>Essayer 14 jours gratuitement</Link>
+              <Link href={APPEL.lien} className={BOUTON_PLEIN}>{APPEL.libelle}</Link>
               <DemoButton className={`w-full sm:w-auto ${BOUTON_DOUX}`} />
             </div>
           </div>

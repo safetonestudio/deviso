@@ -46,6 +46,12 @@ function LoginForm() {
       sessionStorage.removeItem("deviso_no_persist");
     }
 
+    // Une route serveur (activation du lien bêta, /api/beta/activer) ne se
+    // charge pas par le routeur client : navigation complète.
+    if (nextUrl.startsWith("/api/")) {
+      window.location.href = nextUrl;
+      return;
+    }
     router.push(nextUrl);
     router.refresh();
   };

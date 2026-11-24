@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
+import { createAdminClient } from "@/lib/supabase/admin";
 import { stripe } from "@/lib/stripe";
 import { MESSAGE_DEMO } from "@/lib/stripe-guard";
 
@@ -33,7 +34,9 @@ export async function POST() {
       } catch {
         // Customer invalide (ex: ID de test en mode live) → on le réinitialise
         customerId = null;
-        await supabase
+        // Clé de service : la base refuse qu'un utilisateur écrive lui-même ses
+        // identifiants Stripe (migration 20261124_profil_colonnes_protegees).
+        await createAdminClient()
           .from("profiles")
           .update({ stripe_customer_id: null })
           .eq("id", user.id);

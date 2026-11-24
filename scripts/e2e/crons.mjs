@@ -34,7 +34,7 @@ const appelCron = (chemin, avecSecret) =>
     headers: avecSecret && secret ? { authorization: `Bearer ${secret}` } : {},
   }).then(async (r) => ({ status: r.status, body: await r.text() }));
 
-const CRONS = ["/api/cron/send-reminders", "/api/cron/recurring", "/api/cron/cleanup-demo", "/api/cron/resume-cabinet", "/api/cron/pointage-paiements", "/api/cron/veille"];
+const CRONS = ["/api/cron/send-reminders", "/api/cron/recurring", "/api/cron/cleanup-demo", "/api/cron/resume-cabinet", "/api/cron/pointage-paiements", "/api/cron/veille", "/api/cron/fin-beta"];
 
 // ── 1. Le secret protège-t-il réellement ? ───────────────────────────────────
 console.log("── Protection des tâches planifiées ─────────────────────────");

@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { STATUT_BETA } from "@/lib/beta";
 import { stripe } from "@/lib/stripe";
 import { createAdminClient } from "@/lib/supabase/admin";
 import type Stripe from "stripe";
@@ -365,6 +366,19 @@ export async function POST(req: NextRequest) {
         .select("id");
 
       if (error) throw error;
+
+      // Bêta (lib/beta.ts) : un testeur qui résilie l'abonnement souscrit
+      // pendant sa bêta retrouve sa bêta jusqu'à son terme, au lieu de perdre
+      // les jours gratuits qui lui restaient. Le cron fin-beta la terminera.
+      const { error: eBeta } = await supabase
+        .from("profiles")
+        .update({ plan: "pro", subscription_status: STATUT_BETA })
+        .eq("stripe_customer_id", customerId)
+        .is("stripe_subscription_id", null)
+        .gt("beta_fin", new Date().toISOString())
+        .is("beta_fin_notifiee_le", null);
+      if (eBeta) throw eBeta;
+
       if (!touchees || touchees.length === 0) {
         // Essai déjà marqué terminé : la marque reste, l'abonnement mort est oublié.
         const { data: marquees, error: e2 } = await supabase

@@ -21,6 +21,10 @@ import { PlanProvider } from "@/components/PlanContext";
 import Script from "next/script";
 import { EcranEssaiTermine, BandeauEssaiTermine } from "@/components/EssaiTermine";
 import { STATUT_ESSAI_TERMINE } from "@/lib/fin-essai";
+import { EcranFinBeta, BandeauFinBeta, MessageActivationBeta, EcranSansInvitation } from "@/components/FinBeta";
+import { compteSansInvitation } from "@/lib/beta-acces";
+import { STATUT_BETA_TERMINEE } from "@/lib/beta";
+import { Suspense } from "react";
 
 // Pages inaccessibles aux membres invités
 const MEMBER_RESTRICTED_PATHS = ["/billing", "/paiements", "/stats", "/crm"];
@@ -39,7 +43,7 @@ export default async function DashboardLayout({ children }: { children: React.Re
   const droits = await droitsDe(user.id, workspaceUserId);
 
   const [{ data: profile }, { data: workspacePlan }, { data: raccordement }] = await Promise.all([
-    supabase.from("profiles").select("full_name, company_name, is_demo, subscription_status").eq("id", user.id).single(),
+    supabase.from("profiles").select("full_name, company_name, is_demo, subscription_status, stripe_customer_id, beta_debut").eq("id", user.id).single(),
     // Le plan est lu sur la ligne du PROPRIÉTAIRE de l'espace. profiles est en
     // RLS « auth.uid() = id » : un invité ne peut pas lire cette ligne avec son
     // propre client, la lecture reviendrait vide et le plan retomberait sur
@@ -96,9 +100,18 @@ export default async function DashboardLayout({ children }: { children: React.Re
     }
   }
 
+  // Bêta (lib/beta-acces.ts) : un compte ouvert sans invitation, en
+  // contournant la page d'inscription, ne voit que l'appel à candidater.
+  // Ni démarrage, ni création. Bêta fermée : jamais vrai.
+  const sansInvitation =
+    !isMember &&
+    !profile?.is_demo &&
+    (await compteSansInvitation(createAdminClient(), user.id, { plan, ...profile })) &&
+    !(await estCabinet(createAdminClient(), user.id));
+
   // Redirect new owners to onboarding if they haven't set their company name yet
   // Team members (collaborators) are exempt, they use the owner's company profile
-  if (!profile?.company_name && !pathname.startsWith("/onboarding") && !isMember) {
+  if (!sansInvitation && !profile?.company_name && !pathname.startsWith("/onboarding") && !isMember) {
     redirect("/onboarding");
   }
 
@@ -190,6 +203,9 @@ export default async function DashboardLayout({ children }: { children: React.Re
    */
   const essaiTermine =
     !isMember && !isDemo && plan === "free" && profile?.subscription_status === STATUT_ESSAI_TERMINE;
+  // Même logique pour la fin de bêta d'un testeur (cron fin-beta, lib/beta.ts).
+  const betaTerminee =
+    !isMember && !isDemo && plan === "free" && profile?.subscription_status === STATUT_BETA_TERMINEE;
   const surTableauDeBord = pathname === "/dashboard";
   const surAbonnement = pathname.startsWith("/billing");
 
@@ -283,7 +299,13 @@ export default async function DashboardLayout({ children }: { children: React.Re
               noyé parmi les réglages sur ordinateur. */}
           {isDemo && <DemoBanner />}
           {essaiTermine && !surTableauDeBord && !surAbonnement && <BandeauEssaiTermine />}
-          {essaiTermine && surTableauDeBord ? <EcranEssaiTermine /> : children}
+          {betaTerminee && !surTableauDeBord && !surAbonnement && <BandeauFinBeta />}
+          {(surTableauDeBord || pathname.startsWith("/onboarding")) && (
+            <Suspense fallback={null}>
+              <MessageActivationBeta />
+            </Suspense>
+          )}
+          {sansInvitation ? <EcranSansInvitation /> : essaiTermine && surTableauDeBord ? <EcranEssaiTermine /> : betaTerminee && surTableauDeBord ? <EcranFinBeta /> : children}
           </div>
         </main>
       </div>

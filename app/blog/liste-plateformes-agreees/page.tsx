@@ -1,4 +1,5 @@
 import { ArticleLong, type Section, type Source } from "@/components/blog/ArticleLong";
+import { APPEL, BETA_OUVERTE } from "@/lib/beta";
 import { metadonneesArticle } from "@/lib/blog/meta";
 
 const SLUG = "liste-plateformes-agreees";
@@ -202,7 +203,7 @@ export default function Page() {
       cta={{
         titre: "Deviso vous dit par où passent vos factures",
         texte:
-          "Devis, factures Factur-X et transmission via une plateforme agréée, sans que vous ayez à lire un fichier de la DGFiP. Essai de 14 jours, sans carte bancaire.",
+          "Devis, factures Factur-X et transmission via une plateforme agréée, sans que vous ayez à lire un fichier de la DGFiP. " + (BETA_OUVERTE ? APPEL.phrase : "Essai de 14 jours, sans carte bancaire."),
       }}
     />
   );
