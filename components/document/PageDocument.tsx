@@ -51,6 +51,11 @@ interface PageDocumentProps {
   /** Au plus un bandeau : l'appelant choisit le plus urgent. */
   bandeau?: ReactNode;
   feuille: ReactNode;
+  /**
+   * Pages suivantes du document (annexe CGV d'un devis), placées sous la
+   * feuille : la colonne de droite s'arrête au bas de la première page.
+   */
+  suiteFeuille?: ReactNode;
   actions: ReactNode;
   suivi: ReactNode;
   informations: ReactNode;
@@ -60,7 +65,7 @@ interface PageDocumentProps {
 
 export function PageDocument({
   retour, titre, numero, pastilles, dates, sousLigne, bandeau,
-  feuille, actions, suivi, informations, titreInformations, avantPage,
+  feuille, suiteFeuille, actions, suivi, informations, titreInformations, avantPage,
 }: PageDocumentProps) {
   // Un seul bloc centré (retour de Selim, 24/11) : la feuille (820 px au plus)
   // et le panneau (320 px) côte à côte, 40 px entre eux. Le titre, les dates
@@ -90,7 +95,9 @@ export function PageDocument({
 
       <div
         className={`grid grid-cols-1 lg:grid-cols-[minmax(0,820px)_320px] gap-x-10 gap-y-6 items-start ${
-          bandeau ? "lg:grid-rows-[auto_auto_1fr]" : "lg:grid-rows-[auto_1fr]"
+          bandeau
+            ? suiteFeuille ? "lg:grid-rows-[auto_auto_1fr_auto]" : "lg:grid-rows-[auto_auto_1fr]"
+            : suiteFeuille ? "lg:grid-rows-[auto_1fr_auto]" : "lg:grid-rows-[auto_1fr]"
         }`}
       >
         {bandeau && <div className="lg:col-start-1 lg:row-start-1 min-w-0">{bandeau}</div>}
@@ -104,6 +111,10 @@ export function PageDocument({
           <h2 className="text-sm font-semibold text-gray-500 mb-2">Le document, tel que le reçoit le client</h2>
           {feuille}
         </div>
+
+        {suiteFeuille && (
+          <div className={`lg:col-start-1 min-w-0 ${bandeau ? "lg:row-start-4" : "lg:row-start-3"}`}>{suiteFeuille}</div>
+        )}
 
         {/* La colonne de droite fait EXACTEMENT la hauteur du document (retours
             de Selim, 24/11) : sur ordinateur, ce bloc est posé en absolu dans sa

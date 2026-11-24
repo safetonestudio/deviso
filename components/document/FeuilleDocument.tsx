@@ -16,9 +16,31 @@ import type { ContenuDocument } from "@/lib/facture-contenu";
  * 375 px serait illisible) : marges réduites, parties l'une sous l'autre,
  * colonnes Unité et P.U. masquées. Le texte, lui, ne change pas.
  */
-export function FeuilleDocument({ contenu: c, libelle }: { contenu: ContenuDocument; libelle: string }) {
+export function FeuilleDocument({ contenu: c, libelle, partie = "tout" }: {
+  contenu: ContenuDocument;
+  libelle: string;
+  /**
+   * « premiere » : la première page seule ; « annexe » : l'annexe seule (CGV).
+   * La page d'un devis les place séparément pour que la colonne de droite
+   * s'arrête au bas de la première page (retour de Selim, 24/11). Le lien
+   * client affiche « tout ».
+   */
+  partie?: "tout" | "premiere" | "annexe";
+}) {
   const { t } = c;
   const style = { "--accent": c.accent } as CSSProperties;
+
+  if (partie === "annexe") {
+    if (!c.annexe) return null;
+    return (
+      <div className="ff-cadre" style={style} aria-label={`${libelle}, ${c.annexe.titre}`}>
+        <article className={`ff-page ff-annexe ff-modele-${c.modele} saut-page-avant`}>
+          <p className="ff-label">{c.annexe.titre}</p>
+          <p className="ff-texte">{c.annexe.texte}</p>
+        </article>
+      </div>
+    );
+  }
 
   return (
     <div className="ff-cadre" style={style} aria-label={libelle}>
@@ -107,7 +129,7 @@ export function FeuilleDocument({ contenu: c, libelle }: { contenu: ContenuDocum
         </footer>
       </article>
 
-      {c.annexe && (
+      {partie === "tout" && c.annexe && (
         <article className={`ff-page ff-annexe ff-modele-${c.modele} saut-page-avant`}>
           <p className="ff-label">{c.annexe.titre}</p>
           <p className="ff-texte">{c.annexe.texte}</p>

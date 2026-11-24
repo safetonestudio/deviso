@@ -462,6 +462,9 @@ export default function DevisVue({ proposal, profile, shareUrl, isOwner }: Props
     proposal.viewed_at ? `Consulté le ${jour(proposal.viewed_at)}` : null,
   ].filter(Boolean).join(" · ");
 
+  const contenu = contenuDevis(proposal, profile, { marque: profile?.plan === "free" });
+  const libelleFeuille = `Aperçu du devis ${proposal.proposal_number ?? ""}, tel que le voit le client`;
+
   return (
     <PageDocument
       avantPage={<GuidedTourBanner pageKey="proposals_detail" />}
@@ -472,11 +475,15 @@ export default function DevisVue({ proposal, profile, shareUrl, isOwner }: Props
       dates={dates}
       feuille={
         <div className="zone-impression">
-          <FeuilleDocument
-            contenu={contenuDevis(proposal, profile, { marque: profile?.plan === "free" })}
-            libelle={`Aperçu du devis ${proposal.proposal_number ?? ""}, tel que le voit le client`}
-          />
+          <FeuilleDocument contenu={contenu} libelle={libelleFeuille} partie="premiere" />
         </div>
+      }
+      suiteFeuille={
+        contenu.annexe ? (
+          <div className="zone-impression">
+            <FeuilleDocument contenu={contenu} libelle={libelleFeuille} partie="annexe" />
+          </div>
+        ) : undefined
       }
       actions={actions}
       suivi={<Suivi etapes={etapes} />}
