@@ -105,17 +105,28 @@ export function PageDocument({
           {feuille}
         </div>
 
-        {/* La colonne de droite descend jusqu'au bas de la feuille (retour de
-            Selim, 24/11) : le dernier bloc s'étire et ses lignes respirent. */}
-        <div className={`lg:col-start-2 min-w-0 flex flex-col gap-6 lg:self-stretch ${bandeau ? "lg:row-start-3" : "lg:row-start-2"}`}>
-          <section>
-            <h2 className="text-sm font-semibold text-gray-500 mb-2">Suivi</h2>
-            <div className="carte p-5">{suivi}</div>
-          </section>
-          <section className="flex flex-col lg:flex-1">
-            <h2 className="text-sm font-semibold text-gray-500 mb-2">{titreInformations}</h2>
-            <div className="carte p-5 lg:flex-1">{informations}</div>
-          </section>
+        {/* La colonne de droite fait EXACTEMENT la hauteur du document (retours
+            de Selim, 24/11) : sur ordinateur, ce bloc est posé en absolu dans sa
+            cellule, il ne peut donc pas allonger la grille ; c'est la feuille qui
+            la dimensionne. Le dernier bloc prend la place restante et, si son
+            contenu est plus long, il défile dans son cadre au lieu de dépasser. */}
+        <div className={`lg:col-start-2 min-w-0 lg:relative lg:self-stretch lg:min-h-[240px] ${bandeau ? "lg:row-start-3" : "lg:row-start-2"}`}>
+          <div className="flex flex-col gap-6 lg:absolute lg:inset-0">
+            <section className="shrink-0">
+              <h2 className="text-sm font-semibold text-gray-500 mb-2">Suivi</h2>
+              <div className="carte p-5">{suivi}</div>
+            </section>
+            <section className="flex flex-col lg:flex-1 lg:min-h-0">
+              <h2 className="text-sm font-semibold text-gray-500 mb-2">{titreInformations}</h2>
+              <div
+                className="carte p-5 lg:flex-1 lg:min-h-0 lg:overflow-y-auto overscroll-contain focus:outline-hidden focus-visible:ring-2 focus-visible:ring-indigo-500/40"
+                tabIndex={0}
+                aria-label={titreInformations}
+              >
+                {informations}
+              </div>
+            </section>
+          </div>
         </div>
       </div>
     </div>
@@ -315,7 +326,7 @@ export function Suivi({ etapes }: { etapes: EtapeSuivi[] }) {
 /** Une ligne libellé / valeur du bloc Informations. */
 export function Info({ libelle, children }: { libelle: string; children: ReactNode }) {
   return (
-    <div className="flex flex-col gap-1.5 text-sm leading-relaxed py-4 first:pt-0 last:pb-0 border-b border-ds-border last:border-0">
+    <div className="flex flex-col gap-1 text-sm leading-relaxed py-3 first:pt-0 last:pb-0 border-b border-ds-border last:border-0">
       <span className="text-xs text-gray-500">{libelle}</span>
       <div className="text-gray-300 min-w-0 break-words">{children}</div>
     </div>
