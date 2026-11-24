@@ -92,11 +92,11 @@ export function FacturXCompliance({ invoice, compact = false }: { invoice: Invoi
 
   if (compact) {
     return (
-      <div className="space-y-1.5">
+      <div className="space-y-3">
         <p className={isBlocking ? "text-amber-400" : "text-gray-300"}>
           {isBlocking ? "Serait refusée par une plateforme de facturation électronique" : "À vérifier"}
         </p>
-        <ul className="space-y-1 text-xs">
+        <ul className="space-y-2 text-xs leading-relaxed">
           {blocking.map((i) => (
             <li key={i.field} className="text-amber-400 flex gap-1.5"><span aria-hidden="true">•</span><span>{i.label}</span></li>
           ))}

@@ -439,11 +439,11 @@ export default function DevisVue({ proposal, profile, shareUrl, isOwner }: Props
       <Info libelle="Nature des lignes">
         {resumeNature || "Aucune ligne"}
         {proposal.items.some((it) => it.nature) && (
-          <ul className="mt-1 space-y-0.5 text-xs text-gray-500">
+          <ul className="mt-2 space-y-2 text-xs leading-relaxed text-gray-500">
             {proposal.items.map((it, i) => (
               <li key={i} className="flex justify-between gap-3">
-                <span className="truncate">{it.description}</span>
-                <span className="shrink-0">{it.nature ? LIBELLE_NATURE[it.nature] : "À préciser"}</span>
+                <span className="min-w-0">{it.description}</span>
+                <span className="shrink-0 text-right">{it.nature ? LIBELLE_NATURE[it.nature] : "À préciser"}</span>
               </li>
             ))}
           </ul>
