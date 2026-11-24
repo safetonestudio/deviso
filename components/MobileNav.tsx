@@ -6,7 +6,7 @@ import { usePathname, useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 import { terminerDemo } from "@/components/DemoSession";
 import { Menu, X } from "lucide-react";
-import { NAVIGATION, estSection, lienActif, lienVisible, sectionVisible } from "@/lib/navigation";
+import { NAVIGATION, famillesVisibles, lienActif } from "@/lib/navigation";
 import { NotificationBell } from "@/components/NotificationBell";
 import { ThemeToggleIcone } from "@/components/DashboardTheme";
 
@@ -51,15 +51,14 @@ export function MobileNav({ initials, userName, userEmail, isMember = false, isC
   // invisible tant qu'aucune route ne se ressemblait.
   const navLinkClass = (href: string, accent?: boolean) => {
     const active = lienActif(href, pathname);
+    const base = "flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm transition-colors";
     if (accent) {
-      return active
-        ? "flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium bg-indigo-600 text-ink"
-        : "flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-indigo-400 hover:bg-indigo-500/10 hover:text-indigo-300 transition-all";
+      return `${base} font-semibold text-indigo-400 ${active ? "nav-lien-actif" : "hover:bg-ds-elevated"}`;
     }
-    return `flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all ${
+    return `${base} ${
       active
-        ? "bg-indigo-500/10 text-indigo-400 border-l-2 border-indigo-500 pl-[10px]"
-        : "text-gray-400 hover:text-ink hover:bg-ds-elevated"
+        ? "nav-lien-actif text-ink font-semibold [&>svg]:text-indigo-400"
+        : "font-medium text-gray-400 hover:text-ink hover:bg-ds-elevated"
     }`;
   };
 
@@ -85,8 +84,8 @@ export function MobileNav({ initials, userName, userEmail, isMember = false, isC
 
       {open && <div className="lg:hidden fixed inset-0 z-60 bg-black/60 backdrop-blur-xs" onClick={() => setOpen(false)} />}
 
-      <div className={`lg:hidden fixed top-0 left-0 bottom-0 z-60 w-72 bg-ds-bg border-r border-ds-border flex flex-col shadow-xl transition-transform duration-300 ease-in-out ${open ? "translate-x-0" : "-translate-x-full"}`}>
-        <div className="p-5 border-b border-ds-border flex items-center justify-between">
+      <div className={`lg:hidden fixed top-0 left-0 bottom-0 z-60 w-72 nav-panneau border-r border-ds-border flex flex-col shadow-xl transition-transform duration-300 ease-in-out ${open ? "translate-x-0" : "-translate-x-full"}`}>
+        <div className="px-5 pt-5 pb-2 flex items-center justify-between">
           <Link href="/dashboard" className="flex items-center gap-2" onClick={() => setOpen(false)}>
             <div className="w-8 h-8 rounded-lg bg-linear-to-br/srgb from-indigo-600 to-violet-600 flex items-center justify-center">
               <span className="text-ink font-semibold text-sm">D</span>
@@ -98,35 +97,34 @@ export function MobileNav({ initials, userName, userEmail, isMember = false, isC
           </button>
         </div>
 
-        <nav className="flex-1 p-4 space-y-0.5 overflow-y-auto">
-          {NAVIGATION.map((item, i) => {
-            if (estSection(item)) {
-              if (!sectionVisible(i, NAVIGATION, isMember, isComptable)) return null;
-              return (
-                <div key={i} className="pt-4 pb-1">
-                  <p className="px-3 text-[10px] font-semibold text-gray-600">{item.section}</p>
-                </div>
-              );
-            }
-            if (!lienVisible(item, isMember, isComptable)) return null;
-
-            const Icon = item.icon;
-            return (
-              <Link
-                key={item.href}
-                href={item.href}
-                className={navLinkClass(item.href, item.accent)}
-              >
-                <Icon size={16} className="shrink-0" />
-                <span className="flex-1">{item.label}</span>
-                {item.pro && !isMember && <span className="text-[10px] font-semibold px-1.5 py-0.5 rounded-md bg-indigo-500/10 text-indigo-400 border border-indigo-500/20">Pro</span>}
-              </Link>
-            );
-          })}
+        {/* Mêmes familles en creux que la barre latérale (voir SidebarNav). */}
+        <nav aria-label="Navigation principale" className="flex-1 p-3 space-y-2 overflow-y-auto">
+          {famillesVisibles(NAVIGATION, isMember, isComptable).map((famille, i) => (
+            <div key={famille.titre ?? `famille-${i}`} className="nav-famille p-1.5">
+              {famille.titre && (
+                <p className="px-3 pt-1 pb-1 text-xs font-semibold text-gray-500">{famille.titre}</p>
+              )}
+              {famille.liens.map((item) => {
+                const Icon = item.icon;
+                return (
+                  <Link
+                    key={item.href}
+                    href={item.href}
+                    aria-current={lienActif(item.href, pathname) ? "page" : undefined}
+                    className={navLinkClass(item.href, item.accent)}
+                  >
+                    <Icon size={16} className="shrink-0" />
+                    <span className="flex-1">{item.label}</span>
+                    {item.pro && !isMember && <span className="text-[10.5px] font-semibold px-1.5 py-0.5 rounded-md bg-indigo-500/10 text-indigo-400">Pro</span>}
+                  </Link>
+                );
+              })}
+            </div>
+          ))}
         </nav>
 
-        <div className="p-4 border-t border-ds-border space-y-2">
-          <div className="flex items-center gap-3 p-2 rounded-lg">
+        <div className="px-3 pb-4 pt-1 space-y-2">
+          <div className="nav-famille flex items-center gap-3 p-2.5">
             <div className="w-8 h-8 rounded-full bg-indigo-500/20 text-indigo-400 font-semibold text-sm flex items-center justify-center shrink-0">{initials}</div>
             <div className="flex-1 min-w-0">
               <div className="text-sm font-medium text-ink truncate">{userName || "Mon compte"}</div>

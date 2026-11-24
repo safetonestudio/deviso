@@ -206,8 +206,8 @@ export default async function DashboardLayout({ children }: { children: React.Re
           isDemo={isDemo}
         />
 
-        <aside className="hidden lg:flex w-64 bg-ds-surface border-r border-ds-border flex-col fixed h-full">
-          <div className="px-5 py-4 border-b border-ds-border flex items-center justify-between gap-2">
+        <aside className="hidden lg:flex w-64 nav-panneau border-r border-ds-border flex-col fixed h-full">
+          <div className="px-5 pt-4 pb-1 flex items-center justify-between gap-2">
             <a href="/dashboard" className="flex items-center gap-2 min-w-0">
               <div className="w-7 h-7 rounded-[7px] bg-indigo-600 flex items-center justify-center">
                 <span className="text-ink font-display font-semibold text-[15px]">D</span>
@@ -224,7 +224,7 @@ export default async function DashboardLayout({ children }: { children: React.Re
 
           <SidebarNav isMember={isMember} isComptable={isComptable} />
 
-          <div className="p-4 border-t border-ds-border">
+          <div className="px-3 pb-3 pt-1">
             {isDemo && (
               <a
                 href="/signup"
@@ -236,7 +236,7 @@ export default async function DashboardLayout({ children }: { children: React.Re
             )}
 
             {/* Bloc profil */}
-            <div className="flex items-center gap-3 px-3 py-3 rounded-xl bg-ds-elevated mb-2">
+            <div className="nav-famille flex items-center gap-3 px-3 py-3 mb-2">
               <div className="w-9 h-9 rounded-full bg-indigo-500/20 text-indigo-400 font-bold text-sm flex items-center justify-center shrink-0">
                 {initials}
               </div>

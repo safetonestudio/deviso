@@ -566,6 +566,21 @@ html:has(.ds-app.accueil), body:has(.ds-app.accueil) { background-color: #0E1512
   .reveal.vu { opacity: 1; transform: none; }
 }
 /* Barre laterale : repere vert a gauche du lien actif. */
+/* Navigation de l'app client : un panneau d'un seul tenant, chaque famille
+   dans une zone legerement creusee, sans cadre ni trait (choix de Selim le
+   24/11/2026, variante « creusee »). Le lien de la page ouverte ressort du
+   creux, en relief. Valeurs propres a chaque theme dans .ds-app plus bas. */
+.nav-panneau { background-color: var(--nav-panneau); }
+.nav-famille {
+  border-radius: 12px;
+  background-color: var(--nav-creux);
+  box-shadow: var(--nav-creux-ombre);
+}
+.nav-lien-actif {
+  background-color: var(--nav-actif);
+  box-shadow: var(--nav-actif-ombre);
+}
+
 .lien-actif::before {
   content: ""; position: absolute; left: 0; top: 7px; bottom: 7px; width: 3px;
   border-radius: 0 3px 3px 0; background-color: rgb(var(--acc-500));
@@ -626,6 +641,9 @@ html:has(.ds-app.accueil), body:has(.ds-app.accueil) { background-color: #0E1512
    s'appliquent (site public et blog inchanges).
    ───────────────────────────────────────────────────────────────── */
 .ds-app {
+  --nav-panneau: #16201B; --nav-creux: #101814; --nav-actif: #1D2822;
+  --nav-creux-ombre: inset 0 1px 3px rgba(0, 0, 0, 0.45), 0 1px 0 rgba(255, 255, 255, 0.04);
+  --nav-actif-ombre: inset 0 1px 0 rgba(255, 255, 255, 0.07), 0 1px 2px rgba(0, 0, 0, 0.5);
   --ds-bg: #0E1512; --ds-surface: #16201B; --ds-elevated: #1D2822;
   --ds-border: rgba(255, 255, 255, 0.09);
   --ds-shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.4);
@@ -645,6 +663,9 @@ html:has(.ds-app.accueil), body:has(.ds-app.accueil) { background-color: #0E1512
   --inf-600: 60 107 136; --inf-700: 47 85 108; --inf-800: 35 63 80; --inf-900: 25 45 57; --inf-950: 16 30 38;
 }
 .light .ds-app {
+  --nav-panneau: #FFFFFF; --nav-creux: #F1F3EE; --nav-actif: #FFFFFF;
+  --nav-creux-ombre: inset 0 1px 2px rgba(22, 33, 28, 0.08), 0 1px 0 #FFFFFF;
+  --nav-actif-ombre: 0 0 0 1px rgba(22, 33, 28, 0.04), 0 1px 2px rgba(22, 33, 28, 0.1), 0 2px 6px -2px rgba(22, 33, 28, 0.1);
   --ds-bg: #EDEFE9; --ds-surface: #FFFFFF; --ds-elevated: #F5F6F1;
   --ds-border: #E1E4DB;
   --ds-shadow-sm: 0 1px 2px rgba(22, 33, 28, 0.05);
