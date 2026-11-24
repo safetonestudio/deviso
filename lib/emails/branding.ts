@@ -3,7 +3,7 @@
  *
  * Règle : visible tant que l'utilisateur n'a pas d'abonnement actif, masqué dès
  * Solo ou Pro. C'est exactement celle qu'appliquent déjà les documents
- * (`showBranding = plan === "free"` dans ProposalDocument et sur la page
+ * (`showBranding = plan === "free"` dans lib/devis-contenu.ts et sur la page
  * publique). Les emails en étaient la seule exception, un oubli, pas un choix :
  * la grille tarifaire vend « Sans branding Deviso sur vos documents », et un
  * client payant qui voit encore la marque dans ses relances a raison de se

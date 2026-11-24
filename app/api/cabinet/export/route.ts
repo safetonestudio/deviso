@@ -71,7 +71,7 @@ async function exporter(req: NextRequest) {
 
   const { data: profils } = await admin
     .from("profiles")
-    .select("id, company_name, full_name, siret, proposal_color, payment_method, payment_link_provider, payment_link_profile, bank_iban, bank_bic, bank_account_name")
+    .select("id, company_name, full_name, siret, proposal_color, proposal_template, payment_method, payment_link_provider, payment_link_profile, bank_iban, bank_bic, bank_account_name")
     .in("id", selection);
 
   // Le plan de comptes du CABINET (réglé dans son espace), appliqué à tous
@@ -167,7 +167,7 @@ async function exporter(req: NextRequest) {
     for (const inv of invoices ?? []) {
       if (!inv.invoice_number) continue;
       const lie = await documentLie(admin, inv, ownerId);
-      const pdf = await generateFacturXPdf(inv as Invoice, p?.proposal_color ?? undefined, paymentInfo, lie.numero, lie.date);
+      const pdf = await generateFacturXPdf(inv as Invoice, { accent: p?.proposal_color, modele: p?.proposal_template }, paymentInfo, lie.numero, lie.date);
       const nomPdf = format === "quadra" ? `${base}/${nomsQuadra.get(inv.invoice_number)}` : `${base}/pieces/${segmentPiece(inv.invoice_number)}.pdf`;
       fichiers.push({ nom: nomPdf, contenu: new Uint8Array(pdf) });
     }

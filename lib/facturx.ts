@@ -15,6 +15,7 @@ import path from "path";
 import crypto from "crypto";
 import zlib from "zlib";
 import { InvoicePDF, PaymentInfo } from "./invoice-pdf";
+import type { Habillage } from "./facture-contenu";
 import { generateFacturXml } from "./invoice-xml";
 import type { Invoice } from "@/types";
 import type { ReactElement } from "react";
@@ -32,7 +33,7 @@ import type { ReactElement } from "react";
  * le même avoir, et c'est celui que le comptable du client ouvre dans le PDF
  * qui était le mauvais.
  */
-export async function generateFacturXPdf(invoice: Invoice, accentColor?: string, paymentInfo?: PaymentInfo, linkedInvoiceNumber?: string | null, linkedInvoiceDate?: string | null, chorus?: { siretDestinataire: string } | null): Promise<Buffer> {
+export async function generateFacturXPdf(invoice: Invoice, accentColor?: string | Habillage | null, paymentInfo?: PaymentInfo, linkedInvoiceNumber?: string | null, linkedInvoiceDate?: string | null, chorus?: { siretDestinataire: string } | null): Promise<Buffer> {
   // 1. Génération du PDF visuel (React PDF → Buffer)
   const pdfBuffer = await renderToBuffer(
     React.createElement(InvoicePDF, { invoice, accentColor, paymentInfo, linkedInvoiceNumber }) as ReactElement<React.ComponentProps<typeof Document>>

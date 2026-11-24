@@ -29,10 +29,11 @@ export async function GET(_req: NextRequest, { params }: Params) {
   if (error || !data) return NextResponse.json({ error: "Facture introuvable" }, { status: 404 });
 
   const invoice = data as Invoice;
-  const { accentColor, paymentInfo, lie } = await donneesRenduFacture(supabase, invoice, workspaceId);
+  const { accentColor, modele, paymentInfo, lie } = await donneesRenduFacture(supabase, invoice, workspaceId);
   return NextResponse.json({
     invoice,
     accentColor: accentColor ?? null,
+    modele,
     paymentInfo: paymentInfo ?? null,
     linkedNumber: lie.numero,
   });

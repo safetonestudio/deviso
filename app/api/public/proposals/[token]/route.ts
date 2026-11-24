@@ -58,7 +58,7 @@ export async function GET(_req: NextRequest, { params }: Params) {
   // signature, l'IP et le user-agent du signataire. Ces trois derniers sont la
   // piste d'audit : elle est faite pour être opposable, pas pour circuler.
   //
-  // La liste correspond à ce que `components/ProposalDocument.tsx` affiche
+  // La liste correspond à ce que `lib/devis-contenu.ts` affiche
   // réellement. La route POST, elle, garde `select("*")` : elle calcule
   // l'empreinte du document figé et a besoin de tout.
   const { data: proposal, error } = await admin

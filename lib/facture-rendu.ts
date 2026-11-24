@@ -18,6 +18,8 @@ import { documentLie, type DocumentLie } from "./document-lie";
 
 export interface DonneesRendu {
   accentColor: string | undefined;
+  /** Modèle visuel choisi dans Profil (classic, modern, epure). */
+  modele: string | null;
   paymentInfo: PaymentInfo | undefined;
   lie: DocumentLie;
 }
@@ -28,11 +30,11 @@ export async function donneesRenduFacture(
   workspaceId: string
 ): Promise<DonneesRendu> {
   const profileData = await getWorkspaceProfile<{
-    proposal_color: string | null; payment_method: string | null; payment_link_provider: string | null;
+    proposal_color: string | null; proposal_template: string | null; payment_method: string | null; payment_link_provider: string | null;
     payment_link_profile: string | null; bank_iban: string | null; bank_bic: string | null; bank_account_name: string | null;
   }>(
     workspaceId,
-    "proposal_color, payment_method, payment_link_provider, payment_link_profile, bank_iban, bank_bic, bank_account_name"
+    "proposal_color, proposal_template, payment_method, payment_link_provider, payment_link_profile, bank_iban, bank_bic, bank_account_name"
   );
 
   const accentColor = profileData?.proposal_color ?? undefined;
@@ -49,5 +51,5 @@ export async function donneesRenduFacture(
 
   // Solde ET avoir : numéro et date du document lié, voir lib/document-lie.ts.
   const lie = await documentLie(supabase, invoice, workspaceId);
-  return { accentColor, paymentInfo, lie };
+  return { accentColor, modele: profileData?.proposal_template ?? null, paymentInfo, lie };
 }

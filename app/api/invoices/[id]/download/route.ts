@@ -30,9 +30,9 @@ export async function GET(_req: NextRequest, { params }: Params) {
   const invoice = data as Invoice;
   // Couleur, modalités de paiement (profil de l'ESPACE) et document lié :
   // même lecture que la feuille affichée dans l'application, lib/facture-rendu.ts.
-  const { accentColor, paymentInfo, lie } = await donneesRenduFacture(supabase, invoice, workspaceId);
+  const { accentColor, modele, paymentInfo, lie } = await donneesRenduFacture(supabase, invoice, workspaceId);
 
-  const pdfBuffer = await generateFacturXPdf(invoice, accentColor, paymentInfo, lie.numero, lie.date);
+  const pdfBuffer = await generateFacturXPdf(invoice, { accent: accentColor, modele }, paymentInfo, lie.numero, lie.date);
   const filename = facturxFilename(invoice);
 
   // Sauvegarde optionnelle du chemin en BDD (best-effort)

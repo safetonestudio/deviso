@@ -26,7 +26,7 @@ async function pdfFacturXBase64(
 ): Promise<string> {
   const { data: profileData } = await admin
     .from("profiles")
-    .select("proposal_color, payment_method, payment_link_provider, payment_link_profile, bank_iban, bank_bic, bank_account_name")
+    .select("proposal_color, proposal_template, payment_method, payment_link_provider, payment_link_profile, bank_iban, bank_bic, bank_account_name")
     .eq("id", workspaceId)
     .single();
 
@@ -53,7 +53,7 @@ async function pdfFacturXBase64(
     linkedDate = linked?.issue_date ? String(linked.issue_date).slice(0, 10) : null;
   }
 
-  const pdf = await generateFacturXPdf(invoice, accentColor, paymentInfo, linkedNumber, linkedDate, { siretDestinataire: siret });
+  const pdf = await generateFacturXPdf(invoice, { accent: accentColor, modele: profileData?.proposal_template }, paymentInfo, linkedNumber, linkedDate, { siretDestinataire: siret });
   return Buffer.from(pdf).toString("base64");
 }
 

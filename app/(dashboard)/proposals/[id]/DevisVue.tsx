@@ -21,7 +21,8 @@ import {
 } from "lucide-react";
 import type { Proposal, Profile } from "@/types";
 import { usePermission } from "@/components/PlanContext";
-import { ProposalDocument, type ProposalProfile } from "@/components/ProposalDocument";
+import { FeuilleDocument } from "@/components/document/FeuilleDocument";
+import { contenuDevis, type ProfilDevis } from "@/lib/devis-contenu";
 import { GuidedTourBanner } from "@/components/GuidedTourBanner";
 import { LIBELLE_NATURE } from "@/lib/nature-operation";
 import {
@@ -43,7 +44,7 @@ const jourCourt = (d: string) =>
 
 interface Props {
   proposal: Proposal;
-  profile: (ProposalProfile & Partial<Profile>) | null;
+  profile: (ProfilDevis & Partial<Profile>) | null;
   shareUrl: string;
   isOwner: boolean;
 }
@@ -442,13 +443,10 @@ export default function DevisVue({ proposal, profile, shareUrl, isOwner }: Props
       pastilles={<Pastille ton={st.ton}>{st.libelle}</Pastille>}
       dates={dates}
       feuille={
-        <div className="zone-impression feuille-devis">
-          <ProposalDocument
-            proposal={proposal}
-            profile={profile}
-            showBranding={profile?.plan === "free"}
-            isDark={false}
-            cgvText={profile?.cgv_text}
+        <div className="zone-impression">
+          <FeuilleDocument
+            contenu={contenuDevis(proposal, profile, { marque: profile?.plan === "free" })}
+            libelle={`Aperçu du devis ${proposal.proposal_number ?? ""}, tel que le voit le client`}
           />
         </div>
       }

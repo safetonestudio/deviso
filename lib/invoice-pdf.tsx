@@ -19,7 +19,7 @@ import {
 } from "@react-pdf/renderer";
 import path from "path";
 import type { Invoice } from "@/types";
-import { contenuFacture, fmtQty, type PaymentInfo } from "./facture-contenu";
+import { contenuFacture, fmtQty, type PaymentInfo, type Habillage, type ContenuDocument } from "./facture-contenu";
 
 // Réexportés : facturx.ts et invoice-xml.ts les importent d'ici.
 export { fmtQty };
@@ -284,15 +284,48 @@ const styles = StyleSheet.create({
 
 interface Props {
   invoice: Invoice;
-  accentColor?: string;
+  /** Couleur seule (ancien appel) ou couleur et modèle choisis dans Profil. */
+  accentColor?: string | Habillage | null;
   paymentInfo?: PaymentInfo;
   linkedInvoiceNumber?: string | null;
 }
 
+/** Les habillages Moderne et Épuré, par-dessus la base Classique (styles). */
+function variantes(c: ContenuDocument) {
+  const a = c.accent;
+  const moderne = c.modele === "modern";
+  const epure = c.modele === "epure";
+  return {
+    entete: moderne
+      ? { backgroundColor: a, marginTop: -40, marginHorizontal: -45, paddingTop: 32, paddingHorizontal: 45, paddingBottom: 26, marginBottom: 28 }
+      : {},
+    titre: { color: moderne ? "#ffffff" : a },
+    surBande: moderne ? { color: "#ffffff", opacity: 0.85 } : {},
+    numero: moderne ? { color: "#ffffff" } : {},
+    filet: epure ? { backgroundColor: a, height: 1.5 } : {},
+    bandeau: epure ? { borderLeftWidth: 2, borderLeftColor: a, borderRadius: 0 } : { backgroundColor: a },
+    bandeauTexte: epure ? { color: a } : {},
+    entetTableau: epure
+      ? { borderRadius: 0, borderBottomWidth: 1, borderBottomColor: "#cbd5e1" }
+      : { backgroundColor: a },
+    entetTableauTexte: epure ? { color: SLATE_400 } : {},
+    ligneAlt: epure ? {} : styles.tableRowAlt,
+    totalFinal: epure ? { borderRadius: 0, borderTopWidth: 1.5, borderTopColor: a } : { backgroundColor: a },
+    totalFinalTexte: epure ? { color: a } : {},
+    encadre: epure
+      ? { backgroundColor: "#ffffff", borderRadius: 0, borderTopWidth: 1, borderTopColor: "#e2e8f0", paddingHorizontal: 0 }
+      : {},
+    annexe: moderne ? { borderTopWidth: 6, borderTopColor: a } : {},
+  };
+}
+
 /**
+ * Le document visuel du PDF Factur-X.
+ *
  * Tous les textes viennent de `contenuFacture()` (lib/facture-contenu.ts), la
- * même source que la feuille affichée dans l'application : l'écran et le PDF
- * ne peuvent plus dire deux choses différentes.
+ * même source que la feuille affichée dans l'application
+ * (components/document/FeuilleDocument.tsx) ; le modèle (Classique, Moderne,
+ * Épuré) est celui choisi dans Profil, le même qu'à l'écran et que le devis.
  *
  * Les textes multi-lignes sont des chaînes uniques jointes par "\n" : un
  * <Text> à enfants multiples fait émettre à @react-pdf un run de texte vide
@@ -301,7 +334,8 @@ interface Props {
  */
 export function InvoicePDF({ invoice, accentColor, paymentInfo, linkedInvoiceNumber }: Props) {
   const c = contenuFacture(invoice, accentColor, paymentInfo, linkedInvoiceNumber);
-  const { t, accent } = c;
+  const { t } = c;
+  const v = variantes(c);
 
   return (
     <Document
@@ -313,26 +347,27 @@ export function InvoicePDF({ invoice, accentColor, paymentInfo, linkedInvoiceNum
     >
       <Page size="A4" style={styles.page}>
         {/* ── Header ── */}
-        <View style={styles.header}>
+        <View style={[styles.header, v.entete]}>
           <View>
-            <Text style={[styles.brandName, { color: accent }]}>{c.title}</Text>
-            <Text style={{ fontSize: 8, color: SLATE_400, marginTop: 2 }}>{c.vendeur.nom}</Text>
+            <Text style={[styles.brandName, v.titre]}>{c.title}</Text>
+            <Text style={[{ fontSize: 8, color: SLATE_400, marginTop: 2 }, v.surBande]}>{c.sousTitre}</Text>
           </View>
           <View>
-            <Text style={styles.invoiceLabel}>{c.numero}</Text>
-            <Text style={styles.invoiceMeta}>{c.emise}</Text>
-            {c.echeance && <Text style={styles.invoiceMeta}>{c.echeance}</Text>}
+            {c.numero ? <Text style={[styles.invoiceLabel, v.numero]}>{c.numero}</Text> : null}
+            {c.dates.map((d, i) => (
+              <Text key={i} style={[styles.invoiceMeta, v.surBande]}>{d}</Text>
+            ))}
           </View>
         </View>
 
         {/* ── Bandeau acompte / solde ── */}
         {c.bandeau && (
-          <View style={[styles.typeBanner, { backgroundColor: accent }]}>
-            <Text style={styles.typeBannerText}>{c.bandeau}</Text>
+          <View style={[styles.typeBanner, v.bandeau]}>
+            <Text style={[styles.typeBannerText, v.bandeauTexte]}>{c.bandeau}</Text>
           </View>
         )}
 
-        <View style={styles.divider} />
+        <View style={[styles.divider, v.filet]} />
 
         {/* ── Parties ── */}
         <View style={styles.partiesRow}>
@@ -353,18 +388,20 @@ export function InvoicePDF({ invoice, accentColor, paymentInfo, linkedInvoiceNum
           </View>
         </View>
 
+        {c.objet && <Text style={{ fontSize: 11, fontWeight: 700, marginBottom: 12 }}>{c.objet}</Text>}
+
         {/* ── Tableau ── */}
         <View style={styles.table}>
-          <View style={[styles.tableHeader, { backgroundColor: accent }]}>
-            <Text style={[styles.tableHeaderText, styles.colDesc]}>{t.colDesc}</Text>
-            <Text style={[styles.tableHeaderText, styles.colQty]}>{t.colQty}</Text>
-            <Text style={[styles.tableHeaderText, styles.colUnit]}>{t.colUnit}</Text>
-            <Text style={[styles.tableHeaderText, styles.colPrice]}>{t.colPrice}</Text>
-            <Text style={[styles.tableHeaderText, styles.colTotal]}>{t.colTotal}</Text>
+          <View style={[styles.tableHeader, v.entetTableau]}>
+            <Text style={[styles.tableHeaderText, v.entetTableauTexte, styles.colDesc]}>{t.colDesc}</Text>
+            <Text style={[styles.tableHeaderText, v.entetTableauTexte, styles.colQty]}>{t.colQty}</Text>
+            <Text style={[styles.tableHeaderText, v.entetTableauTexte, styles.colUnit]}>{t.colUnit}</Text>
+            <Text style={[styles.tableHeaderText, v.entetTableauTexte, styles.colPrice]}>{t.colPrice}</Text>
+            <Text style={[styles.tableHeaderText, v.entetTableauTexte, styles.colTotal]}>{t.colTotal}</Text>
           </View>
 
           {c.lignes.map((l, i) => (
-            <View key={i} style={[styles.tableRow, i % 2 === 1 ? styles.tableRowAlt : {}]}>
+            <View key={i} style={[styles.tableRow, i % 2 === 1 ? v.ligneAlt : {}]}>
               <Text style={[styles.cellTextBold, styles.colDesc]}>{l.description}</Text>
               <Text style={[styles.cellText, styles.colQty]}>{l.qte}</Text>
               <Text style={[styles.cellText, styles.colUnit]}>{l.unite}</Text>
@@ -387,45 +424,44 @@ export function InvoicePDF({ invoice, accentColor, paymentInfo, linkedInvoiceNum
                 <Text style={styles.totalValue}>{g.montant}</Text>
               </View>
             ))}
-            <View style={[styles.totalRowFinal, { backgroundColor: accent }]}>
-              <Text style={styles.totalLabelFinal}>{c.totalFinal.libelle}</Text>
-              <Text style={styles.totalValueFinal}>{c.totalFinal.montant}</Text>
+            <View style={[styles.totalRowFinal, v.totalFinal]}>
+              <Text style={[styles.totalLabelFinal, v.totalFinalTexte]}>{c.totalFinal.libelle}</Text>
+              <Text style={[styles.totalValueFinal, v.totalFinalTexte]}>{c.totalFinal.montant}</Text>
             </View>
           </View>
         </View>
 
-        {/* ── Modalités de paiement (jamais sur un avoir, voir contenuFacture) ── */}
-        {c.paiement && (
-          <View style={styles.notesBox}>
-            <Text style={styles.notesLabel}>{t.paymentDetails}</Text>
-            {c.paiement.map((p, i) => (
-              <Text key={i} style={styles.notesText}>{p}</Text>
+        {/* ── Modalités de paiement, conditions, mentions légales ── */}
+        {c.encadres.map((e, i) => (
+          <View key={i} style={[styles.notesBox, v.encadre]}>
+            <Text style={styles.notesLabel}>{e.titre}</Text>
+            {e.paragraphes.map((p, j) => (
+              <Text key={j} style={styles.notesText}>{p}</Text>
             ))}
+          </View>
+        ))}
+
+        {c.signature && (
+          <View style={{ borderWidth: 1, borderColor: "#a7d7c0", backgroundColor: "#ecf7f1", borderRadius: 4, padding: 8, marginBottom: 20 }}>
+            <Text style={{ fontSize: 8.5, fontWeight: 700, color: "#14532d" }}>{c.signature}</Text>
           </View>
         )}
 
-        {/* ── Notes / Conditions ── */}
-        {c.conditions && (
-          <View style={styles.notesBox}>
-            <Text style={styles.notesLabel}>{t.termsNotes}</Text>
-            {c.conditions.map((p, i) => (
-              <Text key={i} style={styles.notesText}>{p}</Text>
-            ))}
-          </View>
-        )}
-
-        {/* ── Mentions légales 2026 ── */}
-        <View style={styles.notesBox}>
-          <Text style={styles.notesLabel}>{t.legalHeading}</Text>
-          <Text style={styles.notesText}>{c.mentions}</Text>
-        </View>
+        {c.marque && <Text style={{ fontSize: 7, color: SLATE_400, textAlign: "center", marginBottom: 12 }}>{c.marque}</Text>}
 
         {/* ── Footer ── */}
         <View style={styles.footer} fixed>
-          <Text style={styles.footerText}>{c.pied}</Text>
-          <Text style={[styles.facturxBadge, { color: accent }]}>{t.footerBadge}</Text>
+          <Text style={styles.footerText}>{c.pied.gauche}</Text>
+          {c.pied.droite ? <Text style={[styles.facturxBadge, { color: c.accent }]}>{c.pied.droite}</Text> : null}
         </View>
       </Page>
+
+      {c.annexe && (
+        <Page size="A4" style={[styles.page, v.annexe]}>
+          <Text style={styles.notesLabel}>{c.annexe.titre}</Text>
+          <Text style={styles.notesText}>{c.annexe.texte}</Text>
+        </Page>
+      )}
     </Document>
   );
 }

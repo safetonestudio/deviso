@@ -43,9 +43,9 @@ export async function POST(req: NextRequest, { params }: Params) {
   // son IBAN (ou aucun) au lieu de celui de l'entreprise, le client paie
   // alors sur le mauvais compte, ou un refus « plan insuffisant » sur une
   // fonction que l'espace paie pourtant.
-  const profileData = await getWorkspaceProfile<{ proposal_color: string | null; payment_method: string | null; payment_link_provider: string | null; payment_link_profile: string | null; bank_iban: string | null; bank_bic: string | null; bank_account_name: string | null; plan: string | null; company_name: string | null; full_name: string | null; email: string | null }>(
+  const profileData = await getWorkspaceProfile<{ proposal_color: string | null; proposal_template: string | null; payment_method: string | null; payment_link_provider: string | null; payment_link_profile: string | null; bank_iban: string | null; bank_bic: string | null; bank_account_name: string | null; plan: string | null; company_name: string | null; full_name: string | null; email: string | null }>(
     workspaceId,
-    "proposal_color, payment_method, payment_link_provider, payment_link_profile, bank_iban, bank_bic, bank_account_name, plan, company_name, full_name, email"
+    "proposal_color, proposal_template, payment_method, payment_link_provider, payment_link_profile, bank_iban, bank_bic, bank_account_name, plan, company_name, full_name, email"
   );
 
   const accentColor = profileData?.proposal_color ?? undefined;
@@ -79,7 +79,7 @@ export async function POST(req: NextRequest, { params }: Params) {
   const estAvoir = invoice.invoice_type === "avoir" || invoice.type_code === "381";
 
   const lie = await documentLie(supabase, invoice, workspaceId);
-  const pdfBuffer = await generateFacturXPdf(invoice, accentColor, paymentInfo, lie.numero, lie.date);
+  const pdfBuffer = await generateFacturXPdf(invoice, { accent: accentColor, modele: profileData?.proposal_template }, paymentInfo, lie.numero, lie.date);
   const filename = facturxFilename(invoice);
   const amount = new Intl.NumberFormat("fr-FR", { style: "currency", currency: "EUR" }).format(invoice.total_ttc);
   const clientName = invoice.client_company || invoice.client_name || "Client";

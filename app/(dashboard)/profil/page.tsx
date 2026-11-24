@@ -685,7 +685,7 @@ Les présentes CGV sont soumises au droit français. Tout litige relève de la c
         {canName(profile.plan, "accentColor") ? (
           <SectionRepliable id="documents" titre="Apparence des documents" sousTitre="Choisis le style de tes devis et factures envoyés aux clients.">
             <div>
-              <label className="block text-xs font-medium text-gray-400 mb-2">Mise en page</label>
+              <label className="block text-xs font-medium text-gray-400 mb-2">Modèle des devis et des factures</label>
               <div className="grid grid-cols-3 gap-4">
                 {[
                   { value: "classic", label: "Classique" },
@@ -699,53 +699,55 @@ Les présentes CGV sont soumises au droit français. Tout litige relève de la c
                       onClick={() => set("proposal_template" as keyof Profile, t.value)}
                       className={`relative rounded-xl border-2 p-3 transition-all text-left ${selected ? "border-indigo-500 bg-indigo-500/10" : "border-ds-border hover:border-zinc-600"}`}>
                       <div className="rounded-md bg-ds-bg border border-ds-border overflow-hidden aspect-3/4 p-3 mb-3">
+                        {/* Vignettes fidèles aux trois modèles des devis ET des factures
+                            (lib/invoice-pdf.tsx, FeuilleDocument) : Classique en aplats,
+                            Moderne avec une bande en tête, Épuré sans aplat. */}
                         {t.value === "classic" && (
                           <div className="h-full flex flex-col">
-                            <div className="text-[11px] font-bold tracking-wide" style={{ color }}>DEVIS</div>
-                            <div className="h-px bg-ink/15 my-2" />
+                            <div className="text-[11px] font-bold tracking-wide mb-2" style={{ color }}>FACTURE</div>
                             <div className="flex justify-between gap-2 mb-2.5">
                               <div className="space-y-1"><div className="h-1.5 w-14 rounded-sm bg-ink/25" /><div className="h-1 w-10 rounded-sm bg-ink/15" /></div>
                               <div className="space-y-1 flex flex-col items-end"><div className="h-1.5 w-12 rounded-sm bg-ink/25" /><div className="h-1 w-8 rounded-sm bg-ink/15" /></div>
                             </div>
-                            <div className="h-3 rounded-sm" style={{ backgroundColor: color, opacity: 0.22 }} />
+                            <div className="h-2.5 rounded-xs" style={{ backgroundColor: color }} />
                             <div className="space-y-1.5 mt-2">
                               <div className="h-1.5 w-full rounded-sm bg-ink/10" />
                               <div className="h-1.5 w-full rounded-sm bg-ink/10" />
-                              <div className="h-1.5 w-5/6 rounded-sm bg-ink/10" />
                             </div>
-                            <div className="mt-auto flex justify-end"><div className="h-3 w-16 rounded-sm" style={{ backgroundColor: color }} /></div>
+                            <div className="mt-auto flex justify-end"><div className="h-3 w-16 rounded-xs" style={{ backgroundColor: color }} /></div>
                           </div>
                         )}
                         {t.value === "modern" && (
                           <div className="h-full flex flex-col">
                             <div className="-mx-3 -mt-3 mb-2.5 px-3 py-2.5 flex items-center" style={{ backgroundColor: color }}>
-                              <span className="text-[11px] font-bold tracking-wide" style={{ color: "#ffffff" }}>DEVIS</span>
+                              <span className="text-[11px] font-bold tracking-wide" style={{ color: "#ffffff" }}>FACTURE</span>
                             </div>
                             <div className="flex justify-between gap-2 mb-2.5">
                               <div className="space-y-1"><div className="h-1.5 w-14 rounded-sm bg-ink/25" /><div className="h-1 w-10 rounded-sm bg-ink/15" /></div>
                               <div className="space-y-1 flex flex-col items-end"><div className="h-1.5 w-12 rounded-sm bg-ink/25" /><div className="h-1 w-8 rounded-sm bg-ink/15" /></div>
                             </div>
-                            <div className="space-y-1.5">
+                            <div className="h-2.5 rounded-xs" style={{ backgroundColor: color }} />
+                            <div className="space-y-1.5 mt-2">
                               <div className="h-1.5 w-full rounded-sm bg-ink/10" />
                               <div className="h-1.5 w-full rounded-sm bg-ink/10" />
-                              <div className="h-1.5 w-5/6 rounded-sm bg-ink/10" />
                             </div>
-                            <div className="mt-auto flex justify-end"><div className="h-3 w-16 rounded-sm" style={{ backgroundColor: color }} /></div>
+                            <div className="mt-auto flex justify-end"><div className="h-3 w-16 rounded-xs" style={{ backgroundColor: color }} /></div>
                           </div>
                         )}
                         {t.value === "epure" && (
-                          <div className="h-full flex gap-2.5">
-                            <div className="w-1 rounded-full shrink-0" style={{ backgroundColor: color }} />
-                            <div className="flex-1 flex flex-col">
-                              <div className="text-[9px] font-semibold tracking-[0.3em] text-gray-400">DEVIS</div>
-                              <div className="mt-2.5 space-y-1"><div className="h-1.5 w-14 rounded-sm bg-ink/25" /><div className="h-1 w-10 rounded-sm bg-ink/15" /></div>
-                              <div className="space-y-1.5 mt-3">
-                                <div className="h-1.5 w-full rounded-sm bg-ink/10" />
-                                <div className="h-1.5 w-full rounded-sm bg-ink/10" />
-                                <div className="h-1.5 w-4/6 rounded-sm bg-ink/10" />
-                              </div>
-                              <div className="mt-auto"><div className="h-2.5 w-14 rounded-sm" style={{ backgroundColor: color, opacity: 0.85 }} /></div>
+                          <div className="h-full flex flex-col">
+                            <div className="text-[11px] font-bold tracking-wide" style={{ color }}>FACTURE</div>
+                            <div className="h-px my-2" style={{ backgroundColor: color }} />
+                            <div className="flex justify-between gap-2 mb-2.5">
+                              <div className="space-y-1"><div className="h-1.5 w-14 rounded-sm bg-ink/25" /><div className="h-1 w-10 rounded-sm bg-ink/15" /></div>
+                              <div className="space-y-1 flex flex-col items-end"><div className="h-1.5 w-12 rounded-sm bg-ink/25" /><div className="h-1 w-8 rounded-sm bg-ink/15" /></div>
                             </div>
+                            <div className="h-px bg-ink/20" />
+                            <div className="space-y-1.5 mt-2">
+                              <div className="h-1.5 w-full rounded-sm bg-ink/10" />
+                              <div className="h-1.5 w-full rounded-sm bg-ink/10" />
+                            </div>
+                            <div className="mt-auto flex justify-end"><div className="h-0.5 w-16" style={{ backgroundColor: color }} /></div>
                           </div>
                         )}
                       </div>

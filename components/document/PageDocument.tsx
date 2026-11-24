@@ -62,14 +62,19 @@ export function PageDocument({
   retour, titre, numero, pastilles, dates, sousLigne, bandeau,
   feuille, actions, suivi, informations, titreInformations, avantPage,
 }: PageDocumentProps) {
+  // Un seul bloc centré (retour de Selim, 24/11) : la feuille (820 px au plus)
+  // et le panneau (320 px) côte à côte, 40 px entre eux. Le titre, les dates
+  // et le bandeau s'alignent sur le bord gauche de la feuille ; le bandeau a
+  // la largeur de la feuille. Les deux colonnes partagent la même ligne de
+  // départ : un intitulé au-dessus de la feuille répond à « Actions ».
   return (
-    <>
+    <div className="max-w-[1180px] mx-auto">
       {avantPage}
       <Link href={retour.href} className="text-sm text-gray-500 hover:text-gray-400 transition-colors mb-4 inline-block">
         ← {retour.libelle}
       </Link>
 
-      <header className="mb-6">
+      <header className="mb-8">
         <div className="flex items-center gap-x-3 gap-y-2 flex-wrap">
           <h1 className="text-2xl font-semibold text-ink tracking-tight min-w-0 break-words">{titre}</h1>
           {numero && (
@@ -83,19 +88,24 @@ export function PageDocument({
         {sousLigne && <div className="text-sm mt-1">{sousLigne}</div>}
       </header>
 
-      {bandeau && <div className="mb-6">{bandeau}</div>}
+      <div
+        className={`grid grid-cols-1 lg:grid-cols-[minmax(0,820px)_320px] gap-x-10 gap-y-6 items-start ${
+          bandeau ? "lg:grid-rows-[auto_auto_1fr]" : "lg:grid-rows-[auto_1fr]"
+        }`}
+      >
+        {bandeau && <div className="lg:col-start-1 lg:row-start-1 min-w-0">{bandeau}</div>}
 
-      <div className="grid grid-cols-1 lg:grid-cols-[minmax(0,1fr)_300px] lg:grid-rows-[auto_1fr] gap-6 items-start">
-        <aside className="lg:col-start-2 lg:row-start-1 min-w-0" aria-label="Actions">
+        <aside className={`lg:col-start-2 min-w-0 ${bandeau ? "lg:row-start-2" : "lg:row-start-1"}`} aria-label="Actions">
           <h2 className="text-sm font-semibold text-gray-500 mb-2">Actions</h2>
           {actions}
         </aside>
 
-        <div className="lg:col-start-1 lg:row-start-1 lg:row-span-2 min-w-0">
-          <div className="max-w-[820px] mx-auto">{feuille}</div>
+        <div className={`lg:col-start-1 lg:row-span-2 min-w-0 ${bandeau ? "lg:row-start-2" : "lg:row-start-1"}`}>
+          <h2 className="text-sm font-semibold text-gray-500 mb-2">Le document, tel que le reçoit le client</h2>
+          {feuille}
         </div>
 
-        <div className="lg:col-start-2 lg:row-start-2 min-w-0 space-y-6">
+        <div className={`lg:col-start-2 min-w-0 space-y-6 ${bandeau ? "lg:row-start-3" : "lg:row-start-2"}`}>
           <section>
             <h2 className="text-sm font-semibold text-gray-500 mb-2">Suivi</h2>
             <div className="carte p-4">{suivi}</div>
@@ -106,7 +116,7 @@ export function PageDocument({
           </section>
         </div>
       </div>
-    </>
+    </div>
   );
 }
 

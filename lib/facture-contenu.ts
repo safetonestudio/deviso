@@ -128,28 +128,63 @@ export const LABELS: Record<PdfLang, {
   },
 };
 
-export interface ContenuFacture {
+/**
+ * Modèle visuel des documents, choisi dans Profil (`profiles.proposal_template`).
+ * Depuis le 24/11/2026 il s'applique aux devis ET aux factures, à l'écran comme
+ * dans ce que reçoit le client (décision de Selim). Les trois partagent la même
+ * construction, celle de la facture ; seul l'habillage change.
+ */
+export type Modele = "classic" | "modern" | "epure";
+export function modeleDocument(v: string | null | undefined): Modele {
+  return v === "modern" || v === "epure" ? v : "classic";
+}
+
+/** Couleur et modèle d'un document : ce que le profil de l'espace fixe. */
+export interface Habillage {
+  accent?: string | null;
+  modele?: string | null;
+}
+
+/**
+ * Le contenu d'un document (devis ou facture), dans l'ordre où il s'imprime.
+ * Les deux rendus, PDF (lib/invoice-pdf.tsx) et écran
+ * (components/document/FeuilleDocument.tsx), ne lisent que ceci :
+ * `check:feuille-facture` vérifie que chacun affiche chaque champ.
+ */
+export interface ContenuDocument {
   accent: string;
-  t: (typeof LABELS)["fr"];
+  modele: Modele;
+  /** Libellés des blocs fixes (Émetteur, colonnes, Total HT). */
+  t: Pick<(typeof LABELS)["fr"], "from" | "billTo" | "colDesc" | "colQty" | "colUnit" | "colPrice" | "colTotal" | "subtotal">;
   title: string;
+  sousTitre: string;
   numero: string;
-  emise: string;
-  echeance: string | null;
+  /** Dates sous le numéro (émission, échéance ou validité). */
+  dates: string[];
   /** Bandeau acompte / solde, ou null. */
   bandeau: string | null;
   vendeur: { nom: string; lignes: string[] };
   client: { nom: string; lignes: string[] };
+  /** Objet du document (titre d'un devis), ou null. */
+  objet: string | null;
   lignes: { description: string; qte: string; unite: string; pu: string; total: string }[];
   totalHt: string;
   tva: { libelle: string; montant: string }[];
   totalFinal: { libelle: string; montant: string };
-  /** Modalités de paiement (lignes), ou null : jamais sur un avoir. */
-  paiement: string[] | null;
-  /** Conditions et notes (lignes), ou null. */
-  conditions: string[] | null;
-  mentions: string;
-  pied: string;
+  /** Encadrés après les totaux : paiement, conditions, mentions légales. */
+  encadres: { titre: string; paragraphes: string[] }[];
+  /** Signature électronique (devis signé), ou null. */
+  signature: string | null;
+  /** Pied de page : identité à gauche, mention à droite (ou null). */
+  pied: { gauche: string; droite: string | null };
+  /** Mention « créé avec Deviso » (formule gratuite), ou null. */
+  marque: string | null;
+  /** Annexe sur une nouvelle page (conditions générales de vente), ou null. */
+  annexe: { titre: string; texte: string } | null;
 }
+
+/** Ancien nom, gardé pour les imports existants. */
+export type ContenuFacture = ContenuDocument;
 
 /**
  * Tout le texte de la facture, dans l'ordre où le PDF l'imprime.
@@ -158,11 +193,12 @@ export interface ContenuFacture {
  */
 export function contenuFacture(
   invoice: Invoice,
-  accentColor?: string | null,
+  habillage?: string | Habillage | null,
   paymentInfo?: PaymentInfo | null,
   linkedInvoiceNumber?: string | null
-): ContenuFacture {
-  const accent = accentColor || ACCENT_DEFAUT;
+): ContenuDocument {
+  const h: Habillage = typeof habillage === "string" ? { accent: habillage } : habillage ?? {};
+  const accent = h.accent || ACCENT_DEFAUT;
   // Le motif de l'absence de TVA, déterminé par la même règle que le XML
   // (lib/exoneration.ts). `isFranchise` ne désigne plus « taux à zéro » mais
   // bien le régime de franchise en base : le PDF imprimait « art. 293 B du
@@ -295,14 +331,19 @@ export function contenuFacture(
 
   return {
     accent,
+    modele: modeleDocument(h.modele),
     t,
     title,
+    sousTitre: invoice.seller_company || invoice.seller_name || "",
     numero: `${t.numberPrefix} ${invoice.invoice_number}`,
-    emise: `${t.issuedOn} ${fmtDateDoc(invoice.issue_date, dateLocale)}`,
-    echeance: invoice.due_date ? `${t.dueOn} ${fmtDateDoc(invoice.due_date, dateLocale)}` : null,
+    dates: [
+      `${t.issuedOn} ${fmtDateDoc(invoice.issue_date, dateLocale)}`,
+      ...(invoice.due_date ? [`${t.dueOn} ${fmtDateDoc(invoice.due_date, dateLocale)}`] : []),
+    ],
     bandeau,
     vendeur: { nom: invoice.seller_company || invoice.seller_name || "", lignes: vendeurLignes },
     client: { nom: invoice.client_company || invoice.client_name || "", lignes: clientLignes },
+    objet: null,
     lignes: invoice.items.map((item) => ({
       description: item.description,
       qte: fmtQty(item.quantity, item.unit),
@@ -313,9 +354,14 @@ export function contenuFacture(
     totalHt: fmtMontant(invoice.total_ht),
     tva,
     totalFinal: { libelle: isAvoir ? t.totalCredit : t.totalInclVat, montant: fmtMontant(invoice.total_ttc) },
-    paiement,
-    conditions,
-    mentions,
-    pied,
+    encadres: [
+      ...(paiement ? [{ titre: t.paymentDetails, paragraphes: paiement }] : []),
+      ...(conditions ? [{ titre: t.termsNotes, paragraphes: conditions }] : []),
+      { titre: t.legalHeading, paragraphes: [mentions] },
+    ],
+    signature: null,
+    pied: { gauche: pied, droite: t.footerBadge },
+    marque: null,
+    annexe: null,
   };
 }

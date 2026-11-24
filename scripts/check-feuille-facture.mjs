@@ -1,14 +1,14 @@
 /**
  * Garde : la facture à l'écran et son PDF disent la même chose.
  *
- * Depuis le 24/11/2026, la page d'une facture montre une reproduction du PDF
- * Factur-X (components/document/FeuilleFacture.tsx). Ce que l'utilisateur voit
+ * Depuis le 24/11/2026, les pages devis et facture montrent une reproduction du
+ * PDF (components/document/FeuilleDocument.tsx), au modèle choisi dans Profil. Ce que l'utilisateur voit
  * doit être ce que reçoit son client : les deux rendus lisent donc les mêmes
  * textes, calculés par `contenuFacture()` (lib/facture-contenu.ts).
  *
  * Ce contrôle vérifie que :
- *  1. les deux rendus appellent `contenuFacture()` ;
- *  2. chaque champ de `ContenuFacture` est affiché par les DEUX rendus
+ *  1. les deux rendus lisent le contenu commun (`contenuFacture()`, `contenuDevis()`) ;
+ *  2. chaque champ de `ContenuDocument` est affiché par les DEUX rendus
  *     (un champ ajouté au PDF seul, ou à l'écran seul, fait échouer) ;
  *  3. aucun des deux n'écrit en dur une mention que la source porte déjà.
  *
@@ -18,16 +18,16 @@ import { readFileSync } from "node:fs";
 
 const lire = (f) => readFileSync(f, "utf8");
 const SOURCE = "lib/facture-contenu.ts";
-const RENDUS = ["lib/invoice-pdf.tsx", "components/document/FeuilleFacture.tsx"];
+const RENDUS = ["lib/invoice-pdf.tsx", "components/document/FeuilleDocument.tsx"];
 let ko = 0;
 const exige = (intitule, ok, detail = "") => {
   console.log(`${ok ? "  ok  " : "  KO  "} ${intitule}${!ok && detail ? `\n       ${detail}` : ""}`);
   if (!ok) ko++;
 };
 
-/** Champs de l'interface ContenuFacture. */
+/** Champs de l'interface ContenuDocument (devis et factures). */
 export function champs(src) {
-  const m = src.match(/export interface ContenuFacture \{([\s\S]*?)\n\}/);
+  const m = src.match(/export interface ContenuDocument \{([\s\S]*?)\n\}/);
   if (!m) return [];
   return [...m[1].matchAll(/^\s{2}(\w+)\s*:/gm)].map((x) => x[1]);
 }
@@ -42,17 +42,25 @@ const liste = champs(lire(SOURCE));
 exige(`${SOURCE} décrit le contenu (${liste.length} champs)`, liste.length >= 10);
 for (const f of RENDUS) {
   const src = lire(f);
-  exige(`${f} lit contenuFacture()`, /contenuFacture\(/.test(src));
+  exige(`${f} lit le contenu commun`, /contenuFacture\(|contenu: c/.test(src));
   const m = manquants(src, liste);
   exige(`${f} affiche chaque champ du contenu`, m.length === 0, `non affichés : ${m.join(", ")}`);
   const durs = MENTIONS.filter((r) => r.test(src.replace(/\/\*[\s\S]*?\*\/|\/\/.*$/gm, "")));
   exige(`${f} n'écrit aucune mention en dur`, durs.length === 0, `en dur : ${durs.join(", ")}`);
 }
 
+// Le devis passe par la même feuille, dans l'application et chez le client.
+for (const f of ["app/(dashboard)/proposals/[id]/DevisVue.tsx", "app/(public)/p/[token]/page.tsx"]) {
+  const src = lire(f);
+  exige(`${f} affiche le devis avec FeuilleDocument et contenuDevis()`, /<FeuilleDocument/.test(src) && /contenuDevis\(/.test(src));
+}
+const pageFacture = lire("app/(dashboard)/invoices/[id]/page.tsx");
+exige("la page facture affiche FeuilleDocument et contenuFacture()", /<FeuilleDocument/.test(pageFacture) && /contenuFacture\(/.test(pageFacture));
+
 // Contre-épreuves : le contrôle doit crier sur un rendu qui oublie un champ
 // ou qui réécrit une mention.
 const rendu = lire(RENDUS[1]);
-exige("contre-épreuve : un rendu sans les mentions EST détecté", manquants(rendu.replaceAll("c.mentions", "x"), liste).includes("mentions"));
+exige("contre-épreuve : un rendu sans les encadrés (mentions légales) EST détecté", manquants(rendu.replaceAll("c.encadres", "x"), liste).includes("encadres"));
 exige("contre-épreuve : une mention en dur EST détectée", MENTIONS.some((r) => r.test(`${rendu}\n<p>Mentions légales</p>`)));
 
 if (ko) { console.log(`\ncheck:feuille-facture ECHEC (${ko})`); process.exit(1); }

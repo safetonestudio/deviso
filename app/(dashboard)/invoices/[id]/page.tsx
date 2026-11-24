@@ -5,7 +5,7 @@
  * (components/document/PageDocument.tsx), validé par Selim le 24/11/2026.
  *
  * Au centre, la feuille : la reproduction exacte du PDF Factur-X que reçoit le
- * client (components/document/FeuilleFacture.tsx, mêmes textes que
+ * client (components/document/FeuilleDocument.tsx, mêmes textes que
  * lib/invoice-pdf.tsx). À droite : Actions, Suivi, Facture électronique.
  *
  * Toutes les actions de l'ancien panneau sont reprises, avec leurs droits :
@@ -25,7 +25,7 @@ import {
 import { GuidedTourBanner } from "@/components/GuidedTourBanner";
 import { FacturXCompliance, problemesConformite } from "@/components/FacturXCompliance";
 import { usePermission, useIsMember } from "@/components/PlanContext";
-import { FeuilleFacture } from "@/components/document/FeuilleFacture";
+import { FeuilleDocument } from "@/components/document/FeuilleDocument";
 import {
   PageDocument, Pastille, PanneauActions, BoutonPrincipal, BoutonListe, GroupeActions, Retour,
   ZoneSuppression, Suivi, Info, Bandeau, type EtapeSuivi, type Ton,
@@ -34,7 +34,7 @@ import { LIBELLE_NATURE } from "@/lib/nature-operation";
 import { libelleStatut } from "@/lib/superpdp-statuts";
 import { etatPdp } from "@/lib/superpdp-etat-facture";
 import type { Invoice } from "@/types";
-import type { PaymentInfo } from "@/lib/facture-contenu";
+import { contenuFacture, type PaymentInfo } from "@/lib/facture-contenu";
 import { MODES_REGLEMENT, type ModeReglement } from "@/lib/recettes";
 import { estAPointer, joursDeRetard, ESPACEMENT_JOURS } from "@/lib/pointage-regles";
 import { couleurEtatChorus, libelleEtatFlux } from "@/lib/chorus-etats";
@@ -70,6 +70,7 @@ const jourCourt = (d: string) =>
 interface DonneesFeuille {
   invoice: Invoice;
   accentColor: string | null;
+  modele: string | null;
   paymentInfo: PaymentInfo | null;
   linkedNumber: string | null;
 }
@@ -863,11 +864,9 @@ function FactureVue({ invoice, id, hasChorusPro, feuille, feuilleKo }: {
       bandeau={bandeau}
       feuille={
         feuille ? (
-          <FeuilleFacture
-            invoice={feuille.invoice}
-            accentColor={feuille.accentColor}
-            paymentInfo={feuille.paymentInfo}
-            linkedInvoiceNumber={feuille.linkedNumber}
+          <FeuilleDocument
+            contenu={contenuFacture(feuille.invoice, { accent: feuille.accentColor, modele: feuille.modele }, feuille.paymentInfo, feuille.linkedNumber)}
+            libelle={`Aperçu de la facture ${feuille.invoice.invoice_number}, identique au PDF`}
           />
         ) : feuilleKo ? (
           <div className="carte p-6 text-sm text-gray-400">
