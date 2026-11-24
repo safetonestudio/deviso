@@ -120,43 +120,53 @@ XP Z12-014, cas d'usage 31 : facture mixte). Deviso le dira sans l'imposer.
 
 ---
 
-## Question écrite à Super PDP (à envoyer par Selim, NON envoyée)
+## Ce que leur documentation tranche déjà (relue le 24/11/2026)
+
+Avant d'écrire, les 20 articles de leur documentation (`api.superpdp.tech/internal/articles/{1..20}/html`)
+ont été relus. Deux des trois questions prévues y trouvent leur réponse :
+
+- **B2B transmis au PPF et acheminé** : article 15 « E-reporting », section « E-reporting des
+  factures B2B » : en envoyant une facture B2B, ils l'acheminent au destinataire ET en
+  envoient une copie à l'administration par le flux 1, « vous n'avez rien à faire de plus ».
+  Joint à l'essai (M1 B2B accepté, `fr:202` / `fr:203`), la question ne se pose plus.
+- **Portée de la phrase « factures mixtes non gérées »** : elle se trouve dans la section
+  « E-reporting des factures B2C » de ce même article, et leur message de refus ne vise que
+  `B2C` et `B2BInt`. Question close.
+- **Montant partiel au `fr:212`** : notes de version du 26/01/2026 (article 8), « Possibilité
+  d'envoyer le montant partiel encaissé pour le statut 212 » ; et article 15 : pour une vente
+  de marchandise, le `212` « n'aura aucun effet ». Reste ouvert un seul point : sur une
+  facture MIXTE, un bloc `MEN` limité aux prestations est-il traité comme la totalité de
+  l'encaissement à déclarer, ou comme un paiement partiel qui laisserait la facture « non
+  soldée » côté administration ? C'est l'objet du courrier ci-dessous.
+
+## Courrier à Super PDP (à envoyer par Selim, NON envoyé)
 
 *De : safetonestudio@proton.me. Signature au nom légal (le SIREN et le raccordement à la
 plateforme agréée sont au nom de Berrabah, CLAUDE.md, Règle nº3).*
 
-**Objet : Factures mixtes biens + services (BT-23 M1) en B2B domestique**
+**Objet : Statut 212 sur une facture mixte biens + services (BT-23 M1)**
 
 Bonjour,
 
-Deviso émet par votre API les factures de ses utilisateurs, dont certaines comportent à la
-fois des lignes de biens et des lignes de prestations de services indépendantes (cadre de
-facturation BT-23 = M1). Votre page « E-reporting » indique que les factures mixtes ne sont
-pas gérées. Nous avons fait l'essai dans votre bac à sable le 24/11/2026 :
+Deviso transmet par votre API les factures de ses utilisateurs. Certaines comportent à la
+fois des lignes de biens et des lignes de prestations de services (cadre de facturation
+BT-23 = M1). Nous avons vérifié dans votre bac à sable le 24/11/2026 qu'en B2B domestique une
+telle facture est acceptée et acheminée (factures 2316935, 2316995, 2317035), et que vous la
+refusez en B2C et en B2BInt, ce qui correspond à votre page E-reporting.
 
-- en B2B domestique, une facture M1 (et une facture d'acompte 386 en M1) est acceptée et
-  reçoit fr:200, fr:201, fr:202 et fr:203 (factures 2316935, 2316995, 2317035) ;
-- en B2C et en B2BInt, la même facture est refusée au dépôt : « unhandled business process
-  type: M1 (BT-23) […] Choose one or make 2 invoices ».
+Notre question porte sur le statut 212 « Encaissée » de ces factures. La TVA n'est exigible à
+l'encaissement que sur la partie services (fiche DGFiP « Données de paiement à transmettre à
+l'administration », août 2026). Nous prévoyons donc d'envoyer un bloc MEN ne portant que la
+part services, par taux de TVA. Dans notre essai, une facture de 1 200 € TTC dont 480 € de
+services : le bloc de 480 € est accepté ; sans détail, votre API enregistre 1 200 €.
 
-Pour être sûrs de bien lire ce comportement avant de l'ouvrir à nos utilisateurs :
-
-1. En production, une facture B2B domestique M1 est-elle transmise au PPF (données du
-   flux 1) et acheminée au destinataire comme une facture B1 ou S1 ? Le bac à sable ne nous
-   montre pas la partie PPF.
-2. La phrase « les factures mixtes ne sont pas gérées » de votre page E-reporting vise-t-elle
-   uniquement les transactions B2C et internationales que vous extrayez pour l'e-reporting,
-   comme le suggère votre message d'erreur ?
-3. Pour le statut fr:212 Encaissée d'une facture M1, nous prévoyons d'envoyer un bloc MEN ne
-   portant que la part services (TVA exigible à l'encaissement, fiche DGFiP « Données de
-   paiement à transmettre », août 2026). Sans détail, votre API calcule l'encaissement sur la
-   totalité de la facture, biens compris (1 200 € au lieu de 480 € dans notre essai). Est-ce
-   bien la pratique attendue, et le PPF accepte-t-il un montant encaissé inférieur au total
-   de la facture sans autre précision ?
+Est-ce bien ainsi que vous attendez le 212 d'une facture M1 ? Et ce montant, inférieur au
+total de la facture, est-il transmis à l'administration comme l'encaissement complet de la
+part services, et non comme un paiement partiel qui laisserait la facture en attente d'un
+solde ?
 
 Merci d'avance,
 
 Selim Berrabah
 Deviso, getdeviso.fr
 safetonestudio@proton.me
-[À COMPLÉTER : SIREN si vous souhaitez l'indiquer]
