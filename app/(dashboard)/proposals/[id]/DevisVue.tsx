@@ -8,7 +8,7 @@
  * avec les mêmes droits :
  * - envoyer par e-mail, marquer envoyé, copier le lien de partage : acte
  *   « envoyer_devis » (le titulaire l'a toujours) ;
- * - relancer, convertir en facture, imprimer : visibles comme avant (voir le
+ * - relancer, convertir en facture, télécharger le PDF : visibles comme avant (voir le
  *   point 5 du rapport du 24/11 : la relance n'est gardée ni ici ni côté
  *   serveur, correction proposée à part) ;
  * - supprimer : titulaire seul.
@@ -17,7 +17,7 @@ import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import {
-  Send, Bell, Printer, FileText, Coins, CircleCheck, ChevronDown, Link2, MailCheck, ReceiptText,
+  Send, Bell, Download, FileText, Coins, CircleCheck, ChevronDown, Link2, MailCheck, ReceiptText,
 } from "lucide-react";
 import type { Proposal, Profile } from "@/types";
 import { usePermission } from "@/components/PlanContext";
@@ -55,6 +55,29 @@ export default function DevisVue({ proposal, profile, shareUrl, isOwner }: Props
 
   // ── États (repris de ProposalActions et ShareSection) ──
   const [copie, setCopie] = useState(false);
+  const [telechargement, setTelechargement] = useState(false);
+  const [erreurPdf, setErreurPdf] = useState<string | null>(null);
+
+  // Le PDF du devis, au même modèle que la facture (/api/proposals/[id]/pdf).
+  // Il remplace « Imprimer ou enregistrer en PDF », qui passait par la fenêtre
+  // d'impression du navigateur.
+  const telechargerPdf = async () => {
+    setTelechargement(true);
+    setErreurPdf(null);
+    try {
+      const res = await fetch(`/api/proposals/${proposal.id}/pdf`);
+      if (!res.ok) throw new Error();
+      const blob = await res.blob();
+      const nom = (res.headers.get("Content-Disposition") || "").match(/filename="([^"]+)"/)?.[1] ?? "devis.pdf";
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url; a.download = nom; a.click();
+      URL.revokeObjectURL(url);
+    } catch {
+      setErreurPdf("Le PDF n'a pas pu être généré. Réessaie dans un instant.");
+    }
+    setTelechargement(false);
+  };
   const [marquage, setMarquage] = useState(false);
   const [suppression, setSuppression] = useState(false);
   const [relance, setRelance] = useState(false);
@@ -160,13 +183,13 @@ export default function DevisVue({ proposal, profile, shareUrl, isOwner }: Props
   const libelleRelance = relance ? "Envoi…" : nbRelances > 0 ? `Relancer le client (${nbRelances}/3)` : "Relancer le client";
 
   // ── Le geste attendu : un seul bouton plein ──
-  type Cle = "email" | "relancer" | "convertir" | "imprimer";
+  type Cle = "email" | "relancer" | "convertir" | "telecharger";
   const principal: Cle =
     estBrouillon && peutEnvoyer ? "email"
     : statut === "signed" && peutConvertir ? "convertir"
     : peutRelancer ? "relancer"
     : peutConvertir ? "convertir"
-    : "imprimer";
+    : "telecharger";
 
   const blocEmail = formEmail && (
     <div className="rounded-lg border border-ds-border p-3 space-y-2">
@@ -288,7 +311,9 @@ export default function DevisVue({ proposal, profile, shareUrl, isOwner }: Props
         <span className="flex items-center justify-between gap-2">Convertir en facture<ChevronDown size={16} className={conversion ? "rotate-180" : ""} /></span>
       </BoutonPrincipal>
     ) : (
-      <BoutonPrincipal icone={Printer} onClick={() => window.print()}>Imprimer ou enregistrer en PDF</BoutonPrincipal>
+      <BoutonPrincipal icone={Download} onClick={telechargerPdf} disabled={telechargement} sous="Le PDF tel que le reçoit le client">
+        {telechargement ? "Génération…" : "Télécharger le PDF"}
+      </BoutonPrincipal>
     );
 
   const actions = (
@@ -299,6 +324,7 @@ export default function DevisVue({ proposal, profile, shareUrl, isOwner }: Props
           {principal === "email" && blocEmail}
           {principal === "convertir" && menuConversion}
           {principal === "relancer" && messageRelance && <Retour ton={messageRelance.ton}>{messageRelance.texte}</Retour>}
+          {erreurPdf && <Retour ton="danger">{erreurPdf}</Retour>}
           {envoye && (
             <Retour ton="succes">E-mail envoyé à {envoye}. Le devis passe en statut « Envoyé ».</Retour>
           )}
@@ -342,8 +368,10 @@ export default function DevisVue({ proposal, profile, shareUrl, isOwner }: Props
           {peutEnvoyer && (
             <BoutonListe icone={Link2} onClick={copierLien}>{copie ? "Lien copié" : "Copier le lien de partage"}</BoutonListe>
           )}
-          {principal !== "imprimer" && (
-            <BoutonListe icone={Printer} onClick={() => window.print()}>Imprimer ou enregistrer en PDF</BoutonListe>
+          {principal !== "telecharger" && (
+            <BoutonListe icone={Download} onClick={telechargerPdf} disabled={telechargement}>
+              {telechargement ? "Génération…" : "Télécharger le PDF"}
+            </BoutonListe>
           )}
         </>
       }

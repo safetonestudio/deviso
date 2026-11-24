@@ -334,16 +334,37 @@ function variantes(c: ContenuDocument) {
  */
 export function InvoicePDF({ invoice, accentColor, paymentInfo, linkedInvoiceNumber }: Props) {
   const c = contenuFacture(invoice, accentColor, paymentInfo, linkedInvoiceNumber);
+  return DocumentPDF({
+    c,
+    meta: {
+      title: `Facture ${invoice.invoice_number}`,
+      author: invoice.seller_company || invoice.seller_name || "Deviso",
+      subject: `Facture ${invoice.invoice_number}, ${invoice.client_company || invoice.client_name || ""}`,
+      producer: "Deviso Factur-X Generator",
+    },
+  });
+}
+
+/**
+ * Le rendu PDF d'un document, devis ou facture : la même mise en page et le
+ * même modèle (Profil) pour les deux. La facture y ajoute ensuite son XML
+ * Factur-X (lib/facturx.ts) ; le devis est un PDF simple
+ * (`/api/proposals/[id]/pdf`).
+ */
+export function DocumentPDF({ c, meta }: {
+  c: ContenuDocument;
+  meta: { title: string; author: string; subject: string; producer: string };
+}) {
   const { t } = c;
   const v = variantes(c);
 
   return (
     <Document
-      title={`Facture ${invoice.invoice_number}`}
-      author={invoice.seller_company || invoice.seller_name || "Deviso"}
-      subject={`Facture ${invoice.invoice_number}, ${invoice.client_company || invoice.client_name || ""}`}
+      title={meta.title}
+      author={meta.author}
+      subject={meta.subject}
       creator="Deviso, getdeviso.fr"
-      producer="Deviso Factur-X Generator"
+      producer={meta.producer}
     >
       <Page size="A4" style={styles.page}>
         {/* ── Header ── */}
