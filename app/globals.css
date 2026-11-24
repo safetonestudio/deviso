@@ -743,4 +743,104 @@ html:has(.ds-app.accueil), body:has(.ds-app.accueil) { background-color: #0E1512
   body { font-size: 12px; }
 }
 
+/* ── Feuille de facture : reproduction à l'écran du PDF Factur-X ──────────────
+   components/document/FeuilleFacture.tsx. Chaque valeur reprend celle de
+   lib/invoice-pdf.tsx, en points A4 (595 pt de large) : --pt vaut un point PDF
+   à la largeur de la colonne. Les couleurs sont celles du PDF, en dur : une
+   feuille est du papier, elle ne suit pas le thème. Les capitales des libellés
+   reproduisent celles du PDF (document client, pas étiquette d'interface).
+   Toute modification ici doit suivre une modification du PDF, jamais l'inverse. */
+.ff-cadre { container-type: inline-size; width: 100%; }
+.ff-page {
+  --pt: calc(100cqw / 595);
+  display: flex; flex-direction: column;
+  min-height: calc(842 * var(--pt));
+  padding: calc(40 * var(--pt)) calc(45 * var(--pt)) calc(24 * var(--pt));
+  background: #ffffff; color: #0f172a;
+  font-family: "Liberation Sans", Arial, Helvetica, sans-serif;
+  font-size: calc(9 * var(--pt)); line-height: 1.35;
+  border-radius: 4px;
+  box-shadow: 0 0 0 1px rgba(22, 33, 28, 0.06), 0 2px 6px rgba(22, 33, 28, 0.08), 0 18px 40px -14px rgba(22, 33, 28, 0.22);
+  -webkit-print-color-adjust: exact; print-color-adjust: exact;
+}
+:where(.ff-page p) { margin: 0; }
+.ff-entete { display: flex; justify-content: space-between; gap: calc(16 * var(--pt)); margin-bottom: calc(32 * var(--pt)); }
+.ff-titre { font-size: calc(22 * var(--pt)); font-weight: 700; letter-spacing: calc(1 * var(--pt)); line-height: 1.1; }
+.ff-sous-titre { font-size: calc(8 * var(--pt)); color: #94a3b8; margin-top: calc(2 * var(--pt)); }
+.ff-meta { text-align: right; font-size: calc(8.5 * var(--pt)); color: #475569; }
+.ff-meta p + p { margin-top: calc(2 * var(--pt)); }
+.ff-numero { font-size: calc(11 * var(--pt)); font-weight: 700; color: #0f172a; }
+.ff-bandeau { border-radius: 4px; padding: calc(6 * var(--pt)) calc(10 * var(--pt)); margin-bottom: calc(16 * var(--pt));
+  font-size: calc(8.5 * var(--pt)); font-weight: 700; color: #ffffff; }
+.ff-filet { height: 1px; background: #f1f5f9; margin-bottom: calc(20 * var(--pt)); }
+.ff-parties { display: flex; justify-content: space-between; gap: calc(20 * var(--pt)); margin-bottom: calc(24 * var(--pt)); }
+.ff-parties > div { flex: 1; min-width: 0; }
+.ff-droite { text-align: right; }
+.ff-label { font-size: calc(7 * var(--pt)); font-weight: 700; color: #94a3b8; text-transform: uppercase;
+  letter-spacing: calc(0.8 * var(--pt)); margin-bottom: calc(5 * var(--pt)); }
+.ff-nom { font-size: calc(10 * var(--pt)); font-weight: 700; margin-bottom: calc(2 * var(--pt)); }
+.ff-detail { font-size: calc(8.5 * var(--pt)); color: #475569; line-height: 1.5; overflow-wrap: anywhere; }
+.ff-table { width: 100%; border-collapse: separate; border-spacing: 0; margin-bottom: calc(16 * var(--pt)); font-size: calc(8.5 * var(--pt)); table-layout: fixed; }
+.ff-table th { color: #ffffff; font-size: calc(7.5 * var(--pt)); font-weight: 700; text-transform: uppercase; letter-spacing: calc(0.5 * var(--pt));
+  padding: calc(7 * var(--pt)) calc(8 * var(--pt)); border-bottom: calc(2 * var(--pt)) solid #ffffff; }
+.ff-table th:first-child { border-radius: 4px 0 0 4px; }
+.ff-table th:last-child { border-radius: 0 4px 4px 0; }
+.ff-table td { padding: calc(7 * var(--pt)) calc(8 * var(--pt)); border-bottom: 1px solid #f1f5f9; color: #475569; vertical-align: top; overflow-wrap: anywhere; }
+.ff-table tr.ff-alt td { background: #f8fafc; }
+.ff-table td.ff-gras { font-weight: 700; color: #0f172a; }
+.ff-c-desc { width: 44.4%; text-align: left; }
+.ff-c-qte, .ff-c-unite { width: 11.1%; text-align: center; }
+.ff-c-pu, .ff-c-total { width: 16.7%; text-align: right; white-space: nowrap; }
+.ff-table th.ff-c-desc { text-align: left; }
+.ff-unite-inline { display: none; }
+.ff-totaux { align-self: flex-end; width: calc(200 * var(--pt)); margin: calc(8 * var(--pt)) 0 calc(24 * var(--pt)); font-size: calc(8.5 * var(--pt)); color: #475569; }
+.ff-tot-ligne, .ff-tot-final { display: flex; justify-content: space-between; gap: calc(8 * var(--pt)); }
+.ff-tot-ligne { padding: calc(3 * var(--pt)) calc(8 * var(--pt)); }
+.ff-tot-final { margin-top: calc(4 * var(--pt)); border-radius: 4px; padding: calc(7 * var(--pt)) calc(8 * var(--pt));
+  font-size: calc(9 * var(--pt)); font-weight: 700; color: #ffffff; }
+.ff-boite { background: #f1f5f9; border-radius: 4px; padding: calc(10 * var(--pt)); margin-bottom: calc(20 * var(--pt)); }
+.ff-texte { font-size: calc(8 * var(--pt)); color: #475569; line-height: 1.6; white-space: pre-line; overflow-wrap: anywhere; }
+.ff-pied { margin-top: auto; display: flex; justify-content: space-between; align-items: center; gap: calc(12 * var(--pt));
+  border-top: 1px solid #f1f5f9; padding-top: calc(8 * var(--pt)); font-size: calc(7 * var(--pt)); color: #94a3b8; }
+.ff-pied strong { font-weight: 700; }
+/* Colonne étroite (téléphone, petite tablette) : la feuille se recompose au
+   lieu de rétrécir. Mêmes textes, même ordre ; un point vaut 1,45 px. */
+@container (max-width: 560px) {
+  .ff-page { --pt: 1.45px; min-height: 0; padding: 20px 16px 16px; }
+  .ff-entete { flex-direction: column; gap: 10px; margin-bottom: 18px; }
+  .ff-meta { text-align: left; }
+  .ff-parties { flex-direction: column; gap: 14px; }
+  .ff-droite { text-align: left; }
+  .ff-c-unite, .ff-c-pu { display: none; }
+  .ff-c-desc { width: 46%; }
+  .ff-c-qte { width: 24%; }
+  .ff-c-total { width: 30%; }
+  .ff-table td.ff-c-qte { overflow-wrap: normal; }
+  .ff-unite-inline { display: inline; }
+  .ff-totaux { width: 100%; }
+}
+
+/* ── Impression d'un document : la feuille seule ──────────────────────────────
+   « Télécharger le PDF » d'un devis lance l'impression du navigateur. Sans ces
+   règles, elle imprimait toute la page (menu, boutons, lien de partage). Seule
+   la zone .zone-impression et ses ancêtres restent ; les ancêtres perdent leur
+   mise en page d'écran. */
+@media print {
+  body *:not(:has(.zone-impression)):not(.zone-impression):not(.zone-impression *) { display: none !important; }
+  body *:has(.zone-impression) {
+    display: block !important; position: static !important; padding: 0 !important; margin: 0 !important;
+    max-width: none !important; width: auto !important; min-height: 0 !important; height: auto !important;
+    border: 0 !important; box-shadow: none !important; background: #ffffff !important; overflow: visible !important;
+  }
+  .zone-impression { width: 100% !important; max-width: none !important; margin: 0 !important; }
+  .zone-impression * { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  .zone-impression .saut-page-avant { break-before: page; }
+  html, body { background: #ffffff !important; }
+  @page { size: A4; margin: 12mm; }
+}
+
+/* Le devis à l'écran porte le même relief de feuille que la facture. */
+.feuille-devis .ds-papier > div { box-shadow: 0 2px 6px rgba(22, 33, 28, 0.08), 0 18px 40px -14px rgba(22, 33, 28, 0.22); }
+@media print { .feuille-devis .ds-papier > div { box-shadow: none !important; } }
+
 } /* fin @layer utilities */

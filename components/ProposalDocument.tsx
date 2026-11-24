@@ -96,29 +96,31 @@ function ItemsTable({ proposal, color, headerStyle, p }: {
   const isColored = headerStyle === "colored";
   const thColor = isColored ? "text-ink" : `${p.text400}`;
   return (
-    <table className="w-full mb-6 table-fixed">
+    // Sur téléphone, les colonnes Unité et Prix HT se replient (l'unité suit
+    // la quantité) : à 375 px, cinq colonnes faisaient se chevaucher les montants.
+    <table className="w-full mb-6 sm:table-fixed">
       <colgroup>
-        <col className="w-[46%]" />
-        <col className="w-[8%]" />
-        <col className="w-[12%]" />
-        <col className="w-[17%]" />
-        <col className="w-[17%]" />
+        <col className="sm:w-[46%]" />
+        <col className="sm:w-[8%]" />
+        <col className="hidden sm:table-column sm:w-[12%]" />
+        <col className="hidden sm:table-column sm:w-[17%]" />
+        <col className="sm:w-[17%]" />
       </colgroup>
       <thead>
         {isColored ? (
           <tr style={{ backgroundColor: color }}>
             <th className={`${thBase} ${thColor} text-left pl-3 pr-4`}>Prestation</th>
             <th className={`${thBase} ${thColor} text-center px-2`}>Qté</th>
-            <th className={`${thBase} ${thColor} text-center px-2`}>Unité</th>
-            <th className={`${thBase} ${thColor} text-right px-3`}>Prix HT</th>
+            <th className={`${thBase} ${thColor} text-center px-2 hidden sm:table-cell`}>Unité</th>
+            <th className={`${thBase} ${thColor} text-right px-3 hidden sm:table-cell`}>Prix HT</th>
             <th className={`${thBase} ${thColor} text-right pl-3 pr-3`}>Total HT</th>
           </tr>
         ) : (
           <tr className={`border-b ${p.border}`}>
             <th className={`${thBase} ${thColor} text-left pr-4`}>Prestation</th>
             <th className={`${thBase} ${thColor} text-center px-2`}>Qté</th>
-            <th className={`${thBase} ${thColor} text-center px-2`}>Unité</th>
-            <th className={`${thBase} ${thColor} text-right px-3`}>Prix HT</th>
+            <th className={`${thBase} ${thColor} text-center px-2 hidden sm:table-cell`}>Unité</th>
+            <th className={`${thBase} ${thColor} text-right px-3 hidden sm:table-cell`}>Prix HT</th>
             <th className={`${thBase} ${thColor} text-right pl-3`}>Total HT</th>
           </tr>
         )}
@@ -127,10 +129,10 @@ function ItemsTable({ proposal, color, headerStyle, p }: {
         {proposal.items.map((item, i) => (
           <tr key={i}>
             <td className={`py-3 text-sm ${p.text700} pr-4`}>{item.description}</td>
-            <td className={`py-3 text-sm ${p.text500} text-center px-2`}>{fmtQty(item.quantity, item.unit)}</td>
-            <td className={`py-3 text-sm ${p.text500} text-center px-2`}>{item.unit}</td>
-            <td className={`py-3 text-sm ${p.text500} text-right px-3`}>{fmt(item.unit_price)}</td>
-            <td className={`py-3 text-sm font-medium ${p.text900} text-right pl-3`}>{fmt(item.total)}</td>
+            <td className={`py-3 text-sm ${p.text500} text-center px-2`}>{fmtQty(item.quantity, item.unit)}<span className="sm:hidden"> {item.unit}</span></td>
+            <td className={`py-3 text-sm ${p.text500} text-center px-2 hidden sm:table-cell`}>{item.unit}</td>
+            <td className={`py-3 text-sm ${p.text500} text-right px-3 whitespace-nowrap hidden sm:table-cell`}>{fmt(item.unit_price)}</td>
+            <td className={`py-3 text-sm font-medium ${p.text900} text-right pl-3 whitespace-nowrap`}>{fmt(item.total)}</td>
           </tr>
         ))}
       </tbody>
@@ -187,7 +189,7 @@ function ConditionsSection({ proposal, p, hasCgv }: { proposal: Proposal; p: Ret
 
 function CgvSection({ cgvText, p }: { cgvText: string; p: ReturnType<typeof palette> }) {
   return (
-    <div className={`${p.card} rounded-2xl border p-8 mt-2`}>
+    <div className={`${p.card} rounded-2xl border p-5 sm:p-8 mt-2 saut-page-avant`}>
       <h2 className={`text-sm font-semibold ${p.text400} mb-5 pb-3 border-b ${p.border}`}>
         Conditions Générales de Vente
       </h2>
@@ -249,8 +251,8 @@ function ClassicTemplate({ proposal, profile, color, showBranding, p, cgvText }:
 }) {
   return (
     <>
-    <div className={`${p.card} rounded-2xl border p-8 mb-6`}>
-      <div className={`flex justify-between items-start mb-8 pb-6 border-b ${p.headerBorder}`}>
+    <div className={`${p.card} rounded-2xl border p-5 sm:p-8 mb-6`}>
+      <div className={`flex flex-col sm:flex-row gap-6 sm:gap-4 justify-between items-start mb-8 pb-6 border-b ${p.headerBorder}`}>
         <div>
           <div className="flex items-baseline gap-3 mb-3">
             <div className="text-2xl font-semibold" style={{ color }}>DEVIS</div>
@@ -275,7 +277,7 @@ function ClassicTemplate({ proposal, profile, color, showBranding, p, cgvText }:
             </div>
           )}
         </div>
-        <div className="text-right">
+        <div className="sm:text-right min-w-0 break-words">
           <div className={`text-xs font-semibold ${p.text400} mb-1`}>Adressé à</div>
           <div className={`font-semibold ${p.text900} text-base`}>{proposal.client_company || proposal.client_name || "Client"}</div>
           {proposal.client_name && proposal.client_company && (
@@ -307,7 +309,7 @@ function ModernTemplate({ proposal, profile, color, showBranding, p, cgvText }: 
   return (
     <>
     <div className={`${p.card} rounded-2xl border overflow-hidden mb-6`}>
-      <div style={{ backgroundColor: color }} className="px-8 py-7 text-ink">
+      <div style={{ backgroundColor: color }} className="px-5 sm:px-8 py-7 text-ink">
         <div className="flex justify-between items-start">
           <div>
             <div className="text-xs font-semibold opacity-70 mb-1">Devis</div>
@@ -334,8 +336,8 @@ function ModernTemplate({ proposal, profile, color, showBranding, p, cgvText }: 
         </div>
       </div>
 
-      <div className={`px-8 py-5 ${p.clientBg} border-b flex justify-end`}>
-        <div className="text-right">
+      <div className={`px-5 sm:px-8 py-5 ${p.clientBg} border-b flex justify-end`}>
+        <div className="sm:text-right min-w-0 break-words">
           <div className={`text-xs font-semibold ${p.text400} mb-1`}>Adressé à</div>
           <div className={`font-semibold ${p.text900}`}>{proposal.client_company || proposal.client_name || "Client"}</div>
           {proposal.client_name && proposal.client_company && (
@@ -346,7 +348,7 @@ function ModernTemplate({ proposal, profile, color, showBranding, p, cgvText }: 
         </div>
       </div>
 
-      <div className="p-8">
+      <div className="p-5 sm:p-8">
         <h2 className={`text-xl font-semibold ${p.text900} mb-6`}>{proposal.title}</h2>
         <ItemsTable proposal={proposal} color={color} headerStyle="colored" p={p} />
         <TotalsBox proposal={proposal} color={color} p={p} />
@@ -367,8 +369,8 @@ function EpureTemplate({ proposal, profile, color, showBranding, p, cgvText }: {
 }) {
   return (
     <>
-    <div className={`${p.card} rounded-2xl border p-8 mb-6`}>
-      <div className="flex justify-between items-start mb-10">
+    <div className={`${p.card} rounded-2xl border p-5 sm:p-8 mb-6`}>
+      <div className="flex flex-col sm:flex-row gap-6 sm:gap-4 justify-between items-start mb-10">
         <div className="flex gap-4">
           <div className="w-0.5 rounded-full self-stretch" style={{ backgroundColor: color }} />
           <div>
@@ -386,7 +388,7 @@ function EpureTemplate({ proposal, profile, color, showBranding, p, cgvText }: {
           </div>
         </div>
 
-        <div className="text-right">
+        <div className="sm:text-right min-w-0 break-words">
           <div className={`text-xs font-semibold ${p.text300} mb-1`}>Adressé à</div>
           <div className={`font-semibold ${p.text900}`}>{proposal.client_company || proposal.client_name || "Client"}</div>
           {proposal.client_name && proposal.client_company && (

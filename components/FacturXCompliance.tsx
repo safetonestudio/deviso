@@ -13,7 +13,7 @@ import { motifExoneration } from "@/lib/exoneration";
  * qu'un élément exigé par la norme manque, l'utilisateur doit le savoir AVANT
  * que sa plateforme agréée ne rejette le document.
  */
-export function FacturXCompliance({ invoice }: { invoice: Invoice }) {
+export function problemesConformite(invoice: Invoice) {
   const issuesBrutes = checkInvoiceCompliance({
     sellerSiren: invoice.seller_siren,
     // On donne au contrôle la forme canonique issue des champs séparés : sinon
@@ -60,7 +60,20 @@ export function FacturXCompliance({ invoice }: { invoice: Invoice }) {
 
   const blocking = issues.filter((i) => i.blocking);
   const warnings = issues.filter((i) => !i.blocking);
+  return { issues, blocking, warnings };
+}
 
+/**
+ * Le diagnostic, rangé dans le bloc « Facture électronique » de la page de
+ * détail (components/document/PageDocument.tsx). Le bandeau en haut de page
+ * n'en garde qu'un résumé, et seulement quand un élément bloquant manque.
+ */
+export function FacturXCompliance({ invoice, compact = false }: { invoice: Invoice; compact?: boolean }) {
+  const { issues, blocking, warnings } = problemesConformite(invoice);
+
+  if (!issues.length && compact) {
+    return <p className="text-emerald-400">Conforme : toutes les données exigées par la réforme 2026 sont présentes.</p>;
+  }
   if (!issues.length) {
     return (
       <div className="flex items-start gap-2.5 rounded-xl border border-emerald-500/20 bg-emerald-500/10 px-4 py-3">
@@ -76,6 +89,31 @@ export function FacturXCompliance({ invoice }: { invoice: Invoice }) {
   }
 
   const isBlocking = blocking.length > 0;
+
+  if (compact) {
+    return (
+      <div className="space-y-1.5">
+        <p className={isBlocking ? "text-amber-400" : "text-gray-300"}>
+          {isBlocking ? "Serait refusée par une plateforme de facturation électronique" : "À vérifier"}
+        </p>
+        <ul className="space-y-1 text-xs">
+          {blocking.map((i) => (
+            <li key={i.field} className="text-amber-400 flex gap-1.5"><span aria-hidden="true">•</span><span>{i.label}</span></li>
+          ))}
+          {warnings.map((i) => (
+            <li key={i.field} className="text-gray-400 flex gap-1.5"><span aria-hidden="true">•</span><span>{i.label}</span></li>
+          ))}
+        </ul>
+        <p className="text-xs text-gray-500">
+          {issues.some((i) => i.field.startsWith("seller") || i.field === "tva_number") && (
+            <Link href="/profil" className="text-indigo-400 hover:text-indigo-300 underline mr-1">Compléter mon profil.</Link>
+          )}
+          {issues.some((i) => i.field.startsWith("client")) && "Les informations du client se saisissent à la création de la facture. "}
+          {issues.some((i) => i.field === "operation_category") && "La nature de l'opération se déduit des lignes de la facture."}
+        </p>
+      </div>
+    );
+  }
 
   return (
     <div
