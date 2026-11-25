@@ -42,6 +42,15 @@ function contreEpreuve(nom, detecteur, echantillonFautif) {
   }
 }
 
+// Une route peut déléguer une lecture à une source partagée (comme le CSV des
+// factures plus bas) : la règle se vérifie alors sur la route ET sur cette
+// source. `lireF` est injectable pour que les contre-épreuves fabriquent une
+// source partagée fautive sans toucher au disque.
+function avecDelegue(src, appel, fichier, lireF = lire) {
+  return appel.test(src) ? `${src}
+${lireF(fichier)}` : src;
+}
+
 console.log("");
 console.log("── Exports : le fichier s'ouvre, et il est faux ───────────────");
 console.log("");
@@ -175,6 +184,11 @@ console.log("── Le même document, quatre rendus ─────────
 console.log("");
 
 // ── 6. Document lié : numéro ET date, sur tous les chemins ──────────────────
+// Depuis le 24/11 (713b150), /download lit le document lié par
+// lib/facture-rendu.ts, partagé avec la feuille affichée dans l'application.
+const lienResolu = (src, lireF) =>
+  /documentLie\(/.test(avecDelegue(src, /donneesRenduFacture\(/, "lib/facture-rendu.ts", lireF)) &&
+  /lie\.numero, lie\.date/.test(src);
 for (const f of [
   "app/api/invoices/[id]/download/route.ts",
   "app/api/invoices/[id]/send-email/route.ts",
@@ -182,10 +196,15 @@ for (const f of [
   const src = lire(f);
   exige(
     `${f.split("/").at(-2)}, référence au document lié résolue par la règle partagée`,
-    /documentLie\(/.test(src) && /lie\.numero, lie\.date/.test(src),
+    lienResolu(src),
     "sans la date (BT-26), le validateur officiel ne compte pas la référence : l'avoir est non conforme à BR-FR-CO-05",
   );
 }
+contreEpreuve(
+  "route qui délègue à une lecture partagée sans documentLie",
+  (src) => !lienResolu(src, () => "const lie = { numero: invoice.linked_invoice_number, date: null };"),
+  "const { lie } = await donneesRenduFacture(supabase, invoice, workspaceId); generateFacturXPdf(invoice, o, p, lie.numero, lie.date);",
+);
 {
   const src = lire("lib/facturx.ts");
   exige(
@@ -208,11 +227,17 @@ for (const f of [
 // ── 8. Le motif d'exonération de TVA ────────────────────────────────────────
 {
   const franchiseDeduite = (src) => /tva_rate === 0/.test(src) && /293 B/.test(src);
+  // Depuis le 24/11 (713b150), les textes du PDF viennent de contenuFacture()
+  // (lib/facture-contenu.ts), partagé avec la feuille affichée à l'écran.
+  const motifPartage = (src, lireF) => {
+    const tout = avecDelegue(src, /contenuFacture\(/, "lib/facture-contenu.ts", lireF);
+    return /motifExoneration/.test(tout) && !franchiseDeduite(tout);
+  };
   for (const f of ["lib/invoice-xml.ts", "lib/invoice-pdf.tsx"]) {
     const src = lire(f);
     exige(
       `${f}, le motif d'exonération vient de la règle partagée`,
-      /motifExoneration/.test(src) && !franchiseDeduite(src),
+      motifPartage(src),
       "« taux à zéro » valait « franchise en base, art. 293 B » : une livraison intracommunautaire déclarait par écrit un régime qui n'est pas celui du vendeur",
     );
   }
@@ -220,6 +245,11 @@ for (const f of [
     "franchise déduite du seul taux",
     franchiseDeduite,
     'const isFranchise = invoice.tva_rate === 0; const t = "TVA non applicable, art. 293 B du CGI";',
+  );
+  contreEpreuve(
+    "PDF qui délègue à un contenu partagé fautif",
+    (src) => !motifPartage(src, () => 'const isFranchise = invoice.tva_rate === 0; const t = "TVA non applicable, art. 293 B du CGI";'),
+    "const c = contenuFacture(invoice, accentColor, paymentInfo, linkedInvoiceNumber);",
   );
 }
 
@@ -247,6 +277,11 @@ console.log("");
 }
 
 // ── 10. Le profil lu est celui de l'espace ──────────────────────────────────
+// Depuis le 24/11 (713b150), /download lit le profil par lib/facture-rendu.ts.
+const profilEspace = (src, lireF) => {
+  const tout = avecDelegue(src, /donneesRenduFacture\(/, "lib/facture-rendu.ts", lireF);
+  return /getWorkspaceProfile/.test(tout) && !/from\("profiles"\)[\s\S]{0,200}?eq\("id", user\.id\)/.test(tout);
+};
 for (const f of [
   "app/api/invoices/[id]/download/route.ts",
   "app/api/invoices/[id]/send-email/route.ts",
@@ -258,10 +293,15 @@ for (const f of [
   const src = lire(f);
   exige(
     `${f.replace("app/api/", "")}, profil lu sur l'espace, pas sur la personne`,
-    /getWorkspaceProfile/.test(src) && !/from\("profiles"\)[\s\S]{0,200}?eq\("id", user\.id\)/.test(src),
+    profilEspace(src),
     "un collaborateur générait le PDF avec SON IBAN : le client payait sur le mauvais compte",
   );
 }
+contreEpreuve(
+  "route qui délègue à une lecture partagée du profil de la personne",
+  (src) => !profilEspace(src, () => 'getWorkspaceProfile; await supabase.from("profiles").select("bank_iban").eq("id", user.id).single();'),
+  "const { paymentInfo } = await donneesRenduFacture(supabase, invoice, workspaceId);",
+);
 
 // ── 11. Le tableau de bord ne s'en remet pas à la seule RLS ─────────────────
 {
