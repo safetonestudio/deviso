@@ -47,7 +47,7 @@ export async function POST(req: NextRequest) {
     const admin = createAdminClient();
     const { data: p } = await admin
       .from("profiles")
-      .select("plan, stripe_customer_id, beta_debut, is_demo")
+      .select("plan, stripe_customer_id, beta_debut, is_demo, created_at")
       .eq("id", user.id)
       .maybeSingle();
     if (!p?.is_demo && (await compteSansInvitation(admin, user.id, p)) && !(await estCabinet(admin, user.id))) {

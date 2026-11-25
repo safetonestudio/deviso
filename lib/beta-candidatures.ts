@@ -238,31 +238,43 @@ export type ResultatActivation =
  * l'adresse : deux activations simultanées ne peuvent pas l'utiliser deux fois.
  * Un compte qui porte déjà un abonnement Stripe n'est pas touché.
  */
+/** Pose la bêta sur le profil (testeur) : formule complète, 2 mois à partir de maintenant. */
+async function poserBeta(admin: ReturnType<typeof createAdminClient>, userId: string, maintenant: Date, seulementSiAbsente: boolean) {
+  let q = admin
+    .from("profiles")
+    .update({ plan: "pro", subscription_status: STATUT_BETA, beta_debut: maintenant.toISOString(), beta_fin: finDeBeta(maintenant).toISOString() })
+    .eq("id", userId)
+    .is("stripe_subscription_id", null);
+  if (seulementSiAbsente) q = q.is("beta_debut", null);
+  const { error } = await q;
+  if (error) throw new Error(`Ouverture de la bêta impossible : ${error.message}`);
+}
+
+async function aUnAbonnement(admin: ReturnType<typeof createAdminClient>, userId: string): Promise<boolean> {
+  const { data } = await admin.from("profiles").select("stripe_subscription_id").eq("id", userId).maybeSingle();
+  return Boolean(data?.stripe_subscription_id);
+}
+
 export async function activerBeta(userId: string, emailCompte: string, jeton: string): Promise<ResultatActivation> {
   const admin = createAdminClient();
   const email = normaliserEmail(emailCompte);
   const maintenant = new Date();
 
-  // Le même compte qui revient sur son lien (rechargement) : déjà activé, rien à refaire.
+  // Le même compte qui revient sur son lien (rechargement) : déjà activé.
+  // Activation interrompue (jeton consommé, profil pas encore écrit) : on la
+  // termine. Idempotent : sans effet si la bêta est déjà posée.
   const { data: deja } = await admin
     .from("beta_candidatures")
     .select("type_acces, user_id")
     .eq("jeton_hash", empreinte(jeton))
     .maybeSingle();
   if (deja && deja.user_id === userId) {
-    // Activation interrompue (jeton consommé, profil pas encore écrit) : on la
-    // termine. Idempotent : sans effet si la bêta est déjà posée.
-    if (deja.type_acces === "testeur") {
-      const { error } = await admin
-        .from("profiles")
-        .update({ plan: "pro", subscription_status: STATUT_BETA, beta_debut: maintenant.toISOString(), beta_fin: finDeBeta(maintenant).toISOString() })
-        .eq("id", userId)
-        .is("beta_debut", null)
-        .is("stripe_subscription_id", null);
-      if (error) throw new Error(`Ouverture de la bêta impossible : ${error.message}`);
-    }
+    if (deja.type_acces === "testeur") await poserBeta(admin, userId, maintenant, true);
     return { ok: true, typeAcces: deja.type_acces as TypeAcces, dejaActive: true };
   }
+
+  // Un compte déjà abonné ne consomme pas le lien : il reste utilisable.
+  if (deja?.type_acces === "testeur" && (await aUnAbonnement(admin, userId))) return { ok: false, raison: "abonnement" };
 
   const { data: c } = await admin
     .from("beta_candidatures")
@@ -279,25 +291,43 @@ export async function activerBeta(userId: string, emailCompte: string, jeton: st
     const valide = await lireJeton(jeton);
     return { ok: false, raison: valide ? "adresse" : "jeton" };
   }
+  if (c.type_acces === "testeur") await poserBeta(admin, userId, maintenant, false);
+  return { ok: true, typeAcces: c.type_acces as TypeAcces, dejaActive: false };
+}
 
-  if (c.type_acces !== "testeur") return { ok: true, typeAcces: c.type_acces as TypeAcces, dejaActive: false };
-
-  const { data: profil } = await admin
-    .from("profiles")
-    .select("stripe_subscription_id")
-    .eq("id", userId)
+/**
+ * Activation de secours, sans le lien : le compte (adresse CONFIRMÉE) a une
+ * candidature acceptée, non utilisée, non expirée, à sa propre adresse.
+ *
+ * Cas visé : la confirmation d'adresse ouverte dans un autre navigateur (appli
+ * de messagerie sur téléphone) échoue et perd le retour vers l'activation ;
+ * le testeur se connecte ensuite normalement. Sans ce secours, il verrait
+ * « candidatez » alors qu'il est accepté. L'adresse confirmée prouve autant
+ * que le lien envoyé à cette même adresse.
+ */
+export async function activerParAdresse(userId: string, emailConfirme: string): Promise<ResultatActivation | null> {
+  const admin = createAdminClient();
+  const maintenant = new Date();
+  const { data: cand } = await admin
+    .from("beta_candidatures")
+    .select("id, type_acces")
+    .eq("email", normaliserEmail(emailConfirme))
+    .eq("statut", "acceptee")
+    .is("jeton_utilise_le", null)
+    .gt("jeton_expire_le", maintenant.toISOString())
+    .order("decide_le", { ascending: false })
+    .limit(1)
     .maybeSingle();
-  if (profil?.stripe_subscription_id) return { ok: false, raison: "abonnement" };
-
-  const { error } = await admin
-    .from("profiles")
-    .update({
-      plan: "pro",
-      subscription_status: STATUT_BETA,
-      beta_debut: maintenant.toISOString(),
-      beta_fin: finDeBeta(maintenant).toISOString(),
-    })
-    .eq("id", userId);
-  if (error) throw new Error(`Ouverture de la bêta impossible : ${error.message}`);
-  return { ok: true, typeAcces: "testeur", dejaActive: false };
+  if (!cand) return null;
+  if (cand.type_acces === "testeur" && (await aUnAbonnement(admin, userId))) return { ok: false, raison: "abonnement" };
+  const { data: c } = await admin
+    .from("beta_candidatures")
+    .update({ jeton_utilise_le: maintenant.toISOString(), user_id: userId })
+    .eq("id", cand.id)
+    .is("jeton_utilise_le", null)
+    .select("type_acces")
+    .maybeSingle();
+  if (!c) return null;
+  if (c.type_acces === "testeur") await poserBeta(admin, userId, maintenant, false);
+  return { ok: true, typeAcces: c.type_acces as TypeAcces, dejaActive: false };
 }

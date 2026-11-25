@@ -7,12 +7,14 @@ import { planFeatures, proOnlyFeatures } from "@/lib/plans";
 import { prix as grille, PRIX_SIEGE, PRIX_SIEGE_ANNUEL } from "@/lib/grille-tarifaire";
 import { GuidedTourBanner } from "@/components/GuidedTourBanner";
 import { BETA, BETA_OUVERTE, LIEN_CANDIDATURE, STATUT_BETA } from "@/lib/beta";
+import { creeApresOuverture } from "@/lib/beta-acces";
 
 type Profile = {
   plan: "free" | "solo" | "pro";
   stripe_customer_id: string | null;
   subscription_status: string | null;
   beta_debut?: string | null;
+  created_at?: string | null;
   beta_fin?: string | null;
 };
 
@@ -152,7 +154,10 @@ export default function BillingPage() {
   }
 
   const plan = profile?.plan ?? "free";
-  const isTrialing = profile?.subscription_status === "trialing";
+  // Un bêta-testeur abonné en avance est « trialing » chez Stripe jusqu'à la
+  // fin de sa bêta : ce n'est pas un essai de 14 jours, et sa carte est déjà là.
+  const abonneEnBeta = profile?.subscription_status === "trialing" && Boolean(profile?.beta_debut);
+  const isTrialing = profile?.subscription_status === "trialing" && !abonneEnBeta;
   // Essai déjà consommé et terminé sans carte (lib/fin-essai.ts) : plus de
   // second essai, la carte est demandée tout de suite.
   const essaiTermine = plan === "free" && profile?.subscription_status === "essai_termine";
@@ -169,11 +174,21 @@ export default function BillingPage() {
   // Ancien testeur sans abonnement en cours (fin de bêta, ou résiliation) :
   // la remise promise reste la sienne.
   const betaTerminee = !enBeta && Boolean(profile?.beta_debut) && plan === "free";
-  const fermeParBeta = BETA_OUVERTE && plan === "free" && !profile?.beta_debut && !profile?.stripe_customer_id;
+  const fermeParBeta =
+    BETA_OUVERTE && plan === "free" && !profile?.beta_debut && !profile?.stripe_customer_id && creeApresOuverture(profile?.created_at);
   const finBeta = profile?.beta_fin
     ? new Date(profile.beta_fin).toLocaleDateString("fr-FR", { day: "numeric", month: "long", year: "numeric" })
     : null;
-  const info = PLAN_INFO[plan];
+  // Souscription anticipée ouverte 28 jours avant la fin de la bêta (même
+  // règle que /api/stripe/checkout, JOURS_SOUSCRIPTION_ANTICIPEE).
+  const ouvertureAbonnement = profile?.beta_fin ? new Date(new Date(profile.beta_fin).getTime() - 28 * 86400_000) : null;
+  const abonnementOuvert = !ouvertureAbonnement || Date.now() >= ouvertureAbonnement.getTime();
+  const dateOuverture = ouvertureAbonnement
+    ? ouvertureAbonnement.toLocaleDateString("fr-FR", { day: "numeric", month: "long", year: "numeric" })
+    : null;
+  const info = enBeta
+    ? { ...PLAN_INFO.pro, description: `Formule complète pendant la bêta · ${BETA.utilisateursMax} utilisateurs, toi compris` }
+    : PLAN_INFO[plan];
   const prices = billing === "annual" ? ANNUAL_PRICES : MONTHLY_PRICES;
 
   return (
@@ -268,6 +283,15 @@ export default function BillingPage() {
           )}
         </div>
 
+        {abonneEnBeta && (
+          <div className="mt-4 bg-emerald-500/10 border border-emerald-500/20 rounded-xl px-4 py-3">
+            <p className="text-sm text-emerald-300">
+              <span className="font-semibold">Abonnement enregistré.</span> Ta bêta continue avec la formule complète
+              {finBeta ? ` jusqu'au ${finBeta}` : ""} ; le premier prélèvement, avec ta remise de -{BETA.remise}&nbsp;%, a lieu à cette date.
+            </p>
+          </div>
+        )}
+
         {enBeta && (
           <div className="mt-4 bg-emerald-500/10 border border-emerald-500/20 rounded-xl px-4 py-3">
             <p className="text-sm text-emerald-300">
@@ -359,7 +383,9 @@ export default function BillingPage() {
               <p className="text-sm text-emerald-300">
                 <span className="font-semibold">-{BETA.remise}&nbsp;% pendant 12 mois</span>, ton avantage de bêta-testeur.
                 {enBeta
-                  ? ` Tu peux t'abonner dès maintenant : rien n'est prélevé avant la fin de ta bêta${finBeta ? `, le ${finBeta}` : ""}.`
+                  ? abonnementOuvert
+                    ? ` Tu peux t'abonner dès maintenant : rien n'est prélevé avant la fin de ta bêta${finBeta ? `, le ${finBeta}` : ""}.`
+                    : ` L'abonnement s'ouvre le ${dateOuverture}, 4 semaines avant la fin de ta bêta. D'ici là, tu n'as rien à faire.`
                   : " La carte est demandée tout de suite, l'accès reprend dès le paiement validé."}
               </p>
             </div>

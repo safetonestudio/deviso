@@ -52,7 +52,7 @@ const ETAPES = [
 ];
 
 const CHAMP =
-  "mt-1.5 w-full h-11 rounded-lg bg-ds-bg border border-ink/15 px-3.5 text-[16px] text-ink placeholder:text-gray-500 focus:outline-none focus:border-indigo-500";
+  "mt-1.5 w-full h-11 rounded-lg bg-ds-bg border border-ink/15 px-3.5 text-[16px] text-ink placeholder:text-gray-500 focus:outline-hidden focus:border-indigo-500";
 
 export function AppelBetaTesteurs() {
 

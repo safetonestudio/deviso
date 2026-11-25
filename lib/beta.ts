@@ -22,6 +22,12 @@ export const BETA = {
   places: 10,
   dureeMois: 2,
   remise: 30,
+  /**
+   * Ouverture de la bêta. Seuls les comptes créés APRÈS cette date sont
+   * concernés par la fermeture des inscriptions (lib/beta-acces.ts) : un compte
+   * existant, même sans formule, garde exactement son accès d'avant.
+   */
+  ouverture: new Date("2026-11-24T00:00:00+01:00"),
   /** Dernier jour pour candidater : mise en ligne + 1 mois, à fixer au déploiement. */
   finCandidatures: new Date("2026-12-24T23:59:59+01:00"),
   /** Validité du lien personnel envoyé au candidat accepté. */

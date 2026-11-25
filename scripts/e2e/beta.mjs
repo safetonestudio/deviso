@@ -190,6 +190,39 @@ try {
   verifier("équipe : 2 invitations acceptées", inv[0].status === 200 && inv[1].status === 200, JSON.stringify(inv.slice(0, 2).map((x) => x.status)));
   verifier("équipe : la 3e refusée (3 utilisateurs, titulaire compris)", inv[2].status === 403 && inv[2].body.error === "BETA_LIMITE_EQUIPE", JSON.stringify(inv[2]));
 
+  console.log("── 4 bis. Cas de bord de l'activation ──────────────────");
+  // Compte qui existe déjà : le lien sans session mène à la connexion.
+  const emailExistant = `delivered+existant-${tag}@resend.dev`;
+  const existantId = await creerCompte(emailExistant);
+  const invE = await admin("/api/admin/beta", { method: "POST", body: JSON.stringify({ action: "inviter", nom: "Compte Existant", email: emailExistant, type: "testeur" }) });
+  verifier("invitation directe d'un testeur", invE.status === 200, `HTTP ${invE.status} ${await invE.text()}`);
+  const jetonE = randomBytes(32).toString("base64url");
+  await rest(`beta_candidatures?email=eq.${encodeURIComponent(emailExistant)}`, { method: "PATCH", body: JSON.stringify({ jeton_hash: empreinte(jetonE) }) });
+  const versConnexion = (await fetch(`${BASE}/api/beta/activer?j=${encodeURIComponent(jetonE)}`, { redirect: "manual" })).headers.get("location") ?? "";
+  verifier("adresse déjà inscrite : le lien mène à la connexion, qui revient à l'activation", versConnexion.includes("/login?next=") && versConnexion.includes(encodeURIComponent("/api/beta/activer")), versConnexion);
+  // Activation de secours : connecté, adresse confirmée, sans repasser par le lien.
+  await majProfil(existantId, { company_name: "Existant SARL" });
+  const existant = await session(emailExistant);
+  const secours = await existant("/dashboard");
+  verifier("acceptée mais arrivée sans le lien : bêta ouverte par l'adresse confirmée", (secours.headers.get("location") ?? "").includes("/dashboard?beta=active") || (await profil(existantId))?.subscription_status === "beta", `HTTP ${secours.status} ${secours.headers.get("location")}`);
+  const pE = await profil(existantId);
+  verifier("… profil en bêta, 2 mois", pE?.plan === "pro" && pE?.subscription_status === "beta" && !!pE?.beta_fin);
+  // Cabinet invité directement : son cockpit, pas le démarrage du micro-entrepreneur.
+  const emailCab = `delivered+cabinet-${tag}@resend.dev`;
+  const adminBis = await session(ADMIN_EMAIL); // le script ne réécrit pas les cookies renouvelés
+  const invC = await adminBis("/api/admin/beta", { method: "POST", body: JSON.stringify({ action: "inviter", nom: "Cabinet Test", email: emailCab, type: "cabinet" }) });
+  verifier("invitation directe d'un cabinet", invC.status === 200, `HTTP ${invC.status} ${await invC.text()}`);
+  const jetonC = randomBytes(32).toString("base64url");
+  await rest(`beta_candidatures?email=eq.${encodeURIComponent(emailCab)}`, { method: "PATCH", body: JSON.stringify({ jeton_hash: empreinte(jetonC) }) });
+  await creerCompte(emailCab);
+  const cab = await session(emailCab);
+  const actCab = (await cab(`/api/beta/activer?j=${encodeURIComponent(jetonC)}`)).headers.get("location") ?? "";
+  verifier("cabinet invité : envoyé à son cockpit", actCab.endsWith("/cabinet?beta=cabinet"), actCab);
+  verifier("… sans formule ni bêta (le cockpit est gratuit)", (await profil(crees.users.at(-1)))?.plan === "free");
+  const cockpit = await cab("/cabinet");
+  verifier("… le cockpit s'ouvre", cockpit.status === 200, `HTTP ${cockpit.status}`);
+  await rest(`beta_candidatures?email=in.(${[emailExistant, emailCab].map(encodeURIComponent).join(",")})`, { method: "DELETE" });
+
   console.log("── 5. Le temps passe ───────────────────────────────────");
   const ilYa15j = new Date(Date.now() - 15 * 86400_000);
   const finA = new Date(ilYa15j); finA.setUTCMonth(finA.getUTCMonth() + 2);

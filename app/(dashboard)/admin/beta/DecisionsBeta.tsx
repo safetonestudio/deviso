@@ -21,7 +21,7 @@ function etatAcces(c: Candidature): string {
 }
 
 const CHAMP =
-  "w-full h-11 rounded-lg bg-ds-bg border border-ds-border px-3 text-[15px] text-ink placeholder:text-gray-500 focus:outline-none focus:border-indigo-500";
+  "w-full h-11 rounded-lg bg-ds-bg border border-ds-border px-3 text-[15px] text-ink placeholder:text-gray-500 focus:outline-hidden focus:border-indigo-500";
 
 export function DecisionsBeta({ candidatures }: { candidatures: Candidature[] }) {
   const router = useRouter();

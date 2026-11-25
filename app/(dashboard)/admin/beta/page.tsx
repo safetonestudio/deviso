@@ -30,7 +30,7 @@ export default async function PageBeta() {
 
   return (
     <div className="max-w-5xl mx-auto px-4 sm:px-6 py-8">
-      <h1 className="text-2xl font-semibold text-ink">Bêta, candidatures</h1>
+      <h1 className="titre-page">Bêta, candidatures</h1>
       <p className="mt-2 text-[15px] text-gray-400">
         {acceptes} testeur{acceptes > 1 ? "s" : ""} accepté{acceptes > 1 ? "s" : ""} sur {BETA.places} places annoncées.
         Candidatures ouvertes jusqu&apos;au{" "}

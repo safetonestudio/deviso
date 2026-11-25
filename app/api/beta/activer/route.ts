@@ -24,6 +24,15 @@ export async function GET(req: NextRequest) {
     // « Se connecter », qui revient ici, pour qui a déjà un compte.
     const j = await lireJeton(jeton);
     const email = j ? `&email=${encodeURIComponent(j.email)}` : "";
+    // Adresse qui a déjà un compte : la connexion, qui revient ici. L'inscription
+    // ne lui enverrait aucun courriel (Supabase répond un succès muet).
+    if (j) {
+      const { data: existant } = await createAdminClient().from("profiles").select("id").eq("email", j.email).limit(1).maybeSingle();
+      if (existant) {
+        const retour = `/api/beta/activer?j=${encodeURIComponent(jeton)}`;
+        return NextResponse.redirect(`${origin}/login?next=${encodeURIComponent(retour)}${email}`);
+      }
+    }
     return NextResponse.redirect(`${origin}/signup?beta=${encodeURIComponent(jeton)}${email}`);
   }
 
@@ -34,7 +43,9 @@ export async function GET(req: NextRequest) {
     const { data: p } = await createAdminClient().from("profiles").select("company_name").eq("id", user.id).maybeSingle();
     const page = p?.company_name ? "/dashboard" : "/onboarding";
     if (!r.ok) return NextResponse.redirect(`${origin}${page}?beta=${r.raison}`);
-    return NextResponse.redirect(`${origin}${page}?beta=${r.typeAcces === "testeur" ? "active" : "cabinet"}`);
+    // Le cabinet va à son cockpit, pas au démarrage du micro-entrepreneur.
+    if (r.typeAcces === "cabinet") return NextResponse.redirect(`${origin}/cabinet?beta=cabinet`);
+    return NextResponse.redirect(`${origin}${page}?beta=active`);
   } catch (e) {
     console.error("[beta/activer]", e);
     return NextResponse.redirect(`${origin}/dashboard?beta=erreur`);

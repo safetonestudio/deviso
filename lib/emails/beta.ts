@@ -18,7 +18,7 @@ function prenom(nom: string): string {
   return echapperHtml(nom.trim().split(/\s+/)[0] || "");
 }
 
-function cadre(titre: string, corps: string): string {
+function cadre(titre: string, corps: string, signer = true): string {
   return `<!DOCTYPE html>
 <html lang="fr">
 <head>
@@ -37,7 +37,7 @@ function cadre(titre: string, corps: string): string {
           <tr>
             <td style="background:#ffffff;border-radius:14px;border:1px solid #e1e4db;padding:36px 36px 28px;font-size:15px;line-height:1.6;color:#36433c;">
 ${corps}
-              <p style="margin:28px 0 0;color:#16211c;font-weight:600;">${SIGNATURE}</p>
+              ${signer ? `<p style="margin:28px 0 0;color:#16211c;font-weight:600;">${SIGNATURE}</p>` : ""}
             </td>
           </tr>
           <tr>
@@ -89,7 +89,8 @@ export function courrielNouvelleCandidature(
         `<table cellpadding="0" cellspacing="0" style="margin:8px 0 8px;font-size:14px;">
           ${ligne("Nom", c.nom)}${ligne("Adresse", c.email)}${ligne("Activité", c.activite)}${ligne("Statut", c.statut_juridique)}${ligne("Facture aujourd'hui avec", c.outil)}${ligne("Échange de 20 minutes", c.echange_accepte ? "Accepté" : "Non")}${ligne("Message", c.message)}
         </table>` +
-        bouton(urlAdmin, "Accepter ou refuser")
+        bouton(urlAdmin, "Accepter ou refuser"),
+      false
     ),
   };
 }

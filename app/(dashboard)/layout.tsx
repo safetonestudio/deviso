@@ -1,4 +1,5 @@
 import { redirect } from "next/navigation";
+import { estAdmin } from "@/lib/admin";
 import { headers } from "next/headers";
 import { createClient } from "@/lib/supabase/server";
 import { getWorkspaceUserId } from "@/lib/workspace";
@@ -23,7 +24,8 @@ import { EcranEssaiTermine, BandeauEssaiTermine } from "@/components/EssaiTermin
 import { STATUT_ESSAI_TERMINE } from "@/lib/fin-essai";
 import { EcranFinBeta, BandeauFinBeta, MessageActivationBeta, EcranSansInvitation } from "@/components/FinBeta";
 import { compteSansInvitation } from "@/lib/beta-acces";
-import { STATUT_BETA_TERMINEE } from "@/lib/beta";
+import { activerParAdresse } from "@/lib/beta-candidatures";
+import { STATUT_BETA_TERMINEE, BETA_OUVERTE, LIEN_CANDIDATURE } from "@/lib/beta";
 import { Suspense } from "react";
 
 // Pages inaccessibles aux membres invités
@@ -43,7 +45,7 @@ export default async function DashboardLayout({ children }: { children: React.Re
   const droits = await droitsDe(user.id, workspaceUserId);
 
   const [{ data: profile }, { data: workspacePlan }, { data: raccordement }] = await Promise.all([
-    supabase.from("profiles").select("full_name, company_name, is_demo, subscription_status, stripe_customer_id, beta_debut").eq("id", user.id).single(),
+    supabase.from("profiles").select("full_name, company_name, is_demo, subscription_status, stripe_customer_id, beta_debut, created_at").eq("id", user.id).single(),
     // Le plan est lu sur la ligne du PROPRIÉTAIRE de l'espace. profiles est en
     // RLS « auth.uid() = id » : un invité ne peut pas lire cette ligne avec son
     // propre client, la lecture reviendrait vide et le plan retomberait sur
@@ -106,8 +108,16 @@ export default async function DashboardLayout({ children }: { children: React.Re
   const sansInvitation =
     !isMember &&
     !profile?.is_demo &&
+    !estAdmin(user.email) &&
     (await compteSansInvitation(createAdminClient(), user.id, { plan, ...profile })) &&
     !(await estCabinet(createAdminClient(), user.id));
+
+  // Accepté mais arrivé sans son lien (confirmation d'adresse ouverte ailleurs) :
+  // son adresse confirmée suffit à ouvrir sa bêta (lib/beta-candidatures.ts).
+  if (sansInvitation && user.email && user.email_confirmed_at) {
+    const r = await activerParAdresse(user.id, user.email);
+    if (r?.ok) redirect(r.typeAcces === "cabinet" ? "/cabinet?beta=cabinet" : "/dashboard?beta=active");
+  }
 
   // Redirect new owners to onboarding if they haven't set their company name yet
   // Team members (collaborators) are exempt, they use the owner's company profile
@@ -243,11 +253,11 @@ export default async function DashboardLayout({ children }: { children: React.Re
           <div className="px-3 pb-3 pt-1">
             {isDemo && (
               <a
-                href="/signup"
+                href={BETA_OUVERTE ? LIEN_CANDIDATURE : "/signup"}
                 className="flex items-center gap-2 w-full mb-3 px-3 py-2 rounded-lg bg-amber-500/10 border border-amber-500/20 text-amber-400 text-xs font-semibold hover:bg-amber-500/20 transition-colors"
               >
                 <Sparkles size={16} className="shrink-0" />
-                <span>Créer mon vrai compte →</span>
+                <span>{BETA_OUVERTE ? "Devenir bêta-testeur →" : "Créer mon vrai compte →"}</span>
               </a>
             )}
 

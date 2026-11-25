@@ -70,7 +70,9 @@ export function verifier(lireFichier, fichiers) {
   exiger("app/blog/checklist-reforme-facturation-2026/page.tsx", ['"Essayez gratuitement pendant 14 jours, sans carte bancaire."'], "la phrase d'avant la bêta a disparu");
   exiger("app/blog/liste-plateformes-agreees/page.tsx", ['"Essai de 14 jours, sans carte bancaire."'], "la phrase d'avant la bêta a disparu");
   exiger("components/landing/FaqAccueil.tsx", ["BETA_OUVERTE", "Que se passe-t-il à la fin de l'essai"], "la question d'avant la bêta a disparu");
-  exiger("lib/beta-acces.ts", ["if (!BETA_OUVERTE || !profil) return false;"], "un compte sans invitation resterait bloqué après la bêta");
+  exiger("lib/beta-acces.ts", ["if (!BETA_OUVERTE || !profil) return false;", "if (!creeApresOuverture(profil.created_at)) return false;"], "un compte sans invitation resterait bloqué après la bêta, ou un compte existant serait bloqué");
+  exiger("app/(auth)/login/page.tsx", ["isInvite || !BETA_OUVERTE", "S'inscrire gratuitement"], "le lien d'inscription de la connexion a perdu sa version d'avant");
+  exiger("app/(dashboard)/layout.tsx", ['BETA_OUVERTE ? LIEN_CANDIDATURE : "/signup"', '"Créer mon vrai compte →"'], "le lien « Créer mon vrai compte » de la démo a perdu sa version d'avant");
 
   // 3. Le formulaire ne se pointe qu'à travers lib/beta.ts
   for (const f of fichiers) {

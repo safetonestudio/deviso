@@ -3,6 +3,7 @@ import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { stripe, PLANS } from "@/lib/stripe";
 import { BETA, BETA_OUVERTE, STATUT_BETA } from "@/lib/beta";
+import { creeApresOuverture } from "@/lib/beta-acces";
 
 /** Souscription anticipée d'un testeur : ouverte ce nombre de jours avant la fin de sa bêta. */
 const JOURS_SOUSCRIPTION_ANTICIPEE = 28;
@@ -72,7 +73,7 @@ export async function POST(req: NextRequest) {
 
   const { data: profile } = await supabase
     .from("profiles")
-    .select("stripe_customer_id, stripe_subscription_id, email, full_name, is_demo, subscription_status, beta_debut, beta_fin")
+    .select("stripe_customer_id, stripe_subscription_id, email, full_name, is_demo, subscription_status, beta_debut, beta_fin, created_at")
     .eq("id", user.id)
     .single();
 
@@ -137,7 +138,8 @@ export async function POST(req: NextRequest) {
       { status: 409 }
     );
   }
-  if (BETA_OUVERTE && !estBetaTesteur && !profile?.stripe_subscription_id && !profile?.stripe_customer_id) {
+  // Un compte créé avant l'ouverture de la bêta garde son essai d'avant.
+  if (BETA_OUVERTE && !estBetaTesteur && !profile?.stripe_subscription_id && !profile?.stripe_customer_id && creeApresOuverture(profile?.created_at)) {
     return NextResponse.json(
       {
         error: "BETA_INVITATION",
