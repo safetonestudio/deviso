@@ -29,7 +29,7 @@ export const BETA = {
    */
   ouverture: new Date("2026-11-24T00:00:00+01:00"),
   /** Dernier jour pour candidater : mise en ligne + 1 mois, à fixer au déploiement. */
-  finCandidatures: new Date("2026-12-24T23:59:59+01:00"),
+  finCandidatures: new Date("2026-12-25T23:59:59+01:00"),
   /** Validité du lien personnel envoyé au candidat accepté. */
   joursValiditeLien: 14,
   /** Rappel avant la fin de la bêta d'un testeur. */
