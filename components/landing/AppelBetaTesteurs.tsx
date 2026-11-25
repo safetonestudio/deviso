@@ -57,7 +57,7 @@ const CHAMP =
 export function AppelBetaTesteurs() {
 
   return (
-    <div>
+    <div id="beta-testeurs" className="scroll-mt-24">
       <div className="reveal max-w-[760px]">
         <p className="text-[14px] font-medium text-gray-400">Programme bêta</p>
         <h2 className="mt-3 text-[clamp(28px,2.6vw,40px)] leading-[1.1] font-semibold tracking-[-0.035em] text-ink">

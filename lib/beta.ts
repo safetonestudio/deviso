@@ -56,8 +56,13 @@ export function finDeBeta(debut: Date): Date {
   return fin;
 }
 
-/** Ancre du formulaire de candidature, sur l'accueil. */
-export const LIEN_CANDIDATURE = "/#candidature";
+/**
+ * Destination de chaque bouton « Devenir bêta-testeur » : le HAUT de la
+ * section bêta de l'accueil (titre, conditions, étapes), pas directement le
+ * formulaire, pour que le visiteur ait tout le contexte (demande de Selim,
+ * 25/11). Le formulaire garde sa propre ancre, #candidature.
+ */
+export const LIEN_CANDIDATURE = "/#beta-testeurs";
 
 /** Bouton d'appel principal du site public (essai ou bêta selon la période). */
 export const APPEL = BETA_OUVERTE
