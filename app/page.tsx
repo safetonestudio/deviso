@@ -1,6 +1,6 @@
 import Link from "next/link";
 import type { Metadata } from "next";
-import { PageSite, CADRE, H2, LEAD, BOUTON, BOUTON_PLEIN, BOUTON_DOUX } from "@/components/site/PageSite";
+import { PageSite, CADRE, BANDE, FOND_2, H2, LEAD, BOUTON, BOUTON_PLEIN, BOUTON_DOUX } from "@/components/site/PageSite";
 import { DemoButton } from "@/components/landing/DemoButton";
 import { ParcoursDocument } from "@/components/landing/ParcoursDocument";
 import { SlideFonctionnalites } from "@/components/landing/SlideFonctionnalites";
@@ -73,10 +73,6 @@ const jsonLd = {
    distinguées par leur ton ; un seul accent, le vert ; la feuille claire est
    le seul élément clair de la page. */
 
-/* Bandes de section : fond du haut de page, puis un fond légèrement plus
-   clair une section sur deux, pour marquer où l'une finit et l'autre commence. */
-const BANDE = "py-20 sm:py-28 lg:py-32";
-const FOND_2 = "bande-alt";
 
 export default function LandingPage() {
   return (

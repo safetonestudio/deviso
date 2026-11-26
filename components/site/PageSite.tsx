@@ -21,6 +21,12 @@ import { policesApp } from "@/app/polices-app";
 export const CADRE = "mx-auto w-full max-w-[1400px] px-5 sm:px-8 lg:px-12";
 export const CADRE_LECTURE = "mx-auto w-full max-w-[760px] px-5 sm:px-8";
 export const SECTION = "pt-28 sm:pt-36 lg:pt-44";
+/* Bandes de section : fond du haut de page, puis un fond légèrement plus
+   clair une section sur deux (classe bande-alt, app/globals.css), pour marquer
+   où l'une finit et l'autre commence. Chaque bande pleine largeur porte un
+   CADRE intérieur. */
+export const BANDE = "py-20 sm:py-28 lg:py-32";
+export const FOND_2 = "bande-alt";
 export const H1 = "text-[clamp(34px,4.1vw,60px)] leading-[1.05] font-semibold tracking-[-0.04em] text-ink";
 export const H2 = "text-[clamp(26px,2.6vw,40px)] leading-[1.1] font-semibold tracking-[-0.035em] text-ink";
 export const LEAD = "text-[17px] sm:text-[20px] leading-relaxed text-gray-300";

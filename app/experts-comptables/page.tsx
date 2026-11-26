@@ -1,4 +1,4 @@
-import { PageSite, CADRE, SECTION, H2, LEAD, BOUTON_PLEIN, BOUTON_DOUX } from "@/components/site/PageSite";
+import { PageSite, CADRE, BANDE, FOND_2, H2, LEAD, BOUTON_PLEIN, BOUTON_DOUX } from "@/components/site/PageSite";
 import type { Metadata } from "next";
 import { DonneesStructurees } from "@/components/DonneesStructurees";
 import { prix as grille } from "@/lib/grille-tarifaire";
@@ -153,7 +153,7 @@ export default function Page() {
 
       <main>
         {/* ── Haut de page : la promesse à gauche, le cockpit à droite ── */}
-        <section className={`${CADRE} pt-14 sm:pt-20 lg:pt-24`}>
+        <section className={`${CADRE} pt-14 sm:pt-20 lg:pt-24 pb-20 sm:pb-28 lg:pb-32`}>
           <div className="grid gap-12 lg:grid-cols-12 lg:gap-16 lg:items-center">
             <div className="lg:col-span-6">
               <p className="text-[14px] font-medium text-gray-400">Pour les cabinets d&apos;expertise comptable</p>
@@ -177,7 +177,7 @@ export default function Page() {
         </section>
 
         {/* ── Ce que la réforme change ── */}
-        <section id="pourquoi" className={`${CADRE} ${SECTION} scroll-mt-20`}>
+        <section id="pourquoi" className={`${BANDE} ${FOND_2} scroll-mt-20`}><div className={CADRE}>
           <div className="reveal max-w-[760px]">
             <h2 className={H2}>Ce que la réforme change pour votre cabinet.</h2>
             <p className={`mt-5 ${LEAD}`}>
@@ -194,10 +194,10 @@ export default function Page() {
               </li>
             ))}
           </ul>
-        </section>
+        </div></section>
 
         {/* ── Le cockpit ── */}
-        <section id="cockpit" className={`${CADRE} ${SECTION} scroll-mt-20`}>
+        <section id="cockpit" className={`${BANDE} scroll-mt-20`}><div className={CADRE}>
           <div>
             <div className="reveal max-w-[760px]">
               <h2 className={H2}>Un cockpit pensé pour un portefeuille.</h2>
@@ -218,10 +218,10 @@ export default function Page() {
               }))}
             />
           </div>
-        </section>
+        </div></section>
 
         {/* ── L'offre ── */}
-        <section id="offre" className={`${CADRE} ${SECTION} scroll-mt-20`}>
+        <section id="offre" className={`${BANDE} ${FOND_2} scroll-mt-20`}><div className={CADRE}>
           <div className="reveal max-w-[760px]">
             <h2 className={H2}>Simple, et gratuit pour vous.</h2>
             <p className={`mt-5 ${LEAD}`}>
@@ -246,10 +246,10 @@ export default function Page() {
               </div>
             ))}
           </div>
-        </section>
+        </div></section>
 
         {/* ── Dernière action ── */}
-        <section className={`${CADRE} ${SECTION} pb-16 sm:pb-20`} aria-labelledby="titre-action">
+        <section className={`${BANDE}`} aria-labelledby="titre-action"><div className={CADRE}>
           <div className="reveal rounded-xl bg-ds-surface px-6 py-14 sm:px-12 sm:py-20 lg:px-16 lg:py-24 grid gap-8 lg:grid-cols-12 lg:items-center">
             <div className="lg:col-span-7">
               <h2 id="titre-action" className={H2}>Prenons 20 minutes.</h2>
@@ -276,7 +276,7 @@ export default function Page() {
               ))}
             </ol>
           </div>
-        </section>
+        </div></section>
       </main>
     </PageSite>
   );
