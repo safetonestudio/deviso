@@ -465,6 +465,10 @@ export async function synchroniserFactures(userId: string): Promise<ResultatSync
       .eq("status", "paid")
       .not("superpdp_invoice_id", "is", null)
       .is("superpdp_encaisse_at", null)
+      // TVA sur les débits : aucun encaissement à déclarer (lib/encaissement-men.ts).
+      // Filtré en base, sinon ces factures occuperaient les vingt places du
+      // rattrapage pendant sept jours sans jamais rien envoyer.
+      .not("payment_on_debit", "is", true)
       // Sept jours, et pas « pour toujours ».
       //
       // Le rattrapage vise un refus transitoire, qui se résout en secondes ou
@@ -493,7 +497,7 @@ export async function synchroniserFactures(userId: string): Promise<ResultatSync
       // n'invente rien, la plateforme date, et c'est la regle deja posee.
       const datePaiement = facture.paid_at ? String(facture.paid_at).slice(0, 10) : null;
       const r = await envoyerEncaissementPdp(userId, facture.id, datePaiement);
-      if (r.ok) encaissementsRattrapes++;
+      if (r.ok && !r.nonConcernee) encaissementsRattrapes++;
       // Un échec n'est pas signalé ici : la facture reste éligible et le
       // prochain passage réessaiera. Ce qu'il ne faut pas, c'est boucler.
     }

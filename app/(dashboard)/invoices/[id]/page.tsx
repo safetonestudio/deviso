@@ -25,6 +25,7 @@ import { etatPdp } from "@/lib/superpdp-etat-facture";
 import type { Invoice } from "@/types";
 import { MODES_REGLEMENT, type ModeReglement } from "@/lib/recettes";
 import { estAPointer, joursDeRetard, ESPACEMENT_JOURS } from "@/lib/pointage-paiement";
+import { encaissementADeclarer } from "@/lib/encaissement-men";
 import { couleurEtatChorus, libelleEtatFlux } from "@/lib/chorus-etats";
 
 const STATUS_LABEL: Record<string, string> = {
@@ -145,7 +146,10 @@ function ActionPanel({ invoice, id, router, hasChorusPro }: {
     if (q === "payee") setDemandeDatePaiement(true);
     panneauRef.current?.scrollIntoView({ block: "start" });
   }, []);
-  const dateEncaissementRequise = Boolean(inv.superpdp_invoice_id) && !inv.superpdp_encaisse_at;
+  // Pas de déclaration d'encaissement sous l'option TVA sur les débits (ni sur
+  // une facture mixte sans prestation) : la date n'y part pas (lib/encaissement-men.ts).
+  const encaissementConcerne = encaissementADeclarer(inv);
+  const dateEncaissementRequise = Boolean(inv.superpdp_invoice_id) && !inv.superpdp_encaisse_at && encaissementConcerne;
 
   async function handleDownload() {
     setDownloading(true);
@@ -679,6 +683,13 @@ function ActionPanel({ invoice, id, router, hasChorusPro }: {
                 )}
                 {inv.superpdp_encaisse_at && (
                   <span className="text-[11px] opacity-70">Encaissement déclaré (fr:212)</span>
+                )}
+                {!inv.superpdp_encaisse_at && inv.status === "paid" && !encaissementConcerne && (
+                  <span className="text-[11px] opacity-70">
+                    {inv.payment_on_debit
+                      ? "Aucun encaissement à déclarer : la TVA est payée sur les débits."
+                      : "Aucun encaissement à déclarer : la facture ne porte aucune prestation."}
+                  </span>
                 )}
               </div>
             </div>

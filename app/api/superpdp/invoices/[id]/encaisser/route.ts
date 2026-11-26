@@ -92,5 +92,14 @@ export async function POST(req: NextRequest, ctx: { params: Promise<{ id: string
     );
   }
 
+  if (resultat.nonConcernee) {
+    // Rien n'a été envoyé : aucun encaissement n'est à déclarer pour cette
+    // facture (TVA sur les débits, voir lib/encaissement-men.ts).
+    return NextResponse.json({
+      encaissee: false,
+      raison: "non_concernee",
+      message: "Aucun encaissement à déclarer pour cette facture : la TVA est payée sur les débits, ou elle ne porte aucune prestation.",
+    });
+  }
   return NextResponse.json({ encaissee: true, dejaEncaissee: resultat.dejaEncaissee ?? false });
 }

@@ -214,3 +214,24 @@ sable, sans lien avec la nature de la facture. Le contrôle `fr:203` de la trave
 donc échouer par lenteur ; les autres non.
 
 Non vu : le rendu de l'écran nouvelle facture (le texte est contrôlé, pas l'affichage).
+
+## Suite du 26/11/2026 : TVA sur les débits, contrôle « client pur »
+
+**TVA sur les débits.** La même fiche DGFiP exclut des données de paiement les opérations
+pour lesquelles l'entreprise a opté pour le paiement de la TVA d'après les débits. Deviso
+envoyait pourtant le `fr:212` sur ces factures, montant total compris. Désormais
+`encaissementADeclarer()` (`lib/encaissement-men.ts`) répond non : aucun appel, rien d'écrit,
+`superpdp_encaisse_at` reste vide. Le rattrapage automatique (`lib/superpdp-sync.ts`) les
+écarte en base, l'alerte cabinet « payée sans encaissée » les ignore, la page facture affiche
+« Aucun encaissement à déclarer : la TVA est payée sur les débits » et ne prévient plus que
+la date de paiement part à l'administration. Même traitement pour une facture mixte dont les
+prestations valent zéro (avant : rien d'envoyé mais « Encaissement déclaré » affiché).
+Traversé au bac à sable (`test:mixte-traversee`, 12/12) : facture de prestations sur les
+débits transmise, marquée payée, aucun `fr:212` chez Super PDP ; contre-épreuve : sans la
+règle, un `fr:212` part et le test échoue.
+
+**`check:client-pur`.** Ce n'était pas une vraie fuite : `lib/pointage-paiement.ts` ne
+nommait le client serveur que dans une annotation de type écrite comme un import dynamique,
+que le contrôle (lecture du texte) prend pour un import réel. Écrite en `import type`, plus
+d'alerte ; contre-épreuve : l'ancienne écriture refait échouer le contrôle.
+

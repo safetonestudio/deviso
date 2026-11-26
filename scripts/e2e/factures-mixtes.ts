@@ -14,7 +14,7 @@
  */
 import { manquesPourEmission } from "@/lib/superpdp-precontrole";
 import { checkInvoiceCompliance } from "@/lib/facturx-helpers";
-import { blocsMen, lignesEncaissables } from "@/lib/encaissement-men";
+import { blocsMen, lignesEncaissables, encaissementADeclarer } from "@/lib/encaissement-men";
 import { readFileSync } from "node:fs";
 
 let ok = 0;
@@ -85,6 +85,29 @@ verifier("superpdp-encaissement calcule ses blocs par lib/encaissement-men", /fr
 const page = readFileSync("app/(dashboard)/invoices/new/page.tsx", "utf8");
 verifier("écran nouvelle facture : l'ancien « ne traite pas encore » a disparu", !/ne traite pas encore les factures qui mélangent/.test(page));
 verifier("écran nouvelle facture : le message distingue particulier / étranger / entreprise", /data-mixte=/.test(page) && /estFrance\(clientCountry\)/.test(page));
+
+// ── TVA sur les débits : aucun encaissement à déclarer (26/11/2026) ───────
+// Fiche DGFiP « Données de paiement » : « hors opérations autoliquidées et
+// option pour le paiement de la TVA sur les débits ».
+console.log("\n── TVA sur les débits");
+verifier("prestations, TVA sur les débits : rien à déclarer", encaissementADeclarer({ operation_category: "services", payment_on_debit: true }) === false);
+verifier("prestations, TVA sur encaissements : à déclarer", encaissementADeclarer({ operation_category: "services", payment_on_debit: false }) === true);
+verifier("option absente (anciennes factures) : à déclarer", encaissementADeclarer({ operation_category: "services" }) === true);
+verifier("mixte sur les débits : rien à déclarer", encaissementADeclarer({ ...essai, payment_on_debit: true }) === false);
+verifier("mixte sans prestation chiffrée : rien à déclarer (le corps minimal déclarerait les biens)",
+  encaissementADeclarer({ operation_category: "mixed", items: [{ total: 600, nature: "goods" }, { total: 0, nature: "services" }] }) === false);
+verifier("biens seuls : déclaré comme avant (sans effet chez Super PDP)", encaissementADeclarer({ operation_category: "goods" }) === true);
+
+const avantReservation = enc.indexOf("encaissementADeclarer(");
+verifier("superpdp-encaissement juge « rien à déclarer » AVANT de réserver et d'appeler",
+  avantReservation > 0 && avantReservation < enc.indexOf("Réservation atomique") && /payment_on_debit/.test(enc.slice(enc.indexOf(".select("), enc.indexOf(".select(") + 300)));
+const sync = readFileSync("lib/superpdp-sync.ts", "utf8");
+verifier("rattrapage automatique : écarte les factures sur les débits", /\.not\("payment_on_debit", "is", true\)/.test(sync));
+const cabinet = readFileSync("lib/cabinet-dossiers.ts", "utf8");
+verifier("cabinet : « payée sans encaissée » ignore les factures sur les débits", /!f\.payment_on_debit &&/.test(cabinet) && /superpdp_encaisse_at, operation_category, payment_on_debit/.test(cabinet));
+const fiche = readFileSync("app/(dashboard)/invoices/[id]/page.tsx", "utf8");
+verifier("page facture : la date « part à l'administration » seulement si un encaissement est à déclarer",
+  /dateEncaissementRequise = [^;]*encaissementConcerne/.test(fiche));
 
 console.log(`\n${ok} réussis, ${ko} échoués`);
 process.exit(ko ? 1 : 0);

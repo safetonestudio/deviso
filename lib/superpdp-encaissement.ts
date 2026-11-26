@@ -1,10 +1,20 @@
-import { blocsMen as blocsMen_, type FactureEncaissement } from "@/lib/encaissement-men";
+import { blocsMen as blocsMen_, encaissementADeclarer, type FactureEncaissement } from "@/lib/encaissement-men";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { superpdpFetch, SuperPdpNotConnected, SuperPdpSessionPending } from "@/lib/superpdp";
 import { estCloture, libelleStatut } from "@/lib/superpdp-statuts";
 
 export type ResultatEncaissement =
-  | { ok: true; dejaEncaissee?: boolean }
+  | {
+      ok: true;
+      dejaEncaissee?: boolean;
+      /**
+       * Rien à déclarer, et rien n'a été envoyé : TVA sur les débits, ou
+       * facture mixte sans prestation (lib/encaissement-men.ts). Ce n'est pas
+       * un échec, et `superpdp_encaisse_at` reste vide : l'écran n'affiche
+       * pas « Encaissement déclaré » pour une déclaration qui n'a pas eu lieu.
+       */
+      nonConcernee?: boolean;
+    }
   | {
       ok: false;
       raison:
@@ -77,7 +87,7 @@ export async function envoyerEncaissementPdp(
 
   const { data: facture } = await admin
     .from("invoices")
-    .select("id, superpdp_invoice_id, superpdp_encaisse_at, total_ttc, tva_rate, superpdp_status, items, operation_category")
+    .select("id, superpdp_invoice_id, superpdp_encaisse_at, total_ttc, tva_rate, superpdp_status, items, operation_category, payment_on_debit")
     .eq("id", invoiceId)
     .eq("user_id", workspaceId)
     .maybeSingle();
@@ -125,6 +135,19 @@ export async function envoyerEncaissementPdp(
   // On n'accepte qu'une date du passé, au bon format : une date d'encaissement
   // dans le futur n'a pas de sens et serait rejetée bien plus loin, sans
   // message exploitable.
+  // Rien à déclarer (TVA sur les débits, facture mixte sans prestation) : on
+  // n'appelle pas la plateforme et on n'écrit rien. Règle et sources dans
+  // lib/encaissement-men.ts.
+  if (
+    !encaissementADeclarer({
+      items: facture.items as FactureEncaissement["items"],
+      operation_category: facture.operation_category,
+      payment_on_debit: facture.payment_on_debit,
+    })
+  ) {
+    return { ok: true, nonConcernee: true };
+  }
+
   const aujourdhui = new Date().toISOString().slice(0, 10);
   const dateValide =
     dateEncaissement && /^\d{4}-\d{2}-\d{2}$/.test(dateEncaissement) && dateEncaissement <= aujourdhui
@@ -179,7 +202,6 @@ export async function envoyerEncaissementPdp(
     },
     dateValide
   );
-  const mixteSansPrestation = facture.operation_category === "mixed" && blocsMen.length === 0;
 
   // La date qu'on note chez nous doit être celle qui part réellement. Sans
   // date dans le bloc, c'est la plateforme qui date l'événement, donc
@@ -265,11 +287,6 @@ export async function envoyerEncaissementPdp(
         () => undefined,
         () => undefined
       );
-
-  // Facture mixte dont les lignes de prestations valent zéro : aucun
-  // encaissement à déclarer. Le corps minimal ferait déclarer les biens ; on
-  // n'envoie rien et la réservation reste posée (rien à rattraper).
-  if (mixteSansPrestation) return { ok: true };
 
   try {
     const res = await superpdpFetch(workspaceId, "/invoice_events", {

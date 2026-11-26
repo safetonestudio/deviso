@@ -122,5 +122,35 @@ if (idB2c) {
   verifier("facture B2C mixte créée", false, `HTTP ${b2c.status}`);
 }
 
+// ── TVA sur les débits : aucun encaissement ne part (26/11/2026) ───────────
+// Fiche DGFiP « Données de paiement » : ces opérations sont hors du champ.
+console.log("\n── Prestation, TVA sur les débits : aucun encaissement déclaré");
+const deb = await appel("/api/invoices", { method: "POST", body: JSON.stringify({
+  ...vendeur, client_directory_address: ADRESSE_TRICATEL, client_name: "Tricatel", client_company: "Tricatel",
+  client_siren: SIREN_PARTAGE, client_street: "Avenue de la République", client_postcode: "37170",
+  client_city: "Chambray-lès-Tours", client_country: "FR", operation_category: "services", payment_on_debit: true,
+  items: [{ description: "Prise de vue en studio (demi-journée)", quantity: 1, unit: "forfait", unit_price: 400, total: 400, nature: "services" }],
+  total_ht: 400, tva_rate: 20, total_ttc: 480, issue_date: jour(-5), due_date: jour(25),
+  type_code: "380", invoice_type: "standard", payment_terms: "30 jours net", status: "sent",
+}) });
+const idDeb = deb.body?.invoice?.id;
+verifier("créée avec l'option TVA sur les débits", Boolean(idDeb) && deb.body?.invoice?.payment_on_debit === true, `HTTP ${deb.status} ${deb.body?.invoice?.payment_on_debit}`);
+if (idDeb) {
+  await appel(`/api/invoices/${idDeb}`, { method: "PATCH", body: JSON.stringify({ status: "sent" }) });
+  const e = await appel(`/api/superpdp/invoices/${idDeb}/emettre`, { method: "POST" });
+  verifier("transmise", e.status === 200 && Boolean(e.body?.superpdpId), `HTTP ${e.status} ${JSON.stringify(e.body).slice(0, 200)}`);
+  for (let i = 0; i < 15; i++) {
+    const c = (((await appel(`/api/superpdp/invoices/${idDeb}/declaration`)).body?.evenements) ?? []).map((x) => x.code);
+    if (c.some((x) => x !== "api:uploaded")) break;
+    await new Promise((r) => setTimeout(r, 8000));
+  }
+  const p = await appel(`/api/invoices/${idDeb}`, { method: "PATCH", body: JSON.stringify({ status: "paid", paid_at: PAYEE_LE }) });
+  verifier("« payée » acceptée, aucune déclaration notée chez Deviso", p.status === 200 && p.body?.invoice?.status === "paid" && !p.body?.invoice?.superpdp_encaisse_at, `HTTP ${p.status} encaisse_at=${p.body?.invoice?.superpdp_encaisse_at}`);
+  await new Promise((r) => setTimeout(r, 3000));
+  const codesDeb = (((await appel(`/api/superpdp/invoices/${idDeb}/declaration`)).body?.evenements) ?? []).map((x) => x.code);
+  verifier("relu chez Super PDP : aucun fr:212", !codesDeb.includes("fr:212"), codesDeb.join(", "));
+  console.log(`   Facture sur les débits transmise (conservée) : ${idDeb}`);
+}
+
 console.log(`\n   Facture mixte transmise au bac à sable (conservée) : ${id}`);
 process.exit(bilan());

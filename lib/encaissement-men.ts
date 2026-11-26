@@ -39,7 +39,34 @@ export type FactureEncaissement = {
   tva_rate?: number | string | null;
   total_ttc?: number | string | null;
   operation_category?: string | null;
+  /** Option pour le paiement de la TVA d'après les débits (art. 269-2-c CGI). */
+  payment_on_debit?: boolean | null;
 };
+
+/**
+ * Y a-t-il un encaissement à déclarer pour cette facture ?
+ *
+ * Non quand la facture porte l'option pour le paiement de la TVA d'après les
+ * débits : la TVA est alors exigible à la facturation, et la même fiche DGFiP
+ * exclut expressément ces opérations des données de paiement : « E-reporting
+ * des données de paiement uniquement sur les opérations dont la TVA est
+ * exigible à l'encaissement […] (hors opérations autoliquidées et option pour
+ * le paiement de la TVA sur les débits) ». Avant le 26/11/2026, Deviso
+ * envoyait le `fr:212` quand même, sur toute la facture.
+ *
+ * Non plus pour une facture mixte dont les lignes de prestations ne valent
+ * rien : envoyer le corps minimal ferait déclarer les biens.
+ *
+ * Une facture de biens seuls reste déclarée, comme avant : Super PDP précise
+ * que le `212` n'a alors aucun effet (article « E-reporting »).
+ */
+export function encaissementADeclarer(f: FactureEncaissement): boolean {
+  if (f.payment_on_debit) return false;
+  if (f.operation_category === "mixed") {
+    return lignesEncaissables(f).some((l) => (Number(l.total) || 0) > 0);
+  }
+  return true;
+}
 
 /** Lignes dont l'encaissement se déclare : les prestations seules sur une facture mixte. */
 export function lignesEncaissables(f: FactureEncaissement): (LigneMontant & LigneNature)[] {

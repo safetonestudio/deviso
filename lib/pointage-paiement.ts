@@ -16,6 +16,11 @@
  *    (au-delà, la bannière de la facture et le cabinet prennent le relais).
  */
 
+// Type seulement (effacé au build) : ce fichier est lu par la page facture,
+// côté navigateur. Écrit autrement, check:client-pur y voyait le client
+// serveur embarqué dans la page (26/11/2026).
+import type { createAdminClient } from "@/lib/supabase/admin";
+
 export const ESPACEMENT_JOURS = 7;
 export const MAX_DEMANDES = 6;
 const JOUR_MS = 24 * 60 * 60 * 1000;
@@ -176,7 +181,7 @@ ${reste > 0 ? `<p style="margin:16px 0 0;font-size:14px;color:#64748b;">Et ${res
  * l'envoi.
  */
 export async function pointagesDus(
-  admin: ReturnType<typeof import("@/lib/supabase/admin").createAdminClient>,
+  admin: ReturnType<typeof createAdminClient>,
   maintenant: Date,
   options: { seulement?: string | null } = {},
 ): Promise<{ erreur: string | null; parTitulaire: Map<string, (FactureAPointer & { user_id: string })[]> }> {

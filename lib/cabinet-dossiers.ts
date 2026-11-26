@@ -54,6 +54,7 @@ export type FactureCabinet = {
   superpdp_invoice_id: string | null;
   superpdp_encaisse_at: string | null;
   operation_category: string | null;
+  payment_on_debit?: boolean | null;
   pointage_demande_at?: string | null;
   pointage_demande_nb?: number | null;
   pointage_pas_encore_at?: string | null;
@@ -79,7 +80,7 @@ export type SyntheseDossier = {
 };
 
 const COLONNES_FACTURES =
-  "id, user_id, invoice_number, issue_date, due_date, status, total_ht, total_ttc, tva_rate, items, invoice_type, type_code, client_name, client_company, client_siren, client_country, superpdp_status, superpdp_error, paid_at, superpdp_invoice_id, superpdp_encaisse_at, operation_category, pointage_demande_at, pointage_demande_nb, pointage_pas_encore_at";
+  "id, user_id, invoice_number, issue_date, due_date, status, total_ht, total_ttc, tva_rate, items, invoice_type, type_code, client_name, client_company, client_siren, client_country, superpdp_status, superpdp_error, paid_at, superpdp_invoice_id, superpdp_encaisse_at, operation_category, payment_on_debit, pointage_demande_at, pointage_demande_nb, pointage_pas_encore_at";
 
 /** Seuil au-dela duquel un dossier sans facture est signale comme inactif. */
 export const JOURS_INACTIVITE = 45;
@@ -345,6 +346,8 @@ export async function syntheseDossiers(
         !!f.superpdp_invoice_id &&
         !f.superpdp_encaisse_at &&
         f.operation_category !== "goods" &&
+        // TVA sur les débits : rien à déclarer, donc rien de manquant.
+        !f.payment_on_debit &&
         !!f.paid_at &&
         f.paid_at.slice(0, 10) < septJours,
     );
