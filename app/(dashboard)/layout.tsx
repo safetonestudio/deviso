@@ -1,4 +1,5 @@
 import { redirect } from "next/navigation";
+import { estAdmin } from "@/lib/admin";
 import { headers } from "next/headers";
 import { createClient } from "@/lib/supabase/server";
 import { getWorkspaceUserId } from "@/lib/workspace";
@@ -21,6 +22,11 @@ import { PlanProvider } from "@/components/PlanContext";
 import Script from "next/script";
 import { EcranEssaiTermine, BandeauEssaiTermine } from "@/components/EssaiTermine";
 import { STATUT_ESSAI_TERMINE } from "@/lib/fin-essai";
+import { EcranFinBeta, BandeauFinBeta, MessageActivationBeta, EcranSansInvitation } from "@/components/FinBeta";
+import { compteSansInvitation } from "@/lib/beta-acces";
+import { activerParAdresse } from "@/lib/beta-candidatures";
+import { STATUT_BETA_TERMINEE, BETA_OUVERTE, LIEN_CANDIDATURE } from "@/lib/beta";
+import { Suspense } from "react";
 
 // Pages inaccessibles aux membres invités
 const MEMBER_RESTRICTED_PATHS = ["/billing", "/paiements", "/stats", "/crm"];
@@ -39,7 +45,7 @@ export default async function DashboardLayout({ children }: { children: React.Re
   const droits = await droitsDe(user.id, workspaceUserId);
 
   const [{ data: profile }, { data: workspacePlan }, { data: raccordement }] = await Promise.all([
-    supabase.from("profiles").select("full_name, company_name, is_demo, subscription_status").eq("id", user.id).single(),
+    supabase.from("profiles").select("full_name, company_name, is_demo, subscription_status, stripe_customer_id, beta_debut, created_at").eq("id", user.id).single(),
     // Le plan est lu sur la ligne du PROPRIÉTAIRE de l'espace. profiles est en
     // RLS « auth.uid() = id » : un invité ne peut pas lire cette ligne avec son
     // propre client, la lecture reviendrait vide et le plan retomberait sur
@@ -96,9 +102,26 @@ export default async function DashboardLayout({ children }: { children: React.Re
     }
   }
 
+  // Bêta (lib/beta-acces.ts) : un compte ouvert sans invitation, en
+  // contournant la page d'inscription, ne voit que l'appel à candidater.
+  // Ni démarrage, ni création. Bêta fermée : jamais vrai.
+  const sansInvitation =
+    !isMember &&
+    !profile?.is_demo &&
+    !estAdmin(user.email) &&
+    (await compteSansInvitation(createAdminClient(), user.id, { plan, ...profile })) &&
+    !(await estCabinet(createAdminClient(), user.id));
+
+  // Accepté mais arrivé sans son lien (confirmation d'adresse ouverte ailleurs) :
+  // son adresse confirmée suffit à ouvrir sa bêta (lib/beta-candidatures.ts).
+  if (sansInvitation && user.email && user.email_confirmed_at) {
+    const r = await activerParAdresse(user.id, user.email);
+    if (r?.ok) redirect(r.typeAcces === "cabinet" ? "/cabinet?beta=cabinet" : "/dashboard?beta=active");
+  }
+
   // Redirect new owners to onboarding if they haven't set their company name yet
   // Team members (collaborators) are exempt, they use the owner's company profile
-  if (!profile?.company_name && !pathname.startsWith("/onboarding") && !isMember) {
+  if (!sansInvitation && !profile?.company_name && !pathname.startsWith("/onboarding") && !isMember) {
     redirect("/onboarding");
   }
 
@@ -190,6 +213,9 @@ export default async function DashboardLayout({ children }: { children: React.Re
    */
   const essaiTermine =
     !isMember && !isDemo && plan === "free" && profile?.subscription_status === STATUT_ESSAI_TERMINE;
+  // Même logique pour la fin de bêta d'un testeur (cron fin-beta, lib/beta.ts).
+  const betaTerminee =
+    !isMember && !isDemo && plan === "free" && profile?.subscription_status === STATUT_BETA_TERMINEE;
   const surTableauDeBord = pathname === "/dashboard";
   const surAbonnement = pathname.startsWith("/billing");
 
@@ -206,8 +232,8 @@ export default async function DashboardLayout({ children }: { children: React.Re
           isDemo={isDemo}
         />
 
-        <aside className="hidden lg:flex w-64 bg-ds-surface border-r border-ds-border flex-col fixed h-full">
-          <div className="px-5 py-4 border-b border-ds-border flex items-center justify-between gap-2">
+        <aside className="hidden lg:flex w-64 nav-panneau border-r border-ds-border flex-col fixed h-full">
+          <div className="px-5 pt-4 pb-1 flex items-center justify-between gap-2">
             <a href="/dashboard" className="flex items-center gap-2 min-w-0">
               <div className="w-7 h-7 rounded-[7px] bg-indigo-600 flex items-center justify-center">
                 <span className="text-ink font-display font-semibold text-[15px]">D</span>
@@ -224,19 +250,19 @@ export default async function DashboardLayout({ children }: { children: React.Re
 
           <SidebarNav isMember={isMember} isComptable={isComptable} />
 
-          <div className="p-4 border-t border-ds-border">
+          <div className="px-3 pb-3 pt-1">
             {isDemo && (
               <a
-                href="/signup"
+                href={BETA_OUVERTE ? LIEN_CANDIDATURE : "/signup"}
                 className="flex items-center gap-2 w-full mb-3 px-3 py-2 rounded-lg bg-amber-500/10 border border-amber-500/20 text-amber-400 text-xs font-semibold hover:bg-amber-500/20 transition-colors"
               >
                 <Sparkles size={16} className="shrink-0" />
-                <span>Créer mon vrai compte →</span>
+                <span>{BETA_OUVERTE ? "Devenir bêta-testeur →" : "Créer mon vrai compte →"}</span>
               </a>
             )}
 
             {/* Bloc profil */}
-            <div className="flex items-center gap-3 px-3 py-3 rounded-xl bg-ds-elevated mb-2">
+            <div className="nav-famille flex items-center gap-3 px-3 py-3 mb-2">
               <div className="w-9 h-9 rounded-full bg-indigo-500/20 text-indigo-400 font-bold text-sm flex items-center justify-center shrink-0">
                 {initials}
               </div>
@@ -283,7 +309,13 @@ export default async function DashboardLayout({ children }: { children: React.Re
               noyé parmi les réglages sur ordinateur. */}
           {isDemo && <DemoBanner />}
           {essaiTermine && !surTableauDeBord && !surAbonnement && <BandeauEssaiTermine />}
-          {essaiTermine && surTableauDeBord ? <EcranEssaiTermine /> : children}
+          {betaTerminee && !surTableauDeBord && !surAbonnement && <BandeauFinBeta />}
+          {(surTableauDeBord || pathname.startsWith("/onboarding")) && (
+            <Suspense fallback={null}>
+              <MessageActivationBeta />
+            </Suspense>
+          )}
+          {sansInvitation ? <EcranSansInvitation /> : essaiTermine && surTableauDeBord ? <EcranEssaiTermine /> : betaTerminee && surTableauDeBord ? <EcranFinBeta /> : children}
           </div>
         </main>
       </div>

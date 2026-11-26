@@ -6,11 +6,16 @@ import { PartyPopper, TriangleAlert, Hourglass, Gift } from "lucide-react";
 import { planFeatures, proOnlyFeatures } from "@/lib/plans";
 import { prix as grille, PRIX_SIEGE, PRIX_SIEGE_ANNUEL } from "@/lib/grille-tarifaire";
 import { GuidedTourBanner } from "@/components/GuidedTourBanner";
+import { BETA, BETA_OUVERTE, LIEN_CANDIDATURE, STATUT_BETA } from "@/lib/beta";
+import { creeApresOuverture } from "@/lib/beta-acces";
 
 type Profile = {
   plan: "free" | "solo" | "pro";
   stripe_customer_id: string | null;
   subscription_status: string | null;
+  beta_debut?: string | null;
+  created_at?: string | null;
+  beta_fin?: string | null;
 };
 
 const PLAN_INFO = {
@@ -149,11 +154,41 @@ export default function BillingPage() {
   }
 
   const plan = profile?.plan ?? "free";
-  const isTrialing = profile?.subscription_status === "trialing";
+  // Un bêta-testeur abonné en avance est « trialing » chez Stripe jusqu'à la
+  // fin de sa bêta : ce n'est pas un essai de 14 jours, et sa carte est déjà là.
+  const abonneEnBeta = profile?.subscription_status === "trialing" && Boolean(profile?.beta_debut);
+  const isTrialing = profile?.subscription_status === "trialing" && !abonneEnBeta;
   // Essai déjà consommé et terminé sans carte (lib/fin-essai.ts) : plus de
   // second essai, la carte est demandée tout de suite.
   const essaiTermine = plan === "free" && profile?.subscription_status === "essai_termine";
-  const info = PLAN_INFO[plan];
+  /*
+   * Bêta (lib/beta.ts).
+   *   enBeta        bêta-testeur pendant sa bêta : rien à payer, pas de portail
+   *                 Stripe (aucun client Stripe), la souscription anticipée
+   *                 commence au jour de fin de bêta, avec la remise promise ;
+   *   betaTerminee  sa bêta est finie : il reprend avec la remise ;
+   *   fermeParBeta  bêta ouverte, compte sans formule qui n'est pas testeur :
+   *                 l'accès s'ouvre sur invitation, aucune offre ni prix.
+   */
+  const enBeta = profile?.subscription_status === STATUT_BETA;
+  // Ancien testeur sans abonnement en cours (fin de bêta, ou résiliation) :
+  // la remise promise reste la sienne.
+  const betaTerminee = !enBeta && Boolean(profile?.beta_debut) && plan === "free";
+  const fermeParBeta =
+    BETA_OUVERTE && plan === "free" && !profile?.beta_debut && !profile?.stripe_customer_id && creeApresOuverture(profile?.created_at);
+  const finBeta = profile?.beta_fin
+    ? new Date(profile.beta_fin).toLocaleDateString("fr-FR", { day: "numeric", month: "long", year: "numeric" })
+    : null;
+  // Souscription anticipée ouverte 28 jours avant la fin de la bêta (même
+  // règle que /api/stripe/checkout, JOURS_SOUSCRIPTION_ANTICIPEE).
+  const ouvertureAbonnement = profile?.beta_fin ? new Date(new Date(profile.beta_fin).getTime() - 28 * 86400_000) : null;
+  const abonnementOuvert = !ouvertureAbonnement || Date.now() >= ouvertureAbonnement.getTime();
+  const dateOuverture = ouvertureAbonnement
+    ? ouvertureAbonnement.toLocaleDateString("fr-FR", { day: "numeric", month: "long", year: "numeric" })
+    : null;
+  const info = enBeta
+    ? { ...PLAN_INFO.pro, description: `Formule complète pendant la bêta · ${BETA.utilisateursMax} utilisateurs, toi compris` }
+    : PLAN_INFO[plan];
   const prices = billing === "annual" ? ANNUAL_PRICES : MONTHLY_PRICES;
 
   return (
@@ -229,10 +264,15 @@ export default function BillingPage() {
                   Essai gratuit
                 </span>
               )}
+              {enBeta && (
+                <span className="text-[11px] font-semibold px-2 py-0.5 rounded-full bg-emerald-500/15 text-emerald-400 border border-emerald-500/25">
+                  Bêta-testeur
+                </span>
+              )}
             </div>
             <p className="text-gray-400 text-sm">{info.description}</p>
           </div>
-          {plan !== "free" && (
+          {plan !== "free" && !enBeta && (
             <button
               onClick={handlePortal}
               disabled={acting}
@@ -242,6 +282,24 @@ export default function BillingPage() {
             </button>
           )}
         </div>
+
+        {abonneEnBeta && (
+          <div className="mt-4 bg-emerald-500/10 border border-emerald-500/20 rounded-xl px-4 py-3">
+            <p className="text-sm text-emerald-300">
+              <span className="font-semibold">Abonnement enregistré.</span> Ta bêta continue avec la formule complète
+              {finBeta ? ` jusqu'au ${finBeta}` : ""} ; le premier prélèvement, avec ta remise de -{BETA.remise}&nbsp;%, a lieu à cette date.
+            </p>
+          </div>
+        )}
+
+        {enBeta && (
+          <div className="mt-4 bg-emerald-500/10 border border-emerald-500/20 rounded-xl px-4 py-3">
+            <p className="text-sm text-emerald-300">
+              <span className="font-semibold">Tu es bêta-testeur.</span> Deviso complet, gratuit
+              {finBeta ? ` jusqu'au ${finBeta}` : ""}. Ensuite, si tu continues, ton abonnement est à -{BETA.remise}&nbsp;% pendant 12 mois.
+            </p>
+          </div>
+        )}
 
         {/* Bandeau trial, incite à ajouter une carte avant expiration */}
         {isTrialing && (
@@ -270,10 +328,31 @@ export default function BillingPage() {
         désormais toujours proposées ; c'est la route qui décide s'il s'agit
         d'une souscription ou d'une modification.
       */}
+      {fermeParBeta ? (
+        <div className="carte p-6">
+          <p className="text-sm text-gray-300">
+            Deviso est en bêta : l&apos;accès s&apos;ouvre sur invitation, après une courte candidature.
+          </p>
+          <a
+            href={LIEN_CANDIDATURE}
+            className="mt-4 inline-flex items-center bg-indigo-600 text-on-accent text-sm font-semibold px-5 py-2.5 rounded-xl hover:bg-indigo-700 transition-colors"
+          >
+            Devenir bêta-testeur
+          </a>
+        </div>
+      ) : (
       <div className="carte p-6">
           <div className="flex items-center justify-between mb-5">
             <p className="text-xs font-semibold text-gray-500">
-              {plan === "free" ? (essaiTermine ? "Reprendre ton abonnement" : "Commencer ton essai gratuit") : "Changer de formule"}
+              {enBeta
+                ? "Après ta bêta"
+                : betaTerminee
+                  ? "Continuer avec Deviso"
+                  : plan === "free"
+                    ? essaiTermine
+                      ? "Reprendre ton abonnement"
+                      : "Commencer ton essai gratuit"
+                    : "Changer de formule"}
             </p>
             {/* Toggle mensuel / annuel */}
             <div className="flex items-center gap-1 bg-ds-elevated rounded-lg p-0.5">
@@ -298,7 +377,19 @@ export default function BillingPage() {
           </div>
 
           {/* Bandeau essai, seulement pour qui n'a pas encore d'abonnement */}
-          {essaiTermine ? (
+          {enBeta || betaTerminee ? (
+            <div className="bg-emerald-500/10 border border-emerald-500/20 rounded-xl px-4 py-3 mb-4 flex items-center gap-3">
+              <Gift size={18} className="shrink-0 text-emerald-400" />
+              <p className="text-sm text-emerald-300">
+                <span className="font-semibold">-{BETA.remise}&nbsp;% pendant 12 mois</span>, ton avantage de bêta-testeur.
+                {enBeta
+                  ? abonnementOuvert
+                    ? ` Tu peux t'abonner dès maintenant : rien n'est prélevé avant la fin de ta bêta${finBeta ? `, le ${finBeta}` : ""}.`
+                    : ` L'abonnement s'ouvre le ${dateOuverture}, 4 semaines avant la fin de ta bêta. D'ici là, tu n'as rien à faire.`
+                  : " La carte est demandée tout de suite, l'accès reprend dès le paiement validé."}
+              </p>
+            </div>
+          ) : essaiTermine ? (
             <div className="bg-amber-500/10 border border-amber-500/30 rounded-xl px-4 py-3 mb-4 flex items-center gap-3">
               <Hourglass size={18} className="shrink-0 text-amber-400" />
               <p className="text-sm text-amber-200">
@@ -343,7 +434,9 @@ export default function BillingPage() {
                 >
                   {acting
                     ? "Un instant…"
-                    : essaiTermine
+                    : enBeta || betaTerminee
+                      ? "Choisir Solo →"
+                      : essaiTermine
                       ? "Continuer avec Solo →"
                       : plan === "free"
                       ? "Essayer Solo →"
@@ -374,7 +467,9 @@ export default function BillingPage() {
               >
                 {acting
                   ? "Un instant…"
-                  : essaiTermine
+                  : enBeta || betaTerminee
+                    ? "Choisir Pro →"
+                    : essaiTermine
                     ? "Continuer avec Pro →"
                     : plan === "free"
                     ? "Essayer Pro →"
@@ -389,6 +484,7 @@ export default function BillingPage() {
             <p className="text-xs text-gray-600 mt-3 text-center">Facturation annuelle en une fois · Sans engagement au-delà</p>
           )}
       </div>
+      )}
     </div>
   );
 }

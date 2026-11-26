@@ -1,4 +1,5 @@
 "use client";
+import { BETA_OUVERTE, LIEN_CANDIDATURE } from "@/lib/beta";
 import { useState, useEffect, Suspense } from "react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
@@ -46,6 +47,12 @@ function LoginForm() {
       sessionStorage.removeItem("deviso_no_persist");
     }
 
+    // Une route serveur (activation du lien bêta, /api/beta/activer) ne se
+    // charge pas par le routeur client : navigation complète.
+    if (nextUrl.startsWith("/api/")) {
+      window.location.href = nextUrl;
+      return;
+    }
     router.push(nextUrl);
     router.refresh();
   };
@@ -73,11 +80,20 @@ function LoginForm() {
           <h1 className="text-2xl font-semibold text-ink mb-1">Connexion</h1>
           <p className="text-gray-400 text-sm mb-6">
             Pas encore de compte ?{" "}
+            {/* Bêta (lib/beta.ts) : l'inscription libre est fermée. Un lien bêta
+                (/api/beta/activer) renvoie lui-même vers l'inscription avec son
+                jeton ; tout autre visiteur est invité à candidater. */}
             <Link
-              href={`/signup?next=${encodeURIComponent(nextUrl)}&email=${encodeURIComponent(email)}`}
+              href={
+                isInvite || !BETA_OUVERTE
+                  ? `/signup?next=${encodeURIComponent(nextUrl)}&email=${encodeURIComponent(email)}`
+                  : nextUrl.startsWith("/api/beta/activer")
+                    ? nextUrl
+                    : LIEN_CANDIDATURE
+              }
               className="text-indigo-400 hover:text-indigo-300 font-semibold"
             >
-              {isInvite ? "Créer un compte" : "S'inscrire gratuitement"}
+              {isInvite ? "Créer un compte" : BETA_OUVERTE && !nextUrl.startsWith("/api/beta/activer") ? "Devenir bêta-testeur" : "S'inscrire gratuitement"}
             </Link>
           </p>
 

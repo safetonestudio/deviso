@@ -1,45 +1,62 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
-import { LIBELLE_NATURE } from "@/lib/nature-operation";
-import { ventilationTva } from "@/lib/tva";
+/**
+ * Page de détail d'une facture, dans le cadre commun devis / facture
+ * (components/document/PageDocument.tsx), validé par Selim le 24/11/2026.
+ *
+ * Au centre, la feuille : la reproduction exacte du PDF Factur-X que reçoit le
+ * client (components/document/FeuilleDocument.tsx, mêmes textes que
+ * lib/invoice-pdf.tsx). À droite : Actions, Suivi, Facture électronique.
+ *
+ * Toutes les actions de l'ancien panneau sont reprises, avec leurs droits :
+ * - envoyer, marquer envoyée, relancer, lien de paiement : acte « envoyer_facture » ;
+ * - transmettre à la plateforme agréée : « transmettre_pa » ;
+ * - déposer sur Chorus Pro : « deposer_chorus » ;
+ * - marquer payée, pointage, établir un avoir, supprimer : titulaire seul.
+ * Relance, lien de paiement et avoir sont gardés de la même façon côté serveur
+ * (décision de Selim du 24/11/2026).
+ */
+import { useEffect, useState, type ReactNode } from "react";
 import { useParams, useRouter } from "next/navigation";
 import Link from "next/link";
-import { GuidedTourBanner } from "@/components/GuidedTourBanner";
-import { FacturXCompliance } from "@/components/FacturXCompliance";
-import { usePermission, useIsMember } from "@/components/PlanContext";
 import {
-  Send,
-  CreditCard,
-  MailCheck,
-  Check,
-  Bell,
-  Download,
-  RadioTower,
-  ShieldCheck,
-  Landmark,
-  Undo2,
+  Send, CreditCard, MailCheck, Check, Bell, Download, RadioTower, ShieldCheck, Landmark, Undo2, RefreshCw,
 } from "lucide-react";
+import { GuidedTourBanner } from "@/components/GuidedTourBanner";
+import { FacturXCompliance, problemesConformite } from "@/components/FacturXCompliance";
+import { usePermission, useIsMember } from "@/components/PlanContext";
+import { FeuilleDocument } from "@/components/document/FeuilleDocument";
+import {
+  PageDocument, Pastille, PanneauActions, BoutonPrincipal, BoutonListe, GroupeActions, Retour,
+  ZoneSuppression, Suivi, Info, Bandeau, type EtapeSuivi, type Ton,
+} from "@/components/document/PageDocument";
+import { LIBELLE_NATURE } from "@/lib/nature-operation";
 import { libelleStatut } from "@/lib/superpdp-statuts";
 import { etatPdp } from "@/lib/superpdp-etat-facture";
 import type { Invoice } from "@/types";
+import { contenuFacture, type PaymentInfo } from "@/lib/facture-contenu";
 import { MODES_REGLEMENT, type ModeReglement } from "@/lib/recettes";
-import { estAPointer, joursDeRetard, ESPACEMENT_JOURS } from "@/lib/pointage-paiement";
+import { estAPointer, joursDeRetard, ESPACEMENT_JOURS } from "@/lib/pointage-regles";
 import { encaissementADeclarer } from "@/lib/encaissement-men";
 import { couleurEtatChorus, libelleEtatFlux } from "@/lib/chorus-etats";
 
-const STATUS_LABEL: Record<string, string> = {
-  draft: "Brouillon",
-  sent: "Envoyée",
-  paid: "Payée",
-  cancelled: "Annulée",
+const STATUTS: Record<string, { libelle: string; ton: Ton }> = {
+  draft: { libelle: "Brouillon", ton: "neutre" },
+  sent: { libelle: "Envoyée", ton: "info" },
+  paid: { libelle: "Payée", ton: "succes" },
+  cancelled: { libelle: "Annulée", ton: "danger" },
 };
 
-const STATUS_COLOR: Record<string, string> = {
-  draft: "bg-ds-elevated text-gray-400",
-  sent: "bg-blue-500/10 text-blue-400",
-  paid: "bg-emerald-500/10 text-emerald-400",
-  cancelled: "bg-red-500/10 text-red-400",
+const CHORUS_STATUS_MAP: Record<string, { label: string; color: string }> = {
+  DEPOSEE:             { label: "Déposée",               color: "blue" },
+  EN_COURS_TRAITEMENT: { label: "En cours de traitement", color: "amber" },
+  COMPLETEE:           { label: "Complétée",              color: "amber" },
+  MISE_EN_PAIEMENT:    { label: "Mise en paiement",       color: "indigo" },
+  MANDATEE:            { label: "Mandatée",               color: "emerald" },
+  VALIDEE:             { label: "Validée",                color: "emerald" },
+  SUSPENDUE:           { label: "Suspendue",              color: "amber" },
+  REJETEE:             { label: "Rejetée",                color: "red" },
+  ANNULEE:             { label: "Annulée",                color: "red" },
 };
 
 function fmt(n: number) {
@@ -48,24 +65,75 @@ function fmt(n: number) {
 function fmtDate(d: string) {
   return new Date(d).toLocaleDateString("fr-FR", { timeZone: "Europe/Paris", day: "2-digit", month: "long", year: "numeric" });
 }
+const jourCourt = (d: string) =>
+  new Date(d).toLocaleDateString("fr-FR", { timeZone: "Europe/Paris", day: "2-digit", month: "2-digit" });
 
-function ActionPanel({ invoice, id, router, hasChorusPro }: {
+interface DonneesFeuille {
+  invoice: Invoice;
+  accentColor: string | null;
+  modele: string | null;
+  paymentInfo: PaymentInfo | null;
+  linkedNumber: string | null;
+}
+
+export default function InvoiceDetailPage() {
+  const { id } = useParams<{ id: string }>();
+  const [invoice, setInvoice] = useState<Invoice | null>(null);
+  const [feuille, setFeuille] = useState<DonneesFeuille | null>(null);
+  const [feuilleKo, setFeuilleKo] = useState(false);
+  const [hasChorusPro, setHasChorusPro] = useState(false);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    Promise.all([
+      fetch(`/api/invoices/${id}`).then((r) => r.json()),
+      fetch(`/api/profile`).then((r) => r.json()),
+    ]).then(([invoiceData, profileData]) => {
+      setInvoice(invoiceData.invoice);
+      // Le bouton Chorus Pro n'apparaît que si le fournisseur ID est configuré
+      const p = profileData.profile;
+      setHasChorusPro(!!(p?.chorus_pro_fournisseur_id || p?.chorus_pro_login));
+    }).finally(() => setLoading(false));
+    // La feuille se charge à part : la page et ses actions n'attendent pas.
+    fetch(`/api/invoices/${id}/feuille`)
+      .then((r) => (r.ok ? r.json() : Promise.reject()))
+      .then((d: DonneesFeuille) => setFeuille(d))
+      .catch(() => setFeuilleKo(true));
+  }, [id]);
+
+  if (loading) return <div className="w-full text-center py-16 text-gray-500">Chargement…</div>;
+  if (!invoice) return <div className="w-full text-center py-16 text-gray-400">Facture introuvable</div>;
+
+  return (
+    <div className="w-full">
+      <FactureVue invoice={invoice} id={id} hasChorusPro={hasChorusPro} feuille={feuille} feuilleKo={feuilleKo} />
+    </div>
+  );
+}
+
+function FactureVue({ invoice, id, hasChorusPro, feuille, feuilleKo }: {
   invoice: Invoice;
   id: string;
-  router: ReturnType<typeof useRouter>;
   hasChorusPro: boolean;
+  feuille: DonneesFeuille | null;
+  feuilleKo: boolean;
 }) {
-  const [downloading, setDownloading] = useState(false);
-  const [markingPaid, setMarkingPaid] = useState(false);
-  const [markingSent, setMarkingSent] = useState(false);
-  const [generatingLink, setGeneratingLink] = useState(false);
-  const [sendingReminder, setSendingReminder] = useState(false);
-  const [sendingEmail, setSendingEmail] = useState(false);
-  const [emailSent, setEmailSent] = useState(false);
+  const router = useRouter();
+  const [inv, setInv] = useState(invoice);
   const isMember = useIsMember();
   const peutEnvoyerFacture = usePermission("envoyer_facture");
   const peutTransmettrePa = usePermission("transmettre_pa");
   const peutDeposerChorus = usePermission("deposer_chorus");
+
+  const [downloading, setDownloading] = useState(false);
+  const [markingPaid, setMarkingPaid] = useState(false);
+  const [markingSent, setMarkingSent] = useState(false);
+  const [generatingLink, setGeneratingLink] = useState(false);
+  const [messageLien, setMessageLien] = useState<{ ton: Ton; texte: ReactNode } | null>(null);
+  const [sendingReminder, setSendingReminder] = useState(false);
+  const [messageRelance, setMessageRelance] = useState<{ ton: Ton; texte: string } | null>(null);
+  const [sendingEmail, setSendingEmail] = useState(false);
+  const [messageEnvoi, setMessageEnvoi] = useState<{ ton: Ton; texte: string } | null>(null);
   const [depositingChorus, setDepositingChorus] = useState(false);
   const [emission, setEmission] = useState(false);
   const [verification, setVerification] = useState(false);
@@ -78,73 +146,50 @@ function ActionPanel({ invoice, id, router, hasChorusPro }: {
   // Le bac à sable partage un SIREN entre ses sociétés de test : c'est le seul
   // environnement où « adresse déduite » mérite un avertissement.
   const [sandboxPdp, setSandboxPdp] = useState(false);
-
-  useEffect(() => {
-    let vivant = true;
-    fetch("/api/superpdp/status")
-      .then((r) => r.json())
-      .then((d) => {
-        if (vivant) setSandboxPdp(d?.sandbox === true);
-      })
-      .catch(() => {});
-    return () => {
-      vivant = false;
-    };
-  }, []);
   const [chorusRef, setChorusRef] = useState<string | null>(invoice.chorus_pro_ref || null);
   const [chorusError, setChorusError] = useState<string | null>(null);
-  const CHORUS_STATUS_MAP: Record<string, { label: string; color: string }> = {
-    DEPOSEE:             { label: "Déposée",               color: "blue" },
-    EN_COURS_TRAITEMENT: { label: "En cours de traitement", color: "amber" },
-    COMPLETEE:           { label: "Complétée",              color: "amber" },
-    MISE_EN_PAIEMENT:    { label: "Mise en paiement",       color: "indigo" },
-    MANDATEE:            { label: "Mandatée",               color: "emerald" },
-    VALIDEE:             { label: "Validée",                color: "emerald" },
-    SUSPENDUE:           { label: "Suspendue",              color: "amber" },
-    REJETEE:             { label: "Rejetée",                color: "red" },
-    ANNULEE:             { label: "Annulée",                color: "red" },
-  };
   const [chorusStatus, setChorusStatus] = useState<{ label: string; color: string; motifRejet?: string | null } | null>(
     invoice.chorus_pro_status
       ? (CHORUS_STATUS_MAP[invoice.chorus_pro_status] ?? { label: libelleEtatFlux(invoice.chorus_pro_status), color: couleurEtatChorus(invoice.chorus_pro_status), motifRejet: invoice.chorus_pro_motif_rejet ?? null })
       : null
   );
   const [fetchingStatus, setFetchingStatus] = useState(false);
-  const [confirmDelete, setConfirmDelete] = useState(false);
   const [deleting, setDeleting] = useState(false);
-  const [inv, setInv] = useState(invoice);
   const [creatingAvoir, setCreatingAvoir] = useState(false);
+  const [messageAvoir, setMessageAvoir] = useState<string | null>(null);
+
+  useEffect(() => {
+    let vivant = true;
+    fetch("/api/superpdp/status")
+      .then((r) => r.json())
+      .then((d) => { if (vivant) setSandboxPdp(d?.sandbox === true); })
+      .catch(() => {});
+    return () => { vivant = false; };
+  }, []);
 
   // ── La date d'encaissement, demandée là où elle change quelque chose ──────
   //
-  // Sur une facture transmise à la plateforme agréée, marquer « payée » déclenche
-  // le message `fr:212`, dont l'administration tire l'e-reporting de paiement.
-  // La date portée par ce message fixe la période d'exigibilité de la TVA sur
-  // les prestations de services.
-  //
-  // Cette date ne peut PAS être corrigée après coup : rejouer un `fr:212` ferait
-  // partir une seconde déclaration de paiement pour le même encaissement. Il n'y
-  // a donc pas de « on verra plus tard » possible, c'est maintenant ou jamais,
-  // et c'est ce qui justifie de demander avant plutôt que de proposer de
-  // modifier après.
-  //
-  // Depuis le 24/10/2026, la date ET le mode de reglement sont demandes a
-  // chaque encaissement, transmis ou non : ce sont deux mentions obligatoires
-  // du livre des recettes. Seul l'avertissement « ne pourra plus etre
-  // corrigee » reste reserve aux factures transmises.
+  // Sur une facture transmise à la plateforme agréée, marquer « payée »
+  // déclenche le message `fr:212`, dont la date fixe la période d'exigibilité
+  // de la TVA sur les prestations de services. Elle ne peut PAS être corrigée
+  // après coup (un second `fr:212` serait une seconde déclaration), d'où la
+  // demande avant plutôt qu'une correction après. Depuis le 24/10/2026, date
+  // ET mode de règlement sont demandés à chaque encaissement, transmis ou
+  // non : deux mentions obligatoires du livre des recettes.
   const [demandeDatePaiement, setDemandeDatePaiement] = useState(false);
   const [modeReglement, setModeReglement] = useState<ModeReglement>("virement");
   const [datePaiement, setDatePaiement] = useState(() => new Date().toISOString().slice(0, 10));
   const [pasEncoreAt, setPasEncoreAt] = useState<string | null>(invoice.pointage_pas_encore_at ?? null);
   const [envoiPasEncore, setEnvoiPasEncore] = useState(false);
   const [pointageDemande, setPointageDemande] = useState<"payee" | "pas-encore" | null>(null);
-  const panneauRef = useRef<HTMLDivElement>(null);
   useEffect(() => {
+    // Liens du courriel de pointage : `?pointage=payee` ouvre la saisie de la
+    // date ; `?pointage=pas-encore` met le bouton en évidence, l'enregistrement
+    // exige un clic (jamais un simple chargement de page).
     const q = new URLSearchParams(window.location.search).get("pointage");
     if (q !== "payee" && q !== "pas-encore") return;
     setPointageDemande(q);
     if (q === "payee") setDemandeDatePaiement(true);
-    panneauRef.current?.scrollIntoView({ block: "start" });
   }, []);
   // Pas de déclaration d'encaissement sous l'option TVA sur les débits (ni sur
   // une facture mixte sans prestation) : la date n'y part pas (lib/encaissement-men.ts).
@@ -171,98 +216,71 @@ function ActionPanel({ invoice, id, router, hasChorusPro }: {
     const res = await fetch(`/api/invoices/${id}`, {
       method: "PATCH",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        status: "paid",
-        // Date et mode d'encaissement : mentions du livre des recettes.
-        paid_at: dateEncaissement,
-        payment_mode: mode,
-      }),
+      // Date et mode d'encaissement : mentions du livre des recettes. La route
+      // PATCH déclare elle-même l'encaissement (fr:212) à la plateforme.
+      body: JSON.stringify({ status: "paid", paid_at: dateEncaissement, payment_mode: mode }),
     });
     const data = await res.json();
     if (res.ok) {
       setInv(data.invoice);
       setDemandeDatePaiement(false);
-      // L'encaissement (fr:212) est désormais déclaré par la route PATCH
-      // elle-même, au moment où la facture passe à « payée ». Il l'était ici,
-      // dans le navigateur, ce qui obligeait chaque nouveau chemin menant au
-      // paiement à penser à le recâbler. La route renvoie la facture relue,
-      // donc `superpdp_encaisse_at` est déjà à jour dans `data.invoice`.
     }
     setMarkingPaid(false);
   }
 
   /**
-   * Établir l'avoir qui annule cette facture.
-   *
-   * C'est le seul chemin de correction d'une facture déjà transmise : sous la
-   * réforme elle ne se modifie plus, et un refus du client (fr:210) est
-   * terminal. L'avoir naît en brouillon, l'utilisateur peut réduire les
-   * lignes pour n'en annuler qu'une partie, et on l'y emmène directement,
-   * parce qu'un document créé qu'on ne voit pas est un document oublié.
+   * L'avoir qui annule cette facture : seul chemin de correction d'une facture
+   * déjà transmise. Il naît en brouillon et on y emmène l'utilisateur.
    */
   async function handleAvoir() {
     setCreatingAvoir(true);
+    setMessageAvoir(null);
     const res = await fetch(`/api/invoices/${id}/avoir`, { method: "POST" });
     const data = await res.json();
     setCreatingAvoir(false);
-
     if (res.ok && data.avoir?.id) {
       // Un avoir qui annule une facture refusée ou rejetée ne se transmet pas
-      // (spécifications externes DGFiP v3.2, p. 60). On le dit avant d'emmener
-      // l'utilisateur sur le document : la route d'émission refusera de toute
-      // façon, mais découvrir la règle en se heurtant à un refus est le pire
-      // moment pour l'apprendre.
+      // (spécifications externes DGFiP v3.2, p. 60) : on le dit avant.
       if (data.interne && data.avertissement) alert(data.avertissement);
       window.location.href = `/invoices/${data.avoir.id}`;
       return;
     }
-    // Un avoir existe déjà : on n'en refait pas un, on montre celui-là.
+    // Un avoir existe déjà : on montre celui-là.
     if (res.status === 409 && data.avoirId) {
       window.location.href = `/invoices/${data.avoirId}`;
       return;
     }
-    alert(data.message || data.error || "Création de l'avoir impossible.");
+    setMessageAvoir(data.message || data.error || "Création de l'avoir impossible.");
   }
 
   async function handlePaymentLink() {
     setGeneratingLink(true);
+    setMessageLien(null);
     const res = await fetch(`/api/invoices/${id}/payment-link`, { method: "POST" });
     const data = await res.json();
     if (res.ok && data.url) {
-      await navigator.clipboard.writeText(data.url);
-      setInv((prev) => prev ? { ...prev, payment_link_url: data.url } : prev);
-      // On dit ce que l'outil ne fera PAS à sa place.
-      //
-      // Le lien de paiement est celui de l'utilisateur : l'argent va
-      // directement de son client à lui, sans passer par Deviso. Deviso ne peut
-      // donc pas savoir que la facture a été réglée, et c'est le passage à
-      // « payée » qui déclare l'encaissement (fr:212) à la plateforme agréée,
-      // l'un des quatre statuts obligatoires de la réforme.
-      //
-      // Sans cette phrase, l'utilisateur suppose raisonnablement l'inverse :
-      // il a copié un lien depuis son logiciel de facturation, il attend que
-      // son logiciel suive le paiement. Le silence coûtait une obligation
-      // déclarative.
-      alert(
-        "Lien de paiement copié.\n\n" +
-          "Ce lien envoie l'argent directement sur ton compte : Deviso ne voit pas " +
-          "le paiement. Pense à marquer la facture « payée » quand tu seras réglé, " +
-          "c'est ce geste qui déclare l'encaissement à l'administration."
-      );
+      try { await navigator.clipboard.writeText(data.url); } catch { /* le lien reste affiché */ }
+      setInv((prev) => ({ ...prev, payment_link_url: data.url }));
+      // On dit ce que l'outil ne fera PAS : le lien envoie l'argent directement
+      // à l'utilisateur, Deviso ne voit pas le paiement, et c'est le passage à
+      // « payée » qui déclare l'encaissement à l'administration.
+      setMessageLien({
+        ton: "succes",
+        texte: "Lien de paiement copié. Ce lien envoie l'argent directement sur ton compte : Deviso ne voit pas le paiement. Pense à marquer la facture « payée » quand tu seras réglé, c'est ce geste qui déclare l'encaissement à l'administration.",
+      });
     } else if (data.error === "PAYMENT_NOT_CONFIGURED") {
-      if (confirm("Moyen de paiement non configuré.\n\nAller dans Paiements pour le configurer ?")) {
-        window.location.href = "/paiements";
-      }
+      setMessageLien({
+        ton: "attention",
+        texte: <>Moyen de paiement non configuré. <Link href="/paiements" className="underline">Le configurer dans Paiements</Link></>,
+      });
     } else {
-      alert(data.error || "Erreur");
+      setMessageLien({ ton: "danger", texte: data.error || "Erreur" });
     }
     setGeneratingLink(false);
   }
 
-  // Contrepartie du retrait du changement de statut implicite : une facture
-  // remise autrement que par email (lien copié, remise en main propre) doit
-  // pouvoir être déclarée envoyée. Sans ça, relances et Chorus Pro restent
-  // inaccessibles, tous deux conditionnés au statut « envoyée ».
+  // Une facture remise autrement que par e-mail (lien copié, en main propre)
+  // doit pouvoir être déclarée envoyée : relances et Chorus Pro en dépendent.
   async function handleMarkSent() {
     setMarkingSent(true);
     const res = await fetch(`/api/invoices/${id}`, {
@@ -277,30 +295,31 @@ function ActionPanel({ invoice, id, router, hasChorusPro }: {
   }
 
   async function handleSendEmail() {
-    if (!inv.client_email) { alert("Email client manquant"); return; }
+    if (!inv.client_email) return;
     setSendingEmail(true);
+    setMessageEnvoi(null);
     const res = await fetch(`/api/invoices/${id}/send-email`, { method: "POST" });
     const data = await res.json();
     if (res.ok) {
-      setEmailSent(true);
-      setInv((prev) => prev && prev.status === "draft" ? { ...prev, status: "sent" } : prev);
-      setTimeout(() => setEmailSent(false), 4000);
+      setMessageEnvoi({ ton: "succes", texte: `Facture envoyée à ${inv.client_email}.` });
+      setInv((prev) => prev.status === "draft" ? { ...prev, status: "sent" } : prev);
     } else {
-      alert(data.error || "Erreur lors de l'envoi");
+      setMessageEnvoi({ ton: "danger", texte: data.error || "Erreur lors de l'envoi" });
     }
     setSendingEmail(false);
   }
 
   async function handleSendReminder() {
-    if (!inv.client_email) { alert("Email client manquant"); return; }
+    if (!inv.client_email) return;
     setSendingReminder(true);
+    setMessageRelance(null);
     const res = await fetch(`/api/invoices/${id}/send-reminder`, { method: "POST" });
     const data = await res.json();
     if (res.ok) {
-      setInv((prev) => prev ? { ...prev, reminder_count: data.reminder_count, last_reminder_sent_at: new Date().toISOString() } : prev);
-      alert("Relance envoyée !");
+      setInv((prev) => ({ ...prev, reminder_count: data.reminder_count, last_reminder_sent_at: new Date().toISOString() }));
+      setMessageRelance({ ton: "succes", texte: `Relance envoyée à ${inv.client_email}.` });
     } else {
-      alert(data.error || "Erreur");
+      setMessageRelance({ ton: "danger", texte: data.error || "Erreur" });
     }
     setSendingReminder(false);
   }
@@ -312,7 +331,6 @@ function ActionPanel({ invoice, id, router, hasChorusPro }: {
     const data = await res.json();
     if (res.ok && data.ref) {
       setChorusRef(data.ref);
-      // Récupère le statut initial après dépôt
       setTimeout(() => handleFetchStatus(), 2000);
     } else {
       setChorusError(data.error || "Erreur lors du dépôt");
@@ -339,27 +357,6 @@ function ActionPanel({ invoice, id, router, hasChorusPro }: {
     router.push("/invoices");
   }
 
-  // Un avoir n'appelle aucun règlement : c'est le vendeur qui doit. Lui
-  // proposer un lien de paiement, un « marquer comme payée » ou une relance
-  // aurait la même conséquence de chaque côté, réclamer au client de l'argent
-  // qu'on est en train de lui rendre.
-  const estAvoir = inv.invoice_type === "avoir";
-  const canSendEmail = !!inv.client_email && inv.status !== "cancelled" && peutEnvoyerFacture;
-  const canPaymentLink = !estAvoir && inv.status !== "paid" && inv.status !== "cancelled";
-  const canMarkPaid = !estAvoir && inv.status !== "paid" && inv.status !== "cancelled" && !isMember;
-  const canMarkSent = inv.status === "draft" && peutEnvoyerFacture;
-  const canRemind = !estAvoir && inv.status === "sent" && !!inv.client_email;
-
-  // ── Relance de pointage (lib/pointage-paiement.ts) ──────────────────────
-  // Facture échue sans paiement enregistré : on pose la question ici aussi,
-  // pas seulement par courriel. Les liens du courriel arrivent avec
-  // `?pointage=payee` (ouvre la saisie de la date) ou `?pointage=pas-encore`
-  // (met le bouton en évidence ; l'enregistrement exige un clic, jamais un
-  // simple chargement de page).
-  const aPointer = canMarkPaid && estAPointer(inv, new Date());
-  const pasEncoreRecent =
-    !!pasEncoreAt && Date.now() - new Date(pasEncoreAt).getTime() < ESPACEMENT_JOURS * 24 * 60 * 60 * 1000;
-
   async function handlePasEncore() {
     setEnvoiPasEncore(true);
     const res = await fetch(`/api/invoices/${id}/pas-encore`, { method: "POST" });
@@ -368,22 +365,9 @@ function ActionPanel({ invoice, id, router, hasChorusPro }: {
     else alert(data.error || "Enregistrement impossible");
     setEnvoiPasEncore(false);
   }
-  /**
-   * Transmet la facture à la plateforme agréée.
-   *
-   * Les messages viennent du serveur et sont déjà en français : la route
-   * traduit les contrôles préalables (SIREN manquant) plutôt que de relayer le
-   * retour brut de Super PDP.
-   */
-  /**
-   * Passe la facture aux validateurs officiels, sans la transmettre.
-   *
-   * Leur documentation le conseille systematiquement : << nous vous conseillons
-   * de systematiquement la valider avec le validateur de l'API SUPER PDP >>.
-   * 189 controles XSD et Schematron, avec la localisation de l'erreur.
-   */
+
+  /** Passe la facture aux validateurs officiels, sans la transmettre. */
   async function verifierPdp() {
-    if (!inv) return;
     setVerification(true);
     setRapport(null);
     try {
@@ -413,578 +397,500 @@ function ActionPanel({ invoice, id, router, hasChorusPro }: {
     }
   }
 
+  // ── Ce qui est possible (mêmes règles que l'ancien panneau) ──
+  // Un avoir n'appelle aucun règlement : ni lien de paiement, ni « payée », ni relance.
+  const estAvoir = inv.invoice_type === "avoir";
+  const canSendEmail = !!inv.client_email && inv.status !== "cancelled" && peutEnvoyerFacture;
+  const canPaymentLink = !estAvoir && inv.status !== "paid" && inv.status !== "cancelled" && peutEnvoyerFacture;
+  const canMarkPaid = !estAvoir && inv.status !== "paid" && inv.status !== "cancelled" && !isMember;
+  const canMarkSent = inv.status === "draft" && peutEnvoyerFacture;
+  const canRemind = !estAvoir && inv.status === "sent" && !!inv.client_email && peutEnvoyerFacture;
+  const canAvoir = inv.status !== "draft" && !estAvoir && !isMember;
   const canChorus = inv.status === "sent" && !chorusRef && hasChorusPro && peutDeposerChorus;
-
-  // Émission vers la plateforme agréée. Une facture ne se transmet qu'une fois :
-  // un second envoi arriverait en double chez le client, qui la refuserait pour
-  // « DOUBLON ». D'où la condition sur l'absence d'identifiant.
+  // Une facture ne se transmet qu'une fois : un second envoi arriverait en
+  // double chez le client, qui la refuserait pour « DOUBLON ».
   const dejaTransmise = Boolean(inv.superpdp_invoice_id);
   const peutEmettre = inv.status !== "draft" && inv.status !== "cancelled" && !dejaTransmise && peutTransmettrePa;
 
-  return (
-    <div ref={panneauRef} className="carte overflow-hidden sticky top-8 scroll-mt-4">
-      {/* En-tête du panel */}
-      <div className="px-5 py-4 border-b border-ds-border">
-        <p className="text-xs font-semibold text-gray-500">Actions</p>
-      </div>
+  const aPointer = canMarkPaid && estAPointer(inv, new Date());
+  const pasEncoreRecent =
+    !!pasEncoreAt && Date.now() - new Date(pasEncoreAt).getTime() < ESPACEMENT_JOURS * 24 * 60 * 60 * 1000;
 
-      <div className="p-4 space-y-2">
-        {aPointer && (
-          <div className="rounded-lg border border-amber-500/30 bg-amber-500/5 p-3 mb-3 space-y-2.5">
-            <p className="text-sm font-medium text-amber-300">
-              Échue depuis {joursDeRetard(inv.due_date as string, new Date())} jour{joursDeRetard(inv.due_date as string, new Date()) > 1 ? "s" : ""}. A-t-elle été payée ?
-            </p>
-            {pasEncoreRecent ? (
-              <p className="text-xs text-gray-400 leading-relaxed">
-                Noté le {new Date(pasEncoreAt as string).toLocaleDateString("fr-FR")} : pas encore payée. On te reposera la question dans {ESPACEMENT_JOURS} jours.
-              </p>
-            ) : (
-              !demandeDatePaiement && (
-                <div className="flex gap-2">
-                  <button
-                    onClick={() => setDemandeDatePaiement(true)}
-                    className="flex-1 text-sm font-medium px-3 py-2 rounded-lg bg-emerald-500/15 border border-emerald-500/40 hover:bg-emerald-500/25 text-emerald-300 transition-colors"
-                  >
-                    Oui, payée
-                  </button>
-                  <button
-                    onClick={handlePasEncore}
-                    disabled={envoiPasEncore}
-                    className={`flex-1 text-sm font-medium px-3 py-2 rounded-lg border hover:bg-ds-elevated/60 text-gray-300 disabled:opacity-50 transition-colors ${pointageDemande === "pas-encore" ? "border-amber-500/60" : "border-ds-border"}`}
-                  >
-                    {envoiPasEncore ? "Enregistrement…" : "Pas encore"}
-                  </button>
-                </div>
-              )
-            )}
-            {!pasEncoreRecent && (
-              <p className="text-xs text-gray-400 leading-relaxed">
-                {inv.superpdp_invoice_id
-                  ? "Ce pointage déclare l'encaissement à l'administration : la date de paiement fixe le mois où la TVA est due."
-                  : "Ce pointage tient à jour ton livre des recettes et ce que voit ton expert-comptable."}
-              </p>
-            )}
-          </div>
-        )}
-        {/* ── Groupe 1 : Envoi ── */}
-        {canSendEmail && (
-          <button
-            onClick={handleSendEmail}
-            disabled={sendingEmail}
-            className="w-full bg-indigo-600 hover:bg-indigo-700 disabled:opacity-50 text-ink text-sm font-semibold px-4 py-2.5 rounded-lg transition-colors text-left flex items-center gap-2"
-          >
-            <Send size={17} className="shrink-0" />
-            <span className="flex items-center gap-1.5">{emailSent && <Check size={16} className="shrink-0" />}{emailSent ? "Envoyée !" : sendingEmail ? "Envoi en cours…" : "Envoyer au client"}</span>
-          </button>
-        )}
+  // Même règle que la liste des factures, littéralement la même fonction.
+  const etat = dejaTransmise ? etatPdp(inv, sandboxPdp) : null;
+  const statutPdp = libelleStatut(inv.superpdp_status);
+  const pdpEnEchec = inv.superpdp_status === "fr:210" || inv.superpdp_status === "fr:213";
+  const conformite = problemesConformite(inv);
 
-        {/* ── Groupe 2 : Paiement ── */}
-        {(canPaymentLink || canMarkPaid || canRemind || canMarkSent) && (
-          <>
-            <div className="h-px bg-ds-border my-3" />
-            {canPaymentLink && (
-              <button
-                onClick={handlePaymentLink}
-                disabled={generatingLink}
-                className="w-full text-sm font-medium px-4 py-2.5 rounded-lg border border-ds-border hover:bg-ds-elevated/60 text-gray-300 disabled:opacity-50 transition-colors text-left flex items-center gap-2"
-              >
-                <CreditCard size={17} className="shrink-0" />
-                <span>{generatingLink ? "Génération…" : inv.payment_link_url ? "Copier lien paiement" : "Lien de paiement"}</span>
-              </button>
-            )}
-            {canMarkSent && (
-              <button
-                onClick={handleMarkSent}
-                disabled={markingSent}
-                className="w-full text-sm font-medium px-4 py-2.5 rounded-lg border border-ds-border hover:bg-ds-elevated/60 text-gray-300 disabled:opacity-50 transition-colors text-left flex items-center gap-2"
-              >
-                <MailCheck size={17} className="shrink-0" />
-                <span>{markingSent ? "Mise à jour…" : "Marquer comme envoyée"}</span>
-              </button>
-            )}
-            {canMarkPaid && !demandeDatePaiement && (
-              <button
-                onClick={() => setDemandeDatePaiement(true)}
-                disabled={markingPaid}
-                className="w-full text-sm font-medium px-4 py-2.5 rounded-lg border border-emerald-500/30 hover:bg-emerald-500/10 text-emerald-400 disabled:opacity-50 transition-colors text-left flex items-center gap-2"
-              >
-                <Check size={17} className="shrink-0" />
-                <span>{markingPaid ? "Mise à jour…" : "Marquer comme payée"}</span>
-              </button>
-            )}
+  // ── Le geste attendu : un seul bouton plein ──
+  type Cle = "envoyer" | "marquerEnvoyee" | "payer" | "avoir" | "telecharger";
+  const principal: Cle =
+    pdpEnEchec && canAvoir ? "avoir"
+    : inv.status === "draft" && canSendEmail ? "envoyer"
+    : inv.status === "draft" && canMarkSent ? "marquerEnvoyee"
+    : inv.status === "sent" && canMarkPaid ? "payer"
+    : inv.status === "sent" && canSendEmail && estAvoir ? "envoyer"
+    : "telecharger";
 
-            {canMarkPaid && demandeDatePaiement && (
-              <div className="w-full rounded-lg border border-emerald-500/30 bg-emerald-500/5 p-3 space-y-2.5">
-                <label htmlFor="date-encaissement" className="block text-sm font-medium text-emerald-300">
-                  Payée le
-                </label>
-                <input aria-label="Payée le"
-                  id="date-encaissement"
-                  type="date"
-                  value={datePaiement}
-                  max={new Date().toISOString().slice(0, 10)}
-                  onChange={(e) => setDatePaiement(e.target.value)}
-                  className="w-full text-sm px-3 py-2 rounded-lg bg-ds-elevated border border-ds-border text-gray-200 focus:outline-hidden focus:border-emerald-500/50"
-                />
-                <label htmlFor="mode-reglement" className="block text-sm font-medium text-emerald-300">
-                  Réglée par
-                </label>
-                <select aria-label="Réglée par"
-                  id="mode-reglement"
-                  value={modeReglement}
-                  onChange={(e) => setModeReglement(e.target.value as ModeReglement)}
-                  className="w-full text-sm px-3 py-2 rounded-lg bg-ds-elevated border border-ds-border text-gray-200 focus:outline-hidden focus:border-emerald-500/50"
-                >
-                  {(Object.keys(MODES_REGLEMENT) as ModeReglement[]).map((m) => (
-                    <option key={m} value={m}>{MODES_REGLEMENT[m]}</option>
-                  ))}
-                </select>
-                {/* Pourquoi on demande, en une phrase. */}
-                <p className="text-xs text-gray-400 leading-relaxed">
-                  {dateEncaissementRequise
-                    ? "Cette date part à l'administration avec la déclaration d'encaissement. Elle ne pourra plus être corrigée ensuite."
-                    : "Ces informations alimentent ton livre des recettes."}
-                </p>
-                <div className="flex gap-2">
-                  <button
-                    onClick={() => handleMarkPaid(datePaiement, modeReglement)}
-                    disabled={markingPaid || !datePaiement}
-                    className="flex-1 text-sm font-medium px-3 py-2 rounded-lg bg-emerald-500/15 border border-emerald-500/40 hover:bg-emerald-500/25 text-emerald-300 disabled:opacity-50 transition-colors"
-                  >
-                    {markingPaid ? "Mise à jour…" : "Confirmer"}
-                  </button>
-                  <button
-                    onClick={() => setDemandeDatePaiement(false)}
-                    disabled={markingPaid}
-                    className="text-sm font-medium px-3 py-2 rounded-lg border border-ds-border hover:bg-ds-elevated/60 text-gray-400 disabled:opacity-50 transition-colors"
-                  >
-                    Annuler
-                  </button>
-                </div>
-              </div>
-            )}
-            {canRemind && (
-              <button
-                onClick={handleSendReminder}
-                disabled={sendingReminder}
-                className="w-full text-sm font-medium px-4 py-2.5 rounded-lg border border-amber-500/30 hover:bg-amber-500/10 text-amber-400 disabled:opacity-50 transition-colors text-left flex items-center gap-2"
-              >
-                <Bell size={17} className="shrink-0" />
-                <span>{sendingReminder ? "Envoi…" : inv.reminder_count > 0 ? `Relancer (${inv.reminder_count}/3)` : "Relancer le client"}</span>
-              </button>
-            )}
+  const libelleEnvoi = sendingEmail ? "Envoi en cours…" : inv.status === "draft" ? "Envoyer au client" : "Renvoyer au client";
+  const libelleRelance = sendingReminder ? "Envoi…" : inv.reminder_count > 0 ? `Relancer le client (${inv.reminder_count}/3)` : "Relancer le client";
 
-            {/* Établir un avoir.
-                Proposé sur toute facture sortie du brouillon, et pas seulement
-                sur une facture refusée : une erreur se découvre aussi bien
-                avant le refus qu'après, et sous la réforme une facture partie
-                ne se modifie plus. Un avoir n'a rien à faire sur un avoir. */}
-            {inv.status !== "draft" && inv.invoice_type !== "avoir" && (
-              <button
-                onClick={handleAvoir}
-                disabled={creatingAvoir}
-                className="w-full text-sm font-medium px-4 py-2.5 rounded-lg border border-ds-border hover:bg-ds-elevated/60 text-gray-300 disabled:opacity-50 transition-colors text-left flex items-center gap-2"
-              >
-                <Undo2 size={17} className="shrink-0" />
-                <span>{creatingAvoir ? "Création…" : "Établir un avoir"}</span>
-              </button>
-            )}
-          </>
-        )}
-
-        {/* ── Groupe 3 : Document ── */}
-        <div className="h-px bg-ds-border my-3" />
-        <button
-          onClick={handleDownload}
-          disabled={downloading}
-          className="w-full text-sm font-medium px-4 py-2.5 rounded-lg border border-ds-border hover:bg-ds-elevated/60 text-gray-400 disabled:opacity-50 transition-colors text-left flex items-center gap-2"
-        >
-          <Download size={17} className="shrink-0" />
-          <span>{downloading ? "Génération…" : "Télécharger Factur-X PDF"}</span>
-        </button>
-
-        {peutEmettre && (
-          <button
-            onClick={verifierPdp}
-            disabled={verification}
-            className="w-full text-sm font-medium px-4 py-2.5 rounded-lg border border-ds-border hover:bg-ds-elevated/60 text-gray-400 disabled:opacity-50 transition-colors text-left flex items-center gap-2"
-          >
-            <ShieldCheck size={17} className="shrink-0" />
-            <span>{verification ? "Verification..." : "Verifier avant de transmettre"}</span>
-          </button>
-        )}
-
-        {rapport && (
-          <div
-            className={`w-full text-sm px-4 py-2.5 rounded-lg border ${
-              rapport.conforme
-                ? "border-emerald-500/20 bg-emerald-500/5 text-emerald-400"
-                : "border-amber-500/30 bg-amber-500/5 text-amber-300"
-            }`}
-          >
-            {rapport.conforme ? (
-              <span>Conforme &mdash; cette facture sera acceptee.</span>
-            ) : (
-              <div className="space-y-1">
-                <p className="font-medium">Cette facture serait refusee :</p>
-                <ul className="list-disc list-inside text-xs text-amber-400/90 space-y-0.5">
-                  {[...rapport.manques, ...rapport.validation.echecs].slice(0, 6).map((m, i) => (
-                    <li key={i}>{m}</li>
-                  ))}
-                </ul>
-                {rapport.validation.indisponible && (
-                  <p className="text-[11px] text-gray-500">
-                    Controle officiel indisponible : seuls nos propres controles ont ete appliques.
-                  </p>
-                )}
-              </div>
-            )}
-          </div>
-        )}
-
-        {peutEmettre && (
-          <button
-            onClick={emettrePdp}
-            disabled={emission}
-            className="w-full text-sm font-medium px-4 py-2.5 rounded-lg border border-indigo-500/30 hover:bg-indigo-500/10 text-indigo-400 disabled:opacity-50 transition-colors text-left flex items-center gap-2"
-          >
-            <RadioTower size={17} className="shrink-0" />
-            <span>{emission ? "Transmission…" : "Transmettre à la plateforme agréée"}</span>
-          </button>
-        )}
-
-        {dejaTransmise && (() => {
-          // Même règle que la liste des factures, littéralement la même
-          // fonction. Ce panneau jugeait sur `superpdp_invoice_id` seul et
-          // affichait un « Transmise » vert dès que le POST avait abouti : une
-          // facture rejetée, invalide, ou expédiée à une adresse déduite d'un
-          // SIREN ambigu, donc possiblement jamais remise, portait le même
-          // vert rassurant qu'une facture réellement acceptée. La liste, elle,
-          // avertissait déjà. Les deux écrans disent maintenant la même chose.
-          const etat = etatPdp(inv, sandboxPdp);
-          const statut = libelleStatut(inv.superpdp_status);
-          return (
-            <div className={`w-full text-sm px-4 py-2.5 rounded-lg border border-current/20 flex items-start gap-2 ${etat?.classe ?? "bg-gray-500/5 text-gray-300"}`}>
-              <RadioTower size={17} className="shrink-0 mt-0.5" />
-              <div className="flex flex-col gap-0.5">
-                <span>{etat?.texte ?? "Transmise à la plateforme agréée"}</span>
-                {/* Un code que notre table ne connaît pas s'affiche brut plutôt
-                    que de disparaître : leur nomenclature évolue, `fr:220` a
-                    été ajouté par Super PDP le 07/08/2026 sans que la norme en
-                    publie l'usage, et un code consultable vaut mieux qu'un
-                    silence. Même règle que la liste des factures reçues. */}
-                {(statut || inv.superpdp_status) && (
-                  <span className="text-[11px] opacity-70">
-                    Statut de la plateforme : {statut?.texte ?? inv.superpdp_status}
-                  </span>
-                )}
-                {etat?.alerte && (
-                  <span className="text-[11px] opacity-80 leading-relaxed">{etat.alerte}</span>
-                )}
-                {inv.superpdp_encaisse_at && (
-                  <span className="text-[11px] opacity-70">Encaissement déclaré (fr:212)</span>
-                )}
-                {!inv.superpdp_encaisse_at && inv.status === "paid" && !encaissementConcerne && (
-                  <span className="text-[11px] opacity-70">
-                    {inv.payment_on_debit
-                      ? "Aucun encaissement à déclarer : la TVA est payée sur les débits."
-                      : "Aucun encaissement à déclarer : la facture ne porte aucune prestation."}
-                  </span>
-                )}
-              </div>
-            </div>
-          );
-        })()}
-
-        {messagePdp && (
-          <p className="text-xs text-amber-400 px-1 leading-relaxed">{messagePdp}</p>
-        )}
-
-        {canChorus && (
-          <button
-            onClick={handleChorusDeposit}
-            disabled={depositingChorus}
-            className="w-full text-sm font-medium px-4 py-2.5 rounded-lg border border-blue-500/30 hover:bg-blue-500/10 text-blue-400 disabled:opacity-50 transition-colors text-left flex items-center gap-2"
-          >
-            <Landmark size={17} className="shrink-0" />
-            <span>{depositingChorus ? "Dépôt en cours…" : "Déposer sur Chorus Pro"}</span>
-          </button>
-        )}
-
-        {chorusRef && (
-          <div className="rounded-lg bg-blue-500/10 border border-blue-500/20 overflow-hidden">
-            <div className="flex items-center gap-2 px-4 py-2.5">
-              <Landmark size={16} className="shrink-0 text-blue-400" />
-              <div className="flex-1 min-w-0">
-                <p className="text-xs text-blue-300 font-medium">Chorus Pro #{chorusRef}</p>
-                {chorusStatus && (
-                  <p className={`text-[11px] mt-0.5 font-semibold ${
-                    chorusStatus.color === "emerald" ? "text-emerald-400" :
-                    chorusStatus.color === "amber"   ? "text-amber-400" :
-                    chorusStatus.color === "red"     ? "text-red-400" :
-                    chorusStatus.color === "indigo"  ? "text-indigo-400" :
-                    "text-blue-400"
-                  }`}>
-                    {chorusStatus.label}
-                  </p>
-                )}
-                {chorusStatus?.motifRejet && (
-                  <p className="text-[10px] text-red-400 mt-0.5 leading-snug">{chorusStatus.motifRejet}</p>
-                )}
-              </div>
-              <button
-                onClick={handleFetchStatus}
-                disabled={fetchingStatus}
-                title="Actualiser le statut"
-                className="text-blue-400/60 hover:text-blue-300 transition-colors disabled:opacity-30 shrink-0"
-              >
-                <svg className={`w-3.5 h-3.5 ${fetchingStatus ? "animate-spin" : ""}`} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
-                </svg>
-              </button>
-            </div>
-          </div>
-        )}
-
-        {chorusError && (
-          <div className="px-4 py-2.5 rounded-lg bg-red-500/10 border border-red-500/20">
-            <p className="text-xs text-red-400">{chorusError}</p>
-          </div>
-        )}
-
-        {/* ── Groupe 4 : Zone danger (suppression : titulaire seul) ── */}
-        {!isMember && <div className="h-px bg-ds-border my-3" />}
-        {!isMember && (!confirmDelete ? (
-          <button
-            onClick={() => setConfirmDelete(true)}
-            className="w-full text-xs text-gray-600 hover:text-red-400 px-4 py-2 text-left transition-colors"
-          >
-            Supprimer la facture
-          </button>
-        ) : (
-          <div className="bg-red-500/10 border border-red-500/20 rounded-lg p-3 space-y-2">
-            <p className="text-xs text-red-400 font-medium">Supprimer définitivement ?</p>
-            <div className="flex gap-2">
-              <button
-                onClick={() => setConfirmDelete(false)}
-                className="flex-1 text-xs py-1.5 rounded-lg border border-ds-border text-gray-400 hover:bg-ds-elevated transition-colors"
-              >
-                Annuler
-              </button>
-              <button
-                onClick={handleDelete}
-                disabled={deleting}
-                className="flex-1 text-xs py-1.5 rounded-lg bg-red-600 hover:bg-red-700 text-ink font-medium transition-colors disabled:opacity-50"
-              >
-                {deleting ? "…" : "Confirmer"}
-              </button>
-            </div>
-          </div>
+  const formulairePaiement = canMarkPaid && demandeDatePaiement && (
+    <div className="w-full rounded-lg border border-emerald-500/30 bg-emerald-500/5 p-3 space-y-2.5">
+      <label htmlFor="date-encaissement" className="block text-sm font-medium text-emerald-300">Payée le</label>
+      <input
+        id="date-encaissement"
+        type="date"
+        value={datePaiement}
+        max={new Date().toISOString().slice(0, 10)}
+        onChange={(e) => setDatePaiement(e.target.value)}
+        className="w-full text-sm px-3 py-2 rounded-lg bg-ds-elevated border border-ds-border text-gray-200 focus:outline-hidden focus:border-emerald-500/50"
+      />
+      <label htmlFor="mode-reglement" className="block text-sm font-medium text-emerald-300">Réglée par</label>
+      <select
+        id="mode-reglement"
+        value={modeReglement}
+        onChange={(e) => setModeReglement(e.target.value as ModeReglement)}
+        className="w-full text-sm px-3 py-2 rounded-lg bg-ds-elevated border border-ds-border text-gray-200 focus:outline-hidden focus:border-emerald-500/50"
+      >
+        {(Object.keys(MODES_REGLEMENT) as ModeReglement[]).map((m) => (
+          <option key={m} value={m}>{MODES_REGLEMENT[m]}</option>
         ))}
+      </select>
+      <p className="text-xs text-gray-400 leading-relaxed">
+        {dateEncaissementRequise
+          ? "Cette date part à l'administration avec la déclaration d'encaissement. Elle ne pourra plus être corrigée ensuite."
+          : "Ces informations alimentent ton livre des recettes."}
+      </p>
+      <div className="flex gap-2">
+        <button
+          type="button"
+          onClick={() => handleMarkPaid(datePaiement, modeReglement)}
+          disabled={markingPaid || !datePaiement}
+          className="flex-1 text-sm font-medium px-3 py-2 rounded-lg bg-emerald-500/15 border border-emerald-500/40 hover:bg-emerald-500/25 text-emerald-300 disabled:opacity-50 transition-colors"
+        >
+          {markingPaid ? "Mise à jour…" : "Confirmer"}
+        </button>
+        <button
+          type="button"
+          onClick={() => setDemandeDatePaiement(false)}
+          disabled={markingPaid}
+          className="text-sm font-medium px-3 py-2 rounded-lg border border-ds-border hover:bg-ds-elevated/60 text-gray-400 disabled:opacity-50 transition-colors"
+        >
+          Annuler
+        </button>
       </div>
     </div>
   );
-}
 
-export default function InvoiceDetailPage() {
-  const { id } = useParams<{ id: string }>();
-  const router = useRouter();
-  const [invoice, setInvoice] = useState<Invoice | null>(null);
-  const [hasChorusPro, setHasChorusPro] = useState(false);
-  const [loading, setLoading] = useState(true);
+  const retourEnvoi = messageEnvoi && <Retour ton={messageEnvoi.ton}>{messageEnvoi.texte}</Retour>;
+  const retourAvoir = messageAvoir && <Retour ton="danger">{messageAvoir}</Retour>;
 
-  useEffect(() => {
-    Promise.all([
-      fetch(`/api/invoices/${id}`).then((r) => r.json()),
-      fetch(`/api/profile`).then((r) => r.json()),
-    ]).then(([invoiceData, profileData]) => {
-      setInvoice(invoiceData.invoice);
-      // Le bouton Chorus Pro n'apparaît que si le fournisseur ID est configuré
-      const p = profileData.profile;
-      setHasChorusPro(!!(p?.chorus_pro_fournisseur_id || p?.chorus_pro_login));
-    }).finally(() => setLoading(false));
-  }, [id]);
+  const boutonPrincipal =
+    principal === "envoyer" ? (
+      <>
+        <BoutonPrincipal icone={Send} onClick={handleSendEmail} disabled={sendingEmail} sous={`Destinataire : ${inv.client_email}`}>
+          {libelleEnvoi}
+        </BoutonPrincipal>
+        {retourEnvoi}
+      </>
+    ) : principal === "marquerEnvoyee" ? (
+      <BoutonPrincipal icone={MailCheck} onClick={handleMarkSent} disabled={markingSent}>
+        {markingSent ? "Mise à jour…" : "Marquer comme envoyée"}
+      </BoutonPrincipal>
+    ) : principal === "payer" ? (
+      <>
+        {!demandeDatePaiement && (
+          <BoutonPrincipal icone={Check} onClick={() => setDemandeDatePaiement(true)} disabled={markingPaid} sous="Date et mode de règlement demandés">
+            Marquer comme payée
+          </BoutonPrincipal>
+        )}
+        {formulairePaiement}
+      </>
+    ) : principal === "avoir" ? (
+      <>
+        <BoutonPrincipal icone={Undo2} onClick={handleAvoir} disabled={creatingAvoir} sous="Seul moyen de corriger une facture transmise">
+          {creatingAvoir ? "Création…" : "Établir un avoir"}
+        </BoutonPrincipal>
+        {retourAvoir}
+      </>
+    ) : (
+      <BoutonPrincipal icone={Download} onClick={handleDownload} disabled={downloading} sous="Le PDF Factur-X reçu par le client">
+        {downloading ? "Génération…" : "Télécharger le PDF"}
+      </BoutonPrincipal>
+    );
 
-  if (loading) return <div className="text-center py-16 text-gray-500">Chargement…</div>;
-  if (!invoice) return <div className="text-center py-16 text-gray-400">Facture introuvable</div>;
+  const groupePa = (peutEmettre || canChorus || rapport || messagePdp || chorusError) && (
+    <GroupeActions titre="Facture électronique">
+      {peutEmettre && (
+        <BoutonListe icone={ShieldCheck} onClick={verifierPdp} disabled={verification}>
+          {verification ? "Vérification…" : "Vérifier avant de transmettre"}
+        </BoutonListe>
+      )}
+      {rapport && (
+        <Retour ton={rapport.conforme ? "succes" : "attention"}>
+          {rapport.conforme ? (
+            <span>Conforme : cette facture sera acceptée.</span>
+          ) : (
+            <div className="space-y-1">
+              <p className="font-medium">Cette facture serait refusée :</p>
+              <ul className="list-disc list-inside text-xs space-y-0.5">
+                {[...rapport.manques, ...rapport.validation.echecs].slice(0, 6).map((m, i) => <li key={i}>{m}</li>)}
+              </ul>
+              {rapport.validation.indisponible && (
+                <p className="text-xs text-gray-500">Contrôle officiel indisponible : seuls nos propres contrôles ont été appliqués.</p>
+              )}
+            </div>
+          )}
+        </Retour>
+      )}
+      {peutEmettre && (
+        <BoutonListe icone={RadioTower} onClick={emettrePdp} disabled={emission}>
+          {emission ? "Transmission…" : "Transmettre à la plateforme agréée"}
+        </BoutonListe>
+      )}
+      {messagePdp && <Retour ton="attention">{messagePdp}</Retour>}
+      {canChorus && (
+        <BoutonListe icone={Landmark} onClick={handleChorusDeposit} disabled={depositingChorus}>
+          {depositingChorus ? "Dépôt en cours…" : "Déposer sur Chorus Pro"}
+        </BoutonListe>
+      )}
+      {chorusError && <Retour ton="danger">{chorusError}</Retour>}
+    </GroupeActions>
+  );
+
+  const actions = (
+    <PanneauActions
+      principal={<div className="space-y-2">{boutonPrincipal}</div>}
+      autres={
+        <>
+          {canSendEmail && principal !== "envoyer" && (
+            <>
+              <BoutonListe icone={Send} onClick={handleSendEmail} disabled={sendingEmail}>{libelleEnvoi}</BoutonListe>
+              {retourEnvoi}
+            </>
+          )}
+          {canMarkSent && principal !== "marquerEnvoyee" && (
+            <BoutonListe icone={MailCheck} onClick={handleMarkSent} disabled={markingSent}>
+              {markingSent ? "Mise à jour…" : "Marquer comme envoyée"}
+            </BoutonListe>
+          )}
+          {canMarkPaid && principal !== "payer" && (
+            <>
+              {!demandeDatePaiement && (
+                <BoutonListe icone={Check} onClick={() => setDemandeDatePaiement(true)} disabled={markingPaid} ton="succes">
+                  Marquer comme payée
+                </BoutonListe>
+              )}
+              {formulairePaiement}
+            </>
+          )}
+          {canRemind && (
+            <>
+              <BoutonListe icone={Bell} onClick={handleSendReminder} disabled={sendingReminder} ton="attention">{libelleRelance}</BoutonListe>
+              {messageRelance && <Retour ton={messageRelance.ton}>{messageRelance.texte}</Retour>}
+            </>
+          )}
+          {canPaymentLink && (
+            <>
+              <BoutonListe icone={CreditCard} onClick={handlePaymentLink} disabled={generatingLink}>
+                {generatingLink ? "Génération…" : inv.payment_link_url ? "Copier le lien de paiement" : "Lien de paiement"}
+              </BoutonListe>
+              {messageLien && <Retour ton={messageLien.ton}>{messageLien.texte}</Retour>}
+            </>
+          )}
+          {principal !== "telecharger" && (
+            <BoutonListe icone={Download} onClick={handleDownload} disabled={downloading}>
+              {downloading ? "Génération…" : "Télécharger le PDF"}
+            </BoutonListe>
+          )}
+          {/* Un avoir est proposé sur toute facture sortie du brouillon : sous la
+              réforme, une facture partie ne se modifie plus. */}
+          {canAvoir && principal !== "avoir" && (
+            <>
+              <BoutonListe icone={Undo2} onClick={handleAvoir} disabled={creatingAvoir}>
+                {creatingAvoir ? "Création…" : "Établir un avoir"}
+              </BoutonListe>
+              {retourAvoir}
+            </>
+          )}
+          {groupePa}
+        </>
+      }
+      danger={!isMember ? <ZoneSuppression libelle={estAvoir ? "Supprimer l'avoir" : "Supprimer la facture"} onConfirmer={handleDelete} enCours={deleting} /> : undefined}
+    />
+  );
+
+  // ── Bandeau : un seul, le plus urgent ──
+  let bandeau: ReactNode = null;
+  if (aPointer) {
+    const retard = joursDeRetard(inv.due_date as string, new Date());
+    bandeau = (
+      <Bandeau ton="attention">
+        <div className="flex flex-col sm:flex-row sm:items-center gap-3 justify-between">
+          <div className="min-w-0">
+            <p className="text-sm font-medium text-amber-300">
+              Échue depuis {retard} jour{retard > 1 ? "s" : ""}. A-t-elle été payée ?
+            </p>
+            <p className="text-xs text-gray-400 leading-relaxed mt-0.5">
+              {pasEncoreRecent
+                ? `Noté le ${new Date(pasEncoreAt as string).toLocaleDateString("fr-FR")} : pas encore payée. On te reposera la question dans ${ESPACEMENT_JOURS} jours.`
+                : inv.superpdp_invoice_id
+                ? "Ce pointage déclare l'encaissement à l'administration : la date de paiement fixe le mois où la TVA est due."
+                : "Ce pointage tient à jour ton livre des recettes et ce que voit ton expert-comptable."}
+            </p>
+          </div>
+          {!pasEncoreRecent && !demandeDatePaiement && (
+            <div className="flex gap-2 shrink-0">
+              <button
+                type="button"
+                onClick={() => setDemandeDatePaiement(true)}
+                className="min-h-10 text-sm font-medium px-3 py-2 rounded-lg bg-emerald-500/15 border border-emerald-500/40 hover:bg-emerald-500/25 text-emerald-300 transition-colors"
+              >
+                Oui, payée
+              </button>
+              <button
+                type="button"
+                onClick={handlePasEncore}
+                disabled={envoiPasEncore}
+                className={`min-h-10 text-sm font-medium px-3 py-2 rounded-lg border hover:bg-ds-elevated/60 text-gray-300 disabled:opacity-50 transition-colors ${pointageDemande === "pas-encore" ? "border-amber-500/60" : "border-ds-border"}`}
+              >
+                {envoiPasEncore ? "Enregistrement…" : "Pas encore"}
+              </button>
+            </div>
+          )}
+          {!pasEncoreRecent && demandeDatePaiement && (
+            <p className="text-xs text-emerald-400 shrink-0">Saisis la date et le mode dans Actions.</p>
+          )}
+        </div>
+      </Bandeau>
+    );
+  } else if (etat && (pdpEnEchec || etat.alerte)) {
+    bandeau = (
+      <Bandeau ton={pdpEnEchec ? "danger" : "attention"}>
+        <p className={`text-sm font-medium ${pdpEnEchec ? "text-red-400" : "text-amber-300"}`}>
+          Plateforme agréée : {etat.texte}{statutPdp && !etat.alerte ? ` (${statutPdp.texte})` : ""}.
+        </p>
+        {etat.alerte && <p className="text-xs text-gray-400 mt-0.5 leading-relaxed">{etat.alerte}</p>}
+        {pdpEnEchec && canAvoir && <p className="text-xs text-gray-400 mt-0.5">Pour la corriger, établis un avoir puis une nouvelle facture.</p>}
+      </Bandeau>
+    );
+  } else if (conformite.blocking.length > 0) {
+    bandeau = (
+      <Bandeau ton="attention">
+        <p className="text-sm font-medium text-amber-300">
+          Cette facture serait refusée par une plateforme de facturation électronique :{" "}
+          {conformite.blocking.length} élément{conformite.blocking.length > 1 ? "s manquent" : " manque"}.
+        </p>
+        <p className="text-xs text-gray-400 mt-0.5">Le détail est dans le bloc « Facture électronique ».</p>
+      </Bandeau>
+    );
+  }
+
+  // ── Suivi ──
+  const echue = !estAvoir && inv.status === "sent" && !!inv.due_date && new Date(inv.due_date) < new Date(new Date().toDateString());
+  const etapes: EtapeSuivi[] = [
+    { libelle: estAvoir ? "Avoir émis" : "Facture émise", date: jourCourt(inv.issue_date), faite: true },
+    { libelle: estAvoir ? "Envoyé au client" : "Envoyée au client", faite: inv.status !== "draft" },
+  ];
+  if (inv.reminder_count > 0) {
+    etapes.push({
+      libelle: `Relance ${inv.reminder_count}/3`,
+      date: inv.last_reminder_sent_at ? jourCourt(inv.last_reminder_sent_at) : null,
+      faite: true,
+      ton: "attention",
+    });
+  }
+  if (dejaTransmise) {
+    etapes.push({
+      libelle: pdpEnEchec ? `Plateforme agréée : ${etat?.texte ?? "échec"}` : "Transmise à la plateforme agréée",
+      date: inv.superpdp_status_date ? jourCourt(inv.superpdp_status_date) : null,
+      faite: true,
+      ton: pdpEnEchec ? "danger" : etat?.alerte ? "attention" : undefined,
+    });
+  }
+  if (chorusRef) {
+    etapes.push({
+      libelle: `Déposée sur Chorus Pro${chorusStatus ? ` (${chorusStatus.label})` : ""}`,
+      date: inv.chorus_pro_submitted_at ? jourCourt(inv.chorus_pro_submitted_at) : null,
+      faite: true,
+      ton: chorusStatus?.color === "red" ? "danger" : undefined,
+    });
+  }
+  if (!estAvoir) {
+    if (inv.status === "cancelled") {
+      etapes.push({ libelle: "Annulée", faite: true, ton: "danger" });
+    } else {
+      etapes.push({
+        libelle: inv.status === "paid"
+          ? `Payée${inv.payment_mode ? ` (${MODES_REGLEMENT[inv.payment_mode].toLowerCase()})` : ""}`
+          : echue ? "Échue, paiement attendu" : "Payée",
+        date: inv.status === "paid" && inv.paid_at ? jourCourt(inv.paid_at) : echue && inv.due_date ? jourCourt(inv.due_date) : null,
+        faite: inv.status === "paid" || echue,
+        ton: echue ? "attention" : undefined,
+      });
+      if (dejaTransmise && encaissementConcerne) {
+        etapes.push({
+          libelle: "Encaissement déclaré à l'administration",
+          date: inv.superpdp_encaisse_at ? jourCourt(inv.superpdp_encaisse_at) : null,
+          faite: !!inv.superpdp_encaisse_at,
+        });
+      }
+    }
+  }
+
+  // ── Facture électronique (informations) ──
+  const natures = inv.items.map((it) => it.nature);
+  const categorie =
+    inv.operation_category === "services" ? "Prestations de services"
+    : inv.operation_category === "goods" ? "Livraison de biens" : "Mixte, biens et prestations";
+  const soldeDetail = inv.invoice_type === "solde" && (inv.deposit_percentage ?? 0) > 0 ? (() => {
+    const pctAcompte = inv.deposit_percentage!;
+    const originalTtc = inv.total_ttc / (1 - pctAcompte / 100);
+    return { total: originalTtc, acompte: originalTtc - inv.total_ttc };
+  })() : null;
+
+  const informations = (
+    <div>
+      <Info libelle="Conformité">
+        <FacturXCompliance invoice={inv} compact />
+      </Info>
+      <Info libelle="Format">PDF Factur-X (EN 16931), données de facturation intégrées</Info>
+      <Info libelle="TVA">{inv.payment_on_debit ? "Acquittée sur les débits" : "Acquittée sur les encaissements"}</Info>
+      <Info libelle="Nature de l'opération">
+        {categorie}
+        {natures.some(Boolean) && (
+          <ul className="mt-2 space-y-2 text-xs leading-relaxed text-gray-500">
+            {inv.items.map((it, i) => (
+              <li key={i} className="flex justify-between gap-3">
+                <span className="min-w-0">{it.description}</span>
+                <span className="shrink-0 text-right">{it.nature ? LIBELLE_NATURE[it.nature] : "À préciser"}</span>
+              </li>
+            ))}
+          </ul>
+        )}
+      </Info>
+      {soldeDetail && (
+        <Info libelle="Acompte déjà versé">
+          <span className="flex justify-between gap-3"><span className="text-gray-500">Prestation totale</span><span className="tabular-nums">{fmt(soldeDetail.total)}</span></span>
+          <span className="flex justify-between gap-3"><span className="text-gray-500">Acompte{inv.linked_invoice_number ? ` ${inv.linked_invoice_number}` : ""}</span><span className="tabular-nums">-{fmt(soldeDetail.acompte)}</span></span>
+          <span className="flex justify-between gap-3 font-medium"><span>Solde à payer</span><span className="tabular-nums">{fmt(inv.total_ttc)}</span></span>
+        </Info>
+      )}
+      <Info libelle="Plateforme agréée">
+        {dejaTransmise ? (
+          <div className="space-y-0.5">
+            <span className={`inline-flex rounded-md px-2 py-0.5 text-xs font-medium ${etat?.classe ?? "bg-ds-elevated text-gray-300"}`}>
+              {etat?.texte ?? "Transmise"}
+            </span>
+            {/* Un code que notre table ne connaît pas s'affiche brut plutôt que
+                de disparaître : leur nomenclature évolue. */}
+            {(statutPdp || inv.superpdp_status) && (
+              <p className="text-xs text-gray-500">Statut : {statutPdp?.texte ?? inv.superpdp_status}</p>
+            )}
+            {etat?.alerte && <p className="text-xs text-amber-400 leading-relaxed">{etat.alerte}</p>}
+            {inv.superpdp_encaisse_at && <p className="text-xs text-gray-500">Encaissement déclaré (fr:212)</p>}
+            {!inv.superpdp_encaisse_at && inv.status === "paid" && !encaissementConcerne && (
+              <p className="text-xs text-gray-500">
+                {inv.payment_on_debit
+                  ? "Aucun encaissement à déclarer : la TVA est payée sur les débits."
+                  : "Aucun encaissement à déclarer : la facture ne porte aucune prestation."}
+              </p>
+            )}
+          </div>
+        ) : (
+          <span className="text-gray-500">{inv.status === "draft" ? "Transmissible une fois envoyée" : "Non transmise"}</span>
+        )}
+      </Info>
+      {chorusRef && (
+        <Info libelle="Chorus Pro">
+          <div className="flex items-start justify-between gap-2">
+            <div className="min-w-0">
+              <p>N° {chorusRef}</p>
+              {chorusStatus && (
+                <p className={`text-xs font-semibold ${
+                  chorusStatus.color === "emerald" ? "text-emerald-400" :
+                  chorusStatus.color === "amber" ? "text-amber-400" :
+                  chorusStatus.color === "red" ? "text-red-400" :
+                  chorusStatus.color === "indigo" ? "text-indigo-400" : "text-blue-400"
+                }`}>{chorusStatus.label}</p>
+              )}
+              {chorusStatus?.motifRejet && <p className="text-xs text-red-400 leading-snug">{chorusStatus.motifRejet}</p>}
+            </div>
+            <button
+              type="button"
+              onClick={handleFetchStatus}
+              disabled={fetchingStatus}
+              title="Actualiser le statut"
+              aria-label="Actualiser le statut Chorus Pro"
+              className="shrink-0 p-1.5 rounded-md text-gray-400 hover:text-gray-300 hover:bg-ds-elevated disabled:opacity-40 transition-colors"
+            >
+              <RefreshCw size={14} />
+            </button>
+          </div>
+        </Info>
+      )}
+    </div>
+  );
+
+  // ── En-tête ──
+  const st = echue ? { libelle: "Échue", ton: "attention" as Ton } : STATUTS[inv.status] ?? { libelle: inv.status, ton: "neutre" as Ton };
+  const pastilles = (
+    <>
+      <Pastille ton={st.ton}>{st.libelle}</Pastille>
+      {inv.invoice_type === "acompte" && <Pastille ton="succes">Acompte{inv.deposit_percentage ? ` ${inv.deposit_percentage} %` : ""}</Pastille>}
+      {inv.invoice_type === "solde" && <Pastille ton="info">Solde</Pastille>}
+      {estAvoir && <Pastille ton="attention">Avoir</Pastille>}
+    </>
+  );
+  const dates = [
+    `Émis${estAvoir ? "" : "e"} le ${fmtDate(inv.issue_date)}`,
+    // Un avoir n'a pas d'échéance : il n'appelle aucun paiement.
+    !estAvoir && inv.due_date ? `Échéance le ${fmtDate(inv.due_date)}` : null,
+    inv.status === "paid" && inv.paid_at ? `Payée le ${fmtDate(inv.paid_at)}` : null,
+  ].filter(Boolean).join(" · ");
+  const sousLigne =
+    estAvoir && inv.linked_invoice_number ? (
+      <span className="text-amber-400">Annule la facture {inv.linked_invoice_number}</span>
+    ) : inv.invoice_type === "solde" && inv.linked_invoice_number ? (
+      <span className="text-gray-400">
+        Acompte versé :{" "}
+        <Link href={`/invoices?ref=${inv.linked_invoice_number}`} className="underline hover:text-gray-300">
+          {inv.linked_invoice_number}
+        </Link>
+      </span>
+    ) : inv.invoice_type === "acompte" ? (
+      <span className="text-gray-400">Acompte de {inv.deposit_percentage} %, numérotation indépendante</span>
+    ) : null;
 
   return (
-    <div className="w-full">
-      <GuidedTourBanner pageKey="invoices_detail" />
-      {/* Retour */}
-      <Link href="/invoices" className="text-sm text-gray-500 hover:text-gray-400 transition-colors mb-5 inline-block">
-        ← Retour aux factures
-      </Link>
-
-      {/* Conformité Factur-X : ce qui manquerait pour la télétransmission */}
-      <div className="mb-5">
-        <FacturXCompliance invoice={invoice} />
-      </div>
-
-      {/* Layout deux colonnes */}
-      <div className="grid grid-cols-1 lg:grid-cols-[minmax(0,1fr)_320px] gap-6 items-start">
-
-        {/* ── Colonne gauche : document ── */}
-        <div className="min-w-0">
-          {/* Header : numéro + statut + dates */}
-          <div className="mb-6">
-            <div className="flex items-center gap-3 mb-1 flex-wrap">
-              <h1 className="text-3xl font-semibold text-ink tracking-tight font-mono">{invoice.invoice_number}</h1>
-              <span className={`px-2.5 py-0.5 rounded-full text-xs font-medium ${STATUS_COLOR[invoice.status] || ""}`}>
-                {STATUS_LABEL[invoice.status] || invoice.status}
-              </span>
-              {invoice.invoice_type === "acompte" && (
-                <span className="px-2.5 py-0.5 rounded-full text-xs font-bold bg-emerald-500/15 text-emerald-400 border border-emerald-500/20">
-                  ACOMPTE {invoice.deposit_percentage ? `${invoice.deposit_percentage}%` : ""}
-                </span>
-              )}
-              {invoice.invoice_type === "solde" && (
-                <span className="px-2.5 py-0.5 rounded-full text-xs font-bold bg-indigo-500/15 text-indigo-400 border border-indigo-500/20">
-                  SOLDE
-                </span>
-              )}
-              {invoice.invoice_type === "avoir" && (
-                <span className="px-2.5 py-0.5 rounded-full text-xs font-bold bg-amber-500/15 text-amber-400 border border-amber-500/20">
-                  AVOIR
-                </span>
-              )}
-            </div>
-            <p className="text-gray-400 text-sm">
-              Émis{invoice.invoice_type === "avoir" ? "" : "e"} le {fmtDate(invoice.issue_date)}
-              {/* Un avoir n'a pas d'échéance : il n'appelle aucun paiement. En
-                  afficher une ferait attendre un règlement qui ne viendra pas. */}
-              {invoice.invoice_type !== "avoir" &&
-                invoice.due_date &&
-                ` · Échéance le ${fmtDate(invoice.due_date)}`}
-            </p>
-            {invoice.invoice_type === "avoir" && invoice.linked_invoice_number && (
-              <p className="text-sm text-amber-400 mt-1">
-                Annule la facture {invoice.linked_invoice_number}
-              </p>
-            )}
-            {invoice.invoice_type === "solde" && invoice.linked_invoice_number && (
-              <p className="text-sm text-indigo-400 mt-1">
-                Acompte versé ·{" "}
-                <Link href={`/invoices?ref=${invoice.linked_invoice_number}`} className="underline hover:text-indigo-300">
-                  Réf. {invoice.linked_invoice_number}
-                </Link>
-              </p>
-            )}
-            {invoice.invoice_type === "acompte" && (
-              <p className="text-sm text-emerald-400/80 mt-1">
-                Acompte {invoice.deposit_percentage}% · numérotation indépendante
-              </p>
-            )}
+    <PageDocument
+      avantPage={<GuidedTourBanner pageKey="invoices_detail" />}
+      retour={{ href: "/invoices", libelle: "Toutes les factures" }}
+      titre={inv.client_company || inv.client_name || inv.invoice_number}
+      numero={inv.invoice_number}
+      pastilles={pastilles}
+      dates={dates}
+      sousLigne={sousLigne}
+      bandeau={bandeau}
+      feuille={
+        feuille ? (
+          <FeuilleDocument
+            contenu={contenuFacture(feuille.invoice, { accent: feuille.accentColor, modele: feuille.modele }, feuille.paymentInfo, feuille.linkedNumber)}
+            libelle={`Aperçu de la facture ${feuille.invoice.invoice_number}, identique au PDF`}
+          />
+        ) : feuilleKo ? (
+          <div className="carte p-6 text-sm text-gray-400">
+            L&apos;aperçu n&apos;a pas pu être chargé. Le PDF reste téléchargeable depuis Actions.
           </div>
-
-          {/* Parties émetteur / client */}
-          <div className="grid grid-cols-2 gap-4 mb-6">
-            <div className="bg-ds-surface rounded-xl border border-ds-border p-5">
-              <p className="text-xs font-semibold text-gray-500 mb-2">Émetteur</p>
-              <p className="font-semibold text-ink">{invoice.seller_company || invoice.seller_name}</p>
-              {invoice.seller_address && <p className="text-sm text-gray-400 mt-1">{invoice.seller_address}</p>}
-              {invoice.seller_siren && <p className="text-xs text-gray-500 mt-1">SIREN : {invoice.seller_siren}</p>}
-              {invoice.seller_tva_number && <p className="text-xs text-gray-500">N° TVA : {invoice.seller_tva_number}</p>}
-            </div>
-            <div className="bg-ds-surface rounded-xl border border-ds-border p-5">
-              <p className="text-xs font-semibold text-gray-500 mb-2">Client</p>
-              <p className="font-semibold text-ink">{invoice.client_company || invoice.client_name}</p>
-              {invoice.client_name && invoice.client_company && <p className="text-sm text-gray-400">{invoice.client_name}</p>}
-              {invoice.client_address && <p className="text-sm text-gray-400 mt-1">{invoice.client_address}</p>}
-              {invoice.client_siren && <p className="text-xs text-gray-500 mt-1">SIREN : {invoice.client_siren}</p>}
-            </div>
-          </div>
-
-          {/* Lignes */}
-          <div className="bg-ds-surface rounded-xl border border-ds-border overflow-x-auto mb-6">
-            <table className="w-full text-sm">
-              <thead>
-                <tr className="bg-ds-elevated border-b border-ds-border text-gray-400 text-xs">
-                  <th className="text-left px-3 sm:px-5 py-3">Prestation</th>
-                  <th className="text-center px-2 sm:px-4 py-3">Qté</th>
-                  <th className="text-right px-2 sm:px-4 py-3 whitespace-nowrap">P.U. HT</th>
-                  <th className="text-right px-3 sm:px-5 py-3 whitespace-nowrap">Total HT</th>
-                </tr>
-              </thead>
-              <tbody>
-                {invoice.items.map((item, i) => (
-                  <tr key={i} className="border-b border-ds-border last:border-0">
-                    <td className="px-3 sm:px-5 py-3 text-gray-300 font-medium break-words">
-                      {item.description}
-                      {item.nature && (
-                        <span className="block text-xs font-normal text-gray-500">{LIBELLE_NATURE[item.nature]}</span>
-                      )}
-                    </td>
-                    <td className="px-2 sm:px-4 py-3 text-center text-gray-400">{item.quantity} {item.unit}</td>
-                    <td className="px-2 sm:px-4 py-3 text-right text-gray-400 whitespace-nowrap">{fmt(item.unit_price)}</td>
-                    <td className="px-3 sm:px-5 py-3 text-right font-semibold text-ink whitespace-nowrap">{fmt(item.total)}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-
-          {/* Totaux */}
-          <div className="flex justify-end mb-6">
-            <div className="w-64 space-y-2 text-sm">
-              {invoice.invoice_type === "solde" && (invoice.deposit_percentage ?? 0) > 0 && (() => {
-                const pct = invoice.deposit_percentage!;
-                const originalTtc = invoice.total_ttc / (1 - pct / 100);
-                const depositTtc = originalTtc - invoice.total_ttc;
-                return (
-                  <>
-                    <div className="flex justify-between text-gray-500">
-                      <span>Prestation totale</span><span>{fmt(originalTtc)}</span>
-                    </div>
-                    <div className="flex justify-between text-red-400">
-                      <span>Acompte versé{invoice.linked_invoice_number ? ` (${invoice.linked_invoice_number})` : ""}</span>
-                      <span>-{fmt(depositTtc)}</span>
-                    </div>
-                    <div className="h-px bg-ds-border" />
-                  </>
-                );
-              })()}
-              <div className="flex justify-between text-gray-400">
-                <span>Total HT</span><span>{fmt(invoice.total_ht)}</span>
-              </div>
-              {ventilationTva(invoice.items, invoice.tva_rate).multiTaux ? (
-                ventilationTva(invoice.items, invoice.tva_rate).groupes.map((g, gi) => (
-                  <div className="flex justify-between text-gray-400" key={gi}>
-                    <span>TVA {g.taux}%</span>
-                    <span>{fmt(g.montant_tva)}</span>
-                  </div>
-                ))
-              ) : (
-                <div className="flex justify-between text-gray-400">
-                  <span>TVA {invoice.tva_rate}%</span>
-                  <span>{fmt(invoice.total_ttc - invoice.total_ht)}</span>
-                </div>
-              )}
-              <div className="flex justify-between font-semibold text-ink text-base border-t border-ds-border pt-2">
-                <span>{invoice.invoice_type === "solde" ? "Solde à payer" : invoice.invoice_type === "acompte" ? "Acompte à payer" : "Total TTC"}</span>
-                <span>{fmt(invoice.total_ttc)}</span>
-              </div>
-            </div>
-          </div>
-
-          {/* Badge Factur-X */}
-          <div className="bg-indigo-500/10 border border-indigo-500/20 rounded-xl px-5 py-3 flex items-center gap-3">
-            <span className="text-indigo-400 text-lg">✦</span>
-            <div>
-              <p className="text-sm font-semibold text-indigo-300">Facture électronique · Conforme réforme 2026</p>
-              <p className="text-xs text-indigo-400">
-                PDF avec les données de facturation intégrées ·{" "}
-                {invoice.payment_on_debit ? "TVA sur débits" : "TVA sur encaissements"} ·{" "}
-                {invoice.operation_category === "services" ? "Prestations de services" :
-                 invoice.operation_category === "goods" ? "Livraison de biens" : "Mixte"}
-              </p>
-            </div>
-          </div>
-        </div>
-
-        {/* ── Colonne droite : panel d'actions ── */}
-        <ActionPanel invoice={invoice} id={id} router={router} hasChorusPro={hasChorusPro} />
-      </div>
-    </div>
+        ) : (
+          <div className="aspect-[210/297] w-full rounded-sm bg-ds-elevated" aria-label="Chargement de l&apos;aperçu" />
+        )
+      }
+      actions={actions}
+      suivi={<Suivi etapes={etapes} />}
+      titreInformations="Facture électronique"
+      informations={informations}
+    />
   );
 }

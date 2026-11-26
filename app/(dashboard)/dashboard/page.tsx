@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { BETA_OUVERTE } from "@/lib/beta";
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { isTeamMember, getWorkspaceUserId } from "@/lib/workspace";
@@ -292,7 +293,8 @@ export default async function DashboardPage() {
       {!isMember && vue.statutInconnu && <StatutAPreciser />}
 
       {/* ── Upgrade banner (free, owners only) ── */}
-      {!isPaid && !isMember && (
+      {/* Bêta (lib/beta.ts) : pas d'offre d'essai ni de prix pendant la bêta. */}
+      {!isPaid && !isMember && !BETA_OUVERTE && (
         <div className="bg-linear-to-r/srgb from-indigo-600 to-violet-600 rounded-xl p-5 flex items-center justify-between gap-4 text-ink">
           <div>
             <div className="font-semibold text-sm">Passe à Solo, débloque l&apos;IA, les factures et les relances</div>

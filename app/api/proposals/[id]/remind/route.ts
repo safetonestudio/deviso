@@ -3,6 +3,7 @@ import { createClient } from "@/lib/supabase/server";
 import { envoyerCourriel } from "@/lib/resend";
 import { publicBaseUrl, proposalShareUrl } from "@/lib/public-url";
 import { getWorkspaceUserId, getWorkspaceProfile } from "@/lib/workspace";
+import { exigerActe } from "@/lib/droits";
 import { piedDePageMarque } from "@/lib/emails/branding";
 
 type Params = { params: Promise<{ id: string }> };
@@ -17,6 +18,10 @@ export async function POST(_req: NextRequest, { params }: Params) {
   // filtrer sur user.id renvoyait 404 à tout membre d'équipe, alors que la
   // liste les affichait. Le plan Pro est vendu sur le multi-utilisateurs.
   const workspaceId = await getWorkspaceUserId(user.id);
+
+  // Droits des membres (décision de Selim, 24/11/2026) : une relance part chez le client, c'est un envoi de devis.
+  const refusActe = await exigerActe(user.id, workspaceId, "envoyer_devis");
+  if (refusActe) return refusActe;
 
   const { data: proposal } = await supabase
     .from("proposals")

@@ -1,5 +1,6 @@
 "use client";
 
+import { BETA_OUVERTE, LIEN_CANDIDATURE } from "@/lib/beta";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
@@ -112,10 +113,10 @@ export function DemoBanner() {
 
         <div className="flex items-center gap-2 shrink-0">
           <a
-            href="/signup"
+            href={BETA_OUVERTE ? LIEN_CANDIDATURE : "/signup"}
             className="px-3 py-1.5 rounded-lg bg-amber-500 hover:bg-amber-400 text-gray-900 text-xs font-semibold transition-colors"
           >
-            Créer mon compte
+            {BETA_OUVERTE ? "Devenir bêta-testeur" : "Créer mon compte"}
           </a>
           <button
             onClick={quitter}

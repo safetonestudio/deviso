@@ -60,9 +60,8 @@ const STEPS_OWNER = [
   },
   {
     target: "catalogue",
-    title: "✦ Pro : Catalogue & IA",
+    title: "Catalogue & IA",
     body: "Enregistre tes prestations : l'IA s'appuie dessus pour des devis plus justes.",
-    pro: true,
   },
   {
     target: "team",
@@ -98,7 +97,6 @@ const STEPS_MEMBER = [
     target: "catalogue",
     title: "✦ Catalogue partagé",
     body: "Les prestations de l'équipe, à insérer en un clic dans un devis ou une facture.",
-    pro: true,
   },
   {
     target: "team",

@@ -1,4 +1,5 @@
 import { PageSite, CADRE, SECTION, H1, H2, LEAD, BOUTON_PLEIN, BOUTON_DOUX } from "@/components/site/PageSite";
+import { APPEL } from "@/lib/beta";
 import { DemoButton } from "@/components/landing/DemoButton";
 import type { Metadata } from "next";
 import { DonneesStructurees } from "@/components/DonneesStructurees";
@@ -232,7 +233,7 @@ export default async function MetierTarifsPage({ params }: Props) {
             </p>
           </div>
           <div className="lg:col-span-5 flex flex-col sm:flex-row lg:flex-col gap-3 lg:items-start">
-            <Link href="/signup" className={`w-full sm:w-auto ${BOUTON_PLEIN}`}>Essayer 14 jours gratuitement</Link>
+            <Link href={APPEL.lien} className={`w-full sm:w-auto ${BOUTON_PLEIN}`}>{APPEL.libelle}</Link>
             <DemoButton className={`w-full sm:w-auto ${BOUTON_DOUX}`} />
             <Link href={data.landingHref} className="text-[14px] text-indigo-400 hover:text-indigo-300 transition-colors">
               Voir Deviso pour les {data.label}s

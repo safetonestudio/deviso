@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { APPEL } from "@/lib/beta";
 import type { ReactNode } from "react";
 import { SiteFooter } from "@/components/SiteFooter";
 import { Apparitions } from "@/components/landing/Apparitions";
@@ -57,9 +58,9 @@ export function SiteHeader({ actif }: { actif?: string }) {
         </nav>
         <div className="flex items-center justify-end gap-2">
           <Link href="/login" className="hidden sm:inline-flex items-center h-10 px-4 rounded-lg text-[14px] font-semibold text-gray-300 hover:text-ink transition-colors">Connexion</Link>
-          <Link href="/signup" className="inline-flex items-center h-10 px-4 rounded-lg bg-indigo-600 hover:bg-indigo-700 text-on-accent text-[14px] font-semibold transition-colors">
-            <span className="sm:hidden">Essai gratuit</span>
-            <span className="hidden sm:inline">Essayer 14 jours gratuitement</span>
+          <Link href={APPEL.lien} className="inline-flex items-center h-10 px-4 rounded-lg bg-indigo-600 hover:bg-indigo-700 text-on-accent text-[14px] font-semibold transition-colors">
+            <span className="sm:hidden">{APPEL.libelleCourt}</span>
+            <span className="hidden sm:inline">{APPEL.libelle}</span>
           </Link>
           <MenuMobile liens={[...LIENS, ["/login", "Connexion"] as const]} />
         </div>

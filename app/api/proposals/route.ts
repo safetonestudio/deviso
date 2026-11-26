@@ -1,4 +1,7 @@
 import { ventilationTva } from "@/lib/tva";
+import { compteSansInvitation } from "@/lib/beta-acces";
+import { estCabinet } from "@/lib/cabinet-acces";
+import { createAdminClient } from "@/lib/supabase/admin";
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 import { v4 as uuidv4 } from "uuid";
@@ -37,6 +40,23 @@ export async function POST(req: NextRequest) {
 
   // Devis illimités sur tous les plans (Free inclus)
   // La différenciation Free vs Solo se fait sur les features (IA, relances, e-signature…), pas sur le volume.
+
+  // Bêta (lib/beta-acces.ts) : un compte ouvert sans invitation, en
+  // contournant la page d'inscription, ne crée rien. Bêta fermée : sans effet.
+  if (workspaceId === user.id) {
+    const admin = createAdminClient();
+    const { data: p } = await admin
+      .from("profiles")
+      .select("plan, stripe_customer_id, beta_debut, is_demo, created_at")
+      .eq("id", user.id)
+      .maybeSingle();
+    if (!p?.is_demo && (await compteSansInvitation(admin, user.id, p)) && !(await estCabinet(admin, user.id))) {
+      return NextResponse.json(
+        { error: "BETA_INVITATION", message: "Deviso est en bêta : les comptes s'ouvrent sur invitation." },
+        { status: 403 }
+      );
+    }
+  }
 
   const body = await req.json();
   const {

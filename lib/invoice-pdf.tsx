@@ -1,4 +1,3 @@
-import { ventilationTva } from "./tva";
 ﻿/**
  * Génère le PDF visuel d'une facture avec @react-pdf/renderer
  * Ce PDF sera ensuite enrichi avec le XML CII pour produire un Factur-X
@@ -20,8 +19,11 @@ import {
 } from "@react-pdf/renderer";
 import path from "path";
 import type { Invoice } from "@/types";
-import { digitsOnly, parseAddress, resolveVatNumber } from "./facturx-helpers";
-import { motifExoneration } from "@/lib/exoneration";
+import { contenuFacture, fmtQty, type PaymentInfo, type Habillage, type ContenuDocument } from "./facture-contenu";
+
+// Réexportés : facturx.ts et invoice-xml.ts les importent d'ici.
+export { fmtQty };
+export type { PaymentInfo };
 
 /**
  * Polices incorporées au PDF.
@@ -62,43 +64,13 @@ Font.register({ family: "Helvetica-Bold", src: FONT_BOLD });
 // de façon incorrecte dans les libellés de prestation.
 Font.registerHyphenationCallback((word) => [word]);
 
-/**
- * Libellé exact de l'identifiant : SIRET (14 chiffres, établissement) ou
- * SIREN (9, entreprise). Afficher « SIRET » devant un SIREN serait faux.
- */
-function idLabel(value: string | null | undefined): string | null {
-  const d = digitsOnly(value);
-  if (d.length === 14) return `SIRET : ${d}`;
-  if (d.length === 9) return `SIREN : ${d}`;
-  return value ? `SIRET : ${value}` : null;
-}
-
-/** Adresse sur plusieurs lignes : rue puis « CP Ville », comme sur un courrier. */
-function addressLines(raw: string | null | undefined): string[] {
-  const a = parseAddress(raw);
-  const lines: string[] = [];
-  if (a.street) lines.push(a.street);
-  const cityLine = [a.postcode, a.city].filter(Boolean).join(" ");
-  if (cityLine) lines.push(cityLine);
-  if (!lines.length && raw) lines.push(raw);
-  return lines;
-}
 
 // Palette de couleurs
-const BRAND = "#4f46e5";
 const SLATE_900 = "#0f172a";
 const SLATE_600 = "#475569";
 const SLATE_400 = "#94a3b8";
 const SLATE_100 = "#f1f5f9";
 
-export interface PaymentInfo {
-  method?: string | null; // "none" | "link" | "bank" | "both"
-  linkProvider?: string | null;
-  linkUrl?: string | null;
-  bankIban?: string | null;
-  bankBic?: string | null;
-  bankAccountName?: string | null;
-}
 
 const styles = StyleSheet.create({
   page: {
@@ -310,317 +282,152 @@ const styles = StyleSheet.create({
   },
 });
 
-function fmt(n: number) {
-  // Intl fr-FR utilise l'espace fine insécable (U+202F) comme séparateur de
-  // milliers, glyphe absent de Helvetica dans @react-pdf, qui rend "/" à la
-  // place. On normalise vers une espace classique.
-  return new Intl.NumberFormat("fr-FR", {
-    style: "currency",
-    currency: "EUR",
-    minimumFractionDigits: 2,
-  })
-    .format(n)
-    .replace(/[\u202F\u00A0]/g, " ");
-}
-
-function fmtDate(d: string, locale: string = "fr-FR") {
-  return new Date(d).toLocaleDateString(locale, {
-    day: "2-digit",
-    month: "long",
-    year: "numeric",
-  });
-}
-
-/**
- * Formate une quantité selon l'unité.
- * "heure" + quantité non entière → notation horaire : 2.25 → "2h15", 0.25 → "15min".
- * Sinon → nombre brut sans zéros superflus.
- */
-export function fmtQty(quantity: number, unit: string): string {
-  if (unit === "heure" && !Number.isInteger(quantity)) {
-    const hours = Math.floor(quantity);
-    const minutes = Math.round((quantity - hours) * 60);
-    if (hours === 0) return `${minutes}min`;
-    return `${hours}h${String(minutes).padStart(2, "0")}`;
-  }
-  return Number.isInteger(quantity) ? String(quantity) : String(quantity);
-}
-
-type PdfLang = "fr" | "en";
-
-/**
- * Habillage du PDF par langue. Les mentions legales (art. L441-10, 293 B CGI,
- * nature de l'operation, regime TVA) restent TOUJOURS en francais : elles sont
- * imposees par le droit francais, leur traduction fragiliserait leur valeur.
- */
-const LABELS: Record<PdfLang, {
-  titleFacture: string; titleAcompte: string; titleSolde: string; titleAvoir: string;
-  numberPrefix: string; issuedOn: string; dueOn: string;
-  from: string; billTo: string; vatNo: string;
-  colDesc: string; colQty: string; colUnit: string; colPrice: string; colTotal: string;
-  subtotal: string; vatNotApplicable: string; vatRate: string;
-  totalInclVat: string; totalCredit: string;
-  paymentDetails: string; bankTransfer: string; accountHolder: string; onlinePayment: string;
-  termsNotes: string; paymentPrefix: string; legalHeading: string; footerBadge: string;
-}> = {
-  fr: {
-    titleFacture: "FACTURE", titleAcompte: "FACTURE D'ACOMPTE", titleSolde: "FACTURE DE SOLDE", titleAvoir: "AVOIR",
-    numberPrefix: "N\u00b0", issuedOn: "\u00c9mise le", dueOn: "\u00c9ch\u00e9ance le",
-    from: "\u00c9metteur", billTo: "Destinataire", vatNo: "N\u00b0 TVA",
-    colDesc: "Prestation", colQty: "Qt\u00e9", colUnit: "Unit\u00e9", colPrice: "P.U. HT", colTotal: "Total HT",
-    subtotal: "Total HT", vatNotApplicable: "TVA non applicable", vatRate: "TVA",
-    totalInclVat: "Total TTC", totalCredit: "Total TTC \u00e0 votre cr\u00e9dit",
-    paymentDetails: "Modalit\u00e9s de paiement", bankTransfer: "Virement bancaire", accountHolder: "Titulaire", onlinePayment: "Paiement en ligne s\u00e9curis\u00e9",
-    termsNotes: "Conditions & notes", paymentPrefix: "Paiement :", legalHeading: "Mentions l\u00e9gales",
-    footerBadge: "Factur-X EN 16931, Conforme r\u00e9forme 2026",
-  },
-  en: {
-    titleFacture: "INVOICE", titleAcompte: "DEPOSIT INVOICE", titleSolde: "BALANCE INVOICE", titleAvoir: "CREDIT NOTE",
-    numberPrefix: "No.", issuedOn: "Issued on", dueOn: "Due on",
-    from: "From", billTo: "Bill to", vatNo: "VAT No.",
-    colDesc: "Description", colQty: "Qty", colUnit: "Unit", colPrice: "Unit price", colTotal: "Amount",
-    subtotal: "Subtotal", vatNotApplicable: "VAT not applicable", vatRate: "VAT",
-    totalInclVat: "Total", totalCredit: "Total credited to you",
-    paymentDetails: "Payment details", bankTransfer: "Bank transfer", accountHolder: "Account holder", onlinePayment: "Secure online payment",
-    termsNotes: "Terms & notes", paymentPrefix: "Payment:", legalHeading: "Legal notices",
-    footerBadge: "Factur-X EN 16931, 2026 e-invoicing compliant",
-  },
-};
-
 interface Props {
   invoice: Invoice;
-  accentColor?: string;
+  /** Couleur seule (ancien appel) ou couleur et modèle choisis dans Profil. */
+  accentColor?: string | Habillage | null;
   paymentInfo?: PaymentInfo;
   linkedInvoiceNumber?: string | null;
 }
 
+/** Les habillages Moderne et Épuré, par-dessus la base Classique (styles). */
+function variantes(c: ContenuDocument) {
+  const a = c.accent;
+  const moderne = c.modele === "modern";
+  const epure = c.modele === "epure";
+  return {
+    entete: moderne
+      ? { backgroundColor: a, marginTop: -40, marginHorizontal: -45, paddingTop: 32, paddingHorizontal: 45, paddingBottom: 26, marginBottom: 28 }
+      : {},
+    titre: { color: moderne ? "#ffffff" : a },
+    surBande: moderne ? { color: "#ffffff", opacity: 0.85 } : {},
+    numero: moderne ? { color: "#ffffff" } : {},
+    filet: epure ? { backgroundColor: a, height: 1.5 } : {},
+    bandeau: epure ? { borderLeftWidth: 2, borderLeftColor: a, borderRadius: 0 } : { backgroundColor: a },
+    bandeauTexte: epure ? { color: a } : {},
+    entetTableau: epure
+      ? { borderRadius: 0, borderBottomWidth: 1, borderBottomColor: "#cbd5e1" }
+      : { backgroundColor: a },
+    entetTableauTexte: epure ? { color: SLATE_400 } : {},
+    ligneAlt: epure ? {} : styles.tableRowAlt,
+    totalFinal: epure ? { borderRadius: 0, borderTopWidth: 1.5, borderTopColor: a } : { backgroundColor: a },
+    totalFinalTexte: epure ? { color: a } : {},
+    encadre: epure
+      ? { backgroundColor: "#ffffff", borderRadius: 0, borderTopWidth: 1, borderTopColor: "#e2e8f0", paddingHorizontal: 0 }
+      : {},
+    annexe: moderne ? { borderTopWidth: 6, borderTopColor: a } : {},
+  };
+}
+
+/**
+ * Le document visuel du PDF Factur-X.
+ *
+ * Tous les textes viennent de `contenuFacture()` (lib/facture-contenu.ts), la
+ * même source que la feuille affichée dans l'application
+ * (components/document/FeuilleDocument.tsx) ; le modèle (Classique, Moderne,
+ * Épuré) est celui choisi dans Profil, le même qu'à l'écran et que le devis.
+ *
+ * Les textes multi-lignes sont des chaînes uniques jointes par "\n" : un
+ * <Text> à enfants multiples fait émettre à @react-pdf un run de texte vide
+ * dans la police par défaut (Helvetica), non incorporée, ce qui suffit à
+ * invalider la conformité PDF/A. Un enfant unique de type chaîne l'évite.
+ */
 export function InvoicePDF({ invoice, accentColor, paymentInfo, linkedInvoiceNumber }: Props) {
-  const accent = accentColor || BRAND;
-  // Le motif de l'absence de TVA, déterminé par la même règle que le XML
-  // (lib/exoneration.ts). `isFranchise` ne désigne plus « taux à zéro » mais
-  // bien le régime de franchise en base : le PDF imprimait « art. 293 B du
-  // CGI » sur toute facture à 0 %, y compris une livraison intracommunautaire
-  // émise par un assujetti, une déclaration écrite, et fausse, de son régime
-  // fiscal.
-  const exo = motifExoneration(invoice);
-  const exonere = exo.categorie !== "S";
-  const isFranchise = exo.categorie === "E" && /293 B/.test(exo.mention);
-  const isAcompte = invoice.invoice_type === "acompte";
-  const isSolde = invoice.invoice_type === "solde";
-  const isAvoir = invoice.invoice_type === "avoir";
-  const lang: PdfLang = invoice.language === "en" ? "en" : "fr";
-  const t = LABELS[lang];
-  const dateLocale = lang === "en" ? "en-GB" : "fr-FR";
-  const linkedNumber = linkedInvoiceNumber ?? invoice.linked_invoice_number ?? null;
-  // Même n° de TVA que celui injecté dans le XML : le PDF lisible et les données
-  // structurées doivent dire strictement la même chose.
-  const sellerVatDisplay = resolveVatNumber(
-    invoice.seller_tva_number,
-    invoice.seller_siren,
-    isFranchise
-  ).value;
+  const c = contenuFacture(invoice, accentColor, paymentInfo, linkedInvoiceNumber);
+  return DocumentPDF({
+    c,
+    meta: {
+      title: `Facture ${invoice.invoice_number}`,
+      author: invoice.seller_company || invoice.seller_name || "Deviso",
+      subject: `Facture ${invoice.invoice_number}, ${invoice.client_company || invoice.client_name || ""}`,
+      producer: "Deviso Factur-X Generator",
+    },
+  });
+}
 
-  const showBank =
-    paymentInfo &&
-    (paymentInfo.method === "bank" || paymentInfo.method === "both") &&
-    paymentInfo.bankIban;
-  const showLink =
-    paymentInfo &&
-    (paymentInfo.method === "link" || paymentInfo.method === "both") &&
-    paymentInfo.linkUrl;
-
-  // Un avoir doit se lire comme un avoir dès la première ligne. Le PDF est ce
-  // que le client ouvre et ce que son comptable classe : lui présenter
-  // « FACTURE » sur un document qui rend de l'argent, c'est provoquer une
-  // écriture à l'envers.
-  const title = isAvoir
-    ? t.titleAvoir
-    : isAcompte
-    ? t.titleAcompte
-    : isSolde
-    ? t.titleSolde
-    : t.titleFacture;
-
-  /**
-   * Les textes multi-lignes sont assemblés ici plutôt qu'en JSX.
-   *
-   * Un <Text> à enfants multiples fait émettre à @react-pdf un run de texte
-   * vide dans la police par défaut (Helvetica), non incorporée, ce qui suffit
-   * à invalider la conformité PDF/A. Un enfant unique de type chaîne l'évite.
-   */
-  const bankText = [
-    `${t.bankTransfer}${paymentInfo?.bankAccountName ? `, ${t.accountHolder} : ${paymentInfo.bankAccountName}` : ""}`,
-    `IBAN : ${paymentInfo?.bankIban ?? ""}`,
-    paymentInfo?.bankBic ? `BIC : ${paymentInfo.bankBic}` : "",
-  ]
-    .filter(Boolean)
-    .join("\n");
-
-  const linkText = `${t.onlinePayment}${
-    paymentInfo?.linkProvider ? ` (${paymentInfo.linkProvider})` : ""
-  } : ${paymentInfo?.linkUrl ?? ""}`;
-
-  const operationLabel =
-    invoice.operation_category === "services"
-      ? "Prestation de services"
-      : invoice.operation_category === "goods"
-      ? "Livraison de biens"
-      : "Livraison de biens et prestation de services";
-
-  const legalText = [
-    exonere
-      ? exo.mention
-      : `Facture soumise à TVA, Taux applicable : ${invoice.tva_rate}%${
-          invoice.payment_on_debit
-            ? ", TVA acquittée sur les débits (art. 1693 bis CGI)"
-            : ", TVA acquittée sur les encaissements"
-        }`,
-    `Nature de l'opération : ${operationLabel}`,
-    "En cas de retard de paiement, des pénalités de retard sont exigibles dès le lendemain de la date d'échéance au taux de 3× le taux légal en vigueur, ainsi qu'une indemnité forfaitaire de 40€ pour frais de recouvrement (Art. L441-10 C.Com.).",
-    "Aucun escompte accordé pour paiement anticipé.",
-  ].join("\n");
-
-  const sellerId = idLabel(invoice.seller_siren);
-  const footerText = `${invoice.seller_company || invoice.seller_name || ""}${
-    sellerId ? ` • ${sellerId}` : ""
-  }`;
+/**
+ * Le rendu PDF d'un document, devis ou facture : la même mise en page et le
+ * même modèle (Profil) pour les deux. La facture y ajoute ensuite son XML
+ * Factur-X (lib/facturx.ts) ; le devis est un PDF simple
+ * (`/api/proposals/[id]/pdf`).
+ */
+export function DocumentPDF({ c, meta }: {
+  c: ContenuDocument;
+  meta: { title: string; author: string; subject: string; producer: string };
+}) {
+  const { t } = c;
+  const v = variantes(c);
 
   return (
     <Document
-      title={`Facture ${invoice.invoice_number}`}
-      author={invoice.seller_company || invoice.seller_name || "Deviso"}
-      subject={`Facture ${invoice.invoice_number}, ${invoice.client_company || invoice.client_name || ""}`}
+      title={meta.title}
+      author={meta.author}
+      subject={meta.subject}
       creator="Deviso, getdeviso.fr"
-      producer="Deviso Factur-X Generator"
+      producer={meta.producer}
     >
       <Page size="A4" style={styles.page}>
         {/* ── Header ── */}
-        <View style={styles.header}>
+        <View style={[styles.header, v.entete]}>
           <View>
-            <Text style={[styles.brandName, { color: accent }]}>{title}</Text>
-            <Text style={{ fontSize: 8, color: SLATE_400, marginTop: 2 }}>
-              {invoice.seller_company || invoice.seller_name || ""}
-            </Text>
+            <Text style={[styles.brandName, v.titre]}>{c.title}</Text>
+            <Text style={[{ fontSize: 8, color: SLATE_400, marginTop: 2 }, v.surBande]}>{c.sousTitre}</Text>
           </View>
           <View>
-            <Text style={styles.invoiceLabel}>{t.numberPrefix} {invoice.invoice_number}</Text>
-            <Text style={styles.invoiceMeta}>
-              {t.issuedOn} {fmtDate(invoice.issue_date, dateLocale)}
-            </Text>
-            {invoice.due_date && (
-              <Text style={styles.invoiceMeta}>
-                {t.dueOn} {fmtDate(invoice.due_date, dateLocale)}
-              </Text>
-            )}
+            {c.numero ? <Text style={[styles.invoiceLabel, v.numero]}>{c.numero}</Text> : null}
+            {c.dates.map((d, i) => (
+              <Text key={i} style={[styles.invoiceMeta, v.surBande]}>{d}</Text>
+            ))}
           </View>
         </View>
 
         {/* ── Bandeau acompte / solde ── */}
-        {isAcompte && (
-          <View style={[styles.typeBanner, { backgroundColor: accent }]}>
-            <Text style={styles.typeBannerText}>
-              Facture d&apos;acompte
-              {invoice.deposit_percentage
-                ? `, ${invoice.deposit_percentage}% du montant total de la prestation`
-                : ""}
-              . Le solde fera l&apos;objet d&apos;une facture distincte.
-            </Text>
-          </View>
-        )}
-        {isSolde && (
-          <View style={[styles.typeBanner, { backgroundColor: accent }]}>
-            <Text style={styles.typeBannerText}>
-              Facture de solde
-              {linkedNumber
-                ? `, vient en déduction de la facture d'acompte n° ${linkedNumber}`
-                : ""}
-              .
-            </Text>
+        {c.bandeau && (
+          <View style={[styles.typeBanner, v.bandeau]}>
+            <Text style={[styles.typeBannerText, v.bandeauTexte]}>{c.bandeau}</Text>
           </View>
         )}
 
-        <View style={styles.divider} />
+        <View style={[styles.divider, v.filet]} />
 
         {/* ── Parties ── */}
         <View style={styles.partiesRow}>
           <View style={styles.partyBox}>
             <Text style={styles.partyLabel}>{t.from}</Text>
-            <Text style={styles.partyName}>
-              {invoice.seller_company || invoice.seller_name || ""}
-            </Text>
-            {addressLines(invoice.seller_address).map((l, i) => (
+            <Text style={styles.partyName}>{c.vendeur.nom}</Text>
+            {c.vendeur.lignes.map((l, i) => (
               <Text key={i} style={styles.partyDetail}>{l}</Text>
             ))}
-            {idLabel(invoice.seller_siren) && (
-              <Text style={styles.partyDetail}>{idLabel(invoice.seller_siren)}</Text>
-            )}
-            {sellerVatDisplay && (
-              <Text style={styles.partyDetail}>{t.vatNo} : {sellerVatDisplay}</Text>
-            )}
           </View>
 
           <View style={styles.partyBox}>
-            <Text style={[styles.partyLabel, { textAlign: "right" }]}>
-              {t.billTo}
-            </Text>
-            <Text style={[styles.partyName, { textAlign: "right" }]}>
-              {invoice.client_company || invoice.client_name || ""}
-            </Text>
-            {invoice.client_name && invoice.client_company && (
-              <Text style={[styles.partyDetail, { textAlign: "right" }]}>
-                {invoice.client_name}
-              </Text>
-            )}
-            {addressLines(invoice.client_address).map((l, i) => (
+            <Text style={[styles.partyLabel, { textAlign: "right" }]}>{t.billTo}</Text>
+            <Text style={[styles.partyName, { textAlign: "right" }]}>{c.client.nom}</Text>
+            {c.client.lignes.map((l, i) => (
               <Text key={i} style={[styles.partyDetail, { textAlign: "right" }]}>{l}</Text>
             ))}
-            {idLabel(invoice.client_siren) && (
-              <Text style={[styles.partyDetail, { textAlign: "right" }]}>
-                {idLabel(invoice.client_siren)}
-              </Text>
-            )}
-            {invoice.client_vat_number && (
-              <Text style={[styles.partyDetail, { textAlign: "right" }]}>
-                {t.vatNo} : {invoice.client_vat_number}
-              </Text>
-            )}
           </View>
         </View>
 
+        {c.objet && <Text style={{ fontSize: 11, fontWeight: 700, marginBottom: 12 }}>{c.objet}</Text>}
+
         {/* ── Tableau ── */}
         <View style={styles.table}>
-          <View style={[styles.tableHeader, { backgroundColor: accent }]}>
-            <Text style={[styles.tableHeaderText, styles.colDesc]}>
-              {t.colDesc}
-            </Text>
-            <Text style={[styles.tableHeaderText, styles.colQty]}>{t.colQty}</Text>
-            <Text style={[styles.tableHeaderText, styles.colUnit]}>{t.colUnit}</Text>
-            <Text style={[styles.tableHeaderText, styles.colPrice]}>
-              {t.colPrice}
-            </Text>
-            <Text style={[styles.tableHeaderText, styles.colTotal]}>
-              {t.colTotal}
-            </Text>
+          <View style={[styles.tableHeader, v.entetTableau]}>
+            <Text style={[styles.tableHeaderText, v.entetTableauTexte, styles.colDesc]}>{t.colDesc}</Text>
+            <Text style={[styles.tableHeaderText, v.entetTableauTexte, styles.colQty]}>{t.colQty}</Text>
+            <Text style={[styles.tableHeaderText, v.entetTableauTexte, styles.colUnit]}>{t.colUnit}</Text>
+            <Text style={[styles.tableHeaderText, v.entetTableauTexte, styles.colPrice]}>{t.colPrice}</Text>
+            <Text style={[styles.tableHeaderText, v.entetTableauTexte, styles.colTotal]}>{t.colTotal}</Text>
           </View>
 
-          {invoice.items.map((item, i) => (
-            <View
-              key={i}
-              style={[styles.tableRow, i % 2 === 1 ? styles.tableRowAlt : {}]}
-            >
-              <Text style={[styles.cellTextBold, styles.colDesc]}>
-                {item.description}
-              </Text>
-              <Text style={[styles.cellText, styles.colQty]}>
-                {fmtQty(item.quantity, item.unit)}
-              </Text>
-              <Text style={[styles.cellText, styles.colUnit]}>{item.unit}</Text>
-              <Text style={[styles.cellText, styles.colPrice]}>
-                {fmt(item.unit_price)}
-              </Text>
-              <Text style={[styles.cellTextBold, styles.colTotal]}>
-                {fmt(item.total)}
-              </Text>
+          {c.lignes.map((l, i) => (
+            <View key={i} style={[styles.tableRow, i % 2 === 1 ? v.ligneAlt : {}]}>
+              <Text style={[styles.cellTextBold, styles.colDesc]}>{l.description}</Text>
+              <Text style={[styles.cellText, styles.colQty]}>{l.qte}</Text>
+              <Text style={[styles.cellText, styles.colUnit]}>{l.unite}</Text>
+              <Text style={[styles.cellText, styles.colPrice]}>{l.pu}</Text>
+              <Text style={[styles.cellTextBold, styles.colTotal]}>{l.total}</Text>
             </View>
           ))}
         </View>
@@ -630,75 +437,52 @@ export function InvoicePDF({ invoice, accentColor, paymentInfo, linkedInvoiceNum
           <View style={styles.totalsBox}>
             <View style={styles.totalRow}>
               <Text style={styles.totalLabel}>{t.subtotal}</Text>
-              <Text style={styles.totalValue}>{fmt(invoice.total_ht)}</Text>
+              <Text style={styles.totalValue}>{c.totalHt}</Text>
             </View>
-            {ventilationTva(invoice.items, invoice.tva_rate).multiTaux && !exonere ? (
-              ventilationTva(invoice.items, invoice.tva_rate).groupes.map((g, gi) => (
-                <View style={styles.totalRow} key={gi}>
-                  <Text style={styles.totalLabel}>{`${t.vatRate} ${g.taux}%`}</Text>
-                  <Text style={styles.totalValue}>{fmt(g.montant_tva)}</Text>
-                </View>
-              ))
-            ) : (
-              <View style={styles.totalRow}>
-                <Text style={styles.totalLabel}>
-                  {exonere ? t.vatNotApplicable : `${t.vatRate} ${invoice.tva_rate}%`}
-                </Text>
-                <Text style={styles.totalValue}>
-                  {fmt(invoice.total_ttc - invoice.total_ht)}
-                </Text>
+            {c.tva.map((g, gi) => (
+              <View style={styles.totalRow} key={gi}>
+                <Text style={styles.totalLabel}>{g.libelle}</Text>
+                <Text style={styles.totalValue}>{g.montant}</Text>
               </View>
-            )}
-            <View style={[styles.totalRowFinal, { backgroundColor: accent }]}>
-              <Text style={styles.totalLabelFinal}>
-                {isAvoir ? t.totalCredit : t.totalInclVat}
-              </Text>
-              <Text style={styles.totalValueFinal}>
-                {fmt(invoice.total_ttc)}
-              </Text>
+            ))}
+            <View style={[styles.totalRowFinal, v.totalFinal]}>
+              <Text style={[styles.totalLabelFinal, v.totalFinalTexte]}>{c.totalFinal.libelle}</Text>
+              <Text style={[styles.totalValueFinal, v.totalFinalTexte]}>{c.totalFinal.montant}</Text>
             </View>
           </View>
         </View>
 
-        {/* ── Modalités de paiement ──
-            Rien à payer sur un avoir : c'est le vendeur qui doit. Afficher un
-            IBAN ou un lien de paiement inviterait le client à régler un
-            document qui le crédite. */}
-        {!isAvoir && (showBank || showLink) && (
-          <View style={styles.notesBox}>
-            <Text style={styles.notesLabel}>{t.paymentDetails}</Text>
-            {showBank && <Text style={styles.notesText}>{bankText}</Text>}
-            {showLink && <Text style={styles.notesText}>{linkText}</Text>}
+        {/* ── Modalités de paiement, conditions, mentions légales ── */}
+        {c.encadres.map((e, i) => (
+          <View key={i} style={[styles.notesBox, v.encadre]}>
+            <Text style={styles.notesLabel}>{e.titre}</Text>
+            {e.paragraphes.map((p, j) => (
+              <Text key={j} style={styles.notesText}>{p}</Text>
+            ))}
+          </View>
+        ))}
+
+        {c.signature && (
+          <View style={{ borderWidth: 1, borderColor: "#a7d7c0", backgroundColor: "#ecf7f1", borderRadius: 4, padding: 8, marginBottom: 20 }}>
+            <Text style={{ fontSize: 8.5, fontWeight: 700, color: "#14532d" }}>{c.signature}</Text>
           </View>
         )}
 
-        {/* ── Notes / Conditions ── */}
-        {(invoice.payment_terms || invoice.notes) && (
-          <View style={styles.notesBox}>
-            <Text style={styles.notesLabel}>{t.termsNotes}</Text>
-            {invoice.payment_terms && (
-              <Text style={styles.notesText}>{`${t.paymentPrefix} ${invoice.payment_terms}`}</Text>
-            )}
-            {invoice.notes && (
-              <Text style={styles.notesText}>{invoice.notes}</Text>
-            )}
-          </View>
-        )}
-
-        {/* ── Mentions légales 2026 ── */}
-        <View style={styles.notesBox}>
-          <Text style={styles.notesLabel}>{t.legalHeading}</Text>
-          <Text style={styles.notesText}>{legalText}</Text>
-        </View>
+        {c.marque && <Text style={{ fontSize: 7, color: SLATE_400, textAlign: "center", marginBottom: 12 }}>{c.marque}</Text>}
 
         {/* ── Footer ── */}
         <View style={styles.footer} fixed>
-          <Text style={styles.footerText}>{footerText}</Text>
-          <Text style={[styles.facturxBadge, { color: accent }]}>
-            {t.footerBadge}
-          </Text>
+          <Text style={styles.footerText}>{c.pied.gauche}</Text>
+          {c.pied.droite ? <Text style={[styles.facturxBadge, { color: c.accent }]}>{c.pied.droite}</Text> : null}
         </View>
       </Page>
+
+      {c.annexe && (
+        <Page size="A4" style={[styles.page, v.annexe]}>
+          <Text style={styles.notesLabel}>{c.annexe.titre}</Text>
+          <Text style={styles.notesText}>{c.annexe.texte}</Text>
+        </Page>
+      )}
     </Document>
   );
 }

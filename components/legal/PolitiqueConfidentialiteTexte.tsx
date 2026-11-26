@@ -29,7 +29,10 @@ export function PolitiqueConfidentialiteTexte() {
           prestations décrites, données de time tracking.<br /><br />
           <strong>Données techniques</strong> : adresse IP, données de navigation, métriques d&apos;utilisation anonymisées via Vercel Analytics,
           rapports d&apos;erreur techniques (Sentry).<br /><br />
-          <strong>Échanges avec le support</strong> : messages envoyés par le chat d&apos;assistance ou par email.
+          <strong>Échanges avec le support</strong> : messages envoyés par le chat d&apos;assistance ou par email.<br /><br />
+          <strong>Candidature au programme bêta</strong> : nom, adresse email, activité, statut de l&apos;entreprise, outil de
+          facturation utilisé, message libre facultatif, et une empreinte chiffrée de l&apos;adresse IP, qui sert
+          uniquement à limiter les envois abusifs du formulaire et qui est effacée sous 24 heures.
         </p>
       </section>
 
@@ -52,6 +55,7 @@ export function PolitiqueConfidentialiteTexte() {
         <p className="text-gray-400 leading-relaxed">
           Vos données sont utilisées pour :<br /><br />
           – Fournir et améliorer le service Deviso ;<br />
+          – Étudier votre candidature au programme bêta et vous répondre ;<br />
           – Gérer votre compte et votre abonnement ;<br />
           – Donner accès à votre dossier à l&apos;expert-comptable que vous invitez ;<br />
           – Transmettre vos factures électroniques et vos données de paiement aux plateformes et à l&apos;administration, comme la loi l&apos;impose ;<br />
@@ -66,6 +70,7 @@ export function PolitiqueConfidentialiteTexte() {
         <p className="text-gray-400 leading-relaxed">
           Le traitement de vos données est fondé sur :<br /><br />
           – L&apos;<strong>exécution du contrat</strong> (fourniture du service) ;<br />
+          – Des <strong>mesures précontractuelles</strong> prises à votre demande (candidature au programme bêta) ;<br />
           – Le <strong>respect d&apos;obligations légales</strong> (facturation, comptabilité) ;<br />
           – Notre <strong>intérêt légitime</strong> (amélioration du service, sécurité).
         </p>
@@ -111,7 +116,9 @@ export function PolitiqueConfidentialiteTexte() {
         <p className="text-gray-400 leading-relaxed">
           Vos données sont conservées pendant la durée de votre compte, puis supprimées dans un délai de
           30 jours après la clôture du compte, sauf obligation légale de conservation plus longue
-          (10 ans pour les documents comptables conformément au Code de commerce).
+          (10 ans pour les documents comptables conformément au Code de commerce).<br /><br />
+          Une candidature au programme bêta qui n&apos;aboutit pas à la création d&apos;un compte est supprimée 12 mois
+          après la réponse qui lui a été faite.
         </p>
       </section>
 

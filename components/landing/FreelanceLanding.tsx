@@ -1,4 +1,5 @@
 import { PageSite, CADRE, SECTION, H1, H2, LEAD, BOUTON_PLEIN, BOUTON_DOUX } from "@/components/site/PageSite";
+import { APPEL, BETA, BETA_OUVERTE } from "@/lib/beta";
 import Link from "next/link";
 import type { Metadata } from "next";
 import { DonneesStructurees } from "@/components/DonneesStructurees";
@@ -151,10 +152,15 @@ export function FreelanceLanding({
     operatingSystem: "Web",
     url: canonical,
     description: metaDescription,
-    offers: [
-      { "@type": "Offer", name: "Solo", price: grille("solo").mensuel, priceCurrency: "EUR", billingIncrement: "P1M" },
-      { "@type": "Offer", name: "Pro", price: grille("pro").mensuel, priceCurrency: "EUR", billingIncrement: "P1M" },
-    ],
+    // Bêta (lib/beta.ts) : aucun prix publié, ni sur la page ni pour Google.
+    ...(BETA_OUVERTE
+      ? {}
+      : {
+          offers: [
+            { "@type": "Offer", name: "Solo", price: grille("solo").mensuel, priceCurrency: "EUR", billingIncrement: "P1M" },
+            { "@type": "Offer", name: "Pro", price: grille("pro").mensuel, priceCurrency: "EUR", billingIncrement: "P1M" },
+          ],
+        }),
     inLanguage: "fr",
     audience: {
       "@type": "Audience",
@@ -176,7 +182,7 @@ export function FreelanceLanding({
             </h1>
             <p className={`${LEAD} mt-6`}>{heroSubtitle}</p>
             <div className="mt-8 flex flex-col sm:flex-row gap-3">
-              <Link href="/signup" className={`w-full sm:w-auto ${BOUTON_PLEIN}`}>Essayer 14 jours gratuitement</Link>
+              <Link href={APPEL.lien} className={`w-full sm:w-auto ${BOUTON_PLEIN}`}>{APPEL.libelle}</Link>
               <DemoButton className={`w-full sm:w-auto ${BOUTON_DOUX}`} />
             </div>
             <p className="mt-4 text-[14px] text-gray-400">Démo instantanée · Aucune carte bancaire · Compte Pro complet pré-rempli</p>
@@ -278,27 +284,42 @@ export function FreelanceLanding({
 
       {/* Tarifs */}
       <section id="tarifs" className={`${CADRE} ${SECTION}`}>
-        <div className="grid lg:grid-cols-12 gap-10 lg:gap-14">
-          <div className="lg:col-span-5">
-            <h2 className={H2}>Tarifs simples</h2>
-            <p className={`${LEAD} mt-5`}>Sans engagement. Sans surprise.</p>
-            <Link href="/#tarifs" className="inline-block mt-6 text-indigo-400 hover:text-indigo-300 text-[15px] font-medium transition-colors">
-              Voir tous les détails des plans →
-            </Link>
+        {BETA_OUVERTE ? (
+          // Bêta : la grille tarifaire laisse place à l'appel aux bêta-testeurs.
+          <div className="grid lg:grid-cols-12 gap-10 lg:gap-14 lg:items-center">
+            <div className="lg:col-span-7">
+              <h2 className={H2}>Testez Deviso gratuitement</h2>
+              <p className={`${LEAD} mt-5`}>
+                Deviso est en bêta : {BETA.places} places, {BETA.dureeMois} mois gratuits, puis -{BETA.remise}&nbsp;% la première année si vous continuez.
+              </p>
+            </div>
+            <div className="lg:col-span-5">
+              <Link href={APPEL.lien} className={`w-full sm:w-auto ${BOUTON_PLEIN}`}>{APPEL.libelle}</Link>
+            </div>
           </div>
-          <div className="lg:col-span-7 grid sm:grid-cols-2 gap-4">
-            {[
-              { name: "Solo", price: `${grille("solo").mensuel}€/mois`, desc: "Factur-X, Chorus Pro, acompte/solde, export FEC, sans branding Deviso. 14 jours d'essai gratuit." },
-              { name: "Pro", price: `${grille("pro").mensuel}€/mois`, desc: "Relances auto, CRM, équipe (3 utilisateurs inclus, rôles et validation des devis), exports CSV et récap, sous-domaine de partage. 14 jours d'essai gratuit." },
-            ].map((p) => (
-              <div key={p.name} className="rounded-xl bg-ds-surface p-6">
-                <div className="text-[18px] font-semibold text-ink mb-1">{p.name}</div>
-                <div className="text-[26px] font-semibold text-indigo-400 mb-3">{p.price}</div>
-                <p className="text-gray-300 text-[15px] leading-relaxed">{p.desc}</p>
-              </div>
-            ))}
+        ) : (
+          <div className="grid lg:grid-cols-12 gap-10 lg:gap-14">
+            <div className="lg:col-span-5">
+              <h2 className={H2}>Tarifs simples</h2>
+              <p className={`${LEAD} mt-5`}>Sans engagement. Sans surprise.</p>
+              <Link href="/#tarifs" className="inline-block mt-6 text-indigo-400 hover:text-indigo-300 text-[15px] font-medium transition-colors">
+                Voir tous les détails des plans →
+              </Link>
+            </div>
+            <div className="lg:col-span-7 grid sm:grid-cols-2 gap-4">
+              {[
+                { name: "Solo", price: `${grille("solo").mensuel}€/mois`, desc: "Factur-X, Chorus Pro, acompte/solde, export FEC, sans branding Deviso. 14 jours d'essai gratuit." },
+                { name: "Pro", price: `${grille("pro").mensuel}€/mois`, desc: "Relances auto, CRM, équipe (3 utilisateurs inclus, rôles et validation des devis), exports CSV et récap, sous-domaine de partage. 14 jours d'essai gratuit." },
+              ].map((p) => (
+                <div key={p.name} className="rounded-xl bg-ds-surface p-6">
+                  <div className="text-[18px] font-semibold text-ink mb-1">{p.name}</div>
+                  <div className="text-[26px] font-semibold text-indigo-400 mb-3">{p.price}</div>
+                  <p className="text-gray-300 text-[15px] leading-relaxed">{p.desc}</p>
+                </div>
+              ))}
+            </div>
           </div>
-        </div>
+        )}
       </section>
 
       {/* Pour aller plus loin : les deux autres pages du même métier */}
@@ -347,9 +368,9 @@ export function FreelanceLanding({
             <p className={`${LEAD} mt-4`}>Rejoignez les {professionLabel}s, indépendants comme entreprises avec équipe, qui gèrent leur activité commerciale avec Deviso.</p>
           </div>
           <div className="lg:col-span-5 flex flex-col sm:flex-row lg:flex-col gap-3 lg:items-start">
-            <Link href="/signup" className={`w-full sm:w-auto ${BOUTON_PLEIN}`}>Essayer 14 jours gratuitement</Link>
+            <Link href={APPEL.lien} className={`w-full sm:w-auto ${BOUTON_PLEIN}`}>{APPEL.libelle}</Link>
             <DemoButton className={`w-full sm:w-auto ${BOUTON_DOUX}`} />
-            <p className="text-gray-400 text-[14px]">Essai gratuit 14 jours · Sans carte bancaire</p>
+            <p className="text-gray-400 text-[14px]">{APPEL.phraseCourte} · Sans carte bancaire</p>
           </div>
         </div>
       </section>

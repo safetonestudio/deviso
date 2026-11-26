@@ -87,14 +87,16 @@ await reglerDroits(TOUS_FAUX);
   const envD = await member.call(`/api/proposals/${devis}`, { method: "PATCH", body: doc({ status: "sent" }) });
   verifier("envoyer un devis est refusé (envoyer_devis décoché)", estRefuseActe(envD), `HTTP ${envD.status} ${doc(envD.body).slice(0,90)}`);
 
-  // La relance n'est PAS un des cinq actes reglables (decision Selim, 29/09/2026) :
-  // un membre peut relancer meme avec tous les actes decoches. On verifie donc
-  // qu'aucune de ces routes ne bloque pour une raison de permission.
+  // Relance et lien de paiement sont des envois (décision de Selim du
+  // 24/11/2026, qui revient sur celle du 29/09 où la relance était libre).
   const relF = await member.call(`/api/invoices/${facture}/send-reminder`, { method: "POST" });
-  verifier("relancer une facture reste permis (la relance n'est pas un acte reglable)", !estRefuseActe(relF), `HTTP ${relF.status} ${doc(relF.body).slice(0,90)}`);
+  verifier("relancer une facture est refusé (envoyer_facture décoché)", estRefuseActe(relF), `HTTP ${relF.status} ${doc(relF.body).slice(0,90)}`);
 
   const relD = await member.call(`/api/proposals/${devis}/remind`, { method: "POST" });
-  verifier("relancer un devis reste permis (la relance n'est pas un acte reglable)", !estRefuseActe(relD), `HTTP ${relD.status} ${doc(relD.body).slice(0,90)}`);
+  verifier("relancer un devis est refusé (envoyer_devis décoché)", estRefuseActe(relD), `HTTP ${relD.status} ${doc(relD.body).slice(0,90)}`);
+
+  const lien = await member.call(`/api/invoices/${facture}/payment-link`, { method: "POST" });
+  verifier("le lien de paiement est refusé (envoyer_facture décoché)", estRefuseActe(lien), `HTTP ${lien.status} ${doc(lien.body).slice(0,90)}`);
 
   const pa = await member.call(`/api/superpdp/invoices/${facture}/emettre`, { method: "POST" });
   verifier("transmettre à la PA est refusé (transmettre_pa décoché)", estRefuseActe(pa), `HTTP ${pa.status} ${doc(pa.body).slice(0,90)}`);
@@ -112,6 +114,9 @@ console.log("── Actes titulaire seul : refusés au membre quoi qu'il arrive 
   const facture = await mkFacture();
   const paie = await member.call(`/api/invoices/${facture}`, { method: "PATCH", body: doc({ status: "paid" }) });
   verifier("marquer payée est réservé au titulaire", estRefuseTitulaire(paie), `HTTP ${paie.status} ${doc(paie.body).slice(0,90)}`);
+
+  const avoir = await member.call(`/api/invoices/${facture}/avoir`, { method: "POST" });
+  verifier("établir un avoir est réservé au titulaire", estRefuseTitulaire(avoir), `HTTP ${avoir.status} ${doc(avoir.body).slice(0,90)}`);
 
   const del = await member.call(`/api/invoices/${facture}`, { method: "DELETE" });
   verifier("supprimer une facture est réservé au titulaire", estRefuseTitulaire(del), `HTTP ${del.status} ${doc(del.body).slice(0,90)}`);
@@ -138,6 +143,18 @@ await reglerDroits({ ...TOUS_FAUX, envoyer_devis: true, envoyer_facture: true })
 
   const envD = await member.call(`/api/proposals/${devis}`, { method: "PATCH", body: doc({ status: "sent" }) });
   verifier("envoyer un devis aboutit une fois coché", envD.status === 200 && envD.body?.proposal?.status === "sent", `HTTP ${envD.status} ${doc(envD.body).slice(0,90)}`);
+
+  // Relance et lien de paiement s'ouvrent avec le droit d'envoi correspondant.
+  const relF = await member.call(`/api/invoices/${facture}/send-reminder`, { method: "POST" });
+  verifier("relancer une facture n'est plus refusé pour permission une fois coché", !estRefuseActe(relF), `HTTP ${relF.status} ${doc(relF.body).slice(0,90)}`);
+  const relD = await member.call(`/api/proposals/${devis}/remind`, { method: "POST" });
+  verifier("relancer un devis n'est plus refusé pour permission une fois coché", !estRefuseActe(relD), `HTTP ${relD.status} ${doc(relD.body).slice(0,90)}`);
+  const lien = await member.call(`/api/invoices/${facture}/payment-link`, { method: "POST" });
+  verifier("le lien de paiement n'est plus refusé pour permission une fois coché", !estRefuseActe(lien), `HTTP ${lien.status} ${doc(lien.body).slice(0,90)}`);
+
+  // L'avoir, lui, reste au titulaire même avec les droits d'envoi.
+  const avoir = await member.call(`/api/invoices/${facture}/avoir`, { method: "POST" });
+  verifier("établir un avoir reste titulaire seul, même droits d'envoi cochés", estRefuseTitulaire(avoir), `HTTP ${avoir.status} ${doc(avoir.body).slice(0,90)}`);
 
   // Mais les actes NON cochés restent fermés.
   const pa = await member.call(`/api/superpdp/invoices/${facture}/emettre`, { method: "POST" });

@@ -53,7 +53,7 @@ export async function GET(req: NextRequest) {
     // Récupérer le profil du propriétaire (pour numéro de facture, seller info, couleur)
     const { data: profile } = await supabase
       .from("profiles")
-      .select("full_name, company_name, siret, address, email, tva_number, plan, proposal_color, payment_method, payment_link_provider, payment_link_profile, bank_iban, bank_bic, bank_account_name, is_demo")
+      .select("full_name, company_name, siret, address, email, tva_number, plan, proposal_color, proposal_template, payment_method, payment_link_provider, payment_link_profile, bank_iban, bank_bic, bank_account_name, is_demo")
       .eq("id", rec.user_id)
       .single();
 
@@ -209,7 +209,7 @@ export async function GET(req: NextRequest) {
           bankBic: profile.bank_bic,
           bankAccountName: profile.bank_account_name,
         };
-        const pdfBuffer = await generateFacturXPdf(invoice, accentColor, paymentInfo);
+        const pdfBuffer = await generateFacturXPdf(invoice, { accent: accentColor, modele: profile.proposal_template }, paymentInfo);
         const filename = facturxFilename(invoice);
         const amount = new Intl.NumberFormat("fr-FR", { style: "currency", currency: "EUR" }).format(total_ttc);
         const clientName = rec.client_company || rec.client_name || "Client";

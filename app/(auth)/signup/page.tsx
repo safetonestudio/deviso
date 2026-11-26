@@ -1,16 +1,34 @@
 "use client";
-import { useState, Suspense } from "react";
+import { useState, useEffect, Suspense } from "react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 import { PasswordChecklist, isPasswordValid } from "@/components/PasswordChecklist";
 import { MailCheck } from "lucide-react";
+import { BETA_OUVERTE, LIEN_CANDIDATURE } from "@/lib/beta";
 
 function SignupForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const nextUrl = searchParams.get("next") || "/dashboard";
+  const nextDemande = searchParams.get("next") || "/dashboard";
   const prefillEmail = searchParams.get("email") || "";
+  const jetonBeta = searchParams.get("beta") || "";
+  /*
+   * Bêta ouverte (lib/beta.ts) : l'inscription n'est ouverte qu'aux invitations.
+   *   - lien personnel d'un candidat accepté (?beta=...) : vérifié ici, puis
+   *     consommé après la confirmation de l'adresse (/api/beta/activer) ;
+   *   - invitation d'équipe ou d'expert-comptable (?next=/join/...) : inchangée.
+   * Tout autre visiteur voit l'appel aux bêta-testeurs. Le serveur ne fait pas
+   * confiance à cette page : un compte créé sans invitation n'obtient ni
+   * formule ni essai (garde de /api/stripe/checkout).
+   * Bêta fermée : la page redevient exactement celle d'avant.
+   */
+  const invitationEquipe = nextDemande.startsWith("/join/");
+  const [acces, setAcces] = useState<"libre" | "verification" | "beta" | "lien_invalide" | "ferme">(() =>
+    !BETA_OUVERTE || invitationEquipe ? "libre" : jetonBeta ? "verification" : "ferme"
+  );
+  const [emailBeta, setEmailBeta] = useState("");
+  const nextUrl = acces === "beta" ? `/api/beta/activer?j=${encodeURIComponent(jetonBeta)}` : nextDemande;
   const [fullName, setFullName] = useState("");
   const [email, setEmail] = useState(prefillEmail);
   const [password, setPassword] = useState("");
@@ -18,10 +36,35 @@ function SignupForm() {
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState(false);
 
+  useEffect(() => {
+    if (acces !== "verification") return;
+    let annule = false;
+    fetch(`/api/beta/jeton?j=${encodeURIComponent(jetonBeta)}`)
+      .then((r) => (r.ok ? r.json() : null))
+      .then((r) => {
+        if (annule) return;
+        if (r?.valide && typeof r.email === "string") {
+          setEmailBeta(r.email);
+          setEmail(r.email);
+          setAcces("beta");
+        } else {
+          setAcces("lien_invalide");
+        }
+      })
+      .catch(() => !annule && setAcces("lien_invalide"));
+    return () => {
+      annule = true;
+    };
+  }, [acces, jetonBeta]);
+
   const handleSignup = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!isPasswordValid(password)) {
       setError("Le mot de passe ne respecte pas toutes les exigences ci-dessous.");
+      return;
+    }
+    if (acces === "beta" && email.trim().toLowerCase() !== emailBeta.toLowerCase()) {
+      setError("Ce lien est lié à l'adresse " + emailBeta + " : créez votre compte avec cette adresse.");
       return;
     }
     setLoading(true);
@@ -61,6 +104,39 @@ function SignupForm() {
           <Link href="/login" className="text-indigo-400 hover:text-indigo-300 font-semibold hover:underline text-sm">
             Retour à la connexion
           </Link>
+        </div>
+      </div>
+    );
+  }
+
+  if (acces === "ferme" || acces === "lien_invalide" || acces === "verification") {
+    return (
+      <div className="min-h-screen bg-site flex items-center justify-center px-4">
+        <div className="w-full max-w-md text-center">
+          <h1 className="text-2xl font-bold text-ink mb-3">
+            {acces === "verification"
+              ? "Vérification de votre lien..."
+              : acces === "lien_invalide"
+                ? "Ce lien n'est plus valable"
+                : "Les inscriptions sont réservées aux bêta-testeurs"}
+          </h1>
+          {acces !== "verification" && (
+            <>
+              <p className="text-gray-400 mb-6">
+                {acces === "lien_invalide"
+                  ? "Il a déjà servi ou il a expiré. Écrivez à support@getdeviso.fr pour en recevoir un nouveau."
+                  : "Deviso est en bêta : les comptes s'ouvrent sur invitation. Candidatez en une minute, je vous réponds sous 48 heures."}
+              </p>
+              <div className="flex flex-col sm:flex-row gap-3 justify-center">
+                <Link href={LIEN_CANDIDATURE} className="inline-flex items-center justify-center h-11 px-5 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-on-accent font-semibold">
+                  Devenir bêta-testeur
+                </Link>
+                <Link href="/login" className="inline-flex items-center justify-center h-11 px-5 rounded-xl border border-ds-border text-ink font-semibold hover:bg-ink/5">
+                  Se connecter
+                </Link>
+              </div>
+            </>
+          )}
         </div>
       </div>
     );
@@ -114,6 +190,7 @@ function SignupForm() {
                 type="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
+                readOnly={acces === "beta"}
                 required
                 placeholder="thomas@exemple.fr"
                 className="w-full px-4 py-3 rounded-xl bg-ds-bg border border-ds-border text-ink placeholder:text-gray-600 focus:outline-hidden focus:border-indigo-500 text-sm transition"

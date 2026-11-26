@@ -1,4 +1,5 @@
 import { PageSite } from "@/components/site/PageSite";
+import { APPEL, BETA_OUVERTE } from "@/lib/beta";
 import Link from "next/link";
 import { WaitlistButton } from "@/components/landing/WaitlistButton";
 import { Signature } from "@/components/blog/Signature";
@@ -234,7 +235,7 @@ export function BlogPost({
               Créez votre devis de {profession} en 30 secondes
             </h2>
             <p className="text-gray-400 mb-6 max-w-lg mx-auto">
-              Décrivez votre mission en quelques phrases. L&apos;IA Deviso génère un devis complet, structuré et conforme, prêt à envoyer. Essai gratuit, sans carte bancaire.
+              Décrivez votre mission en quelques phrases. L&apos;IA Deviso génère un devis complet, structuré et conforme, prêt à envoyer. {BETA_OUVERTE ? APPEL.phrase : "Essai gratuit, sans carte bancaire."}
             </p>
             <div className="flex flex-col sm:flex-row items-center justify-center gap-3">
               <WaitlistButton

@@ -1,9 +1,9 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 import { generateFacturXPdf, facturxFilename } from "@/lib/facturx";
-import { documentLie } from "@/lib/document-lie";
+import { donneesRenduFacture } from "@/lib/facture-rendu";
 import type { Invoice } from "@/types";
-import { getWorkspaceUserId, getWorkspaceProfile } from "@/lib/workspace";
+import { getWorkspaceUserId } from "@/lib/workspace";
 
 type Params = { params: Promise<{ id: string }> };
 
@@ -28,34 +28,11 @@ export async function GET(_req: NextRequest, { params }: Params) {
   if (error || !data) return NextResponse.json({ error: "Facture introuvable" }, { status: 404 });
 
   const invoice = data as Invoice;
-  // Le profil de l'ESPACE, pas celui de la personne connectée.
-  //
-  // Ce `.eq("id", user.id)` était un défaut discret et coûteux : sur un plan
-  // Pro multi-utilisateurs, un collaborateur agissant sur un document de
-  // l'espace lisait SON profil. Selon la route, cela donnait un PDF portant
-  // son IBAN (ou aucun) au lieu de celui de l'entreprise, le client paie
-  // alors sur le mauvais compte, ou un refus « plan insuffisant » sur une
-  // fonction que l'espace paie pourtant.
-  const profileData = await getWorkspaceProfile<{ proposal_color: string | null; payment_method: string | null; payment_link_provider: string | null; payment_link_profile: string | null; bank_iban: string | null; bank_bic: string | null; bank_account_name: string | null }>(
-    workspaceId,
-    "proposal_color, payment_method, payment_link_provider, payment_link_profile, bank_iban, bank_bic, bank_account_name"
-  );
+  // Couleur, modalités de paiement (profil de l'ESPACE) et document lié :
+  // même lecture que la feuille affichée dans l'application, lib/facture-rendu.ts.
+  const { accentColor, modele, paymentInfo, lie } = await donneesRenduFacture(supabase, invoice, workspaceId);
 
-  const accentColor = profileData?.proposal_color ?? undefined;
-  const paymentInfo = profileData ? {
-    method: (profileData.payment_method || "none") as "none" | "link" | "bank" | "both",
-    linkProvider: profileData.payment_link_provider,
-    linkUrl: profileData.payment_link_profile,
-    bankIban: profileData.bank_iban,
-    bankBic: profileData.bank_bic,
-    bankAccountName: profileData.bank_account_name,
-  } : undefined;
-
-  // Solde ET avoir : numéro et date du document lié. Cette route ne traitait
-  // que le solde, et ne lisait que le numéro, voir lib/document-lie.ts.
-  const lie = await documentLie(supabase, invoice, workspaceId);
-
-  const pdfBuffer = await generateFacturXPdf(invoice, accentColor, paymentInfo, lie.numero, lie.date);
+  const pdfBuffer = await generateFacturXPdf(invoice, { accent: accentColor, modele }, paymentInfo, lie.numero, lie.date);
   const filename = facturxFilename(invoice);
 
   // Sauvegarde optionnelle du chemin en BDD (best-effort)

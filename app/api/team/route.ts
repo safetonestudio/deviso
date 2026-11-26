@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { BETA, STATUT_BETA } from "@/lib/beta";
 import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { getWorkspaceUserId } from "@/lib/workspace";
@@ -50,7 +51,7 @@ export async function POST(req: NextRequest) {
 
   const { data: profile } = await supabase
     .from("profiles")
-    .select("plan, full_name, company_name")
+    .select("plan, full_name, company_name, subscription_status")
     .eq("id", user.id)
     .single();
 
@@ -84,6 +85,21 @@ export async function POST(req: NextRequest) {
 
     if ((seatCount ?? 0) >= 10) {
       return NextResponse.json({ error: "SEAT_LIMIT_REACHED" }, { status: 403 });
+    }
+
+    // Bêta (lib/beta.ts) : pas d'abonnement Stripe, donc aucun siège facturé.
+    // Sans cette limite, un espace en bêta inviterait des collaborateurs sans
+    // fin, gratuitement (synchroniserSieges ne fait rien sans abonnement).
+    // 3 utilisateurs, titulaire compris, comme la formule Pro ; l'expert-
+    // comptable n'est pas compté.
+    if (profile?.subscription_status === STATUT_BETA && (seatCount ?? 0) >= BETA.utilisateursMax - 1) {
+      return NextResponse.json(
+        {
+          error: "BETA_LIMITE_EQUIPE",
+          message: `Pendant la bêta, un espace compte ${BETA.utilisateursMax} utilisateurs au plus, vous compris. Retirez un collaborateur ou une invitation pour en ajouter un autre.`,
+        },
+        { status: 403 }
+      );
     }
   }
 

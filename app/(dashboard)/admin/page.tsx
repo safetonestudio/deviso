@@ -32,6 +32,8 @@ const ABONNEMENT: Record<string, { texte: string; ton: string }> = {
   trialing: { texte: "Essai", ton: "text-amber-400" },
   past_due: { texte: "Impayé", ton: "text-red-400" },
   canceled: { texte: "Résilié", ton: "text-gray-400" },
+  beta: { texte: "Bêta", ton: "text-emerald-400" },
+  beta_terminee: { texte: "Bêta terminée", ton: "text-gray-400" },
 };
 
 /**
@@ -65,6 +67,9 @@ export default async function Pilotage() {
         <p className="sous-titre-page">
           Comptes réels uniquement (démos exclues). Compteurs et états seulement, jamais le contenu des documents.
         </p>
+        <a href="/admin/beta" className="mt-3 inline-block text-sm font-semibold text-indigo-400 hover:text-indigo-300">
+          Candidatures à la bêta →
+        </a>
       </div>
 
       {error && (

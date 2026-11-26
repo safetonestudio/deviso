@@ -1,6 +1,12 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
+import { createAdminClient } from "@/lib/supabase/admin";
 import { stripe, PLANS } from "@/lib/stripe";
+import { BETA, BETA_OUVERTE, STATUT_BETA } from "@/lib/beta";
+import { creeApresOuverture } from "@/lib/beta-acces";
+
+/** Souscription anticipée d'un testeur : ouverte ce nombre de jours avant la fin de sa bêta. */
+const JOURS_SOUSCRIPTION_ANTICIPEE = 28;
 import { MESSAGE_DEMO } from "@/lib/stripe-guard";
 import { prixSiegePour, estPrixSiege } from "@/lib/stripe-seats";
 import { collaborateursARetirer, retirerEquipePourSolo } from "@/lib/equipe-solo";
@@ -67,13 +73,80 @@ export async function POST(req: NextRequest) {
 
   const { data: profile } = await supabase
     .from("profiles")
-    .select("stripe_customer_id, stripe_subscription_id, email, full_name, is_demo")
+    .select("stripe_customer_id, stripe_subscription_id, email, full_name, is_demo, subscription_status, beta_debut, beta_fin, created_at")
     .eq("id", user.id)
     .single();
 
   // Bloquer les comptes démo, pas d'abonnement réel possible
   if (profile?.is_demo) {
     return NextResponse.json({ error: "DEMO", message: MESSAGE_DEMO }, { status: 403 });
+  }
+
+  /**
+   * Bêta (lib/beta.ts).
+   *
+   * Les écritures de profil de cette route passent par la clé de service
+   * (`admin`) : depuis le 24/11, la base refuse qu'un utilisateur écrive
+   * lui-même sa formule ou ses identifiants Stripe
+   * (migration 20261124_profil_colonnes_protegees).
+   *
+   * - Bêta-testeur, pendant ou après sa bêta : abonnement au tarif promis
+   *   (-30 % pendant 12 mois, coupon STRIPE_COUPON_BETA), sans essai de
+   *   14 jours ; pendant la bêta, premier prélèvement le jour où elle se
+   *   termine. Tant que le coupon n'est pas configuré, la souscription est
+   *   refusée : un testeur ne paie jamais le plein tarif par erreur. Cette
+   *   règle ne dépend PAS de l'interrupteur : la promesse tient après la bêta.
+   * - Bêta ouverte, compte neuf qui n'est pas bêta-testeur (jamais de client
+   *   Stripe) : refus. Les comptes s'ouvrent sur invitation, l'essai de
+   *   14 jours est fermé. Un ancien client (client Stripe existant) reprend
+   *   normalement, sans essai, comme avant la bêta.
+   * - Tout compte qui a déjà un abonnement : inchangé (modification ci-dessous).
+   *
+   * Le testeur est reconnu par beta_debut (colonne protégée, que Stripe
+   * n'écrit jamais), pas par subscription_status, que le webhook réécrit dès
+   * qu'un abonnement existe : un testeur qui résilie garde ainsi sa remise.
+   *
+   * Remise de 12 mois : chez Stripe, la durée d'un coupon « repeating » court
+   * dès la souscription, période gratuite comprise. Une souscription anticipée
+   * n'est donc acceptée que dans les 28 derniers
+   * jours de la bêta : la première facture tombe alors avant la fin du premier
+   * mois de remise, et les 12 factures mensuelles sont toutes remisées.
+   */
+  const admin = createAdminClient();
+  const estBetaTesteur = Boolean(profile?.beta_debut);
+  const enBeta = estBetaTesteur && profile?.subscription_status === STATUT_BETA;
+  const couponBeta = process.env.STRIPE_COUPON_BETA || "";
+  if (estBetaTesteur && !profile?.stripe_subscription_id && enBeta && profile?.beta_fin) {
+    const ouvertureMs = new Date(profile.beta_fin).getTime() - JOURS_SOUSCRIPTION_ANTICIPEE * 86400_000;
+    if (Date.now() < ouvertureMs) {
+      const le = new Date(ouvertureMs).toLocaleDateString("fr-FR", { day: "numeric", month: "long", year: "numeric", timeZone: "Europe/Paris" });
+      return NextResponse.json(
+        {
+          error: "BETA_TROP_TOT",
+          message: `Ta bêta est en cours, tu n'as rien à payer. L'abonnement au tarif bêta-testeur s'ouvre le ${le}.`,
+        },
+        { status: 409 }
+      );
+    }
+  }
+  if (estBetaTesteur && !profile?.stripe_subscription_id && !couponBeta) {
+    return NextResponse.json(
+      {
+        error: "BETA_ABONNEMENT_BIENTOT",
+        message: `L'abonnement au tarif bêta-testeur (-${BETA.remise} % pendant 12 mois) ouvre très bientôt. Vous n'avez rien à faire d'ici là, vous serez prévenu par courriel.`,
+      },
+      { status: 409 }
+    );
+  }
+  // Un compte créé avant l'ouverture de la bêta garde son essai d'avant.
+  if (BETA_OUVERTE && !estBetaTesteur && !profile?.stripe_subscription_id && !profile?.stripe_customer_id && creeApresOuverture(profile?.created_at)) {
+    return NextResponse.json(
+      {
+        error: "BETA_INVITATION",
+        message: "Deviso est en bêta : les comptes et les abonnements s'ouvrent sur invitation. Écrivez à support@getdeviso.fr.",
+      },
+      { status: 403 }
+    );
   }
 
   /**
@@ -104,7 +177,7 @@ export async function POST(req: NextRequest) {
       // L'abonnement mémorisé n'existe plus chez Stripe (compte de test,
       // migration). On l'oublie et on repart sur un tunnel normal.
       sub = null;
-      await supabase
+      await admin
         .from("profiles")
         .update({ stripe_subscription_id: null })
         .eq("id", user.id);
@@ -273,7 +346,7 @@ export async function POST(req: NextRequest) {
       if (aJour) {
         // L'écran doit refléter le changement tout de suite, sans dépendre du
         // délai d'un webhook.
-        await supabase
+        await admin
           .from("profiles")
           .update({ plan: targetPlan })
           .eq("id", user.id);
@@ -303,7 +376,7 @@ export async function POST(req: NextRequest) {
       await stripe.customers.retrieve(customerId);
     } catch {
       customerId = null;
-      await supabase.from("profiles").update({ stripe_customer_id: null }).eq("id", user.id);
+      await admin.from("profiles").update({ stripe_customer_id: null }).eq("id", user.id);
     }
   }
 
@@ -314,7 +387,7 @@ export async function POST(req: NextRequest) {
       metadata: { supabase_user_id: user.id },
     });
     customerId = customer.id;
-    await supabase
+    await admin
       .from("profiles")
       .update({ stripe_customer_id: customerId })
       .eq("id", user.id);
@@ -344,14 +417,33 @@ export async function POST(req: NextRequest) {
     aDejaEuUnAbonnement = true;
   }
 
-  let session;
-  try {
-    session = await stripe.checkout.sessions.create({
+  // Bêta-testeur : jamais d'essai de 14 jours, carte exigée, remise promise.
+  // Pendant sa bêta, le premier prélèvement tombe le jour où elle se termine
+  // (Stripe exige une fin de période gratuite à 48 h au moins) ; après, tout
+  // de suite.
+  const finBetaS = estBetaTesteur && profile?.beta_fin ? Math.floor(new Date(profile.beta_fin).getTime() / 1000) : 0;
+  const finGratuiteBeta = finBetaS > Math.floor(Date.now() / 1000) + 48 * 3600 ? finBetaS : null;
+  const sansEssai = estBetaTesteur || aDejaEuUnAbonnement;
+  const metaBeta: Record<string, string> = estBetaTesteur ? { beta: "1" } : {};
+  const periodeGratuite: Pick<Stripe.Checkout.SessionCreateParams.SubscriptionData, "trial_end" | "trial_period_days" | "trial_settings"> =
+    estBetaTesteur
+      ? finGratuiteBeta
+        ? { trial_end: finGratuiteBeta }
+        : {}
+      : aDejaEuUnAbonnement
+        ? {}
+        : {
+            trial_period_days: 14,
+            trial_settings: { end_behavior: { missing_payment_method: "cancel" } },
+          };
+
+  const parametres: Stripe.Checkout.SessionCreateParams = {
       customer: customerId,
       payment_method_types: ["card"],
       // Essai (premier abonnement) : pas de carte pendant l'essai. Re-souscription
       // ou changement : carte exigée tout de suite, la période est active.
-      payment_method_collection: aDejaEuUnAbonnement ? "always" : "if_required",
+      payment_method_collection: sansEssai ? "always" : "if_required",
+      ...(estBetaTesteur ? { discounts: [{ coupon: couponBeta }] } : {}),
       line_items: [{ price: priceId, quantity: 1 }],
       mode: "subscription",
       success_url: `${baseUrl}/billing?upgraded=1`,
@@ -369,16 +461,15 @@ export async function POST(req: NextRequest) {
          * le reconnaît (lib/fin-essai.ts), coupe, écrit au titulaire, et l'écran
          * de reprise propose une carte via un NOUVEL abonnement, sans essai.
          */
-        ...(aDejaEuUnAbonnement
-          ? {}
-          : {
-              trial_period_days: 14,
-              trial_settings: { end_behavior: { missing_payment_method: "cancel" as const } },
-            }),
-        metadata: { target_plan: targetPlan, billing },
+        ...periodeGratuite,
+        metadata: { target_plan: targetPlan, billing, ...metaBeta },
       },
-      metadata: { target_plan: targetPlan, billing },
-    });
+      metadata: { target_plan: targetPlan, billing, ...metaBeta },
+  };
+
+  let session;
+  try {
+    session = await stripe.checkout.sessions.create(parametres);
   } catch (err: unknown) {
     const message = err instanceof Error ? err.message : "Erreur Stripe inconnue";
     console.error("[stripe/checkout] session.create error:", message);

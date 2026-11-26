@@ -55,7 +55,7 @@ export type NavLink = {
   icon: LucideIcon;
   /** Mise en avant visuelle : action principale, pas une simple page. */
   accent?: boolean;
-  /** Réservé au plan Pro. */
+  /** Réservé à la formule Pro : affiche une étiquette « Pro », rien de plus (les droits passent par `can()`). */
   pro?: boolean;
   /** Masqué pour les membres invités d'un espace de travail. */
   ownerOnly?: boolean;
@@ -92,8 +92,12 @@ export const NAVIGATION: NavItem[] = [
   { section: "Clients", ownerOnly: true },
   { href: "/crm", label: "Mes clients", icon: Users, ownerOnly: true },
 
-  { section: "Pro" },
-  { href: "/catalogue", label: "Catalogue", icon: Package, pro: true },
+  // Ce que l'entreprise vend (catalogue) et qui y travaille (équipe). Appelée
+  // « Pro » jusqu'au 24/11/2026 ; depuis l'unification des offres (23/11),
+  // Solo et Pro ne diffèrent que par l'équipe, le titre « Pro » ne disait plus
+  // rien. Le catalogue est inclus dans Solo : plus d'étiquette « Pro » sur lui.
+  { section: "Mon entreprise" },
+  { href: "/catalogue", label: "Catalogue", icon: Package },
   { href: "/team", label: "Équipe", icon: UsersRound, pro: true },
 
   { section: "Gestion", ownerOnly: true },
@@ -135,7 +139,9 @@ export function lienActif(href: string, pathname: string): boolean {
   if (href === "/dashboard") return pathname === "/dashboard";
   if (href === "/proposals/new") return pathname === "/proposals/new";
   if (href === "/invoices/new") return pathname === "/invoices/new";
-  if (href === "/proposals") return pathname === "/proposals" || pathname.startsWith("/proposals/");
+  // « Devis » s'allume sur un devis ouvert, mais pas sur la page de création,
+  // qui a sa propre entrée : sans cette exclusion, les deux brillaient ensemble.
+  if (href === "/proposals") return pathname === "/proposals" || (pathname.startsWith("/proposals/") && pathname !== "/proposals/new");
   return pathname === href || pathname.startsWith(href + "/");
 }
 
@@ -176,4 +182,28 @@ export function sectionVisible(index: number, items: NavItem[], isMember: boolea
     if (lienVisible(it, isMember, isComptable)) return true;
   }
   return false;
+}
+
+/** Une famille de la navigation : son titre (aucun pour la première) et ses liens visibles. */
+export type Famille = { titre: string | null; liens: NavLink[] };
+
+/**
+ * La navigation découpée en familles, telle que la voit cet utilisateur. Une
+ * famille dont aucun lien n'est visible disparaît, titre compris. Barre
+ * latérale et menu mobile s'en servent tous deux, pour dessiner chaque famille
+ * dans sa propre zone en creux.
+ */
+export function famillesVisibles(items: NavItem[], isMember: boolean, isComptable: boolean): Famille[] {
+  const familles: Famille[] = [];
+  let courante: Famille = { titre: null, liens: [] };
+  for (const item of items) {
+    if (estSection(item)) {
+      familles.push(courante);
+      courante = { titre: item.section, liens: [] };
+    } else if (lienVisible(item, isMember, isComptable)) {
+      courante.liens.push(item);
+    }
+  }
+  familles.push(courante);
+  return familles.filter((f) => f.liens.length > 0);
 }

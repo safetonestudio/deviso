@@ -28,6 +28,10 @@
       "schedule": "0 9 * * *"
     },
     {
+      "path": "/api/cron/fin-beta",
+      "schedule": "30 8 * * *"
+    },
+    {
       "path": "/api/cron/superpdp-sync",
       "schedule": "0 0 * * *"
     },

@@ -3,7 +3,8 @@
 import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
 import Image from "next/image";
-import { ProposalDocument } from "@/components/ProposalDocument";
+import { FeuilleDocument } from "@/components/document/FeuilleDocument";
+import { contenuDevis } from "@/lib/devis-contenu";
 import { FileQuestion, CircleCheck, CircleX, PenLine } from "lucide-react";
 import type { Proposal, Profile } from "@/types";
 
@@ -148,8 +149,14 @@ export default function PublicProposalPage() {
           </div>
         )}
 
-        {/* Document */}
-        <ProposalDocument proposal={proposal} profile={profile} showBranding={showBranding} cgvText={profile?.cgv_text} />
+        {/* Document : même feuille et même modèle (Profil) que dans l'application
+            et que le PDF des factures, décision de Selim du 24/11/2026. */}
+        <div className="mb-6">
+          <FeuilleDocument
+            contenu={contenuDevis(proposal, profile, { marque: showBranding })}
+            libelle={`Devis ${proposal.proposal_number ?? ""}`}
+          />
+        </div>
 
         {/* Zone de signature */}
         {!done && (

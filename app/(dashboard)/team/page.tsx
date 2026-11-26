@@ -136,7 +136,7 @@ export default function TeamPage() {
     } else if (data.error === "SEAT_LIMIT_REACHED") {
       setInviteMsg({ type: "error", text: "Limite de sièges atteinte." });
     } else {
-      setInviteMsg({ type: "error", text: data.error || "Erreur" });
+      setInviteMsg({ type: "error", text: data.message || data.error || "Erreur" });
     }
     setInviting(false);
   }

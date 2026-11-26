@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { STATUT_BETA } from "@/lib/beta";
 import { stripe } from "@/lib/stripe";
 import { createAdminClient } from "@/lib/supabase/admin";
 import type Stripe from "stripe";
@@ -29,6 +30,17 @@ function planFromPriceId(priceId: string): "solo" | "pro" | null {
   if (priceId === process.env.STRIPE_PRO_PRICE_ID) return "pro";
   if (priceId === process.env.STRIPE_PRO_ANNUAL_PRICE_ID) return "pro";
   return null;
+}
+
+/**
+ * Abonnement souscrit par un bêta-testeur, encore dans sa période gratuite
+ * (fin de bêta, trial_end) : il garde la formule complète de la bêta et son
+ * équipe jusqu'au premier prélèvement, quelle que soit la formule choisie.
+ * Le passage effectif à la formule choisie se fait quand l'abonnement devient
+ * « active » (même événement customer.subscription.updated).
+ */
+function abonnementPendantBeta(sub: Stripe.Subscription): boolean {
+  return sub.metadata?.beta === "1" && sub.status === "trialing";
 }
 
 export async function POST(req: NextRequest) {
@@ -254,7 +266,7 @@ export async function POST(req: NextRequest) {
       const { data: touchees, error } = await supabase
         .from("profiles")
         .update({
-          plan: aJour ? plan : "free",
+          plan: aJour ? (abonnementPendantBeta(sub) ? "pro" : plan) : "free",
           stripe_customer_id: customerId,
           stripe_subscription_id: subscriptionId,
           subscription_status: subscriptionStatus,
@@ -306,10 +318,11 @@ export async function POST(req: NextRequest) {
 
       // trialing = utilisateur en essai → accès au plan souscrit (pas "free")
       const isActive = status === "active" || status === "trialing";
+      const pendantBeta = abonnementPendantBeta(sub);
       let requete = supabase
         .from("profiles")
         .update({
-          plan: isActive ? plan : "free",
+          plan: isActive ? (pendantBeta ? "pro" : plan) : "free",
           subscription_status: status,
           stripe_subscription_id: sub.id,
         })
@@ -331,7 +344,7 @@ export async function POST(req: NextRequest) {
        * ici la même règle (lib/equipe-solo.ts) : équipe retirée, comptable
        * gardé, sièges réalignés. Sans effet si l'équipe est déjà vide.
        */
-      if (isActive && plan === "solo") {
+      if (isActive && plan === "solo" && !pendantBeta) {
         // Stripe ne garantit pas l'ordre des événements : un « Solo » ancien,
         // livré après un retour à Pro, supprimerait la nouvelle équipe. On ne
         // retire donc rien sans relire l'abonnement tel qu'il est MAINTENANT.
@@ -365,6 +378,19 @@ export async function POST(req: NextRequest) {
         .select("id");
 
       if (error) throw error;
+
+      // Bêta (lib/beta.ts) : un testeur qui résilie l'abonnement souscrit
+      // pendant sa bêta retrouve sa bêta jusqu'à son terme, au lieu de perdre
+      // les jours gratuits qui lui restaient. Le cron fin-beta la terminera.
+      const { error: eBeta } = await supabase
+        .from("profiles")
+        .update({ plan: "pro", subscription_status: STATUT_BETA })
+        .eq("stripe_customer_id", customerId)
+        .is("stripe_subscription_id", null)
+        .gt("beta_fin", new Date().toISOString())
+        .is("beta_fin_notifiee_le", null);
+      if (eBeta) throw eBeta;
+
       if (!touchees || touchees.length === 0) {
         // Essai déjà marqué terminé : la marque reste, l'abonnement mort est oublié.
         const { data: marquees, error: e2 } = await supabase

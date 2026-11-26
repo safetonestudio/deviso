@@ -1,13 +1,22 @@
+import { BETA, BETA_OUVERTE } from "@/lib/beta";
+
 /**
  * Les questions qu'on se pose avant de payer. Chaque réponse s'appuie sur
  * une source du dépôt : CGU (résiliation), lib/plans.ts (fonctions),
  * lib/statut-entreprise.ts (statuts), accès comptable (team_members).
  */
 const QUESTIONS = [
-  {
-    q: "Que se passe-t-il à la fin de l'essai ?",
-    r: "Aucun prélèvement : sans carte enregistrée, l'abonnement ne démarre pas et l'accès à votre espace s'arrête. Vous pouvez vous abonner plus tard, quand vous le souhaitez.",
-  },
+  // Bêta (lib/beta.ts) : la question sur la fin de l'essai devient celle de la
+  // fin de la bêta ; la question d'avant revient quand la bêta se ferme.
+  BETA_OUVERTE
+    ? {
+        q: "Que se passe-t-il à la fin de la bêta ?",
+        r: `Aucun prélèvement automatique : après vos ${BETA.dureeMois} mois gratuits, vous choisissez de vous abonner, avec -${BETA.remise} % pendant 12 mois, ou de vous arrêter. Vos devis et factures restent consultables.`,
+      }
+    : {
+        q: "Que se passe-t-il à la fin de l'essai ?",
+        r: "Aucun prélèvement : sans carte enregistrée, l'abonnement ne démarre pas et l'accès à votre espace s'arrête. Vous pouvez vous abonner plus tard, quand vous le souhaitez.",
+      },
   {
     q: "Puis-je récupérer mes données ?",
     r: "Oui, à tout moment. Vos factures restent téléchargeables en PDF Factur-X, et vous exportez votre comptabilité au format FEC et en CSV.",

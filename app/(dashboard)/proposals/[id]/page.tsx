@@ -1,33 +1,9 @@
 import { notFound } from "next/navigation";
-import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
-import { createClient as createAdminClient } from "@supabase/supabase-js";
 import { getWorkspaceUserId } from "@/lib/workspace";
-import ProposalActions from "./ProposalActions";
-import ShareSection from "./ShareSection";
-import { ProposalPreviewWrapper } from "@/components/ProposalPreviewWrapper";
-import { GuidedTourBanner } from "@/components/GuidedTourBanner";
-import type { Proposal, Profile } from "@/types";
+import DevisVue from "./DevisVue";
 import { publicBaseUrl, proposalShareUrl } from "@/lib/public-url";
-
-const supabaseAdmin = createAdminClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY!
-);
-
-function fmt(n: number) {
-  return new Intl.NumberFormat("fr-FR", { style: "currency", currency: "EUR" }).format(n);
-}
-
-const STATUS_LABELS: Record<string, { label: string; color: string }> = {
-  draft:    { label: "Brouillon",  color: "bg-ds-elevated text-gray-400" },
-  sent:     { label: "Envoyé",     color: "bg-blue-500/10 text-blue-400" },
-  viewed:   { label: "Consulté",   color: "bg-amber-500/10 text-amber-400" },
-  signed:   { label: "Signé ✓",   color: "bg-emerald-500/10 text-emerald-400" },
-  declined: { label: "Refusé",     color: "bg-red-500/10 text-red-400" },
-};
-
-const PROFILE_FIELDS = "full_name, company_name, email, phone, address, siret, tva_number, proposal_template, proposal_color, plan, subdomain";
+import { chargerDevis } from "@/lib/devis-donnees";
 
 export default async function ProposalDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
@@ -38,100 +14,16 @@ export default async function ProposalDetailPage({ params }: { params: Promise<{
   const workspaceId = await getWorkspaceUserId(user.id);
   const isOwner = user.id === workspaceId;
 
-  const { data, error } = await supabaseAdmin
-    .from("proposals")
-    .select("*")
-    .eq("id", id)
-    .eq("user_id", workspaceId)
-    .single();
-
-  if (error || !data) notFound();
-
-  const proposal = data as Proposal;
-
-  // Fetch owner profile (company info + template + require_approval + subdomain)
-  const { data: ownerProfile } = await supabaseAdmin
-    .from("profiles")
-    .select(PROFILE_FIELDS)
-    .eq("id", workspaceId)
-    .single();
-
-
-  // If the proposal was created by a collaborator, merge their personal info
-  let mergedProfile: Partial<Profile> | null = ownerProfile ?? null;
-  if (proposal.created_by && proposal.created_by !== workspaceId) {
-    const { data: creatorProfile } = await supabaseAdmin
-      .from("profiles")
-      .select("full_name, email, phone")
-      .eq("id", proposal.created_by)
-      .single();
-    if (creatorProfile) {
-      mergedProfile = {
-        ...ownerProfile,
-        full_name: creatorProfile.full_name,
-        email: creatorProfile.email,
-        phone: creatorProfile.phone,
-      };
-    }
-  }
-
-  const status = STATUS_LABELS[proposal.status] || STATUS_LABELS.draft;
+  // Même lecture que le PDF du devis (/api/proposals/[id]/pdf).
+  const devis = await chargerDevis(id, workspaceId);
+  if (!devis) notFound();
 
   // Une seule fonction décide de l'adresse publique, ici comme dans les relances.
-  const shareUrl = proposalShareUrl(publicBaseUrl(ownerProfile), proposal.share_token);
-
+  const shareUrl = proposalShareUrl(publicBaseUrl(devis.ownerProfile), devis.proposal.share_token);
 
   return (
     <div className="w-full">
-      <GuidedTourBanner pageKey="proposals_detail" />
-      {/* Retour */}
-      <Link href="/proposals" className="text-sm text-gray-500 hover:text-gray-400 transition-colors mb-5 inline-block">
-        ← Tous les devis
-      </Link>
-
-      {/* Layout deux colonnes */}
-      <div className="grid grid-cols-1 lg:grid-cols-[minmax(0,1fr)_320px] gap-6 items-start">
-
-        {/* ── Colonne gauche : document ── */}
-        <div className="min-w-0">
-          {/* Header : titre + statuts + dates */}
-          <div className="mb-5">
-            <div className="flex items-center gap-3 flex-wrap mb-1">
-              <h1 className="text-3xl font-semibold text-ink tracking-tight">{proposal.title}</h1>
-              {proposal.proposal_number && (
-                <span className="text-xs font-mono font-semibold text-gray-400 bg-ds-elevated px-2 py-0.5 rounded-sm">
-                  {proposal.proposal_number}
-                </span>
-              )}
-              <span className={`text-xs font-semibold px-2.5 py-1 rounded-full ${status.color}`}>
-                {status.label}
-              </span>
-            </div>
-            <p className="text-sm text-gray-500">
-              Créé le {new Date(proposal.created_at).toLocaleDateString("fr-FR")}
-              {proposal.viewed_at && (
-                <span className="text-amber-400"> · Consulté le {new Date(proposal.viewed_at).toLocaleDateString("fr-FR")}</span>
-              )}
-            </p>
-          </div>
-
-          {/* Document devis */}
-          <div id="proposal-print" className="max-w-4xl mx-auto">
-            <ProposalPreviewWrapper proposal={proposal} profile={mergedProfile} showBranding={mergedProfile?.plan === "free"} cgvText={mergedProfile?.cgv_text} />
-          </div>
-
-          {/* Section partage + email */}
-          <ShareSection proposal={proposal} shareUrl={shareUrl} profile={mergedProfile} />
-        </div>
-
-        {/* ── Colonne droite : panel d'actions ── */}
-        <ProposalActions
-          proposal={proposal}
-          shareUrl={shareUrl}
-          isOwner={isOwner}
-          panel={true}
-        />
-      </div>
+      <DevisVue proposal={devis.proposal} profile={devis.profile} shareUrl={shareUrl} isOwner={isOwner} />
     </div>
   );
 }

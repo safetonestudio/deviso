@@ -566,6 +566,21 @@ html:has(.ds-app.accueil), body:has(.ds-app.accueil) { background-color: #0E1512
   .reveal.vu { opacity: 1; transform: none; }
 }
 /* Barre laterale : repere vert a gauche du lien actif. */
+/* Navigation de l'app client : un panneau d'un seul tenant, chaque famille
+   dans une zone legerement creusee, sans cadre ni trait (choix de Selim le
+   24/11/2026, variante « creusee »). Le lien de la page ouverte ressort du
+   creux, en relief. Valeurs propres a chaque theme dans .ds-app plus bas. */
+.nav-panneau { background-color: var(--nav-panneau); }
+.nav-famille {
+  border-radius: 12px;
+  background-color: var(--nav-creux);
+  box-shadow: var(--nav-creux-ombre);
+}
+.nav-lien-actif {
+  background-color: var(--nav-actif);
+  box-shadow: var(--nav-actif-ombre);
+}
+
 .lien-actif::before {
   content: ""; position: absolute; left: 0; top: 7px; bottom: 7px; width: 3px;
   border-radius: 0 3px 3px 0; background-color: rgb(var(--acc-500));
@@ -626,6 +641,9 @@ html:has(.ds-app.accueil), body:has(.ds-app.accueil) { background-color: #0E1512
    s'appliquent (site public et blog inchanges).
    ───────────────────────────────────────────────────────────────── */
 .ds-app {
+  --nav-panneau: #16201B; --nav-creux: #101814; --nav-actif: #1D2822;
+  --nav-creux-ombre: inset 0 1px 3px rgba(0, 0, 0, 0.45), 0 1px 0 rgba(255, 255, 255, 0.04);
+  --nav-actif-ombre: inset 0 1px 0 rgba(255, 255, 255, 0.07), 0 1px 2px rgba(0, 0, 0, 0.5);
   --ds-bg: #0E1512; --ds-surface: #16201B; --ds-elevated: #1D2822;
   --ds-border: rgba(255, 255, 255, 0.09);
   --ds-shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.4);
@@ -645,6 +663,9 @@ html:has(.ds-app.accueil), body:has(.ds-app.accueil) { background-color: #0E1512
   --inf-600: 60 107 136; --inf-700: 47 85 108; --inf-800: 35 63 80; --inf-900: 25 45 57; --inf-950: 16 30 38;
 }
 .light .ds-app {
+  --nav-panneau: #FFFFFF; --nav-creux: #F1F3EE; --nav-actif: #FFFFFF;
+  --nav-creux-ombre: inset 0 1px 2px rgba(22, 33, 28, 0.08), 0 1px 0 #FFFFFF;
+  --nav-actif-ombre: 0 0 0 1px rgba(22, 33, 28, 0.04), 0 1px 2px rgba(22, 33, 28, 0.1), 0 2px 6px -2px rgba(22, 33, 28, 0.1);
   --ds-bg: #EDEFE9; --ds-surface: #FFFFFF; --ds-elevated: #F5F6F1;
   --ds-border: #E1E4DB;
   --ds-shadow-sm: 0 1px 2px rgba(22, 33, 28, 0.05);
@@ -741,6 +762,129 @@ html:has(.ds-app.accueil), body:has(.ds-app.accueil) { background-color: #0E1512
 @media print {
   .no-print { display: none !important; }
   body { font-size: 12px; }
+}
+
+/* ── Feuille de document : reproduction à l'écran du PDF ─────────────────────
+   components/document/FeuilleDocument.tsx (devis et factures). Chaque valeur
+   reprend celle de lib/invoice-pdf.tsx, en points A4 (595 pt de large) : --pt
+   vaut un point PDF à la largeur de la colonne. Les couleurs sont celles du
+   PDF, en dur : une feuille est du papier, elle ne suit pas le thème. --accent
+   est la couleur choisie dans Profil. Les capitales des libellés reproduisent
+   celles du PDF (document client, pas étiquette d'interface). Trois modèles
+   (Profil) : classic (référence), modern (bande de couleur en tête), epure
+   (aucun aplat, la couleur sur le titre et les filets). Toute modification ici
+   doit suivre une modification du PDF, jamais l'inverse. */
+.ff-cadre { container-type: inline-size; width: 100%; display: flex; flex-direction: column; gap: 24px; }
+.ff-page {
+  --pt: calc(100cqw / 595);
+  display: flex; flex-direction: column;
+  min-height: calc(842 * var(--pt));
+  padding: calc(40 * var(--pt)) calc(45 * var(--pt)) calc(24 * var(--pt));
+  background: #ffffff; color: #0f172a;
+  font-family: "Liberation Sans", Arial, Helvetica, sans-serif;
+  font-size: calc(9 * var(--pt)); line-height: 1.35;
+  border-radius: 2px; overflow: hidden;
+  box-shadow: 0 0 0 1px rgba(22, 33, 28, 0.06), 0 2px 6px rgba(22, 33, 28, 0.08), 0 18px 40px -14px rgba(22, 33, 28, 0.22);
+  -webkit-print-color-adjust: exact; print-color-adjust: exact;
+}
+:where(.ff-page p) { margin: 0; }
+.ff-entete { display: flex; justify-content: space-between; gap: calc(16 * var(--pt)); margin-bottom: calc(32 * var(--pt)); }
+.ff-titre { font-size: calc(22 * var(--pt)); font-weight: 700; letter-spacing: calc(1 * var(--pt)); line-height: 1.1; color: var(--accent); }
+.ff-sous-titre { font-size: calc(8 * var(--pt)); color: #94a3b8; margin-top: calc(2 * var(--pt)); }
+.ff-meta { text-align: right; font-size: calc(8.5 * var(--pt)); color: #475569; }
+.ff-meta p + p { margin-top: calc(2 * var(--pt)); }
+.ff-numero { font-size: calc(11 * var(--pt)); font-weight: 700; color: #0f172a; }
+.ff-bandeau { border-radius: 4px; padding: calc(6 * var(--pt)) calc(10 * var(--pt)); margin-bottom: calc(16 * var(--pt));
+  font-size: calc(8.5 * var(--pt)); font-weight: 700; color: #ffffff; background: var(--accent); }
+.ff-filet { height: 1px; background: #f1f5f9; margin-bottom: calc(20 * var(--pt)); }
+.ff-parties { display: flex; justify-content: space-between; gap: calc(20 * var(--pt)); margin-bottom: calc(24 * var(--pt)); }
+.ff-parties > div { flex: 1; min-width: 0; }
+.ff-droite { text-align: right; }
+.ff-label { font-size: calc(7 * var(--pt)); font-weight: 700; color: #94a3b8; text-transform: uppercase;
+  letter-spacing: calc(0.8 * var(--pt)); margin-bottom: calc(5 * var(--pt)); }
+.ff-nom { font-size: calc(10 * var(--pt)); font-weight: 700; margin-bottom: calc(2 * var(--pt)); }
+.ff-detail { font-size: calc(8.5 * var(--pt)); color: #475569; line-height: 1.5; overflow-wrap: anywhere; }
+.ff-objet { font-size: calc(11 * var(--pt)); font-weight: 700; margin-bottom: calc(12 * var(--pt)); }
+.ff-table { width: 100%; border-collapse: separate; border-spacing: 0; margin-bottom: calc(16 * var(--pt)); font-size: calc(8.5 * var(--pt)); table-layout: fixed; }
+.ff-table th { color: #ffffff; background: var(--accent); box-shadow: 1px 0 0 var(--accent);
+  font-size: calc(7.5 * var(--pt)); font-weight: 700; text-transform: uppercase; letter-spacing: calc(0.5 * var(--pt));
+  padding: calc(7 * var(--pt)) calc(8 * var(--pt)); border-bottom: calc(2 * var(--pt)) solid #ffffff; }
+.ff-table th:first-child { border-radius: 4px 0 0 4px; }
+.ff-table th:last-child { border-radius: 0 4px 4px 0; box-shadow: none; }
+.ff-table td { padding: calc(7 * var(--pt)) calc(8 * var(--pt)); border-bottom: 1px solid #f1f5f9; color: #475569; vertical-align: top; overflow-wrap: anywhere; }
+.ff-table tr.ff-alt td { background: #f8fafc; }
+.ff-table td.ff-gras { font-weight: 700; color: #0f172a; }
+.ff-c-desc { width: 44.4%; text-align: left; }
+.ff-c-qte, .ff-c-unite { width: 11.1%; text-align: center; }
+.ff-c-pu, .ff-c-total { width: 16.7%; text-align: right; white-space: nowrap; }
+.ff-table th.ff-c-desc { text-align: left; }
+.ff-unite-inline { display: none; }
+.ff-totaux { align-self: flex-end; width: calc(200 * var(--pt)); margin: calc(8 * var(--pt)) 0 calc(24 * var(--pt)); font-size: calc(8.5 * var(--pt)); color: #475569; }
+.ff-tot-ligne, .ff-tot-final { display: flex; justify-content: space-between; gap: calc(8 * var(--pt)); }
+.ff-tot-ligne { padding: calc(3 * var(--pt)) calc(8 * var(--pt)); }
+.ff-tot-final { margin-top: calc(4 * var(--pt)); border-radius: 4px; padding: calc(7 * var(--pt)) calc(8 * var(--pt));
+  font-size: calc(9 * var(--pt)); font-weight: 700; color: #ffffff; background: var(--accent); }
+.ff-boite { background: #f1f5f9; border-radius: 4px; padding: calc(10 * var(--pt)); margin-bottom: calc(20 * var(--pt)); }
+.ff-texte { font-size: calc(8 * var(--pt)); color: #475569; line-height: 1.6; white-space: pre-line; overflow-wrap: anywhere; }
+.ff-signature { border: 1px solid #a7d7c0; background: #ecf7f1; color: #14532d; border-radius: 4px;
+  padding: calc(8 * var(--pt)) calc(10 * var(--pt)); margin-bottom: calc(20 * var(--pt)); font-size: calc(8.5 * var(--pt)); font-weight: 700; }
+.ff-marque { text-align: center; font-size: calc(7 * var(--pt)); color: #94a3b8; margin-bottom: calc(12 * var(--pt)); }
+.ff-marque a { color: inherit; text-decoration: none; }
+.ff-pied { margin-top: auto; display: flex; justify-content: space-between; align-items: center; gap: calc(12 * var(--pt));
+  border-top: 1px solid #f1f5f9; padding-top: calc(8 * var(--pt)); font-size: calc(7 * var(--pt)); color: #94a3b8; }
+.ff-pied strong { font-weight: 700; color: var(--accent); }
+
+/* Moderne : une bande de couleur en tête, bord à bord, titre et dates en blanc. */
+.ff-modele-modern .ff-entete { margin: calc(-40 * var(--pt)) calc(-45 * var(--pt)) calc(28 * var(--pt));
+  padding: calc(32 * var(--pt)) calc(45 * var(--pt)) calc(26 * var(--pt)); background: var(--accent); }
+.ff-modele-modern .ff-titre, .ff-modele-modern .ff-numero { color: #ffffff; }
+.ff-modele-modern .ff-sous-titre, .ff-modele-modern .ff-meta { color: rgba(255, 255, 255, 0.82); }
+.ff-modele-modern.ff-annexe { border-top: calc(6 * var(--pt)) solid var(--accent); }
+
+/* Épuré : aucun aplat de couleur ; la couleur tient au titre et aux filets. */
+.ff-modele-epure .ff-filet { background: var(--accent); height: calc(1.5 * var(--pt)); }
+.ff-modele-epure .ff-bandeau { background: transparent; color: var(--accent); border-left: calc(2 * var(--pt)) solid var(--accent); border-radius: 0; }
+.ff-modele-epure .ff-table th { background: transparent; box-shadow: none; color: #94a3b8; border-radius: 0; border-bottom: 1px solid #cbd5e1; }
+.ff-modele-epure .ff-table tr.ff-alt td { background: transparent; }
+.ff-modele-epure .ff-tot-final { background: transparent; color: var(--accent); border-radius: 0; border-top: calc(1.5 * var(--pt)) solid var(--accent); }
+.ff-modele-epure .ff-boite { background: transparent; border-radius: 0; border-top: 1px solid #e2e8f0; padding: calc(10 * var(--pt)) 0 0; }
+
+/* Colonne étroite (téléphone, petite tablette) : la feuille se recompose au
+   lieu de rétrécir. Mêmes textes, même ordre ; un point vaut 1,45 px. */
+@container (max-width: 560px) {
+  .ff-page { --pt: 1.45px; min-height: 0; padding: 20px 16px 16px; }
+  .ff-entete { flex-direction: column; gap: 10px; margin-bottom: 18px; }
+  .ff-modele-modern .ff-entete { margin: -20px -16px 18px; padding: 20px 16px; }
+  .ff-meta { text-align: left; }
+  .ff-parties { flex-direction: column; gap: 14px; }
+  .ff-droite { text-align: left; }
+  .ff-c-unite, .ff-c-pu { display: none; }
+  .ff-c-desc { width: 46%; }
+  .ff-c-qte { width: 24%; }
+  .ff-c-total { width: 30%; }
+  .ff-table td.ff-c-qte { overflow-wrap: normal; }
+  .ff-unite-inline { display: inline; }
+  .ff-totaux { width: 100%; }
+}
+
+/* ── Impression d'un document : la feuille seule ──────────────────────────────
+   « Télécharger le PDF » d'un devis lance l'impression du navigateur. Sans ces
+   règles, elle imprimait toute la page (menu, boutons, lien de partage). Seule
+   la zone .zone-impression et ses ancêtres restent ; les ancêtres perdent leur
+   mise en page d'écran. */
+@media print {
+  body *:not(:has(.zone-impression)):not(.zone-impression):not(.zone-impression *) { display: none !important; }
+  body *:has(.zone-impression) {
+    display: block !important; position: static !important; padding: 0 !important; margin: 0 !important;
+    max-width: none !important; width: auto !important; min-height: 0 !important; height: auto !important;
+    border: 0 !important; box-shadow: none !important; background: #ffffff !important; overflow: visible !important;
+  }
+  .zone-impression { width: 100% !important; max-width: none !important; margin: 0 !important; }
+  .zone-impression * { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  .zone-impression .saut-page-avant { break-before: page; }
+  .zone-impression .ff-page { box-shadow: none !important; min-height: 0 !important; }
+  html, body { background: #ffffff !important; }
+  @page { size: A4; margin: 12mm; }
 }
 
 } /* fin @layer utilities */

@@ -1,4 +1,5 @@
 import type { Metadata, Viewport } from "next";
+import { BETA_OUVERTE } from "@/lib/beta";
 import { Inter } from "next/font/google";
 import "./globals.css";
 
@@ -29,7 +30,7 @@ export const metadata: Metadata = {
     template: "%s | Deviso",
   },
   description:
-    "Créez vos devis en 30 secondes avec l'IA, facturez en Factur-X conforme 2026, relances automatiques, suivi du chiffre d'affaires et de la TVA. Pour l'indépendant comme pour la société avec son équipe. Essai gratuit sans carte bancaire.",
+    "Créez vos devis en 30 secondes avec l'IA, facturez en Factur-X conforme 2026, relances automatiques, suivi du chiffre d'affaires et de la TVA. Pour l'indépendant comme pour la société avec son équipe. " + (BETA_OUVERTE ? "Bêta gratuite, sans carte bancaire." : "Essai gratuit sans carte bancaire."),
   keywords: [
     "logiciel devis entreprise",
     "devis en ligne gratuit",
@@ -56,7 +57,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: "Deviso, devis et factures pour les entreprises, de l'indépendant à la société",
     description:
-      "Vos devis rédigés, vos factures conformes, vos relances envoyées. Plateforme agréée comprise, essai gratuit de 14 jours.",
+      "Vos devis rédigés, vos factures conformes, vos relances envoyées. Plateforme agréée comprise, " + (BETA_OUVERTE ? "bêta gratuite." : "essai gratuit de 14 jours."),
     type: "website",
     locale: "fr_FR",
     url: "https://getdeviso.fr",
@@ -66,7 +67,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "Deviso, devis et factures pour les entreprises, de l'indépendant à la société",
     description:
-      "Vos devis rédigés, vos factures conformes, vos relances envoyées. Plateforme agréée comprise, essai gratuit de 14 jours.",
+      "Vos devis rédigés, vos factures conformes, vos relances envoyées. Plateforme agréée comprise, " + (BETA_OUVERTE ? "bêta gratuite." : "essai gratuit de 14 jours."),
   },
   robots: {
     index: true,
