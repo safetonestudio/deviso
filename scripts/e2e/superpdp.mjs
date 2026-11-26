@@ -372,13 +372,17 @@ verifier(
   `HTTP ${emissionB2c.status} ${doc(emissionB2c.body).slice(0, 300)}`
 );
 
-// ── Facture mixte biens+services : doit être bloquée ─────────────────────────
+// ── Facture mixte biens+services à un particulier : doit être bloquée ────────
+//
+// Depuis le 26/11/2026, une facture mixte ENTRE ENTREPRISES part (Super PDP
+// l'accepte, essai au bac à sable du 24/11, docs/superpdp/factures-mixtes.md).
+// Pour un particulier, Super PDP la refuse au dépôt : Deviso doit la bloquer
+// avant, avec un message qui dit quoi faire.
 console.log("");
-console.log("── Facture mixte biens+services : refusée avant l'envoi ──────");
+console.log("── Facture mixte à un particulier : refusée avant l'envoi ────");
 
 const mixte = await creerFacture({
-  client_name: "Client Mixte SARL", client_company: "Client Mixte SARL",
-  client_siren: "552100554",
+  client_name: "Jeanne Martin", client_email: "jeanne.martin.e2e@example.fr",
   client_street: "5 rue Bossuet", client_postcode: "33140", client_city: "Villenave-d'Ornon",
   operation_category: "mixed",
   // La categorie se DEDUIT des lignes : une prestation et un bien.
@@ -396,8 +400,8 @@ const emissionMixte = idMixte
   ? await bq.call(`/api/superpdp/invoices/${idMixte}/emettre`, { method: "POST" })
   : { status: 0, body: null };
 verifier(
-  "une facture mixte est refusée à l'émission, avec un message explicite",
-  emissionMixte.status === 400 && /catégorie d.opération/.test(emissionMixte.body?.message ?? ""),
+  "une facture mixte à un particulier est refusée à l'émission, avec un message explicite",
+  emissionMixte.status === 400 && /facture par nature/.test(emissionMixte.body?.message ?? ""),
   `HTTP ${emissionMixte.status} ${doc(emissionMixte.body).slice(0, 200)}`
 );
 

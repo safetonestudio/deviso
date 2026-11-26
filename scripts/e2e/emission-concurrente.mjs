@@ -188,8 +188,8 @@ verifier(
 
 // ── Le verrou ne bloque pas une facture qui a échoué ───────────────────────
 //
-// Une facture refusée avant l'envoi (ici : biens ET services mélangés, que
-// l'e-reporting ne gère pas) doit pouvoir être retentée immédiatement après
+// Une facture refusée avant l'envoi (ici : biens ET services mélangés sur une
+// vente à un particulier, que Super PDP refuse) doit pouvoir être retentée immédiatement après
 // correction. Si le verrou restait posé, l'utilisateur corrigerait sa facture
 // pour s'entendre répondre « transmission déjà en cours » pendant dix minutes.
 const mixte = await appel("/api/invoices", {
@@ -200,10 +200,8 @@ const mixte = await appel("/api/invoices", {
     seller_street: "809 avenue du Languedoc",
     seller_postcode: "12100",
     seller_city: "Millau",
-    client_directory_address: ADRESSE_TRICATEL,
-    client_name: "Tricatel",
-    client_company: "Tricatel",
-    client_siren: SIREN_PARTAGE,
+    client_name: "Jeanne Martin",
+    client_email: "jeanne.martin.e2e@example.fr",
     client_street: "Avenue de la République",
     client_postcode: "37170",
     client_city: "Chambray-lès-Tours",

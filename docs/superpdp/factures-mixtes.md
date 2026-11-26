@@ -139,7 +139,7 @@ ont été relus. Deux des trois questions prévues y trouvent leur réponse :
   l'encaissement à déclarer, ou comme un paiement partiel qui laisserait la facture « non
   soldée » côté administration ? C'est l'objet du courrier ci-dessous.
 
-## Courrier à Super PDP (à envoyer par Selim, NON envoyé)
+## Courrier à Super PDP (envoyé par Selim, réponse reçue)
 
 *De : safetonestudio@proton.me. Signature au nom légal (le SIREN et le raccordement à la
 plateforme agréée sont au nom de Berrabah, CLAUDE.md, Règle nº3).*
@@ -170,3 +170,47 @@ Merci d'avance,
 Selim Berrabah
 Deviso, getdeviso.fr
 safetonestudio@proton.me
+
+## Réponse de Super PDP (ticket 9381527, lue le 26/11/2026)
+
+Gwendal Fernet, SUPER PDP, depuis support@superpdp.tech :
+
+> Il n'y a pas de différence entre statut payé complètement ou partiellement.
+> L'administration veut uniquement le statut encaissée. C'est donc bien l'encaissement
+> des 480€ qui est à déclarer.
+
+Question close : sur une facture mixte, le `fr:212` porte la part prestations seule.
+
+Vérifié en plus au bac à sable le 26/11/2026 (facture `2378566`) : un bloc `MEN` de la part
+services **sans date** est accepté (200). La règle BR-FR-CDV-14 n'exige que le montant et le
+taux (`docs/superpdp/audit-2026-09-02.md`).
+
+## Correction faite le 26/11/2026 (branche `claude/factures-mixtes-superpdp-ab8720`, non poussée)
+
+| Où | Avant | Après |
+|---|---|---|
+| `lib/superpdp-precontrole.ts` | toute facture mixte bloquée | bloquée seulement pour un particulier ou un client à l'étranger, avec « une facture par nature » |
+| `lib/facturx-helpers.ts` (panneau de conformité) | alerte rouge bloquante | rouge pour particulier / étranger ; entre entreprises, simple conseil de faire deux factures |
+| `lib/encaissement-men.ts` (nouveau) + `lib/superpdp-encaissement.ts` | `fr:212` sur toute la facture (ou corps minimal, que Super PDP calcule sur toute la facture) | facture mixte : blocs `MEN` des seules lignes de prestations, toujours envoyés, datés quand la date est connue |
+| `app/(dashboard)/invoices/new/page.tsx` | « la plateforme ne traite pas encore les factures mixtes » | message selon le client : refus expliqué (particulier, étranger) ou « elle sera transmise » |
+
+Garde : `npm run test:factures-mixtes` (18 contrôles, dans `verify`), contre-épreuve faite
+pour chacun des cinq fichiers. `test:superpdp` et `test:emission-concurrente` testent
+désormais le refus d'une mixte **à un particulier** (et non plus entre entreprises).
+
+Traversé le 26/11/2026 par les vraies routes du serveur local, au bac à sable, compte de
+test seul (`npm run test:mixte-traversee`, hors `verify` car il dépose de vraies factures) :
+facture mixte Tricatel créée (catégorie déduite `mixed`) → `/emettre` 200 → `fr:200` →
+« Marquer comme payée » au 23/11 → relu chez Super PDP : `fr:212` avec **un bloc MEN de
+480,00 €** daté du 23/11 ; facture mixte à un particulier refusée 400 avant l'envoi.
+Contre-épreuve : avec l'ancien `lib/superpdp-encaissement.ts`, le même chemin déclare
+**1 200,00 €** et le test échoue. `test:date-encaissement` (factures de prestations) reste
+13/13.
+
+`fr:203` (« Mise à disposition ») a été vu sur les deux premières factures mixtes du jour,
+mais le bac à sable l'a ensuite fait attendre plus de quinze minutes, **y compris pour une
+facture de prestations ordinaire** émise au même moment (`1afec3c4…`) : lenteur du bac à
+sable, sans lien avec la nature de la facture. Le contrôle `fr:203` de la traversée peut
+donc échouer par lenteur ; les autres non.
+
+Non vu : le rendu de l'écran nouvelle facture (le texte est contrôlé, pas l'affichage).

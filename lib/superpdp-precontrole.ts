@@ -87,11 +87,19 @@ export function manquesPourEmission(facture: {
     );
   }
 
-  // Documenté par Super PDP (page « E-reporting ») : les factures mélangeant
-  // biens et services ne sont pas gérées par leur extraction d'e-reporting.
-  if (facture.operation_category === "mixed") {
+  // Facture mixte (biens + prestations, BT-23 = M1) : refusée par Super PDP
+  // pour le particulier et l'international SEULEMENT, les deux flux dont ils
+  // extraient eux-mêmes l'e-reporting. Essai au bac à sable du 24/11/2026
+  // (docs/superpdp/factures-mixtes.md) : en B2B domestique elle est acceptée
+  // et acheminée (fr:200 → fr:203) ; en B2C et B2BInt, refus 400 au dépôt,
+  // « unhandled business process type: M1 (BT-23) […] Choose one or make 2
+  // invoices ». Jusqu'au 26/11, Deviso la refusait partout, sur la foi d'une
+  // phrase de leur page « E-reporting » qui figure dans sa section B2C.
+  if (facture.operation_category === "mixed" && nature !== "B2B") {
     manques.push(
-      "une catégorie d'opération unique : biens OU services, pas les deux sur la même facture"
+      nature === "B2C"
+        ? "une facture par nature (biens, ou prestations) : une vente à un particulier ne peut pas mêler les deux"
+        : "une facture par nature (biens, ou prestations) : une vente à l'étranger ne peut pas mêler les deux"
     );
   }
 

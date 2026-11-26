@@ -1,4 +1,4 @@
-import { ventilationTva, type LigneMontant } from "@/lib/tva";
+import { blocsMen as blocsMen_, type FactureEncaissement } from "@/lib/encaissement-men";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { superpdpFetch, SuperPdpNotConnected, SuperPdpSessionPending } from "@/lib/superpdp";
 import { estCloture, libelleStatut } from "@/lib/superpdp-statuts";
@@ -77,7 +77,7 @@ export async function envoyerEncaissementPdp(
 
   const { data: facture } = await admin
     .from("invoices")
-    .select("id, superpdp_invoice_id, superpdp_encaisse_at, total_ttc, tva_rate, superpdp_status, items")
+    .select("id, superpdp_invoice_id, superpdp_encaisse_at, total_ttc, tva_rate, superpdp_status, items, operation_category")
     .eq("id", invoiceId)
     .eq("user_id", workspaceId)
     .maybeSingle();
@@ -162,31 +162,33 @@ export async function envoyerEncaissementPdp(
   // bloc suffit toujours. Si l'un des deux chiffres manque, on n'invente rien :
   // on retombe sur le corps minimal, que la plateforme sait compléter. On perd
   // la date exacte, jamais la déclaration.
-  const ttc = Number(facture.total_ttc);
-  const taux = Number(facture.tva_rate);
-  const chiffresSurs = Number.isFinite(ttc) && ttc > 0 && Number.isFinite(taux) && taux >= 0;
-
   // Une facture peut porter plusieurs taux: on envoie un bloc MEN par taux
   // (reported_data accepte un tableau), chacun avec le TTC de son groupe. Tout
   // ou rien, un details partiel desactive le calcul de la plateforme.
-  const vEnc = ventilationTva((facture.items ?? []) as LigneMontant[], taux);
-  const blocsMen =
-    dateValide && chiffresSurs
-      ? vEnc.groupes.map((g) => ({
-          type_code: "MEN",
-          amount: (g.base_ht + g.montant_tva).toFixed(2),
-          currency_code: "EUR",
-          value_percent: g.taux.toFixed(2),
-          date: dateValide,
-        }))
-      : [];
+  //
+  // Facture MIXTE (biens + prestations) : les blocs ne portent que les lignes
+  // de prestations, et partent TOUJOURS, même sans date. Sans eux, la
+  // plateforme déclare encaissée la facture entière, biens compris. Règle et
+  // sources dans lib/encaissement-men.ts.
+  const blocsMen = blocsMen_(
+    {
+      items: facture.items as FactureEncaissement["items"],
+      tva_rate: facture.tva_rate,
+      total_ttc: facture.total_ttc,
+      operation_category: facture.operation_category,
+    },
+    dateValide
+  );
+  const mixteSansPrestation = facture.operation_category === "mixed" && blocsMen.length === 0;
 
-  // La date qu'on note chez nous doit être celle qui part réellement. Sans le
-  // bloc, c'est la plateforme qui date l'événement, donc aujourd'hui. Noter la
-  // date fournie ferait croire à une déclaration qu'on n'a pas faite.
-  const horodatage = blocsMen.length
-    ? new Date(`${dateValide}T12:00:00Z`).toISOString()
-    : new Date().toISOString();
+  // La date qu'on note chez nous doit être celle qui part réellement. Sans
+  // date dans le bloc, c'est la plateforme qui date l'événement, donc
+  // aujourd'hui. Noter la date fournie ferait croire à une déclaration qu'on
+  // n'a pas faite.
+  const horodatage =
+    dateValide && blocsMen.some((b) => b.date)
+      ? new Date(`${dateValide}T12:00:00Z`).toISOString()
+      : new Date().toISOString();
 
   // ─────────────────── Réservation atomique avant l'appel ───────────────────
   //
@@ -263,6 +265,11 @@ export async function envoyerEncaissementPdp(
         () => undefined,
         () => undefined
       );
+
+  // Facture mixte dont les lignes de prestations valent zéro : aucun
+  // encaissement à déclarer. Le corps minimal ferait déclarer les biens ; on
+  // n'envoie rien et la réservation reste posée (rien à rattraper).
+  if (mixteSansPrestation) return { ok: true };
 
   try {
     const res = await superpdpFetch(workspaceId, "/invoice_events", {

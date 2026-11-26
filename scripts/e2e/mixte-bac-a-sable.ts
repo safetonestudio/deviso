@@ -236,8 +236,9 @@ const attendre = (ms: number) => new Promise((r) => setTimeout(r, ms));
       const corps = {
         invoice_id: idPdp,
         status_code: "fr:212",
+        // MIXTE_212=sans-date : bloc MEN sans date (paiement pointé sans date).
         ...(e.montant
-          ? { details: [{ reported_data: [{ type_code: "MEN", amount: e.montant, currency_code: "EUR", value_percent: "20.00", date: jour }] }] }
+          ? { details: [{ reported_data: [{ type_code: "MEN", amount: e.montant, currency_code: "EUR", value_percent: "20.00", ...(process.env.MIXTE_212 === "sans-date" ? {} : { date: jour }) }] }] }
           : {}),
       };
       const r = await pdp("/invoice_events", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(corps) });

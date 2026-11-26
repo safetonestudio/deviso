@@ -171,20 +171,27 @@ export function checkInvoiceCompliance(input: {
   clientAddress?: string | null;
   isFranchise: boolean;
   isB2C?: boolean;
+  /** Client établi hors de France. */
+  isInternational?: boolean;
   operationCategory?: "services" | "goods" | "mixed" | null;
 }): ComplianceIssue[] {
   const issues: ComplianceIssue[] = [];
 
-  // Documenté par Super PDP (page "E-reporting", 29/08/2026) : « Les factures
-  // mixtes (appelées aussi doubles) comportant des ventes de biens et
-  // services ne sont pas gérées. » L'extraction automatique de l'e-reporting
-  // ne sait pas ventiler une facture entre les deux, il faut deux factures.
+  // Facture mixte : même règle que lib/superpdp-precontrole.ts. Super PDP la
+  // refuse pour un particulier et à l'international (essai au bac à sable du
+  // 24/11/2026, docs/superpdp/factures-mixtes.md), l'accepte entre entreprises
+  // françaises. Là, deux factures restent le conseil le plus simple, sans
+  // être une obligation.
   if (input.operationCategory === "mixed") {
+    const refusee = input.isB2C || input.isInternational;
     issues.push({
       field: "operation_category",
-      label:
-        "Une facture mélangeant biens et services ne peut pas être transmise à la Plateforme Agréée, séparez-la en deux factures",
-      blocking: true,
+      label: refusee
+        ? "Une facture mêlant biens et prestations ne peut pas être transmise pour " +
+          (input.isB2C ? "un particulier" : "un client à l'étranger") +
+          " : faites une facture pour les biens et une pour les prestations"
+        : "Facture mêlant biens et prestations : elle est transmise, mais une facture par nature reste plus simple à suivre",
+      blocking: Boolean(refusee),
     });
   }
 

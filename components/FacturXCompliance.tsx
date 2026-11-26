@@ -5,6 +5,7 @@ import { checkInvoiceCompliance, isB2CInvoice } from "@/lib/facturx-helpers";
 import type { Invoice } from "@/types";
 import { resolveAddress } from "@/lib/address";
 import { motifExoneration } from "@/lib/exoneration";
+import { natureOperation } from "@/lib/superpdp-nature";
 
 /**
  * Diagnostic de conformité Factur-X EN 16931 affiché sur la facture.
@@ -36,6 +37,8 @@ export function FacturXCompliance({ invoice }: { invoice: Invoice }) {
     // 29/08/2026 : B2C géré nativement (note BAR/B2C + adresse EM), donc plus
     // besoin de forcer un SIREN client fictif pour émettre.
     isB2C: isB2CInvoice(invoice),
+    // Facture mixte : refusée pour un particulier ET pour un client étranger.
+    isInternational: natureOperation(invoice) === "B2BInt",
     operationCategory: invoice.operation_category,
   });
 

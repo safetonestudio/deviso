@@ -5,6 +5,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import type { Proposal, ProposalItem } from "@/types";
 import { PAYS_FACTURATION } from "@/lib/superpdp-nature";
+import { estFrance } from "@/lib/territoires";
 import { RechercheEntreprise } from "@/components/RechercheEntreprise";
 import { v4 as uuidv4 } from "uuid";
 import { ventilationTva } from "@/lib/tva";
@@ -1020,8 +1021,13 @@ export default function NewInvoicePage() {
                 </p>
               )}
               {operationCategory === "mixed" && (
-                <p className="text-xs text-blue-300 mt-1.5">
-                  Facture mixte : la plateforme de facturation électronique ne traite pas encore les factures qui mélangent biens et services. Pour la transmettre, fais plutôt une facture par nature.
+                // Super PDP refuse une facture mixte pour un particulier ou un
+                // client étranger, l'accepte entre entreprises françaises
+                // (essai au bac à sable du 24/11/2026, docs/superpdp/factures-mixtes.md).
+                <p className="text-xs text-blue-300 mt-1.5" data-mixte={!clientCompany.trim() || !estFrance(clientCountry) ? "refusee" : "transmise"}>
+                  {!clientCompany.trim() || !estFrance(clientCountry)
+                    ? `Facture mixte : pour ${!clientCompany.trim() ? "un particulier" : "un client à l'étranger"}, la plateforme agréée n'accepte pas une facture qui mêle biens et prestations. Pour pouvoir la transmettre, faites une facture pour les biens et une pour les prestations.`
+                    : "Facture mixte : elle sera transmise à la plateforme agréée de votre client. Une facture par nature reste plus simple à suivre, pour vous comme pour lui."}
                 </p>
               )}
             </div>

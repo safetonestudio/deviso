@@ -182,7 +182,7 @@ Corrigé dans `lib/cadre-facturation.ts`, règle unique appelée par
 |---|---|
 | services (ou catégorie absente, défaut en base) | `S1` |
 | biens | `B1` |
-| mixte (refusée par le pré-contrôle avant toute transmission) | `M1` |
+| mixte (transmise entre entreprises françaises ; refusée avant envoi pour un particulier ou à l'étranger, voir `factures-mixtes.md`) | `M1` |
 | solde qui renvoie à son acompte (BT-25 écrit) | `S4` / `B4` / `M4` |
 | acompte (386), avoir (381) | chiffre 1 (G1.60 interdit le 4 sur un 386 et un 503) |
 | déjà payée | **chiffre 1, pas 2** : le validateur officiel refuse S2/B2 si le net à payer n'est pas nul (« BR-FR-CO-09/BT-23 », constaté le 23/11), et Deviso écrit le net à payer égal au TTC. La catégorie d'e-reporting est la même, l'encaissement part par `fr:212` |
