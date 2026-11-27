@@ -16,16 +16,16 @@ export const metadata = metadonneesArticle(SLUG);
  */
 const FAQ = [
   {
-    q: "Qu'est-ce que l'e-reporting ?",
+    q: "Qu'est-ce que l'e-reporting ?",
     a: "L'e-reporting est l'obligation de transmettre à la DGFiP les données de transactions commerciales qui ne font pas l'objet d'une e-facture. Cela concerne principalement les ventes aux particuliers (B2C) et les ventes à l'étranger. Contrairement à l'e-invoicing (envoi de la facture structurée au client), l'e-reporting n'est pas une facture, c'est une déclaration de données fiscales.",
   },
   {
-    q: "L'e-reporting concerne-t-il les entreprises en franchise de TVA ?",
-    a: "La franchise de TVA (article 293B CGI) exonère les entreprises concernées (notamment les micro-entrepreneurs) de la collecte et du versement de TVA. Elle n'exempte pas des obligations d'e-reporting. Cependant, comme les données d'e-reporting concernent principalement la TVA, les franchisés auront des déclarations simplifiées (montants HT uniquement). La DGFiP doit préciser les modalités exactes pour les franchisés.",
+    q: "L'e-reporting concerne-t-il les entreprises en franchise de TVA ?",
+    a: "La franchise de TVA (article 293B CGI) exonère les entreprises concernées (notamment les micro-entrepreneurs) de la collecte et du versement de TVA. Elle n'exempte pas des obligations d'e-reporting. Les modalités sont publiées : pour une entreprise en franchise en base, les données sont transmises tous les deux mois (bimestre civil), au plus tard entre le 25 et le 30 du mois qui suit le bimestre.",
   },
   {
-    q: "Quelle est l'amende en cas de non-respect de l'e-reporting ?",
-    a: "Depuis le 1er septembre 2026, l'amende est de 500 € par transmission manquante ou insuffisante, plafonnée à 15 000 € par an. Elle était de 250 € : la loi de finances pour 2026 (loi n° 2026-103 du 19 février 2026, article 123) l'a doublée. Aucune sanction n'est appliquée en cas de premier manquement sur l'année civile en cours et les trois précédentes, si l'infraction est réparée spontanément ou dans les trente jours suivant une demande de l'administration.",
+    q: "Quelle est l'amende en cas de non-respect de l'e-reporting ?",
+    a: "Depuis le 1er septembre 2026, l'amende est de 500 € par transmission manquante ou insuffisante, plafonnée à 15 000 € par an. Elle était de 250 € : la loi de finances pour 2026 (loi n° 2026-103 du 19 février 2026, article 123) l'a doublée. Aucune sanction n'est appliquée en cas de premier manquement sur l'année civile en cours et les trois précédentes, si l'infraction est réparée spontanément ou dans les trente jours suivant une demande de l'administration.",
   },
 ];
 
@@ -54,20 +54,20 @@ export default function EReportingFreelancePage() {
         <div className="mb-10">
           <div className="flex items-center gap-3 mb-4">
             <span className="text-xs font-semibold text-amber-400 bg-amber-500/10 border border-amber-500/20 rounded-full px-3 py-1">Réforme 2026 · E-reporting</span>
-            <span className="text-xs text-gray-400">7 min · Mis à jour juillet 2026</span>
+            <span className="text-xs text-gray-400">7 min · Mis à jour novembre 2026</span>
           </div>
           <h1 className="text-3xl sm:text-4xl font-bold text-ink leading-tight mb-4">
-            E-reporting 2026 : l&apos;obligation B2C dont personne ne parle
+            E-reporting 2026 : l&apos;obligation B2C dont personne ne parle
           </h1>
           <p className="text-lg text-gray-400 leading-relaxed">
-            Tout le monde parle de la facturation électronique pour les transactions B2B. Mais si vous avez des clients particuliers, ou si vous vendez à l&apos;étranger, vous avez une deuxième obligation : l&apos;<strong className="text-ink">e-reporting</strong>. Tour d&apos;horizon complet.
+            Tout le monde parle de la facturation électronique pour les transactions B2B. Mais si vous avez des clients particuliers, ou si vous vendez à l&apos;étranger, vous avez une deuxième obligation : l&apos;<strong className="text-ink">e-reporting</strong>. Tour d&apos;horizon complet.
           </p>
         </div>
 
         <div className="prose prose-invert prose-sm max-w-none space-y-10 text-gray-400 leading-relaxed">
 
           <section>
-            <h2 className="text-xl font-bold text-ink mb-4">E-invoicing vs e-reporting : quelle différence ?</h2>
+            <h2 className="text-xl font-bold text-ink mb-4">E-invoicing vs e-reporting : quelle différence ?</h2>
             <div className="grid sm:grid-cols-2 gap-4">
               <div className="bg-[#191830] border border-indigo-500/20 rounded-xl p-5">
                 <p className="text-sm font-bold text-indigo-300 mb-3">E-invoicing (facturation électronique)</p>
@@ -75,7 +75,7 @@ export default function EReportingFreelancePage() {
                   <li className="flex gap-2"><span className="text-indigo-400 shrink-0">→</span> <span>Transactions <strong className="text-ink">B2B</strong> entre entreprises françaises assujetties à la TVA</span></li>
                   <li className="flex gap-2"><span className="text-indigo-400 shrink-0">→</span> <span>La <strong className="text-ink">facture elle-même</strong> est transmise via une PDP dans un format structuré (Factur-X)</span></li>
                   <li className="flex gap-2"><span className="text-indigo-400 shrink-0">→</span> <span>Remplace le PDF classique</span></li>
-                  <li className="flex gap-2"><span className="text-indigo-400 shrink-0">→</span> <span>Obligation à partir de sept. 2026 (grandes entreprises) → sept. 2027 (tous)</span></li>
+                  <li className="flex gap-2"><span className="text-indigo-400 shrink-0">→</span> <span>Obligation à partir de sept. 2026 (grandes entreprises et ETI) → sept. 2027 (tous)</span></li>
                 </ul>
               </div>
               <div className="bg-[#241d11] border border-amber-500/20 rounded-xl p-5">
@@ -83,25 +83,25 @@ export default function EReportingFreelancePage() {
                 <ul className="space-y-2 text-sm">
                   <li className="flex gap-2"><span className="text-amber-400 shrink-0">→</span> <span>Transactions <strong className="text-ink">B2C</strong> (clients particuliers) + ventes à l&apos;étranger</span></li>
                   <li className="flex gap-2"><span className="text-amber-400 shrink-0">→</span> <span><strong className="text-ink">Données fiscales</strong> transmises à la DGFiP (pas la facture complète)</span></li>
-                  <li className="flex gap-2"><span className="text-amber-400 shrink-0">→</span> <span>Le client ne reçoit pas d&apos;e-facture : il reçoit un PDF ou un ticket comme avant</span></li>
+                  <li className="flex gap-2"><span className="text-amber-400 shrink-0">→</span> <span>Le client ne reçoit pas d&apos;e-facture : il reçoit un PDF ou un ticket comme avant</span></li>
                   <li className="flex gap-2"><span className="text-amber-400 shrink-0">→</span> <span>Mêmes échéances que l&apos;e-invoicing</span></li>
                 </ul>
               </div>
             </div>
             <p className="mt-4">
-              En résumé : <strong className="text-ink">l&apos;e-invoicing change comment vous envoyez vos factures B2B ; l&apos;e-reporting ajoute une obligation de reporting fiscal sur toutes les autres transactions.</strong>
+              En résumé : <strong className="text-ink">l&apos;e-invoicing change comment vous envoyez vos factures B2B ; l&apos;e-reporting ajoute une obligation de reporting fiscal sur toutes les autres transactions.</strong>
             </p>
           </section>
 
           <section>
-            <h2 className="text-xl font-bold text-ink mb-4">Qui est concerné par l&apos;e-reporting ?</h2>
-            <p>L&apos;e-reporting concerne toutes les entreprises assujetties à la TVA qui réalisent des opérations non couvertes par l&apos;e-invoicing :</p>
+            <h2 className="text-xl font-bold text-ink mb-4">Qui est concerné par l&apos;e-reporting ?</h2>
+            <p>L&apos;e-reporting concerne toutes les entreprises assujetties à la TVA qui réalisent des opérations non couvertes par l&apos;e-invoicing :</p>
             <div className="mt-4 space-y-3">
               {[
                 { icon: "✓", color: "text-amber-400", label: "Entreprises avec des clients particuliers (B2C)", desc: "Commerce de détail, restaurant, photographe de mariage, coach personnel, cabinet de conseil ou de formation aux particuliers, etc." },
                 { icon: "✓", color: "text-amber-400", label: "Exportateurs et prestataires de services à l'étranger", desc: "Clients en dehors de l'UE, mais aussi clients professionnels hors de France." },
-                { icon: "✓", color: "text-amber-400", label: "Ventes à des associations ou entités non-TVA", desc: "Les associations qui ne récupèrent pas la TVA sont traitées comme des particuliers pour l'e-reporting." },
-                { icon: "×", color: "text-gray-600", label: "Non concerné : entreprise 100% B2B avec des entreprises françaises", desc: "Dans ce cas, toutes les transactions sont couvertes par l'e-invoicing. Pas d'e-reporting supplémentaire." },
+                { icon: "✓", color: "text-amber-400", label: "Ventes à des associations ou entités non assujetties à la TVA", desc: "Les associations non assujetties à la TVA sont traitées comme des particuliers pour l'e-reporting." },
+                { icon: "×", color: "text-gray-600", label: "Non concerné : entreprise 100 % B2B avec des entreprises françaises", desc: "Dans ce cas, toutes les transactions sont couvertes par l'e-invoicing. Pas d'e-reporting supplémentaire." },
               ].map(({ icon, color, label, desc }) => (
                 <div key={label} className="flex gap-3 bg-ds-surface border border-ds-border rounded-xl p-4">
                   <span className={`font-bold shrink-0 ${color}`}>{icon}</span>
@@ -115,9 +115,9 @@ export default function EReportingFreelancePage() {
           </section>
 
           <section>
-            <h2 className="text-xl font-bold text-ink mb-4">Quelles données déclarer et à quelle fréquence ?</h2>
+            <h2 className="text-xl font-bold text-ink mb-4">Quelles données déclarer et à quelle fréquence ?</h2>
             <p>
-              Pour chaque période, vous transmettez à la DGFiP via votre PDP un <strong className="text-ink">récapitulatif de vos opérations B2C</strong>. Vous n&apos;avez pas à déclarer chaque facture unitairement (sauf si votre logiciel le fait automatiquement) : vous pouvez regrouper par période.
+              Pour chaque période, vous transmettez à la DGFiP via votre PDP un <strong className="text-ink">récapitulatif de vos opérations B2C</strong>. Vous n&apos;avez pas à déclarer chaque facture unitairement : les ventes aux particuliers sont totalisées jour par jour, et ces totaux sont transmis pour chaque période. Les opérations avec des entreprises étrangères, elles, sont transmises facture par facture.
             </p>
             <div className="mt-5 bg-ds-surface border border-ds-border rounded-xl overflow-hidden">
               <div className="bg-ds-elevated px-4 py-3 border-b border-ds-border">
@@ -125,11 +125,11 @@ export default function EReportingFreelancePage() {
               </div>
               <div className="divide-y divide-ds-border">
                 {[
-                  { champ: "Montant HT total", detail: "Total des ventes B2C de la période" },
-                  { champ: "Montant de TVA collectée", detail: "Par taux applicable (0%, 5,5%, 10%, 20%)" },
-                  { champ: "Période de reporting", detail: "Mensuelle (si CA > seuil) ou trimestrielle" },
+                  { champ: "Date", detail: "Les opérations sont agrégées jour par jour" },
+                  { champ: "Montant HT total", detail: "Base HT des ventes B2C de la journée" },
+                  { champ: "Montant de TVA collectée", detail: "Par taux applicable (2,1 %, 5,5 %, 10 %, 20 %)" },
                   { champ: "Nature de l'opération", detail: "Vente de biens / prestation de services" },
-                  { champ: "Pays du client", detail: "France / UE / hors UE" },
+                  { champ: "Période de reporting", detail: "Décade, mois ou bimestre, selon votre régime de TVA" },
                 ].map(({ champ, detail }) => (
                   <div key={champ} className="flex justify-between gap-4 px-4 py-3 text-sm">
                     <span className="font-medium text-ink">{champ}</span>
@@ -139,29 +139,32 @@ export default function EReportingFreelancePage() {
               </div>
             </div>
             <p className="mt-4 text-sm">
-              <strong className="text-ink">Fréquence :</strong> mensuelle pour les assujettis avec un CA élevé ou un régime réel mensuel de TVA. Trimestrielle pour les autres. La périodicité suit celle de votre déclaration de TVA (CA3 mensuelle ou trimestrielle).
+              <strong className="text-ink">Fréquence :</strong> elle dépend de votre régime de TVA. Régime réel normal mensuel : par décade, trois transmissions par mois. Régime réel normal trimestriel et régime simplifié : mensuelle. Franchise en base : tous les deux mois (bimestre civil).
+            </p>
+            <p className="mt-3 text-sm">
+              <strong className="text-ink">Données de paiement :</strong> pour les prestations de services, la plateforme transmet aussi les encaissements (date et montant, par taux de TVA), sauf si vous avez opté pour le paiement de la TVA d&apos;après les débits.
             </p>
           </section>
 
           <section>
-            <h2 className="text-xl font-bold text-ink mb-4">Et si je suis en franchise de TVA ?</h2>
+            <h2 className="text-xl font-bold text-ink mb-4">Et si je suis en franchise de TVA ?</h2>
             <div className="bg-ds-surface border border-ds-border rounded-xl p-5">
               <p className="text-sm font-semibold text-ink mb-3">Franchise de TVA (article 293B CGI), statut des micro-entrepreneurs</p>
               <p className="text-sm mb-3">
                 La franchise de TVA vous <strong className="text-ink">exonère de la collecte et du versement de TVA</strong>. Elle ne supprime pas automatiquement l&apos;obligation d&apos;e-reporting, mais elle la simplifie considérablement.
               </p>
               <p className="text-sm mb-3">
-                Comme vous ne facturez pas de TVA, vos déclarations d&apos;e-reporting ne contiendront <strong className="text-ink">que des montants HT à 0% de TVA</strong>. En pratique, le reporting sera minimal : vous confirmez simplement vos ventes avec mention TVA non applicable.
+                Comme vous ne facturez pas de TVA, vos données d&apos;e-reporting ne portent <strong className="text-ink">aucun montant de TVA</strong> : elles indiquent vos ventes hors taxes, totalisées jour par jour.
               </p>
               <p className="text-sm text-amber-400">
-                La DGFiP n&apos;a pas encore publié les modalités exactes pour les franchisés TVA. Deviso mettra à jour ses outils dès que les décrets d&apos;application seront publiés.
+                Les modalités pour les franchisés sont publiées : transmission tous les deux mois (bimestre civil), au plus tard entre le 25 et le 30 du mois qui suit le bimestre.
               </p>
             </div>
           </section>
 
           <section>
             <h2 className="text-xl font-bold text-ink mb-4">Calendrier e-reporting</h2>
-            <p className="text-sm text-gray-500 mb-4">Mêmes échéances que l&apos;e-invoicing, par tranche d&apos;entreprise :</p>
+            <p className="text-sm text-gray-500 mb-4">Mêmes échéances que l&apos;e-invoicing, par tranche d&apos;entreprise :</p>
             <div className="space-y-3">
               {[
                 {
@@ -205,11 +208,11 @@ export default function EReportingFreelancePage() {
               <div className="bg-[#241717] border border-red-500/20 rounded-xl p-5">
                 <p className="text-sm font-bold text-red-400 mb-3">Amende e-reporting</p>
                 <p className="text-sm text-gray-300">
-                  <strong>500 € par transmission</strong> manquante ou insuffisante, plafonnée à{" "}
-                  <strong>15 000 € / an</strong>.
+                  <strong>500 € par transmission</strong> manquante ou insuffisante, plafonnée à{" "}
+                  <strong>15 000 € / an</strong>.
                 </p>
                 <p className="text-xs text-gray-500 mt-2">
-                  Montant doublé depuis le 1<sup>er</sup> septembre 2026 : il était de 250 €. Aucune
+                  Montant doublé depuis le 1<sup>er</sup> septembre 2026 : il était de 250 €. Aucune
                   sanction au premier manquement si vous régularisez spontanément, ou dans les 30 jours
                   suivant une demande de l&apos;administration.
                 </p>
@@ -217,10 +220,12 @@ export default function EReportingFreelancePage() {
               <div className="bg-[#241717] border border-red-500/20 rounded-xl p-5">
                 <p className="text-sm font-bold text-red-400 mb-3">Amende de réception</p>
                 <p className="text-sm text-gray-300">
-                  Celle-ci s&apos;applique <strong>déjà</strong>, à tout le monde : si vous n&apos;êtes
+                  Celle-ci s&apos;applique <strong>déjà</strong>, à tout le monde : si vous n&apos;êtes
                   pas en mesure de <strong>recevoir</strong> vos factures via une plateforme agréée,
-                  c&apos;est <strong>500 €</strong> après une mise en demeure de trois mois, puis{" "}
-                  <strong>1 000 € tous les trois mois</strong> tant que la situation persiste.
+                  c&apos;est <strong>500 €</strong> après une mise en demeure de trois mois, puis{" "}
+                  <strong>1 000 € tous les trois mois</strong> tant que la situation persiste.
+                  L&apos;administration a toutefois annoncé ne pas sanctionner en 2026 les entreprises
+                  engagées dans leur mise en conformité.
                 </p>
                 <p className="text-xs text-gray-500 mt-2">
                   Elle ne dépend ni de votre chiffre d&apos;affaires, ni de votre régime de TVA, ni du
@@ -230,7 +235,7 @@ export default function EReportingFreelancePage() {
               <div className="bg-[#241d11] border border-amber-500/20 rounded-xl p-5">
                 <p className="text-sm font-bold text-amber-400 mb-3">Contrôle fiscal facilité</p>
                 <p className="text-sm text-gray-300">
-                  La DGFiP aura accès en temps réel aux données de transactions. L&apos;incohérence entre l&apos;e-reporting et votre déclaration de TVA sera détectée automatiquement.
+                  La DGFiP reçoit les données de transactions à chaque période de transmission. L&apos;incohérence entre l&apos;e-reporting et votre déclaration de TVA sera détectée automatiquement.
                 </p>
               </div>
             </div>
@@ -239,14 +244,14 @@ export default function EReportingFreelancePage() {
           <section>
             <h2 className="text-xl font-bold text-ink mb-4">Ce que Deviso fait pour vous</h2>
             <p>
-              Deviso transmet vos factures à une Plateforme Agréée, qui réalise l&apos;e-reporting automatiquement. Concrètement :
+              Deviso transmet vos factures à une Plateforme Agréée, qui réalise l&apos;e-reporting automatiquement. Concrètement :
             </p>
             <ul className="mt-3 space-y-3">
               {[
                 "Chaque facture créée dans Deviso alimente automatiquement les données d'e-reporting (B2C ou B2B).",
                 "La classification B2C / B2B est déduite du type de client (particulier vs entreprise avec SIRET).",
                 "Le rapport de données est transmis à la DGFiP via PDP aux dates prévues, sans action de votre part.",
-                "Un tableau de bord e-reporting vous montrera l'état de vos déclarations en temps réel.",
+                "L'écran Déclarations vous montre ce qui a été transmis en votre nom, et ce que l'administration a accepté ou refusé.",
               ].map((item) => (
                 <li key={item} className="flex gap-3 text-sm">
                   <span className="text-indigo-400 shrink-0 mt-0.5">✓</span>
@@ -261,19 +266,19 @@ export default function EReportingFreelancePage() {
             <div className="space-y-5">
               {[
                 {
-                  q: "Je facture des entreprises ET des particuliers. Dois-je faire e-invoicing ET e-reporting ?",
+                  q: "Je facture des entreprises ET des particuliers. Dois-je faire e-invoicing ET e-reporting ?",
                   a: "Oui. Les factures B2B françaises passeront en e-invoicing (via PDP). Les ventes aux particuliers (B2C) seront couvertes par l'e-reporting. Si votre logiciel est connecté à une PDP, les deux obligations seront gérées automatiquement selon le type de client.",
                 },
                 {
-                  q: "J'ai un client association qui paye des prestations. C'est du B2B ou du B2C pour l'e-reporting ?",
-                  a: "Les associations n'étant généralement pas assujetties à la TVA, elles sont traitées comme des particuliers pour l'e-reporting : vos factures à des associations relèvent de l'e-reporting, pas de l'e-invoicing. Exception : certaines associations réalisant des activités économiques peuvent être assujetties. Vérifiez avec votre expert-comptable.",
+                  q: "J'ai un client association qui paye des prestations. C'est du B2B ou du B2C pour l'e-reporting ?",
+                  a: "Une association non assujettie à la TVA (non lucrative, gestion désintéressée, recettes lucratives sous le seuil annuel) est traitée comme un particulier : vos factures à cette association relèvent de l'e-reporting, pas de l'e-invoicing. Exception : une association assujettie à la TVA reçoit des factures électroniques, comme une entreprise. Vérifiez avec votre expert-comptable.",
                 },
                 {
-                  q: "Ai-je besoin d'un logiciel spécifique pour faire l'e-reporting ?",
+                  q: "Ai-je besoin d'un logiciel spécifique pour faire l'e-reporting ?",
                   a: "Non. Vous avez besoin d'un logiciel connecté à une PDP (ou qui est lui-même une PDP). La PDP gère la transmission. Si votre logiciel de facturation intègre une PDP, vous n'avez rien à faire de plus.",
                 },
                 {
-                  q: "L'e-reporting remplace-t-il ma déclaration de TVA (CA3) ?",
+                  q: "L'e-reporting remplace-t-il ma déclaration de TVA (CA3) ?",
                   a: "Non. L'e-reporting et la déclaration de TVA CA3 coexistent. L'e-reporting sert à la DGFiP à pré-remplir et contrôler votre CA3. À terme, la DGFiP espère pouvoir proposer des déclarations TVA pré-remplies, mais ce n'est pas l'objectif immédiat.",
                 },
               ].map(({ q, a }) => (
@@ -304,9 +309,9 @@ export default function EReportingFreelancePage() {
           <div className="space-y-3">
             {[
               { href: "/blog/facturation-electronique-2026", title: "Guide complet réforme facturation électronique 2026" },
-              { href: "/blog/reforme-facturation-micro-entrepreneur", title: "Micro-entrepreneur : ce que la réforme change pour vous" },
+              { href: "/blog/reforme-facturation-micro-entrepreneur", title: "Micro-entrepreneur : ce que la réforme change pour vous" },
               { href: "/blog/choisir-plateforme-agreee-freelance", title: "Comment choisir sa plateforme agréée (PDP)" },
-              { href: "/blog/checklist-reforme-facturation-2026", title: "Checklist réforme 2026 : êtes-vous prêt ?" },
+              { href: "/blog/checklist-reforme-facturation-2026", title: "Checklist réforme 2026 : êtes-vous prêt ?" },
             ].map(({ href, title }) => (
               <Link key={href} href={href} className="flex items-center gap-3 text-sm text-gray-400 hover:text-indigo-300 transition-colors group">
                 <span className="text-indigo-500 group-hover:text-indigo-300 shrink-0">→</span>
@@ -319,7 +324,7 @@ export default function EReportingFreelancePage() {
         <div className="rounded-2xl bg-[#191830] border border-indigo-500/20 p-8 text-center mb-14">
           <h2 className="text-xl font-bold text-ink mb-3">E-reporting intégré, rien à faire</h2>
           <p className="text-sm text-gray-400 mb-6 max-w-lg mx-auto">
-            Deviso gérera automatiquement l&apos;e-reporting B2C et l&apos;e-invoicing B2B. Vous créez vos factures comme aujourd&apos;hui, la conformité 2026-2027 est prise en charge.
+            Deviso gère automatiquement l&apos;e-reporting B2C et l&apos;e-invoicing B2B, par sa plateforme agréée. Vous créez vos factures comme aujourd&apos;hui, la conformité 2026-2027 est prise en charge.
           </p>
           <WaitlistButton plan="free" label="Essayer Deviso 14 jours →" className="inline-flex items-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-ink font-semibold px-6 py-3 rounded-xl transition-colors text-sm" />
           <Signature />

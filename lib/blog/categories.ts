@@ -76,7 +76,7 @@ type FormeCategorie = {
 export const CATEGORIES = [
   {
     id: "reforme",
-    titre: "Facturation électronique : la réforme, concrètement",
+    titre: "Facturation électronique : la réforme, concrètement",
     badge: "Réforme 2026",
     resume:
       "La réforme est entrée en application le 1er septembre 2026. Ce qui s'applique déjà, ce qui arrive en 2027, les plateformes agréées, l'e-reporting, les amendes réelles.",
@@ -85,10 +85,10 @@ export const CATEGORIES = [
   },
   {
     id: "factures",
-    titre: "Devis et factures : les règles du jeu",
+    titre: "Devis et factures : les règles du jeu",
     badge: "Devis et factures",
     resume:
-      "Quel document émettre et ce qu'il doit contenir : devis, acompte, avoir, note d'honoraires, numérotation, frais refacturés, clients à l'étranger.",
+      "Quel document émettre et ce qu'il doit contenir : devis, acompte, avoir, note d'honoraires, numérotation, frais refacturés, clients à l'étranger.",
     accent: "indigo",
   },
   {
@@ -96,15 +96,15 @@ export const CATEGORIES = [
     titre: "Se faire payer et se protéger",
     badge: "Paiement",
     resume:
-      "Délais légaux, pénalités de retard, relances, impayés, fraude au faux RIB : sécuriser l'argent que vos clients vous doivent.",
+      "Délais légaux, pénalités de retard, relances, impayés, fraude au faux RIB : sécuriser l'argent que vos clients vous doivent.",
     accent: "rose",
   },
   {
     id: "micro",
-    titre: "Micro-entreprise : cotisations, TVA et plafonds",
+    titre: "Micro-entreprise : cotisations, TVA et plafonds",
     badge: "Micro-entreprise",
     resume:
-      "Déclarations URSSAF, versement libératoire, passage à la TVA, livre des recettes, plafonds, calendrier : tenir sa micro-entreprise sans s'y perdre.",
+      "Déclarations URSSAF, versement libératoire, passage à la TVA, livre des recettes, plafonds, calendrier : tenir sa micro-entreprise sans s'y perdre.",
     accent: "sky",
   },
   {
@@ -112,7 +112,7 @@ export const CATEGORIES = [
     titre: "Gérer et développer son entreprise",
     badge: "Gestion",
     resume:
-      "Choisir son statut, fixer ses prix, passer au régime réel, s'entourer d'un expert-comptable, choisir ses outils : les décisions qui font grandir une entreprise.",
+      "Choisir son statut, fixer ses prix, passer au régime réel, s'entourer d'un expert-comptable, choisir ses outils : les décisions qui font grandir une entreprise.",
     accent: "emerald",
   },
   {
@@ -157,7 +157,7 @@ export function categorie(id: string): Categorie_ {
   const c = PAR_ID.get(id);
   if (!c) {
     throw new Error(
-      `[blog] catégorie inconnue : « ${id} ». Catégories déclarées : ${CATEGORIES.map((x) => x.id).join(", ")}`
+      `[blog] catégorie inconnue : « ${id} ». Catégories déclarées : ${CATEGORIES.map((x) => x.id).join(", ")}`
     );
   }
   return c;

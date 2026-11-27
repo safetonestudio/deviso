@@ -24,36 +24,36 @@ const CHECKLIST: ChecklistItem[] = [
   {
     num: "01",
     title: "Identifier si vous êtes une grande entreprise, ETI ou PME/TPE",
-    description: "Votre date d'obligation d'émettre dépend de votre taille : pour une PME, une TPE, un indépendant ou un micro-entrepreneur, c'est le 1er septembre 2027. Mais l'obligation de pouvoir RECEVOIR une facture électronique via une plateforme agréée s'applique déjà, depuis le 1er septembre 2026, quelle que soit votre taille.",
+    description: "Votre date d'obligation d'émettre dépend de votre taille : pour une PME, une TPE, un indépendant ou un micro-entrepreneur, c'est le 1er septembre 2027. Mais l'obligation de pouvoir RECEVOIR une facture électronique via une plateforme agréée s'applique déjà, depuis le 1er septembre 2026, quelle que soit votre taille.",
     urgency: "high",
     action: "Vérifier votre catégorie dans le portail impots.gouv.fr ou avec votre expert-comptable.",
     details: [
-      "Grande entreprise (CA > 250M€) → obligation émission : sept. 2026",
-      "ETI (50M–250M€ CA) → obligation émission : déc. 2026",
-      "PME, TPE, micro-entrepreneur → obligation émission : sept. 2027",
-      "Tous → obligation réception : sept. 2026",
+      "Grande entreprise (5 000 salariés ou plus, ou CA > 1,5 Md€ et bilan > 2 Md€) → obligation émission : sept. 2026",
+      "ETI (250 à 4 999 salariés, ou moins de 250 salariés avec CA > 50 M€ et bilan > 43 M€) → obligation émission : sept. 2026",
+      "PME, TPE, micro-entrepreneur → obligation émission : sept. 2027",
+      "Tous → obligation réception : sept. 2026",
     ],
   },
   {
     num: "02",
     title: "Vérifier que votre logiciel de facturation supporte le Factur-X",
-    description: "Le format Factur-X (PDF/A-3 + XML EN 16931) est le format pivot de la réforme pour les PME, les TPE et les indépendants. Si votre logiciel génère des PDF classiques ou des factures Word, il n'est pas conforme.",
+    description: "Le format Factur-X (PDF/A-3 + XML EN 16931) est l'un des trois formats acceptés par la réforme, avec UBL et CII, et le plus simple pour les PME, les TPE et les indépendants, car il reste lisible comme un PDF. Si votre logiciel génère des PDF classiques ou des factures Word, il n'est pas conforme.",
     urgency: "high",
-    action: "Contacter l'éditeur de votre logiciel et demander : « Générez-vous des factures Factur-X au profil EN 16931 ? »",
+    action: "Contacter l'éditeur de votre logiciel et demander : « Générez-vous des factures Factur-X au profil EN 16931 ? »",
     details: [
       "Factur-X EN 16931 = le profil recommandé pour les PME, les TPE et les indépendants",
       "Factur-X MINIMUM = très simplifié, limité à certains cas",
-      "XRechnung, UBL = autres formats admis mais moins courants en France",
+      "UBL et CII = les deux autres formats acceptés, en XML seul, sans PDF lisible",
     ],
   },
   {
     num: "03",
     title: "Confirmer que votre logiciel sera connecté à une PDP avant votre date d'obligation",
-    description: "Le Portail Public de Facturation (PPF) est abandonné. Seules les PDP (plateformes privées certifiées) peuvent transmettre les e-factures à la DGFiP. Votre logiciel doit être connecté à une PDP.",
+    description: "Le Portail Public de Facturation (PPF) ne fait plus transiter les factures : il est recentré sur l'annuaire et la collecte des données. Seules les plateformes agréées (anciennement appelées PDP), immatriculées par l'administration fiscale, peuvent transmettre vos e-factures à vos clients et les données à la DGFiP. Votre logiciel doit être une plateforme agréée ou connecté à l'une d'elles.",
     urgency: "high",
-    action: "Demander à votre éditeur logiciel : « Avez-vous un partenariat PDP ? Quelle PDP ? Pour quand ? »",
+    action: "Demander à votre éditeur logiciel : « Avez-vous un partenariat PDP ? Quelle PDP ? Pour quand ? »",
     details: [
-      "Si votre éditeur dit « on passera par le PPF » → c'est faux, le PPF est abandonné depuis oct. 2024",
+      "Si votre éditeur dit « on passera par le PPF » → c'est faux, le PPF n'assure plus l'échange des factures depuis le recentrage annoncé en octobre 2024",
       "Vérifier que la PDP partenaire est bien immatriculée sur la liste DGFiP",
       "Deviso est déjà raccordé à une Plateforme Agréée (Super PDP) et émet et reçoit déjà vos factures électroniques.",
     ],
@@ -61,22 +61,23 @@ const CHECKLIST: ChecklistItem[] = [
   {
     num: "04",
     title: "Vérifier les mentions légales obligatoires sur vos factures",
-    description: "La réforme impose des données structurées dans le XML Factur-X. Certains champs sont désormais obligatoires dans la partie visible (PDF) ET dans les données XML : SIRET, N° de TVA, adresse complète, numéro de commande si applicable.",
+    description: "La réforme impose des données structurées dans le XML Factur-X, et ajoute quatre mentions obligatoires, à porter dans la partie visible (PDF) ET dans les données XML : numéro SIREN du client, adresse de livraison si elle diffère, nature des opérations (biens, services ou les deux), option pour la TVA sur les débits le cas échéant.",
     urgency: "medium",
     action: "Passer en revue vos modèles de facture et vous assurer que tous les champs requis par l'article 242 nonies A du CGI sont présents.",
     details: [
-      "SIRET (pas seulement SIREN)",
-      "Numéro de TVA intracommunautaire (si applicable)",
-      "Adresse de livraison si différente de l'adresse de facturation",
-      "Numéro de bon de commande du client (souvent exigé en B2B)",
+      "Numéro SIREN du client, s'il s'agit d'une entreprise",
+      "Adresse de livraison des biens si elle est différente de l'adresse du client",
+      "Nature des opérations : livraisons de biens, prestations de services, ou les deux",
+      "Option pour le paiement de la TVA d'après les débits, si vous l'avez choisie",
+      "Numéro de bon de commande, lorsque l'acheteur l'a établi au préalable",
     ],
   },
   {
     num: "05",
     title: "Déterminer si vous avez une obligation d'e-reporting (B2C ou international)",
-    description: "Si vous avez des clients particuliers OU des clients à l'étranger, vous avez une obligation d'e-reporting TVA en plus de l'e-invoicing B2B. L'e-reporting est souvent oublié dans les guides, mais l'amende est significative : 500 € par transmission manquante depuis le 1er septembre 2026, plafonnée à 15 000 € par an.",
+    description: "Si vous avez des clients particuliers OU des clients à l'étranger, vous avez une obligation d'e-reporting TVA en plus de l'e-invoicing B2B. L'e-reporting est souvent oublié dans les guides, mais l'amende est significative : 500 € par transmission manquante depuis le 1er septembre 2026, plafonnée à 15 000 € par an.",
     urgency: "medium",
-    action: "Lister vos types de clients : B2B France, B2B étranger, B2C (particuliers), associations. Chaque catégorie a un traitement différent.",
+    action: "Lister vos types de clients : B2B France, B2B étranger, B2C (particuliers), associations. Chaque catégorie a un traitement différent.",
     details: [
       "B2B France → e-invoicing via PDP",
       "B2C (particuliers) → e-reporting à la DGFiP",
@@ -87,19 +88,19 @@ const CHECKLIST: ChecklistItem[] = [
   {
     num: "06",
     title: "Vérifier la gestion de la TVA et votre statut franchise",
-    description: "Si vous êtes en franchise de TVA (micro-entrepreneur ou petite entreprise sous les seuils), vous devrez probablement faire de l'e-reporting simplifié. Si vous avez dépassé les seuils et êtes passé au régime réel, vous êtes pleinement concerné par l'e-invoicing.",
+    description: "Même en franchise de TVA (micro-entrepreneur ou petite entreprise sous les seuils), vous êtes concerné : la réforme vise aussi les entreprises en franchise en base. Vous devez recevoir vos factures électroniques depuis le 1er septembre 2026, et émettre au format électronique celles destinées à des entreprises à partir du 1er septembre 2027.",
     urgency: "medium",
     action: "Vérifier votre statut TVA actuel (franchise 293B CGI vs assujetti) et les seuils applicables à votre activité pour 2026-2027.",
     details: [
-      "Seuil de franchise TVA en services (BIC et BNC) : 37 500 € de base, 41 250 € en seuil majoré",
-      "Si CA > seuil franchise → vous devenez assujetti TVA → e-invoicing plein",
+      "Seuil de franchise TVA en services (BIC et BNC) : 37 500 € de base, 41 250 € en seuil majoré",
+      "Si CA > seuil franchise → vous facturez la TVA ; l'obligation de facturation électronique, elle, reste la même",
       "Si franchise → e-reporting simplifié (modalités à préciser par décret)",
     ],
   },
   {
     num: "07",
     title: "Planifier la formation et le test avant votre date d'obligation",
-    description: "La réforme introduit de nouveaux workflows : envoi via PDP, suivi des statuts (DEPOSEE, VALIDEE, REJETEE), gestion des rejets. Tester avant le go-live est indispensable pour éviter les incidents en production.",
+    description: "La réforme introduit de nouveaux workflows : envoi via PDP, suivi des statuts (DEPOSEE, VALIDEE, REJETEE), gestion des rejets. Tester avant le go-live est indispensable pour éviter les incidents en production.",
     urgency: "low",
     action: "Demander à votre éditeur logiciel l'accès à un environnement de test (sandbox) et réaliser au moins 5 factures de test avec votre PDP avant septembre.",
     details: [
@@ -119,7 +120,7 @@ export default function ChecklistReforme2026Page() {
 
       <div className="bg-indigo-950/95 backdrop-blur-xs border-b border-indigo-500/20 py-2 px-4 text-center text-sm">
         <span className="text-ink font-semibold">1er septembre 2026&nbsp;:</span>
-        <span className="text-gray-300 ml-1.5">Grandes entreprises → e-facturation obligatoire. Toutes → obligation de réception.</span>
+        <span className="text-gray-300 ml-1.5">Grandes entreprises et ETI → e-facturation obligatoire. Toutes → obligation de réception.</span>
       </div>
 
 
@@ -137,10 +138,10 @@ export default function ChecklistReforme2026Page() {
         <div className="mb-10">
           <div className="flex items-center gap-3 mb-4">
             <span className="text-xs font-semibold text-indigo-400 bg-indigo-500/10 border border-indigo-500/20 rounded-full px-3 py-1">Réforme 2026 · Checklist</span>
-            <span className="text-xs text-gray-400">10 min · Mis à jour juillet 2026</span>
+            <span className="text-xs text-gray-400">10 min · Mis à jour novembre 2026</span>
           </div>
           <h1 className="text-3xl sm:text-4xl font-bold text-ink leading-tight mb-4">
-            Checklist réforme facturation 2026 : 7 points à vérifier pour être prêt
+            Checklist réforme facturation 2026 : 7 points à vérifier pour être prêt
           </h1>
           <p className="text-lg text-gray-400 leading-relaxed">
             La réforme de la facturation électronique est complexe. Pour éviter de passer à côté d&apos;un point critique, nous avons condensé les actions essentielles en une checklist actionnable, à partager avec votre comptable.
@@ -161,7 +162,7 @@ export default function ChecklistReforme2026Page() {
 
         {/* Légende urgence */}
         <div className="flex items-center gap-4 text-xs mb-8 text-gray-500">
-          <span>Priorité :</span>
+          <span>Priorité :</span>
           <div className="flex items-center gap-1.5"><span className="w-2 h-2 rounded-full bg-red-500/60 shrink-0" /> Haute</div>
           <div className="flex items-center gap-1.5"><span className="w-2 h-2 rounded-full bg-amber-500/60 shrink-0" /> Moyenne</div>
           <div className="flex items-center gap-1.5"><span className="w-2 h-2 rounded-full bg-indigo-500/40 shrink-0" /> Planification</div>
@@ -228,9 +229,8 @@ export default function ChecklistReforme2026Page() {
           <div className="bg-ds-surface border border-ds-border rounded-2xl overflow-hidden">
             <div className="divide-y divide-ds-border text-sm">
               {[
-                { date: "1er sept. 2026", action: "Grandes entreprises : émission e-factures obligatoire", extra: "Toutes entreprises : réception obligatoire" },
-                { date: "1er déc. 2026", action: "ETI : émission e-factures obligatoire", extra: "" },
-                { date: "1er sept. 2027", action: "PME, TPE, micro-entrepreneurs : émission obligatoire", extra: "E-reporting B2C/international obligatoire pour tous" },
+                { date: "1er sept. 2026", action: "Grandes entreprises et ETI : émission e-factures et e-reporting obligatoires", extra: "Toutes entreprises : réception obligatoire" },
+                { date: "1er sept. 2027", action: "PME, TPE, micro-entrepreneurs : émission e-factures et e-reporting obligatoires", extra: "" },
               ].map(({ date, action, extra }) => (
                 <div key={date} className="flex gap-4 px-5 py-4">
                   <span className="font-semibold text-indigo-300 shrink-0 min-w-[120px]">{date}</span>
@@ -250,9 +250,9 @@ export default function ChecklistReforme2026Page() {
           <div className="space-y-3">
             {[
               { href: "/blog/facturation-electronique-2026", title: "Guide complet réforme facturation électronique 2026" },
-              { href: "/blog/reforme-facturation-micro-entrepreneur", title: "Micro-entrepreneur : tout ce que la réforme change" },
-              { href: "/blog/choisir-plateforme-agreee-freelance", title: "Choisir sa PDP (plateforme agréée) : guide comparatif" },
-              { href: "/blog/e-reporting-freelance-2026", title: "E-reporting B2C : l'obligation oubliée de la réforme" },
+              { href: "/blog/reforme-facturation-micro-entrepreneur", title: "Micro-entrepreneur : tout ce que la réforme change" },
+              { href: "/blog/choisir-plateforme-agreee-freelance", title: "Choisir sa PDP (plateforme agréée) : guide comparatif" },
+              { href: "/blog/e-reporting-freelance-2026", title: "E-reporting B2C : l'obligation oubliée de la réforme" },
             ].map(({ href, title }) => (
               <Link key={href} href={href} className="flex items-center gap-3 text-sm text-gray-400 hover:text-indigo-300 transition-colors group">
                 <span className="text-indigo-500 group-hover:text-indigo-300 shrink-0">→</span>

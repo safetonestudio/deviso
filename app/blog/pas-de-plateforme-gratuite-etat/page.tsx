@@ -17,23 +17,23 @@ export const metadata = metadonneesArticle(SLUG);
  */
 const FAQ = [
   {
-    q: "L'État ne fournit donc aucune plateforme gratuite ?",
-    a: "Non, plus aujourd'hui. Un portail public gratuit était prévu pour émettre et recevoir vos factures : sa fonction d'échange a été abandonnée en 2024 et son développement arrêté ensuite. Pour émettre et recevoir, vous passez désormais par un opérateur privé immatriculé, appelé plateforme agréée.",
+    q: "L'État ne fournit donc aucune plateforme gratuite ?",
+    a: "Non, plus aujourd'hui. Un portail public gratuit était prévu pour émettre et recevoir vos factures : sa fonction d'échange a été abandonnée en 2024 et son développement arrêté ensuite. Pour émettre et recevoir, vous passez désormais par un opérateur privé immatriculé, appelé plateforme agréée.",
   },
   {
-    q: "Le portail public a-t-il complètement disparu ?",
-    a: "Non. Le PPF subsiste, mais dans un autre rôle : celui d'annuaire central des destinataires et de concentrateur des données transmises à l'administration. Ce n'est plus un canal par lequel vous faites transiter vos factures, c'est une pièce d'infrastructure côté État.",
+    q: "Le portail public a-t-il complètement disparu ?",
+    a: "Non. Le PPF subsiste, mais dans un autre rôle : celui d'annuaire central des destinataires et de concentrateur des données transmises à l'administration. Ce n'est plus un canal par lequel vous faites transiter vos factures, c'est une pièce d'infrastructure côté État.",
   },
   {
-    q: "Puis-je au moins recevoir mes factures gratuitement ?",
+    q: "Puis-je au moins recevoir mes factures gratuitement ?",
     a: "Souvent oui. La réception coûte peu à opérer, et beaucoup d'éditeurs la proposent sans frais. C'est déjà ce qui est obligatoire pour tout le monde depuis le 1er septembre 2026, avant même l'obligation d'émettre.",
   },
   {
-    q: "Existe-t-il une offre d'émission gratuite ?",
-    a: "Chez certains éditeurs privés, oui, généralement plafonnée en nombre de factures ou limitée en fonctionnalités. Pour une très petite activité, cela peut suffire. Ce qui n'existe pas, c'est une plateforme publique, illimitée et gratuite : la gratuité vient d'acteurs privés, avec leurs conditions. Vérifiez toujours que l'offre est agréée ou adossée à une plateforme agréée.",
+    q: "Existe-t-il une offre d'émission gratuite ?",
+    a: "Chez certains éditeurs privés, oui, généralement plafonnée en nombre de factures ou limitée en fonctionnalités. Pour une très petite activité, cela peut suffire. Ce qui n'existe pas, c'est une plateforme publique, illimitée et gratuite : la gratuité vient d'acteurs privés, avec leurs conditions. Vérifiez toujours que l'offre est agréée ou adossée à une plateforme agréée.",
   },
   {
-    q: "Pourquoi l'État a-t-il renoncé au portail gratuit ?",
+    q: "Pourquoi l'État a-t-il renoncé au portail gratuit ?",
     a: "Faire tourner une plateforme d'échange à l'échelle du pays est complexe et coûteux, alors qu'un écosystème d'opérateurs privés pouvait assurer ce rôle. L'État a préféré se recentrer sur l'annuaire et la collecte des données, et laisser l'émission et la réception aux plateformes agréées.",
   },
 ];
@@ -72,7 +72,7 @@ export default function Page() {
             <h1 className="text-3xl sm:text-4xl font-semibold text-ink leading-tight mb-4">{a.h1}</h1>
             <p className="text-lg text-gray-400 leading-relaxed">
               Vous cherchez la plateforme gratuite que l&apos;État devait fournir pour vos factures. C&apos;est
-              une recherche légitime : cette plateforme a existé, sur le papier. Elle n&apos;existe plus. Voici
+              une recherche légitime : cette plateforme a existé, sur le papier. Elle n&apos;existe plus. Voici
               son histoire, ce qu&apos;il en reste, et comment vous mettre en règle sans payer trop cher.
             </p>
           </div>
@@ -102,7 +102,7 @@ export default function Page() {
                 <li className="flex gap-2">
                   <span className="text-indigo-400 shrink-0">→</span>
                   <span>
-                    Résultat : tout le monde passe par un <strong className="text-ink">opérateur privé
+                    Résultat : tout le monde passe par un <strong className="text-ink">opérateur privé
                     agréé</strong>. Il n&apos;y a pas d&apos;option publique gratuite, mais il y a des options
                     peu coûteuses, et la réception est souvent gratuite.
                   </span>
@@ -117,15 +117,15 @@ export default function Page() {
               </h2>
               <p className="mb-4">
                 Au cœur du projet initial de la réforme, il y avait le <strong className="text-ink">Portail
-                Public de Facturation</strong>, le PPF. L&apos;idée était simple et généreuse : une plateforme
+                Public de Facturation</strong>, le PPF. L&apos;idée était simple et généreuse : une plateforme
                 gérée par l&apos;État, gratuite, par laquelle chaque entreprise aurait pu émettre et recevoir ses
                 factures électroniques sans passer par un prestataire. Une sorte de service public de la facture,
                 accessible à tous, du grand groupe au micro-entrepreneur.
               </p>
               <p>
                 C&apos;est cette promesse que beaucoup ont retenue, et c&apos;est elle qui fait qu&apos;on cherche
-                encore aujourd&apos;hui « la plateforme gratuite de l&apos;État ». La recherche n&apos;est pas
-                absurde : elle porte sur quelque chose qui a réellement été annoncé.
+                encore aujourd&apos;hui « la plateforme gratuite de l&apos;État ». La recherche n&apos;est pas
+                absurde : elle porte sur quelque chose qui a réellement été annoncé.
               </p>
             </section>
 
@@ -136,12 +136,12 @@ export default function Page() {
               </h2>
               <p className="mb-4">
                 En <strong className="text-ink">octobre 2024</strong>, l&apos;administration annonce un
-                changement de cap : le PPF n&apos;assurera plus les fonctions d&apos;émission et de réception des
+                changement de cap : le PPF n&apos;assurera plus les fonctions d&apos;émission et de réception des
                 factures. L&apos;État se retire du rôle d&apos;opérateur d&apos;échange. Le développement de cette
                 partie du portail est arrêté par la suite.
               </p>
               <p className="mb-4">
-                Le PPF ne disparaît pas pour autant. Il subsiste, mais dans un rôle différent :
+                Le PPF ne disparaît pas pour autant. Il subsiste, mais dans un rôle différent :
                 <strong className="text-ink"> annuaire central</strong> des destinataires, celui qui permet de
                 savoir vers quelle plateforme envoyer une facture, et
                 <strong className="text-ink"> concentrateur des données</strong> transmises à
@@ -149,7 +149,7 @@ export default function Page() {
                 mais il n&apos;est plus le tuyau par lequel vos factures circulent.
               </p>
               <p>
-                La raison tient en une phrase : faire tourner une plateforme d&apos;échange à l&apos;échelle du
+                La raison tient en une phrase : faire tourner une plateforme d&apos;échange à l&apos;échelle du
                 pays est lourd et coûteux, alors qu&apos;un écosystème d&apos;opérateurs privés pouvait déjà le
                 faire. L&apos;État a choisi de se concentrer sur l&apos;annuaire et la collecte, et de laisser
                 l&apos;émission et la réception aux plateformes agréées.
@@ -170,9 +170,9 @@ export default function Page() {
               <div className="flex gap-3 bg-ds-surface border border-ds-border rounded-xl p-5">
                 <CircleCheck size={18} className="shrink-0 mt-0.5 text-emerald-400" />
                 <p className="text-gray-300">
-                  La bonne nouvelle : « passer par un opérateur privé » ne veut pas dire « payer cher ». La
+                  La bonne nouvelle : « passer par un opérateur privé » ne veut pas dire « payer cher ». La
                   réception est très souvent gratuite, et pour une petite activité, l&apos;émission peut
-                  l&apos;être aussi. Le mot « obligatoire » a été beaucoup utilisé pour vendre de la peur ; la
+                  l&apos;être aussi. Le mot « obligatoire » a été beaucoup utilisé pour vendre de la peur ; la
                   réalité des coûts est plus douce.
                 </p>
               </div>
@@ -184,8 +184,8 @@ export default function Page() {
                 Ce qui existe gratuitement, malgré tout
               </h2>
               <p className="mb-4">
-                La gratuité n&apos;a pas disparu, elle a simplement changé de main : elle vient désormais
-                d&apos;éditeurs privés, pas de l&apos;État. Concrètement :
+                La gratuité n&apos;a pas disparu, elle a simplement changé de main : elle vient désormais
+                d&apos;éditeurs privés, pas de l&apos;État. Concrètement :
               </p>
               <ul className="space-y-3">
                 <li className="flex gap-2">
@@ -224,7 +224,7 @@ export default function Page() {
                 {[
                   {
                     t: "Séparez la réception de l'émission",
-                    d: "Vous pouvez très bien recevoir gratuitement chez un éditeur et n'ajouter l'émission que le jour où elle devient obligatoire pour vous, en 2027.",
+                    d: "Vous pouvez très bien recevoir gratuitement chez un éditeur et n'ajouter l'émission que le jour où elle devient obligatoire pour vous : le 1er septembre 2027 si vous êtes une PME, une TPE ou une micro-entreprise.",
                   },
                   {
                     t: "Comparez sur votre volume réel",
@@ -232,7 +232,7 @@ export default function Page() {
                   },
                   {
                     t: "Vérifiez l'agrément avant le prix",
-                    d: "Une offre gratuite qui ne serait ni agréée ni adossée à une plateforme agréée ne vaut rien : elle ne pourra pas transmettre vos factures. Le contrôle est public et prend deux minutes.",
+                    d: "Une offre gratuite qui ne serait ni agréée ni adossée à une plateforme agréée ne vaut rien : elle ne pourra pas transmettre vos factures. Le contrôle est public et prend deux minutes.",
                   },
                 ].map((item, i) => (
                   <li key={item.t} className="flex gap-4">
@@ -251,7 +251,7 @@ export default function Page() {
                 mérite deux minutes de lecture, parce que c&apos;est elle qui décide de ce qu&apos;un outil a le
                 droit de faire.{" "}
                 <Link href="/blog/plateforme-agreee-ou-solution-compatible" className="text-indigo-400 hover:text-indigo-300 transition-colors">
-                  Plateforme agréée ou solution compatible : la différence
+                  Plateforme agréée ou solution compatible : la différence
                 </Link>
                 .
               </p>
@@ -266,7 +266,7 @@ export default function Page() {
                     Méfiez-vous des pages qui vendent la peur
                   </p>
                   <p className="text-gray-400">
-                    Une partie du web qui traite ce sujet est financée par l&apos;affiliation : ces pages ont
+                    Une partie du web qui traite ce sujet est financée par l&apos;affiliation : ces pages ont
                     intérêt à vous faire croire que la seule issue est un abonnement payant. La réforme est une
                     obligation réelle, mais elle n&apos;impose ni un tarif, ni un éditeur en particulier. Comparez
                     calmement, et allez vérifier l&apos;agrément à la source.

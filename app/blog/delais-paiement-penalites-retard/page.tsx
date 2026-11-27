@@ -17,7 +17,7 @@ const SECTIONS: Section[] = [
   },
   {
     type: "tableau",
-    titre: "Les délais en un coup d&rsquo;oeil",
+    titre: "Les délais en un coup d&rsquo;œil",
     colonnes: ["Situation", "Délai maximal"],
     lignes: [
       ["Aucun délai prévu", "30 jours après la livraison ou la prestation"],
@@ -32,7 +32,7 @@ const SECTIONS: Section[] = [
     titre: "Les pénalités de retard sont dues automatiquement",
     paragraphes: [
       "Dès le lendemain de l&rsquo;échéance, des <strong>pénalités de retard</strong> courent de plein droit, sans que vous ayez à envoyer de relance ni de mise en demeure. Leur taux est celui que vous fixez dans vos conditions, sans pouvoir être inférieur à trois fois le taux d&rsquo;intérêt légal. À défaut de taux écrit, c&rsquo;est le taux de la Banque centrale européenne majoré de 10 points qui s&rsquo;applique.",
-      "S&rsquo;y ajoute une <strong>indemnité forfaitaire de 40 € pour frais de recouvrement</strong>, due pour chaque facture payée en retard, et non par jour de retard. Si vos frais réels de recouvrement sont plus élevés, vous pouvez demander une indemnisation complémentaire en les justifiant.",
+      "S&rsquo;y ajoute une <strong>indemnité forfaitaire de 40 € pour frais de recouvrement</strong>, due pour chaque facture payée en retard, et non par jour de retard. Si vos frais réels de recouvrement sont plus élevés, vous pouvez demander une indemnisation complémentaire en les justifiant.",
     ],
   },
   {
@@ -40,13 +40,13 @@ const SECTIONS: Section[] = [
     ton: "alerte",
     titre: "Trois mentions à faire figurer sur chaque facture",
     texte:
-      "La <strong>date d&rsquo;échéance</strong>, le <strong>taux des pénalités de retard</strong> et la mention de l&rsquo;<strong>indemnité forfaitaire de 40 €</strong>. Leur absence vous expose à une amende, et vous prive d&rsquo;un argument précieux le jour où il faut relancer.",
+      "La <strong>date d&rsquo;échéance</strong>, le <strong>taux des pénalités de retard</strong> et la mention de l&rsquo;<strong>indemnité forfaitaire de 40 €</strong>. Leur absence vous expose à une amende, et vous prive d&rsquo;un argument précieux le jour où il faut relancer.",
   },
   {
     type: "texte",
     titre: "Ce que risque un client qui paie en retard",
     paragraphes: [
-      "Le respect des délais de paiement est contrôlé par l&rsquo;administration (DGCCRF). Une entreprise qui paie systématiquement en retard s&rsquo;expose à une <strong>amende administrative pouvant atteindre 2 millions d&rsquo;euros</strong> pour une société, et 75 000 € pour une personne physique. Le plafond est doublé en cas de récidive dans les deux ans.",
+      "Le respect des délais de paiement est contrôlé par l&rsquo;administration (DGCCRF). Une entreprise qui paie systématiquement en retard s&rsquo;expose à une <strong>amende administrative pouvant atteindre 2 millions d&rsquo;euros</strong> pour une société, et 75 000 € pour une personne physique. Le plafond est doublé en cas de récidive dans les deux ans.",
       "Dans la pratique, ces sanctions visent surtout les mauvais payeurs récurrents, souvent de grands donneurs d&rsquo;ordre. Elles ne règlent pas votre facture, mais elles rappellent que vous êtes dans votre droit en réclamant votre dû.",
     ],
   },
@@ -62,7 +62,7 @@ const SECTIONS: Section[] = [
       {
         titre: "Envoyer une mise en demeure",
         texte:
-          "Par lettre recommandée, en rappelant le montant dû, les pénalités et l&rsquo;indemnité de 40 €, avec un dernier délai. C&rsquo;est la pièce que vous demandera toute procédure ensuite.",
+          "Par lettre recommandée, en rappelant le montant dû, les pénalités et l&rsquo;indemnité de 40 €, avec un dernier délai. C&rsquo;est la pièce que vous demandera toute procédure ensuite.",
       },
       {
         titre: "Saisir le Médiateur des entreprises",
@@ -72,7 +72,7 @@ const SECTIONS: Section[] = [
       {
         titre: "Passer par la justice",
         texte:
-          "Pour une petite somme (5 000 € au plus), la procédure simplifiée de recouvrement passe par un commissaire de justice. Au-delà, ou en cas de refus, l&rsquo;injonction de payer devant le tribunal de commerce reste rapide et peu coûteuse.",
+          "Pour une petite somme (5 000 € au plus), la procédure simplifiée de recouvrement passe par un commissaire de justice. Au-delà, ou en cas de refus, l&rsquo;injonction de payer, devant le tribunal de commerce pour une créance commerciale ou le tribunal judiciaire sinon, reste rapide et peu coûteuse.",
       },
     ],
   },
@@ -81,29 +81,29 @@ const SECTIONS: Section[] = [
     ton: "info",
     titre: "La facture électronique ne change pas les délais",
     texte:
-      "Depuis septembre 2026, les factures entre entreprises passent progressivement par des plateformes agréées. Le cadre juridique des délais et des pénalités reste le même, mais le suivi devient plus simple&nbsp;: la date de réception de la facture et son statut sont tracés, ce qui limite les « je ne l&rsquo;ai jamais reçue ».",
+      "Depuis septembre 2026, les factures entre entreprises passent progressivement par des plateformes agréées. Le cadre juridique des délais et des pénalités reste le même, mais le suivi devient plus simple&nbsp;: la date de réception de la facture et son statut sont tracés, ce qui limite les « je ne l&rsquo;ai jamais reçue ».",
   },
 ];
 
 const FAQ = [
   {
-    q: "Quel est le délai de paiement maximal entre entreprises ?",
+    q: "Quel est le délai de paiement maximal entre entreprises ?",
     a: "60 jours à compter de la date de la facture, ou 45 jours fin de mois si le contrat le prévoit. Sans clause particulière, le délai est de 30 jours après la livraison ou la prestation.",
   },
   {
-    q: "Les pénalités de retard sont-elles dues sans relance ?",
+    q: "Les pénalités de retard sont-elles dues sans relance ?",
     a: "Oui. Entre professionnels, elles courent de plein droit dès le lendemain de l'échéance, sans mise en demeure préalable.",
   },
   {
-    q: "L'indemnité de 40 € s'applique-t-elle par facture ?",
+    q: "L'indemnité de 40 € s'applique-t-elle par facture ?",
     a: "Oui, elle est due pour chaque facture payée en retard, et non par jour de retard. Vous pouvez demander davantage si vos frais de recouvrement réels sont supérieurs et justifiés.",
   },
   {
-    q: "Quelles mentions doivent figurer sur la facture ?",
-    a: "La date d'échéance, le taux des pénalités de retard et l'indemnité forfaitaire de 40 € pour frais de recouvrement.",
+    q: "Quelles mentions doivent figurer sur la facture ?",
+    a: "La date d'échéance, le taux des pénalités de retard et l'indemnité forfaitaire de 40 € pour frais de recouvrement.",
   },
   {
-    q: "Ces règles s'appliquent-elles aux particuliers ?",
+    q: "Ces règles s'appliquent-elles aux particuliers ?",
     a: "Non. Elles concernent les relations entre professionnels. Avec un particulier, les conditions de paiement relèvent du droit de la consommation et de ce que prévoit votre devis.",
   },
 ];
@@ -120,9 +120,9 @@ const SOURCES: Source[] = [
     precision: "contrôles et amendes administratives",
   },
   {
-    libelle: "DREETS Hauts-de-France, Lutte contre les retards de paiement",
-    url: "https://hauts-de-france.dreets.gouv.fr/sites/hauts-de-france.dreets.gouv.fr/IMG/pdf/lutte_contre_les_retards_de_paiement.pdf",
-    precision: "pénalités, indemnité de 40 €, mentions obligatoires",
+    libelle: "Service-public.gouv.fr, Délais de paiement entre professionnels et pénalités de retard",
+    url: "https://entreprendre.service-public.gouv.fr/vosdroits/F23211",
+    precision: "pénalités, indemnité de 40 €, amendes administratives",
   },
   {
     libelle: "Ministère de l'Économie, Médiateur des entreprises",
@@ -144,8 +144,8 @@ export default function Page() {
       enBref={[
         "Sans clause, le client paie sous <strong>30 jours</strong>&nbsp;; avec clause, jamais plus de <strong>60 jours</strong> ou <strong>45 jours fin de mois</strong>.",
         "Les <strong>pénalités de retard</strong> courent dès le lendemain de l&rsquo;échéance, sans relance.",
-        "Chaque facture payée en retard ouvre droit à <strong>40 €</strong> d&rsquo;indemnité forfaitaire.",
-        "Échéance, taux des pénalités et indemnité de 40 € doivent figurer <strong>sur chaque facture</strong>.",
+        "Chaque facture payée en retard ouvre droit à <strong>40 €</strong> d&rsquo;indemnité forfaitaire.",
+        "Échéance, taux des pénalités et indemnité de 40 € doivent figurer <strong>sur chaque facture</strong>.",
         "Relance, mise en demeure, médiation gratuite, puis justice&nbsp;: dans cet ordre.",
       ]}
       sections={SECTIONS}
@@ -154,7 +154,7 @@ export default function Page() {
       cta={{
         titre: "Des factures qui se font payer",
         texte:
-          "Deviso inscrit l&rsquo;échéance, les pénalités et l&rsquo;indemnité de 40 € sur chaque facture, et relance vos clients à votre place quand l&rsquo;échéance est passée.",
+          "Deviso inscrit l&rsquo;échéance, les pénalités et l&rsquo;indemnité de 40 € sur chaque facture, et relance vos clients à votre place quand l&rsquo;échéance est passée.",
       }}
     />
   );

@@ -11,7 +11,7 @@ export default function Page() {
       slug={SLUG}
       intro="Un devis de travaux mal rédigé, c'est un redressement fiscal possible (mauvais taux de TVA), une mise en cause juridique (garantie décennale absente) ou un litige client (périmètre flou). Voici comment rédiger un devis artisan BTP conforme, qui protège votre entreprise, artisan indépendant ou société et accélère vos paiements."
       mandatoryTitle="Les mentions obligatoires d'un devis artisan BTP"
-      mandatoryIntro="Au-delà des mentions légales classiques, un devis de travaux a des exigences spécifiques imposées par la réglementation BTP :"
+      mandatoryIntro="Au-delà des mentions légales classiques, un devis de travaux a des exigences spécifiques imposées par la réglementation BTP :"
       mandatoryItems={[
         {
           title: "Vos coordonnées et numéro SIRET",
@@ -27,7 +27,7 @@ export default function Page() {
         },
         {
           title: "Taux de TVA applicable selon le type de travaux",
-          desc: "5,5% pour la rénovation énergétique éligible (isolation, chaudière, pompe à chaleur). 10% pour les travaux de rénovation courants sur logements de plus de 2 ans. 20% pour la construction neuve ou les logements de moins de 2 ans. Une erreur de taux est un risque fiscal direct.",
+          desc: "5,5 % pour la rénovation énergétique éligible (isolation, pompe à chaleur). 10 % pour les travaux de rénovation courants sur logements de plus de 2 ans. 20 % pour la construction neuve ou les logements de moins de 2 ans. Une erreur de taux est un risque fiscal direct.",
         },
         {
           title: "Assurance garantie décennale (obligatoire)",
@@ -39,53 +39,53 @@ export default function Page() {
         },
         {
           title: "Acompte et modalités de paiement",
-          desc: "30 à 40% à la commande pour couvrir l'achat des matériaux. Solde à la réception des travaux. Pénalités de retard obligatoires entre professionnels. Notez que les acomptes supérieurs à 5% sont réglementés pour les particuliers (loi anti-arnaque).",
+          desc: "30 à 40 % à la commande pour couvrir l'achat des matériaux. Solde à la réception des travaux. Pénalités de retard obligatoires entre professionnels. Précisez s'il s'agit d'un acompte ou d'arrhes : sans précision, les sommes versées d'avance sont des arrhes.",
         },
       ]}
       exampleClient="M. Durand, Particulier, Paris 11e (appartement résidence principale, construit en 1985)"
       exampleLines={[
-        { desc: "Dépose et évacuation ancienne installation (baignoire, carrelage, équipements)", qty: "1 forfait", price: "350 €" },
-        { desc: "Fourniture et pose douche italienne 120×90 + receveur extra-plat", qty: "1 unité", price: "1 200 €" },
-        { desc: "Carrelage mural et sol, fourniture + pose (15 m²)", qty: "15 m²", price: "1 800 €" },
-        { desc: "Robinetterie thermostatique + accessoires, fourniture + pose", qty: "1 forfait", price: "650 €" },
-        { desc: "Main d'œuvre plomberie, étanchéité, finitions", qty: "3 jours", price: "900 €" },
+        { desc: "Dépose et évacuation ancienne installation (baignoire, carrelage, équipements)", qty: "1 forfait", price: "350 €" },
+        { desc: "Fourniture et pose douche italienne 120×90 + receveur extra-plat", qty: "1 unité", price: "1 200 €" },
+        { desc: "Carrelage mural et sol, fourniture + pose (15 m²)", qty: "15 m²", price: "1 800 €" },
+        { desc: "Robinetterie thermostatique + accessoires, fourniture + pose", qty: "1 forfait", price: "650 €" },
+        { desc: "Main d'œuvre plomberie, étanchéité, finitions", qty: "3 jours", price: "900 €" },
       ]}
-      exampleTotal="4 900 € HT"
-      exampleNote="TVA 10% applicable (travaux de rénovation, logement de plus de 2 ans, résidence principale). Acompte 35% à la commande (1 715 €), solde à la réception. Garantie décennale : Allianz, police n°XX-XXX-XXXX, France entière."
+      exampleTotal="4 900 € HT"
+      exampleNote="TVA 10 % applicable (travaux de rénovation, logement de plus de 2 ans, résidence principale). Acompte 35 % à la commande (1 715 €), solde à la réception. Garantie décennale : Allianz, police n°XX-XXX-XXXX, France entière."
       mistakes={[
         {
           title: "Appliquer le mauvais taux de TVA",
-          desc: "C'est l'erreur la plus courante et la plus coûteuse. Appliquer 20% sur des travaux éligibles au taux réduit de 10% ou 5,5% fait perdre des marchés. À l'inverse, appliquer 10% sur une construction neuve expose à un redressement fiscal. En cas de doute, consultez le site impots.gouv.fr ou un expert-comptable.",
+          desc: "C'est l'erreur la plus courante et la plus coûteuse. Appliquer 20 % sur des travaux éligibles au taux réduit de 10 % ou 5,5 % fait perdre des marchés. À l'inverse, appliquer 10 % sur une construction neuve expose à un redressement fiscal. En cas de doute, consultez le site impots.gouv.fr ou un expert-comptable.",
         },
         {
           title: "Omettre la garantie décennale",
-          desc: "Son absence dans le devis est illégale depuis 1978. En cas de sinistre, vous seriez personnellement responsable sans couverture. Certains clients refuseront de signer un devis sans cette mention, et ils ont raison.",
+          desc: "L'assurance est obligatoire depuis la loi Spinetta de 1978, et ses références doivent figurer sur vos devis et vos factures. En cas de sinistre, vous seriez personnellement responsable sans couverture. Certains clients refuseront de signer un devis sans cette mention, et ils ont raison.",
         },
         {
           title: "Devis trop vague sur les matériaux",
-          desc: "\"Carrelage fourni et posé\" sans préciser la marque, la référence, le prix au m² et la surface exacte laisse la porte ouverte à des incompréhensions. Le client choisit du carrelage à 80 €/m², vous aviez chiffré à 30 €/m².",
+          desc: "\"Carrelage fourni et posé\" sans préciser la marque, la référence, le prix au m² et la surface exacte laisse la porte ouverte à des incompréhensions. Le client choisit du carrelage à 80 €/m², vous aviez chiffré à 30 €/m².",
         },
         {
           title: "Ne pas mentionner les imprévus de chantier",
-          desc: "Murs porteurs découverts, canalisations pourries, amiante, les chantiers réservent des surprises. Ajoutez une clause : 'En cas de découverte d'imprévus techniques modifiant substantiellement le périmètre, un avenant tarifé sera établi avant poursuite des travaux'.",
+          desc: "Murs porteurs découverts, canalisations pourries, amiante, les chantiers réservent des surprises. Ajoutez une clause : 'En cas de découverte d'imprévus techniques modifiant substantiellement le périmètre, un avenant tarifé sera établi avant poursuite des travaux'.",
         },
       ]}
       faq={[
         {
-          q: "Quel taux de TVA appliquer sur un devis de travaux ?",
-          a: "5,5% pour les travaux de rénovation énergétique éligibles (isolation thermique, installation de chaudière à condensation, pompe à chaleur, panneaux solaires) sur résidence principale de plus de 2 ans. 10% pour la plupart des travaux de rénovation, d'amélioration et d'entretien sur logements de plus de 2 ans. 20% pour les constructions neuves et les travaux sur logements de moins de 2 ans. En cas de doute, demandez à votre client une attestation simplifiée de TVA (formulaire Cerfa n°1301-SD).",
+          q: "Quel taux de TVA appliquer sur un devis de travaux ?",
+          a: "5,5 % pour les travaux de rénovation énergétique éligibles (isolation thermique, pompe à chaleur et autres équipements de la liste officielle) dans un logement achevé depuis plus de 2 ans. 10 % pour la plupart des travaux de rénovation, d'amélioration et d'entretien sur logements de plus de 2 ans. 20 % pour les constructions neuves et les travaux sur logements de moins de 2 ans. Depuis le 16 février 2025, les attestations 1300-SD et 1301-SD n'existent plus : c'est votre client qui certifie, sur le devis ou la facture, que les conditions du taux réduit sont remplies.",
         },
         {
-          q: "La garantie décennale est-elle obligatoire sur un devis artisan ?",
-          a: "Oui, c'est une obligation légale depuis la loi Spinetta de 1978. Tout constructeur (artisan, entrepreneur BTP) doit mentionner son assurance décennale sur les devis et contrats : nom de l'assureur, numéro de police, et étendue géographique de la couverture. Sans cette mention, vous engagez votre responsabilité personnelle en cas de sinistre.",
+          q: "La garantie décennale est-elle obligatoire sur un devis artisan ?",
+          a: "Oui. L'assurance décennale est obligatoire depuis la loi Spinetta de 1978, et tout artisan ou entrepreneur qui y est soumis doit en mentionner les références sur ses devis et ses factures (article 22-2 de la loi du 5 juillet 1996) : nom de l'assureur, numéro de police, et étendue géographique de la couverture. Sans cette mention, vous engagez votre responsabilité personnelle en cas de sinistre.",
         },
         {
-          q: "Peut-on demander plus de 30% d'acompte à un particulier ?",
-          a: "Pour les contrats avec les particuliers supérieurs à 500 €, la loi réglemente les acomptes. L'acompte ne peut pas dépasser 5% du prix total avant la signature du contrat (loi relative à la protection des consommateurs). Des règles spéciales s'appliquent selon le type de contrat. Entre professionnels, il n'y a pas de plafond légal.",
+          q: "Peut-on demander plus de 30 % d'acompte à un particulier ?",
+          a: "Aucun plafond général ne s'applique aux acomptes d'un devis de travaux, mais des règles particulières existent selon le contrat (par exemple le contrat de construction de maison individuelle, ou l'interdiction de tout paiement pendant le délai de rétractation de 7 jours après une signature au domicile du client). Précisez toujours s'il s'agit d'un acompte ou d'arrhes : sans précision, ce sont des arrhes, que le client peut abandonner pour se dédire.",
         },
         {
-          q: "Doit-on obligatoirement remettre un devis écrit pour des petits travaux ?",
-          a: "Pour les travaux de plus de 150 € TTC chez un particulier, le devis écrit préalable est obligatoire si le client le demande. Pour les travaux de plus de 1 500 € TTC, le devis préalable est systématiquement obligatoire. En pratique, mieux vaut toujours remettre un devis signé, même pour de petits montants, pour vous protéger en cas de litige.",
+          q: "Doit-on obligatoirement remettre un devis écrit pour des petits travaux ?",
+          a: "Pour les travaux et dépannages du bâtiment chez un particulier (maçonnerie, plomberie, électricité, couverture, peinture, etc.), la réglementation impose un devis préalable, sans seuil de montant. Le devis peut être gratuit ou payant, mais il doit le préciser (et indiquer son coût s'il est payant) et mentionner la durée de validité de l'offre. En pratique, remettez toujours un devis signé, même pour de petits montants, pour vous protéger en cas de litige.",
         },
       ]}
     />

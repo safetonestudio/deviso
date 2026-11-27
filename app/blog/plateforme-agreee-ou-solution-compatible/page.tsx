@@ -17,24 +17,24 @@ export const metadata = metadonneesArticle(SLUG);
  */
 const FAQ = [
   {
-    q: "Mon logiciel de facturation doit-il être une plateforme agréée ?",
-    a: "Non. Il doit soit être agréé lui-même, soit être adossé à une plateforme agréée. Ce sont les deux seules configurations valables. Ce qui n'existe pas, c'est un logiciel qui transmettrait vos factures sans passer par une plateforme agréée : une solution non immatriculée n'y est pas autorisée.",
+    q: "Mon logiciel de facturation doit-il être une plateforme agréée ?",
+    a: "Non. Il doit soit être agréé lui-même, soit être adossé à une plateforme agréée. Ce sont les deux seules configurations valables. Ce qui n'existe pas, c'est un logiciel qui transmettrait vos factures sans passer par une plateforme agréée : une solution non immatriculée n'y est pas autorisée.",
   },
   {
-    q: "Comment savoir si mon éditeur est agréé ou simplement compatible ?",
+    q: "Comment savoir si mon éditeur est agréé ou simplement compatible ?",
     a: "Demandez-le, et vérifiez. La liste des plateformes agréées est publiée par la DGFiP sur impots.gouv.fr et téléchargeable. Si votre éditeur ne figure pas dessus, il est au mieux une solution compatible, ce qui est parfaitement valable, à condition qu'il puisse nommer la plateforme agréée à laquelle il est adossé.",
   },
   {
-    q: "Est-ce moins bien d'utiliser une solution compatible ?",
+    q: "Est-ce moins bien d'utiliser une solution compatible ?",
     a: "Pas en soi. Ce qui compte, c'est que la chaîne soit complète et que vous puissiez la vérifier. Beaucoup d'éditeurs de logiciels de facturation, y compris parmi les plus utilisés par les PME, les TPE et les indépendants, sont des solutions compatibles adossées à une plateforme agréée. Le vrai critère n'est pas le statut de l'éditeur, c'est sa capacité à vous dire lequel il a.",
   },
   {
-    q: "Que signifie « immatriculation sous réserve » sur la liste officielle ?",
-    a: "La DGFiP publie deux listes distinctes. La première réunit les opérateurs qui satisfont à l'ensemble des conditions, tests d'interopérabilité inclus : leur immatriculation est définitive. La seconde réunit ceux qui ont déposé un dossier complet et conforme, mais dont l'immatriculation définitive reste conditionnée à la réussite de ces tests. Une plateforme de la seconde liste est bien sur la liste officielle, mais son agrément n'est pas encore définitif.",
+    q: "Que signifie « immatriculation sous réserve » sur la liste officielle ?",
+    a: "La DGFiP publie deux listes distinctes. La première réunit les opérateurs qui satisfont à l'ensemble des conditions, tests d'interopérabilité inclus : leur immatriculation est définitive. La seconde réunit ceux qui ont déposé un dossier complet et conforme, mais dont l'immatriculation définitive reste conditionnée à la réussite de ces tests. Une plateforme de la seconde liste est bien sur la liste officielle, mais son agrément n'est pas encore définitif.",
   },
   {
-    q: "Combien de temps dure une immatriculation ?",
-    a: "Trois ans, renouvelable. Ce n'est donc pas un statut acquis une fois pour toutes : une plateforme agréée aujourd'hui devra renouveler son immatriculation. C'est une raison de plus pour consulter la liste officielle à la source plutôt qu'un chiffre recopié sur un comparatif.",
+    q: "Combien de temps dure une immatriculation ?",
+    a: "Trois ans, renouvelable. Ce n'est donc pas un statut acquis une fois pour toutes : une plateforme agréée aujourd'hui devra renouveler son immatriculation. C'est une raison de plus pour consulter la liste officielle à la source plutôt qu'un chiffre recopié sur un comparatif.",
   },
 ];
 
@@ -65,7 +65,7 @@ export default function Page() {
             <span>/</span>
             <Link href="/blog" className="hover:text-gray-300 transition-colors">Blog</Link>
             <span>/</span>
-            <span className="text-gray-400">Plateforme agréée ou solution compatible ?</span>
+            <span className="text-gray-400">Plateforme agréée ou solution compatible ?</span>
           </nav>
 
           <div className="mb-10">
@@ -81,8 +81,8 @@ export default function Page() {
             </div>
             <h1 className="text-3xl sm:text-4xl font-semibold text-ink leading-tight mb-4">{a.h1}</h1>
             <p className="text-lg text-gray-400 leading-relaxed">
-              Vous comparez deux logiciels de facturation. L&apos;un affiche « plateforme agréée », l&apos;autre
-              « conforme à la réforme 2026 ». Ce n&apos;est pas une nuance de vocabulaire commercial : les deux
+              Vous comparez deux logiciels de facturation. L&apos;un affiche « plateforme agréée », l&apos;autre
+              « conforme à la réforme 2026 ». Ce n&apos;est pas une nuance de vocabulaire commercial : les deux
               n&apos;ont pas les mêmes droits, et la distinction est écrite noir sur blanc par l&apos;administration
               fiscale.
             </p>
@@ -114,9 +114,9 @@ export default function Page() {
                 <li className="flex gap-2">
                   <span className="text-indigo-400 shrink-0">→</span>
                   <span>
-                    Donc la question à poser à votre éditeur n&apos;est pas « êtes-vous conforme ? », tout le
+                    Donc la question à poser à votre éditeur n&apos;est pas « êtes-vous conforme ? », tout le
                     monde répond oui. C&apos;est{" "}
-                    <strong className="text-ink">« êtes-vous agréé, ou adossé à qui ? »</strong>
+                    <strong className="text-ink">« êtes-vous agréé, ou adossé à qui ? »</strong>
                   </span>
                 </li>
               </ul>
@@ -134,14 +134,14 @@ export default function Page() {
                 C&apos;est une immatriculation, pas un label qu&apos;on s&apos;attribue.
               </p>
               <p className="mb-4">
-                Et elle est explicite sur la conséquence, pour un opérateur qui ne l&apos;a pas :{" "}
+                Et elle est explicite sur la conséquence, pour un opérateur qui ne l&apos;a pas :{" "}
                 <em>à défaut d&apos;immatriculation par l&apos;administration fiscale, cet opérateur n&apos;aura
                 pas la qualité de plateforme agréée et ne sera donc pas autorisé à transmettre les factures
                 électroniques aux plateformes des clients.</em>
               </p>
               <p className="mb-6">
                 Autrement dit, ce n&apos;est pas une hiérarchie de qualité. C&apos;est une question
-                d&apos;autorisation : ce qu&apos;une solution compatible ne peut pas faire, elle ne peut pas le
+                d&apos;autorisation : ce qu&apos;une solution compatible ne peut pas faire, elle ne peut pas le
                 faire du tout.
               </p>
 
@@ -213,7 +213,7 @@ export default function Page() {
               <h2 className="text-xl font-semibold text-ink mb-4">Comment vérifier, en deux minutes</h2>
               <p className="mb-4">
                 La liste est publique. Et elle est <strong className="text-ink">double</strong>, ce qui est la
-                subtilité que presque aucun comparatif ne mentionne :
+                subtilité que presque aucun comparatif ne mentionne :
               </p>
               <div className="space-y-3 mb-5">
                 <div className="bg-ds-surface border border-emerald-500/20 rounded-xl p-5">
@@ -261,9 +261,9 @@ export default function Page() {
                   <p className="text-gray-400">
                     Une vingtaine de sites se sont créés autour de cette réforme, la plupart financés par
                     l&apos;affiliation. Ils sont parfois utiles pour dégrossir, mais leurs chiffres se
-                    contredisent : le nombre de plateformes agréées y est annoncé entre 137 et 166 selon les
-                    pages, et certains attribuent à la même plateforme un statut définitif sur un site et « sous
-                    réserve » sur un autre. Ils ne peuvent pas tous avoir raison. Pour une question de
+                    contredisent : le nombre de plateformes agréées y est annoncé entre 137 et 166 selon les
+                    pages, et certains attribuent à la même plateforme un statut définitif sur un site et « sous
+                    réserve » sur un autre. Ils ne peuvent pas tous avoir raison. Pour une question de
                     conformité, allez à la source, c&apos;est deux minutes.
                   </p>
                 </div>
@@ -281,17 +281,17 @@ export default function Page() {
               <ol className="space-y-4">
                 {[
                   {
-                    q: "Êtes-vous une plateforme agréée, ou une solution compatible ?",
+                    q: "Êtes-vous une plateforme agréée, ou une solution compatible ?",
                     pourquoi:
-                      "Une réponse évasive à cette question est une réponse. « Nous sommes conformes » n'en est pas une.",
+                      "Une réponse évasive à cette question est une réponse. « Nous sommes conformes » n'en est pas une.",
                   },
                   {
-                    q: "Si vous êtes une solution compatible, à quelle plateforme agréée êtes-vous adossé ?",
+                    q: "Si vous êtes une solution compatible, à quelle plateforme agréée êtes-vous adossé ?",
                     pourquoi:
                       "Le nom, pas une formule. Sans nom, il n'y a rien à vérifier, et donc rien à croire.",
                   },
                   {
-                    q: "Cette plateforme figure-t-elle sur la liste de la DGFiP, et sur laquelle des deux ?",
+                    q: "Cette plateforme figure-t-elle sur la liste de la DGFiP, et sur laquelle des deux ?",
                     pourquoi:
                       "Vous pouvez répondre vous-même, en téléchargeant la liste. C'est le seul contrôle qui ne dépende de personne.",
                   },
@@ -317,7 +317,7 @@ export default function Page() {
               <p className="mb-4">
                 Appliquons-nous les trois questions. <strong className="text-ink">Deviso est une solution
                 compatible</strong>, adossée à <strong className="text-ink">Super PDP</strong>, qui est la
-                plateforme agréée. Nous ne transmettons rien directement à l&apos;administration : c&apos;est
+                plateforme agréée. Nous ne transmettons rien directement à l&apos;administration : c&apos;est
                 Super PDP qui dépose vos factures et transmet les données.
               </p>
               <p className="mb-4">

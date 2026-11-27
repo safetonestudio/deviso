@@ -17,23 +17,23 @@ export const metadata = metadonneesArticle(SLUG);
  */
 const FAQ = [
   {
-    q: "Factur-X, c'est un PDF ou un fichier de données ?",
+    q: "Factur-X, c'est un PDF ou un fichier de données ?",
     a: "Les deux à la fois, et c'est tout l'intérêt. C'est un PDF que vous ouvrez et lisez normalement, à l'intérieur duquel est rangé un petit fichier de données qui contient les mêmes informations sous une forme que les logiciels lisent sans se tromper.",
   },
   {
-    q: "Dois-je créer le fichier de données moi-même ?",
-    a: "Non, jamais. C'est votre outil de facturation qui le génère quand vous créez votre facture. Vous ne verrez pas ce fichier et vous n'avez rien à saisir en plus : vous remplissez votre facture comme d'habitude, le format se fabrique tout seul.",
+    q: "Dois-je créer le fichier de données moi-même ?",
+    a: "Non, jamais. C'est votre outil de facturation qui le génère quand vous créez votre facture. Vous ne verrez pas ce fichier et vous n'avez rien à saisir en plus : vous remplissez votre facture comme d'habitude, le format se fabrique tout seul.",
   },
   {
-    q: "Un simple PDF envoyé par e-mail suffira-t-il encore ?",
+    q: "Un simple PDF envoyé par e-mail suffira-t-il encore ?",
     a: "Non, une fois l'émission électronique obligatoire pour vous. Un PDF classique se lit à l'œil, mais il ne porte pas les données structurées que la réforme exige, et il ne passe pas par une plateforme agréée. Il faudra un vrai format électronique, comme Factur-X.",
   },
   {
-    q: "Quelle est la différence entre Factur-X, UBL et CII ?",
-    a: "Ce sont les trois formats acceptés par la réforme. Factur-X est le format hybride : un PDF lisible plus les données. UBL et CII sont des formats de données seuls, sans page lisible sans outil. Pour une entreprise de petite taille ou un indépendant, Factur-X est le plus confortable, mais vous n'avez pas à choisir : votre plateforme s'en occupe.",
+    q: "Quelle est la différence entre Factur-X, UBL et CII ?",
+    a: "Ce sont les trois formats acceptés par la réforme. Factur-X est le format hybride : un PDF lisible plus les données. UBL et CII sont des formats de données seuls, sans page lisible sans outil. Pour une entreprise de petite taille ou un indépendant, Factur-X est le plus confortable, mais vous n'avez pas à choisir : votre plateforme s'en occupe.",
   },
   {
-    q: "Ce format est-il obligatoire pour moi ?",
+    q: "Ce format est-il obligatoire pour moi ?",
     a: "La réception de factures électroniques l'est pour tout le monde depuis le 1er septembre 2026. L'émission le deviendra au 1er septembre 2027 pour les TPE, PME et micro-entreprises. Le format requis, dont Factur-X, fait partie de cette obligation d'émission.",
   },
 ];
@@ -71,9 +71,9 @@ export default function Page() {
             </div>
             <h1 className="text-3xl sm:text-4xl font-semibold text-ink leading-tight mb-4">{a.h1}</h1>
             <p className="text-lg text-gray-400 leading-relaxed">
-              Depuis la réforme, le mot « Factur-X » est partout, et presque personne ne prend le temps de dire ce
+              Depuis la réforme, le mot « Factur-X » est partout, et presque personne ne prend le temps de dire ce
               que c&apos;est. La plupart des explications sont écrites pour des comptables. En voici une pour tout
-              le monde, sans jargon, et rassurante sur un point : vous n&apos;aurez rien à faire à la main.
+              le monde, sans jargon, et rassurante sur un point : vous n&apos;aurez rien à faire à la main.
             </p>
           </div>
 
@@ -117,13 +117,13 @@ export default function Page() {
               </h2>
               <p className="mb-4">
                 Prenez une facture PDF classique, celle que vous envoyez par e-mail depuis des années. Un humain la
-                lit sans effort. Un logiciel, lui, en est incapable : pour retrouver le montant, la date ou le
+                lit sans effort. Un logiciel, lui, en est incapable : pour retrouver le montant, la date ou le
                 numéro de TVA, il devrait les <em>deviner</em> à partir de l&apos;image de la page, et il se trompe.
                 D&apos;où la ressaisie à la main, côté client comme côté administration, et les erreurs qui vont
                 avec.
               </p>
               <p className="mb-6">
-                Factur-X supprime ce problème en mettant les deux lectures dans un seul fichier : la page pour
+                Factur-X supprime ce problème en mettant les deux lectures dans un seul fichier : la page pour
                 l&apos;humain, les données pour la machine. Personne ne ressaisit rien, et les deux camps lisent
                 exactement la même facture.
               </p>
@@ -132,15 +132,15 @@ export default function Page() {
                   <Eye size={18} className="text-indigo-400 mb-3" />
                   <p className="text-ink font-medium mb-1">Ce que vous voyez</p>
                   <p className="text-gray-400">
-                    Une facture PDF ordinaire : votre logo, vos lignes, votre total. Rien ne trahit qu&apos;elle est
-                    « spéciale ».
+                    Une facture PDF ordinaire : votre logo, vos lignes, votre total. Rien ne trahit qu&apos;elle est
+                    « spéciale ».
                   </p>
                 </div>
                 <div className="bg-ds-surface border border-ds-border rounded-xl p-5">
                   <Cpu size={18} className="text-indigo-400 mb-3" />
                   <p className="text-ink font-medium mb-1">Ce que la machine lit</p>
                   <p className="text-gray-400">
-                    Le fichier de données caché dedans : les mêmes montants, mais rangés dans des cases nommées, que
+                    Le fichier de données caché dedans : les mêmes montants, mais rangés dans des cases nommées, que
                     n&apos;importe quel logiciel comprend.
                   </p>
                 </div>
@@ -153,16 +153,16 @@ export default function Page() {
                 Ce qu&apos;il y a vraiment dans un fichier Factur-X
               </h2>
               <p className="mb-4">
-                Techniquement, et vous pouvez oublier cette phrase juste après l&apos;avoir lue : un Factur-X est un
+                Techniquement, et vous pouvez oublier cette phrase juste après l&apos;avoir lue : un Factur-X est un
                 PDF d&apos;un type conçu pour l&apos;archivage (appelé PDF/A-3), dans lequel est incorporé un fichier
                 de données au format XML. Ce fichier de données suit une <strong className="text-ink">norme
                 européenne commune</strong>, la EN 16931, ce qui garantit qu&apos;un outil français et un outil
                 allemand y rangent l&apos;information de la même façon.
               </p>
               <p>
-                La seule règle qui compte pour vous : la partie visible et la partie données doivent
-                <strong className="text-ink"> dire la même chose</strong>. Un total affiché à 1 200 € et un total
-                caché à 1 000 € produirait une facture incohérente. Un bon outil s&apos;assure que les deux
+                La seule règle qui compte pour vous : la partie visible et la partie données doivent
+                <strong className="text-ink"> dire la même chose</strong>. Un total affiché à 1 200 € et un total
+                caché à 1 000 € produiraient une facture incohérente. Un bon outil s&apos;assure que les deux
                 coïncident toujours, parce qu&apos;il fabrique les deux à partir de la même saisie.
               </p>
             </section>
@@ -170,11 +170,11 @@ export default function Page() {
             {/* Faut-il choisir */}
             <section>
               <h2 className="text-xl font-semibold text-ink mb-4">
-                Factur-X, UBL, CII : faut-il choisir ?
+                Factur-X, UBL, CII : faut-il choisir ?
               </h2>
               <p className="mb-4">
                 Vous croiserez trois noms, parce que la réforme accepte trois formats. La différence tient en une
-                image :
+                image :
               </p>
               <ul className="space-y-3">
                 <li className="flex gap-2">
@@ -195,7 +195,7 @@ export default function Page() {
                 </li>
               </ul>
               <p className="mt-4">
-                La bonne nouvelle : vous n&apos;avez pas à trancher. Le choix du format se fait entre votre outil et
+                La bonne nouvelle : vous n&apos;avez pas à trancher. Le choix du format se fait entre votre outil et
                 la plateforme agréée, en arrière-plan. Votre travail s&apos;arrête à la saisie de la facture.
               </p>
             </section>
@@ -206,15 +206,15 @@ export default function Page() {
                 Ce que ça change pour vous, concrètement
               </h2>
               <p className="mb-4">
-                Presque rien de visible, et c&apos;est voulu. Vous créez votre facture comme avant ; votre outil
-                produit un Factur-X ; votre client la reçoit lisible ; les données partent correctement vers la
+                Presque rien de visible, et c&apos;est voulu. Vous créez votre facture comme avant ; votre outil
+                produit un Factur-X ; votre client la reçoit lisible ; les données partent correctement vers la
                 plateforme et l&apos;administration. La seule différence de fond avec le PDF que vous envoyiez par
                 e-mail, c&apos;est qu&apos;un simple PDF ne suffira plus une fois l&apos;émission obligatoire pour
                 vous, parce qu&apos;il ne porte pas les données.
               </p>
               <p>
-                Visuellement, un Factur-X et un PDF ordinaire sont impossibles à distinguer à l&apos;œil : la
-                différence est cachée. Vous ne pouvez donc pas vérifier vous-même « à la main » qu&apos;une facture
+                Visuellement, un Factur-X et un PDF ordinaire sont impossibles à distinguer à l&apos;œil : la
+                différence est cachée. Vous ne pouvez donc pas vérifier vous-même « à la main » qu&apos;une facture
                 est bien au format. C&apos;est le rôle de l&apos;outil, et c&apos;est une raison de plus de le
                 choisir conforme plutôt que de bricoler.
               </p>
@@ -226,9 +226,9 @@ export default function Page() {
                 Comment Deviso le gère
               </p>
               <p className="mb-4">
-                Chaque facture générée par Deviso est un Factur-X conforme : la page que voit votre client, et le
+                Chaque facture générée par Deviso est un Factur-X conforme : la page que voit votre client, et le
                 fichier de données caché à l&apos;intérieur, construits ensemble à partir de votre saisie, pour
-                qu&apos;ils disent toujours la même chose. Vous ne voyez que votre facture ; le reste se fait tout
+                qu&apos;ils disent toujours la même chose. Vous ne voyez que votre facture ; le reste se fait tout
                 seul.
               </p>
               <Link
@@ -259,14 +259,14 @@ export default function Page() {
               <ul className="space-y-2 text-gray-400">
                 <li>
                   <a
-                    href="https://www.impots.gouv.fr/facturation-electronique-et-plateformes-agreees"
+                    href="https://www.impots.gouv.fr/professionnel/je-decouvre-la-facturation-electronique"
                     target="_blank"
                     rel="noopener noreferrer"
                     className="text-indigo-400 hover:text-indigo-300 transition-colors"
                   >
-                    impots.gouv.fr, Facturation électronique et plateformes agréées
+                    impots.gouv.fr, Je découvre la facturation électronique
                   </a>{" "}
-                  (formats acceptés et fonctionnement)
+                  (formats acceptés, calendrier)
                 </li>
                 <li>
                   <a

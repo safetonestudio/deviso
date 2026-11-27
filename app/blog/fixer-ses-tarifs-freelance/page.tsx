@@ -16,11 +16,11 @@ export const metadata = metadonneesArticle(SLUG);
  */
 const FAQ = [
   {
-    q: "Comment calculer son TJM ?",
-    a: "La méthode la plus fiable : (1) Estimez votre revenu net mensuel cible, (2) Ajoutez vos charges (URSSAF, mutuelle, retraite, frais professionnels, environ 45-55% du CA pour un auto-entrepreneur), (3) Divisez par votre nombre de jours facturables réels par mois (généralement 15-18 jours sur 20 jours ouvrés, en comptant les congés, la prospection, l'admin). Le résultat est votre TJM minimum. Ajoutez une marge selon votre positionnement et la demande.",
+    q: "Comment calculer son TJM ?",
+    a: "La méthode la plus fiable : (1) Estimez votre revenu net mensuel cible, (2) Ajoutez vos charges (URSSAF, mutuelle, retraite, frais professionnels, environ 45-55 % du CA pour un auto-entrepreneur), (3) Divisez par votre nombre de jours facturables réels par mois (généralement 15-18 jours sur 20 jours ouvrés, en comptant les congés, la prospection, l'admin). Le résultat est votre TJM minimum. Ajoutez une marge selon votre positionnement et la demande.",
   },
   {
-    q: "Faut-il afficher ses tarifs publiquement ?",
+    q: "Faut-il afficher ses tarifs publiquement ?",
     a: "Il n'y a pas de règle universelle. Afficher une fourchette de tarifs sur son site filtre les clients qui n'ont pas le budget et réduit le temps passé à faire des devis non convertis. Garder ses tarifs confidentiels permet plus de flexibilité selon le client et la mission. La plupart des prestataires B2B choisissent de ne pas afficher de tarifs mais de mentionner une fourchette dans les premiers échanges.",
   },
 ];
@@ -41,8 +41,8 @@ export default function Page() {
 
       <div className="bg-indigo-950/95 backdrop-blur-xs border-b border-indigo-500/20 py-2 px-4 text-center text-sm">
         <span className="text-indigo-300 font-semibold">Réforme 2026&nbsp;:</span>
-        <span className="text-gray-300 ml-1.5">La facturation électronique B2B devient obligatoire.&nbsp;</span>
-        <span className="text-indigo-400 font-medium">Deviso est déjà conforme Factur-X.</span>
+        <span className="text-gray-300 ml-1.5">Réception des factures électroniques obligatoire depuis le 1<sup>er</sup> septembre 2026, émission au 1<sup>er</sup> septembre 2027 pour les PME, TPE et micro-entreprises.&nbsp;</span>
+        <span className="text-indigo-400 font-medium">Deviso émet en Factur-X par la plateforme agréée comprise dans l&apos;abonnement.</span>
       </div>
 
 
@@ -63,10 +63,10 @@ export default function Page() {
               <span className="text-xs text-gray-400">29 juin 2026 · 7 min</span>
             </div>
             <h1 className="text-3xl sm:text-4xl font-semibold text-ink leading-tight mb-4">
-              Comment fixer ses tarifs en freelance : TJM, méthodes et erreurs à éviter
+              Comment fixer ses tarifs en freelance : TJM, méthodes et erreurs à éviter
             </h1>
             <p className="text-lg text-gray-400 leading-relaxed">
-              Pour un indépendant comme pour une société de services, sous-facturer, c&apos;est travailler pour rien. Sur-facturer sans le prouver, c&apos;est perdre des clients. La vérité : il existe une méthode rationnelle pour trouver le bon tarif, et elle n&apos;a rien à voir avec ce que pratique le voisin.
+              Pour un indépendant comme pour une société de services, sous-facturer, c&apos;est travailler pour rien. Sur-facturer sans le prouver, c&apos;est perdre des clients. La vérité : il existe une méthode rationnelle pour trouver le bon tarif, et elle n&apos;a rien à voir avec ce que pratique le voisin.
             </p>
           </div>
 
@@ -83,13 +83,13 @@ export default function Page() {
                   </div>
                   <p className="text-gray-400 text-sm mb-4 leading-relaxed">C&apos;est la méthode la plus fiable. Vous partez de ce dont vous avez besoin pour vivre, et vous calculez ce que vous devez facturer pour y arriver.</p>
                   <div className="bg-ds-elevated rounded-xl p-4 font-mono text-xs text-gray-300 space-y-1">
-                    <p>Revenu net mensuel souhaité : 3 000 €</p>
-                    <p>+ Charges URSSAF + mutuelle + retraite (~45%) : 2 455 €</p>
-                    <p className="pt-1 mt-1">= CA mensuel nécessaire : 5 455 €</p>
-                    <p>÷ Jours facturables / mois (17 sur 20) : 17 jours</p>
-                    <p className="pt-1 mt-1 text-indigo-400 font-bold">= TJM minimum : 321 €/jour</p>
+                    <p>Revenu net mensuel souhaité : 3 000 €</p>
+                    <p>+ Charges URSSAF + mutuelle + retraite (~45 %) : 2 455 €</p>
+                    <p className="pt-1 mt-1">= CA mensuel nécessaire : 5 455 €</p>
+                    <p>÷ Jours facturables / mois (17 sur 20) : 17 jours</p>
+                    <p className="pt-1 mt-1 text-indigo-400 font-bold">= TJM minimum : 321 €/jour</p>
                   </div>
-                  <p className="text-xs text-gray-400 mt-3">Ajoutez une marge de 20-30% pour les périodes creuses, les formations, les imprévus. TJM recommandé ici : ~400€/jour.</p>
+                  <p className="text-xs text-gray-400 mt-3">Ajoutez une marge de 20-30 % pour les périodes creuses, les formations, les imprévus. TJM recommandé ici : ~400 €/jour.</p>
                 </div>
 
                 <div className="bg-ds-surface border border-ds-border rounded-xl p-6">
@@ -97,7 +97,7 @@ export default function Page() {
                     <span className="text-indigo-400 font-bold font-mono text-sm">02</span>
                     <h3 className="font-semibold text-ink">La méthode du marché (benchmarking)</h3>
                   </div>
-                  <p className="text-gray-400 text-sm leading-relaxed">Regardez ce que pratiquent vos pairs avec le même niveau d&apos;expérience dans la même zone géographique. Malt, Crème de la crème, LinkedIn, les profils publics donnent une bonne indication des fourchettes pratiquées. Attention : les tarifs affichés sont souvent des tarifs maximums, pas des moyennes.</p>
+                  <p className="text-gray-400 text-sm leading-relaxed">Regardez ce que pratiquent vos pairs avec le même niveau d&apos;expérience dans la même zone géographique. Malt, Crème de la crème, LinkedIn, les profils publics donnent une bonne indication des fourchettes pratiquées. Attention : les tarifs affichés sont souvent des tarifs maximums, pas des moyennes.</p>
                 </div>
 
                 <div className="bg-ds-surface border border-ds-border rounded-xl p-6">
@@ -105,7 +105,7 @@ export default function Page() {
                     <span className="text-indigo-400 font-bold font-mono text-sm">03</span>
                     <h3 className="font-semibold text-ink">La méthode de la valeur délivrée (value-based pricing)</h3>
                   </div>
-                  <p className="text-gray-400 text-sm leading-relaxed mb-3">Au lieu de facturer votre temps, vous facturez la valeur que vous créez pour le client. Un consultant, ou une société de conseil, qui aide une PME à gagner 100 000€ de CA supplémentaire peut facturer 20 000€ de mission, même si ça lui a pris 20 jours. C&apos;est la méthode la plus rentable, mais elle requiert une bonne compréhension de l&apos;impact de votre travail et la capacité à le quantifier.</p>
+                  <p className="text-gray-400 text-sm leading-relaxed mb-3">Au lieu de facturer votre temps, vous facturez la valeur que vous créez pour le client. Un consultant, ou une société de conseil, qui aide une PME à gagner 100 000 € de CA supplémentaire peut facturer 20 000 € de mission, même si ça lui a pris 20 jours. C&apos;est la méthode la plus rentable, mais elle requiert une bonne compréhension de l&apos;impact de votre travail et la capacité à le quantifier.</p>
                   <p className="text-xs text-gray-400">Particulièrement adaptée aux consultants, coachs business, spécialistes SEO, experts en conversion.</p>
                 </div>
               </div>
@@ -118,15 +118,15 @@ export default function Page() {
                 {[
                   {
                     title: "Se comparer au salaire d'un salarié",
-                    desc: "Un développeur salarié à 45 000€/an brut ne coûte pas 45 000€ à son employeur, il coûte environ 67 000€ avec les charges patronales. Et l'indépendant, lui, doit financer sa propre protection sociale, sa retraite, ses congés, sa formation. Un TJM de 450€ pour un dev senior n'est pas \"cher\", c'est l'équivalent d'un salarié à 50k brut, sans les avantages.",
+                    desc: "Un développeur salarié à 45 000 €/an brut ne coûte pas 45 000 € à son employeur, il coûte environ 67 000 € avec les charges patronales. Et l'indépendant, lui, doit financer sa propre protection sociale, sa retraite, ses congés, sa formation. Un TJM de 450 € pour un dev senior n'est pas \"cher\", c'est l'équivalent d'un salarié à 50k brut, sans les avantages.",
                   },
                   {
                     title: "Oublier les temps non facturables",
-                    desc: "Sur 20 jours ouvrés, combien facturez-vous réellement ? Comptez : prospection commerciale (2-3 jours), comptabilité/admin (1 jour), formation (1 jour), congés/maladie (1-2 jours). Vous facturez souvent 13 à 16 jours réels. Si vous calculez votre TJM sur 20 jours, vous sous-facturez structurellement.",
+                    desc: "Sur 20 jours ouvrés, combien facturez-vous réellement ? Comptez : prospection commerciale (2-3 jours), comptabilité/admin (1 jour), formation (1 jour), congés/maladie (1-2 jours). Vous facturez souvent 13 à 16 jours réels. Si vous calculez votre TJM sur 20 jours, vous sous-facturez structurellement.",
                   },
                   {
                     title: "Le syndrome de l'imposteur tarifaire",
-                    desc: "\"Je ne peux pas facturer autant, je ne suis pas assez expérimenté / les clients ne vont pas accepter / il y a des gens meilleurs que moi.\" Ce discours intérieur pousse de nombreux prestataires à sous-facturer pendant des années. La réalité : si un client vous propose une mission, c'est qu'il croit que vous pouvez la faire. Il vous a déjà validé.",
+                    desc: "\"Je ne peux pas facturer autant, je ne suis pas assez expérimenté / les clients ne vont pas accepter / il y a des gens meilleurs que moi.\" Ce discours intérieur pousse de nombreux prestataires à sous-facturer pendant des années. La réalité : si un client vous propose une mission, c'est qu'il croit que vous pouvez la faire. Il vous a déjà validé.",
                   },
                   {
                     title: "Baisser ses tarifs pour \"ne pas perdre le client\"",
@@ -146,10 +146,10 @@ export default function Page() {
               <p className="mb-4 text-gray-400">L&apos;augmentation de tarifs est inévitable, l&apos;inflation, la progression de vos compétences, et la demande croissante l&apos;exigent. La plupart des prestataires repoussent cette conversation indéfiniment. Voici comment l&apos;aborder.</p>
               <div className="space-y-3">
                 {[
-                  { tip: "Annoncez la hausse 1 à 3 mois à l'avance, par email. Pas d'excuse, pas d'explication longue : \"À partir du [date], mes tarifs passent de X à Y€/jour. Je souhaitais vous en informer en avance pour que vous puissiez anticiper.\"" },
+                  { tip: "Annoncez la hausse 1 à 3 mois à l'avance, par email. Pas d'excuse, pas d'explication longue : \"À partir du [date], mes tarifs passent de X à Y€/jour. Je souhaitais vous en informer en avance pour que vous puissiez anticiper.\"" },
                   { tip: "Commencez par appliquer les nouveaux tarifs aux nouveaux clients. Vos clients actuels les plus fidèles bénéficient d'une période de transition de 3 à 6 mois." },
-                  { tip: "Hausse modérée mais régulière (5 à 10%/an) plutôt qu'une hausse forte tous les 5 ans. C'est plus facile à accepter et reflète mieux la réalité du marché." },
-                  { tip: "Un client qui part parce que vous augmentez vos tarifs de 10% était probablement déjà en train de chercher quelqu'un de moins cher. Vous perdez peu." },
+                  { tip: "Hausse modérée mais régulière (5 à 10 %/an) plutôt qu'une hausse forte tous les 5 ans. C'est plus facile à accepter et reflète mieux la réalité du marché." },
+                  { tip: "Un client qui part parce que vous augmentez vos tarifs de 10 % était probablement déjà en train de chercher quelqu'un de moins cher. Vous perdez peu." },
                 ].map((item, i) => (
                   <div key={i} className="flex gap-3 bg-ds-elevated rounded-xl p-4 border border-ds-border">
                     <span className="text-emerald-400 font-bold shrink-0 text-sm">→</span>
@@ -160,7 +160,7 @@ export default function Page() {
             </section>
 
             <section>
-              <h2 className="text-xl font-semibold text-ink mb-4">TJM vs forfait : lequel choisir ?</h2>
+              <h2 className="text-xl font-semibold text-ink mb-4">TJM vs forfait : lequel choisir ?</h2>
               <p className="mb-4 text-gray-400">Les deux modèles coexistent et chacun a ses avantages.</p>
               <div className="grid grid-cols-2 gap-4">
                 <div className="bg-ds-surface border border-ds-border rounded-xl p-5">
@@ -177,7 +177,7 @@ export default function Page() {
                   <ul className="text-gray-400 text-xs space-y-1">
                     <li>✓ Rentabilité croissante avec l&apos;expérience</li>
                     <li>✓ Le client sait exactement son budget</li>
-                    <li>✓ Favorise la value-based pricing</li>
+                    <li>✓ Favorise la tarification à la valeur</li>
                     <li>✗ Risque de sous-évaluation si scope mal défini</li>
                   </ul>
                 </div>

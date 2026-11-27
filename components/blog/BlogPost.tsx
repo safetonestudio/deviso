@@ -93,7 +93,7 @@ export function BlogPost({
   const m = a.metier;
   if (!m) {
     throw new Error(
-      `[blog] « ${slug} » utilise <BlogPost> mais n'a pas de bloc \`metier\` dans le registre.`
+      `[blog] « ${slug} » utilise <BlogPost> mais n'a pas de bloc \`metier\` dans le registre.`
     );
   }
   const { landing: landingHref, landingLabel, profession, professionPluriel } = m;
@@ -111,8 +111,8 @@ export function BlogPost({
         className="bg-indigo-950/95 backdrop-blur-xs border-b border-indigo-500/20 py-2 px-4 text-center text-sm"
       >
         <span className="text-indigo-300 font-semibold">Réforme 2026&nbsp;:</span>
-        <span className="text-gray-300 ml-1.5">La facturation électronique B2B devient obligatoire en France.&nbsp;</span>
-        <span className="text-indigo-400 font-medium">Deviso est déjà conforme Factur-X.</span>
+        <span className="text-gray-300 ml-1.5">Réception des factures électroniques obligatoire depuis le 1<sup>er</sup> septembre 2026, émission au 1<sup>er</sup> septembre 2027 pour les PME, TPE et micro-entreprises.&nbsp;</span>
+        <span className="text-indigo-400 font-medium">Deviso émet en Factur-X par la plateforme agréée comprise dans l&apos;abonnement.</span>
         <Link href={landingHref} className="ml-2 text-indigo-300 hover:text-ink font-semibold transition-colors underline underline-offset-2">
           En savoir plus →
         </Link>
@@ -269,7 +269,7 @@ export function BlogPost({
           {tarifs && (
             <section className="mb-12 bg-ds-surface border border-ds-border rounded-2xl p-6">
               <p className="text-xs text-gray-500 font-medium uppercase tracking-wider mb-2">
-                Et côté prix ?
+                Et côté prix ?
               </p>
               <h2 className="text-xl font-semibold text-ink mb-2">
                 Combien facturer quand on est {profession} ?

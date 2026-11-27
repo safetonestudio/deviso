@@ -10,8 +10,8 @@ const SECTIONS: Section[] = [
     type: "texte",
     titre: "Le dossier micro, ce petit client qui coûte cher",
     paragraphes: [
-      "Les clients en micro-entreprise ont un point commun : leurs honoraires sont bas, mais leur <strong>dossier n&rsquo;est pas proportionnellement plus simple</strong>. Il arrive souvent en tableur approximatif, en captures d&rsquo;écran, parfois en pochette de factures, et c&rsquo;est le cabinet qui absorbe la mise en ordre.",
-      "Résultat : une rentabilité faible, du temps passé en ressaisie et en relances, et une exposition au risque quand les pièces ne tiennent pas la route. Le levier n&rsquo;est pas de facturer plus, mais de <strong>tarir le désordre à la source</strong>, chez le client.",
+      "Les clients en micro-entreprise ont un point commun : leurs honoraires sont bas, mais leur <strong>dossier n&rsquo;est pas proportionnellement plus simple</strong>. Il arrive souvent en tableur approximatif, en captures d&rsquo;écran, parfois en pochette de factures, et c&rsquo;est le cabinet qui absorbe la mise en ordre.",
+      "Résultat : une rentabilité faible, du temps passé en ressaisie et en relances, et une exposition au risque quand les pièces ne tiennent pas la route. Le levier n&rsquo;est pas de facturer plus, mais de <strong>tarir le désordre à la source</strong>, chez le client.",
     ],
   },
   {
@@ -21,17 +21,17 @@ const SECTIONS: Section[] = [
       {
         titre: "De la ressaisie",
         texte:
-          "Reprendre un tableur, retrouver les encaissements, reconstituer une numérotation : du temps non facturable.",
+          "Reprendre un tableur, retrouver les encaissements, reconstituer une numérotation : du temps non facturable.",
       },
       {
         titre: "Des relances",
         texte:
-          "Pièces manquantes, montants incohérents, factures introuvables : chaque échange rallonge le traitement.",
+          "Pièces manquantes, montants incohérents, factures introuvables : chaque échange rallonge le traitement.",
       },
       {
         titre: "Un risque de non-conformité",
         texte:
-          "Numérotation à trous, recettes au facturé plutôt qu&rsquo;à l&rsquo;encaissé, mentions absentes : autant de points qui fragilisent le dossier.",
+          "Numérotation à trous, recettes au facturé plutôt qu&rsquo;à l&rsquo;encaissé, mentions absentes : autant de points qui fragilisent le dossier.",
       },
       {
         titre: "Une exposition à la réforme",
@@ -71,8 +71,8 @@ const SECTIONS: Section[] = [
     type: "texte",
     titre: "Équiper plutôt que subir",
     paragraphes: [
-      "L&rsquo;idée est simple : donner à vos clients micro un outil de facturation qui produit, sans effort de leur part, exactement ce dont vous avez besoin. Côté client, une interface qu&rsquo;ils tiennent seuls au quotidien. Côté cabinet, une <strong>vue d&rsquo;ensemble</strong> de vos dossiers : conformité, échéances de TVA, points à traiter, exports prêts.",
-      "C&rsquo;est l&rsquo;approche que nous développons avec Deviso : un outil de devis et de facturation conçu pour les entreprises de toute forme, de l&rsquo;indépendant à la société avec équipe, doublé d&rsquo;un cockpit pour l&rsquo;expert-comptable qui suit plusieurs dossiers. Nous en parlons en détail sur notre page dédiée aux experts-comptables.",
+      "L&rsquo;idée est simple : donner à vos clients micro un outil de facturation qui produit, sans effort de leur part, exactement ce dont vous avez besoin. Côté client, une interface qu&rsquo;ils tiennent seuls au quotidien. Côté cabinet, une <strong>vue d&rsquo;ensemble</strong> de vos dossiers : conformité, échéances de TVA, points à traiter, exports prêts.",
+      "C&rsquo;est l&rsquo;approche que nous développons avec Deviso : un outil de devis et de facturation conçu pour les entreprises de toute forme, de l&rsquo;indépendant à la société avec équipe, doublé d&rsquo;un cockpit pour l&rsquo;expert-comptable qui suit plusieurs dossiers. Nous en parlons en détail sur notre page dédiée aux experts-comptables.",
     ],
   },
   {
@@ -80,32 +80,32 @@ const SECTIONS: Section[] = [
     ton: "succes",
     titre: "Un cockpit pour le cabinet",
     texte:
-      "Au-delà de l&rsquo;outil client, Deviso donne au cabinet un tableau de bord de ses dossiers : état de <strong>conformité</strong> (SIRET, raccordement à la réforme, régime de TVA), <strong>calendrier des échéances de TVA</strong>, signalements à traiter, et exports comptables standardisés. De quoi superviser un portefeuille mêlant micro-entrepreneurs, entreprises individuelles et sociétés sans ressaisir dossier par dossier.",
+      "Au-delà de l&rsquo;outil client, Deviso donne au cabinet un tableau de bord de ses dossiers : état de <strong>conformité</strong> (SIRET, raccordement à la réforme, régime de TVA), <strong>calendrier des échéances de TVA</strong>, signalements à traiter, et exports comptables standardisés. De quoi superviser un portefeuille mêlant micro-entrepreneurs, entreprises individuelles et sociétés sans ressaisir dossier par dossier.",
   },
 ];
 
 const FAQ = [
   {
-    q: "Pourquoi les dossiers de clients en micro-entreprise sont-ils peu rentables ?",
+    q: "Pourquoi les dossiers de clients en micro-entreprise sont-ils peu rentables ?",
     a: "Parce que leurs honoraires sont bas mais que le dossier arrive souvent mal tenu (tableur, captures, factures en vrac). Le cabinet absorbe la mise en ordre, la ressaisie et les relances, qui ne sont pas facturables.",
   },
   {
-    q: "La réforme de la facturation électronique oblige-t-elle mes clients micro à s'équiper ?",
+    q: "La réforme de la facturation électronique oblige-t-elle mes clients micro à s'équiper ?",
     a: "Oui. Depuis septembre 2026, les assujettis à la TVA doivent pouvoir recevoir des factures électroniques, et l'émission se généralise. Les clients, micro-entrepreneurs comme sociétés, devront disposer d'un outil compatible.",
   },
   {
-    q: "Quel intérêt à choisir moi-même l'outil de mes clients ?",
+    q: "Quel intérêt à choisir moi-même l'outil de mes clients ?",
     a: "Un outil unique, dont vous connaissez les exports et les règles, évite d'avoir une solution différente par client. Vous passez du temps à superviser plutôt qu'à ressaisir des données hétérogènes.",
   },
   {
-    q: "Qu'apporte un cockpit cabinet par rapport à un simple outil de facturation ?",
-    a: "Il donne une vue d'ensemble du portefeuille : état de conformité par dossier, calendrier des échéances de TVA, points à traiter et exports standardisés, pour superviser plusieurs clients, micro-entrepreneurs comme sociétés, sans traiter chaque dossier isolément.",
+    q: "Qu'apporte un cockpit cabinet par rapport à un simple outil de facturation ?",
+    a: "Il donne une vue d'ensemble du portefeuille : état de conformité par dossier, calendrier des échéances de TVA, points à traiter et exports standardisés, pour superviser plusieurs clients, micro-entrepreneurs comme sociétés, sans traiter chaque dossier isolément.",
   },
 ];
 
 const SOURCES: Source[] = [
   {
-    libelle: "Service-public.gouv.fr, Facturation électronique entre entreprises",
+    libelle: "Service-public.gouv.fr, Tout savoir sur la facturation",
     url: "https://entreprendre.service-public.gouv.fr/vosdroits/F23208",
     precision: "calendrier de réception et d'émission des factures électroniques",
   },

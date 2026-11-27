@@ -17,12 +17,12 @@ export const metadata = metadonneesArticle(SLUG);
  */
 const FAQ = [
   {
-    q: "Qu'est-ce que le scope creep ?",
+    q: "Qu'est-ce que le scope creep ?",
     a: "Le scope creep (ou dérive de périmètre) désigne le phénomène par lequel le périmètre d'une mission s'étend progressivement au-delà de ce qui était prévu initialement, sans ajustement du prix ni de la durée. C'est souvent le résultat d'un brief flou, de demandes clients non formalisées, ou d'un devis sans clause de périmètre.",
   },
   {
-    q: "Comment éviter le scope creep dans un devis ?",
-    a: "La protection la plus efficace est une clause de périmètre explicite dans le devis : 'La présente mission couvre exclusivement les prestations décrites ci-dessus. Toute demande supplémentaire fera l'objet d'un avenant tarifé.' Complétez avec un brief détaillé signé avant le démarrage et une procédure d'avenant claire.",
+    q: "Comment éviter le scope creep dans un devis ?",
+    a: "La protection la plus efficace est une clause de périmètre explicite dans le devis : « La présente mission couvre exclusivement les prestations décrites ci-dessus. Toute demande supplémentaire fera l'objet d'un avenant tarifé. » Complétez avec un brief détaillé signé avant le démarrage et une procédure d'avenant claire.",
   },
 ];
 
@@ -47,8 +47,8 @@ export default function Page() {
       {/* Bandeau */}
       <div className="bg-indigo-950/95 backdrop-blur-xs border-b border-indigo-500/20 py-2 px-4 text-center text-sm">
         <span className="text-indigo-300 font-semibold">Réforme 2026&nbsp;:</span>
-        <span className="text-gray-300 ml-1.5">La facturation électronique B2B devient obligatoire en France.&nbsp;</span>
-        <span className="text-indigo-400 font-medium">Deviso est déjà conforme Factur-X.</span>
+        <span className="text-gray-300 ml-1.5">Réception des factures électroniques obligatoire depuis le 1<sup>er</sup> septembre 2026, émission au 1<sup>er</sup> septembre 2027 pour les PME, TPE et micro-entreprises.&nbsp;</span>
+        <span className="text-indigo-400 font-medium">Deviso émet en Factur-X par la plateforme agréée comprise dans l&apos;abonnement.</span>
       </div>
 
 
@@ -69,7 +69,7 @@ export default function Page() {
               <span className="text-xs text-gray-400">29 juin 2026 · 6 min</span>
             </div>
             <h1 className="text-3xl sm:text-4xl font-semibold text-ink leading-tight mb-4">
-              Scope creep freelance : qu&apos;est-ce que c&apos;est et comment s&apos;en protéger dans son devis
+              Scope creep freelance : qu&apos;est-ce que c&apos;est et comment s&apos;en protéger dans son devis
             </h1>
             <p className="text-lg text-gray-400 leading-relaxed">
               Vous avez accepté de créer un site de 5 pages. Vous en livrez 8. Vous avez proposé 2 logos, vous en avez fait 12. Bienvenue dans le scope creep, une cause fréquente de perte de rentabilité, pour un indépendant comme pour une société de services.
@@ -80,22 +80,22 @@ export default function Page() {
           <div className="space-y-10 text-sm text-gray-300 leading-relaxed">
 
             <section>
-              <h2 className="text-xl font-semibold text-ink mb-4">Qu&apos;est-ce que le scope creep ?</h2>
+              <h2 className="text-xl font-semibold text-ink mb-4">Qu&apos;est-ce que le scope creep ?</h2>
               <p className="mb-4">
-                Le <strong className="text-ink">scope creep</strong> (ou &quot;dérive de périmètre&quot; en français) désigne le phénomène par lequel une mission s&apos;étend progressivement au-delà de ce qui était prévu, sans ajustement du prix ni de la durée. Ce n&apos;est généralement pas une tentative délibérée d&apos;en avoir plus pour le même prix. C&apos;est souvent la conséquence d&apos;un brief flou, d&apos;un devis vague, et d&apos;une relation client où vous avez du mal à dire non.
+                Le <strong className="text-ink">scope creep</strong> (ou « dérive de périmètre » en français) désigne le phénomène par lequel une mission s&apos;étend progressivement au-delà de ce qui était prévu, sans ajustement du prix ni de la durée. Ce n&apos;est généralement pas une tentative délibérée d&apos;en avoir plus pour le même prix. C&apos;est souvent la conséquence d&apos;un brief flou, d&apos;un devis vague, et d&apos;une relation client où vous avez du mal à dire non.
               </p>
               <p>
-                L&apos;ironie du scope creep : plus vous êtes compétent et impliqué, plus vous y êtes exposé. Le client voit que vous faites du bon travail, que vous connaissez son projet mieux que lui, alors il continue à solliciter. &quot;Puisque t&apos;es là, tu peux juste...&quot;
+                L&apos;ironie du scope creep : plus vous êtes compétent et impliqué, plus vous y êtes exposé. Le client voit que vous faites du bon travail, que vous connaissez son projet mieux que lui, alors il continue à solliciter. « Puisque vous êtes là, vous pouvez juste… »
               </p>
             </section>
 
             <section>
-              <h2 className="text-xl font-semibold text-ink mb-4">Comment le scope creep arrive-t-il concrètement ?</h2>
+              <h2 className="text-xl font-semibold text-ink mb-4">Comment le scope creep arrive-t-il concrètement ?</h2>
               <div className="space-y-4">
                 {[
                   { title: "Le brief qui évolue en cours de route", desc: "Le client change d'avis sur la direction créative, le positionnement, la cible. Ce qui était prévu ne colle plus, et il faut refaire. Sans clause de révision, vous absorbez ce coût." },
-                  { title: "Les \"petites\" demandes qui s'accumulent", desc: "\"Tu peux juste ajouter...\" est la phrase la plus dangereuse dans une activité de services. Chaque demande prise individuellement semble mineure. Ensemble, elles représentent des heures non facturées." },
-                  { title: "L'absence de livrable défini", desc: "\"Refonte du site\" sans préciser le nombre de pages, les fonctionnalités, les intégrations. Le client a imaginé quelque chose, vous avez imaginé autre chose, et c'est vous qui vous alignez." },
+                  { title: "Les « petites » demandes qui s'accumulent", desc: "« Vous pouvez juste ajouter… » est la phrase la plus dangereuse dans une activité de services. Chaque demande prise individuellement semble mineure. Ensemble, elles représentent des heures non facturées." },
+                  { title: "L'absence de livrable défini", desc: "« Refonte du site » sans préciser le nombre de pages, les fonctionnalités, les intégrations. Le client a imaginé quelque chose, vous avez imaginé autre chose, et c'est vous qui vous alignez." },
                   { title: "La pression relationnelle", desc: "Vous ne voulez pas décevoir. Vous voulez que le client soit content. Alors vous faites ce qu'il demande, même si c'est hors périmètre. Et le prix reste le même." },
                 ].map((item) => (
                   <div key={item.title} className="bg-ds-surface border border-ds-border rounded-xl p-5">
@@ -109,14 +109,14 @@ export default function Page() {
             <section>
               <h2 className="text-xl font-semibold text-ink mb-4">Les clauses qui vous protègent dans votre devis</h2>
               <p className="mb-5">
-                La protection contre le scope creep commence dans le devis, avant même que la mission démarre. Deux clauses sont essentielles :
+                La protection contre le scope creep commence dans le devis, avant même que la mission démarre. Deux clauses sont essentielles :
               </p>
 
               <div className="space-y-5">
                 <div className="border border-indigo-500/30 bg-indigo-500/5 rounded-xl p-5">
                   <p className="text-xs font-semibold text-indigo-400 uppercase tracking-wider mb-3">Clause de périmètre</p>
                   <p className="text-sm text-gray-200 italic leading-relaxed mb-3">
-                    &ldquo;La présente mission couvre exclusivement les prestations décrites ci-dessus. Toute demande supplémentaire non prévue dans ce devis fera l&apos;objet d&apos;un avenant tarifé, établi et accepté par les deux parties avant toute exécution.&rdquo;
+                    «&nbsp;La présente mission couvre exclusivement les prestations décrites ci-dessus. Toute demande supplémentaire non prévue dans ce devis fera l&apos;objet d&apos;un avenant tarifé, établi et accepté par les deux parties avant toute exécution.&nbsp;»
                   </p>
                   <p className="text-xs text-gray-500">Cette clause transforme chaque demande supplémentaire en conversation commerciale normale, plutôt qu&apos;en pression relationnelle.</p>
                 </div>
@@ -124,23 +124,23 @@ export default function Page() {
                 <div className="border border-blue-500/30 bg-blue-500/5 rounded-xl p-5">
                   <p className="text-xs font-semibold text-blue-400 uppercase tracking-wider mb-3">Clause de révisions</p>
                   <p className="text-sm text-gray-200 italic leading-relaxed mb-3">
-                    &ldquo;Le présent devis inclut 2 cycles de révisions mineures dans le cadre du brief initial. Au-delà, toute modification est facturée à [X€/heure]. Toute modification substantielle du brief initial constitue une nouvelle prestation.&rdquo;
+                    «&nbsp;Le présent devis inclut 2 cycles de révisions mineures dans le cadre du brief initial. Au-delà, toute modification est facturée à [X €/heure]. Toute modification substantielle du brief initial constitue une nouvelle prestation.&nbsp;»
                   </p>
-                  <p className="text-xs text-gray-500">Définissez aussi ce que vous entendez par &quot;révision mineure&quot; vs &quot;modification substantielle&quot; dans les échanges préalables au devis.</p>
+                  <p className="text-xs text-gray-500">Définissez aussi ce que vous entendez par « révision mineure » et par « modification substantielle » dans les échanges préalables au devis.</p>
                 </div>
               </div>
             </section>
 
             <section>
-              <h2 className="text-xl font-semibold text-ink mb-4">La procédure d&apos;avenant : comment facturer les demandes supplémentaires sans froisser le client</h2>
+              <h2 className="text-xl font-semibold text-ink mb-4">La procédure d&apos;avenant : comment facturer les demandes supplémentaires sans froisser le client</h2>
               <p className="mb-4">
-                Avoir la clause dans le devis ne suffit pas, vous devez aussi savoir comment l&apos;activer dans la vraie vie, avec un client qui vous dit &quot;c&apos;est juste deux minutes&quot;.
+                Avoir la clause dans le devis ne suffit pas, vous devez aussi savoir comment l&apos;activer dans la vraie vie, avec un client qui vous dit « c&apos;est juste deux minutes ».
               </p>
               <div className="space-y-3">
                 {[
-                  { step: "1", text: "Accusez réception de la demande sans refuser : \"Bien reçu, c'est une bonne idée. Je regarde comment on peut intégrer ça.\"" },
-                  { step: "2", text: "Estimez l'impact : temps supplémentaire, coût, impact sur le délai de livraison." },
-                  { step: "3", text: "Envoyez un avenant formel : document simple qui décrit la demande, le prix et le délai ajouté." },
+                  { step: "1", text: "Accusez réception de la demande sans refuser : « Bien reçu, c'est une bonne idée. Je regarde comment on peut intégrer ça. »" },
+                  { step: "2", text: "Estimez l'impact : temps supplémentaire, coût, impact sur le délai de livraison." },
+                  { step: "3", text: "Envoyez un avenant formel : document simple qui décrit la demande, le prix et le délai ajouté." },
                   { step: "4", text: "Attendez la signature avant de commencer. Sans validation, vous travaillez gratuitement." },
                 ].map((item) => (
                   <div key={item.step} className="flex gap-4 bg-ds-elevated rounded-xl p-4 border border-ds-border">
@@ -154,11 +154,11 @@ export default function Page() {
             <section>
               <h2 className="text-xl font-semibold text-ink mb-4">Prévenir le scope creep dès le brief</h2>
               <p className="mb-4">
-                La meilleure clause de périmètre est celle que vous n&apos;avez jamais besoin d&apos;activer, parce que le brief initial était suffisamment précis. Avant de rédiger le devis :
+                La meilleure clause de périmètre est celle que vous n&apos;avez jamais besoin d&apos;activer, parce que le brief initial était suffisamment précis. Avant de rédiger le devis :
               </p>
               <ul className="space-y-2 text-gray-400">
-                <li className="flex gap-2"><span className="text-emerald-400 shrink-0">✓</span> Listez les livrables de manière exhaustive (pas &quot;un site web&quot; mais &quot;un site de 5 pages : accueil, services, à propos, contact, mentions légales&quot;)</li>
-                <li className="flex gap-2"><span className="text-emerald-400 shrink-0">✓</span> Précisez ce qui est exclu (pas &quot;le SEO n&apos;est pas inclus&quot; mais &quot;l&apos;optimisation SEO on-page et les campagnes SEA ne font pas partie de cette mission&quot;)</li>
+                <li className="flex gap-2"><span className="text-emerald-400 shrink-0">✓</span> Listez les livrables de manière exhaustive (pas « un site web » mais « un site de 5 pages : accueil, services, à propos, contact, mentions légales »)</li>
+                <li className="flex gap-2"><span className="text-emerald-400 shrink-0">✓</span> Précisez ce qui est exclu (pas « le SEO n&apos;est pas inclus » mais « l&apos;optimisation SEO on-page et les campagnes SEA ne font pas partie de cette mission »)</li>
                 <li className="flex gap-2"><span className="text-emerald-400 shrink-0">✓</span> Faites signer le brief avant de signer le devis, ou intégrez-le en annexe du devis</li>
                 <li className="flex gap-2"><span className="text-emerald-400 shrink-0">✓</span> Définissez les jalons et les points de validation pour les projets longs</li>
               </ul>

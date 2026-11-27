@@ -26,7 +26,7 @@ const SECTIONS: Section[] = [
       {
         titre: "Une urgence ou une confidentialité inhabituelle",
         texte:
-          "« À régler aujourd&rsquo;hui », « ne pas en parler », « je suis en déplacement, pas joignable »&nbsp;: la pression sur le délai sert à vous empêcher de vérifier.",
+          "« À régler aujourd&rsquo;hui », « ne pas en parler », « je suis en déplacement, pas joignable »&nbsp;: la pression sur le délai sert à vous empêcher de vérifier.",
       },
       {
         titre: "Une adresse légèrement différente",
@@ -43,7 +43,7 @@ const SECTIONS: Section[] = [
   {
     type: "encadre",
     ton: "alerte",
-    titre: "La règle d&rsquo;or : le contre-appel",
+    titre: "La règle d&rsquo;or : le contre-appel",
     texte:
       "Aucun changement de coordonnées bancaires ne se valide sur la foi d&rsquo;un e-mail. Appelez votre interlocuteur habituel <strong>sur le numéro que vous connaissez déjà</strong>, jamais sur celui indiqué dans le message suspect, et faites-lui confirmer le nouveau RIB.",
   },
@@ -93,23 +93,23 @@ const SECTIONS: Section[] = [
 
 const FAQ = [
   {
-    q: "Qu'est-ce que la fraude au faux RIB ?",
+    q: "Qu'est-ce que la fraude au faux RIB ?",
     a: "Un escroc se fait passer pour un fournisseur, un client ou un partenaire et vous demande de payer sur de nouvelles coordonnées bancaires, qui sont les siennes.",
   },
   {
-    q: "Comment vérifier un changement de RIB ?",
+    q: "Comment vérifier un changement de RIB ?",
     a: "En appelant votre interlocuteur habituel sur un numéro que vous connaissez déjà, jamais sur celui du message reçu, et en faisant confirmer les nouvelles coordonnées avant tout paiement.",
   },
   {
-    q: "Que faire si j'ai payé un faux RIB ?",
-    a: "Contacter immédiatement votre banque pour demander le rappel des fonds, déposer plainte, et conserver toutes les pièces : facture, RIB, messages, ordre de virement.",
+    q: "Que faire si j'ai payé un faux RIB ?",
+    a: "Contacter immédiatement votre banque pour demander le rappel des fonds, déposer plainte, et conserver toutes les pièces : facture, RIB, messages, ordre de virement.",
   },
   {
-    q: "Ai-je encore une dette envers le vrai fournisseur ?",
-    a: "En principe oui : payer un usurpateur ne règle pas la dette envers le créancier réel. C'est pourquoi la vérification préalable est essentielle.",
+    q: "Ai-je encore une dette envers le vrai fournisseur ?",
+    a: "En principe oui : payer un usurpateur ne règle pas la dette envers le créancier réel. C'est pourquoi la vérification préalable est essentielle.",
   },
   {
-    q: "Ma propre entreprise peut-elle être usurpée ?",
+    q: "Ma propre entreprise peut-elle être usurpée ?",
     a: "Oui. Si votre messagerie est piratée, de faux RIB peuvent être envoyés à vos clients en votre nom. La double authentification et une information claire à vos clients limitent ce risque.",
   },
 ];
@@ -127,7 +127,7 @@ const SOURCES: Source[] = [
   },
   {
     libelle: "Ministère de l'Intérieur et collectivités, Fraude aux faux ordres de virement",
-    url: "https://www.collectivites-locales.gouv.fr/files/files/Ressources/D%C3%A9pliants%20LePointsur/depl-fovi_web.pdf",
+    url: "https://www.collectivites-locales.gouv.fr/files/files/Ressources/D%C3 %A9pliants%20LePointsur/depl-fovi_web.pdf",
     precision: "contre-appel sur des coordonnées fiabilisées",
   },
 ];

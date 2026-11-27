@@ -16,16 +16,16 @@ export const metadata = metadonneesArticle(SLUG);
  */
 const FAQ = [
   {
-    q: "C'est quoi une PDP (Plateforme de Dématérialisation Partenaire) ?",
-    a: "Une PDP est une plateforme privée certifiée par la DGFiP pour transmettre les factures électroniques entre entreprises et déclarer les données fiscales à l'administration. Depuis l'abandon du PPF (portail public) en octobre 2024, seules les PDP privées sont habilitées pour la réforme de facturation électronique.",
+    q: "C'est quoi une PDP (Plateforme de Dématérialisation Partenaire) ?",
+    a: "Une PDP, aujourd'hui appelée plateforme agréée, est une plateforme privée immatriculée par l'État pour transmettre les factures électroniques entre entreprises et déclarer les données fiscales à l'administration. Depuis l'abandon du PPF (portail public) en octobre 2024, seules les PDP privées sont habilitées pour la réforme de facturation électronique.",
   },
   {
-    q: "Une entreprise ou un indépendant doit-il choisir sa propre PDP ?",
+    q: "Une entreprise ou un indépendant doit-il choisir sa propre PDP ?",
     a: "Pas nécessairement. Si votre logiciel de facturation est lui-même une PDP ou est connecté à une PDP, c'est transparent pour vous. Vous utilisez votre logiciel comme d'habitude, et la transmission à la DGFiP se fait automatiquement. Deviso est raccordé à une Plateforme Agréée (Super PDP) et émet et reçoit déjà vos factures électroniques, en conformité avec la réforme.",
   },
   {
-    q: "Combien coûte une PDP pour une petite entreprise ou un indépendant ?",
-    a: "Le coût varie selon les prestataires. Certaines PDP facturent à la transaction (0,05 à 0,30 € par facture), d'autres proposent des abonnements mensuels. Beaucoup de logiciels de facturation incluront l'accès à une PDP dans leur abonnement existant, sans surcoût.",
+    q: "Combien coûte une PDP pour une petite entreprise ou un indépendant ?",
+    a: "Le coût varie selon les prestataires. Certaines PDP facturent à la transaction (0,05 à 0,30 € par facture), d'autres proposent des abonnements mensuels. Beaucoup de logiciels de facturation incluront l'accès à une PDP dans leur abonnement existant, sans surcoût.",
   },
 ];
 
@@ -55,46 +55,46 @@ export default function ChoisirPlateformeAgreeePage() {
         <div className="mb-10">
           <div className="flex items-center gap-3 mb-4">
             <span className="text-xs font-semibold text-indigo-400 bg-indigo-500/10 border border-indigo-500/20 rounded-full px-3 py-1">Réforme 2026 · PDP</span>
-            <span className="text-xs text-gray-400">8 min · Mis à jour juillet 2026</span>
+            <span className="text-xs text-gray-400">8 min · Mis à jour novembre 2026</span>
           </div>
           <h1 className="text-3xl sm:text-4xl font-bold text-ink leading-tight mb-4">
             Comment choisir sa plateforme agréée (PDP) quand on est freelance, indépendant ou dirigeant de petite entreprise
           </h1>
           <p className="text-lg text-gray-400 leading-relaxed">
-            Le portail public de facturation (PPF) a abandonné son rôle de plateforme d'échange en octobre 2024. Depuis le 1er septembre 2026, toute entreprise assujettie à la TVA, sociétés comme indépendants, passe par une plateforme agréée privée. Voici comment choisir la vôtre.
+            Le portail public de facturation (PPF) a abandonné son rôle de plateforme d&apos;échange en octobre 2024. Depuis le 1er septembre 2026, toute entreprise assujettie à la TVA, sociétés comme indépendants, passe par une plateforme agréée privée. Voici comment choisir la vôtre.
           </p>
         </div>
 
         <div className="prose prose-invert prose-sm max-w-none space-y-10 text-gray-400 leading-relaxed">
 
           <section>
-            <h2 className="text-xl font-bold text-ink mb-4">Qu&apos;est-ce qu&apos;une PDP et pourquoi c&apos;est obligatoire ?</h2>
+            <h2 className="text-xl font-bold text-ink mb-4">Qu&apos;est-ce qu&apos;une PDP et pourquoi c&apos;est obligatoire ?</h2>
             <p>
-              Une <strong className="text-ink">Plateforme de Dématérialisation Partenaire (PDP)</strong> est un opérateur privé immatriculé par la DGFiP. Son rôle est double :
+              Une <strong className="text-ink">Plateforme de Dématérialisation Partenaire (PDP)</strong> est un opérateur privé immatriculé par la DGFiP. Son rôle est double :
             </p>
             <ul className="mt-3 space-y-2">
               <li className="flex gap-2"><span className="text-indigo-400 shrink-0">1.</span> <span><strong className="text-ink">Transmettre les factures</strong> entre émetteur et destinataire dans un format structuré (Factur-X, UBL...)</span></li>
-              <li className="flex gap-2"><span className="text-indigo-400 shrink-0">2.</span> <span><strong className="text-ink">Déclarer les données fiscales</strong> à la DGFiP en temps réel (montants, TVA, parties, date)</span></li>
+              <li className="flex gap-2"><span className="text-indigo-400 shrink-0">2.</span> <span><strong className="text-ink">Transmettre les données fiscales</strong> prévues par la loi à l&apos;administration (montants, TVA, parties, date)</span></li>
             </ul>
             <p className="mt-3">
-              Avant 2024, on espérait pouvoir utiliser le Portail Public de Facturation (PPF) gratuitement pour émettre et recevoir. La DGFiP a abandonné cette fonction en octobre 2024, et l&apos;État a arrêté le développement du portail en août 2025 : il ne reste que les plateformes agréées privées. Vous devez donc en avoir une, mais dans la plupart des cas, votre logiciel de facturation s&apos;en charge pour vous.
+              Avant 2024, on espérait pouvoir utiliser le Portail Public de Facturation (PPF) gratuitement pour émettre et recevoir. La DGFiP a abandonné cette fonction en octobre 2024, et l&apos;État a arrêté le développement du portail en août 2025 : il ne reste que les plateformes agréées privées. Vous devez donc en avoir une, mais dans la plupart des cas, votre logiciel de facturation s&apos;en charge pour vous.
             </p>
           </section>
 
           <section>
-            <h2 className="text-xl font-bold text-ink mb-4">Dois-je vraiment choisir une PDP moi-même ?</h2>
+            <h2 className="text-xl font-bold text-ink mb-4">Dois-je vraiment choisir une PDP moi-même ?</h2>
             <p>
-              <strong className="text-ink">Probablement non.</strong> Il existe deux scénarios :
+              <strong className="text-ink">Probablement non.</strong> Il existe deux scénarios :
             </p>
             <div className="mt-4 space-y-4">
               <div className="bg-[#14211a] border border-emerald-500/20 rounded-xl p-5">
-                <p className="text-sm font-bold text-emerald-400 mb-2">Scénario 1 (le plus fréquent), Votre logiciel intègre une PDP</p>
+                <p className="text-sm font-bold text-emerald-400 mb-2">Scénario 1 (le plus fréquent) : votre logiciel intègre une plateforme agréée</p>
                 <p className="text-sm text-gray-300">
-                  Vous utilisez un logiciel de facturation (Deviso, Pennylane, Abby...) qui a conclu un partenariat avec une ou plusieurs PDP. La transmission est transparente : vous créez votre facture comme d&apos;habitude, et le logiciel gère la transmission à la DGFiP automatiquement. C&apos;est le chemin le plus simple.
+                  Vous utilisez un logiciel de facturation qui est soit lui-même plateforme agréée (c&apos;est le cas de Pennylane ou d&apos;Abby), soit raccordé à une plateforme agréée (c&apos;est le cas de Deviso, avec Super PDP). La transmission est transparente : vous créez votre facture comme d&apos;habitude, et le logiciel gère la transmission à la DGFiP automatiquement. C&apos;est le chemin le plus simple.
                 </p>
               </div>
               <div className="bg-ds-surface border border-ds-border rounded-xl p-5">
-                <p className="text-sm font-bold text-ink mb-2">Scénario 2, Vous devez choisir votre propre PDP</p>
+                <p className="text-sm font-bold text-ink mb-2">Scénario 2 : vous devez choisir votre propre PDP</p>
                 <p className="text-sm">
                   Si vous utilisez un outil qui ne gère pas la PDP, ou si vous émettez vos factures depuis un système interne, vous devrez vous connecter directement à une PDP. Dans ce cas, les critères ci-dessous s&apos;appliquent.
                 </p>
@@ -128,8 +128,8 @@ export default function ChoisirPlateformeAgreeePage() {
                 },
                 {
                   num: "05",
-                  titre: "Certification DGFiP à jour",
-                  desc: "Vérifiez que la PDP est bien immatriculée et à jour dans sa certification. Une liste officielle est publiée sur impots.gouv.fr. Évitez les prestataires qui « prévoient » d'être certifiés mais ne le sont pas encore.",
+                  titre: "Immatriculation à vérifier",
+                  desc: "Vérifiez que la plateforme figure bien dans la liste des opérateurs immatriculés, publiée sur impots.gouv.fr. Évitez les prestataires qui « prévoient » d'être immatriculés mais ne le sont pas encore.",
                 },
               ].map(({ num, titre, desc }) => (
                 <div key={num} className="flex gap-4 bg-ds-surface border border-ds-border rounded-xl p-4">
@@ -147,13 +147,13 @@ export default function ChoisirPlateformeAgreeePage() {
             <h2 className="text-xl font-bold text-ink mb-4">Questions à poser à une PDP avant de s&apos;engager</h2>
             <div className="bg-ds-surface border border-ds-border rounded-xl p-5 space-y-3">
               {[
-                "Êtes-vous immatriculé PDP par la DGFiP ? Quelle est votre date d'immatriculation ?",
-                "Acceptez-vous le format Factur-X au profil EN 16931 ?",
-                "Quel est le coût pour une activité de 5 à 30 factures B2B par mois ?",
-                "Comment gérez-vous les factures en franchise de TVA (article 293B CGI) ?",
-                "Avez-vous une intégration avec [votre logiciel de facturation] ?",
-                "Comment puis-je recevoir les e-factures de mes fournisseurs via votre plateforme ?",
-                "Quel est votre support en cas de problème de transmission ou de rejet ?",
+                "Êtes-vous immatriculé PDP par la DGFiP ? Quelle est votre date d'immatriculation ?",
+                "Acceptez-vous le format Factur-X au profil EN 16931 ?",
+                "Quel est le coût pour une activité de 5 à 30 factures B2B par mois ?",
+                "Comment gérez-vous les factures en franchise de TVA (article 293B CGI) ?",
+                "Avez-vous une intégration avec [votre logiciel de facturation] ?",
+                "Comment puis-je recevoir les e-factures de mes fournisseurs via votre plateforme ?",
+                "Quel est votre support en cas de problème de transmission ou de rejet ?",
               ].map((q) => (
                 <div key={q} className="flex gap-3 text-sm">
                   <span className="text-indigo-400 shrink-0 mt-0.5">?</span>
@@ -164,7 +164,7 @@ export default function ChoisirPlateformeAgreeePage() {
           </section>
 
           <section>
-            <h2 className="text-xl font-bold text-ink mb-4">Et Deviso dans tout ça ?</h2>
+            <h2 className="text-xl font-bold text-ink mb-4">Et Deviso dans tout ça ?</h2>
             <p>
               Deviso est raccordé à une Plateforme Agréée (Super PDP). Vous n&apos;avez <strong className="text-ink">rien à faire</strong> : vous créez votre facture dans Deviso comme aujourd&apos;hui, et la transmission à la DGFiP via la Plateforme Agréée se fait automatiquement.
             </p>
@@ -172,7 +172,7 @@ export default function ChoisirPlateformeAgreeePage() {
               Vos factures Deviso sont au format Factur-X EN 16931, le format que la Plateforme Agréée reçoit et transmet. Pas de travail de conversion, pas de reformatage. La donnée structurée est déjà là.
             </p>
             <p className="mt-3">
-              Concrètement : Deviso émet et reçoit déjà vos factures électroniques via la Plateforme Agréée, en conformité avec la réforme, bien avant l&apos;obligation universelle du 1er septembre 2027.
+              Concrètement : Deviso émet et reçoit déjà vos factures électroniques via la Plateforme Agréée, en conformité avec la réforme, bien avant l&apos;obligation universelle du 1er septembre 2027.
             </p>
           </section>
 
@@ -181,19 +181,19 @@ export default function ChoisirPlateformeAgreeePage() {
             <div className="space-y-5">
               {[
                 {
-                  q: "Peut-on utiliser plusieurs PDP ?",
+                  q: "Peut-on utiliser plusieurs PDP ?",
                   a: "Oui. Rien n'interdit d'émettre via une PDP et de recevoir via une autre (ou la même). Mais c'est une complexité inutile pour une petite structure. Mieux vaut une PDP unique intégrée à votre logiciel.",
                 },
                 {
-                  q: "Le PPF est-il vraiment abandonné ? Ne pourrait-il pas être rétabli ?",
-                  a: "L'abandon du PPF est officiel depuis octobre 2024. La DGFiP a confirmé qu'elle ne développerait pas le portail public. Il n'existe aucune indication d'un possible retour en arrière sur ce point.",
+                  q: "Le PPF est-il vraiment abandonné ? Ne pourrait-il pas être rétabli ?",
+                  a: "Le recentrage du PPF a été annoncé le 16 octobre 2024 et entériné par la loi de finances 2025 : le portail public garde l'annuaire et la concentration des données transmises à l'administration, mais il ne sera pas une plateforme d'échange gratuite. Il n'existe aucune indication d'un possible retour en arrière sur ce point.",
                 },
                 {
-                  q: "Mes factures seront-elles visibles par la DGFiP en temps réel ?",
-                  a: "Oui. C'est l'un des objectifs de la réforme : la DGFiP dispose de données de facturation en temps quasi-réel pour améliorer la lutte contre la fraude TVA. Vos factures (montants HT, TVA, parties, date) seront transmises automatiquement.",
+                  q: "Mes factures seront-elles visibles par la DGFiP en temps réel ?",
+                  a: "Non, pas vos factures elles-mêmes : elles circulent entre plateformes agréées et ne sont pas centralisées par l'administration. Seules les données prévues par la loi lui sont transmises (montants HT, TVA, parties, date), au fil des dépôts pour les factures entre entreprises françaises, et à chaque période de transmission pour l'e-reporting. C'est l'un des outils de la lutte contre la fraude à la TVA.",
                 },
                 {
-                  q: "La PDP peut-elle refuser de transmettre une facture ?",
+                  q: "La PDP peut-elle refuser de transmettre une facture ?",
                   a: "Oui, si la facture ne respecte pas le format (données manquantes, SIRET invalide, format non conforme). La PDP retourne alors un statut de rejet avec le motif. Votre logiciel de facturation vous préviendra et vous indiquera comment corriger.",
                 },
               ].map(({ q, a }) => (
@@ -224,9 +224,9 @@ export default function ChoisirPlateformeAgreeePage() {
           <div className="space-y-3">
             {[
               { href: "/blog/facturation-electronique-2026", title: "Guide complet réforme facturation électronique 2026" },
-              { href: "/blog/reforme-facturation-micro-entrepreneur", title: "Micro-entrepreneur : ce que la réforme change pour vous" },
-              { href: "/blog/e-reporting-freelance-2026", title: "E-reporting : l'obligation B2C dont personne ne parle" },
-              { href: "/blog/checklist-reforme-facturation-2026", title: "Checklist réforme 2026 : êtes-vous prêt ?" },
+              { href: "/blog/reforme-facturation-micro-entrepreneur", title: "Micro-entrepreneur : ce que la réforme change pour vous" },
+              { href: "/blog/e-reporting-freelance-2026", title: "E-reporting : l'obligation B2C dont personne ne parle" },
+              { href: "/blog/checklist-reforme-facturation-2026", title: "Checklist réforme 2026 : êtes-vous prêt ?" },
             ].map(({ href, title }) => (
               <Link key={href} href={href} className="flex items-center gap-3 text-sm text-gray-400 hover:text-indigo-300 transition-colors group">
                 <span className="text-indigo-500 group-hover:text-indigo-300 shrink-0">→</span>

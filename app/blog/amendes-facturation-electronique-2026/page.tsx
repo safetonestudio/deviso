@@ -17,24 +17,24 @@ export const metadata = metadonneesArticle(SLUG);
  */
 const FAQ = [
   {
-    q: "Quel est le montant de l'amende si je n'émets pas au bon format ?",
-    a: "50 € par facture non émise au format électronique requis lorsque l'émission est obligatoire, dans la limite de 15 000 € par an. C'est le montant en vigueur depuis le 1er septembre 2026.",
+    q: "Quel est le montant de l'amende si je n'émets pas au bon format ?",
+    a: "50 € par facture non émise au format électronique requis lorsque l'émission est obligatoire, dans la limite de 15 000 € par an. C'est le montant en vigueur depuis le 1er septembre 2026.",
   },
   {
-    q: "Et pour l'e-reporting ?",
-    a: "500 € par transmission d'e-reporting manquante ou insuffisante, également plafonnée à 15 000 € par an. L'e-reporting, c'est la transmission à l'administration des données de vos ventes aux particuliers et à l'étranger, distincte de la facture elle-même.",
+    q: "Et pour l'e-reporting ?",
+    a: "500 € par transmission d'e-reporting manquante ou insuffisante, également plafonnée à 15 000 € par an. L'e-reporting, c'est la transmission à l'administration des données de vos ventes aux particuliers et à l'étranger, distincte de la facture elle-même.",
   },
   {
-    q: "Que se passe-t-il si je ne peux pas recevoir une facture électronique ?",
-    a: "Le défaut de réception est sanctionné de 500 €, porté à 1 000 € en cas de réitération dans les trois mois. C'est la seule obligation déjà en vigueur pour tout le monde depuis le 1er septembre 2026, et la plus simple à respecter, puisque recevoir est souvent gratuit.",
+    q: "Que se passe-t-il si je ne peux pas recevoir une facture électronique ?",
+    a: "Ne pas recourir à une plateforme agréée pour recevoir vos factures vaut d'abord une mise en demeure de vous y conformer sous trois mois. Passé ce délai sans régularisation, l'amende est de 500 €, puis de 1 000 € après une nouvelle mise en demeure de trois mois, et à nouveau 1 000 € tous les trois mois tant que la situation n'est pas régularisée. C'est la seule obligation déjà en vigueur pour tout le monde depuis le 1er septembre 2026, et la plus simple à respecter, puisque recevoir est souvent gratuit.",
   },
   {
-    q: "Vais-je être sanctionné dès le premier oubli ?",
-    a: "Non. Aucune sanction n'est appliquée au premier manquement de l'année civile en cours et des trois précédentes, si vous régularisez spontanément ou dans les trente jours suivant une demande de l'administration. La sanction vise la négligence répétée, pas l'erreur unique corrigée.",
+    q: "Vais-je être sanctionné dès le premier oubli ?",
+    a: "Pas pour l'émission ni pour l'e-reporting : aucune amende n'est appliquée au premier manquement de l'année civile en cours et des trois précédentes, si vous régularisez spontanément ou dans les trente jours suivant une demande de l'administration. Pour la réception, il n'y a pas d'amende immédiate non plus : l'administration vous met d'abord en demeure de vous équiper sous trois mois. La sanction vise la négligence répétée, pas l'erreur unique corrigée.",
   },
   {
-    q: "Pourquoi je vois encore 250 € et 15 € un peu partout ?",
-    a: "Ce sont les montants d'avant la loi de finances pour 2026. L'e-reporting était à 250 €, l'émission à 15 €. La loi les a relevés, mais beaucoup de pages n'ont pas été mises à jour. Un site qui affiche encore ces chiffres est un site qui n'a pas suivi.",
+    q: "Pourquoi je vois encore 250 € et 15 € un peu partout ?",
+    a: "Ce sont les montants d'avant la loi de finances pour 2026. L'e-reporting était à 250 €, l'émission à 15 €. La loi les a relevés, mais beaucoup de pages n'ont pas été mises à jour. Un site qui affiche encore ces chiffres est un site qui n'a pas suivi.",
   },
 ];
 
@@ -42,18 +42,18 @@ const FAQ = [
 const SANCTIONS = [
   {
     manquement: "Défaut d'émission au format électronique requis (obligatoire)",
-    montant: "50 € par facture",
-    plafond: "15 000 € par an",
+    montant: "50 € par facture",
+    plafond: "15 000 € par an",
   },
   {
     manquement: "Transmission d'e-reporting manquante ou insuffisante",
-    montant: "500 € par transmission",
-    plafond: "15 000 € par an",
+    montant: "500 € par transmission",
+    plafond: "15 000 € par an",
   },
   {
-    manquement: "Défaut de réception d'une facture électronique",
-    montant: "500 €, puis 1 000 € si réitération sous 3 mois",
-    plafond: "au cas par cas",
+    manquement: "Absence de plateforme agréée pour recevoir les factures électroniques",
+    montant: "500 € après une mise en demeure de 3 mois restée sans effet, puis 1 000 € tous les 3 mois tant que rien n'est régularisé",
+    plafond: "aucun plafond annuel",
   },
 ];
 
@@ -108,24 +108,24 @@ export default function Page() {
                   <span className="text-indigo-400 shrink-0">→</span>
                   <span>
                     Ne pas <strong className="text-ink">émettre</strong> au format requis quand
-                    c&apos;est obligatoire : <strong className="text-ink">50 € par facture</strong>, dans la
-                    limite de 15 000 € par an.
+                    c&apos;est obligatoire : <strong className="text-ink">50 € par facture</strong>, dans la
+                    limite de 15 000 € par an.
                   </span>
                 </li>
                 <li className="flex gap-2">
                   <span className="text-indigo-400 shrink-0">→</span>
                   <span>
                     Manquer une transmission d&apos;<strong className="text-ink">e-reporting</strong> :
-                    <strong className="text-ink"> 500 € par transmission</strong>, également plafonnée à
-                    15 000 € par an.
+                    <strong className="text-ink"> 500 € par transmission</strong>, également plafonnée à
+                    15 000 € par an.
                   </span>
                 </li>
                 <li className="flex gap-2">
                   <span className="text-indigo-400 shrink-0">→</span>
                   <span>
-                    Ne pas pouvoir <strong className="text-ink">recevoir</strong> une facture électronique :
-                    <strong className="text-ink"> 500 €</strong>, porté à 1 000 € en cas de réitération sous
-                    trois mois.
+                    Ne pas avoir de plateforme agréée pour <strong className="text-ink">recevoir</strong> vos
+                    factures : mise en demeure de trois mois, puis <strong className="text-ink">500 €</strong>,
+                    puis 1 000 € tous les trois mois tant que la situation n&apos;est pas régularisée.
                   </span>
                 </li>
               </ul>
@@ -177,10 +177,10 @@ export default function Page() {
                 Ces montants ne sont pas ceux du texte d&apos;origine. La{" "}
                 <strong className="text-ink">loi de finances pour 2026</strong> (loi n° 2026-103 du 19 février
                 2026, article 123) a relevé les sanctions de la réforme. L&apos;e-reporting est passé de 250 à
-                500 € par manquement, et l&apos;émission de 15 à 50 € par facture.
+                500 € par manquement, et l&apos;émission de 15 à 50 € par facture.
               </p>
               <p>
-                C&apos;est la source de la confusion que vous croisez en ligne : une partie du web a été écrite
+                C&apos;est la source de la confusion que vous croisez en ligne : une partie du web a été écrite
                 avant ce texte, et affiche encore les anciens chiffres. Sur un sujet où l&apos;exactitude est tout
                 l&apos;intérêt, un montant périmé décrédibilise la page entière. Les valeurs de cet article sont
                 celles en vigueur, avec leur source en bas de page.
@@ -196,12 +196,14 @@ export default function Page() {
                     La tolérance que presque personne ne cite
                   </p>
                   <p className="text-gray-400">
-                    Aucune sanction n&apos;est appliquée au <strong className="text-gray-200">premier
+                    Pour l&apos;émission (50 € par facture) comme pour l&apos;e-reporting (500 € par transmission),
+                    aucune amende n&apos;est appliquée au <strong className="text-gray-200">premier
                     manquement</strong> de l&apos;année civile en cours et des trois précédentes, dès lors que
                     l&apos;infraction est réparée spontanément, ou dans les <strong className="text-gray-200">trente
                     jours</strong> suivant une demande de l&apos;administration. Autrement dit, la sanction vise la
                     négligence répétée, pas l&apos;erreur unique que l&apos;on corrige. Ce n&apos;est pas une
-                    dispense, c&apos;est une marge, et elle disparaît dès qu&apos;on l&apos;a déjà utilisée.
+                    dispense, c&apos;est une marge, et elle disparaît dès qu&apos;on l&apos;a déjà utilisée. La
+                    réception suit une autre logique : la mise en demeure de trois mois tient lieu d&apos;avertissement.
                   </p>
                 </div>
               </div>
@@ -213,13 +215,14 @@ export default function Page() {
                 Le plafond, et pourquoi il ne rassure pas les petites activités
               </h2>
               <p className="mb-4">
-                Le plafond de 15 000 € par an peut sembler lointain quand on émet quelques factures par mois. Il
+                Le plafond de 15 000 € par an peut sembler lointain quand on émet quelques factures par mois. Il
                 l&apos;est. Le vrai risque, pour une petite activité, n&apos;est pas d&apos;atteindre ce plafond,
-                c&apos;est le <strong className="text-ink">coût unitaire</strong> : un seul manquement, une fois
-                la tolérance consommée, coûte souvent plus cher qu&apos;une année entière d&apos;un outil adapté.
+                c&apos;est le <strong className="text-ink">coût unitaire</strong> : une seule transmission
+                d&apos;e-reporting manquée, une fois la tolérance consommée, coûte 500 €, plus qu&apos;une année
+                entière d&apos;un outil adapté.
               </p>
               <p>
-                Le calcul qui consiste à « ne rien prendre pour économiser » se retourne au premier oubli. C&apos;est
+                Le calcul qui consiste à « ne rien prendre pour économiser » se retourne au premier oubli. C&apos;est
                 d&apos;autant plus dommage que la mise en conformité est peu coûteuse, et gratuite pour la seule
                 obligation déjà en vigueur, la réception.
               </p>
@@ -232,7 +235,7 @@ export default function Page() {
               </p>
               <p className="mb-4">
                 Ces sanctions punissent un défaut de format ou de transmission. Un outil qui produit le bon format
-                et transmet ce qu&apos;il faut, quand il faut, les rend sans objet : il n&apos;y a plus de
+                et transmet ce qu&apos;il faut, quand il faut, les rend sans objet : il n&apos;y a plus de
                 manquement à sanctionner. C&apos;est exactement le travail d&apos;un logiciel de facturation
                 conforme, et c&apos;est le nôtre.
               </p>

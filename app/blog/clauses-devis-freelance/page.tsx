@@ -23,7 +23,7 @@ const clauses = [
     title: "Clause de périmètre",
     risk: "Scope creep",
     color: "indigo",
-    desc: "C'est la clause la plus importante pour toute entreprise de services. Elle définit exactement ce que couvre la mission, et implicitement, tout ce qui n'en fait pas partie. Sans elle, votre client peut légitimement considérer que \"une page de plus\", \"un onglet supplémentaire\" ou \"juste une petite modification\" sont inclus dans le prix.",
+    desc: "C'est la clause la plus importante pour toute entreprise de services. Elle définit exactement ce que couvre la mission, et implicitement, tout ce qui n'en fait pas partie. Sans elle, votre client peut légitimement considérer qu'« une page de plus », « un onglet supplémentaire » ou « juste une petite modification » sont inclus dans le prix.",
     formulation: "La présente mission couvre exclusivement les prestations décrites ci-dessus. Toute demande supplémentaire non prévue dans ce devis fera l'objet d'un avenant tarifé, établi et accepté avant toute exécution.",
     professions: [
       { label: "Développeur web", href: "/freelance-developpeur" },
@@ -39,7 +39,7 @@ const clauses = [
     title: "Clause d'acompte",
     risk: "Défaut de paiement, annulation",
     color: "violet",
-    desc: "L'acompte protège votre trésorerie et dissuade les clients de mauvaise foi. Un client qui a payé 40% d'acompte est beaucoup plus engagé qu'un client sans acompte. Cette clause doit préciser le montant de l'acompte, sa non-restituabilité en cas d'annulation, et les conditions de démarrage de la mission.",
+    desc: "L'acompte protège votre trésorerie et dissuade les clients de mauvaise foi. Un client qui a payé 40 % d'acompte est beaucoup plus engagé qu'un client sans acompte. Cette clause doit préciser le montant de l'acompte, sa non-restituabilité en cas d'annulation, et les conditions de démarrage de la mission.",
     formulation: "Un acompte de [X]% du montant total HT, soit [montant] €, est exigible à la signature du présent devis. La mission débutera à réception de cet acompte. En cas d'annulation de la mission par le client après signature, l'acompte versé reste acquis au prestataire à titre d'indemnité.",
     professions: [
       { label: "Artisan BTP", href: "/freelance-artisan" },
@@ -47,15 +47,15 @@ const clauses = [
       { label: "Coach freelance", href: "/freelance-coach" },
       { label: "Formateur indépendant", href: "/freelance-formateur" },
     ],
-    tip: "30 à 40% est la norme B2B. Pour les particuliers, la loi réglemente les acomptes selon le type de prestation.",
+    tip: "En B2B, 30 à 40 % est une pratique courante. Pour les particuliers, la loi réglemente les acomptes selon le type de prestation.",
   },
   {
     id: "revisions",
     num: "03",
     title: "Clause de révisions",
-    risk: "Aller-retours infinis",
+    risk: "Allers-retours infinis",
     color: "blue",
-    desc: "Sans cette clause, vous pouvez vous retrouver à refaire votre travail indéfiniment. Le client a \"juste quelques retours\", et le cycle ne s'arrête jamais. Définissez le nombre de cycles de révisions inclus, ce qu'est une révision (vs une modification de brief), et le tarif applicable au-delà.",
+    desc: "Sans cette clause, vous pouvez vous retrouver à refaire votre travail indéfiniment. Le client a « juste quelques retours », et le cycle ne s'arrête jamais. Définissez le nombre de cycles de révisions inclus, ce qu'est une révision (par opposition à une modification du brief), et le tarif applicable au-delà.",
     formulation: "Le présent devis inclut [X] cycle(s) de révisions mineures (ajustements limités dans le cadre du brief initial). Au-delà, toute modification sera facturée au taux horaire de [X] €/heure. Toute modification substantielle du brief initial (changement d'orientation, de cible, de format) constitue une nouvelle prestation et fera l'objet d'un avenant.",
     professions: [
       { label: "Graphiste freelance", href: "/freelance-graphiste" },
@@ -63,7 +63,7 @@ const clauses = [
       { label: "Développeur web", href: "/freelance-developpeur" },
       { label: "Traducteur freelance", href: "/freelance-traducteur" },
     ],
-    tip: "Distinguez toujours \"révision mineure\" (corriger une faute, ajuster une couleur) de \"modification substantielle\" (changer complètement le concept).",
+    tip: "Distinguez toujours « révision mineure » (corriger une faute, ajuster une couleur) et « modification substantielle » (changer complètement le concept).",
   },
   {
     id: "propriete-intellectuelle",
@@ -71,7 +71,7 @@ const clauses = [
     title: "Clause de propriété intellectuelle",
     risk: "Utilisation non autorisée, litige sur les droits",
     color: "emerald",
-    desc: "Par défaut en droit français, les créations intellectuelles appartiennent à leur auteur, pas au client. Sans clause de cession, votre client n'est pas légalement autorisé à utiliser votre travail pour des usages non convenus. Cette clause doit préciser ce qui est cédé : durée, territoire, supports, et à quelle condition (souvent : paiement intégral).",
+    desc: "Par défaut en droit français, les créations intellectuelles appartiennent à leur auteur, pas au client. Sans clause de cession, votre client n'est pas légalement autorisé à utiliser votre travail pour des usages non convenus. Cette clause doit préciser ce qui est cédé : durée, territoire, supports, et à quelle condition (souvent : paiement intégral).",
     formulation: "Les droits d'exploitation de la création réalisée dans le cadre de la présente mission sont cédés au client à titre exclusif, pour une durée de [X ans / indéfinie], sur le territoire [France / monde entier], pour les supports [web, print, broadcast...]. Cette cession est conditionnée au paiement intégral des sommes dues. En cas de non-paiement, le prestataire se réserve le droit de réclamer le retrait de toute utilisation de la création.",
     professions: [
       { label: "Graphiste freelance", href: "/freelance-graphiste" },
@@ -80,7 +80,7 @@ const clauses = [
       { label: "Traducteur freelance", href: "/freelance-traducteur" },
       { label: "Développeur web", href: "/freelance-developpeur" },
     ],
-    tip: "La cession conditionnée au paiement est votre meilleure garantie : le client ne peut pas utiliser votre travail sans vous avoir payé.",
+    tip: "La cession conditionnée au paiement est votre meilleure garantie : le client ne peut pas utiliser votre travail sans vous avoir payé.",
   },
   {
     id: "penalites-retard",
@@ -88,14 +88,14 @@ const clauses = [
     title: "Clause de pénalités de retard",
     risk: "Retards de paiement chroniques",
     color: "amber",
-    desc: "Entre professionnels, la mention des pénalités de retard est une obligation légale sur les factures (Code de commerce). Il est fortement conseillé de les mentionner aussi dans le devis. Une indemnité forfaitaire de 40€ pour frais de recouvrement est également due de plein droit en cas de retard B2B, sans mise en demeure préalable.",
-    formulation: "Tout retard de paiement au-delà de la date d'échéance entraînera automatiquement l'application de pénalités de retard au taux de [3 fois le taux légal en vigueur / taux conventionnel], calculées sur le montant TTC impayé. Une indemnité forfaitaire de 40 € pour frais de recouvrement sera également due conformément à l'article L441-10 du Code de commerce.",
+    desc: "Entre professionnels, la mention des pénalités de retard est une obligation légale sur les factures (Code de commerce). Il est fortement conseillé de les mentionner aussi dans le devis. Une indemnité forfaitaire de 40 € pour frais de recouvrement est également due de plein droit en cas de retard B2B, sans mise en demeure préalable.",
+    formulation: "Tout retard de paiement au-delà de la date d'échéance entraînera automatiquement l'application de pénalités de retard au taux de [3 fois le taux légal en vigueur / taux conventionnel], calculées sur le montant TTC impayé. Une indemnité forfaitaire de 40 € pour frais de recouvrement sera également due conformément à l'article L441-10 du Code de commerce.",
     professions: [
       { label: "Consultant indépendant", href: "/freelance-consultant" },
       { label: "Développeur web", href: "/freelance-developpeur" },
       { label: "Community manager", href: "/freelance-community-manager" },
     ],
-    tip: "En 2026, le taux légal est publié annuellement au Journal Officiel. Vous pouvez aussi fixer un taux conventionnel supérieur, librement négocié.",
+    tip: "Le taux d'intérêt légal est fixé pour chaque semestre : vérifiez celui en vigueur sur service-public.fr. Vous pouvez aussi fixer un taux conventionnel supérieur, librement négocié.",
   },
   {
     id: "resiliation",
@@ -118,7 +118,7 @@ const clauses = [
     title: "Clause d'annulation",
     risk: "Annulation de dernière minute, perte de créneau",
     color: "orange",
-    desc: "Différente de la résiliation (qui concerne les missions longues), la clause d'annulation protège pour les prestations ponctuelles : shooting photo, chantier, session de formation. Si votre client annule la veille, vous perdez le créneau que vous auriez pu vendre à quelqu'un d'autre.",
+    desc: "Différente de la résiliation (qui concerne les missions longues), la clause d'annulation protège pour les prestations ponctuelles : shooting photo, chantier, session de formation. Si votre client annule la veille, vous perdez le créneau que vous auriez pu vendre à quelqu'un d'autre.",
     formulation: "En cas d'annulation par le client dans un délai de [48h / 7 jours] avant la date de prestation, l'acompte versé reste acquis au prestataire. En cas d'annulation avec moins de [24h] de préavis, le montant total de la prestation reste dû. Le prestataire se réserve le droit d'annuler en cas de force majeure (intempéries, sinistre, maladie) et proposera un report à une date convenue d'un commun accord.",
     professions: [
       { label: "Photographe freelance", href: "/freelance-photographe" },
@@ -126,7 +126,7 @@ const clauses = [
       { label: "Formateur indépendant", href: "/freelance-formateur" },
       { label: "Coach freelance", href: "/freelance-coach" },
     ],
-    tip: "Adaptez le délai de préavis à votre métier : 24h pour un shooting, 7 jours pour un chantier, 15 jours pour une formation inter-entreprises.",
+    tip: "Adaptez le délai de préavis à votre métier : 24h pour un shooting, 7 jours pour un chantier, 15 jours pour une formation inter-entreprises.",
   },
   {
     id: "confidentialite",
@@ -149,7 +149,7 @@ const clauses = [
     title: "Clause de force majeure",
     risk: "Événements exceptionnels imprévus",
     color: "zinc",
-    desc: "La force majeure couvre les événements imprévisibles, extérieurs et irrésistibles qui empêchent l'exécution de la mission : pandémie, catastrophe naturelle, grève générale, sinistre. Sans cette clause, vous pouvez être tenu responsable d'un retard dû à des circonstances totalement indépendantes de votre volonté.",
+    desc: "La force majeure couvre les événements imprévisibles, extérieurs et irrésistibles qui empêchent l'exécution de la mission : pandémie, catastrophe naturelle, grève générale, sinistre. Sans cette clause, vous pouvez être tenu responsable d'un retard dû à des circonstances totalement indépendantes de votre volonté.",
     formulation: "Ni le prestataire ni le client ne pourront être tenus responsables d'un retard ou d'une inexécution de leurs obligations résultant d'un cas de force majeure au sens de l'article 1218 du Code civil. En cas de force majeure persistant plus de [30 jours], chaque partie pourra résilier le contrat sans pénalités, les prestations réalisées restant dues.",
     professions: [
       { label: "Artisan BTP", href: "/freelance-artisan" },
@@ -205,23 +205,23 @@ const metierLinks = [
  */
 const FAQ = [
   {
-    q: "Un devis a-t-il la même valeur juridique qu'un contrat ?",
+    q: "Un devis a-t-il la même valeur juridique qu'un contrat ?",
     a: "Oui. Un devis signé des deux parties constitue un contrat au sens juridique. Il engage le prestataire, indépendant ou société, à réaliser la prestation aux conditions décrites, et le client à payer le prix convenu. Les clauses que vous incluez ont donc une valeur contractuelle pleine et entière, d'où l'importance de les rédiger avec soin.",
   },
   {
-    q: "Les pénalités de retard sont-elles obligatoires ?",
-    a: "Entre professionnels (B2B), leur mention est une obligation légale sur les factures (Code de commerce, art. L441-9). Le taux minimum est 3 fois le taux d'intérêt légal. Une indemnité forfaitaire de 40€ pour frais de recouvrement est également due de plein droit. En B2C, les pénalités sont librement fixées mais doivent être mentionnées avant la conclusion du contrat.",
+    q: "Les pénalités de retard sont-elles obligatoires ?",
+    a: "Entre professionnels (B2B), leur mention est une obligation légale sur les factures (Code de commerce, art. L441-9). Le taux minimum est 3 fois le taux d'intérêt légal. Une indemnité forfaitaire de 40 € pour frais de recouvrement est également due de plein droit. En B2C, les pénalités sont librement fixées mais doivent être mentionnées avant la conclusion du contrat.",
   },
   {
-    q: "Quand les droits d'auteur sont-ils transférés au client ?",
-    a: "Sans mention contraire, jamais, les droits restent à l'auteur. La cession doit être explicitement prévue dans le devis ou contrat : durée, territoire, supports d'exploitation. La pratique la plus courante est de conditionner la cession au paiement intégral : tant que le client n'a pas payé, il n'a pas légalement le droit d'utiliser la création.",
+    q: "Quand les droits d'auteur sont-ils transférés au client ?",
+    a: "Sans mention contraire, jamais, les droits restent à l'auteur. La cession doit être explicitement prévue dans le devis ou contrat : durée, territoire, supports d'exploitation. La pratique la plus courante est de conditionner la cession au paiement intégral : tant que le client n'a pas payé, il n'a pas légalement le droit d'utiliser la création.",
   },
   {
-    q: "Faut-il des Conditions Générales de Vente en plus du devis ?",
+    q: "Faut-il des conditions générales de vente en plus du devis ?",
     a: "Les CGV sont recommandées, surtout si vous travaillez avec de nombreux clients. Elles complètent le devis en posant un cadre général (droit applicable, tribunal compétent, modalités de facturation). Dans la pratique, pour les missions ponctuelles, un devis bien rédigé avec les clauses essentielles suffit souvent. Pour les missions récurrentes ou les grands comptes, des CGV séparées sont préférables.",
   },
   {
-    q: "Un client peut-il refuser de signer un devis avec ces clauses ?",
+    q: "Un client peut-il refuser de signer un devis avec ces clauses ?",
     a: "Il peut négocier, mais il ne peut pas exiger que vous retiriez des clauses légitimes qui vous protègent. Si un client refuse catégoriquement des clauses standard (comme la limitation de révisions ou la clause d'acompte), c'est souvent un signal d'alerte sur la relation commerciale. Vous êtes libre de refuser une mission dont les conditions ne vous conviennent pas.",
   },
 ];
@@ -234,8 +234,8 @@ export default function Page() {
       {/* ── Bandeau 2026 ── */}
       <div className="bg-indigo-950/95 backdrop-blur-xs border-b border-indigo-500/20 py-2 px-4 text-center text-sm">
         <span className="text-indigo-300 font-semibold">Réforme 2026&nbsp;:</span>
-        <span className="text-gray-300 ml-1.5">La facturation électronique B2B devient obligatoire en France.&nbsp;</span>
-        <span className="text-indigo-400 font-medium">Deviso est déjà conforme Factur-X, sans rien faire de votre côté.</span>
+        <span className="text-gray-300 ml-1.5">Réception des factures électroniques obligatoire depuis le 1<sup>er</sup> septembre 2026, émission au 1<sup>er</sup> septembre 2027 pour les PME, TPE et micro-entreprises.&nbsp;</span>
+        <span className="text-indigo-400 font-medium">Deviso émet en Factur-X par la plateforme agréée comprise dans l&apos;abonnement.</span>
       </div>
 
 
@@ -285,10 +285,10 @@ export default function Page() {
           {/* Intro */}
           <div className="prose prose-invert max-w-none mb-12">
             <p className="text-gray-300 leading-relaxed text-base mb-4">
-              La plupart des litiges entre une entreprise et ses clients ne viennent pas d&apos;une mauvaise volonté, mais d&apos;un malentendu sur ce qui était convenu. Un devis vague en est l&apos;origine fréquente : le prestataire pensait que &quot;le projet&quot; couvrait X, le client pensait que Y était inclus aussi.
+              La plupart des litiges entre une entreprise et ses clients ne viennent pas d&apos;une mauvaise volonté, mais d&apos;un malentendu sur ce qui était convenu. Un devis vague en est l&apos;origine fréquente : le prestataire pensait que « le projet » couvrait X, le client pensait que Y était inclus aussi.
             </p>
             <p className="text-gray-300 leading-relaxed text-base mb-4">
-              La solution ? Des clauses claires, rédigées en français simple, qui définissent les règles du jeu avant que la mission commence. Chaque clause ci-dessous correspond à un risque réel auquel les entreprises de services sont exposées, et que vous pouvez éviter.
+              La solution ? Des clauses claires, rédigées en français simple, qui définissent les règles du jeu avant que la mission commence. Chaque clause ci-dessous correspond à un risque réel auquel les entreprises de services sont exposées, et que vous pouvez éviter.
             </p>
           </div>
 
@@ -300,7 +300,7 @@ export default function Page() {
                   <span className={`font-mono text-2xl font-bold ${numColorMap[clause.color]}`}>{clause.num}</span>
                   <div>
                     <h2 className="text-xl font-semibold text-ink">{clause.title}</h2>
-                    <span className="text-xs text-gray-400">Risque couvert : {clause.risk}</span>
+                    <span className="text-xs text-gray-400">Risque couvert : {clause.risk}</span>
                   </div>
                 </div>
 
@@ -309,12 +309,12 @@ export default function Page() {
                 {/* Formulation */}
                 <div className={`border rounded-xl p-5 mb-5 ${colorMap[clause.color]}`}>
                   <p className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-3">Formulation type</p>
-                  <p className="text-sm text-gray-200 leading-relaxed italic">&ldquo;{clause.formulation}&rdquo;</p>
+                  <p className="text-sm text-gray-200 leading-relaxed italic">«&nbsp;{clause.formulation}&nbsp;»</p>
                 </div>
 
                 {/* Professions */}
                 <div className="mb-4">
-                  <p className="text-xs text-gray-400 mb-2">Particulièrement important pour :</p>
+                  <p className="text-xs text-gray-400 mb-2">Particulièrement important pour :</p>
                   <div className="flex flex-wrap gap-2">
                     {clause.professions.map((p) => (
                       <Link

@@ -10,7 +10,7 @@ const SECTIONS: Section[] = [
     type: "texte",
     titre: "La franchise en base, et le jour où elle s&rsquo;arrête",
     paragraphes: [
-      "Tant que votre chiffre d&rsquo;affaires reste sous les seuils de <strong>franchise en base de TVA</strong>, vous ne facturez pas la TVA : vos factures portent la mention « TVA non applicable, article 293 B du CGI ». C&rsquo;est l&rsquo;un des grands conforts du régime micro.",
+      "Tant que votre chiffre d&rsquo;affaires reste sous les seuils de <strong>franchise en base de TVA</strong>, vous ne facturez pas la TVA : vos factures portent la mention « TVA non applicable, article 293 B du CGI ». C&rsquo;est l&rsquo;un des grands conforts du régime micro.",
       "Mais la franchise n&rsquo;est pas liée à votre plafond de micro-entreprise. Elle a ses propres seuils, <strong>beaucoup plus bas</strong>, et le jour où vous les franchissez, vous devez facturer la TVA, la déclarer et la reverser. Mieux vaut voir ce mur arriver que le découvrir sur une facture déjà partie.",
     ],
   },
@@ -18,28 +18,28 @@ const SECTIONS: Section[] = [
     type: "tableau",
     titre: "Les seuils de franchise 2026",
     intro:
-      "Deux niveaux à connaître : le seuil de base, et le seuil majoré qui déclenche la TVA immédiatement.",
+      "Deux niveaux à connaître : le seuil de base, et le seuil majoré qui déclenche la TVA immédiatement.",
     colonnes: ["", "Vente de biens", "Prestations de services"],
     lignes: [
-      ["Seuil de base", "<strong>85 000 €</strong>", "<strong>37 500 €</strong>"],
-      ["Seuil majoré", "93 500 €", "41 250 €"],
+      ["Seuil de base", "<strong>85 000 €</strong>", "<strong>37 500 €</strong>"],
+      ["Seuil majoré", "93 500 €", "41 250 €"],
     ],
     note:
-      "Le projet d&rsquo;un seuil unique de 25 000 € a été <strong>abandonné</strong> par la loi du 3 novembre 2025. Ce sont bien ces seuils-là qui s&rsquo;appliquent.",
+      "Le projet d&rsquo;un seuil unique de 25 000 € a été <strong>abandonné</strong> par la loi du 3 novembre 2025. Ce sont bien ces seuils-là qui s&rsquo;appliquent.",
   },
   {
     type: "encadre",
     ton: "alerte",
     titre: "Le seuil majoré ne pardonne pas",
     texte:
-      "Si vous dépassez le seuil de base mais restez sous le seuil majoré, vous basculez à la TVA au <strong>1er janvier suivant</strong>. Mais si vous franchissez le <strong>seuil majoré</strong> en cours d&rsquo;année, vous devenez redevable de la TVA <strong>dès le 1er jour du mois de dépassement</strong>. Les factures de ce mois doivent alors porter la TVA, même celles déjà émises sans.",
+      "Si vous dépassez le seuil de base mais restez sous le seuil majoré, vous basculez à la TVA au <strong>1er janvier suivant</strong>. Mais si vous franchissez le <strong>seuil majoré</strong> en cours d&rsquo;année, vous devenez redevable de la TVA <strong>dès le jour du dépassement</strong> (et non plus au 1er jour du mois, comme avant 2025). Les factures émises à partir de cette date doivent porter la TVA.",
   },
   {
     type: "texte",
     titre: "Ce qui change concrètement",
     paragraphes: [
       "Trois choses changent le jour où vous passez à la TVA. D&rsquo;abord, vos factures affichent le <strong>taux et le montant de TVA</strong>, et votre <strong>numéro de TVA intracommunautaire</strong> (que vous demandez à votre service des impôts des entreprises). Ensuite, vous <strong>collectez</strong> la TVA pour l&rsquo;État et la reversez. Enfin, et c&rsquo;est la contrepartie, vous pouvez <strong>déduire</strong> la TVA sur vos propres achats professionnels.",
-      "Pour vos clients professionnels, la TVA est neutre : ils la récupèrent. Pour vos clients particuliers, en revanche, vos prix TTC augmentent si vous répercutez la taxe : c&rsquo;est un point à anticiper dans votre tarification.",
+      "Pour vos clients professionnels, la TVA est neutre : ils la récupèrent. Pour vos clients particuliers, en revanche, vos prix TTC augmentent si vous répercutez la taxe : c&rsquo;est un point à anticiper dans votre tarification.",
     ],
   },
   {
@@ -55,7 +55,7 @@ const SECTIONS: Section[] = [
       {
         titre: "Choisir votre régime de déclaration",
         texte:
-          "Réel simplifié ou réel normal (voir ci-dessous). Ce choix fixe la fréquence de vos déclarations.",
+          "Réel simplifié ou réel normal (voir ci-dessous). Ce choix fixe la fréquence de vos déclarations. À partir du 1er janvier 2027, le réel simplifié disparaît.",
       },
       {
         titre: "Mettre à jour vos factures",
@@ -75,30 +75,31 @@ const SECTIONS: Section[] = [
     paragraphes: [
       "Au <strong>réel simplifié</strong>, vous faites une seule déclaration annuelle (la CA12) et payez deux acomptes dans l&rsquo;année, en juillet et en décembre. C&rsquo;est le régime le plus léger, adapté à la plupart des micro-entrepreneurs qui viennent de franchir le seuil.",
       "Au <strong>réel normal</strong>, vous déclarez la TVA chaque mois (la CA3), ou chaque trimestre si votre TVA annuelle est faible. C&rsquo;est plus lourd, mais parfois imposé selon l&rsquo;activité ou choisi pour récupérer la TVA plus vite quand on investit.",
+      "Attention, ce choix ne vaut que pour 2026 : le <strong>régime simplifié est supprimé au 1<sup>er</sup> janvier 2027</strong> (article 38 de la loi de finances pour 2025). Les entreprises qui en relevaient passent au réel normal, avec une déclaration CA3 <strong>trimestrielle</strong> tant que leur chiffre d&rsquo;affaires ne dépasse pas 1 000 000 € l&rsquo;année précédente et 1 100 000 € l&rsquo;année en cours, mensuelle au-delà ou sur option. La dernière CA12, celle de 2026, est à déposer au plus tard le 4 mai 2027.",
     ],
   },
 ];
 
 const FAQ = [
   {
-    q: "Quels sont les seuils de franchise de TVA en 2026 ?",
-    a: "85 000 € (seuil de base) et 93 500 € (seuil majoré) pour la vente de biens ; 37 500 € et 41 250 € pour les prestations de services. Le projet de seuil unique de 25 000 € a été abandonné par la loi du 3 novembre 2025.",
+    q: "Quels sont les seuils de franchise de TVA en 2026 ?",
+    a: "85 000 € (seuil de base) et 93 500 € (seuil majoré) pour la vente de biens ; 37 500 € et 41 250 € pour les prestations de services. Le projet de seuil unique de 25 000 € a été abandonné par la loi du 3 novembre 2025.",
   },
   {
-    q: "À partir de quand dois-je facturer la TVA si je dépasse un seuil ?",
-    a: "Si vous dépassez seulement le seuil de base, vous passez à la TVA au 1er janvier suivant. Si vous franchissez le seuil majoré en cours d'année, vous devenez redevable dès le 1er jour du mois de dépassement.",
+    q: "À partir de quand dois-je facturer la TVA si je dépasse un seuil ?",
+    a: "Si vous dépassez seulement le seuil de base, vous passez à la TVA au 1er janvier suivant. Si vous franchissez le seuil majoré en cours d'année, vous devenez redevable dès le jour du dépassement.",
   },
   {
-    q: "Comment obtenir un numéro de TVA intracommunautaire ?",
+    q: "Comment obtenir un numéro de TVA intracommunautaire ?",
     a: "En le demandant à votre service des impôts des entreprises, depuis votre espace professionnel sur impots.gouv.fr. Il devient obligatoire sur vos factures dès que vous facturez la TVA.",
   },
   {
-    q: "Quelle est la différence entre la CA12 et la CA3 ?",
-    a: "La CA12 est la déclaration annuelle du régime réel simplifié, avec deux acomptes en juillet et décembre. La CA3 est la déclaration mensuelle (ou trimestrielle) du régime réel normal.",
+    q: "Quelle est la différence entre la CA12 et la CA3 ?",
+    a: "La CA12 est la déclaration annuelle du régime réel simplifié, avec deux acomptes en juillet et décembre. La CA3 est la déclaration mensuelle (ou trimestrielle) du régime réel normal. Le régime simplifié est supprimé au 1er janvier 2027 : à partir de cette date, ses entreprises déclarent sur CA3, chaque trimestre tant que leur chiffre d'affaires ne dépasse pas 1 000 000 €.",
   },
   {
-    q: "Puis-je déduire la TVA sur mes achats une fois assujetti ?",
-    a: "Oui. C'est la contrepartie de la collecte : dès que vous facturez la TVA, vous pouvez déduire celle que vous payez sur vos achats professionnels.",
+    q: "Puis-je déduire la TVA sur mes achats une fois assujetti ?",
+    a: "Oui. C'est la contrepartie de la collecte : dès que vous facturez la TVA, vous pouvez déduire celle que vous payez sur vos achats professionnels.",
   },
 ];
 
@@ -109,9 +110,9 @@ const SOURCES: Source[] = [
     precision: "seuils de franchise et conditions de sortie",
   },
   {
-    libelle: "Impots.gouv.fr, Régimes d'imposition et déclarations de TVA",
-    url: "https://www.impots.gouv.fr/professionnel/les-regimes-dimposition",
-    precision: "réel simplifié (CA12) et réel normal (CA3)",
+    libelle: "Impots.gouv.fr, Le régime simplifié d'imposition à la TVA est supprimé à compter du 1er janvier 2027",
+    url: "https://www.impots.gouv.fr/actualite/le-regime-simplifie-dimposition-la-tva-est-supprime-compter-du-1er-janvier-2027",
+    precision: "fin de la CA12, passage au réel normal (CA3 trimestrielle ou mensuelle)",
   },
 ];
 
@@ -121,11 +122,11 @@ export default function Page() {
       slug={SLUG}
       chapeau="La franchise de TVA s&rsquo;arrête bien avant votre plafond de micro-entreprise. Voici les seuils 2026, ce qui déclenche la bascule, et les démarches pour passer à la TVA sans mauvaise surprise."
       enBref={[
-        "Seuils de franchise 2026 : <strong>85 000 / 93 500 €</strong> (biens), <strong>37 500 / 41 250 €</strong> (services).",
-        "Le seuil unique de 25 000 € a été <strong>abandonné</strong> (loi du 3 novembre 2025).",
-        "Dépasser le <strong>seuil majoré</strong> rend redevable dès le 1er jour du mois ; le seuil de base, au 1er janvier suivant.",
-        "Passer à la TVA : numéro intracommunautaire, TVA sur les factures, collecte, et <strong>déduction</strong> sur vos achats.",
-        "Déclaration au <strong>réel simplifié</strong> (CA12, 2 acomptes) ou au <strong>réel normal</strong> (CA3 mensuelle).",
+        "Seuils de franchise 2026 : <strong>85 000 / 93 500 €</strong> (biens), <strong>37 500 / 41 250 €</strong> (services).",
+        "Le seuil unique de 25 000 € a été <strong>abandonné</strong> (loi du 3 novembre 2025).",
+        "Dépasser le <strong>seuil majoré</strong> rend redevable dès le jour du dépassement ; le seuil de base, au 1er janvier suivant.",
+        "Passer à la TVA : numéro intracommunautaire, TVA sur les factures, collecte, et <strong>déduction</strong> sur vos achats.",
+        "Déclaration au <strong>réel simplifié</strong> (CA12, 2 acomptes) ou au <strong>réel normal</strong> (CA3) ; dès 2027, CA3 pour tous.",
       ]}
       sections={SECTIONS}
       faq={FAQ}

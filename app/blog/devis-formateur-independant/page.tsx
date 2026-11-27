@@ -11,7 +11,7 @@ export default function Page() {
       slug={SLUG}
       intro="Un devis de formation professionnelle n'est pas un devis ordinaire. Si votre client finance via un OPCO (Atlas, Constructys, Opco EP…), certaines mentions sont obligatoires sous peine de refus de prise en charge. Voici comment rédiger un devis conforme qui simplifie la vie de votre client, et la vôtre, que vous soyez formateur indépendant ou organisme de formation."
       mandatoryTitle="Les mentions obligatoires d'un devis de formation professionnelle"
-      mandatoryIntro="Au-delà des mentions légales classiques, un devis de formation doit répondre aux exigences des OPCO et de la réglementation sur la formation professionnelle :"
+      mandatoryIntro="Au-delà des mentions légales classiques, un devis de formation doit répondre aux exigences des OPCO et de la réglementation sur la formation professionnelle :"
       mandatoryItems={[
         {
           title: "Intitulé exact de la formation",
@@ -19,11 +19,11 @@ export default function Page() {
         },
         {
           title: "Objectifs pédagogiques",
-          desc: "Minimum 3 objectifs formulés en termes de compétences acquises : 'À l'issue de cette formation, le stagiaire sera capable de…'. C'est une exigence légale depuis la loi du 5 mars 2014 et un critère de contrôle Qualiopi.",
+          desc: "Des objectifs précis, formulés en termes de compétences acquises : 'À l'issue de cette formation, le stagiaire sera capable de…'. Les financeurs (OPCO) les attendent, et c'est un critère de contrôle Qualiopi.",
         },
         {
           title: "Durée en heures et modalité",
-          desc: "Durée totale en heures (ex : 14h soit 2 jours), modalité (présentiel, distanciel, mixte), lieu si présentiel. Séparez les heures de formation des heures de suivi individuel si applicable.",
+          desc: "Durée totale en heures (ex : 14h soit 2 jours), modalité (présentiel, distanciel, mixte), lieu si présentiel. Séparez les heures de formation des heures de suivi individuel si applicable.",
         },
         {
           title: "Public visé et prérequis",
@@ -35,7 +35,7 @@ export default function Page() {
         },
         {
           title: "Prix HT et modalités de paiement",
-          desc: "Prix total HT, TVA applicable ou exonération (les formations professionnelles continue sont exonérées de TVA sous conditions), et conditions de paiement : acompte à la commande, solde après la formation.",
+          desc: "Prix total HT, TVA applicable ou exonération (la formation professionnelle continue est exonérée de TVA sous conditions), et conditions de paiement : acompte à la commande, solde après la formation.",
         },
         {
           title: "Conditions d'annulation",
@@ -44,18 +44,18 @@ export default function Page() {
       ]}
       exampleClient="PME Industrie, Lyon (200 personnes, financement OPCO Atlas)"
       exampleLines={[
-        { desc: "Formation management d'équipe (2 jours · 14h présentiel)", qty: "1 forfait", price: "2 800 €" },
-        { desc: "Supports pédagogiques (slides, exercices, livret participant × 12)", qty: "1 forfait", price: "600 €" },
-        { desc: "Évaluations pré/post formation (quiz + grille de compétences)", qty: "1 forfait", price: "200 €" },
-        { desc: "Suivi individuel post-formation (1h × 12 participants, distanciel)", qty: "12 × 1h", price: "1 200 €" },
-        { desc: "Rapport de formation + attestations individuelles (12 participants)", qty: "1 forfait", price: "200 €" },
+        { desc: "Formation management d'équipe (2 jours · 14h présentiel)", qty: "1 forfait", price: "2 800 €" },
+        { desc: "Supports pédagogiques (slides, exercices, livret participant × 12)", qty: "1 forfait", price: "600 €" },
+        { desc: "Évaluations pré/post formation (quiz + grille de compétences)", qty: "1 forfait", price: "200 €" },
+        { desc: "Suivi individuel post-formation (1h × 12 participants, distanciel)", qty: "12 × 1h", price: "1 200 €" },
+        { desc: "Rapport de formation + attestations individuelles (12 participants)", qty: "1 forfait", price: "200 €" },
       ]}
-      exampleTotal="5 000 € HT"
-      exampleNote="Exonération de TVA applicable (formation professionnelle continue, déclaration d'activité enregistrée). Acompte 30% à la commande (1 500 €), solde à l'issue de la formation. Annulation à moins de 10 jours ouvrés : 50% du montant total dû."
+      exampleTotal="5 000 € HT"
+      exampleNote="Exonération de TVA applicable (formation professionnelle continue, déclaration d'activité enregistrée). Acompte 30 % à la commande (1 500 €), solde à l'issue de la formation. Annulation à moins de 10 jours ouvrés : 50 % du montant total dû."
       mistakes={[
         {
           title: "Objectifs pédagogiques trop vagues",
-          desc: "'Améliorer le management' n'est pas un objectif pédagogique conforme. L'OPCO et les inspecteurs Qualiopi attendent des formulations actionnables : 'Être capable de conduire un entretien de recadrage en appliquant la méthode DESC' est un objectif valide.",
+          desc: "'Améliorer le management' n'est pas un objectif pédagogique conforme. L'OPCO et les inspecteurs Qualiopi attendent des formulations actionnables : 'Être capable de conduire un entretien de recadrage en appliquant la méthode DESC' est un objectif valide.",
         },
         {
           title: "Oublier les conditions d'annulation",
@@ -66,26 +66,26 @@ export default function Page() {
           desc: "La formation professionnelle continue est exonérée de TVA à condition d'avoir votre numéro de déclaration d'activité et que la formation entre dans le champ de la formation professionnelle. Si ces conditions ne sont pas réunies, vous devez facturer la TVA au taux normal. Ne présumez pas de votre statut.",
         },
         {
-          title: "Ne pas anticiper la facturation Factur-X pour les organismes publics",
-          desc: "Si votre client est un organisme public (ministère, collectivité, hôpital), la facturation via Chorus Pro est obligatoire. Et dès 2026, la facturation Factur-X est imposée aux grandes entreprises. Assurez-vous de pouvoir émettre des factures électroniques conformes.",
+          title: "Ne pas anticiper la facture électronique (Chorus Pro et réforme)",
+          desc: "Si votre client est un organisme public (ministère, collectivité, hôpital), la facturation via Chorus Pro est obligatoire. Entre entreprises, la facture électronique arrive aussi : réception obligatoire pour toutes depuis le 1er septembre 2026, émission au 1er septembre 2027 pour les PME et les micro-entreprises. Assurez-vous de pouvoir émettre des factures électroniques conformes.",
         },
       ]}
       faq={[
         {
-          q: "Quelles mentions sont obligatoires dans un devis de formation pour un financement OPCO ?",
-          a: "Un devis de formation pour financement OPCO doit contenir : intitulé de la formation, objectifs pédagogiques formulés en compétences acquises, durée en heures, modalité (présentiel/distanciel), public visé, prérequis éventuels, moyens pédagogiques et d'évaluation, prix HT et modalités de paiement. Sans ces éléments, l'OPCO peut refuser la prise en charge ou demander des compléments.",
+          q: "Quelles mentions sont obligatoires dans un devis de formation pour un financement OPCO ?",
+          a: "Un devis de formation pour financement OPCO doit contenir : intitulé de la formation, objectifs pédagogiques formulés en compétences acquises, durée en heures, modalité (présentiel/distanciel), public visé, prérequis éventuels, moyens pédagogiques et d'évaluation, prix HT et modalités de paiement. Sans ces éléments, l'OPCO peut refuser la prise en charge ou demander des compléments.",
         },
         {
-          q: "La TVA s'applique-t-elle sur une facture de formation professionnelle ?",
-          a: "Non, sous conditions. La formation professionnelle continue est exonérée de TVA si vous êtes déclaré comme organisme de formation (numéro de déclaration d'activité obtenu auprès de la DREETS) et si la prestation entre dans le champ de la formation professionnelle continue. Sans déclaration d'activité, vous devez appliquer la TVA au taux normal de 20%.",
+          q: "La TVA s'applique-t-elle sur une facture de formation professionnelle ?",
+          a: "Non, sous conditions. La formation professionnelle continue est exonérée de TVA si vous êtes déclaré comme organisme de formation (numéro de déclaration d'activité obtenu auprès de la DREETS) et si la prestation entre dans le champ de la formation professionnelle continue. Sans déclaration d'activité, vous devez appliquer la TVA au taux normal de 20 %.",
         },
         {
-          q: "Faut-il être certifié Qualiopi pour facturer des formations en 2026 ?",
-          a: "Qualiopi est obligatoire uniquement si vous souhaitez que vos formations soient éligibles aux financements publics ou mutualisés (OPCO, CPF, Pôle Emploi, Régions). Si votre client finance la formation sur fonds propres sans passer par un OPCO, Qualiopi n'est pas requise. Cependant, de plus en plus d'entreprises exigent Qualiopi même pour les financements internes.",
+          q: "Faut-il être certifié Qualiopi pour facturer des formations en 2026 ?",
+          a: "Qualiopi est obligatoire uniquement si vous souhaitez que vos formations soient éligibles aux financements publics ou mutualisés (OPCO, CPF, France Travail, Régions). Si votre client finance la formation sur fonds propres sans passer par un OPCO, Qualiopi n'est pas requise. Cependant, de plus en plus d'entreprises exigent Qualiopi même pour les financements internes.",
         },
         {
-          q: "Comment rédiger une convention de formation en plus du devis ?",
-          a: "La convention de formation est le contrat qui accompagne le devis pour les formations financées par OPCO. Elle reprend les éléments du devis et y ajoute : les coordonnées complètes des deux parties, le programme détaillé, les conditions d'accès et de suivi des stagiaires. Certains OPCO fournissent leurs propres modèles de convention. Deviso génère les devis, la convention peut être rédigée séparément ou intégrée au devis signé.",
+          q: "Comment rédiger une convention de formation en plus du devis ?",
+          a: "La convention de formation est le contrat qui accompagne le devis pour les formations financées par OPCO. Elle reprend les éléments du devis et y ajoute : les coordonnées complètes des deux parties, le programme détaillé, les conditions d'accès et de suivi des stagiaires. Certains OPCO fournissent leurs propres modèles de convention. Deviso génère les devis, la convention peut être rédigée séparément ou intégrée au devis signé.",
         },
       ]}
     />

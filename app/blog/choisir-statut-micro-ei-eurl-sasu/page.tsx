@@ -29,7 +29,7 @@ const SECTIONS: Section[] = [
   },
   {
     type: "comparaison",
-    titre: "Micro-entreprise : la simplicité, avec des limites",
+    titre: "Micro-entreprise : la simplicité, avec des limites",
     colonnes: [
       {
         titre: "Ce qu&rsquo;elle apporte",
@@ -41,13 +41,13 @@ const SECTIONS: Section[] = [
         titre: "Ses limites",
         ton: "negatif",
         texte:
-          "Des plafonds de chiffre d&rsquo;affaires (203 100 € pour la vente, 83 600 € pour les services en 2026), et aucune déduction de vos charges réelles&nbsp;: un abattement forfaitaire les remplace.",
+          "Des plafonds de chiffre d&rsquo;affaires (203 100 € pour la vente, 83 600 € pour les services en 2026), et aucune déduction de vos charges réelles&nbsp;: un abattement forfaitaire les remplace.",
       },
     ],
   },
   {
     type: "texte",
-    titre: "Entreprise individuelle au réel : le même cadre, l&rsquo;impôt sur le vrai bénéfice",
+    titre: "Entreprise individuelle au réel : le même cadre, l&rsquo;impôt sur le vrai bénéfice",
     paragraphes: [
       "Juridiquement, rien ne change par rapport à la micro-entreprise&nbsp;: vous restez en entreprise individuelle. Ce qui change, c&rsquo;est le régime fiscal. Vous déduisez vos charges réelles et vous êtes imposé sur votre bénéfice effectif, au prix d&rsquo;une vraie comptabilité.",
       "Depuis mai 2022, votre <strong>patrimoine personnel est protégé par défaut</strong>&nbsp;: les créanciers professionnels ne peuvent saisir que les biens utiles à l&rsquo;activité. L&rsquo;entreprise individuelle peut aussi opter pour l&rsquo;impôt sur les sociétés, ce qui la rapproche d&rsquo;une EURL sans en créer une.",
@@ -55,14 +55,14 @@ const SECTIONS: Section[] = [
   },
   {
     type: "comparaison",
-    titre: "EURL ou SASU : deux sociétés, deux philosophies",
+    titre: "EURL ou SASU : deux sociétés, deux philosophies",
     colonnes: [
       {
         titre: "EURL",
         sousTitre: "Gérant indépendant",
         ton: "neutre",
         texte:
-          "Cotisations sociales moins élevées pour une même rémunération, mais une protection plus réduite. À l&rsquo;IS, la part des dividendes qui dépasse 10 % du capital et des apports est soumise aux cotisations sociales.",
+          "Cotisations sociales moins élevées pour une même rémunération, mais une protection plus réduite. À l&rsquo;IS, la part des dividendes qui dépasse 10 % du capital et des apports est soumise aux cotisations sociales.",
       },
       {
         titre: "SASU",
@@ -78,7 +78,7 @@ const SECTIONS: Section[] = [
     ton: "info",
     titre: "Les sociétés et l&rsquo;impôt sur les sociétés",
     texte:
-      "Une petite société soumise à l&rsquo;IS paie <strong>15 % sur les 42 500 premiers euros de bénéfice</strong>, puis 25 % au-delà, si elle remplit les conditions du taux réduit (chiffre d&rsquo;affaires, capital entièrement libéré et détenu majoritairement par des personnes physiques). Le bénéfice laissé dans la société pour investir n&rsquo;est donc imposé qu&rsquo;à ce taux.",
+      "Une petite société soumise à l&rsquo;IS paie <strong>15 % sur les 42 500 premiers euros de bénéfice</strong>, puis 25 % au-delà, si elle remplit les conditions du taux réduit (chiffre d&rsquo;affaires, capital entièrement libéré et détenu pour au moins 75 % par des personnes physiques). Le bénéfice laissé dans la société pour investir n&rsquo;est donc imposé qu&rsquo;à ce taux.",
   },
   {
     type: "liste",
@@ -117,23 +117,23 @@ const SECTIONS: Section[] = [
 
 const FAQ = [
   {
-    q: "Quel statut choisir pour démarrer seul ?",
+    q: "Quel statut choisir pour démarrer seul ?",
     a: "La micro-entreprise est la plus simple pour démarrer avec peu de charges. Si vos charges sont importantes ou si vous voulez un statut de salarié, l'entreprise individuelle au réel, l'EURL ou la SASU peuvent être plus adaptées.",
   },
   {
-    q: "Quelle différence entre EURL et SASU ?",
-    a: "En EURL, le gérant associé unique relève du régime des indépendants, avec des cotisations moins élevées. En SASU, le président est assimilé salarié : meilleure protection, mais cotisations plus lourdes sur la rémunération.",
+    q: "Quelle différence entre EURL et SASU ?",
+    a: "En EURL, le gérant associé unique relève du régime des indépendants, avec des cotisations moins élevées. En SASU, le président est assimilé salarié : meilleure protection, mais cotisations plus lourdes sur la rémunération.",
   },
   {
-    q: "Mon patrimoine personnel est-il protégé en entreprise individuelle ?",
-    a: "Oui, depuis mai 2022 : les créanciers professionnels ne peuvent saisir que les biens utiles à l'activité, sauf exceptions.",
+    q: "Mon patrimoine personnel est-il protégé en entreprise individuelle ?",
+    a: "Oui, depuis mai 2022 : les créanciers professionnels ne peuvent saisir que les biens utiles à l'activité, sauf exceptions.",
   },
   {
-    q: "Quel est le taux de l'impôt sur les sociétés pour une petite société ?",
-    a: "15 % sur les 42 500 premiers euros de bénéfice, puis 25 % au-delà, si la société remplit les conditions du taux réduit.",
+    q: "Quel est le taux de l'impôt sur les sociétés pour une petite société ?",
+    a: "15 % sur les 42 500 premiers euros de bénéfice, puis 25 % au-delà, si la société remplit les conditions du taux réduit.",
   },
   {
-    q: "Peut-on changer de statut plus tard ?",
+    q: "Peut-on changer de statut plus tard ?",
     a: "Oui. On peut passer du régime micro au réel, opter pour l'IS, ou transférer son activité dans une société. Chaque passage a ses formalités et ses conséquences fiscales, à préparer avec un professionnel.",
   },
 ];
@@ -147,7 +147,12 @@ const SOURCES: Source[] = [
   {
     libelle: "Impots.gouv.fr, Taux réduit d'impôt sur les sociétés",
     url: "https://www.impots.gouv.fr/actualite/taux-reduit-dimpot-sur-les-societes-le-critere-du-chiffre-daffaires-revu-pour-les",
-    precision: "15 % jusqu'à 42 500 € de bénéfice, conditions",
+    precision: "15 % jusqu'à 42 500 € de bénéfice, conditions",
+  },
+  {
+    libelle: "Service-public.gouv.fr, Impôt sur les sociétés : taux, déclaration, paiement",
+    url: "https://entreprendre.service-public.gouv.fr/vosdroits/F23575",
+    precision: "conditions du taux réduit : chiffre d'affaires, capital détenu à 75 % par des personnes physiques",
   },
   {
     libelle: "Bpifrance Création, Choisir son statut juridique",
@@ -166,7 +171,7 @@ export default function Page() {
         "<strong>EI au réel</strong>&nbsp;: impôt sur le vrai bénéfice, patrimoine personnel protégé depuis 2022.",
         "<strong>EURL</strong>&nbsp;: société, gérant indépendant, cotisations plus légères.",
         "<strong>SASU</strong>&nbsp;: président assimilé salarié, meilleure protection, cotisations plus lourdes.",
-        "Une société à l&rsquo;IS paie <strong>15 % jusqu&rsquo;à 42 500 €</strong> de bénéfice, puis 25 %.",
+        "Une société à l&rsquo;IS paie <strong>15 % jusqu&rsquo;à 42 500 €</strong> de bénéfice, puis 25 %.",
       ]}
       sections={SECTIONS}
       faq={FAQ}

@@ -17,12 +17,12 @@ export const metadata = metadonneesArticle(SLUG);
  */
 const FAQ = [
   {
-    q: "Quel est le délai de prescription pour les factures impayées ?",
-    a: "En France, les créances professionnelles se prescrivent en 5 ans à compter de la date d'exigibilité de la facture (date d'échéance). Vous avez donc 5 ans pour agir juridiquement. Mais plus vous attendez, plus le recouvrement est difficile : agissez dès le premier mois de retard.",
+    q: "Quel est le délai de prescription pour les factures impayées ?",
+    a: "Entre professionnels, une facture impayée se prescrit en 5 ans à compter de sa date d'exigibilité (date d'échéance). Face à un client particulier, le délai n'est que de 2 ans. Passé ce délai, vous ne pouvez plus agir en justice. Mais plus vous attendez, plus le recouvrement est difficile : agissez dès le premier mois de retard.",
   },
   {
-    q: "Comment fonctionne l'injonction de payer ?",
-    a: "L'injonction de payer est une procédure judiciaire simplifiée, sans audience. Vous déposez une requête au tribunal compétent avec vos justificatifs (devis signé, facture, relances). Si le juge l'accorde, le débiteur a 1 mois pour contester. Si ce délai passe sans contestation, l'ordonnance devient exécutoire et un huissier peut saisir les biens du débiteur.",
+    q: "Comment fonctionne l'injonction de payer ?",
+    a: "L'injonction de payer est une procédure judiciaire simplifiée, sans audience. Vous déposez une requête au tribunal compétent (tribunal de commerce pour une créance commerciale, tribunal judiciaire sinon) avec vos justificatifs (devis signé, facture, relances). Si le juge l'accorde, le débiteur a 1 mois à partir de la signification pour contester. Si ce délai passe sans contestation, l'ordonnance devient exécutoire et un commissaire de justice peut saisir les biens du débiteur.",
   },
 ];
 
@@ -42,8 +42,8 @@ export default function Page() {
 
       <div className="bg-indigo-950/95 backdrop-blur-xs border-b border-indigo-500/20 py-2 px-4 text-center text-sm">
         <span className="text-indigo-300 font-semibold">Réforme 2026&nbsp;:</span>
-        <span className="text-gray-300 ml-1.5">La facturation électronique B2B devient obligatoire.&nbsp;</span>
-        <span className="text-indigo-400 font-medium">Deviso est déjà conforme Factur-X.</span>
+        <span className="text-gray-300 ml-1.5">Réception des factures électroniques obligatoire depuis le 1<sup>er</sup> septembre 2026, émission au 1<sup>er</sup> septembre 2027 pour les PME, TPE et micro-entreprises.&nbsp;</span>
+        <span className="text-indigo-400 font-medium">Deviso émet en Factur-X par la plateforme agréée comprise dans l&apos;abonnement.</span>
       </div>
 
 
@@ -64,26 +64,26 @@ export default function Page() {
               <span className="text-xs text-gray-400">29 juin 2026 · 7 min</span>
             </div>
             <h1 className="text-3xl sm:text-4xl font-semibold text-ink leading-tight mb-4">
-              Gérer les impayés en freelance : de la relance à l&apos;injonction de payer
+              Gérer les impayés en freelance : de la relance à l&apos;injonction de payer
             </h1>
             <p className="text-lg text-gray-400 leading-relaxed">
-              Un impayé peut toucher n&apos;importe quelle entreprise, de l&apos;indépendant à la société. La bonne nouvelle : la loi vous protège. La mauvaise : vous devez connaître les étapes pour l&apos;activer efficacement, et ne pas attendre 6 mois avant d&apos;agir.
+              Un impayé peut toucher n&apos;importe quelle entreprise, de l&apos;indépendant à la société. La bonne nouvelle : la loi vous protège. La mauvaise : vous devez connaître les étapes pour l&apos;activer efficacement, et ne pas attendre 6 mois avant d&apos;agir.
             </p>
           </div>
 
           <div className="space-y-10 text-sm text-gray-300 leading-relaxed">
 
             <section>
-              <h2 className="text-xl font-semibold text-ink mb-4">Étape 0 : se protéger avant la mission (prévention)</h2>
+              <h2 className="text-xl font-semibold text-ink mb-4">Étape 0 : se protéger avant la mission (prévention)</h2>
               <p className="mb-4">
-                Le meilleur traitement des impayés, c&apos;est de les éviter. Avant de commencer à travailler pour un nouveau client :
+                Le meilleur traitement des impayés, c&apos;est de les éviter. Avant de commencer à travailler pour un nouveau client :
               </p>
               <div className="space-y-3">
                 {[
-                  { icon: "✓", text: "Exigez un acompte de 30 à 50% à la signature du devis, un client qui a payé un acompte est infiniment plus fiable." },
+                  { icon: "✓", text: "Exigez un acompte de 30 à 50 % à la signature du devis, un client qui a payé un acompte est infiniment plus fiable." },
                   { icon: "✓", text: "Faites signer le devis avant de démarrer. Une signature électronique suffit et est juridiquement valable." },
-                  { icon: "✓", text: "Mentionnez des pénalités de retard dans votre devis (obligatoire en B2B). Elles dissuadent les mauvais payeurs." },
-                  { icon: "✓", text: "Pour les gros montants ou les nouveaux clients : vérifiez l'existence légale de l'entreprise sur Pappers.fr." },
+                  { icon: "✓", text: "Mentionnez des pénalités de retard dans votre devis et vos conditions générales (obligatoire sur la facture en B2B). Elles dissuadent les mauvais payeurs." },
+                  { icon: "✓", text: "Pour les gros montants ou les nouveaux clients : vérifiez l'existence légale de l'entreprise sur Pappers.fr." },
                 ].map((item) => (
                   <div key={item.text} className="flex gap-3 bg-ds-elevated rounded-xl p-4 border border-ds-border">
                     <span className="text-emerald-400 font-bold shrink-0">{item.icon}</span>
@@ -102,9 +102,9 @@ export default function Page() {
                   title: "Relance amiable (J+1 à J+14)",
                   color: "amber",
                   content: [
-                    "Dès le premier jour de retard, envoyez une relance, par email d'abord, par téléphone ensuite. Ne laissez pas trainer : plus vous attendez, plus le client considère que l'impayé est acceptable.",
-                    "Ton : professionnel et neutre. Ne culpabilisez pas, ne vous excusez pas. Rappelez simplement le fait : \"La facture n°XXX de X€, arrivée à échéance le [date], n'apparaît pas encore dans nos paiements reçus. Pouvez-vous confirmer sa mise en règlement ?\"",
-                    "Si pas de réponse sous 48h : relancez par téléphone. Souvent, l'impayé se résout à cette étape : il s'agit d'un oubli ou d'un problème de trésorerie ponctuel.",
+                    "Dès le premier jour de retard, envoyez une relance, par email d'abord, par téléphone ensuite. Ne laissez pas traîner : plus vous attendez, plus le client considère que l'impayé est acceptable.",
+                    "Ton : professionnel et neutre. Ne culpabilisez pas, ne vous excusez pas. Rappelez simplement le fait : \"La facture n°XXX de X€, arrivée à échéance le [date], n'apparaît pas encore dans nos paiements reçus. Pouvez-vous confirmer sa mise en règlement ?\"",
+                    "Si pas de réponse sous 48h : relancez par téléphone. Souvent, l'impayé se résout à cette étape : il s'agit d'un oubli ou d'un problème de trésorerie ponctuel.",
                   ],
                 },
                 {
@@ -113,7 +113,7 @@ export default function Page() {
                   color: "orange",
                   content: [
                     "Si la relance amiable reste sans effet, envoyez une mise en demeure par lettre recommandée avec accusé de réception (LRAR). C'est un acte formel qui marque officiellement le début du contentieux.",
-                    "La mise en demeure doit mentionner : le montant exact dû, le numéro de facture, la date d'échéance initiale, le délai accordé pour payer (généralement 8 à 15 jours), et la mention que sans paiement vous engagerez des poursuites judiciaires.",
+                    "La mise en demeure doit mentionner : le montant exact dû, le numéro de facture, la date d'échéance initiale, le délai accordé pour payer (généralement 8 à 15 jours), et la mention que sans paiement vous engagerez des poursuites judiciaires.",
                     "Le cachet de la poste fait foi pour la date d'envoi, conservez l'avis de réception. C'est votre preuve que le débiteur a bien été notifié.",
                   ],
                 },
@@ -122,9 +122,9 @@ export default function Page() {
                   title: "Injonction de payer (J+30 à J+90)",
                   color: "rose",
                   content: [
-                    "C'est la procédure judiciaire simplifiée pour les créances non contestées. Pas d'audience, pas d'avocat obligatoire (pour les montants inférieurs à 10 000€). Vous déposez une requête au tribunal judiciaire compétent avec vos preuves.",
-                    "Documents à réunir : devis signé, facture, échanges confirmant la réalisation de la mission, copie des relances et de la mise en demeure. Le juge rend une ordonnance sous quelques semaines. Si le débiteur ne conteste pas sous 1 mois, l'ordonnance devient exécutoire.",
-                    "Avec une ordonnance exécutoire, un huissier peut saisir les comptes bancaires, les créances clients ou le matériel professionnel du débiteur.",
+                    "C'est la procédure judiciaire simplifiée pour les créances non contestées. Pas d'audience, pas d'avocat obligatoire pour déposer la requête (si le débiteur fait opposition devant le tribunal judiciaire, l'avocat le devient au-delà de 10 000 €). Vous déposez la requête au tribunal compétent avec vos preuves : tribunal de commerce pour une créance commerciale, tribunal judiciaire sinon.",
+                    "Documents à réunir : devis signé, facture, échanges confirmant la réalisation de la mission, copie des relances et de la mise en demeure. Le juge rend une ordonnance sous quelques semaines. L'ordonnance doit ensuite être signifiée au débiteur par un commissaire de justice, dans les 3 mois pour une ordonnance rendue depuis le 1er septembre 2026. Si le débiteur ne conteste pas sous 1 mois, l'ordonnance devient exécutoire.",
+                    "Avec une ordonnance exécutoire, un commissaire de justice peut saisir les comptes bancaires, les créances clients ou le matériel professionnel du débiteur.",
                   ],
                 },
                 {
@@ -132,8 +132,8 @@ export default function Page() {
                   title: "Recours à un avocat / saisie (J+90+)",
                   color: "red",
                   content: [
-                    "Pour les montants importants ou les débiteurs qui contestent, consultez un avocat spécialisé en droit des affaires. Une consultation coûte 150 à 300€, à mettre en perspective avec la créance à récupérer.",
-                    "Vous pouvez aussi mandater une société de recouvrement (commission de 10 à 30% sur les montants récupérés). Solution pratique si vous ne voulez pas gérer la procédure vous-même.",
+                    "Pour les montants importants ou les débiteurs qui contestent, consultez un avocat spécialisé en droit des affaires. Une consultation coûte 150 à 300 €, à mettre en perspective avec la créance à récupérer.",
+                    "Vous pouvez aussi mandater une société de recouvrement (commission de 10 à 30 % sur les montants récupérés). Solution pratique si vous ne voulez pas gérer la procédure vous-même.",
                   ],
                 },
               ].map((step) => (
@@ -152,20 +152,20 @@ export default function Page() {
             </section>
 
             <section>
-              <h2 className="text-xl font-semibold text-ink mb-4">Et si le client conteste la facture ?</h2>
+              <h2 className="text-xl font-semibold text-ink mb-4">Et si le client conteste la facture ?</h2>
               <p className="mb-4">
-                Certains clients ne paient pas parce qu&apos;ils sont de mauvaise foi ou en difficulté financière. D&apos;autres contestent sincèrement : ils estiment que le travail n&apos;a pas été livré conforme à ce qui était prévu.
+                Certains clients ne paient pas parce qu&apos;ils sont de mauvaise foi ou en difficulté financière. D&apos;autres contestent sincèrement : ils estiment que le travail n&apos;a pas été livré conforme à ce qui était prévu.
               </p>
               <p className="mb-4">
-                Votre meilleure défense : votre <strong className="text-ink">devis signé</strong>. Il définit exactement ce qui était convenu. Si vous avez un devis précis, avec une clause de périmètre et de révision, les marges de contestation sont très limitées.
+                Votre meilleure défense : votre <strong className="text-ink">devis signé</strong>. Il définit exactement ce qui était convenu. Si vous avez un devis précis, avec une clause de périmètre et de révision, les marges de contestation sont très limitées.
               </p>
               <div className="bg-ds-surface border border-ds-border rounded-xl p-5">
                 <p className="text-sm font-semibold text-ink mb-2">Ce que le juge regardera en premier</p>
                 <ul className="text-gray-400 text-sm space-y-1">
-                  <li>, Le devis : a-t-il été signé ? Ce qui était convenu est-il clairement décrit ?</li>
-                  <li>, La livraison : avez-vous une preuve que la mission a été accomplie ?</li>
-                  <li>, Les échanges : le client a-t-il validé les livrables par email ?</li>
-                  <li>, Les relances : avez-vous mis en demeure avant d&apos;agir ?</li>
+                  <li>Le devis : a-t-il été signé ? Ce qui était convenu est-il clairement décrit ?</li>
+                  <li>La livraison : avez-vous une preuve que la mission a été accomplie ?</li>
+                  <li>Les échanges : le client a-t-il validé les livrables par email ?</li>
+                  <li>Les relances : avez-vous mis en demeure avant d&apos;agir ?</li>
                 </ul>
               </div>
             </section>

@@ -28,18 +28,18 @@ const SECTIONS: Section[] = [
   },
   {
     type: "texte",
-    titre: "Sans local : la cotisation minimum",
+    titre: "Sans local : la cotisation minimum",
     paragraphes: [
       "Quand la valeur locative de vos locaux est faible ou nulle, le fisc applique une <strong>base minimum</strong>. Chaque commune la fixe dans une fourchette prévue par la loi, qui dépend de votre chiffre d&rsquo;affaires&nbsp;: plus il est élevé, plus le plafond de la fourchette monte. La cotisation à payer est ensuite cette base multipliée par le taux voté par la commune.",
-      "Conséquence pratique&nbsp;: deux entreprises au même chiffre d&rsquo;affaires, l&rsquo;un dans une petite commune, l&rsquo;autre dans une grande ville, peuvent payer des montants très différents. Les fourchettes changent chaque année&nbsp;; la fiche officielle de service-public.fr donne les montants en vigueur.",
+      "Conséquence pratique&nbsp;: deux entreprises au même chiffre d&rsquo;affaires, l&rsquo;une dans une petite commune, l&rsquo;autre dans une grande ville, peuvent payer des montants très différents. Les fourchettes changent chaque année&nbsp;; la fiche officielle de service-public.fr donne les montants en vigueur.",
     ],
   },
   {
     type: "encadre",
     ton: "succes",
-    titre: "Moins de 5 000 € de chiffre d&rsquo;affaires : pas de cotisation minimum",
+    titre: "Moins de 5 000 € de chiffre d&rsquo;affaires : pas de cotisation minimum",
     texte:
-      "Si votre chiffre d&rsquo;affaires ou vos recettes ne dépassent pas <strong>5 000 €</strong> sur l&rsquo;année de référence, vous n&rsquo;êtes pas soumis à la cotisation minimum. Une activité qui démarre doucement ne paie donc rien à ce titre.",
+      "Si votre chiffre d&rsquo;affaires ou vos recettes ne dépassent pas <strong>5 000 €</strong> sur l&rsquo;année de référence, vous n&rsquo;êtes pas soumis à la cotisation minimum. Une activité qui démarre doucement ne paie donc rien à ce titre.",
   },
   {
     type: "liste",
@@ -67,7 +67,7 @@ const SECTIONS: Section[] = [
     ton: "alerte",
     titre: "L&rsquo;avis n&rsquo;arrive pas par la poste",
     texte:
-      "L&rsquo;avis de CFE n&rsquo;est disponible <strong>que dans votre espace professionnel</strong> sur impots.gouv.fr, généralement à partir de la mi-novembre. Le paiement est attendu au plus tard le <strong>15 décembre</strong>, uniquement par moyen dématérialisé (paiement en ligne ou prélèvement). Sans espace professionnel, vous ne verrez pas l&rsquo;avis, mais l&rsquo;échéance court quand même, et un retard entraîne une majoration.",
+      "L&rsquo;avis de CFE n&rsquo;est disponible <strong>que dans votre espace professionnel</strong> sur impots.gouv.fr, généralement début novembre (le 2 novembre en 2026). Le paiement est attendu au plus tard le <strong>15 décembre</strong>, uniquement par moyen dématérialisé (paiement en ligne ou prélèvement). Sans espace professionnel, vous ne verrez pas l&rsquo;avis, mais l&rsquo;échéance court quand même, et un retard entraîne une majoration.",
   },
   {
     type: "liste",
@@ -84,7 +84,7 @@ const SECTIONS: Section[] = [
           "Base retenue, exonération de création, base minimum appliquée ou non&nbsp;: une erreur se conteste auprès de votre service des impôts des entreprises.",
       },
       {
-        titre: "Payer avant le 15 décembre",
+        titre: "Payer au plus tard le 15 décembre",
         texte:
           "Ou mettre en place le prélèvement mensuel pour les années suivantes, qui lisse la dépense.",
       },
@@ -99,23 +99,23 @@ const SECTIONS: Section[] = [
 
 const FAQ = [
   {
-    q: "Un micro-entrepreneur doit-il payer la CFE ?",
-    a: "Oui, sauf exonération. Il n'en paie pas l'année de création, sa base est réduite de moitié l'année suivante, et il n'est pas soumis à la cotisation minimum si son chiffre d'affaires ne dépasse pas 5 000 €.",
+    q: "Un micro-entrepreneur doit-il payer la CFE ?",
+    a: "Oui, sauf exonération. Il n'en paie pas l'année de création, sa base est réduite de moitié l'année suivante, et il n'est pas soumis à la cotisation minimum si son chiffre d'affaires ne dépasse pas 5 000 €.",
   },
   {
-    q: "Je travaille chez moi, dois-je payer la CFE ?",
-    a: "Oui en principe : sans local professionnel, une cotisation minimum s'applique, fixée par votre commune selon votre chiffre d'affaires.",
+    q: "Je travaille chez moi, dois-je payer la CFE ?",
+    a: "Oui en principe : sans local professionnel, une cotisation minimum s'applique, fixée par votre commune selon votre chiffre d'affaires.",
   },
   {
-    q: "Quand faut-il payer la CFE ?",
+    q: "Quand faut-il payer la CFE ?",
     a: "Au plus tard le 15 décembre, par paiement en ligne ou prélèvement. L'avis est consultable uniquement dans l'espace professionnel sur impots.gouv.fr.",
   },
   {
-    q: "Combien coûte la CFE ?",
+    q: "Combien coûte la CFE ?",
     a: "Cela dépend de la valeur locative de vos locaux, ou à défaut de la base minimum votée par votre commune et de son taux. Les fourchettes de la base minimum dépendent du chiffre d'affaires et sont publiées chaque année sur service-public.fr.",
   },
   {
-    q: "Paie-t-on la CFE l'année de création ?",
+    q: "Paie-t-on la CFE l'année de création ?",
     a: "Non. L'entreprise n'est pas redevable de la CFE l'année de sa création, et sa base est réduite de moitié l'année suivante.",
   },
 ];
@@ -129,7 +129,7 @@ const SOURCES: Source[] = [
   {
     libelle: "Service-public.gouv.fr, Un micro-entrepreneur doit-il payer la CFE",
     url: "https://entreprendre.service-public.gouv.fr/vosdroits/F23999",
-    precision: "cas du micro-entrepreneur, seuil de 5 000 €",
+    precision: "cas du micro-entrepreneur, seuil de 5 000 €",
   },
   {
     libelle: "Bercy Infos Entreprises, la CFE",
@@ -146,7 +146,7 @@ export default function Page() {
       enBref={[
         "La CFE concerne <strong>toutes les entreprises</strong>, micro-entrepreneurs compris, même sans local.",
         "<strong>Pas de CFE l&rsquo;année de création</strong>, puis une base réduite de moitié l&rsquo;année suivante.",
-        "Sous <strong>5 000 €</strong> de chiffre d&rsquo;affaires, pas de cotisation minimum.",
+        "Sous <strong>5 000 €</strong> de chiffre d&rsquo;affaires, pas de cotisation minimum.",
         "L&rsquo;avis est <strong>uniquement en ligne</strong>, dans l&rsquo;espace professionnel sur impots.gouv.fr.",
         "Paiement au plus tard le <strong>15 décembre</strong>, en ligne ou par prélèvement.",
       ]}

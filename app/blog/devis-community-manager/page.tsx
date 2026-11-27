@@ -11,7 +11,7 @@ export default function Page() {
       slug={SLUG}
       intro="Un devis de community management vague, c'est la garantie de travailler deux fois plus que prévu sans être payé en conséquence. Périmètre flou, livrables non définis, absence de clause de résiliation, voici comment rédiger un devis CM freelance qui protège votre activité, que vous soyez indépendant ou en agence, et vous positionne comme un professionnel."
       mandatoryTitle="Les mentions obligatoires d'un devis community manager freelance"
-      mandatoryIntro="Au-delà des mentions légales classiques, un devis de community management doit détailler le périmètre de la mission avec précision :"
+      mandatoryIntro="Au-delà des mentions légales classiques, un devis de community management doit détailler le périmètre de la mission avec précision :"
       mandatoryItems={[
         {
           title: "Vos coordonnées et statut juridique",
@@ -23,38 +23,38 @@ export default function Page() {
         },
         {
           title: "Le volume de contenu par plateforme",
-          desc: "Nombre de posts par mois et par plateforme, nombre de stories, nombre de reels/vidéos courts. Soyez précis : '12 posts Instagram/mois' évite le client qui en demande 20. Si la fréquence est quotidienne, précisez les jours de publication.",
+          desc: "Nombre de posts par mois et par plateforme, nombre de stories, nombre de reels/vidéos courts. Soyez précis : '12 posts Instagram/mois' évite le client qui en demande 20. Si la fréquence est quotidienne, précisez les jours de publication.",
         },
         {
-          title: "La création de visuels (inclus ou non ?)",
-          desc: "C'est souvent la source de malentendus. Créez-vous les visuels ? Utilisez-vous les assets du client ? Faites-vous appel à un graphiste externe (et qui le paye) ? Mentionnez le nombre de visuels originaux inclus par mois et les formats livrés (carré, story, cover LinkedIn...).",
+          title: "La création de visuels (inclus ou non ?)",
+          desc: "C'est souvent la source de malentendus. Créez-vous les visuels ? Utilisez-vous les assets du client ? Faites-vous appel à un graphiste externe (et qui le paye) ? Mentionnez le nombre de visuels originaux inclus par mois et les formats livrés (carré, story, cover LinkedIn...).",
         },
         {
-          title: "La gestion des publicités payantes (inclus ou non ?)",
+          title: "La gestion des publicités payantes (inclus ou non ?)",
           desc: "La gestion de campagnes Meta Ads, LinkedIn Ads ou TikTok Ads est une prestation distincte qui se facture séparément. Indiquez clairement si la publicité payante est incluse dans le forfait, et si oui, quel est le budget média géré (distinct de vos honoraires).",
         },
         {
           title: "La modération et l'engagement",
-          desc: "Répondez-vous aux commentaires ? Aux DM ? Dans quel délai ? La modération quotidienne représente une charge de travail significative. Définissez le périmètre : jours ouvrés uniquement, délai de réponse garanti sous 24h, langues couvertes.",
+          desc: "Répondez-vous aux commentaires ? Aux DM ? Dans quel délai ? La modération quotidienne représente une charge de travail significative. Définissez le périmètre : jours ouvrés uniquement, délai de réponse garanti sous 24h, langues couvertes.",
         },
         {
           title: "Le reporting mensuel et les KPIs",
-          desc: "Reporting mensuel avec quels indicateurs ? Reach, engagement rate, croissance abonnés, clics, impressions ? Format du rapport (PDF, tableau de bord, présentation visio) ? C'est une valeur ajoutée à mettre en avant, mais aussi une charge de travail à prévoir dans votre tarif.",
+          desc: "Reporting mensuel avec quels indicateurs ? Reach, engagement rate, croissance abonnés, clics, impressions ? Format du rapport (PDF, tableau de bord, présentation visio) ? C'est une valeur ajoutée à mettre en avant, mais aussi une charge de travail à prévoir dans votre tarif.",
         },
         {
           title: "Durée de l'engagement et conditions de résiliation",
-          desc: "Durée minimale du contrat (3 mois recommandés), reconduction tacite ou non, préavis de résiliation (1 mois recommandé). Sans ces clauses, un client peut vous arrêter du jour au lendemain après que vous ayez organisé toute votre planning.",
+          desc: "Durée minimale du contrat (3 mois recommandés), reconduction tacite ou non, préavis de résiliation (1 mois recommandé). Sans ces clauses, un client peut vous arrêter du jour au lendemain après que vous avez organisé tout votre planning.",
         },
       ]}
       exampleClient="PME e-commerce mode, Lyon (15 salariés, boutique en ligne + physique)"
       exampleLines={[
-        { desc: "Gestion Instagram, 12 posts/mois (visuels + captions + hashtags)", qty: "1 forfait/mois", price: "500 €" },
-        { desc: "Gestion LinkedIn, 8 posts/mois (articles + visuels)", qty: "1 forfait/mois", price: "350 €" },
-        { desc: "Gestion Facebook, 8 posts/mois + stories hebdomadaires", qty: "1 forfait/mois", price: "250 €" },
-        { desc: "Modération et engagement (DM + commentaires, du lun. au ven.)", qty: "1 forfait/mois", price: "200 €" },
-        { desc: "Reporting mensuel KPIs (reach, engagement, croissance, PDF)", qty: "1 rapport/mois", price: "150 €" },
+        { desc: "Gestion Instagram, 12 posts/mois (visuels + captions + hashtags)", qty: "1 forfait/mois", price: "500 €" },
+        { desc: "Gestion LinkedIn, 8 posts/mois (articles + visuels)", qty: "1 forfait/mois", price: "350 €" },
+        { desc: "Gestion Facebook, 8 posts/mois + stories hebdomadaires", qty: "1 forfait/mois", price: "250 €" },
+        { desc: "Modération et engagement (DM + commentaires, du lun. au ven.)", qty: "1 forfait/mois", price: "200 €" },
+        { desc: "Reporting mensuel KPIs (reach, engagement, croissance, PDF)", qty: "1 rapport/mois", price: "150 €" },
       ]}
-      exampleTotal="1 450 € HT / mois"
+      exampleTotal="1 450 € HT / mois"
       exampleNote="Durée minimale 3 mois, puis reconduction tacite par mois. Résiliation avec préavis d'1 mois. Visuels créés sur Canva Pro (licence client). Budget publicitaire non inclus dans ce forfait. Bilan de lancement en semaine 1 (accès comptes, brief marque)."
       mistakes={[
         {
@@ -63,7 +63,7 @@ export default function Page() {
         },
         {
           title: "Ne pas distinguer votre forfait du budget publicitaire",
-          desc: "Si vous gérez des campagnes payantes, votre honoraire de gestion (ex: 200€/mois) et le budget média du client (ex: 500€/mois dépensés en publicités) sont deux montants distincts. Si ce n'est pas clair dans le devis, vous pouvez vous retrouver à avancer des budgets pub pour le compte du client.",
+          desc: "Si vous gérez des campagnes payantes, votre honoraire de gestion (ex : 200 €/mois) et le budget média du client (ex : 500 €/mois dépensés en publicités) sont deux montants distincts. Si ce n'est pas clair dans le devis, vous pouvez vous retrouver à avancer des budgets pub pour le compte du client.",
         },
         {
           title: "Pas de durée minimale d'engagement",
@@ -71,25 +71,25 @@ export default function Page() {
         },
         {
           title: "Oublier de mentionner les accès nécessaires",
-          desc: "Pour démarrer la mission, vous avez besoin d'accès : comptes réseaux sociaux (éditeur ou admin), outils de planification, charte graphique, brand kit. Mentionnez dans le devis que le client doit vous fournir ces accès avant le démarrage, et que tout retard repousse la date de lancement.",
+          desc: "Pour démarrer la mission, vous avez besoin d'accès : comptes réseaux sociaux (éditeur ou admin), outils de planification, charte graphique, brand kit. Mentionnez dans le devis que le client doit vous fournir ces accès avant le démarrage, et que tout retard repousse la date de lancement.",
         },
       ]}
       faq={[
         {
-          q: "Comment définir le périmètre dans un devis community manager ?",
-          a: "Listez précisément : les plateformes incluses, le nombre de posts par mois et par plateforme, si la création de visuels est incluse (et combien), si la gestion des publicités payantes est dans le scope, le délai de réponse aux commentaires et DM, et si le reporting mensuel est inclus. Tout ce qui n'est pas mentionné dans le devis sera source de litige.",
+          q: "Comment définir le périmètre dans un devis community manager ?",
+          a: "Listez précisément : les plateformes incluses, le nombre de posts par mois et par plateforme, si la création de visuels est incluse (et combien), si la gestion des publicités payantes est dans le scope, le délai de réponse aux commentaires et DM, et si le reporting mensuel est inclus. Tout ce qui n'est pas mentionné dans le devis sera source de litige.",
         },
         {
-          q: "Quelle durée d'engagement prévoir dans un devis CM freelance ?",
+          q: "Quelle durée d'engagement prévoir dans un devis CM freelance ?",
           a: "La plupart des CM freelances travaillent sur des contrats de 3 mois minimum, reconductibles tacitement par mois. C'est le temps minimum pour observer des résultats mesurables. Prévoyez un préavis de résiliation d'1 mois pour que ni vous ni votre client ne soient pris au dépourvu.",
         },
         {
-          q: "Doit-on facturer la création de visuels séparément ?",
-          a: "Vous avez le choix : inclure la création de visuels dans votre forfait mensuel (en précisant le nombre et les formats), ou facturer séparément au volume. L'important est de préciser dans le devis ce qui est inclus ou non, pour éviter tout malentendu. La création de visuels représente souvent 30 à 40% du temps de la mission.",
+          q: "Doit-on facturer la création de visuels séparément ?",
+          a: "Vous avez le choix : inclure la création de visuels dans votre forfait mensuel (en précisant le nombre et les formats), ou facturer séparément au volume. L'important est de préciser dans le devis ce qui est inclus ou non, pour éviter tout malentendu. La création de visuels représente souvent 30 à 40 % du temps de la mission.",
         },
         {
-          q: "Comment facturer les publications supplémentaires en cours de mission ?",
-          a: "Prévoyez dans le devis une clause 'livrables supplémentaires' avec un tarif unitaire : ex. 'Tout post supplémentaire au-delà du forfait sera facturé 50 €/post'. Cela vous permet d'accepter facilement des demandes ponctuelles sans avoir à renégocier le contrat, et le client sait à quoi s'attendre.",
+          q: "Comment facturer les publications supplémentaires en cours de mission ?",
+          a: "Prévoyez dans le devis une clause 'livrables supplémentaires' avec un tarif unitaire : ex. 'Tout post supplémentaire au-delà du forfait sera facturé 50 €/post'. Cela vous permet d'accepter facilement des demandes ponctuelles sans avoir à renégocier le contrat, et le client sait à quoi s'attendre.",
         },
       ]}
     />

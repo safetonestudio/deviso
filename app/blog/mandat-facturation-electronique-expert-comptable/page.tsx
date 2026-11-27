@@ -10,7 +10,7 @@ const SECTIONS: Section[] = [
     type: "texte",
     titre: "Une décision du client, souvent préparée par le cabinet",
     paragraphes: [
-      "La réforme a fait de la plateforme agréée un sujet que les clients posent d'abord à leur expert-comptable. Le cadre officiel, lui, est clair sur un point : selon la FAQ de l'administration, le choix de la plateforme est <strong>totalement libre</strong> et relève d'une <strong>décision de gestion du chef d'entreprise</strong>. Chaque entreprise signe un accord formel avec la ou les plateformes désignées pour la réception de ses factures dans l'annuaire.",
+      "La réforme a fait de la plateforme agréée un sujet que les clients posent d'abord à leur expert-comptable. Le cadre officiel, lui, est clair sur un point : selon la FAQ de l'administration, le choix de la plateforme est <strong>totalement libre</strong> et relève d'une <strong>décision de gestion du chef d'entreprise</strong>. Chaque entreprise signe un accord formel avec la ou les plateformes désignées pour la réception de ses factures dans l'annuaire.",
       "Le cabinet n'est pas pour autant spectateur. Le guide de démarrage de la DGFiP cite l'expert-comptable parmi les intermédiaires par lesquels une entreprise peut engager la démarche, au même titre que le logiciel de gestion, la banque ou un autre prestataire. Entre conseiller le choix et agir à la place du client, il y a toutefois une frontière, et c'est le mandat qui la trace.",
     ],
   },
@@ -22,7 +22,7 @@ const SECTIONS: Section[] = [
       [
         "Conseiller le choix de la plateforme, diagnostiquer les flux",
         "La lettre de mission (mission de conseil)",
-        "Le client décide : c'est une décision de gestion",
+        "Le client décide : c'est une décision de gestion",
       ],
       [
         "Organiser le raccordement ou la désignation de la plateforme",
@@ -36,7 +36,7 @@ const SECTIONS: Section[] = [
       ],
       [
         "Recevoir des factures fournisseurs pour le client",
-        "Un accord avec le client, et un bloc « adressée à » sur la facture",
+        "Un accord avec le client, et un bloc « adressée à » sur la facture",
         "Le client, au nom duquel la facture est libellée",
       ],
     ],
@@ -45,7 +45,7 @@ const SECTIONS: Section[] = [
     type: "texte",
     titre: "Le mandat de facturation, un régime ancien qui s'applique toujours",
     paragraphes: [
-      "L'article 289 du CGI permet à un assujetti de faire émettre ses factures par un tiers, qui agit en son nom et pour son compte. La réforme ne supprime pas cette possibilité. La FAQ de l'administration précise qu'en émission, le prestataire agit sous couvert d'un mandat de facturation, et que la facture est <strong>par principe transmise par la plateforme de l'émetteur</strong>, c'est-à-dire celle du client. Les modalités varient selon le prestataire et la plateforme : il faut savoir si le mandataire utilise ou non sa propre plateforme agréée.",
+      "L'article 289 du CGI permet à un assujetti de faire émettre ses factures par un tiers, qui agit en son nom et pour son compte. La réforme ne supprime pas cette possibilité. La FAQ de l'administration précise qu'en émission, le prestataire agit sous couvert d'un mandat de facturation, et que la facture est <strong>par principe transmise par la plateforme de l'émetteur</strong>, c'est-à-dire celle du client. Les modalités varient selon le prestataire et la plateforme : il faut savoir si le mandataire utilise ou non sa propre plateforme agréée.",
       "Le BOFiP détaille les conditions de ce mandat. Elles valent pour un cabinet comme pour tout autre tiers.",
     ],
   },
@@ -56,7 +56,7 @@ const SECTIONS: Section[] = [
       {
         titre: "Un mandat préalable",
         texte:
-          "Il doit nécessairement être conclu avant que le tiers ne commence à émettre des factures. Aucune forme particulière n'est imposée, mais les parties doivent pouvoir en apporter la preuve : l'écrit est recommandé.",
+          "Il doit nécessairement être conclu avant que le tiers ne commence à émettre des factures. Aucune forme particulière n'est imposée, mais les parties doivent pouvoir en apporter la preuve : l'écrit est recommandé.",
       },
       {
         titre: "L'acceptation de chaque facture",
@@ -71,7 +71,7 @@ const SECTIONS: Section[] = [
       {
         titre: "Une mention recommandée",
         texte:
-          "Le BOFiP recommande de porter sur la facture une mention du type « facture établie par A au nom et pour le compte de B ».",
+          "Le BOFiP recommande de porter sur la facture une mention du type « facture établie par A au nom et pour le compte de B ».",
       },
       {
         titre: "Les factures rectificatives",
@@ -103,7 +103,7 @@ const SECTIONS: Section[] = [
       {
         titre: "Le périmètre exact",
         texte:
-          "Conseil seul, raccordement, émission, réception, e-reporting : nommer chaque tâche confiée, et celles qui ne le sont pas.",
+          "Conseil seul, raccordement, émission, réception, e-reporting : nommer chaque tâche confiée, et celles qui ne le sont pas.",
       },
       {
         titre: "La plateforme concernée",
@@ -157,25 +157,25 @@ const SECTIONS: Section[] = [
     ton: "succes",
     titre: "Avec Deviso, le cabinet supervise sans mandat d'émission",
     texte:
-      "Dans Deviso, c'est le client qui émet ses factures, transmises par la plateforme agréée comprise dans son abonnement. Il invite son expert-comptable, qui accède à ses dossiers <strong>en lecture seule</strong>, gratuitement, depuis un cockpit qui regroupe tout le portefeuille : anomalies, échéances de TVA, exports FEC et Quadra. Le cabinet n'émet rien au nom du client : la frontière est posée par l'outil lui-même.",
+      "Dans Deviso, c'est le client qui émet ses factures, transmises par la plateforme agréée comprise dans son abonnement. Il invite son expert-comptable, qui accède à ses dossiers <strong>en lecture seule</strong>, gratuitement, depuis un cockpit qui regroupe tout le portefeuille : anomalies, échéances de TVA, exports FEC et Quadra. Le cabinet n'émet rien au nom du client : la frontière est posée par l'outil lui-même.",
   },
 ];
 
 const FAQ = [
   {
-    q: "L'expert-comptable peut-il choisir la plateforme agréée de son client ?",
+    q: "L'expert-comptable peut-il choisir la plateforme agréée de son client ?",
     a: "Il peut la conseiller et organiser la démarche, mais selon la FAQ de l'administration, le choix de la plateforme relève d'une décision de gestion du chef d'entreprise, qui signe un accord formel avec la plateforme désignée dans l'annuaire. Tout acte accompli pour le client doit reposer sur un mandat.",
   },
   {
-    q: "Un cabinet peut-il émettre les factures de son client après la réforme ?",
+    q: "Un cabinet peut-il émettre les factures de son client après la réforme ?",
     a: "Oui, sous mandat de facturation (article 289 du CGI). Le mandat doit être préalable, chaque facture doit être acceptée par le client, qui garde l'entière responsabilité de sa facturation. Selon la FAQ, la facture est par principe transmise par la plateforme de l'émetteur.",
   },
   {
-    q: "Le mandat de facturation doit-il être écrit ?",
-    a: "Le BOFiP n'impose aucune forme particulière, mais exige que les parties puissent prouver le mandat, et recommande donc un écrit. Un écrit est impératif lorsque le mandataire est établi hors de l'Union européenne.",
+    q: "Le mandat de facturation doit-il être écrit ?",
+    a: "Le BOFiP n'impose aucune forme particulière, mais exige que les parties puissent prouver le mandat, et recommande donc un écrit. Un écrit est impératif lorsque le mandataire est établi hors de l'Union européenne, dans un pays avec lequel il n'existe aucun instrument juridique d'assistance mutuelle.",
   },
   {
-    q: "Faut-il modifier la lettre de mission pour la facturation électronique ?",
+    q: "Faut-il modifier la lettre de mission pour la facturation électronique ?",
     a: "Dès que le cabinet prend en charge une partie des tâches liées à la réforme (raccordement, émission, réception, suivi des rejets), il est prudent de le dire dans la lettre de mission ou dans un avenant. Le décret du 30 mars 2012 prévoit que la lettre de mission fait état du mandat confié et de sa durée.",
   },
 ];
@@ -184,27 +184,27 @@ const SOURCES: Source[] = [
   {
     libelle: "impots.gouv.fr, Foire aux questions, Je découvre la facturation électronique",
     url: "https://www.impots.gouv.fr/sites/default/files/media/1_metier/2_professionnel/EV/2_gestion/290_facturation_electronique/faq---fe_je-decouvre-la-facturation-electronique.pdf",
-    precision: "question 2.1 : choix libre de la plateforme, décision de gestion, accord formel et annuaire",
+    precision: "question 2.1 : choix libre de la plateforme, décision de gestion, accord formel et annuaire",
   },
   {
     libelle: "impots.gouv.fr, Foire aux questions, J'approfondis la facturation électronique",
     url: "https://www.impots.gouv.fr/foire-aux-questions-japprofondis-la-facturation-electronique",
-    precision: "questions 2.1 et 2.2 : réception par un prestataire, émission sous mandat de facturation",
+    precision: "questions 2.1 et 2.2 : réception par un prestataire, émission sous mandat de facturation",
   },
   {
-    libelle: "impots.gouv.fr, Facturation électronique : guide pratique de démarrage au 1er septembre 2026",
+    libelle: "impots.gouv.fr, Facturation électronique : guide pratique de démarrage au 1er septembre 2026",
     url: "https://www.impots.gouv.fr/sites/default/files/media/1_metier/2_professionnel/EV/2_gestion/290_facturation_electronique/guide_pratique_facturation_electronique.pdf",
-    precision: "question 1 : l'expert-comptable parmi les intermédiaires possibles",
+    precision: "question 1 : l'expert-comptable parmi les intermédiaires possibles",
   },
   {
     libelle: "BOFiP, BOI-TVA-DECLA-30-20-10-30, Personnes tenues de délivrer des factures",
     url: "https://bofip.impots.gouv.fr/bofip/13244-PGP.html/identifiant=BOI-TVA-DECLA-30-20-10-30-20220629",
-    precision: "conditions du mandat de facturation : antériorité, acceptation, responsabilité, mention",
+    precision: "conditions du mandat de facturation : antériorité, acceptation, responsabilité, mention",
   },
   {
     libelle: "Légifrance, Code général des impôts, articles 289-0 à 289 bis (factures)",
     url: "https://www.legifrance.gouv.fr/codes/id/LEGISCTA000006191855",
-    precision: "article 289, I-2 : émission par un tiers ; article 289 bis : plateforme agréée",
+    precision: "article 289, I-2 : émission par un tiers ; article 289 bis : plateforme agréée",
   },
   {
     libelle: "Légifrance, décret n° 2012-432 du 30 mars 2012, article 151",
@@ -217,13 +217,13 @@ export default function Page() {
   return (
     <ArticleLong
       slug={SLUG}
-      chapeau="Choisir la plateforme, raccorder, émettre, recevoir : vos clients vous demandent de les accompagner sur la facture électronique. Ce que le cabinet peut faire, sur quel fondement, et ce que la lettre de mission doit en dire."
+      chapeau="Choisir la plateforme, raccorder, émettre, recevoir : vos clients vous demandent de les accompagner sur la facture électronique. Ce que le cabinet peut faire, sur quel fondement, et ce que la lettre de mission doit en dire."
       enBref={[
         "Le choix de la plateforme agréée est une <strong>décision de gestion du client</strong>, pas du cabinet.",
         "Le cabinet peut émettre pour son client sous <strong>mandat de facturation</strong> (article 289 du CGI).",
         "Ce mandat doit être préalable, chaque facture acceptée, et le client reste <strong>entièrement responsable</strong>.",
-        "Le mandat présumé de l'expert-comptable ne vise pas expressément la plateforme de facturation : écrivez-le.",
-        "La réforme est l'occasion de relire vos <strong>lettres de mission</strong> : périmètre, rejets, durée.",
+        "Le mandat présumé de l'expert-comptable ne vise pas expressément la plateforme de facturation : écrivez-le.",
+        "La réforme est l'occasion de relire vos <strong>lettres de mission</strong> : périmètre, rejets, durée.",
       ]}
       sections={SECTIONS}
       faq={FAQ}

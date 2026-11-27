@@ -91,9 +91,9 @@ const ICONES: Record<string, LucideIcon> = {
 };
 
 export const metadata: Metadata = {
-  title: "Guides pour entreprendre : devis, factures, TVA et réforme 2026",
+  title: "Guides pour entreprendre : devis, factures, TVA et réforme 2026",
   description:
-    "Guides pratiques pour les indépendants, freelances et petites entreprises en France : réforme 2026, documents obligatoires, TVA et seuils, se faire payer, devis par métier. Sourcés et datés.",
+    "Guides pratiques pour les indépendants, freelances et petites entreprises en France : réforme 2026, documents obligatoires, TVA et seuils, se faire payer, devis par métier. Sourcés et datés.",
   alternates: { canonical: `${SITE}/blog` },
   openGraph: {
     title: "Blog Deviso, guides pour entreprendre en France",
@@ -116,7 +116,7 @@ const jsonLd = {
       "@id": `${SITE}/blog#blog`,
       name: "Blog Deviso, guides pour entreprendre en France",
       description:
-        "Guides pratiques pour les indépendants, freelances et petites entreprises en France : réforme 2026, documents obligatoires, TVA et seuils, devis par métier.",
+        "Guides pratiques pour les indépendants, freelances et petites entreprises en France : réforme 2026, documents obligatoires, TVA et seuils, devis par métier.",
       url: `${SITE}/blog`,
       publisher: { "@type": "Organization", name: "Deviso", url: SITE },
       inLanguage: "fr",
@@ -147,8 +147,8 @@ export default function BlogIndex() {
         className="bg-indigo-950/95 backdrop-blur-xs border-b border-indigo-500/20 py-2 px-4 text-center text-sm"
       >
         <span className="text-indigo-300 font-semibold">Réforme 2026&nbsp;:</span>
-        <span className="text-gray-300 ml-1.5">La facturation électronique B2B devient obligatoire en France.&nbsp;</span>
-        <span className="text-indigo-400 font-medium">Deviso est déjà conforme Factur-X, sans rien faire de votre côté.</span>
+        <span className="text-gray-300 ml-1.5">Réception des factures électroniques obligatoire depuis le 1<sup>er</sup> septembre 2026, émission au 1<sup>er</sup> septembre 2027 pour les PME, TPE et micro-entreprises.&nbsp;</span>
+        <span className="text-indigo-400 font-medium">Deviso émet en Factur-X par la plateforme agréée comprise dans l&apos;abonnement.</span>
       </div>
 
 
@@ -189,7 +189,7 @@ export default function BlogIndex() {
             {ARTICLES.length} guides. Chacun porte sa date de dernière mise à jour et ses sources.
             Si vous y trouvez une information fausse,{" "}
             <a href="mailto:support@getdeviso.fr" className="text-indigo-400 hover:text-indigo-300 transition-colors">
-              dites-le nous
+              dites-le-nous
             </a>{" "}
             : nous corrigeons et nous datons la correction.
           </p>

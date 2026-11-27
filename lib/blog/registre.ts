@@ -90,22 +90,22 @@ export const ARTICLES: Article[] = [
   {
     slug: "facturation-electronique-2026",
     categorie: "reforme",
-    titre: "Facturation électronique 2026 : le guide",
+    titre: "Facturation électronique 2026 : le guide",
     description:
-      "Facturation électronique : ce qui s'applique depuis le 1er septembre 2026, ce qui arrive en 2027, formats et plateformes agréées, pour toute entreprise.",
-    h1: "Facturation électronique 2026 : le guide complet pour les entreprises, des indépendants aux PME",
+      "Facturation électronique : ce qui s'applique depuis le 1er septembre 2026, ce qui arrive en 2027, formats et plateformes agréées, pour toute entreprise.",
+    h1: "Facturation électronique 2026 : le guide complet pour les entreprises, des indépendants aux PME",
     og: {
-      titre: "Facturation électronique 2026 : le guide complet pour les entreprises",
+      titre: "Facturation électronique 2026 : le guide complet pour les entreprises",
       description:
         "Calendrier, formats Factur-X, plateformes agréées, e-reporting, tout comprendre en 10 minutes.",
     },
     publieLe: "2026-07-10",
-    misAJourLe: "2026-11-23",
+    misAJourLe: "2026-11-27",
     dureeLecture: 10,
     carte: {
       titre: "Guide complet réforme facturation électronique 2026",
       resume:
-        "Ce qui s'applique déjà, ce qui arrive en 2027, le PPF abandonné, Factur-X, plateformes agréées",
+        "Ce qui s'applique déjà, ce qui arrive en 2027, pas de portail public gratuit, Factur-X, plateformes agréées",
       badge: "Guide pilier",
     },
     lies: [
@@ -120,20 +120,20 @@ export const ARTICLES: Article[] = [
   {
     slug: "reforme-facturation-micro-entrepreneur",
     categorie: "reforme",
-    titre: "Micro-entrepreneur : la réforme 2026 expliquée",
+    titre: "Micro-entrepreneur : la réforme 2026 expliquée",
     description:
-      "Micro-entrepreneur : ce que la réforme de facturation électronique change vraiment pour vous. Franchise TVA, Factur-X, plateforme agréée, calendrier.",
-    h1: "Micro-entrepreneur et réforme facturation 2026 : ce qui change vraiment",
+      "Micro-entrepreneur : ce que la réforme de la facturation électronique change vraiment pour vous. Franchise de TVA, Factur-X, plateforme agréée, calendrier.",
+    h1: "Micro-entrepreneur et réforme facturation 2026 : ce qui change vraiment",
     og: {
-      titre: "Micro-entrepreneur et réforme facturation 2026 : ce qui change vraiment",
+      titre: "Micro-entrepreneur et réforme facturation 2026 : ce qui change vraiment",
       description:
         "La franchise TVA ne vous exempte pas. Voici ce que vous devez savoir et faire avant septembre 2027.",
     },
     publieLe: "2026-07-10",
-    misAJourLe: "2026-11-23",
+    misAJourLe: "2026-11-27",
     dureeLecture: 8,
     carte: {
-      titre: "Micro-entrepreneur : ce que la réforme change pour vous",
+      titre: "Micro-entrepreneur : ce que la réforme change pour vous",
       resume: "Franchise TVA ≠ exemption. Les 3 scénarios selon votre activité B2B/B2C",
       badge: "Micro-entrepreneur",
     },
@@ -144,19 +144,19 @@ export const ARTICLES: Article[] = [
     categorie: "reforme",
     titre: "Choisir sa plateforme agréée (freelance, TPE, PME)",
     description:
-      "Le portail public (PPF) est abandonné : seules les plateformes agréées privées subsistent. 5 critères pour choisir la bonne, en freelance comme en entreprise.",
-    h1: "Comment choisir sa plateforme agréée : freelance, indépendant ou dirigeant de petite entreprise",
+      "Pas de portail public gratuit : seules les plateformes agréées transmettent les factures. 5 critères pour choisir la bonne, en freelance comme en entreprise.",
+    h1: "Comment choisir sa plateforme agréée : freelance, indépendant ou dirigeant de petite entreprise",
     og: {
-      titre: "Comment choisir sa plateforme agréée : freelance, TPE ou PME",
+      titre: "Comment choisir sa plateforme agréée : freelance, TPE ou PME",
       description:
-        "PPF abandonné, plateforme agréée obligatoire. Critères de choix, questions à poser, intégration avec votre logiciel de facturation.",
+        "Pas de portail public gratuit, plateforme agréée obligatoire. Critères de choix, questions à poser, intégration avec votre logiciel de facturation.",
     },
     publieLe: "2026-07-10",
-    misAJourLe: "2026-11-23",
+    misAJourLe: "2026-11-27",
     dureeLecture: 8,
     carte: {
-      titre: "Choisir sa plateforme agréée : guide comparatif",
-      resume: "Le PPF est abandonné. 5 critères pour sélectionner la bonne plateforme pour votre activité",
+      titre: "Choisir sa plateforme agréée : guide comparatif",
+      resume: "Pas de portail public gratuit. 5 critères pour sélectionner la bonne plateforme pour votre activité",
       badge: "Plateforme agréée",
     },
     lies: [
@@ -171,15 +171,15 @@ export const ARTICLES: Article[] = [
     categorie: "reforme",
     titre: "Liste des plateformes agréées (PA)",
     description:
-      "La liste officielle tient en deux fichiers, et leurs noms trompent. Ce qu’ils contiennent, ce qu’ils ne disent pas, et comment vérifier un éditeur en deux minutes.",
-    h1: "Liste des plateformes agréées : les deux fichiers officiels, et comment les lire",
+      "La liste officielle tient en deux fichiers, et leurs noms trompent. Ce qu’ils contiennent, ce qu’ils taisent, et comment vérifier un éditeur en deux minutes.",
+    h1: "Liste des plateformes agréées : les deux fichiers officiels, et comment les lire",
     og: {
-      titre: "Liste des plateformes agréées : les deux fichiers officiels",
+      titre: "Liste des plateformes agréées : les deux fichiers officiels",
       description:
         "Une plateforme immatriculée et une plateforme en attente ne figurent pas au même endroit. Les comparateurs mélangent les deux.",
     },
     publieLe: "2026-09-14",
-    misAJourLe: "2026-09-20",
+    misAJourLe: "2026-11-27",
     dureeLecture: 7,
     carte: {
       titre: "La liste des plateformes agréées, lue à la source",
@@ -196,22 +196,22 @@ export const ARTICLES: Article[] = [
   {
     slug: "e-reporting-freelance-2026",
     categorie: "reforme",
-    titre: "E-reporting 2026 : l'obligation B2C",
+    titre: "E-reporting 2026 : l'obligation B2C",
     description:
       "La facturation électronique ne concerne pas que le B2B. Si votre entreprise facture des particuliers, l'e-reporting s'applique aussi. À faire avant 2027.",
-    h1: "E-reporting 2026 : l'obligation B2C dont personne ne parle",
+    h1: "E-reporting 2026 : l'obligation B2C dont personne ne parle",
     og: {
-      titre: "E-reporting 2026 : l'obligation B2C oubliée des entreprises",
+      titre: "E-reporting 2026 : l'obligation B2C oubliée des entreprises",
       description:
-        "Vous avez des clients particuliers ? L'e-reporting TVA vous concerne, même si vous n'émettez pas d'e-factures. Calendrier, obligations, amendes.",
+        "Vous avez des clients particuliers ? L'e-reporting TVA vous concerne, même si vous n'émettez pas d'e-factures. Calendrier, obligations, amendes.",
     },
     publieLe: "2026-07-10",
-    misAJourLe: "2026-11-23",
+    misAJourLe: "2026-11-27",
     dureeLecture: 7,
     carte: {
-      titre: "E-reporting : l'obligation B2C dont personne ne parle",
+      titre: "E-reporting : l'obligation B2C dont personne ne parle",
       resume:
-        "Si vous avez des clients particuliers, l'e-reporting TVA vous concerne aussi. Amende : 500 € par transmission",
+        "Si vous avez des clients particuliers, l'e-reporting TVA vous concerne aussi. Amende : 500 € par transmission",
       badge: "B2C",
     },
     lies: ["facturation-electronique-2026", "reforme-facturation-micro-entrepreneur", "checklist-reforme-facturation-2026"],
@@ -219,20 +219,20 @@ export const ARTICLES: Article[] = [
   {
     slug: "facture-electronique-refusee-que-faire",
     categorie: "reforme",
-    titre: "Facture électronique refusée : que faire ?",
+    titre: "Facture électronique refusée : que faire ?",
     description:
-      "Refusée ou rejetée, ce ne sont pas les mêmes causes ni les mêmes remèdes. Les statuts, les treize motifs de refus possibles, et pourquoi un avoir ne se transmet pas toujours.",
-    h1: "Votre facture électronique a été refusée : ce que ça veut dire et quoi faire",
+      "Refusée ou rejetée : ni les mêmes causes, ni les mêmes remèdes. Les statuts, les treize motifs de refus, et pourquoi un avoir ne se transmet pas toujours.",
+    h1: "Votre facture électronique a été refusée : ce que ça veut dire et quoi faire",
     og: {
-      titre: "Facture électronique refusée ou rejetée : comprendre et corriger",
+      titre: "Facture électronique refusée ou rejetée : comprendre et corriger",
       description:
         "Les statuts du cycle de vie, la différence entre un refus du client et un rejet de la plateforme, les motifs réels, et la règle de l'avoir que personne n'explique.",
     },
     publieLe: "2026-09-11",
-    misAJourLe: "2026-09-11",
+    misAJourLe: "2026-11-27",
     dureeLecture: 12,
     carte: {
-      titre: "Facture refusée ou rejetée : que faire ?",
+      titre: "Facture refusée ou rejetée : que faire ?",
       resume:
         "Les statuts, les treize motifs de refus possibles, et la règle de l'avoir qui ne doit pas être transmis",
       badge: "Cycle de vie",
@@ -246,22 +246,22 @@ export const ARTICLES: Article[] = [
   {
     slug: "plateforme-agreee-ou-solution-compatible",
     categorie: "reforme",
-    titre: "Plateforme agréée ou solution compatible ?",
+    titre: "Plateforme agréée ou solution compatible ?",
     description:
-      "La distinction est officielle, pas marketing : une solution compatible ne peut ni transmettre ni recevoir vos factures. Comment vérifier où se situe votre logiciel.",
-    h1: "Plateforme agréée ou solution compatible : ce que la différence change pour vous",
+      "La distinction est officielle, pas marketing : une solution compatible ne transmet ni ne reçoit vos factures sans plateforme agréée. Où se situe votre outil ?",
+    h1: "Plateforme agréée ou solution compatible : ce que la différence change pour vous",
     og: {
-      titre: "Plateforme agréée ou solution compatible : la différence qui compte",
+      titre: "Plateforme agréée ou solution compatible : la différence qui compte",
       description:
-        "Une solution compatible doit s'adosser à une plateforme agréée. La question à poser à votre éditeur n'est pas « êtes-vous conforme ? » mais « êtes-vous agréé, ou adossé à qui ? »",
+        "Une solution compatible doit s'adosser à une plateforme agréée. La question à poser à votre éditeur n'est pas « êtes-vous conforme ? » mais « êtes-vous agréé, ou adossé à qui ? »",
     },
     publieLe: "2026-09-11",
     misAJourLe: "2026-09-11",
     dureeLecture: 7,
     carte: {
-      titre: "Plateforme agréée ou solution compatible ?",
+      titre: "Plateforme agréée ou solution compatible ?",
       resume:
-        "La distinction officielle que presque personne n'explique, et les trois questions à poser à votre éditeur",
+        "La distinction officielle, et les trois questions à poser à votre éditeur",
       badge: "Plateforme agréée",
     },
     lies: [
@@ -273,20 +273,20 @@ export const ARTICLES: Article[] = [
   {
     slug: "checklist-reforme-facturation-2026",
     categorie: "reforme",
-    titre: "Checklist réforme facturation 2026 : 7 points",
+    titre: "Checklist réforme facturation 2026 : 7 points",
     description:
-      "Réforme facturation électronique : 7 points à vérifier pour être prêt. Logiciel, format Factur-X, plateforme agréée, e-reporting, mentions légales.",
-    h1: "Checklist réforme facturation 2026 : êtes-vous prêt ?",
+      "Réforme de la facturation électronique : 7 points à vérifier pour être prêt. Logiciel, format Factur-X, plateforme agréée, e-reporting, mentions légales.",
+    h1: "Checklist réforme facturation 2026 : êtes-vous prêt ?",
     og: {
       titre: "Checklist réforme facturation 2026 pour votre entreprise",
       description:
         "7 points à vérifier pour être en conformité avec la réforme de facturation électronique.",
     },
     publieLe: "2026-07-10",
-    misAJourLe: "2026-11-23",
+    misAJourLe: "2026-11-27",
     dureeLecture: 10,
     carte: {
-      titre: "Checklist réforme 2026 : êtes-vous prêt ?",
+      titre: "Checklist réforme 2026 : êtes-vous prêt ?",
       resume: "7 points à vérifier pour ne rien rater, à partager avec votre comptable",
       badge: "Checklist",
     },
@@ -298,18 +298,18 @@ export const ARTICLES: Article[] = [
     categorie: "reforme",
     titre: "Facturation électronique et petit chiffre d'affaires",
     description:
-      "Vous facturez quelques milliers d'euros par an et la réforme vous inquiète. Ce qu'elle vous impose réellement, ce qu'elle ne vous impose pas, et les options gratuites.",
-    h1: "Facturation électronique quand on fait un petit chiffre d'affaires : ce qui s'applique vraiment",
+      "Vous facturez quelques milliers d'euros par an ? Ce que la réforme vous impose réellement, ce qu'elle ne vous impose pas, et les options gratuites qui existent.",
+    h1: "Facturation électronique quand on fait un petit chiffre d'affaires : ce qui s'applique vraiment",
     og: {
-      titre: "Petit chiffre d'affaires et facturation électronique : les options réelles",
+      titre: "Petit chiffre d'affaires et facturation électronique : les options réelles",
       description:
         "Entre la réception obligatoire depuis 2026 et l'émission en 2027, ce qu'un très petit CA doit faire, et ce qu'il ne doit pas payer.",
     },
     publieLe: "2026-09-12",
-    misAJourLe: "2026-09-12",
+    misAJourLe: "2026-11-27",
     dureeLecture: 8,
     carte: {
-      titre: "Petit chiffre d'affaires : ce qui s'applique vraiment",
+      titre: "Petit chiffre d'affaires : ce qui s'applique vraiment",
       resume: "Ce que la réforme impose à un très petit CA, et ce qu'elle ne vous oblige pas à payer",
     },
     lies: [
@@ -323,7 +323,7 @@ export const ARTICLES: Article[] = [
     categorie: "reforme",
     titre: "Pas de plateforme gratuite de l'État",
     description:
-      "Le portail public gratuit de facturation a été abandonné en 2024. Ce qu'il devait être, ce qu'il est devenu, et pourquoi tout le monde passe par un opérateur privé.",
+      "Le portail public gratuit de facturation a été abandonné en 2024. Ce qu'il devait être, ce qu'il est devenu, et pourquoi tout passe par un opérateur privé.",
     h1: "Non, il n'y a pas de plateforme gratuite de l'État pour vos factures électroniques",
     og: {
       titre: "Non, il n'y a pas de plateforme gratuite de l'État",
@@ -331,7 +331,7 @@ export const ARTICLES: Article[] = [
         "Le portail public gratuit devait tout gérer. Il a été abandonné en 2024. Voici ce qui existe vraiment, et comment ne pas payer trop cher.",
     },
     publieLe: "2026-09-27",
-    misAJourLe: "2026-09-27",
+    misAJourLe: "2026-11-27",
     dureeLecture: 7,
     carte: {
       titre: "Pas de plateforme gratuite de l'État",
@@ -350,20 +350,20 @@ export const ARTICLES: Article[] = [
     categorie: "reforme",
     titre: "Amendes de la facturation électronique 2026",
     description:
-      "Les montants réels depuis le 1er septembre 2026 : 50 € par facture, 500 € par e-reporting, 500 € en réception, plafond 15 000 €. Ce que le web n'a pas encore mis à jour.",
-    h1: "Amendes de la facturation électronique : les montants réels depuis le 1er septembre 2026",
+      "Montants en vigueur : 50 € par facture, 500 € par e-reporting, 500 € puis 1 000 € sans plateforme de réception après mise en demeure, plafond 15 000 € par an.",
+    h1: "Amendes de la facturation électronique : les montants réels depuis le 1er septembre 2026",
     og: {
-      titre: "Amendes de la facturation électronique : les montants réels",
+      titre: "Amendes de la facturation électronique : les montants réels",
       description:
-        "50 € par facture, 500 € par e-reporting, 500 € en réception, plafond 15 000 € par an. La loi de finances 2026 a tout changé, et presque personne ne l'a répercuté.",
+        "50 € par facture, 500 € par e-reporting, 500 € puis 1 000 € sans plateforme de réception après mise en demeure. Ce que la loi de finances 2026 a changé.",
     },
     publieLe: "2026-09-27",
-    misAJourLe: "2026-09-27",
+    misAJourLe: "2026-11-27",
     dureeLecture: 8,
     carte: {
       titre: "Les amendes réelles depuis septembre 2026",
       resume:
-        "50 € par facture, 500 € par e-reporting, plafond 15 000 € : les montants que la moitié du web ignore encore",
+        "50 € par facture, 500 € par e-reporting, plafond 15 000 € : les montants en vigueur et leur source",
       badge: "Réforme 2026",
     },
     lies: [
@@ -377,7 +377,7 @@ export const ARTICLES: Article[] = [
     categorie: "reforme",
     titre: "Factur-X expliqué simplement",
     description:
-      "Factur-X, c'est un PDF normal doublé d'un fichier que les logiciels savent lire. À quoi ça sert, ce que ça change pour vous, et pourquoi vous n'avez rien à faire à la main.",
+      "Factur-X, c'est un PDF normal doublé d'un fichier que les logiciels savent lire. À quoi ça sert, ce que ça change, et pourquoi rien n'est à faire à la main.",
     h1: "Factur-X expliqué à quelqu'un qui n'est pas comptable",
     og: {
       titre: "Factur-X expliqué à quelqu'un qui n'est pas comptable",
@@ -403,17 +403,17 @@ export const ARTICLES: Article[] = [
   {
     slug: "facture-acompte-freelance",
     categorie: "factures",
-    titre: "Facture d'acompte : le document d'après le devis",
+    titre: "Facture d'acompte : le document d'après le devis",
     description:
-      "Votre devis est signé, le client verse un acompte : il faut une facture d'acompte. Mentions obligatoires, lien avec la facture de solde, TVA, et ce qu'il faut déclarer.",
-    h1: "Facture d'acompte : le document que personne ne vous explique après la signature du devis",
+      "Devis signé, acompte versé : il vous faut une facture d'acompte. Mentions obligatoires, lien avec la facture de solde, TVA, et ce qu'il faut déclarer.",
+    h1: "Facture d'acompte : le document que personne ne vous explique après la signature du devis",
     og: {
-      titre: "Facture d'acompte freelance : mentions, solde, TVA et déclaration",
+      titre: "Facture d'acompte freelance : mentions, solde, TVA et déclaration",
       description:
         "Ce que doit contenir une facture d'acompte, comment la relier à la facture de solde, et quand déclarer la somme encaissée à l'URSSAF.",
     },
     publieLe: "2026-09-12",
-    misAJourLe: "2026-09-12",
+    misAJourLe: "2026-11-27",
     dureeLecture: 8,
     carte: {
       titre: "Facture d'acompte",
@@ -424,20 +424,20 @@ export const ARTICLES: Article[] = [
   {
     slug: "facture-avoir-erreur-facture",
     categorie: "factures",
-    titre: "Erreur sur une facture : l'avoir, pas la gomme",
+    titre: "Erreur sur une facture : l'avoir, pas la gomme",
     description:
-      "Une facture émise ne se modifie ni ne se supprime. Comment corriger : avoir total, avoir partiel, facture rectificative, et ce que la facturation électronique change.",
-    h1: "J'ai fait une erreur sur une facture : pourquoi on ne la supprime jamais, et quoi faire",
+      "Une facture émise ne se modifie ni ne se supprime. Comment la corriger : avoir total ou partiel, facture rectificative, et ce que la réforme y change.",
+    h1: "J'ai fait une erreur sur une facture : pourquoi on ne la supprime jamais, et quoi faire",
     og: {
-      titre: "Corriger une facture : avoir, rectification, et ce que la réforme change",
+      titre: "Corriger une facture : avoir, rectification, et ce que la réforme change",
       description:
-        "Une facture émise est définitive. L'avoir est le seul outil de correction, et depuis la facturation électronique, le rattrapage n'est plus le même.",
+        "Une facture émise est définitive. L'avoir est le seul outil de correction, et avec la facturation électronique, le rattrapage n'est plus le même.",
     },
     publieLe: "2026-09-12",
-    misAJourLe: "2026-09-12",
+    misAJourLe: "2026-11-27",
     dureeLecture: 9,
     carte: {
-      titre: "Erreur sur une facture : l'avoir",
+      titre: "Erreur sur une facture : l'avoir",
       resume: "Pourquoi on ne supprime jamais une facture, et comment la corriger proprement",
     },
     lies: [
@@ -450,20 +450,20 @@ export const ARTICLES: Article[] = [
   {
     slug: "note-honoraires-ou-facture",
     categorie: "factures",
-    titre: "Note d'honoraires : c'est quoi, et faut-il une facture ?",
+    titre: "Note d'honoraires : c'est quoi, et faut-il une facture ?",
     description:
-      "Une note d'honoraires, c'est quoi ? Pour un praticien ou une profession libérale, ce n'est pas un document à part : ce qui la distingue d'une facture, et ce qu'elle contient.",
-    h1: "Note d'honoraires : c'est quoi, et en quoi diffère-t-elle d'une facture ?",
+      "Une note d'honoraires, c'est quoi ? Pour une profession libérale, ce n'est pas un document à part : ce qui la distingue d'une facture, et ce qu'elle contient.",
+    h1: "Note d'honoraires : c'est quoi, et en quoi diffère-t-elle d'une facture ?",
     og: {
-      titre: "Note d'honoraires : c'est quoi, et en quoi diffère-t-elle d'une facture",
+      titre: "Note d'honoraires : c'est quoi, et en quoi diffère-t-elle d'une facture",
       description:
         "Pour un praticien ou une profession libérale, la note d'honoraires obéit aux mêmes obligations qu'une facture. Ce qui change, et ce qui ne change pas.",
     },
     publieLe: "2026-09-12",
-    misAJourLe: "2026-09-12",
+    misAJourLe: "2026-11-27",
     dureeLecture: 7,
     carte: {
-      titre: "Note d'honoraires ou facture ?",
+      titre: "Note d'honoraires ou facture ?",
       resume: "Ce que la note d'honoraires change vraiment, et ce qu'elle doit contenir",
     },
     lies: ["facture-acompte-freelance", "numerotation-factures-freelance", "facturation-electronique-2026"],
@@ -473,19 +473,19 @@ export const ARTICLES: Article[] = [
     categorie: "factures",
     titre: "Mon client demande une attestation de vigilance",
     description:
-      "Votre client exige une attestation de vigilance URSSAF avant de payer. Pourquoi il y est obligé, comment l'obtenir en micro-entreprise, et quoi faire si elle vous est refusée.",
-    h1: "Mon client me demande une attestation de vigilance URSSAF : que faire ?",
+      "Votre client exige une attestation de vigilance URSSAF avant de payer. Pourquoi il y est tenu, comment l'obtenir en micro, et que faire en cas de refus.",
+    h1: "Mon client me demande une attestation de vigilance URSSAF : que faire ?",
     og: {
-      titre: "Attestation de vigilance URSSAF : pourquoi votre client l'exige et comment l'obtenir",
+      titre: "Attestation de vigilance URSSAF : pourquoi votre client l'exige et comment l'obtenir",
       description:
-        "Au-delà de 5 000 € HT, votre client a l'obligation de la réclamer. Comment la télécharger, sa durée de validité, et les cas de refus.",
+        "Dès 5 000 € HT, votre client a l'obligation de la réclamer. Comment la télécharger, sa durée de validité, et les cas de refus.",
     },
     publieLe: "2026-09-12",
-    misAJourLe: "2026-09-12",
+    misAJourLe: "2026-11-27",
     dureeLecture: 6,
     carte: {
       titre: "Attestation de vigilance URSSAF",
-      resume: "Pourquoi votre client l'exige au-delà de 5 000 €, et comment l'obtenir",
+      resume: "Pourquoi votre client l'exige au-delà de 5 000 €, et comment l'obtenir",
     },
     lies: ["gerer-impayes-freelance", "facture-acompte-freelance", "clauses-devis-freelance"],
   },
@@ -496,15 +496,15 @@ export const ARTICLES: Article[] = [
     categorie: "micro",
     titre: "Le livre des recettes du micro-entrepreneur",
     description:
-      "Le seul document comptable obligatoire en micro-entreprise. Les mentions à porter, le piège de l'encaissement, et ce qui est vraiment sanctionné.",
-    h1: "Le livre des recettes du micro-entrepreneur : le tenir juste, sans y passer ses soirées",
+      "Le seul document comptable obligatoire en micro-entreprise. Les mentions à porter, le piège de l'encaissement, et ce qui est vraiment sanctionné en cas d'oubli.",
+    h1: "Le livre des recettes du micro-entrepreneur : le tenir juste, sans y passer ses soirées",
     og: {
-      titre: "Livre des recettes du micro-entrepreneur : le guide clair",
+      titre: "Livre des recettes du micro-entrepreneur : le guide clair",
       description:
         "Obligatoire pour tous les micro-entrepreneurs. Les mentions, le piège de l'encaissement, le registre des achats et les sanctions.",
     },
     publieLe: "2026-11-02",
-    misAJourLe: "2026-11-02",
+    misAJourLe: "2026-11-27",
     dureeLecture: 7,
     carte: {
       titre: "Le livre des recettes du micro-entrepreneur",
@@ -519,21 +519,21 @@ export const ARTICLES: Article[] = [
   {
     slug: "biens-ou-services-micro-entrepreneur",
     categorie: "micro",
-    titre: "Micro-entreprise : vente de biens ou prestation de services",
+    titre: "Micro-entreprise : vente de biens ou prestation de services",
     description:
-      "Prestation de services BIC ou BNC, ou vente de biens : la catégorie de votre micro-entreprise fixe cotisations, abattement, plafond et seuil de TVA. Chiffres 2026.",
-    h1: "Micro-entreprise : vente de biens ou prestation de services (BIC, BNC), ce qui change pour vous",
+      "Services BIC ou BNC, ou vente de biens : la catégorie de votre micro-entreprise fixe cotisations, abattement, plafond et seuil de TVA. Les chiffres 2026.",
+    h1: "Micro-entreprise : vente de biens ou prestation de services (BIC, BNC), ce qui change pour vous",
     og: {
-      titre: "Micro-entreprise : vente de biens ou prestation de services (BIC, BNC)",
+      titre: "Micro-entreprise : vente de biens ou prestation de services (BIC, BNC)",
       description:
-        "Taux de cotisations, abattement, plafond, seuil de TVA : tout dépend de la catégorie de votre activité. Et l'activité mixte se ventile.",
+        "Taux de cotisations, abattement, plafond, seuil de TVA : tout dépend de la catégorie de votre activité. Et l'activité mixte se ventile.",
     },
     publieLe: "2026-11-02",
-    misAJourLe: "2026-11-02",
+    misAJourLe: "2026-11-27",
     dureeLecture: 7,
     carte: {
-      titre: "Biens ou services : la distinction qui change tout",
-      resume: "Cotisations, abattement, plafond, seuil de TVA : pourquoi la catégorie décide de tout",
+      titre: "Biens ou services : la distinction qui change tout",
+      resume: "Cotisations, abattement, plafond, seuil de TVA : pourquoi la catégorie décide de tout",
     },
     lies: [
       "livre-des-recettes-micro-entrepreneur",
@@ -547,15 +547,15 @@ export const ARTICLES: Article[] = [
     categorie: "micro",
     titre: "Passer à la TVA en micro-entreprise",
     description:
-      "La franchise de TVA s'arrête avant votre plafond de micro. Les seuils 2026, ce qui déclenche la bascule, et les démarches pour passer à la TVA.",
-    h1: "Passer à la TVA en micro-entreprise : sortie de franchise et déclaration",
+      "La franchise de TVA s'arrête avant votre plafond de micro-entreprise. Les seuils 2026, ce qui déclenche la bascule, et les démarches pour passer à la TVA.",
+    h1: "Passer à la TVA en micro-entreprise : sortie de franchise et déclaration",
     og: {
-      titre: "Passer à la TVA en micro : seuils 2026 et démarches",
+      titre: "Passer à la TVA en micro : seuils 2026 et démarches",
       description:
-        "Seuils 85 000 / 37 500 €, seuil majoré, numéro intracommunautaire, CA12 ou CA3 : tout ce qui change le jour où vous facturez la TVA.",
+        "Seuils 85 000 / 37 500 €, seuil majoré, numéro intracommunautaire, CA12 ou CA3 : tout ce qui change le jour où vous facturez la TVA.",
     },
     publieLe: "2026-11-02",
-    misAJourLe: "2026-11-02",
+    misAJourLe: "2026-11-27",
     dureeLecture: 8,
     carte: {
       titre: "Passer à la TVA en micro-entreprise",
@@ -572,15 +572,15 @@ export const ARTICLES: Article[] = [
     categorie: "micro",
     titre: "Déclarer son chiffre d'affaires à l'URSSAF",
     description:
-      "Chaque mois ou trimestre, vous déclarez l'encaissé et payez vos cotisations dessus. Taux 2026, bonne périodicité, ACRE et oublis coûteux.",
-    h1: "Déclarer son chiffre d'affaires à l'URSSAF : taux 2026 et ACRE",
+      "Chaque mois ou chaque trimestre, vous déclarez votre chiffre d'affaires encaissé et payez vos cotisations dessus. Taux 2026, périodicité, ACRE, oublis coûteux.",
+    h1: "Déclarer son chiffre d'affaires à l'URSSAF : taux 2026 et ACRE",
     og: {
-      titre: "Déclarer son CA à l'URSSAF : taux 2026 et ACRE",
+      titre: "Déclarer son CA à l'URSSAF : taux 2026 et ACRE",
       description:
-        "Déclaration à l'encaissement, même à zéro, taux 12,3 à 25,6 %, ACRE à 25 % depuis juillet 2026 : le mode d'emploi.",
+        "Déclaration à l'encaissement, même à zéro, taux 12,3 à 25,6 %, ACRE à 25 % depuis juillet 2026 : le mode d'emploi.",
     },
     publieLe: "2026-11-02",
-    misAJourLe: "2026-11-02",
+    misAJourLe: "2026-11-27",
     dureeLecture: 7,
     carte: {
       titre: "Déclarer son chiffre d'affaires à l'URSSAF",
@@ -595,20 +595,20 @@ export const ARTICLES: Article[] = [
   {
     slug: "versement-liberatoire-2026",
     categorie: "micro",
-    titre: "Le versement libératoire en 2026 : pour qui",
+    titre: "Le versement libératoire en 2026 : pour qui",
     description:
-      "Payer son impôt au fil de l'eau, séduisant mais pas pour tout le monde. Taux 2026, condition de revenu, et la question qui décide : êtes-vous imposable ?",
-    h1: "Le versement libératoire de l'impôt en 2026 : pour qui est-ce vraiment rentable",
+      "Payer son impôt au fil de l'eau, séduisant mais pas pour tout le monde. Taux 2026, condition de revenu, et la question qui décide : êtes-vous imposable ?",
+    h1: "Le versement libératoire de l'impôt en 2026 : pour qui est-ce vraiment rentable",
     og: {
-      titre: "Versement libératoire 2026 : rentable ou pas ?",
+      titre: "Versement libératoire 2026 : rentable ou pas ?",
       description:
-        "Taux 1 à 2,2 %, plafond de RFR de 29 315 € par part : à qui le versement libératoire fait gagner, et à qui il fait perdre.",
+        "Taux 1 à 2,2 %, plafond de RFR de 29 579 € par part : à qui le versement libératoire fait gagner, et à qui il fait perdre.",
     },
     publieLe: "2026-11-02",
-    misAJourLe: "2026-11-02",
+    misAJourLe: "2026-11-27",
     dureeLecture: 7,
     carte: {
-      titre: "Le versement libératoire en 2026 : pour qui",
+      titre: "Le versement libératoire en 2026 : pour qui",
       resume: "Taux, condition de RFR, et le piège de l'impôt payé pour rien",
     },
     lies: [
@@ -622,19 +622,19 @@ export const ARTICLES: Article[] = [
     categorie: "micro",
     titre: "Les obligations comptables au-delà du livre des recettes",
     description:
-      "Le micro dispense de bilan, pas de tout. Compte bancaire dédié, factures conformes, registre des achats, conservation 10 ans : le tour complet.",
-    h1: "Au-delà du livre des recettes : compte bancaire, factures et conservation",
+      "La micro-entreprise dispense de bilan, pas de tout. Compte bancaire dédié, factures conformes, registre des achats, conservation 10 ans : le tour complet.",
+    h1: "Au-delà du livre des recettes : compte bancaire, factures et conservation",
     og: {
-      titre: "Obligations comptables du micro : le tour complet",
+      titre: "Obligations comptables du micro : le tour complet",
       description:
-        "Compte dédié au-delà de 10 000 €, factures numérotées, registre des achats, conservation 10 ans, et ce dont vous êtes dispensé.",
+        "Compte dédié (dès le début en commerce, au-delà de 10 000 € sinon), factures numérotées, registre des achats, conservation 10 ans, et ce dont vous êtes dispensé.",
     },
     publieLe: "2026-11-02",
-    misAJourLe: "2026-11-02",
+    misAJourLe: "2026-11-27",
     dureeLecture: 7,
     carte: {
       titre: "Les obligations comptables au-delà du livre des recettes",
-      resume: "Compte bancaire, factures, registre des achats, conservation : tout le reste",
+      resume: "Compte bancaire, factures, registre des achats, conservation : tout le reste",
     },
     lies: [
       "livre-des-recettes-micro-entrepreneur",
@@ -647,19 +647,19 @@ export const ARTICLES: Article[] = [
     categorie: "micro",
     titre: "Plafonds de la micro-entreprise 2026-2028",
     description:
-      "203 100 € et 83 600 € depuis 2026. Et surtout : ne confondez pas ces plafonds avec les seuils de TVA, bien plus bas, que vous franchirez en premier.",
-    h1: "Plafonds de la micro-entreprise 2026-2028 : les vrais chiffres, et le piège des deux seuils",
+      "203 100 € et 83 600 € depuis 2026. Surtout, ne confondez pas ces plafonds avec les seuils de TVA, bien plus bas, que vous franchirez en premier en pratique.",
+    h1: "Plafonds de la micro-entreprise 2026-2028 : les vrais chiffres, et le piège des deux seuils",
     og: {
-      titre: "Plafonds micro-entreprise 2026-2028 : 203 100 € et 83 600 €",
+      titre: "Plafonds micro-entreprise 2026-2028 : 203 100 € et 83 600 €",
       description:
-        "Les plafonds ont été revalorisés de 7,6 % pour 2026-2028. Les seuils de TVA, eux, n'ont pas bougé, et c'est eux que vous franchirez d'abord.",
+        "Les plafonds ont été revalorisés de 7,6 % pour 2026-2028. Les seuils de TVA, eux, n'ont pas bougé, et c'est eux que vous franchirez d'abord.",
     },
     publieLe: "2026-09-12",
-    misAJourLe: "2026-09-12",
+    misAJourLe: "2026-11-27",
     dureeLecture: 8,
     carte: {
       titre: "Plafonds micro-entreprise 2026-2028",
-      resume: "203 100 € et 83 600 €, et le piège de la confusion avec les seuils de TVA",
+      resume: "203 100 € et 83 600 €, et le piège de la confusion avec les seuils de TVA",
     },
     lies: [
       "facturer-client-etranger-freelance",
@@ -672,15 +672,15 @@ export const ARTICLES: Article[] = [
     categorie: "factures",
     titre: "Refacturer ses frais sans gonfler son CA",
     description:
-      "Refacturer un train ou un hôtel augmente votre chiffre d'affaires, donc vos cotisations. Le mécanisme du débours, ses conditions strictes, et quand il ne s'applique pas.",
+      "Refacturer un train ou un hôtel gonfle votre chiffre d'affaires, donc vos cotisations. Le mécanisme du débours, ses conditions strictes, et ses limites.",
     h1: "Refacturer ses frais à un client sans faire exploser son chiffre d'affaires",
     og: {
-      titre: "Refacturer des frais en micro-entreprise : le piège des cotisations",
+      titre: "Refacturer des frais en micro-entreprise : le piège des cotisations",
       description:
         "Un frais refacturé entre dans votre chiffre d'affaires et donc dans l'assiette de vos cotisations. Sauf s'il remplit les conditions du débours.",
     },
     publieLe: "2026-09-12",
-    misAJourLe: "2026-11-23",
+    misAJourLe: "2026-11-27",
     dureeLecture: 9,
     carte: {
       titre: "Refacturer ses frais sans gonfler son CA",
@@ -697,19 +697,19 @@ export const ARTICLES: Article[] = [
     categorie: "factures",
     titre: "Facturer un client à l'étranger",
     description:
-      "Client pro dans l'UE, particulier en Belgique, entreprise aux États-Unis : la mention à porter sur la facture change à chaque fois. Le guide des quatre cas.",
-    h1: "Facturer un client à l'étranger : quelle mention porter, dans quel cas",
+      "Client pro dans l'UE, particulier en Belgique, entreprise aux États-Unis : la mention à porter sur la facture change à chaque fois. Le guide des quatre cas.",
+    h1: "Facturer un client à l'étranger : quelle mention porter, dans quel cas",
     og: {
-      titre: "Facturer un client étranger en freelance : TVA, mentions, DES",
+      titre: "Facturer un client étranger en freelance : TVA, mentions, DES",
       description:
-        "Autoliquidation, numéro de TVA intracommunautaire obligatoire même en franchise, Déclaration européenne de services : les quatre cas, sans jargon.",
+        "Autoliquidation, numéro de TVA intracommunautaire obligatoire même en franchise, Déclaration européenne de services : les quatre cas, sans jargon.",
     },
     publieLe: "2026-09-12",
-    misAJourLe: "2026-09-12",
+    misAJourLe: "2026-11-27",
     dureeLecture: 10,
     carte: {
       titre: "Facturer un client à l'étranger",
-      resume: "UE ou hors UE, pro ou particulier : la mention change à chaque fois",
+      resume: "UE ou hors UE, pro ou particulier : la mention change à chaque fois",
     },
     lies: [
       "plafonds-micro-entreprise-2026",
@@ -722,10 +722,10 @@ export const ARTICLES: Article[] = [
     categorie: "factures",
     titre: "Numéroter ses factures, et réparer un trou",
     description:
-      "La numérotation doit être continue et sans trou : c'est une obligation du CGI. Les formats qui tiennent, et comment réparer une série déjà cassée.",
+      "La numérotation des factures doit être continue et sans trou : c'est une obligation du CGI. Les formats qui tiennent, et comment réparer une série cassée.",
     h1: "Numéroter ses factures sans se tromper, et que faire si c'est déjà raté",
     og: {
-      titre: "Numérotation des factures : les règles, les formats, et comment réparer",
+      titre: "Numérotation des factures : les règles, les formats, et comment réparer",
       description:
         "Séquence continue, sans trou, sans doublon. Les formats qui tiennent dans le temps, et la marche à suivre quand la série est déjà cassée.",
     },
@@ -747,17 +747,17 @@ export const ARTICLES: Article[] = [
   {
     slug: "devis-graphiste-freelance",
     categorie: "metier",
-    titre: "Devis graphiste freelance : mentions obligatoires",
+    titre: "Devis graphiste freelance : mentions obligatoires",
     description:
-      "Tout ce qu'un devis de graphiste freelance doit contenir : mentions légales, droits de cession, acompte, révisions. Exemple concret + erreurs à éviter.",
-    h1: "Devis de graphiste freelance : mentions obligatoires, exemple et erreurs à éviter",
+      "Tout ce qu'un devis de graphiste freelance doit contenir : mentions légales, droits de cession, acompte, révisions. Exemple concret + erreurs à éviter.",
+    h1: "Devis de graphiste freelance : mentions obligatoires, exemple et erreurs à éviter",
     og: {
-      titre: "Devis graphiste freelance : mentions obligatoires et exemple",
+      titre: "Devis graphiste freelance : mentions obligatoires et exemple",
       description:
         "Mentions légales, droits de cession, acompte, révisions, tout ce qu'un devis de graphiste doit contenir. Exemple concret.",
     },
     publieLe: "2026-06-29",
-    misAJourLe: "2026-06-29",
+    misAJourLe: "2026-11-27",
     dureeLecture: 6,
     carte: { titre: "Graphiste freelance", resume: "Droits de cession, révisions, formats livrés" },
     metier: {
@@ -771,12 +771,12 @@ export const ARTICLES: Article[] = [
   {
     slug: "devis-developpeur-web",
     categorie: "metier",
-    titre: "Devis développeur web freelance : le guide",
+    titre: "Devis développeur web freelance : le guide",
     description:
-      "Comment rédiger un devis de développement web freelance : mentions obligatoires, TJM vs forfait, scope creep, Chorus Pro. Exemple concret inclus.",
-    h1: "Devis développeur web freelance : guide complet, exemple et erreurs à éviter",
+      "Comment rédiger un devis de développement web freelance : mentions obligatoires, TJM ou forfait, dérive du périmètre, Chorus Pro. Exemple concret inclus.",
+    h1: "Devis développeur web freelance : guide complet, exemple et erreurs à éviter",
     og: {
-      titre: "Devis développeur web freelance : guide complet 2026",
+      titre: "Devis développeur web freelance : guide complet 2026",
       description:
         "Mentions obligatoires, TJM vs forfait, scope creep, Chorus Pro, guide complet pour votre devis de dev web freelance.",
     },
@@ -795,17 +795,17 @@ export const ARTICLES: Article[] = [
   {
     slug: "devis-consultant-independant",
     categorie: "metier",
-    titre: "Devis consultant indépendant : propale et TJM",
+    titre: "Devis consultant indépendant : propale et TJM",
     description:
-      "Comment rédiger une proposition commerciale de consultant indépendant : livrables, TJM, confidentialité, grands comptes. Exemple et erreurs à éviter.",
-    h1: "Devis de consultant indépendant : rédiger une propale efficace en 2026",
+      "Comment rédiger la proposition commerciale d'un consultant indépendant : livrables, TJM, confidentialité, grands comptes. Exemple concret et erreurs à éviter.",
+    h1: "Devis de consultant indépendant : rédiger une propale efficace en 2026",
     og: {
-      titre: "Devis consultant indépendant : propale, TJM, livrables",
+      titre: "Devis consultant indépendant : propale, TJM, livrables",
       description:
         "Livrables, TJM, confidentialité, Factur-X grands comptes, guide complet pour votre propale de consultant indépendant.",
     },
     publieLe: "2026-06-29",
-    misAJourLe: "2026-06-29",
+    misAJourLe: "2026-11-27",
     dureeLecture: 6,
     carte: { titre: "Consultant indépendant", resume: "Propale efficace, régie vs forfait, grands comptes" },
     metier: {
@@ -819,12 +819,12 @@ export const ARTICLES: Article[] = [
   {
     slug: "devis-photographe-freelance",
     categorie: "metier",
-    titre: "Devis photographe : droits d'auteur et acompte",
+    titre: "Devis photographe : droits d'auteur et acompte",
     description:
-      "Comment rédiger un devis de photographe freelance : droits d'utilisation, retouches, frais de déplacement, acompte. Exemple concret et erreurs à éviter.",
-    h1: "Devis de photographe freelance : droits d'auteur, acompte et exemple concret",
+      "Comment rédiger un devis de photographe freelance : droits d'utilisation, retouches, frais de déplacement, acompte. Exemple concret et erreurs à éviter.",
+    h1: "Devis de photographe freelance : droits d'auteur, acompte et exemple concret",
     og: {
-      titre: "Devis photographe freelance : droits d'auteur, acompte, exemple",
+      titre: "Devis photographe freelance : droits d'auteur, acompte, exemple",
       description:
         "Droits d'utilisation, retouches, frais de déplacement, acompte, tout ce qu'un devis photo doit contenir. Exemple concret.",
     },
@@ -843,12 +843,12 @@ export const ARTICLES: Article[] = [
   {
     slug: "devis-redacteur-web",
     categorie: "metier",
-    titre: "Devis rédacteur web : tarifs, exemple et droits",
+    titre: "Devis rédacteur web : tarifs, exemple et droits",
     description:
-      "Devis rédacteur web : tarif au mot ou à la page, révisions, cession de droits et relances, avec un exemple de devis de rédaction web et les erreurs à éviter.",
-    h1: "Devis rédacteur web : tarifs, exemple, révisions et erreurs à éviter",
+      "Devis rédacteur web : tarif au mot ou à la page, révisions, cession de droits et relances, avec un exemple de devis de rédaction web et les erreurs à éviter.",
+    h1: "Devis rédacteur web : tarifs, exemple, révisions et erreurs à éviter",
     og: {
-      titre: "Devis rédacteur web : tarifs, exemple, révisions, droits",
+      titre: "Devis rédacteur web : tarifs, exemple, révisions, droits",
       description:
         "Tarif au mot ou à la page, révisions, cession de droits, guide complet pour votre devis de rédaction web freelance.",
     },
@@ -867,17 +867,17 @@ export const ARTICLES: Article[] = [
   {
     slug: "devis-formateur-independant",
     categorie: "metier",
-    titre: "Devis formateur : mentions OPCO et exemple",
+    titre: "Devis formateur : mentions OPCO et exemple",
     description:
-      "Devis de formation : mentions OPCO obligatoires, objectifs pédagogiques, acompte et solde. Exemple concret et erreurs à éviter.",
-    h1: "Devis de formateur indépendant : mentions OPCO, exemple et erreurs à éviter",
+      "Devis de formation professionnelle : mentions attendues par l'OPCO, objectifs pédagogiques, acompte et solde, TVA. Exemple concret et erreurs à éviter.",
+    h1: "Devis de formateur indépendant : mentions OPCO, exemple et erreurs à éviter",
     og: {
-      titre: "Devis formateur indépendant : mentions OPCO et exemple 2026",
+      titre: "Devis formateur indépendant : mentions OPCO et exemple 2026",
       description:
         "Mentions OPCO obligatoires, objectifs pédagogiques, acompte/solde, Factur-X, guide complet pour votre devis de formation.",
     },
     publieLe: "2026-06-29",
-    misAJourLe: "2026-06-29",
+    misAJourLe: "2026-11-27",
     dureeLecture: 6,
     carte: { titre: "Formateur indépendant", resume: "Mentions OPCO, exonération TVA, Qualiopi" },
     metier: {
@@ -891,17 +891,17 @@ export const ARTICLES: Article[] = [
   {
     slug: "devis-artisan-btp",
     categorie: "metier",
-    titre: "Devis artisan BTP : TVA réduite et décennale",
+    titre: "Devis artisan BTP : TVA réduite et décennale",
     description:
-      "Devis d'artisan BTP : taux de TVA selon les travaux, mention garantie décennale, acompte. Exemple concret et erreurs à éviter.",
-    h1: "Devis artisan BTP : TVA réduite, garantie décennale et erreurs à éviter",
+      "Devis d'artisan du BTP : taux de TVA selon les travaux, mention de l'assurance décennale, acompte, validité. Un exemple concret et les erreurs à éviter.",
+    h1: "Devis artisan BTP : TVA réduite, garantie décennale et erreurs à éviter",
     og: {
-      titre: "Devis artisan BTP : TVA réduite, garantie décennale, exemple",
+      titre: "Devis artisan BTP : TVA réduite, garantie décennale, exemple",
       description:
-        "TVA 5,5 % / 10 % / 20 %, garantie décennale obligatoire, acompte, tout ce qu'un devis artisan BTP doit contenir.",
+        "TVA 5,5 % / 10 % / 20 %, garantie décennale obligatoire, acompte, tout ce qu'un devis artisan BTP doit contenir.",
     },
     publieLe: "2026-06-29",
-    misAJourLe: "2026-06-29",
+    misAJourLe: "2026-11-27",
     dureeLecture: 7,
     carte: { titre: "Artisan BTP", resume: "TVA réduite, garantie décennale, acompte" },
     metier: {
@@ -915,12 +915,12 @@ export const ARTICLES: Article[] = [
   {
     slug: "devis-community-manager",
     categorie: "metier",
-    titre: "Devis community manager : forfait et périmètre",
+    titre: "Devis community manager : forfait et périmètre",
     description:
-      "Devis de community manager : définir le périmètre (plateformes, posts, visuels), forfait mensuel, résiliation. Exemple et erreurs à éviter.",
-    h1: "Devis community manager freelance : périmètre, forfait mensuel et erreurs à éviter",
+      "Devis de community manager : définir le périmètre (réseaux, publications, visuels), le forfait mensuel et la résiliation. Exemple concret et erreurs à éviter.",
+    h1: "Devis community manager freelance : périmètre, forfait mensuel et erreurs à éviter",
     og: {
-      titre: "Devis community manager freelance : périmètre, forfait mensuel, erreurs",
+      titre: "Devis community manager freelance : périmètre, forfait mensuel, erreurs",
       description:
         "Périmètre précis, forfaits mensuels, conditions de résiliation, tout ce qu'un devis de CM freelance doit contenir.",
     },
@@ -939,17 +939,17 @@ export const ARTICLES: Article[] = [
   {
     slug: "devis-coach-freelance",
     categorie: "metier",
-    titre: "Devis coach freelance : TVA, abandon, exemple",
+    titre: "Devis coach freelance : TVA, abandon, exemple",
     description:
-      "Devis de coaching : TVA franchise ou exonération, conditions d'abandon et de remboursement, séances vs programmes. Exemple et erreurs à éviter.",
-    h1: "Devis coach freelance : TVA, conditions d'abandon de programme et erreurs à éviter",
+      "Devis de coaching : franchise ou exonération de TVA, conditions d'abandon et de remboursement, séances ou programmes. Exemple concret et erreurs à éviter.",
+    h1: "Devis coach freelance : TVA, conditions d'abandon de programme et erreurs à éviter",
     og: {
-      titre: "Devis coach freelance : TVA, conditions abandon programme, exemple",
+      titre: "Devis coach freelance : TVA, conditions abandon programme, exemple",
       description:
         "TVA franchise ou exonération, conditions d'abandon, séances vs programmes, tout ce qu'un devis de coach freelance doit contenir.",
     },
     publieLe: "2026-06-29",
-    misAJourLe: "2026-06-29",
+    misAJourLe: "2026-11-27",
     dureeLecture: 6,
     carte: { titre: "Coach freelance", resume: "TVA, conditions d'abandon de programme" },
     metier: {
@@ -963,17 +963,17 @@ export const ARTICLES: Article[] = [
   {
     slug: "devis-traducteur-freelance",
     categorie: "metier",
-    titre: "Devis traducteur freelance : tarifs et droits",
+    titre: "Devis traducteur freelance : tarifs et droits",
     description:
-      "Devis de traduction : tarifer au mot ou à la page, inclure les révisions, droits sur la traduction, tarif urgence. Exemple et erreurs à éviter.",
-    h1: "Devis traducteur freelance : tarification, révisions, droits sur la traduction et erreurs à éviter",
+      "Devis de traduction : tarif au mot ou à la page, révisions incluses, droits sur la traduction et tarif d'urgence. Exemple concret et erreurs à éviter.",
+    h1: "Devis traducteur freelance : tarification, révisions, droits sur la traduction et erreurs à éviter",
     og: {
-      titre: "Devis traducteur freelance : tarification, révisions, droits sur la traduction",
+      titre: "Devis traducteur freelance : tarification, révisions, droits sur la traduction",
       description:
         "Tarification au mot ou à la page, révisions, droits sur la traduction, tarif urgence, guide complet pour votre devis de traduction.",
     },
     publieLe: "2026-06-29",
-    misAJourLe: "2026-06-29",
+    misAJourLe: "2026-11-27",
     dureeLecture: 7,
     carte: { titre: "Traducteur freelance", resume: "Tarif au mot, droits sur la traduction, urgences" },
     metier: {
@@ -989,21 +989,21 @@ export const ARTICLES: Article[] = [
   {
     slug: "micro-ou-reel-quand-basculer",
     categorie: "gestion",
-    titre: "Micro ou régime réel : quand basculer",
+    titre: "Micro ou régime réel : quand basculer",
     description:
-      "Le micro applique un abattement forfaitaire, le réel déduit vos charges. La bascule tient à une question : vos charges dépassent-elles votre abattement ?",
-    h1: "Micro-entreprise ou régime réel : quand le passage devient rentable",
+      "Le micro applique un abattement forfaitaire, le réel déduit vos charges. La bascule tient à une question : vos charges dépassent-elles votre abattement ?",
+    h1: "Micro-entreprise ou régime réel : quand le passage devient rentable",
     og: {
-      titre: "Micro ou régime réel : quand basculer",
+      titre: "Micro ou régime réel : quand basculer",
       description:
-        "Abattement forfaitaire contre charges réelles : à partir de quel niveau de charges le régime réel l'emporte, et ce qu'il implique.",
+        "Abattement forfaitaire contre charges réelles : à partir de quel niveau de charges le régime réel l'emporte, et ce qu'il implique.",
     },
     publieLe: "2026-11-02",
-    misAJourLe: "2026-11-02",
+    misAJourLe: "2026-11-27",
     dureeLecture: 8,
     carte: {
-      titre: "Micro ou régime réel : quand basculer",
-      resume: "Abattement contre charges réelles : le seuil où le réel devient rentable",
+      titre: "Micro ou régime réel : quand basculer",
+      resume: "Abattement contre charges réelles : le seuil où le réel devient rentable",
     },
     lies: [
       "biens-ou-services-micro-entrepreneur",
@@ -1014,12 +1014,12 @@ export const ARTICLES: Article[] = [
   {
     slug: "quand-prendre-expert-comptable-micro",
     categorie: "gestion",
-    titre: "Micro-entrepreneur : quand prendre un expert-comptable",
+    titre: "Micro-entrepreneur : quand prendre un expert-comptable",
     description:
-      "En micro, l'expert-comptable n'est pas obligatoire. La vraie question : à partir de quand est-ce rentable. Les moments qui le justifient.",
-    h1: "Micro-entrepreneur : quand (et pourquoi) prendre un expert-comptable",
+      "En micro-entreprise, l'expert-comptable n'est pas obligatoire. La vraie question : à partir de quand devient-il rentable ? Les moments qui le justifient.",
+    h1: "Micro-entrepreneur : quand (et pourquoi) prendre un expert-comptable",
     og: {
-      titre: "Micro : quand prendre un expert-comptable",
+      titre: "Micro : quand prendre un expert-comptable",
       description:
         "Aucune obligation en micro, mais TVA, régime réel, embauche ou contrôle changent la donne. Ce que vous pouvez garder pour vous.",
     },
@@ -1027,8 +1027,8 @@ export const ARTICLES: Article[] = [
     misAJourLe: "2026-11-02",
     dureeLecture: 7,
     carte: {
-      titre: "Micro-entrepreneur : quand prendre un expert-comptable",
-      resume: "Pas obligatoire, mais utile à certains moments précis : lesquels",
+      titre: "Micro-entrepreneur : quand prendre un expert-comptable",
+      resume: "Pas obligatoire, mais utile à certains moments précis : lesquels",
     },
     lies: [
       "micro-ou-reel-quand-basculer",
@@ -1039,20 +1039,20 @@ export const ARTICLES: Article[] = [
   {
     slug: "experts-comptables-equiper-clients-micro",
     categorie: "comptables",
-    titre: "Experts-comptables : équiper ses clients micro",
+    titre: "Experts-comptables : équiper ses clients micro",
     description:
       "Le dossier micro est peu rentable non parce qu'il est simple, mais parce qu'il arrive en désordre. L'équiper à la source, et la place des clients sociétés.",
-    h1: "Experts-comptables : équiper ses clients micro d'un outil de facturation conforme",
+    h1: "Experts-comptables : équiper ses clients micro d'un outil de facturation conforme",
     og: {
-      titre: "Experts-comptables : équiper ses clients micro",
+      titre: "Experts-comptables : équiper ses clients micro",
       description:
-        "Ressaisie, relances, non-conformité : ce que le dossier micro mal tenu coûte au cabinet, et pourquoi la réforme rend l'équipement incontournable.",
+        "Ressaisie, relances, non-conformité : ce que le dossier micro mal tenu coûte au cabinet, et pourquoi la réforme rend l'équipement incontournable.",
     },
     publieLe: "2026-11-02",
     misAJourLe: "2026-11-23",
     dureeLecture: 8,
     carte: {
-      titre: "Experts-comptables : équiper ses clients micro",
+      titre: "Experts-comptables : équiper ses clients micro",
       resume: "Tarir le désordre à la source plutôt que l'absorber dossier par dossier",
     },
     lies: [
@@ -1064,12 +1064,12 @@ export const ARTICLES: Article[] = [
   {
     slug: "trajectoire-conformite-facturation-electronique-cabinet",
     categorie: "comptables",
-    titre: "Réforme : documenter la conformité de vos clients",
+    titre: "Réforme : documenter la conformité de vos clients",
     description: "Le guide de démarrage de la DGFiP tient compte des difficultés documentées. Les preuves qu'il attend, et comment le cabinet aide chaque client à les réunir.",
-    h1: "Facturation électronique : aider vos clients à documenter leur trajectoire de conformité",
+    h1: "Facturation électronique : aider vos clients à documenter leur trajectoire de conformité",
     og: {
-      titre: "Réforme : documenter la trajectoire de conformité de vos clients",
-      description: "Ni report ni suspension : la DGFiP apprécie les difficultés réelles, documentées et suivies. Les preuves à réunir, dossier par dossier, avec le cabinet.",
+      titre: "Réforme : documenter la trajectoire de conformité de vos clients",
+      description: "Ni report ni suspension : la DGFiP apprécie les difficultés réelles, documentées et suivies. Les preuves à réunir, dossier par dossier, avec le cabinet.",
     },
     publieLe: "2026-11-23",
     misAJourLe: "2026-11-23",
@@ -1087,19 +1087,19 @@ export const ARTICLES: Article[] = [
   {
     slug: "mandat-facturation-electronique-expert-comptable",
     categorie: "comptables",
-    titre: "Mandat et facture électronique : le rôle du cabinet",
-    description: "Choix de plateforme, raccordement, émission pour le client : ce que l'expert-comptable peut faire sous mandat, et ce que la lettre de mission doit préciser.",
-    h1: "Facturation électronique : ce que le cabinet peut faire sous mandat pour ses clients",
+    titre: "Mandat et facture électronique : le rôle du cabinet",
+    description: "Choix de plateforme, raccordement, émission pour le client : ce que l'expert-comptable peut faire sous mandat, et ce que la lettre de mission doit préciser.",
+    h1: "Facturation électronique : ce que le cabinet peut faire sous mandat pour ses clients",
     og: {
-      titre: "Facture électronique : ce que le cabinet peut faire sous mandat",
-      description: "Le choix de la plateforme reste une décision du client. Mandat de facturation, mandat présumé, lettre de mission : les règles, et les points à écrire.",
+      titre: "Facture électronique : ce que le cabinet peut faire sous mandat",
+      description: "Le choix de la plateforme reste une décision du client. Mandat de facturation, mandat présumé, lettre de mission : les règles, et les points à écrire.",
     },
     publieLe: "2026-11-23",
-    misAJourLe: "2026-11-23",
+    misAJourLe: "2026-11-27",
     dureeLecture: 9,
     carte: {
       titre: "Le mandat entre le cabinet et son client",
-      resume: "Plateforme, émission sous mandat, lettre de mission : qui fait quoi",
+      resume: "Plateforme, émission sous mandat, lettre de mission : qui fait quoi",
     },
     lies: [
       "choisir-plateforme-agreee-freelance",
@@ -1110,12 +1110,12 @@ export const ARTICLES: Article[] = [
   {
     slug: "portefeuille-clients-echeance-septembre-2027",
     categorie: "comptables",
-    titre: "Septembre 2027 : préparer son portefeuille clients",
+    titre: "Septembre 2027 : préparer son portefeuille clients",
     description: "Au 1er septembre 2027, PME, TPE et micro émettent en électronique et font leur e-reporting. Trier le portefeuille par profil et préparer chaque dossier.",
-    h1: "Échéance de septembre 2027 : préparer le portefeuille de clients PME, TPE et micro",
+    h1: "Échéance de septembre 2027 : préparer le portefeuille de clients PME, TPE et micro",
     og: {
-      titre: "Septembre 2027 : préparer le portefeuille de clients du cabinet",
-      description: "Taille appréciée au 1er janvier 2025, profils prioritaires, rythme du e-reporting selon le régime de TVA, nouvelles mentions : le plan du cabinet.",
+      titre: "Septembre 2027 : préparer le portefeuille de clients du cabinet",
+      description: "Taille appréciée au 1er janvier 2025, profils prioritaires, rythme du e-reporting selon le régime de TVA, nouvelles mentions : le plan du cabinet.",
     },
     publieLe: "2026-11-23",
     misAJourLe: "2026-11-23",
@@ -1135,7 +1135,7 @@ export const ARTICLES: Article[] = [
     categorie: "micro",
     titre: "Le calendrier fiscal et social du micro",
     description:
-      "Déclaration de CA, déclaration de revenus, CFE, TVA : le tour des rendez-vous de l'année, et de ceux qui tombent même sans activité.",
+      "Déclaration de chiffre d'affaires, déclaration de revenus, CFE, TVA : le tour des rendez-vous de l'année en micro, et de ceux qui tombent même sans activité.",
     h1: "Votre calendrier fiscal et social de l'année en micro-entreprise",
     og: {
       titre: "Le calendrier fiscal et social du micro",
@@ -1143,7 +1143,7 @@ export const ARTICLES: Article[] = [
         "Les échéances récurrentes du micro, les deux dates qui bougent chaque année, et ce qui reste dû même en l'absence d'activité.",
     },
     publieLe: "2026-11-02",
-    misAJourLe: "2026-11-02",
+    misAJourLe: "2026-11-27",
     dureeLecture: 6,
     carte: {
       titre: "Le calendrier fiscal et social du micro",
@@ -1158,21 +1158,21 @@ export const ARTICLES: Article[] = [
   {
     slug: "deviso-solution-comptable-marche",
     categorie: "gestion",
-    titre: "Deviso face au marché : notre solution comptable",
+    titre: "Deviso face au marché : notre outil de gestion",
     description:
-      "Le marché de la facturation laisse des trous aux petites entreprises. Où se place Deviso, du micro-entrepreneur à la société, et ce qu'il ne prétend pas être.",
-    h1: "Deviso face au marché : notre place et les points de douleur que nous réglons pour votre entreprise",
+      "Les outils de gestion laissent des trous aux petites entreprises. Où se place Deviso, du micro-entrepreneur à la société, et ce qu'il ne prétend pas être.",
+    h1: "Deviso face au marché : notre place, et les difficultés que nous réglons pour votre entreprise",
     og: {
       titre: "Deviso face au marché de la facturation",
       description:
-        "Du micro-entrepreneur à la société : où se place Deviso, et ce qu'il ne prétend pas être.",
+        "Du micro-entrepreneur à la société : où se place Deviso, et ce qu'il ne prétend pas être.",
     },
     publieLe: "2026-11-02",
     misAJourLe: "2026-11-23",
     dureeLecture: 7,
     carte: {
-      titre: "Deviso face au marché : notre solution comptable",
-      resume: "Entre outils grand public et grosses plateformes : notre place et nos partis pris",
+      titre: "Deviso face au marché : notre outil de gestion",
+      resume: "Entre outils grand public et grosses plateformes : notre place et nos partis pris",
     },
     lies: [
       "experts-comptables-equiper-clients-micro",
@@ -1185,7 +1185,7 @@ export const ARTICLES: Article[] = [
     categorie: "factures",
     titre: "Clauses indispensables d'un devis freelance",
     description:
-      "Périmètre, acompte, révisions, propriété intellectuelle, résiliation : les 9 clauses à mettre dans un devis freelance, avec formulations prêtes à l'emploi.",
+      "Périmètre, acompte, révisions, propriété intellectuelle, résiliation : les 9 clauses à mettre dans un devis freelance, avec formulations prêtes à l'emploi.",
     h1: "Les clauses indispensables dans un devis freelance, guide complet 2026",
     og: {
       titre: "Les clauses indispensables dans un devis freelance, guide complet 2026",
@@ -1193,7 +1193,7 @@ export const ARTICLES: Article[] = [
         "Périmètre, acompte, révisions, droits d'auteur, résiliation, NDA, les 9 clauses à ne jamais oublier dans votre devis freelance.",
     },
     publieLe: "2026-06-29",
-    misAJourLe: "2026-06-29",
+    misAJourLe: "2026-11-27",
     dureeLecture: 8,
     carte: {
       titre: "Les clauses indispensables dans un devis freelance (avec formulations)",
@@ -1206,22 +1206,22 @@ export const ARTICLES: Article[] = [
   {
     slug: "scope-creep-freelance",
     categorie: "factures",
-    titre: "Scope creep freelance : s'en protéger au devis",
+    titre: "Scope creep freelance : s'en protéger au devis",
     description:
-      "Le scope creep est la première cause de perte de rentabilité en freelance. Comment il arrive et quelles clauses mettre au devis pour s'en protéger.",
-    h1: "Scope creep freelance : qu'est-ce que c'est et comment s'en protéger dans son devis",
+      "La dérive du périmètre (scope creep) ronge la rentabilité d'une mission freelance. Comment elle s'installe, et quelles clauses du devis vous en protègent.",
+    h1: "Scope creep freelance : qu'est-ce que c'est et comment s'en protéger dans son devis",
     og: {
-      titre: "Scope creep freelance : comment s'en protéger avec son devis",
+      titre: "Scope creep freelance : comment s'en protéger avec son devis",
       description:
-        "Qu'est-ce que le scope creep ? Comment l'éviter ? Quelles clauses inclure dans votre devis ? Guide pratique pour freelances.",
+        "Qu'est-ce que le scope creep ? Comment l'éviter ? Quelles clauses inclure dans votre devis ? Guide pratique pour freelances.",
     },
     publieLe: "2026-06-29",
-    misAJourLe: "2026-06-29",
+    misAJourLe: "2026-11-27",
     dureeLecture: 6,
     carte: {
-      titre: "Scope creep freelance : qu'est-ce que c'est et comment s'en protéger dans son devis",
+      titre: "Scope creep freelance : qu'est-ce que c'est et comment s'en protéger dans son devis",
       resume:
-        "Le scope creep est la première cause de perte de rentabilité en freelance. Découvrez comment il arrive, et les clauses pour vous en protéger.",
+        "La dérive du périmètre (scope creep) ronge la rentabilité d'une mission. Comment elle s'installe, et les clauses pour vous en protéger.",
       badge: "Problème freelance",
     },
     lies: ["clauses-devis-freelance", "fixer-ses-tarifs-freelance"],
@@ -1229,20 +1229,20 @@ export const ARTICLES: Article[] = [
   {
     slug: "gerer-impayes-freelance",
     categorie: "paiement",
-    titre: "Gérer les impayés en freelance : les 4 étapes",
+    titre: "Gérer les impayés en freelance : les 4 étapes",
     description:
-      "Récupérer une facture impayée en freelance : relance amiable, mise en demeure, injonction de payer. Étapes concrètes et protection dès le devis.",
-    h1: "Gérer les impayés en freelance : de la relance à l'injonction de payer",
+      "Récupérer une facture impayée en freelance : relance amiable, mise en demeure, injonction de payer. Les étapes concrètes, et comment se protéger dès le devis.",
+    h1: "Gérer les impayés en freelance : de la relance à l'injonction de payer",
     og: {
-      titre: "Gérer les impayés en freelance : relance, mise en demeure, tribunal",
+      titre: "Gérer les impayés en freelance : relance, mise en demeure, tribunal",
       description:
         "Relance amiable, mise en demeure LRAR, injonction de payer, le guide complet pour récupérer vos factures impayées.",
     },
     publieLe: "2026-06-29",
-    misAJourLe: "2026-06-29",
+    misAJourLe: "2026-11-27",
     dureeLecture: 7,
     carte: {
-      titre: "Gérer les impayés en freelance : de la relance à l'injonction de payer",
+      titre: "Gérer les impayés en freelance : de la relance à l'injonction de payer",
       resume:
         "Relance amiable, mise en demeure LRAR, injonction de payer, le guide complet pour récupérer vos factures impayées, étape par étape.",
       badge: "Problème freelance",
@@ -1252,12 +1252,12 @@ export const ARTICLES: Article[] = [
   {
     slug: "fixer-ses-tarifs-freelance",
     categorie: "gestion",
-    titre: "Fixer ses tarifs en freelance : TJM et méthodes",
+    titre: "Fixer ses tarifs en freelance : TJM et méthodes",
     description:
-      "Calculer son TJM en freelance : 3 méthodes, les erreurs classiques, et comment augmenter ses tarifs sans perdre ses clients.",
-    h1: "Comment fixer ses tarifs en freelance : TJM, méthodes et erreurs à éviter",
+      "Calculer son TJM en freelance : trois méthodes, les erreurs classiques, les temps non facturables, et comment augmenter ses tarifs sans perdre ses clients.",
+    h1: "Comment fixer ses tarifs en freelance : TJM, méthodes et erreurs à éviter",
     og: {
-      titre: "Comment fixer ses tarifs en freelance : TJM, méthodes, erreurs à éviter",
+      titre: "Comment fixer ses tarifs en freelance : TJM, méthodes, erreurs à éviter",
       description:
         "Les 3 méthodes pour calculer son TJM, les erreurs classiques, et comment augmenter ses tarifs. Guide complet pour freelances.",
     },
@@ -1265,7 +1265,7 @@ export const ARTICLES: Article[] = [
     misAJourLe: "2026-06-29",
     dureeLecture: 7,
     carte: {
-      titre: "Comment fixer ses tarifs en freelance : TJM, méthodes et erreurs à éviter",
+      titre: "Comment fixer ses tarifs en freelance : TJM, méthodes et erreurs à éviter",
       resume:
         "Les 3 méthodes pour calculer son TJM, les erreurs classiques (syndrome de l'imposteur, temps non facturables), et comment augmenter ses tarifs sans perdre ses clients.",
       badge: "Problème freelance",
@@ -1276,31 +1276,31 @@ export const ARTICLES: Article[] = [
   {
     slug: "delais-paiement-penalites-retard",
     categorie: "paiement",
-    titre: "Délais de paiement et pénalités de retard : ce que dit la loi",
+    titre: "Délais de paiement et pénalités de retard : ce que dit la loi",
     description:
-      "Entre professionnels : 30 jours par défaut, 60 jours au plus, pénalités automatiques et 40 € par facture en retard. Les règles, les mentions et les recours.",
-    h1: "Délais de paiement et pénalités de retard : ce que dit la loi entre entreprises",
+      "Entre professionnels : 30 jours par défaut, 60 jours au plus, pénalités automatiques et 40 € par facture en retard. Les règles, les mentions et les recours.",
+    h1: "Délais de paiement et pénalités de retard : ce que dit la loi entre entreprises",
     publieLe: "2026-11-19",
-    misAJourLe: "2026-11-19",
+    misAJourLe: "2026-11-27",
     dureeLecture: 7,
     carte: {
       titre: "Délais de paiement et pénalités de retard",
-      resume: "30, 60 ou 45 jours fin de mois, pénalités automatiques, 40 € par facture : vos droits face aux retards",
+      resume: "30, 60 ou 45 jours fin de mois, pénalités automatiques, 40 € par facture : vos droits face aux retards",
     },
     lies: ["gerer-impayes-freelance", "clauses-devis-freelance", "numerotation-factures-freelance"],
   },
   {
     slug: "fraude-faux-rib-faux-fournisseur",
     categorie: "paiement",
-    titre: "Fraude au faux RIB et au faux fournisseur : s'en protéger",
+    titre: "Fraude au faux RIB et au faux fournisseur : s'en protéger",
     description:
-      "Un faux changement de RIB au nom d'un fournisseur ou d'un client : les signaux d'alerte, le contre-appel, et que faire si le virement est déjà parti.",
-    h1: "Fraude au faux RIB et au faux fournisseur : comment protéger votre entreprise",
+      "Un faux changement de RIB au nom d'un fournisseur ou d'un client : les signaux d'alerte, la règle du contre-appel, et que faire si le virement est déjà parti.",
+    h1: "Fraude au faux RIB et au faux fournisseur : comment protéger votre entreprise",
     publieLe: "2026-11-19",
     misAJourLe: "2026-11-19",
     dureeLecture: 6,
     carte: {
-      titre: "Fraude au faux RIB : s'en protéger",
+      titre: "Fraude au faux RIB : s'en protéger",
       resume: "Les signaux d'alerte, la règle du contre-appel, et les bons réflexes si le virement est parti",
     },
     lies: ["facturation-electronique-2026", "gerer-impayes-freelance"],
@@ -1308,32 +1308,32 @@ export const ARTICLES: Article[] = [
   {
     slug: "choisir-statut-micro-ei-eurl-sasu",
     categorie: "gestion",
-    titre: "Micro, EI, EURL ou SASU : choisir son statut",
+    titre: "Micro, EI, EURL ou SASU : choisir son statut",
     description:
-      "Micro-entreprise, entreprise individuelle au réel, EURL ou SASU : impôt, cotisations et protection sociale comparés pour choisir le bon statut.",
-    h1: "Micro-entreprise, EI, EURL ou SASU : quel statut choisir pour votre entreprise",
+      "Micro-entreprise, entreprise individuelle au réel, EURL ou SASU : impôt, cotisations, protection sociale et formalités comparés pour choisir le bon statut.",
+    h1: "Micro-entreprise, EI, EURL ou SASU : quel statut choisir pour votre entreprise",
     publieLe: "2026-11-19",
-    misAJourLe: "2026-11-19",
+    misAJourLe: "2026-11-27",
     dureeLecture: 8,
     carte: {
-      titre: "Micro, EI, EURL ou SASU : choisir son statut",
-      resume: "Impôt, cotisations, protection sociale : les quatre statuts comparés, et comment trancher",
+      titre: "Micro, EI, EURL ou SASU : choisir son statut",
+      resume: "Impôt, cotisations, protection sociale : les quatre statuts comparés, et comment trancher",
     },
     lies: ["micro-ou-reel-quand-basculer", "plafonds-micro-entreprise-2026", "quand-prendre-expert-comptable-micro"],
   },
   {
     slug: "cfe-cotisation-fonciere-entreprises",
     categorie: "gestion",
-    titre: "CFE : qui la paie, combien, et avant quand",
+    titre: "CFE : qui la paie, combien, et avant quand",
     description:
-      "La CFE concerne toutes les entreprises, même sans local. Exonération la première année, seuil de 5 000 €, avis en ligne uniquement, paiement avant le 15 décembre.",
-    h1: "CFE : qui doit la payer, combien, et ce qu'il faut faire avant le 15 décembre",
+      "La CFE concerne toutes les entreprises, même sans local. Exonération la première année, seuil de 5 000 €, avis en ligne, paiement avant le 15 décembre.",
+    h1: "CFE : qui doit la payer, combien, et ce qu'il faut faire avant le 15 décembre",
     publieLe: "2026-11-20",
-    misAJourLe: "2026-11-20",
+    misAJourLe: "2026-11-27",
     dureeLecture: 6,
     carte: {
-      titre: "CFE : qui la paie, combien, et avant quand",
-      resume: "Exonération de création, seuil de 5 000 €, base minimum, avis en ligne et échéance du 15 décembre",
+      titre: "CFE : qui la paie, combien, et avant quand",
+      resume: "Exonération de création, seuil de 5 000 €, base minimum, avis en ligne et échéance du 15 décembre",
     },
     lies: ["choisir-statut-micro-ei-eurl-sasu", "calendrier-fiscal-social-micro", "plafonds-micro-entreprise-2026"],
   },
@@ -1354,7 +1354,7 @@ export function article(slug: string): Article {
   const a = PAR_SLUG.get(slug);
   if (!a) {
     throw new Error(
-      `[blog] slug inconnu : « ${slug} ». Les slugs connus sont : ${ARTICLES.map((x) => x.slug).join(", ")}`
+      `[blog] slug inconnu : « ${slug} ». Les slugs connus sont : ${ARTICLES.map((x) => x.slug).join(", ")}`
     );
   }
   return a;

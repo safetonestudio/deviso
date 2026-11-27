@@ -10,13 +10,13 @@ const SECTIONS: Section[] = [
     type: "texte",
     titre: "Deux logiques opposées",
     paragraphes: [
-      "Le régime <strong>micro</strong> applique un abattement forfaitaire sur vos recettes pour calculer votre bénéfice imposable : 71 %, 50 % ou 34 % selon l&rsquo;activité. Vous ne déduisez aucune charge réelle, mais en échange votre comptabilité se résume au livre des recettes.",
-      "Le <strong>régime réel</strong> fait l&rsquo;inverse : vous déduisez vos charges pour de vrai (loyer, matériel, sous-traitance, véhicule), et vous êtes imposé sur le bénéfice qui reste. C&rsquo;est plus juste quand vos charges sont lourdes, mais cela suppose une véritable comptabilité.",
+      "Le régime <strong>micro</strong> applique un abattement forfaitaire sur vos recettes pour calculer votre bénéfice imposable : 71 %, 50 % ou 34 % selon l&rsquo;activité. Vous ne déduisez aucune charge réelle, mais en échange votre comptabilité se résume au livre des recettes.",
+      "Le <strong>régime réel</strong> fait l&rsquo;inverse : vous déduisez vos charges pour de vrai (loyer, matériel, sous-traitance, véhicule), et vous êtes imposé sur le bénéfice qui reste. C&rsquo;est plus juste quand vos charges sont lourdes, mais cela suppose une véritable comptabilité.",
     ],
   },
   {
     type: "comparaison",
-    titre: "Micro ou réel, en un coup d&rsquo;oeil",
+    titre: "Micro ou réel, en un coup d&rsquo;œil",
     colonnes: [
       {
         titre: "Régime micro",
@@ -30,7 +30,7 @@ const SECTIONS: Section[] = [
         sousTitre: "Précis, exigeant",
         ton: "neutre",
         texte:
-          "Charges réelles déduites, TVA récupérable, mais comptabilité complète (bilan, compte de résultat, liasse fiscale). Gagnant quand vos charges dépassent l&rsquo;abattement forfaitaire.",
+          "Charges réelles déduites, mais comptabilité complète (en BIC, bilan, compte de résultat et liasse fiscale ; en BNC, livre-journal des recettes et des dépenses et registre des immobilisations). Gagnant quand vos charges dépassent l&rsquo;abattement forfaitaire.",
       },
     ],
   },
@@ -38,30 +38,30 @@ const SECTIONS: Section[] = [
     type: "texte",
     titre: "La règle de bascule",
     paragraphes: [
-      "Le raisonnement tient en une phrase : le réel devient intéressant quand vos <strong>charges réelles dépassent l&rsquo;abattement forfaitaire</strong> du micro. Tant que vos charges sont inférieures, le micro vous fait économiser de l&rsquo;impôt sans effort.",
-      "Concrètement, un prestataire BNC bénéficie d&rsquo;un abattement de 34 % : si ses charges réelles représentent moins de 34 % de ses recettes, le micro est plus avantageux. Au-delà, le réel reprend l&rsquo;avantage.",
+      "Le raisonnement tient en une phrase : le réel devient intéressant quand vos <strong>charges réelles dépassent l&rsquo;abattement forfaitaire</strong> du micro. Tant que vos charges sont inférieures, le micro vous fait économiser de l&rsquo;impôt sans effort.",
+      "Concrètement, un prestataire BNC bénéficie d&rsquo;un abattement de 34 % : si ses charges réelles représentent moins de 34 % de ses recettes, le micro est plus avantageux. Au-delà, le réel reprend l&rsquo;avantage.",
     ],
   },
   {
     type: "tableau",
     titre: "À partir de quel niveau de charges le réel l&rsquo;emporte",
     intro:
-      "Exprimé en part de vos recettes. En dessous, le micro gagne ; au-dessus, le réel devient plus favorable sur l&rsquo;impôt.",
+      "Exprimé en part de vos recettes. En dessous, le micro gagne ; au-dessus, le réel devient plus favorable sur l&rsquo;impôt.",
     colonnes: ["Activité", "Abattement micro", "Bascule si charges >"],
     lignes: [
-      ["Vente de biens, hébergement", "71 %", "71 % des recettes"],
-      ["Prestations de services BIC", "50 %", "50 % des recettes"],
-      ["Prestations libérales (BNC)", "34 %", "34 % des recettes"],
+      ["Vente de biens, hébergement", "71 %", "71 % des recettes"],
+      ["Prestations de services BIC", "50 %", "50 % des recettes"],
+      ["Prestations libérales (BNC)", "34 %", "34 % des recettes"],
     ],
     note:
-      "Ce calcul ne porte que sur l&rsquo;impôt. Le réel apporte aussi la récupération de la TVA et la déduction des amortissements, qui peuvent faire pencher la balance plus tôt pour une activité qui investit.",
+      "Ce calcul ne porte que sur l&rsquo;impôt. Le réel apporte aussi la déduction des amortissements, qui peut faire pencher la balance plus tôt pour une activité qui investit. La récupération de la TVA, elle, ne dépend pas du régime d&rsquo;imposition&nbsp;: un micro-entrepreneur assujetti à la TVA la récupère aussi.",
   },
   {
     type: "encadre",
     ton: "alerte",
     titre: "Le réel, c&rsquo;est une vraie comptabilité",
     texte:
-      "Passer au réel, ce n&rsquo;est pas cocher une case : c&rsquo;est tenir une comptabilité d&rsquo;engagement, produire un bilan et une liasse fiscale, et le plus souvent travailler avec un <strong>expert-comptable</strong>. Le gain d&rsquo;impôt doit couvrir ce surcoût et ce temps. Pour beaucoup, le seuil réel de bascule n&rsquo;est pas l&rsquo;arithmétique, mais le moment où l&rsquo;activité est assez grosse pour le justifier. Une société soumise à l&rsquo;impôt sur les sociétés relève, elle, d&rsquo;un régime réel d&rsquo;imposition : cette question de bascule concerne l&rsquo;entreprise individuelle.",
+      "Passer au réel, ce n&rsquo;est pas cocher une case : c&rsquo;est tenir une vraie comptabilité (en BIC, une comptabilité d&rsquo;engagement avec bilan et liasse fiscale&nbsp;; en BNC, un livre-journal des recettes encaissées et des dépenses payées, un registre des immobilisations et la déclaration n° 2035), et le plus souvent travailler avec un <strong>expert-comptable</strong>. Le gain d&rsquo;impôt doit couvrir ce surcoût et ce temps. Pour beaucoup, le seuil réel de bascule n&rsquo;est pas l&rsquo;arithmétique, mais le moment où l&rsquo;activité est assez grosse pour le justifier. Une société soumise à l&rsquo;impôt sur les sociétés relève, elle, d&rsquo;un régime réel d&rsquo;imposition : cette question de bascule concerne l&rsquo;entreprise individuelle.",
   },
   {
     type: "liste",
@@ -70,12 +70,12 @@ const SECTIONS: Section[] = [
       {
         titre: "Vos charges explosent",
         texte:
-          "Local, salarié, stock, sous-traitance : si vos dépenses dépassent votre abattement, le micro vous surimpose.",
+          "Local, salarié, stock, sous-traitance : si vos dépenses dépassent votre abattement, le micro vous surimpose.",
       },
       {
         titre: "Vous investissez",
         texte:
-          "Matériel coûteux, véhicule : au réel, vous amortissez et récupérez la TVA, ce que le micro ne permet pas.",
+          "Matériel coûteux, véhicule : au réel, vous amortissez, ce que le micro ne permet pas. La TVA, elle, se récupère dès que vous y êtes assujetti, au micro comme au réel.",
       },
       {
         titre: "Vous approchez des plafonds",
@@ -88,37 +88,42 @@ const SECTIONS: Section[] = [
 
 const FAQ = [
   {
-    q: "Quelle est la différence entre le régime micro et le régime réel ?",
-    a: "Le micro applique un abattement forfaitaire (71 %, 50 % ou 34 %) et se limite au livre des recettes. Le réel déduit les charges réelles et récupère la TVA, mais impose une comptabilité complète avec bilan et liasse fiscale.",
+    q: "Quelle est la différence entre le régime micro et le régime réel ?",
+    a: "Le micro applique un abattement forfaitaire (71 %, 50 % ou 34 %) et se limite au livre des recettes. Le réel déduit les charges réelles, mais impose une comptabilité complète : bilan et liasse fiscale en BIC, livre-journal des recettes et des dépenses et registre des immobilisations en BNC.",
   },
   {
-    q: "Quand faut-il passer au régime réel ?",
-    a: "Quand vos charges réelles dépassent l'abattement forfaitaire du micro. Par exemple, pour un prestataire BNC (abattement 34 %), le réel devient avantageux dès que les charges dépassent 34 % des recettes.",
+    q: "Quand faut-il passer au régime réel ?",
+    a: "Quand vos charges réelles dépassent l'abattement forfaitaire du micro. Par exemple, pour un prestataire BNC (abattement 34 %), le réel devient avantageux dès que les charges dépassent 34 % des recettes.",
   },
   {
-    q: "Le passage au réel est-il obligatoire à un moment ?",
+    q: "Le passage au réel est-il obligatoire à un moment ?",
     a: "Oui. Un dépassement durable des plafonds du régime micro entraîne le passage au régime réel. On peut aussi y opter volontairement.",
   },
   {
-    q: "Ai-je besoin d'un expert-comptable au régime réel ?",
-    a: "Ce n'est pas obligatoire, mais le réel suppose une comptabilité d'engagement, un bilan et une liasse fiscale. La plupart des entrepreneurs au réel travaillent avec un expert-comptable.",
+    q: "Ai-je besoin d'un expert-comptable au régime réel ?",
+    a: "Ce n'est pas obligatoire, mais le réel suppose une vraie comptabilité : comptabilité d'engagement, bilan et liasse fiscale en BIC, livre-journal et registre des immobilisations en BNC. La plupart des entrepreneurs au réel travaillent avec un expert-comptable.",
   },
   {
-    q: "Le réel permet-il de récupérer la TVA ?",
-    a: "Oui, dès lors que vous êtes assujetti à la TVA, vous déduisez celle payée sur vos achats, ce que le régime micro en franchise ne permet pas.",
+    q: "Le réel permet-il de récupérer la TVA ?",
+    a: "Oui, dès lors que vous êtes assujetti à la TVA, vous déduisez celle payée sur vos achats. Ce n'est pas propre au réel : un micro-entrepreneur assujetti à la TVA la récupère aussi. C'est la franchise en base qui l'empêche, pas le régime micro.",
   },
 ];
 
 const SOURCES: Source[] = [
   {
-    libelle: "Service-public.gouv.fr, Régimes d'imposition des bénéfices",
-    url: "https://entreprendre.service-public.gouv.fr/vosdroits/F32917",
-    precision: "micro, réel simplifié et réel normal",
+    libelle: "Impots.gouv.fr, Les régimes réservés aux petites entreprises (fiche 2026)",
+    url: "https://www.impots.gouv.fr/sites/default/files/media/3_Documentation/depliants/pro_fiche_regimes_reserves_aux_petites_entreprises_2026.pdf",
+    precision: "régime micro, abattements, franchise en base de TVA",
+  },
+  {
+    libelle: "Impots.gouv.fr, Livret fiscal du créateur d'entreprise, bénéfices non commerciaux",
+    url: "https://www.impots.gouv.fr/livret-createur-entreprise-benefices-non-commerciaux-bnc",
+    precision: "obligations comptables de la déclaration contrôlée",
   },
   {
     libelle: "Service-public.gouv.fr, Régime fiscal de la micro-entreprise",
     url: "https://entreprendre.service-public.gouv.fr/vosdroits/F32353",
-    precision: "abattements forfaitaires de 71 %, 50 % et 34 %",
+    precision: "abattements forfaitaires de 71 %, 50 % et 34 %",
   },
 ];
 
@@ -126,12 +131,12 @@ export default function Page() {
   return (
     <ArticleLong
       slug={SLUG}
-      chapeau="Le micro applique un abattement forfaitaire, le réel déduit vos charges pour de vrai. La bascule tient à une question simple : vos charges dépassent-elles votre abattement ? Et à une autre, moins visible : le jeu en vaut-il la chandelle ?"
+      chapeau="Le micro applique un abattement forfaitaire, le réel déduit vos charges pour de vrai. La bascule tient à une question simple : vos charges dépassent-elles votre abattement ? Et à une autre, moins visible : le jeu en vaut-il la chandelle ?"
       enBref={[
-        "Micro : abattement forfaitaire (<strong>71 / 50 / 34 %</strong>), livre des recettes, pas de bilan.",
-        "Réel : charges réelles déduites, TVA récupérable, mais <strong>comptabilité complète</strong>.",
+        "Micro : abattement forfaitaire (<strong>71 / 50 / 34 %</strong>), livre des recettes, pas de bilan.",
+        "Réel : charges réelles déduites, mais <strong>comptabilité complète</strong>.",
         "Le réel l&rsquo;emporte quand vos <strong>charges dépassent l&rsquo;abattement</strong> de votre activité.",
-        "Le réel apporte aussi <strong>amortissements et récupération de TVA</strong>, utiles si vous investissez.",
+        "Le réel apporte aussi les <strong>amortissements</strong>, utiles si vous investissez. La TVA se récupère dès que vous y êtes assujetti, au micro comme au réel.",
         "Au-delà de l&rsquo;impôt, le réel suppose un vrai suivi comptable, souvent avec un <strong>expert-comptable</strong>.",
       ]}
       sections={SECTIONS}
