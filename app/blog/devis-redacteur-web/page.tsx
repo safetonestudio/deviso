@@ -73,7 +73,7 @@ export default function Page() {
       faq={[
         {
           q: "Vaut-il mieux facturer au mot, à la page ou au forfait en rédaction web ?",
-          a: "Le tarif au mot est transparent mais peut inciter au padding (remplissage). La page (500 mots) est plus lisible pour le client. Le forfait par article est le plus courant en 2026 : il inclut brief, recherche, rédaction et optimisation SEO dans un prix global. Comptez 80 à 200 € par article de blog selon le niveau de recherche requis et votre positionnement.",
+          a: "Le tarif au mot est transparent mais peut inciter au padding (remplissage). La page (500 mots) est plus lisible pour le client. Le forfait par article est une pratique répandue : il inclut brief, recherche, rédaction et optimisation SEO dans un prix global. Le prix par article dépend du niveau de recherche requis, de la longueur et de votre positionnement : l'exemple de devis ci-dessus n'est qu'une illustration, à adapter à vos coûts.",
         },
         {
           q: "Comment gérer un client qui demande des révisions à n'en plus finir ?",
@@ -85,7 +85,7 @@ export default function Page() {
         },
         {
           q: "Faut-il demander un acompte pour une mission de rédaction ?",
-          a: "Pour les missions ponctuelles (1-2 articles), un acompte est facultatif mais recommandé pour les nouveaux clients. Pour les missions récurrentes (package mensuel), facturez en début de mois. Pour les gros projets (site complet, livre blanc), exigez 30 à 50 % à la commande.",
+          a: "Pour les missions ponctuelles (1-2 articles), un acompte est facultatif mais recommandé pour les nouveaux clients. Pour les missions récurrentes (package mensuel), facturez en début de mois. Pour les gros projets (site complet, livre blanc), demandez un acompte à la commande (souvent entre 30 et 50 %, à titre indicatif).",
         },
       ]}
     />

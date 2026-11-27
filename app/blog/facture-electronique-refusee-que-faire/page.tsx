@@ -495,6 +495,18 @@ export default function Page() {
                 c&apos;est pour ça que vous ne trouverez nulle part de traduction fiable de ces codes, y compris
                 ici.
               </p>
+              <p className="text-gray-400 mt-3">
+                À partir du 1er janvier 2027, les règles de TVA citées ici quittent le Code général des impôts pour le livre II du Code des impositions sur les biens et services (CIBS) : les numéros d&apos;articles changeront (
+                <a
+                  href="https://bofip.impots.gouv.fr/doctrine/BOI-RES-TVA-000253"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-indigo-400 hover:text-indigo-300 transition-colors"
+                >
+                  BOFiP, BOI-RES-TVA-000253
+                </a>
+                ).
+              </p>
             </section>
 
             {/* ── À lire ensuite ── */}

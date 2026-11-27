@@ -17,7 +17,7 @@ export const metadata = metadonneesArticle(SLUG);
 const FAQ = [
   {
     q: "Comment calculer son TJM ?",
-    a: "La méthode la plus fiable : (1) Estimez votre revenu net mensuel cible, (2) Ajoutez vos charges (URSSAF, mutuelle, retraite, frais professionnels, environ 45-55 % du CA pour un auto-entrepreneur), (3) Divisez par votre nombre de jours facturables réels par mois (généralement 15-18 jours sur 20 jours ouvrés, en comptant les congés, la prospection, l'admin). Le résultat est votre TJM minimum. Ajoutez une marge selon votre positionnement et la demande.",
+    a: "La méthode la plus fiable : (1) Estimez votre revenu net mensuel cible, (2) Ajoutez vos charges (URSSAF, mutuelle, retraite, frais professionnels ; le taux de cotisations dépend de votre activité, voir les taux de l'URSSAF et le simulateur officiel mon-entreprise.urssaf.fr), (3) Divisez par votre nombre de jours facturables réels par mois (généralement 15-18 jours sur 20 jours ouvrés, en comptant les congés, la prospection, l'admin). Le résultat est votre TJM minimum. Ajoutez une marge selon votre positionnement et la demande.",
   },
   {
     q: "Faut-il afficher ses tarifs publiquement ?",
@@ -84,7 +84,7 @@ export default function Page() {
                   <p className="text-gray-400 text-sm mb-4 leading-relaxed">C&apos;est la méthode la plus fiable. Vous partez de ce dont vous avez besoin pour vivre, et vous calculez ce que vous devez facturer pour y arriver.</p>
                   <div className="bg-ds-elevated rounded-xl p-4 font-mono text-xs text-gray-300 space-y-1">
                     <p>Revenu net mensuel souhaité : 3 000 €</p>
-                    <p>+ Charges URSSAF + mutuelle + retraite (~45 %) : 2 455 €</p>
+                    <p>+ Charges URSSAF + mutuelle + retraite (montant d&apos;exemple) : 2 455 €</p>
                     <p className="pt-1 mt-1">= CA mensuel nécessaire : 5 455 €</p>
                     <p>÷ Jours facturables / mois (17 sur 20) : 17 jours</p>
                     <p className="pt-1 mt-1 text-indigo-400 font-bold">= TJM minimum : 321 €/jour</p>
@@ -118,7 +118,7 @@ export default function Page() {
                 {[
                   {
                     title: "Se comparer au salaire d'un salarié",
-                    desc: "Un développeur salarié à 45 000 €/an brut ne coûte pas 45 000 € à son employeur, il coûte environ 67 000 € avec les charges patronales. Et l'indépendant, lui, doit financer sa propre protection sociale, sa retraite, ses congés, sa formation. Un TJM de 450 € pour un dev senior n'est pas \"cher\", c'est l'équivalent d'un salarié à 50k brut, sans les avantages.",
+                    desc: "Un salarié coûte à son employeur bien plus que son salaire brut, une fois les cotisations patronales ajoutées. Et l'indépendant, lui, doit financer sa propre protection sociale, sa retraite, ses congés, sa formation. Un TJM de 450 € pour un dev senior n'est pas \"cher\" : il doit couvrir tout ce qu'un salarié reçoit en plus de son salaire.",
                   },
                   {
                     title: "Oublier les temps non facturables",
@@ -203,9 +203,9 @@ export default function Page() {
           <div className="mt-14 bg-linear-to-br/srgb from-indigo-900/40 to-violet-900/20 rounded-2xl border border-indigo-500/20 p-8 text-center">
             <h2 className="text-2xl font-semibold text-ink mb-3">Facturez au bon prix, présentez-vous comme un pro</h2>
             <p className="text-gray-400 mb-6 max-w-lg mx-auto text-sm leading-relaxed">
-              Avec Deviso, vos devis sont générés en 30 secondes, signés électroniquement et relancés automatiquement. Professionnalisme et sérénité, dès le premier contact.
+              Avec Deviso, vous créez vos devis en quelques minutes, les faites signer électroniquement (formules Solo et Pro) et programmez des relances automatiques (formules Solo et Pro). Professionnalisme et sérénité, dès le premier contact.
             </p>
-            <WaitlistButton plan="free" label="Générer mon premier devis, gratuit" className="inline-block bg-indigo-600 hover:bg-indigo-700 text-ink font-semibold px-8 py-3 rounded-xl transition-all" />
+            <WaitlistButton plan="free" label="Essayer gratuitement" className="inline-block bg-indigo-600 hover:bg-indigo-700 text-ink font-semibold px-8 py-3 rounded-xl transition-all" />
           </div>
 
           <div className="mt-14 pt-8">

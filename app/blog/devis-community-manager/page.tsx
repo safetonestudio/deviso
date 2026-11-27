@@ -15,7 +15,7 @@ export default function Page() {
       mandatoryItems={[
         {
           title: "Vos coordonnées et statut juridique",
-          desc: "Nom ou raison sociale, SIRET, adresse. Si vous êtes micro-entrepreneur en franchise de TVA, mentionnez 'TVA non applicable, art. 293 B du CGI'. Si vous êtes assujetti à la TVA, indiquez votre numéro de TVA intracommunautaire.",
+          desc: "Nom ou raison sociale, SIRET, adresse. Si vous êtes micro-entrepreneur en franchise de TVA, mentionnez 'TVA non applicable, art. 293 B du CGI'. À partir du 1er janvier 2027, les règles de TVA citées ici quittent le Code général des impôts pour le livre II du Code des impositions sur les biens et services (CIBS) : les numéros d'articles changeront. Si vous êtes assujetti à la TVA, indiquez votre numéro de TVA intracommunautaire.",
         },
         {
           title: "Les plateformes incluses dans la mission",
@@ -85,7 +85,7 @@ export default function Page() {
         },
         {
           q: "Doit-on facturer la création de visuels séparément ?",
-          a: "Vous avez le choix : inclure la création de visuels dans votre forfait mensuel (en précisant le nombre et les formats), ou facturer séparément au volume. L'important est de préciser dans le devis ce qui est inclus ou non, pour éviter tout malentendu. La création de visuels représente souvent 30 à 40 % du temps de la mission.",
+          a: "Vous avez le choix : inclure la création de visuels dans votre forfait mensuel (en précisant le nombre et les formats), ou facturer séparément au volume. L'important est de préciser dans le devis ce qui est inclus ou non, pour éviter tout malentendu. La création de visuels prend souvent une part importante du temps de la mission : chiffrez-la plutôt que de l'absorber.",
         },
         {
           q: "Comment facturer les publications supplémentaires en cours de mission ?",

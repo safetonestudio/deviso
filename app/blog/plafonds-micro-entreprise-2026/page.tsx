@@ -72,7 +72,7 @@ const SECTIONS: Section[] = [
       "C&rsquo;est le scénario qui prend les gens au dépourvu, et il mérite d&rsquo;être décrit précisément.",
       "Imaginons que vous rendiez des services et que votre chiffre d&rsquo;affaires cumulé franchisse <strong>41 250 €</strong> le 18 octobre. Vous devenez redevable de la TVA <strong>à compter du 18 octobre</strong>, jour du dépassement. Depuis 2025, il n&rsquo;y a plus de retour au 1<sup>er</sup> du mois : les factures émises à partir de cette date doivent porter la TVA, sans avoir à corriger celles du début du mois.",
       "Si vous dépassez seulement le seuil de base, entre 37 500 € et 41 250 €, vous restez en franchise jusqu&rsquo;au 31 décembre, et vous devenez assujetti au 1<sup>er</sup> janvier suivant. C&rsquo;est beaucoup plus confortable, et c&rsquo;est la raison pour laquelle la zone entre les deux seuils mérite d&rsquo;être surveillée de près plutôt que franchie par inadvertance.",
-      "Dans les deux cas, il faut demander un numéro de TVA à votre service des impôts des entreprises, et vos factures changent : taux, montant de TVA, total TTC, et disparition de la mention de l&rsquo;article 293 B.",
+      "Dans les deux cas, il faut demander un numéro de TVA à votre service des impôts des entreprises, et vos factures changent : taux, montant de TVA, total TTC, et disparition de la mention de l&rsquo;article 293 B. À partir du 1er janvier 2027, les règles de TVA citées ici quittent le Code général des impôts pour le livre II du Code des impositions sur les biens et services (CIBS) : les numéros d&rsquo;articles changeront.",
     ],
   },
   {
@@ -158,6 +158,11 @@ const SOURCES: Source[] = [
     libelle: "BOFiP, BOI-TVA-DECLA-40-10-10, version du 1er juillet 2026",
     url: "https://bofip.impots.gouv.fr/bofip/849-PGP.html/identifiant=BOI-TVA-DECLA-40-10-10-20260701",
     precision: "seuils de franchise en base de TVA : 85 000 / 93 500 € et 37 500 / 41 250 €",
+  },
+  {
+    libelle: "BOFiP, BOI-RES-TVA-000253",
+    url: "https://bofip.impots.gouv.fr/doctrine/BOI-RES-TVA-000253",
+    precision: "recodification de la TVA dans le CIBS à compter du 1er janvier 2027",
   },
   {
     libelle: "BOFiP, actualité ACTU-2025-00144",

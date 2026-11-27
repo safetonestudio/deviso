@@ -26,7 +26,7 @@ const SECTIONS: Section[] = [
     type: "texte",
     titre: "Le débours : la seule somme qui ne vous appartient jamais",
     paragraphes: [
-      "Le débours est une dépense que vous engagez <strong>au nom et pour le compte de votre client</strong>. Juridiquement, vous n&rsquo;achetez rien : vous avancez l&rsquo;argent de quelqu&rsquo;un d&rsquo;autre, comme un mandataire. L&rsquo;article 267, II-2° du Code général des impôts exclut ces sommes de la base d&rsquo;imposition, et la doctrine fiscale en tire la conséquence : ce n&rsquo;est pas votre recette, donc ce n&rsquo;est pas votre chiffre d&rsquo;affaires.",
+      "Le débours est une dépense que vous engagez <strong>au nom et pour le compte de votre client</strong>. Juridiquement, vous n&rsquo;achetez rien : vous avancez l&rsquo;argent de quelqu&rsquo;un d&rsquo;autre, comme un mandataire. L&rsquo;article 267, II-2° du Code général des impôts exclut ces sommes de la base d&rsquo;imposition, et la doctrine fiscale en tire la conséquence : ce n&rsquo;est pas votre recette, donc ce n&rsquo;est pas votre chiffre d&rsquo;affaires. À partir du 1er janvier 2027, les règles de TVA citées ici quittent le Code général des impôts pour le livre II du Code des impositions sur les biens et services (CIBS) : les numéros d&rsquo;articles changeront.",
       "La différence avec une refacturation ordinaire ne tient pas au type de dépense. Un billet de train peut être un débours ou non ; c&rsquo;est la façon dont il a été engagé qui tranche. Et l&rsquo;administration exige quatre conditions réunies, pas trois.",
     ],
   },
@@ -191,6 +191,11 @@ const SOURCES: Source[] = [
     precision: "§ 200 à 230 : les quatre conditions du débours",
   },
   {
+    libelle: "BOFiP, BOI-RES-TVA-000253",
+    url: "https://bofip.impots.gouv.fr/doctrine/BOI-RES-TVA-000253",
+    precision: "recodification de la TVA dans le CIBS à compter du 1er janvier 2027",
+  },
+  {
     libelle: "Légifrance, article 267 du Code général des impôts",
     url: "https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000042910064",
     precision: "II-2° : exclusion des sommes remboursées aux intermédiaires",
@@ -218,9 +223,9 @@ export default function Page() {
       faq={FAQ}
       sources={SOURCES}
       cta={{
-        titre: "Des frais séparés du chiffre d&rsquo;affaires, sans tableur",
+        titre: "Vos devis, factures et paiements dans un seul outil",
         texte:
-          "Deviso distingue les frais refacturés des débours sur vos devis et vos factures, et ne compte dans votre chiffre d&rsquo;affaires que ce qui doit y entrer.",
+          "Avec Deviso, vous gérez devis, factures et suivi des paiements au même endroit. La qualification d&rsquo;une dépense en frais refacturé ou en débours reste votre décision : Deviso ne la fait pas à votre place, vérifiez-la avec les quatre conditions ci-dessus ou avec votre comptable.",
       }}
     />
   );

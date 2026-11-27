@@ -202,7 +202,12 @@ const SOURCES: Source[] = [
   {
     libelle: "Légifrance, Code général des impôts, articles 289-0 à 289 bis (factures)",
     url: "https://www.legifrance.gouv.fr/codes/id/LEGISCTA000006191855",
-    precision: "article 289 bis : recours obligatoire à une plateforme agréée",
+    precision: "article 289 bis : recours obligatoire à une plateforme agréée À partir du 1er janvier 2027, les règles de TVA citées ici quittent le Code général des impôts pour le livre II du Code des impositions sur les biens et services (CIBS) : les numéros d'articles changeront.",
+  },
+  {
+    libelle: "BOFiP, BOI-RES-TVA-000253",
+    url: "https://bofip.impots.gouv.fr/doctrine/BOI-RES-TVA-000253",
+    precision: "recodification de la TVA dans le CIBS à compter du 1er janvier 2027",
   },
 ];
 
@@ -225,6 +230,7 @@ export default function Page() {
         titre: "Suivre la conformité de vos clients",
         texte:
           "Le cockpit cabinet de Deviso montre, dossier par dossier, l'état de conformité et les anomalies à traiter, dont les factures rejetées. Il est gratuit pour le cabinet, et nous cherchons des cabinets pilotes pour le construire avec eux.",
+        lien: { label: "Découvrir l'espace cabinet", href: "/experts-comptables" },
       }}
     />
   );

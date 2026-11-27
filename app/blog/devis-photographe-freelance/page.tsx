@@ -35,7 +35,7 @@ export default function Page() {
         },
         {
           title: "Acompte à la commande",
-          desc: "30 à 50 % à la commande est standard pour un shooting. L'acompte bloque la date dans votre agenda et vous protège en cas d'annulation de dernière minute.",
+          desc: "Un acompte de 30 à 50 % à la commande est courant pour un shooting (à titre indicatif). L'acompte bloque la date dans votre agenda et vous protège en cas d'annulation de dernière minute.",
         },
         {
           title: "Conditions d'annulation",
@@ -73,11 +73,11 @@ export default function Page() {
       faq={[
         {
           q: "Comment calculer les droits d'auteur sur un devis photo ?",
-          a: "Les droits d'auteur sont calculés selon le support (web, print, publicité), la zone géographique (France, Europe, monde), la durée d'utilisation et la diffusion estimée (tirage, impressions). En pratique, les droits représentent 20 à 50 % du prix de la prise de vue pour une utilisation commerciale. Pour une utilisation web simple, comptez 15 à 25 %. Pour de la publicité nationale, montez à 50-100 % du forfait shooting.",
+          a: "Les droits d'auteur sont calculés selon le support (web, print, publicité), la zone géographique (France, Europe, monde), la durée d'utilisation et la diffusion estimée (tirage, impressions). Il n'existe pas de barème officiel : à titre indicatif, les photographes facturent souvent la cession des droits en plus de la prise de vue, d'autant plus cher que l'usage est large (publicité nationale plutôt que web simple). Précisez toujours le montant de la cession sur une ligne distincte du devis.",
         },
         {
           q: "Faut-il demander un acompte pour un shooting photo ?",
-          a: "Oui, absolument. Un acompte de 30 à 50 % à la commande bloque la date dans votre agenda et vous protège en cas d'annulation de dernière minute. Sans acompte, vous risquez de refuser d'autres missions pour un client qui annule la veille. L'acompte est non remboursable en cas d'annulation à moins de 48 ou 72h.",
+          a: "Oui, absolument. Un acompte à la commande (souvent entre 30 et 50 %, à titre indicatif) bloque la date dans votre agenda et vous protège en cas d'annulation de dernière minute. Sans acompte, vous risquez de refuser d'autres missions pour un client qui annule la veille. L'acompte est non remboursable en cas d'annulation à moins de 48 ou 72h.",
         },
         {
           q: "Doit-on livrer les fichiers RAW au client ?",
@@ -85,7 +85,7 @@ export default function Page() {
         },
         {
           q: "Comment gérer un devis photo pour un mariage ?",
-          a: "Le mariage est une prestation spécifique avec des risques élevés (événement unique). Votre devis doit absolument mentionner : équipement de backup prévu, nombre de photos livrées minimum, délai de livraison du dossier complet (4 à 12 semaines est la norme), droits d'utilisation personnels uniquement, et acompte conséquent (40 à 50 %).",
+          a: "Le mariage est une prestation spécifique avec des risques élevés (événement unique). Votre devis doit absolument mentionner : équipement de backup prévu, nombre de photos livrées minimum, délai de livraison du dossier complet (à fixer clairement, souvent de plusieurs semaines pour un mariage), droits d'utilisation personnels uniquement, et acompte conséquent.",
         },
       ]}
     />

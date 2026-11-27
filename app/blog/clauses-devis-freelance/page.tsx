@@ -340,14 +340,14 @@ export default function Page() {
           {/* CTA */}
           <div className="mt-16 bg-linear-to-br/srgb from-indigo-900/40 to-violet-900/20 rounded-2xl border border-indigo-500/20 p-8 text-center">
             <h2 className="text-2xl font-semibold text-ink mb-3">
-              Intégrez ces clauses dans vos devis en 30 secondes
+              Intégrez ces clauses dans vos devis en quelques minutes
             </h2>
             <p className="text-gray-400 mb-6 max-w-lg mx-auto text-sm leading-relaxed">
-              Avec Deviso, décrivez votre mission et l&apos;IA génère un devis complet avec les clauses adaptées à votre métier. Vos clients signent électroniquement, vous êtes protégé juridiquement.
+              Avec Deviso, décrivez votre mission et l&apos;IA génère un devis complet avec les clauses adaptées à votre métier. Vos clients peuvent signer électroniquement (signature incluse dans les formules Solo et Pro), et les clauses de votre devis précisent ce qui a été convenu.
             </p>
             <WaitlistButton
               plan="free"
-              label="Générer mon premier devis, gratuit"
+              label="Essayer gratuitement"
               className="inline-block bg-indigo-600 hover:bg-indigo-700 text-ink font-semibold px-8 py-3 rounded-xl transition-all shadow-lg shadow-indigo-900/50"
             />
           </div>

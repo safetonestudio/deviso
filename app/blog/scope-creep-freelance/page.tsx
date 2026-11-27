@@ -193,11 +193,11 @@ export default function Page() {
 
           {/* CTA */}
           <div className="mt-14 bg-linear-to-br/srgb from-indigo-900/40 to-violet-900/20 rounded-2xl border border-indigo-500/20 p-8 text-center">
-            <h2 className="text-2xl font-semibold text-ink mb-3">Un devis avec les bonnes clauses, en 30 secondes</h2>
+            <h2 className="text-2xl font-semibold text-ink mb-3">Un devis avec les bonnes clauses, en quelques minutes</h2>
             <p className="text-gray-400 mb-6 max-w-lg mx-auto text-sm leading-relaxed">
-              Deviso génère votre devis avec une clause de périmètre et de révisions adaptées à votre mission. Votre client signe électroniquement, vous êtes couvert.
+              Deviso génère votre devis avec une clause de périmètre et de révisions adaptées à votre mission. Votre client peut signer électroniquement (signature incluse dans les formules Solo et Pro), et le périmètre convenu est écrit noir sur blanc.
             </p>
-            <WaitlistButton plan="free" label="Générer mon devis, gratuit" className="inline-block bg-indigo-600 hover:bg-indigo-700 text-ink font-semibold px-8 py-3 rounded-xl transition-all" />
+            <WaitlistButton plan="free" label="Essayer gratuitement" className="inline-block bg-indigo-600 hover:bg-indigo-700 text-ink font-semibold px-8 py-3 rounded-xl transition-all" />
           </div>
 
           {/* Métiers */}

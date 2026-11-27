@@ -232,7 +232,7 @@ export function BlogPost({
           {/* ── CTA Deviso ── */}
           <section className="mb-12 bg-linear-to-br/srgb from-indigo-900/40 to-violet-900/20 rounded-2xl border border-indigo-500/20 p-8 text-center">
             <h2 className="text-2xl font-semibold text-ink mb-3">
-              Créez votre devis de {profession} en 30 secondes
+              Créez votre devis de {profession} en quelques minutes
             </h2>
             <p className="text-gray-400 mb-6 max-w-lg mx-auto">
               Décrivez votre mission en quelques phrases. L&apos;IA Deviso génère un devis complet, structuré et conforme, prêt à envoyer. {BETA_OUVERTE ? APPEL.phrase : "Essai gratuit, sans carte bancaire."}

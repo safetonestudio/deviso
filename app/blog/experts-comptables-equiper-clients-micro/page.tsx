@@ -135,6 +135,7 @@ export default function Page() {
         titre: "Découvrir Deviso côté cabinet",
         texte:
           "Nous construisons Deviso avec des experts-comptables, et cherchons des cabinets pilotes. La page experts-comptables détaille l&rsquo;outil client et le cockpit, et comment nous associer à sa conception.",
+        lien: { label: "Découvrir l'espace cabinet", href: "/experts-comptables" },
       }}
     />
   );

@@ -113,6 +113,9 @@ export default function ReformeFacturationMicroEntrepreneurPage() {
             <p className="mt-3">
               Ce n&apos;est pas vous qui le gérez : c&apos;est votre logiciel de facturation. Deviso détecte votre régime TVA (franchisé) et génère automatiquement la bonne catégorie dans le XML Factur-X. Vous n&apos;avez rien à faire.
             </p>
+            <p className="mt-3">
+              À partir du 1er janvier 2027, les règles de TVA citées ici quittent le Code général des impôts pour le livre II du Code des impositions sur les biens et services (CIBS) : les numéros d&apos;articles changeront.
+            </p>
           </section>
 
           <section>

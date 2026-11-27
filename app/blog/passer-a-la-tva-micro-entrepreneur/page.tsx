@@ -10,7 +10,7 @@ const SECTIONS: Section[] = [
     type: "texte",
     titre: "La franchise en base, et le jour où elle s&rsquo;arrête",
     paragraphes: [
-      "Tant que votre chiffre d&rsquo;affaires reste sous les seuils de <strong>franchise en base de TVA</strong>, vous ne facturez pas la TVA : vos factures portent la mention « TVA non applicable, article 293 B du CGI ». C&rsquo;est l&rsquo;un des grands conforts du régime micro.",
+      "Tant que votre chiffre d&rsquo;affaires reste sous les seuils de <strong>franchise en base de TVA</strong>, vous ne facturez pas la TVA : vos factures portent la mention « TVA non applicable, article 293 B du CGI ». C&rsquo;est l&rsquo;un des grands conforts du régime micro. À partir du 1er janvier 2027, les règles de TVA citées ici quittent le Code général des impôts pour le livre II du Code des impositions sur les biens et services (CIBS) : les numéros d&rsquo;articles changeront.",
       "Mais la franchise n&rsquo;est pas liée à votre plafond de micro-entreprise. Elle a ses propres seuils, <strong>beaucoup plus bas</strong>, et le jour où vous les franchissez, vous devez facturer la TVA, la déclarer et la reverser. Mieux vaut voir ce mur arriver que le découvrir sur une facture déjà partie.",
     ],
   },
@@ -73,9 +73,9 @@ const SECTIONS: Section[] = [
     type: "texte",
     titre: "Réel simplifié ou réel normal",
     paragraphes: [
-      "Au <strong>réel simplifié</strong>, vous faites une seule déclaration annuelle (la CA12) et payez deux acomptes dans l&rsquo;année, en juillet et en décembre. C&rsquo;est le régime le plus léger, adapté à la plupart des micro-entrepreneurs qui viennent de franchir le seuil.",
+      "Jusqu&rsquo;au 31 décembre 2026, le <strong>réel simplifié</strong> permet de faire une seule déclaration annuelle (la CA12) et de payer deux acomptes dans l&rsquo;année, en juillet et en décembre. C&rsquo;est le régime le plus léger, adapté à la plupart des micro-entrepreneurs qui viennent de franchir le seuil.",
       "Au <strong>réel normal</strong>, vous déclarez la TVA chaque mois (la CA3), ou chaque trimestre si votre TVA annuelle est faible. C&rsquo;est plus lourd, mais parfois imposé selon l&rsquo;activité ou choisi pour récupérer la TVA plus vite quand on investit.",
-      "Attention, ce choix ne vaut que pour 2026 : le <strong>régime simplifié est supprimé au 1<sup>er</sup> janvier 2027</strong> (article 38 de la loi de finances pour 2025). Les entreprises qui en relevaient passent au réel normal, avec une déclaration CA3 <strong>trimestrielle</strong> tant que leur chiffre d&rsquo;affaires ne dépasse pas 1 000 000 € l&rsquo;année précédente et 1 100 000 € l&rsquo;année en cours, mensuelle au-delà ou sur option. La dernière CA12, celle de 2026, est à déposer au plus tard le 4 mai 2027.",
+      "Attention, ce choix ne vaut que pour 2026 : le <strong>régime simplifié est supprimé au 1<sup>er</sup> janvier 2027</strong> (article 38 de la loi de finances pour 2025). Les entreprises qui en relevaient passent au réel normal, avec une déclaration CA3 <strong>trimestrielle</strong> tant que leur chiffre d&rsquo;affaires ne dépasse pas 1 000 000 € l&rsquo;année précédente et 1 100 000 € l&rsquo;année en cours, mensuelle au-delà ou sur option. La dernière CA12, celle de 2026, est à déposer au plus tard le 4 mai 2027. À partir du 1<sup>er</sup> janvier 2027, il n&rsquo;est donc plus possible de choisir la CA12 : si vous devenez redevable de la TVA en 2027, vous relevez directement du réel normal (CA3).",
     ],
   },
 ];
@@ -108,6 +108,11 @@ const SOURCES: Source[] = [
     libelle: "Service-public.gouv.fr, Franchise en base de TVA",
     url: "https://entreprendre.service-public.gouv.fr/vosdroits/F21746",
     precision: "seuils de franchise et conditions de sortie",
+  },
+  {
+    libelle: "BOFiP, BOI-RES-TVA-000253",
+    url: "https://bofip.impots.gouv.fr/doctrine/BOI-RES-TVA-000253",
+    precision: "recodification de la TVA dans le CIBS à compter du 1er janvier 2027",
   },
   {
     libelle: "Impots.gouv.fr, Le régime simplifié d'imposition à la TVA est supprimé à compter du 1er janvier 2027",

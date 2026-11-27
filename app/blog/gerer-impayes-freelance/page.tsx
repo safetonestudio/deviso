@@ -132,8 +132,8 @@ export default function Page() {
                   title: "Recours à un avocat / saisie (J+90+)",
                   color: "red",
                   content: [
-                    "Pour les montants importants ou les débiteurs qui contestent, consultez un avocat spécialisé en droit des affaires. Une consultation coûte 150 à 300 €, à mettre en perspective avec la créance à récupérer.",
-                    "Vous pouvez aussi mandater une société de recouvrement (commission de 10 à 30 % sur les montants récupérés). Solution pratique si vous ne voulez pas gérer la procédure vous-même.",
+                    "Pour les montants importants ou les débiteurs qui contestent, consultez un avocat spécialisé en droit des affaires. Une consultation a un coût, à mettre en perspective avec la créance à récupérer : demandez le tarif avant le rendez-vous.",
+                    "Vous pouvez aussi mandater une société de recouvrement (elle se rémunère généralement par une commission sur les montants récupérés, à négocier avant tout engagement). Solution pratique si vous ne voulez pas gérer la procédure vous-même.",
                   ],
                 },
               ].map((step) => (

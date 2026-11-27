@@ -38,7 +38,7 @@ const SECTIONS: Section[] = [
         ton: "positif",
         sousTitre: "Le régime de TVA, pour certaines activités",
         texte:
-          "Les soins dispensés par les professions médicales et paramédicales réglementées sont exonérés de TVA par l&rsquo;article 261-4-1° du CGI. Ce n&rsquo;est pas la franchise en base : c&rsquo;est une exonération qui tient à la nature de l&rsquo;activité, et qui ne dépend pas du chiffre d&rsquo;affaires.",
+          "Les soins dispensés par les professions médicales et paramédicales réglementées sont exonérés de TVA par l&rsquo;article 261-4-1° du CGI. Ce n&rsquo;est pas la franchise en base : c&rsquo;est une exonération qui tient à la nature de l&rsquo;activité, et qui ne dépend pas du chiffre d&rsquo;affaires. À partir du 1er janvier 2027, les règles de TVA citées ici quittent le Code général des impôts pour le livre II du Code des impositions sur les biens et services (CIBS) : les numéros d&rsquo;articles changeront.",
       },
     ],
   },
@@ -162,6 +162,11 @@ const SOURCES: Source[] = [
     precision: "exonération de TVA des soins dispensés par les professions médicales et paramédicales réglementées",
   },
   {
+    libelle: "BOFiP, BOI-RES-TVA-000253",
+    url: "https://bofip.impots.gouv.fr/doctrine/BOI-RES-TVA-000253",
+    precision: "recodification de la TVA dans le CIBS à compter du 1er janvier 2027",
+  },
+  {
     libelle: "Article 293 B du Code général des impôts",
     url: "https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000052488142",
     precision: "franchise en base de TVA",
@@ -196,7 +201,7 @@ export default function Page() {
       cta={{
         titre: "Des notes d&rsquo;honoraires numérotées correctement, sans y penser",
         texte:
-          "Deviso tient une série unique et continue pour toute l&rsquo;activité de votre entreprise, et porte la mention de TVA qui correspond à votre situation, exonération, franchise en base ou assujettissement.",
+          "Deviso numérote vos factures de façon chronologique et continue, et porte la mention de TVA de la franchise en base ou de l&rsquo;assujettissement. L&rsquo;exonération des soins (art. 261-4-1° du CGI) n&rsquo;y est pas gérée automatiquement à ce jour : vérifiez la mention portée sur votre document avant de l&rsquo;envoyer.",
       }}
     />
   );

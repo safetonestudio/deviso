@@ -19,7 +19,7 @@ export default function Page() {
         },
         {
           title: "Régime de TVA et mention obligatoire",
-          desc: "Si vous êtes en franchise de TVA (auto-entrepreneur sous le seuil), indiquez 'TVA non applicable, art. 293 B du CGI'. Si vous êtes assujetti, ajoutez votre numéro de TVA intracommunautaire. Attention : le life coaching et le coaching professionnel individuel ne bénéficient pas d'exonération de TVA en France (contrairement à la formation).",
+          desc: "Si vous êtes en franchise de TVA (auto-entrepreneur sous le seuil), indiquez 'TVA non applicable, art. 293 B du CGI'. À partir du 1er janvier 2027, les règles de TVA citées ici quittent le Code général des impôts pour le livre II du Code des impositions sur les biens et services (CIBS) : les numéros d'articles changeront. Si vous êtes assujetti, ajoutez votre numéro de TVA intracommunautaire. Attention : le life coaching et le coaching professionnel individuel ne bénéficient pas d'exonération de TVA en France (contrairement à la formation).",
         },
         {
           title: "Description précise du programme ou des séances",

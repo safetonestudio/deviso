@@ -45,7 +45,7 @@ const SECTIONS: Section[] = [
     type: "texte",
     titre: "Le mandat de facturation, un régime ancien qui s'applique toujours",
     paragraphes: [
-      "L'article 289 du CGI permet à un assujetti de faire émettre ses factures par un tiers, qui agit en son nom et pour son compte. La réforme ne supprime pas cette possibilité. La FAQ de l'administration précise qu'en émission, le prestataire agit sous couvert d'un mandat de facturation, et que la facture est <strong>par principe transmise par la plateforme de l'émetteur</strong>, c'est-à-dire celle du client. Les modalités varient selon le prestataire et la plateforme : il faut savoir si le mandataire utilise ou non sa propre plateforme agréée.",
+      "L'article 289 du CGI permet à un assujetti de faire émettre ses factures par un tiers, qui agit en son nom et pour son compte. La réforme ne supprime pas cette possibilité. La FAQ de l'administration précise qu'en émission, le prestataire agit sous couvert d'un mandat de facturation, et que la facture est <strong>par principe transmise par la plateforme de l'émetteur</strong>, c'est-à-dire celle du client. Les modalités varient selon le prestataire et la plateforme : il faut savoir si le mandataire utilise ou non sa propre plateforme agréée. À partir du 1er janvier 2027, les règles de TVA citées ici quittent le Code général des impôts pour le livre II du Code des impositions sur les biens et services (CIBS) : les numéros d'articles changeront.",
       "Le BOFiP détaille les conditions de ce mandat. Elles valent pour un cabinet comme pour tout autre tiers.",
     ],
   },
@@ -187,6 +187,11 @@ const SOURCES: Source[] = [
     precision: "question 2.1 : choix libre de la plateforme, décision de gestion, accord formel et annuaire",
   },
   {
+    libelle: "BOFiP, BOI-RES-TVA-000253",
+    url: "https://bofip.impots.gouv.fr/doctrine/BOI-RES-TVA-000253",
+    precision: "recodification de la TVA dans le CIBS à compter du 1er janvier 2027",
+  },
+  {
     libelle: "impots.gouv.fr, Foire aux questions, J'approfondis la facturation électronique",
     url: "https://www.impots.gouv.fr/foire-aux-questions-japprofondis-la-facturation-electronique",
     precision: "questions 2.1 et 2.2 : réception par un prestataire, émission sous mandat de facturation",
@@ -232,6 +237,7 @@ export default function Page() {
         titre: "Superviser sans opérer",
         texte:
           "Avec Deviso, vos clients émettent eux-mêmes dans un outil conforme, et vous suivez leurs dossiers en lecture seule depuis un cockpit gratuit. Nous construisons cet outil avec des cabinets pilotes.",
+        lien: { label: "Découvrir l'espace cabinet", href: "/experts-comptables" },
       }}
     />
   );

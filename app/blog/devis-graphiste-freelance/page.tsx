@@ -15,7 +15,7 @@ export default function Page() {
       mandatoryItems={[
         {
           title: "Vos coordonnées complètes",
-          desc: "Nom/raison sociale, adresse, numéro SIRET, et si applicable votre numéro de TVA intracommunautaire. En société, indiquez aussi la forme juridique et le capital social. En franchise de TVA, indiquez 'TVA non applicable, art. 293 B du CGI'.",
+          desc: "Nom/raison sociale, adresse, numéro SIRET, et si applicable votre numéro de TVA intracommunautaire. En société, indiquez aussi la forme juridique et le capital social. En franchise de TVA, indiquez 'TVA non applicable, art. 293 B du CGI'. À partir du 1er janvier 2027, les règles de TVA citées ici quittent le Code général des impôts pour le livre II du Code des impositions sur les biens et services (CIBS) : les numéros d'articles changeront.",
         },
         {
           title: "Coordonnées du client",
@@ -35,7 +35,7 @@ export default function Page() {
         },
         {
           title: "Conditions de paiement et acompte",
-          desc: "Pourcentage d'acompte à la commande (30 à 50 % est standard), délai de paiement du solde (30 jours est la norme légale entre professionnels), et pénalités de retard obligatoires entre professionnels.",
+          desc: "Pourcentage d'acompte à la commande (30 à 50 % est courant, à titre indicatif), délai de paiement du solde (30 jours est la norme légale entre professionnels), et pénalités de retard obligatoires entre professionnels.",
         },
         {
           title: "Durée de validité du devis",
@@ -85,7 +85,7 @@ export default function Page() {
         },
         {
           q: "Peut-on utiliser un modèle de devis gratuit pour le graphisme ?",
-          a: "Oui, à condition que le modèle inclue toutes les mentions légales et des champs spécifiques au graphisme (droits de cession, révisions, formats livrés). Avec Deviso, l'IA génère automatiquement un devis adapté à votre métier en 30 secondes à partir d'une simple description de votre mission.",
+          a: "Oui, à condition que le modèle inclue toutes les mentions légales et des champs spécifiques au graphisme (droits de cession, révisions, formats livrés). Avec Deviso, l'IA génère un devis adapté à votre métier en quelques minutes à partir d'une simple description de votre mission.",
         },
         {
           q: "Faut-il un devis signé pour commencer à travailler ?",

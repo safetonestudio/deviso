@@ -25,7 +25,7 @@ const FAQ = [
   },
   {
     q: "Combien coûte une PDP pour une petite entreprise ou un indépendant ?",
-    a: "Le coût varie selon les prestataires. Certaines PDP facturent à la transaction (0,05 à 0,30 € par facture), d'autres proposent des abonnements mensuels. Beaucoup de logiciels de facturation incluront l'accès à une PDP dans leur abonnement existant, sans surcoût.",
+    a: "Le coût varie selon les prestataires. Les modèles varient : abonnement, facturation à l'usage, offre incluse dans un logiciel. Selon la DGFiP, au 1er août 2026, plus d'une dizaine de plateformes sur les 150 agréées proposaient des offres gratuites ou sans surcoût pour les besoins essentiels des plus petites structures. Beaucoup de logiciels de facturation incluront l'accès à une PDP dans leur abonnement existant, sans surcoût.",
   },
 ];
 
@@ -36,7 +36,7 @@ export default function ChoisirPlateformeAgreeePage() {
 
       <div className="bg-indigo-950/95 backdrop-blur-xs border-b border-indigo-500/20 py-2 px-4 text-center text-sm">
         <span className="text-indigo-300 font-semibold">Réforme 2026&nbsp;:</span>
-        <span className="text-gray-300 ml-1.5">PPF abandonné · Seules les PDP privées subsistent.&nbsp;</span>
+        <span className="text-gray-300 ml-1.5">Pas de plateforme publique gratuite · Seules les plateformes agréées transmettent les factures.&nbsp;</span>
         <span className="text-indigo-400 font-medium">Deviso est raccordé à une Plateforme Agréée (Super PDP) et émet et reçoit déjà vos factures électroniques.</span>
       </div>
 
@@ -77,7 +77,7 @@ export default function ChoisirPlateformeAgreeePage() {
               <li className="flex gap-2"><span className="text-indigo-400 shrink-0">2.</span> <span><strong className="text-ink">Transmettre les données fiscales</strong> prévues par la loi à l&apos;administration (montants, TVA, parties, date)</span></li>
             </ul>
             <p className="mt-3">
-              Avant 2024, on espérait pouvoir utiliser le Portail Public de Facturation (PPF) gratuitement pour émettre et recevoir. La DGFiP a abandonné cette fonction en octobre 2024, et l&apos;État a arrêté le développement du portail en août 2025 : il ne reste que les plateformes agréées privées. Vous devez donc en avoir une, mais dans la plupart des cas, votre logiciel de facturation s&apos;en charge pour vous.
+              Avant 2024, on espérait pouvoir utiliser le Portail Public de Facturation (PPF) gratuitement pour émettre et recevoir. L&apos;État a recentré le portail public en octobre 2024 sur l&apos;annuaire et la transmission des données à l&apos;administration : il ne fait plus transiter les factures, qui passent par les plateformes agréées privées. Vous devez donc en avoir une, mais dans la plupart des cas, votre logiciel de facturation s&apos;en charge pour vous.
             </p>
           </section>
 
@@ -161,6 +161,9 @@ export default function ChoisirPlateformeAgreeePage() {
                 </div>
               ))}
             </div>
+            <p className="text-sm mt-4">
+              À partir du 1er janvier 2027, les règles de TVA citées ici quittent le Code général des impôts pour le livre II du Code des impositions sur les biens et services (CIBS) : les numéros d&apos;articles changeront.
+            </p>
           </section>
 
           <section>
@@ -185,7 +188,7 @@ export default function ChoisirPlateformeAgreeePage() {
                   a: "Oui. Rien n'interdit d'émettre via une PDP et de recevoir via une autre (ou la même). Mais c'est une complexité inutile pour une petite structure. Mieux vaut une PDP unique intégrée à votre logiciel.",
                 },
                 {
-                  q: "Le PPF est-il vraiment abandonné ? Ne pourrait-il pas être rétabli ?",
+                  q: "Le PPF peut-il redevenir une plateforme d'échange gratuite ?",
                   a: "Le recentrage du PPF a été annoncé le 16 octobre 2024 et entériné par la loi de finances 2025 : le portail public garde l'annuaire et la concentration des données transmises à l'administration, mais il ne sera pas une plateforme d'échange gratuite. Il n'existe aucune indication d'un possible retour en arrière sur ce point.",
                 },
                 {

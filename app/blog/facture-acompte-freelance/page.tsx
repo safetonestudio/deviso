@@ -11,7 +11,7 @@ const SECTIONS: Section[] = [
     titre: "Pourquoi un document séparé, et pas juste un virement",
     paragraphes: [
       "Un acompte est un paiement partiel reçu avant la livraison. Dès qu&rsquo;il est encaissé, il correspond à une somme perçue dans le cadre de votre activité : il doit donc être appuyé par un document, entrer dans votre comptabilité, et être déclaré. Le devis signé ne suffit pas, un devis n&rsquo;est pas une pièce comptable, c&rsquo;est un engagement.",
-      "La facture d&rsquo;acompte est ce document. Elle a la même valeur et les mêmes contraintes qu&rsquo;une facture ordinaire : un numéro dans votre séquence, une date, les mentions obligatoires. Ce n&rsquo;est pas un brouillon, ni un reçu.",
+      "La facture d&rsquo;acompte est ce document. Elle a la même valeur et les mêmes contraintes qu&rsquo;une facture ordinaire : un numéro chronologique et continu, une date, les mentions obligatoires. Ce n&rsquo;est pas un brouillon, ni un reçu.",
       "Et c&rsquo;est la raison pour laquelle on ne peut pas « régulariser plus tard » : une fois l&rsquo;argent encaissé, le document doit exister à cette date-là.",
     ],
   },
@@ -27,9 +27,9 @@ const SECTIONS: Section[] = [
           "Écrite noir sur blanc. C&rsquo;est ce qui permet à votre client, à son comptable et au vôtre de ne pas la compter deux fois avec la facture finale.",
       },
       {
-        titre: "Un numéro dans votre séquence unique",
+        titre: "Un numéro chronologique et continu",
         texte:
-          "Pas une numérotation parallèle. Une facture d&rsquo;acompte consomme un numéro de la même série continue que vos autres factures, sinon vous créez un trou, ce qui est précisément ce que la réglementation interdit.",
+          "La numérotation doit être unique, chronologique et continue. Le plus simple est de faire entrer la facture d&rsquo;acompte dans votre série habituelle. Une série distincte pour les acomptes (par exemple avec un préfixe « AC- ») reste admise, à condition que chaque série soit elle-même chronologique et continue, sans trou ni doublon dans l&rsquo;année (BOFiP, au 27 novembre 2026).",
       },
       {
         titre: "Le montant de l&rsquo;acompte, et le montant total de la commande",
@@ -49,7 +49,7 @@ const SECTIONS: Section[] = [
       {
         titre: "Le régime de TVA applicable",
         texte:
-          "Si vous êtes en franchise en base, la mention « TVA non applicable, art. 293 B du CGI ». Si vous êtes assujetti, la TVA est due sur l&rsquo;acompte dès son encaissement pour une prestation de services, voir plus bas, c&rsquo;est le point qui surprend.",
+          "Si vous êtes en franchise en base, la mention « TVA non applicable, art. 293 B du CGI ». Si vous êtes assujetti, la TVA est due sur l&rsquo;acompte dès son encaissement pour une prestation de services, voir plus bas, c&rsquo;est le point qui surprend. À partir du 1er janvier 2027, les règles de TVA citées ici quittent le Code général des impôts pour le livre II du Code des impositions sur les biens et services (CIBS) : les numéros d'articles changeront.",
       },
     ],
   },
@@ -84,7 +84,7 @@ const SECTIONS: Section[] = [
       ],
     ],
     note:
-      "Les numéros se suivent dans une seule série. L&rsquo;acompte consomme le 015, le solde prend le numéro courant au moment de son émission, il n&rsquo;est pas réservé à l&rsquo;avance.",
+      "Exemple avec une série unique : l&rsquo;acompte consomme le 015, le solde prend le numéro courant au moment de son émission, il n&rsquo;est pas réservé à l&rsquo;avance. Avec une série distincte pour les acomptes, chacune des deux séries se suit sans trou.",
   },
   {
     type: "texte",
@@ -105,9 +105,9 @@ const SECTIONS: Section[] = [
           "Un reçu n&rsquo;est pas une facture. Si la somme est encaissée, il faut une facture, avec un numéro et les mentions obligatoires. Le mot compte.",
       },
       {
-        titre: "Numéroter les acomptes à part",
+        titre: "Laisser un trou ou un doublon dans la numérotation",
         texte:
-          "Une série « A-001, A-002 » en parallèle des factures crée deux séquences. Or la continuité s&rsquo;apprécie sur l&rsquo;ensemble. Une seule série, toujours.",
+          "Que vous ayez une série unique ou une série distincte pour les acomptes (préfixe « AC- » par exemple), chaque série doit rester chronologique et continue, et deux factures de la même année ne doivent jamais porter le même numéro. Un numéro sauté ou réutilisé, c&rsquo;est une anomalie à justifier.",
       },
       {
         titre: "Oublier de déduire l&rsquo;acompte sur le solde",
@@ -137,7 +137,7 @@ const FAQ = [
   },
   {
     q: "Faut-il un numéro de facture différent pour un acompte ?",
-    a: "Un numéro différent, oui, mais dans la même série. L'acompte consomme un numéro de votre séquence unique et continue, comme n'importe quelle autre facture. Ce qu'il ne faut surtout pas faire, c'est ouvrir une numérotation parallèle du type « A-001 » : la continuité s'apprécie sur l'ensemble de vos factures, et deux séries créent mécaniquement des trous dans chacune.",
+    a: "Elle prend un numéro propre, comme n'importe quelle autre facture. Vous pouvez le prendre dans votre série habituelle, ou ouvrir une série distincte pour les acomptes avec un préfixe qui lui est propre (par exemple « AC- »). Le BOFiP admet plusieurs séries lorsque les conditions d'exercice de l'activité le justifient, à condition que chaque série soit chronologique et continue, et que deux factures émises la même année ne portent jamais le même numéro. Ce qu'il faut éviter : un numéro sauté ou réutilisé.",
   },
   {
     q: "Comment déduire l'acompte sur la facture finale ?",
@@ -169,6 +169,16 @@ const SOURCES: Source[] = [
     precision: "mentions obligatoires et numérotation continue",
   },
   {
+    libelle: "BOFiP, BOI-TVA-DECLA-30-20-20-10",
+    url: "https://bofip.impots.gouv.fr/bofip/140-PGP.html/identifiant=BOI-TVA-DECLA-30-20-20-10-20131018",
+    precision: "numérotation des factures, y compris d'acompte, et séries distinctes (§ 60 à 100)",
+  },
+  {
+    libelle: "BOFiP, BOI-RES-TVA-000253",
+    url: "https://bofip.impots.gouv.fr/doctrine/BOI-RES-TVA-000253",
+    precision: "recodification de la TVA dans le CIBS à compter du 1er janvier 2027",
+  },
+  {
     libelle: "Article 269 du Code général des impôts",
     url: "https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000044983827",
     precision: "exigibilité de la TVA à l'encaissement pour les prestations de services",
@@ -187,7 +197,7 @@ export default function Page() {
       chapeau="Le devis de votre entreprise est signé, le client verse 30 % pour démarrer, et la question se pose : quel document émettre ? La réponse est une facture, une vraie, avec un numéro dans votre série, et deux ou trois détails décident de sa validité, que vous soyez en société ou indépendant."
       enBref={[
         "Un acompte encaissé exige une <strong>facture d&rsquo;acompte</strong> : le devis signé n&rsquo;est pas une pièce comptable.",
-        "Elle prend un numéro dans votre <strong>série unique et continue</strong>, jamais dans une série parallèle.",
+        "Elle porte un numéro <strong>chronologique et continu</strong> : dans votre série habituelle, ou dans une série distincte à préfixe propre, à condition que chaque série reste continue.",
         "La facture de solde doit <strong>déduire explicitement</strong> l&rsquo;acompte, en citant son numéro et sa date.",
         "En prestation de services assujettie, la <strong>TVA sur l&rsquo;acompte est due à l&rsquo;encaissement</strong>, pas à la livraison.",
         "En micro-entreprise, l&rsquo;acompte se déclare à l&rsquo;URSSAF sur la période où il a été <strong>encaissé</strong>.",

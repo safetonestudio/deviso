@@ -30,7 +30,7 @@ const FAQ = [
   },
   {
     q: "Vais-je être sanctionné dès le premier oubli ?",
-    a: "Pas pour l'émission ni pour l'e-reporting : aucune amende n'est appliquée au premier manquement de l'année civile en cours et des trois précédentes, si vous régularisez spontanément ou dans les trente jours suivant une demande de l'administration. Pour la réception, il n'y a pas d'amende immédiate non plus : l'administration vous met d'abord en demeure de vous équiper sous trois mois. La sanction vise la négligence répétée, pas l'erreur unique corrigée.",
+    a: "Pas pour l'émission ni pour l'e-reporting : aucune amende n'est appliquée au premier manquement de l'année civile en cours et des trois précédentes, si vous régularisez spontanément ou dans les trente jours suivant une demande de l'administration. Pour la réception, il n'y a pas d'amende immédiate non plus : l'administration vous met d'abord en demeure de vous équiper sous trois mois. La sanction vise la négligence répétée, pas l'erreur unique corrigée. Par ailleurs, dans un communiqué du 11 juillet 2026, le ministre de l'Action et des Comptes publics a annoncé qu'il n'y aurait pas, au démarrage de la réforme, de sanctions pour les entreprises de bonne foi qui engagent les démarches pour régulariser leur situation. C'est une annonce, pas un texte de loi : aucune date de fin n'est connue au 27 novembre 2026, et l'obligation s'applique.",
   },
   {
     q: "Pourquoi je vois encore 250 € et 15 € un peu partout ?",
@@ -205,6 +205,16 @@ export default function Page() {
                     dispense, c&apos;est une marge, et elle disparaît dès qu&apos;on l&apos;a déjà utilisée. La
                     réception suit une autre logique : la mise en demeure de trois mois tient lieu d&apos;avertissement.
                   </p>
+                  <p className="text-gray-400 mt-3">
+                    À cette règle s&apos;ajoute une <strong className="text-gray-200">tolérance de
+                    démarrage</strong> annoncée par le ministre de l&apos;Action et des Comptes publics dans un
+                    communiqué du 11 juillet 2026 : « il n&apos;y aura pas, au démarrage de cette réforme, de sanctions pour les
+                    entreprises de bonne foi », c&apos;est-à-dire celles qui rencontrent une difficulté et
+                    engagent les démarches pour régulariser leur situation. Attention, c&apos;est une
+                    <strong className="text-gray-200"> annonce, et non un texte de loi</strong> : le communiqué
+                    ne fixe pas de date de fin, et aucune n&apos;est connue au 27 novembre 2026. L&apos;obligation,
+                    elle, s&apos;applique bel et bien.
+                  </p>
                 </div>
               </div>
             </section>
@@ -276,6 +286,17 @@ export default function Page() {
                     <ExternalLink size={13} className="shrink-0" />
                   </a>{" "}
                   (montants des sanctions relevés)
+                </li>
+                <li>
+                  <a
+                    href="https://presse.economie.gouv.fr/?p=181381"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-indigo-400 hover:text-indigo-300 transition-colors"
+                  >
+                    Ministère de l&apos;Économie, communiqué du 11 juillet 2026
+                  </a>{" "}
+                  (tolérance de démarrage annoncée pour les entreprises de bonne foi)
                 </li>
                 <li>
                   <a

@@ -55,7 +55,7 @@ export default function Page() {
         { desc: "Livraison format Word + HTML balisé", qty: "1 forfait", price: "50 €" },
       ]}
       exampleTotal="1 200 € HT"
-      exampleNote="TVA non applicable, art. 293 B du CGI. Basé sur le document transmis le 29/06/2026 (4 000 mots source, comptage Word). Livraison sous 5 jours ouvrés. 1 cycle de révisions mineures inclus. Droits cédés : utilisation web, France et international, 5 ans. Modifications majeures (nouveau brief ou document) feront l'objet d'un avenant."
+      exampleNote="TVA non applicable, art. 293 B du CGI. Basé sur le document transmis le 29/06/2026 (4 000 mots source, comptage Word). Livraison sous 5 jours ouvrés. 1 cycle de révisions mineures inclus. Droits cédés : utilisation web, France et international, 5 ans. Modifications majeures (nouveau brief ou document) feront l'objet d'un avenant. À partir du 1er janvier 2027, les règles de TVA citées ici quittent le Code général des impôts pour le livre II du Code des impositions sur les biens et services (CIBS) : les numéros d'articles changeront."
       mistakes={[
         {
           title: "Devis estimatif sans voir le document source",
@@ -77,7 +77,7 @@ export default function Page() {
       faq={[
         {
           q: "Comment fixer le prix d'une traduction : au mot, à la page ou au forfait ?",
-          a: "La tarification au mot source est la plus courante et la plus transparente. Elle permet au client de comprendre exactement ce qu'il paie. La tarification à la page (généralement 250 mots source = 1 page standard) simplifie les calculs pour les documents longs. Le forfait convient aux missions complexes avec volume difficile à estimer (sites web avec répétitions, logiciels avec chaînes de traduction). Les tarifs moyens en France varient de 0,08 € à 0,25 €/mot selon la technicité : texte marketing (0,10-0,15 €), traduction juridique ou médicale (0,15-0,25 €).",
+          a: "La tarification au mot source est la plus courante et la plus transparente. Elle permet au client de comprendre exactement ce qu'il paie. La tarification à la page (généralement 250 mots source = 1 page standard) simplifie les calculs pour les documents longs. Le forfait convient aux missions complexes avec volume difficile à estimer (sites web avec répétitions, logiciels avec chaînes de traduction). Le tarif varie fortement selon la technicité du texte, le couple de langues, le volume et le délai : à titre indicatif, il n'existe pas de barème officiel, et l'exemple de devis ci-dessus (0,20 € le mot source) n'est qu'une illustration. Fixez votre tarif d'après vos coûts et ce que pratiquent des confrères sur des missions comparables.",
         },
         {
           q: "Les droits de traduction appartiennent-ils au traducteur ou au client ?",

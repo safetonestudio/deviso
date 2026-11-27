@@ -11,7 +11,7 @@ const SECTIONS: Section[] = [
     titre: "Septembre 2026 n'était que la première marche",
     paragraphes: [
       "Depuis le 1er septembre 2026, toutes les entreprises assujetties doivent pouvoir recevoir des factures électroniques, et seules les grandes entreprises et les ETI sont tenues de les émettre. Pour la plupart des cabinets, l'essentiel du portefeuille est ailleurs : les <strong>PME, TPE et micro-entreprises</strong>, qui devront émettre leurs factures au format électronique et transmettre leurs données de transaction au plus tard le <strong>1er septembre 2027</strong>.",
-      "Neuf mois, c'est court pour un portefeuille de plusieurs dizaines ou centaines de dossiers. Tous ne demandent pas le même travail : un consultant qui ne facture que des entreprises françaises n'a pas les mêmes chantiers qu'un commerçant qui vend à des particuliers ou qu'une PME qui exporte. Le premier travail du cabinet est donc de <strong>trier</strong>.",
+      "Au 27 novembre 2026, il reste un peu plus de neuf mois avant cette échéance : c'est court pour un portefeuille de plusieurs dizaines ou centaines de dossiers. Tous ne demandent pas le même travail : un consultant qui ne facture que des entreprises françaises n'a pas les mêmes chantiers qu'un commerçant qui vend à des particuliers ou qu'une PME qui exporte. Le premier travail du cabinet est donc de <strong>trier</strong>.",
     ],
   },
   {
@@ -76,7 +76,7 @@ const SECTIONS: Section[] = [
       ],
       [
         "Micro-entrepreneur en franchise en base de TVA",
-        "Émission, et e-reporting à rythme bimestriel s'il a des clients particuliers",
+        "Émission ; e-reporting bimestriel de ses ventes à des particuliers et de ses opérations avec des clients ou fournisseurs étrangers ; données de paiement de ses prestations de services, également par bimestre (FAQ de l'administration, 4.1)",
         "Normale",
       ],
     ],
@@ -149,7 +149,7 @@ const SECTIONS: Section[] = [
   },
   {
     type: "liste",
-    titre: "Un plan en quatre temps pour les neuf mois qui restent",
+    titre: "Un plan en quatre temps d'ici le 1er septembre 2027",
     numerotee: true,
     items: [
       {
@@ -234,7 +234,7 @@ export default function Page() {
   return (
     <ArticleLong
       slug={SLUG}
-      chapeau="Le 1er septembre 2027, les PME, TPE et micro-entreprises devront émettre leurs factures électroniques et transmettre leurs données. Pour un cabinet, c'est l'essentiel du portefeuille. Comment le trier et le préparer dans les neuf mois qui restent."
+      chapeau="Le 1er septembre 2027, les PME, TPE et micro-entreprises devront émettre leurs factures électroniques et transmettre leurs données. Pour un cabinet, c'est l'essentiel du portefeuille. Comment le trier et le préparer avant cette échéance."
       enBref={[
         "PME, TPE et micro : <strong>émission et e-reporting au 1er septembre 2027</strong> au plus tard.",
         "La taille s'apprécie au <strong>1er janvier 2025</strong>, par SIREN, sur le dernier exercice clos.",
@@ -249,6 +249,7 @@ export default function Page() {
         titre: "Préparer 2027 avec un cockpit",
         texte:
           "Deviso donne au cabinet une vue d'ensemble de ses dossiers : conformité, anomalies, TVA par périodicité, exports FEC et Quadra. Gratuit pour le cabinet, et construit avec des cabinets pilotes.",
+        lien: { label: "Découvrir l'espace cabinet", href: "/experts-comptables" },
       }}
     />
   );

@@ -159,6 +159,9 @@ export default function EReportingFreelancePage() {
               <p className="text-sm text-amber-400">
                 Les modalités pour les franchisés sont publiées : transmission tous les deux mois (bimestre civil), au plus tard entre le 25 et le 30 du mois qui suit le bimestre.
               </p>
+              <p className="text-sm mt-3">
+                À partir du 1er janvier 2027, les règles de TVA citées ici quittent le Code général des impôts pour le livre II du Code des impositions sur les biens et services (CIBS) : les numéros d&apos;articles changeront.
+              </p>
             </div>
           </section>
 
@@ -279,7 +282,7 @@ export default function EReportingFreelancePage() {
                 },
                 {
                   q: "L'e-reporting remplace-t-il ma déclaration de TVA (CA3) ?",
-                  a: "Non. L'e-reporting et la déclaration de TVA CA3 coexistent. L'e-reporting sert à la DGFiP à pré-remplir et contrôler votre CA3. À terme, la DGFiP espère pouvoir proposer des déclarations TVA pré-remplies, mais ce n'est pas l'objectif immédiat.",
+                  a: "Non. L'e-reporting et la déclaration de TVA CA3 coexistent. Selon la DGFiP, les données de paiement transmises permettront notamment de pré-remplir la déclaration de TVA.",
                 },
               ].map(({ q, a }) => (
                 <div key={q} className="border-b border-ds-border pb-5 last:border-0">

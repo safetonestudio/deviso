@@ -48,6 +48,14 @@ const SECTIONS: Section[] = [
       "Aucun changement de coordonnées bancaires ne se valide sur la foi d&rsquo;un e-mail. Appelez votre interlocuteur habituel <strong>sur le numéro que vous connaissez déjà</strong>, jamais sur celui indiqué dans le message suspect, et faites-lui confirmer le nouveau RIB.",
   },
   {
+    type: "texte",
+    titre: "La vérification du bénéficiaire, un filet de plus",
+    paragraphes: [
+      "Depuis le 9 octobre 2025, les établissements de paiement (banques en tête) doivent proposer, sans frais, la <strong>vérification du bénéficiaire</strong> pour les virements SEPA en euros. Au moment de saisir l&rsquo;ordre, votre banque interroge celle du bénéficiaire pour contrôler que le nom et l&rsquo;IBAN saisis correspondent bien au titulaire du compte. Si ce n&rsquo;est pas le cas, vous êtes immédiatement prévenu, et vous pouvez corriger ou renoncer avant de valider.",
+      "C&rsquo;est un vrai garde-fou contre les faux RIB&nbsp;: saisissez le nom exact de votre fournisseur, et un compte ouvert au nom d&rsquo;un autre titulaire sera signalé. Mais une alerte n&rsquo;est pas un blocage, et l&rsquo;absence d&rsquo;alerte ne prouve pas que le RIB est le bon. Le contre-appel reste la vérification de référence (information vérifiée au 27 novembre 2026).",
+    ],
+  },
+  {
     type: "liste",
     titre: "Mettre en place des réflexes simples",
     items: [
@@ -109,6 +117,10 @@ const FAQ = [
     a: "En principe oui : payer un usurpateur ne règle pas la dette envers le créancier réel. C'est pourquoi la vérification préalable est essentielle.",
   },
   {
+    q: "La vérification du bénéficiaire protège-t-elle contre le faux RIB ?",
+    a: "En partie. Depuis le 9 octobre 2025, votre banque doit vérifier gratuitement, pour les virements SEPA en euros, que le nom et l'IBAN saisis correspondent au titulaire du compte, et vous signaler toute non-concordance. C'est utile, mais cela ne remplace pas le contre-appel auprès de votre interlocuteur habituel.",
+  },
+  {
     q: "Ma propre entreprise peut-elle être usurpée ?",
     a: "Oui. Si votre messagerie est piratée, de faux RIB peuvent être envoyés à vos clients en votre nom. La double authentification et une information claire à vos clients limitent ce risque.",
   },
@@ -129,6 +141,11 @@ const SOURCES: Source[] = [
     libelle: "Ministère de l'Intérieur et collectivités, Fraude aux faux ordres de virement",
     url: "https://www.collectivites-locales.gouv.fr/files/files/Ressources/D%C3 %A9pliants%20LePointsur/depl-fovi_web.pdf",
     precision: "contre-appel sur des coordonnées fiabilisées",
+  },
+  {
+    libelle: "Banque de France et CNMP, Guide d'utilisation de la vérification du bénéficiaire (septembre 2025)",
+    url: "https://www.banque-france.fr/system/files/2025-09/CNMP_Guide-d-utilisation-Verification-du-beneficiaire.pdf",
+    precision: "service gratuit depuis le 9 octobre 2025, signalement des non-concordances nom et IBAN",
   },
 ];
 

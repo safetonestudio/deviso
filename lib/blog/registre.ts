@@ -552,14 +552,14 @@ export const ARTICLES: Article[] = [
     og: {
       titre: "Passer à la TVA en micro : seuils 2026 et démarches",
       description:
-        "Seuils 85 000 / 37 500 €, seuil majoré, numéro intracommunautaire, CA12 ou CA3 : tout ce qui change le jour où vous facturez la TVA.",
+        "Seuils 85 000 / 37 500 €, seuil majoré, numéro intracommunautaire, déclaration CA3 (la CA12 disparaît en 2027) : tout ce qui change le jour où vous facturez la TVA.",
     },
     publieLe: "2026-11-02",
     misAJourLe: "2026-11-27",
     dureeLecture: 8,
     carte: {
       titre: "Passer à la TVA en micro-entreprise",
-      resume: "Sortie de franchise, seuils 2026 et choix du régime de déclaration",
+      resume: "Sortie de franchise, seuils 2026, et la déclaration de TVA après la fin de la CA12 en 2027",
     },
     lies: [
       "plafonds-micro-entreprise-2026",
@@ -829,7 +829,7 @@ export const ARTICLES: Article[] = [
         "Droits d'utilisation, retouches, frais de déplacement, acompte, tout ce qu'un devis photo doit contenir. Exemple concret.",
     },
     publieLe: "2026-06-29",
-    misAJourLe: "2026-06-29",
+    misAJourLe: "2026-11-27",
     dureeLecture: 5,
     carte: { titre: "Photographe freelance", resume: "Droits d'auteur, acompte, conditions d'annulation" },
     metier: {
@@ -853,7 +853,7 @@ export const ARTICLES: Article[] = [
         "Tarif au mot ou à la page, révisions, cession de droits, guide complet pour votre devis de rédaction web freelance.",
     },
     publieLe: "2026-06-29",
-    misAJourLe: "2026-06-29",
+    misAJourLe: "2026-11-27",
     dureeLecture: 5,
     carte: { titre: "Rédacteur & copywriter", resume: "Tarif au mot, révisions limitées, cession de droits" },
     metier: {
@@ -925,7 +925,7 @@ export const ARTICLES: Article[] = [
         "Périmètre précis, forfaits mensuels, conditions de résiliation, tout ce qu'un devis de CM freelance doit contenir.",
     },
     publieLe: "2026-06-29",
-    misAJourLe: "2026-06-29",
+    misAJourLe: "2026-11-27",
     dureeLecture: 6,
     carte: { titre: "Community manager", resume: "Périmètre, forfait mensuel, résiliation" },
     metier: {
@@ -1072,7 +1072,7 @@ export const ARTICLES: Article[] = [
       description: "Ni report ni suspension : la DGFiP apprécie les difficultés réelles, documentées et suivies. Les preuves à réunir, dossier par dossier, avec le cabinet.",
     },
     publieLe: "2026-11-23",
-    misAJourLe: "2026-11-23",
+    misAJourLe: "2026-11-27",
     dureeLecture: 8,
     carte: {
       titre: "Documenter la trajectoire de conformité",
@@ -1118,7 +1118,7 @@ export const ARTICLES: Article[] = [
       description: "Taille appréciée au 1er janvier 2025, profils prioritaires, rythme du e-reporting selon le régime de TVA, nouvelles mentions : le plan du cabinet.",
     },
     publieLe: "2026-11-23",
-    misAJourLe: "2026-11-23",
+    misAJourLe: "2026-11-27",
     dureeLecture: 9,
     carte: {
       titre: "Préparer le portefeuille pour septembre 2027",
@@ -1168,7 +1168,7 @@ export const ARTICLES: Article[] = [
         "Du micro-entrepreneur à la société : où se place Deviso, et ce qu'il ne prétend pas être.",
     },
     publieLe: "2026-11-02",
-    misAJourLe: "2026-11-23",
+    misAJourLe: "2026-11-27",
     dureeLecture: 7,
     carte: {
       titre: "Deviso face au marché : notre outil de gestion",
@@ -1262,7 +1262,7 @@ export const ARTICLES: Article[] = [
         "Les 3 méthodes pour calculer son TJM, les erreurs classiques, et comment augmenter ses tarifs. Guide complet pour freelances.",
     },
     publieLe: "2026-06-29",
-    misAJourLe: "2026-06-29",
+    misAJourLe: "2026-11-27",
     dureeLecture: 7,
     carte: {
       titre: "Comment fixer ses tarifs en freelance : TJM, méthodes et erreurs à éviter",
@@ -1297,11 +1297,11 @@ export const ARTICLES: Article[] = [
       "Un faux changement de RIB au nom d'un fournisseur ou d'un client : les signaux d'alerte, la règle du contre-appel, et que faire si le virement est déjà parti.",
     h1: "Fraude au faux RIB et au faux fournisseur : comment protéger votre entreprise",
     publieLe: "2026-11-19",
-    misAJourLe: "2026-11-19",
+    misAJourLe: "2026-11-27",
     dureeLecture: 6,
     carte: {
       titre: "Fraude au faux RIB : s'en protéger",
-      resume: "Les signaux d'alerte, la règle du contre-appel, et les bons réflexes si le virement est parti",
+      resume: "Les signaux d'alerte, la vérification du bénéficiaire, le contre-appel, et les bons réflexes si le virement est parti",
     },
     lies: ["facturation-electronique-2026", "gerer-impayes-freelance"],
   },

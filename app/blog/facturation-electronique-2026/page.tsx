@@ -31,7 +31,7 @@ const FAQ = [
   },
   {
     q: "Le portail public de facturation (PPF) existe-t-il encore ?",
-    a: "Il existe, mais plus comme plateforme d'échange. En octobre 2024 la DGFiP a abandonné sa fonction de plateforme gratuite d'émission et de réception, et en août 2025 le développement du portail a été arrêté. Le PPF subsiste dans deux rôles : l'annuaire central des entreprises, qui sert au routage, et le concentrateur des données transmises à l'administration. Conséquence concrète : il n'existe aucune option publique gratuite, et toute entreprise assujettie doit passer par une plateforme agréée privée.",
+    a: "Il existe, mais plus comme plateforme d'échange. Depuis le recentrage annoncé en octobre 2024 et entériné par la loi de finances 2025, le portail public ne fait plus transiter les factures. Il est recentré sur deux rôles : l'annuaire central des entreprises, qui sert au routage, et le concentrateur des données transmises à l'administration. Conséquence concrète : il n'existe aucune option publique gratuite, et toute entreprise assujettie doit passer par une plateforme agréée privée.",
   },
 ];
 
@@ -58,7 +58,9 @@ const metierLinks = [
  * discrédite sur tout le reste.
  *
  * Sources : economie.gouv.fr (coup d'envoi de la réforme), impots.gouv.fr
- * (facturation électronique et plateformes agréées).
+ * (facturation électronique et plateformes agréées), aife.economie.gouv.fr
+ * (recentrage du portail public, communiqué du 16 octobre 2024), service-public
+ * fiche F23208 (nouvelles mentions obligatoires).
  */
 const ECHEANCES = [
   {
@@ -192,6 +194,9 @@ export default function FacturationElectronique2026Page() {
               <li className="flex gap-2"><span className="text-indigo-400 shrink-0 font-bold">1.</span> <span><strong className="text-ink">L&apos;e-invoicing</strong> : obligation d&apos;émettre et de recevoir les factures B2B en format électronique structuré</span></li>
               <li className="flex gap-2"><span className="text-indigo-400 shrink-0 font-bold">2.</span> <span><strong className="text-ink">L&apos;e-reporting</strong> : obligation de transmettre à la DGFiP les données des transactions B2C (clients particuliers) et des transactions B2B avec des partenaires étrangers, ainsi que les données de paiement des prestations de services</span></li>
             </ul>
+            <p className="mt-3">
+              <strong className="text-ink">Quatre nouvelles mentions obligatoires</strong> s&apos;ajoutent sur les factures : le numéro SIREN du client (lorsque c&apos;est une entreprise), l&apos;adresse de livraison des biens si elle diffère de celle du client, la nature des opérations (livraisons de biens, prestations de services, ou les deux) et, le cas échéant, la mention « Option pour le paiement de la taxe d&apos;après les débits ». Selon la fiche service-public.gouv.fr, elles s&apos;appliquent aux grandes entreprises et aux entreprises de taille intermédiaire à partir du 1<sup>er</sup> septembre 2026, et aux PME, TPE et micro-entreprises à partir du 1<sup>er</sup> septembre 2027. Votre logiciel de facturation doit donc les prévoir avant votre date d&apos;émission.
+            </p>
           </section>
 
           {/* Section 2 */}
@@ -262,9 +267,9 @@ export default function FacturationElectronique2026Page() {
 
           {/* Section 4 */}
           <section>
-            <h2 className="text-xl font-bold text-ink mb-4">4. Le portail public (PPF) est abandonné, que se passe-t-il ?</h2>
+            <h2 className="text-xl font-bold text-ink mb-4">4. Pas de portail public gratuit : que se passe-t-il ?</h2>
             <p>
-              En octobre 2024, la DGFiP a officiellement annoncé l&apos;abandon du Portail Public de Facturation (PPF) qu&apos;elle développait initialement. Ce portail gratuit devait permettre à toutes les entreprises d&apos;émettre et de recevoir des e-factures sans passer par une plateforme privée.
+              Le Portail Public de Facturation (PPF) devait, à l&apos;origine, permettre à toutes les entreprises d&apos;émettre et de recevoir des e-factures gratuitement, sans passer par une plateforme privée. Ce n&apos;est plus son rôle : par un communiqué du 16 octobre 2024, l&apos;État a annoncé son recentrage sur la fonction d&apos;annuaire, qui permet le routage des factures, et sur celle de concentrateur, qui transmet les données de facturation et de transaction à l&apos;administration fiscale. Ce recentrage a été entériné par la loi de finances 2025. Le portail public ne fait donc plus transiter les factures.
             </p>
             <p className="mt-3">
               Ce changement a une conséquence que peu de contenus énoncent clairement : <strong className="text-ink">il n&apos;existe aucune option gratuite fournie par l&apos;État.</strong> Toute entreprise assujettie passe par une <strong className="text-ink">plateforme agréée</strong> privée, immatriculée par la DGFiP, on parlait avant de « plateforme de dématérialisation partenaire » (PDP), les deux termes désignent la même chose.
@@ -293,6 +298,9 @@ export default function FacturationElectronique2026Page() {
               <li className="flex gap-2"><span className="text-indigo-400 shrink-0">✓</span> Mentionner « TVA non applicable, art. 293 B du CGI » dans les données structurées (pas de montant TVA, mais le champ doit exister)</li>
               <li className="flex gap-2"><span className="text-indigo-400 shrink-0">✓</span> Recevoir les e-factures de ses fournisseurs qui en émettent</li>
             </ul>
+            <p className="mt-3">
+              À partir du 1er janvier 2027, les règles de TVA citées ici quittent le Code général des impôts pour le livre II du Code des impositions sur les biens et services (CIBS) : les numéros d&apos;articles changeront.
+            </p>
             <p className="mt-3">
               La seule vraie exemption : les <strong className="text-ink">transactions B2C</strong> (avec des particuliers). L&apos;e-invoicing s&apos;applique uniquement aux transactions B2B. Pour les clients particuliers, c&apos;est l&apos;e-reporting qui s&apos;applique (voir{" "}
               <Link href="/blog/e-reporting-freelance-2026" className="text-indigo-400 hover:text-indigo-300 underline">notre article dédié</Link>).

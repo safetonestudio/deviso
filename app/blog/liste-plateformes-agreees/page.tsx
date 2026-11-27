@@ -21,6 +21,8 @@ export const metadata = metadonneesArticle(SLUG);
  * `misAJourLe`, c'est tout l'argument de la page.
  */
 const RELEVE = "27 novembre 2026";
+/** Date de génération des fichiers officiels dont sont tirés les chiffres. */
+const DATE_LISTES = "20 novembre 2026";
 const IMMATRICULES = 159;
 const EN_ATTENTE = 5;
 
@@ -29,7 +31,7 @@ const SECTIONS: Section[] = [
     type: "texte",
     paragraphes: [
       "Cherchez « liste des plateformes agréées » et vous trouverez une dizaine de pages qui annoncent un nombre. Aucune ne donne le même. Ce n’est pas que l’une ment : c’est qu’elles comptent des choses différentes, parce que la liste officielle n’est pas <strong>une</strong> liste. Elle est en deux fichiers, et la différence entre les deux est exactement celle qui vous intéresse.",
-      `Au ${RELEVE}, ces deux fichiers réunissent <strong>${IMMATRICULES} opérateurs immatriculés</strong> et <strong>${EN_ATTENTE} en attente de l’être</strong>. Voici où ils sont, ce qu’ils contiennent, et les trois pièges qui font écrire n’importe quoi à leur sujet.`,
+      `Au ${DATE_LISTES}, ces deux fichiers réunissent <strong>${IMMATRICULES} opérateurs immatriculés</strong> et <strong>${EN_ATTENTE} en attente de l’être</strong>. La liste évolue : de nouveaux opérateurs sont immatriculés régulièrement, ces chiffres ne sont donc valables qu’à cette date. Voici où ils sont, ce qu’ils contiennent, et les trois pièges qui font écrire n’importe quoi à leur sujet.`,
     ],
   },
   {
@@ -143,7 +145,7 @@ const SECTIONS: Section[] = [
 const FAQ = [
   {
     q: "Combien y a-t-il de plateformes agréées en France ?",
-    a: `Au ${RELEVE}, ${IMMATRICULES} opérateurs sont immatriculés et ${EN_ATTENTE} ont un dossier accepté en attente des tests d’interopérabilité. Ces nombres changent vite : 58 immatriculations en 2025, 101 du 1er janvier au 19 novembre 2026. Tout chiffre cité sans sa date de relevé est à vérifier.`,
+    a: `Au ${DATE_LISTES}, ${IMMATRICULES} opérateurs sont immatriculés et ${EN_ATTENTE} ont un dossier accepté en attente des tests d’interopérabilité. Ces nombres changent vite : 58 immatriculations en 2025, 101 du 1er janvier au 19 novembre 2026. Tout chiffre cité sans sa date de relevé est à vérifier.`,
   },
   {
     q: "Où trouver la liste officielle des plateformes agréées ?",
@@ -191,7 +193,7 @@ export default function Page() {
       slug={SLUG}
       chapeau={`La liste officielle des plateformes agréées est publique et gratuite. Elle tient en deux fichiers dont les noms disent à peu près le contraire de leur contenu, ce qui explique une bonne part des chiffres contradictoires qu’on lit partout. Voici ce qu’ils contiennent, relevé le ${RELEVE}.`}
       enBref={[
-        `${IMMATRICULES} opérateurs immatriculés et ${EN_ATTENTE} en attente des tests d’interopérabilité, au ${RELEVE}.`,
+        `${IMMATRICULES} opérateurs immatriculés et ${EN_ATTENTE} en attente des tests d’interopérabilité, au ${DATE_LISTES} (la liste évolue).`,
         "La liste est en deux fichiers distincts, publiés par la DGFiP sur impots.gouv.fr.",
         "Le fichier des immatriculés porte le mot « attente » dans son nom : il désigne le rapport d’audit postérieur, pas l’immatriculation.",
         "Ni SIREN ni numéro d’immatriculation n’y figurent, seulement la date de délivrance.",

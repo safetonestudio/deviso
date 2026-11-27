@@ -179,7 +179,7 @@ const FAQ = [
   },
   {
     q: "Un avoir annule-t-il la TVA déjà déclarée ?",
-    a: "Oui, à condition qu'il reprenne le taux de TVA de la facture d'origine, en négatif. C'est ce mécanisme qui vous permet de récupérer la TVA que vous avez déclarée à tort. Un avoir qui oublie de mentionner le taux initial ne le permet pas, et la TVA reste à votre charge. En franchise en base, la question ne se pose pas : l'avoir reprend simplement la mention de l'article 293 B.",
+    a: "Oui, à condition qu'il reprenne le taux de TVA de la facture d'origine, en négatif. C'est ce mécanisme qui vous permet de récupérer la TVA que vous avez déclarée à tort. Un avoir qui oublie de mentionner le taux initial ne le permet pas, et la TVA reste à votre charge. En franchise en base, la question ne se pose pas : l'avoir reprend simplement la mention de l'article 293 B. À partir du 1er janvier 2027, les règles de TVA citées ici quittent le Code général des impôts pour le livre II du Code des impositions sur les biens et services (CIBS) : les numéros d'articles changeront.",
   },
   {
     q: "Faut-il transmettre l'avoir via la plateforme agréée ?",
@@ -196,6 +196,11 @@ const SOURCES: Source[] = [
     libelle: "Article 242 nonies A du CGI, annexe II",
     url: "https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000050811276",
     precision: "mentions obligatoires et numérotation continue sans rupture",
+  },
+  {
+    libelle: "BOFiP, BOI-RES-TVA-000253",
+    url: "https://bofip.impots.gouv.fr/doctrine/BOI-RES-TVA-000253",
+    precision: "recodification de la TVA dans le CIBS à compter du 1er janvier 2027",
   },
   {
     libelle: "Article 289 du Code général des impôts",

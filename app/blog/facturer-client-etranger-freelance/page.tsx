@@ -84,7 +84,7 @@ const SECTIONS: Section[] = [
       {
         titre: "Aucune TVA dans le total",
         texte:
-          "Le montant HT est le montant dû. Et si vous êtes en franchise, n&rsquo;ajoutez <strong>pas</strong> la mention « TVA non applicable, art. 293 B » sur cette facture : elle n&rsquo;a rien à y faire et brouille le message envoyé au client.",
+          "Le montant HT est le montant dû. Et si vous êtes en franchise, n&rsquo;ajoutez <strong>pas</strong> la mention « TVA non applicable, art. 293 B » sur cette facture : elle n&rsquo;a rien à y faire et brouille le message envoyé au client. À partir du 1er janvier 2027, les règles de TVA citées ici quittent le Code général des impôts pour le livre II du Code des impositions sur les biens et services (CIBS) : les numéros d&rsquo;articles changeront.",
       },
     ],
   },
@@ -201,6 +201,11 @@ const SOURCES: Source[] = [
     libelle: "Légifrance, article 259 du Code général des impôts",
     url: "https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000021642728",
     precision: "lieu d'imposition des prestations de services",
+  },
+  {
+    libelle: "BOFiP, BOI-RES-TVA-000253",
+    url: "https://bofip.impots.gouv.fr/doctrine/BOI-RES-TVA-000253",
+    precision: "recodification de la TVA dans le CIBS à compter du 1er janvier 2027",
   },
   {
     libelle: "Légifrance, article 259 B du Code général des impôts",

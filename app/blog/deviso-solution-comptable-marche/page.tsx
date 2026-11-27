@@ -10,33 +10,33 @@ const SECTIONS: Section[] = [
     type: "texte",
     titre: "Un marché encombré, et pourtant des trous",
     paragraphes: [
-      "Les outils de facturation pour indépendants ne manquent pas : une bonne dizaine de solutions se partagent le marché français, beaucoup avec une offre gratuite. Côté cabinets, la bataille se joue entre des plateformes bien financées, dont certaines ont levé des montants considérables pour équiper les experts-comptables et leurs clients.",
-      "Dans ce paysage, on pourrait croire les petites entreprises parfaitement servies. En pratique, deux trous persistent : les outils grand public digèrent mal les subtilités propres à chaque statut, du régime micro à la société, et les plateformes pensées pour les cabinets sont souvent trop lourdes, et trop chères, pour un portefeuille de petits dossiers.",
+      "Les outils de facturation pour indépendants ne manquent pas : de nombreuses solutions se partagent le marché français, comme le recense par exemple un comparatif spécialisé. Côté cabinets, des plateformes bien financées, dont l&rsquo;une a levé 175 millions d&rsquo;euros en janvier 2026 selon Siècle Digital, cherchent à équiper les experts-comptables et leurs clients.",
+      "Dans ce paysage, on pourrait croire les petites entreprises parfaitement servies. Notre lecture, en tant qu&rsquo;éditeur : deux besoins restent à nos yeux mal couverts. D&rsquo;une part, certains outils grand public prennent mal en compte les subtilités propres à chaque statut, du régime micro à la société. D&rsquo;autre part, des plateformes pensées pour les cabinets peuvent se révéler lourdes, ou onéreuses, pour un portefeuille de petits dossiers.",
     ],
   },
   {
     type: "liste",
-    titre: "Les points de douleur que les outils laissent",
+    titre: "Les points de douleur que nous observons",
     items: [
       {
         titre: "La réforme mal digérée",
         texte:
-          "Beaucoup promettent la facturation électronique, mais peu expliquent clairement au dirigeant, micro-entrepreneur ou société, ce qu&rsquo;il doit faire, et quand. La confusion règne sur les seuils, les dates et les plateformes.",
+          "La facturation électronique est annoncée partout, mais il n&rsquo;est pas toujours simple, pour un dirigeant, micro-entrepreneur ou société, de savoir ce qu&rsquo;il doit faire, et quand. Les seuils, les dates et les plateformes prêtent à confusion.",
       },
       {
         titre: "Le livre des recettes au facturé",
         texte:
-          "Des outils tiennent les recettes à la date de facture, pas à l&rsquo;encaissement. Pour le micro, c&rsquo;est faux, et cela décale la déclaration de chiffre d&rsquo;affaires.",
+          "Certains outils peuvent tenir les recettes à la date de facture plutôt qu&rsquo;à l&rsquo;encaissement. Pour le micro, c&rsquo;est le chiffre d&rsquo;affaires encaissé qui se déclare : un suivi au facturé décale la déclaration.",
       },
       {
         titre: "Des outils qui ne s&rsquo;adaptent pas au statut",
         texte:
-          "Nombre de solutions sont conçues pour un seul profil : soit des sociétés au réel, avec une complexité inutile au micro, soit des micro-entrepreneurs, sans ce qu&rsquo;il faut dès que l&rsquo;entreprise grandit. Changer de statut oblige alors à changer d&rsquo;outil.",
+          "Certaines solutions sont conçues pour un seul profil : soit des sociétés au réel, avec une complexité inutile au micro, soit des micro-entrepreneurs, sans ce qu&rsquo;il faut dès que l&rsquo;entreprise grandit. Changer de statut peut alors obliger à changer d&rsquo;outil.",
       },
       {
         titre: "Un canal comptable hors de prix pour les petits dossiers",
         texte:
-          "Les plateformes cabinet sont puissantes, mais leur modèle vise surtout de gros dossiers. Suivre dix petites entreprises, micro-entrepreneurs compris, y revient cher pour ce que cela rapporte.",
+          "Les plateformes cabinet sont puissantes, mais certaines sont pensées d&rsquo;abord pour des dossiers plus conséquents. Pour un cabinet qui suit beaucoup de petites entreprises, micro-entrepreneurs compris, l&rsquo;équation économique peut être moins évidente.",
       },
     ],
   },
@@ -45,7 +45,7 @@ const SECTIONS: Section[] = [
     titre: "Où Deviso se place",
     paragraphes: [
       "Deviso ne cherche pas à être une plateforme comptable universelle. Notre choix est de faire bien la facturation et le suivi de <strong>l&rsquo;entreprise</strong>, de l&rsquo;indépendant à la société, et de la connecter à un <strong>canal expert-comptable</strong> pensé pour les petits dossiers.",
-      "Côté entreprise : des devis et des factures conformes, des factures fournisseurs reçues, un suivi adapté au statut (micro, entreprise individuelle au réel ou société), la TVA à plusieurs taux, des exports comptables FEC et Quadra, et la conformité à la réforme intégrée. Pour un micro-entrepreneur, le livre des recettes reste tenu à l&rsquo;encaissement, avec la distinction biens / services. Côté cabinet : un accès en lecture seule, gratuit, et un cockpit qui donne la vue d&rsquo;ensemble d&rsquo;un portefeuille de petits dossiers, sans la lourdeur d&rsquo;une suite conçue pour les grands comptes.",
+      "Côté entreprise : des devis et des factures conformes, des factures fournisseurs reçues, un suivi adapté au statut (micro, entreprise individuelle au réel ou société), la TVA à plusieurs taux, des exports comptables FEC et Quadra, et la conformité à la réforme intégrée. Pour un micro-entrepreneur, le livre des recettes reste tenu à l&rsquo;encaissement, avec la distinction biens / services. Côté cabinet : un accès en lecture seule, gratuit, et un cockpit qui donne la vue d&rsquo;ensemble d&rsquo;un portefeuille de petits dossiers, avec une approche plus légère qu&rsquo;une suite conçue pour de grands portefeuilles.",
     ],
   },
   {
@@ -87,7 +87,7 @@ const FAQ = [
   },
   {
     q: "Pourquoi un outil de plus alors que le marché est déjà encombré ?",
-    a: "Parce que deux trous persistent : les outils grand public digèrent mal les subtilités propres à chaque statut (recettes au facturé pour le micro, réforme floue), et les plateformes pour cabinets sont trop lourdes et chères pour un portefeuille de petits dossiers.",
+    a: "Parce que, selon nous, deux besoins restent mal couverts : certains outils grand public prennent mal en compte les subtilités propres à chaque statut (recettes au facturé pour le micro, réforme floue), et des plateformes pour cabinets peuvent être lourdes ou onéreuses pour un portefeuille de petits dossiers.",
   },
   {
     q: "Quels points de douleur Deviso règle-t-il concrètement ?",
@@ -114,8 +114,8 @@ export default function Page() {
       slug={SLUG}
       chapeau="Le marché des outils de facturation déborde, et pourtant les petites entreprises restent mal servies, coincées entre des outils grand public imprécis et des plateformes cabinet trop lourdes. Voici où Deviso se place, et ce qu&rsquo;il ne prétend pas être."
       enBref={[
-        "Marché <strong>encombré</strong> côté petites entreprises, dominé par des acteurs très financés côté cabinets.",
-        "Trous persistants : réforme floue, livre des recettes <strong>au facturé</strong>, outils qui ignorent le statut.",
+        "Marché <strong>encombré</strong> côté petites entreprises, avec des acteurs très financés côté cabinets.",
+        "Besoins mal couverts, selon nous : réforme floue, livre des recettes <strong>au facturé</strong>, outils qui ignorent le statut.",
         "Deviso fait <strong>une chose bien</strong> : l&rsquo;entreprise, du micro à la société, reliée à un canal expert-comptable léger.",
         "Recettes à l&rsquo;<strong>encaissement</strong> pour le micro, conformité réforme, exports standardisés, cockpit cabinet.",
         "Honnête sur le périmètre : <strong>pas</strong> une comptabilité complète, <strong>pas</strong> un remplaçant de l&rsquo;expert-comptable.",

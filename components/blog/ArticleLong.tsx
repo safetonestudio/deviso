@@ -71,7 +71,12 @@ export interface ArticleLongProps {
   faq: { q: string; a: string }[];
   sources?: Source[];
   /** L'appel à l'action de fin, s'il a du sens sur ce sujet. */
-  cta?: { titre: string; texte: string };
+  cta?: {
+    titre: string;
+    texte: string;
+    /** Remplace le bouton d'inscription (ex. espace cabinet pour les articles de la catégorie comptables). */
+    lien?: { label: string; href: string };
+  };
 }
 
 const TONS = {
@@ -325,11 +330,20 @@ export function ArticleLong({ slug, chapeau, enBref, sections, faq, sources, cta
               <section className="bg-linear-to-br/srgb from-indigo-900/40 to-violet-900/20 rounded-2xl border border-indigo-500/20 p-8 text-center">
                 <Riche as="h2" className="text-xl font-semibold text-ink mb-3" t={cta.titre} />
                 <Riche as="p" className="text-gray-400 mb-6 max-w-lg mx-auto" t={cta.texte} />
-                <WaitlistButton
-                  plan="free"
-                  label="Essayer gratuitement"
-                  className="bg-indigo-600 hover:bg-indigo-700 text-ink font-semibold px-8 py-3 rounded-xl transition-all shadow-lg shadow-indigo-900/50"
-                />
+                {cta.lien ? (
+                  <Link
+                    href={cta.lien.href}
+                    className="inline-block bg-indigo-600 hover:bg-indigo-700 text-ink font-semibold px-8 py-3 rounded-xl transition-all shadow-lg shadow-indigo-900/50"
+                  >
+                    {cta.lien.label}
+                  </Link>
+                ) : (
+                  <WaitlistButton
+                    plan="free"
+                    label="Essayer gratuitement"
+                    className="bg-indigo-600 hover:bg-indigo-700 text-ink font-semibold px-8 py-3 rounded-xl transition-all shadow-lg shadow-indigo-900/50"
+                  />
+                )}
               </section>
             )}
 

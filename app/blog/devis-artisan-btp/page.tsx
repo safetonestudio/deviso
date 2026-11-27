@@ -15,7 +15,7 @@ export default function Page() {
       mandatoryItems={[
         {
           title: "Vos coordonnées et numéro SIRET",
-          desc: "Raison sociale ou nom, adresse, numéro SIRET, et si applicable numéro de TVA intracommunautaire. Pour les micro-entrepreneurs en franchise, mentionnez 'TVA non applicable, art. 293 B du CGI'.",
+          desc: "Raison sociale ou nom, adresse, numéro SIRET, et si applicable numéro de TVA intracommunautaire. Pour les micro-entrepreneurs en franchise, mentionnez 'TVA non applicable, art. 293 B du CGI'. À partir du 1er janvier 2027, les règles de TVA citées ici quittent le Code général des impôts pour le livre II du Code des impositions sur les biens et services (CIBS) : les numéros d'articles changeront.",
         },
         {
           title: "Qualifications professionnelles",
