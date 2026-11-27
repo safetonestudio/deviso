@@ -68,6 +68,7 @@ const intracom = motifExoneration({
   client_country: "BE",
   client_company: "Studio Bruxelles SPRL",
   client_vat_number: "BE0123456789",
+  operation_category: "goods",
 });
 verifier(
   "une livraison intracommunautaire est categorie K",
@@ -75,7 +76,7 @@ verifier(
   JSON.stringify(intracom),
 );
 verifier(
-  "et sa mention est l'autoliquidation, pas la franchise",
+  "et sa mention est l'exoneration 262 ter I, pas la franchise",
   /262 ter/.test(intracom.mention) && !/293 B/.test(intracom.mention),
   intracom.mention,
 );
@@ -105,6 +106,7 @@ const exportUs = motifExoneration({
   tva_rate: 0,
   client_country: "US",
   client_company: "Acme Inc",
+  operation_category: "goods",
 });
 verifier(
   "une exportation hors UE est categorie G",
@@ -122,11 +124,73 @@ const exportSuisse = motifExoneration({
   tva_rate: 0,
   client_country: "CH",
   client_company: "Muster AG",
+  operation_category: "goods",
 });
 verifier(
   "la Suisse est hors Union : exportation, pas intracommunautaire",
   exportSuisse.categorie === "G",
   JSON.stringify(exportSuisse),
+);
+
+// ── Prestations de services (correction du 27/11/2026) ──────────────────────
+// 262 ter I et 262 I ne visent que les livraisons de biens : ils ne doivent
+// jamais s'imprimer sur une prestation de services.
+
+const serviceUe = motifExoneration({
+  ...assujetti,
+  tva_rate: 0,
+  client_country: "BE",
+  client_company: "Studio Bruxelles SPRL",
+  client_vat_number: "BE0123456789",
+  operation_category: "services",
+});
+verifier(
+  "une prestation a une entreprise de l'UE est autoliquidee (AE)",
+  serviceUe.categorie === "AE" && serviceUe.certaine && /Autoliquidation/.test(serviceUe.mention),
+  JSON.stringify(serviceUe),
+);
+verifier(
+  "et ne cite aucun article sur les livraisons de biens",
+  !/262|293 B/.test(serviceUe.mention),
+  serviceUe.mention,
+);
+
+const serviceUs = motifExoneration({
+  ...assujetti,
+  tva_rate: 0,
+  client_country: "US",
+  client_company: "Acme Inc",
+  operation_category: "services",
+});
+verifier(
+  "une prestation a une entreprise hors UE cite 259-1°, pas 262 I",
+  serviceUs.certaine && /259-1/.test(serviceUs.mention) && !/262/.test(serviceUs.mention),
+  JSON.stringify(serviceUs),
+);
+
+const serviceParticulierUs = motifExoneration({
+  ...assujetti,
+  tva_rate: 0,
+  client_country: "US",
+  operation_category: "services",
+});
+verifier(
+  "une prestation a un particulier hors UE n'est pas devinee",
+  serviceParticulierUs.certaine === false && serviceParticulierUs.mention === "TVA non applicable",
+  JSON.stringify(serviceParticulierUs),
+);
+
+const natureInconnue = motifExoneration({
+  ...assujetti,
+  tva_rate: 0,
+  client_country: "BE",
+  client_company: "Studio Bruxelles SPRL",
+  client_vat_number: "BE0123456789",
+});
+verifier(
+  "sans nature connue, aucune mention d'article et l'on demande la nature",
+  natureInconnue.certaine === false && !/262|259|293 B/.test(natureInconnue.mention) && /nature/.test(natureInconnue.manque ?? ""),
+  JSON.stringify(natureInconnue),
 );
 
 // ── Assujetti, operation francaise, taux a zero : on n'invente pas ──────────

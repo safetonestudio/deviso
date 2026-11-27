@@ -17,9 +17,22 @@ import { CODES_UE, estFrance } from "./territoires.ts";
  *   | Cause                          | Catégorie EN 16931 | Mention légale                        |
  *   |--------------------------------|--------------------|---------------------------------------|
  *   | Franchise en base              | E                  | art. 293 B du CGI                     |
- *   | Livraison intracommunautaire   | K                  | Autoliquidation, art. 262 ter I CGI  |
- *   | Exportation hors UE            | G                  | Exonération, art. 262 I du CGI       |
- *   | Autoliquidation (sous-traitance)| AE                | Autoliquidation, art. 283-2 CGI      |
+ *   | Livraison de biens dans l'UE   | K                  | Exonération, art. 262 ter I du CGI    |
+ *   | Prestation à une entreprise UE | AE                 | Autoliquidation (art. 196 directive)  |
+ *   | Exportation de biens hors UE   | G                  | Exonération, art. 262 I du CGI        |
+ *   | Prestation à une entreprise    | G                  | TVA non applicable, art. 259-1° CGI   |
+ *   | hors UE                        |                    |                                       |
+ *
+ * Correction du 27/11/2026 : les articles 262 ter I et 262 I ne visent que les
+ * LIVRAISONS DE BIENS. Ils s'imprimaient aussi sur des prestations de services
+ * (le cas le plus courant chez les utilisateurs), ce qui est une mention
+ * fausse. La nature de l'opération (`operation_category`, déduite des lignes)
+ * départage désormais ; inconnue ou mixte, on revient à la mention neutre.
+ *
+ * ATTENTION : au 1er janvier 2027, la TVA quitte le CGI pour le livre II du code des
+ * impositions sur les biens et services (BOFiP BOI-RES-TVA-000253) : les
+ * numéros d'articles cités ici (293 B, 262 ter I, 262 I, 259-1°) seront à
+ * remplacer par leurs équivalents du CIBS.
  *
  * Conséquence concrète : un développeur assujetti facturant 5 000 € à une
  * société belge et mettant le taux à 0 voyait s'imprimer sur son PDF « TVA non
@@ -70,6 +83,8 @@ export function motifExoneration(facture: {
   client_country?: string | null;
   client_vat_number?: string | null;
   seller_tva_number?: string | null;
+  /** Nature déduite des lignes (lib/nature-operation.ts). Absente : on ne devine pas. */
+  operation_category?: "goods" | "services" | "mixed" | null;
 }): MotifExoneration {
   // Une facture avec de la TVA n'a rien à justifier.
   if ((facture.tva_rate ?? 0) > 0) return { categorie: "S", mention: "", certaine: true };
@@ -77,6 +92,15 @@ export function motifExoneration(facture: {
   const pays = (facture.client_country ?? "").trim().toUpperCase();
   const vendeurAssujetti = Boolean(facture.seller_tva_number?.trim());
   const clientIntracom = Boolean(facture.client_vat_number?.trim());
+  const nature = facture.operation_category ?? null;
+  const natureInconnue = {
+    categorie: "E" as const,
+    mention: "TVA non applicable",
+    certaine: false,
+    manque:
+      "la nature de l'opération (livraison de biens ou prestation de services), " +
+      "qui décide de la mention d'exonération : précisez la nature de chaque ligne",
+  };
 
   // ── Vendeur en franchise en base ──────────────────────────────────────────
   //
@@ -95,11 +119,24 @@ export function motifExoneration(facture: {
   if (!estFrance(pays)) {
     if (CODES_UE.has(pays)) {
       if (clientIntracom) {
-        return {
-          categorie: "K",
-          mention: "Autoliquidation par le preneur, art. 262 ter I du CGI",
-          certaine: true,
-        };
+        if (nature === "goods") {
+          return {
+            categorie: "K",
+            mention: "Exonération de TVA, art. 262 ter I du CGI",
+            certaine: true,
+          };
+        }
+        if (nature === "services") {
+          // Lieu de la prestation chez le preneur assujetti (art. 259-1° du
+          // CGI) ; la TVA est due par lui, d'où la mention « Autoliquidation »
+          // exigée par l'art. 242 nonies A de l'annexe II.
+          return {
+            categorie: "AE",
+            mention: "Autoliquidation, art. 196 de la directive 2006/112/CE",
+            certaine: true,
+          };
+        }
+        return natureInconnue;
       }
       // Livraison dans l'UE sans numéro de TVA du client : l'exonération
       // intracommunautaire est précisément conditionnée à ce numéro. On ne
@@ -114,12 +151,36 @@ export function motifExoneration(facture: {
       };
     }
 
-    // Hors Union : exportation.
-    return {
-      categorie: "G",
-      mention: "Exonération de TVA, art. 262 I du CGI (exportation)",
-      certaine: true,
-    };
+    // Hors Union.
+    if (nature === "goods") {
+      return {
+        categorie: "G",
+        mention: "Exonération de TVA, art. 262 I du CGI (exportation)",
+        certaine: true,
+      };
+    }
+    if (nature === "services") {
+      // Prestation à une entreprise établie hors UE : lieu chez le preneur
+      // (art. 259-1° du CGI), hors du champ de la TVA française. Pour un
+      // particulier, la règle dépend de la prestation (art. 259 B) : on ne
+      // devine pas.
+      if (facture.client_company?.trim()) {
+        return {
+          categorie: "G",
+          mention: "TVA non applicable, art. 259-1° du CGI",
+          certaine: true,
+        };
+      }
+      return {
+        categorie: "E",
+        mention: "TVA non applicable",
+        certaine: false,
+        manque:
+          "le statut de votre client : pour une prestation à un particulier établi hors de " +
+          "l'Union, la TVA française peut être due selon la prestation (art. 259 B du CGI)",
+      };
+    }
+    return natureInconnue;
   }
 
   // ── Vendeur assujetti, opération française, taux à zéro ───────────────────
