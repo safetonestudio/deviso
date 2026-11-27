@@ -81,7 +81,16 @@ Classés du plus important au moins important. Rien de tout cela n'a été modif
 - Liste des plateformes : chiffres datés « au 20 novembre 2026 », avec la mention que la liste évolue.
 - Constat 48 du lot A (e-reporting et CA3) : corrigé sur la fiche DGFiP des données de paiement.
 - Point 5, corrigé le 27/11 dans `lib/exoneration.ts` : la nature de l'opération départage. Biens vers l'UE : K, « Exonération de TVA, art. 262 ter I du CGI ». Prestation à une entreprise de l'UE : AE, « Autoliquidation, art. 196 de la directive 2006/112/CE ». Biens hors UE : G, art. 262 I. Prestation à une entreprise hors UE : G, « TVA non applicable, art. 259-1° du CGI ». Particulier hors UE ou nature inconnue : mention neutre et demande de l'information manquante. Garde `test:exoneration` (27/27, les cas « prestations » échouaient avec l'ancienne règle) ; XML Factur-X généré et relu pour les trois cas. Non fait : passage d'une facture réelle par Super PDP avec la catégorie AE. **À refaire en janvier 2027** : les numéros d'articles imprimés sur les factures (293 B, 262 ter I, 262 I, 259-1°) passeront au CIBS.
-- **Reste ouvert** : point 16 (points mineurs des annexes).
+- Point 16, traité le 27/11 : les points mineurs des sept annexes, article par article (formulations absolues adoucies, chiffres et jugements sans source retirés, nuances juridiques, langue, h1 et dates lus dans le registre). Corrections de fond trouvées en chemin : la note d'honoraires annonçait un e-reporting pour les soins exonérés, alors qu'ils sont hors du dispositif (fiche DGFiP 1-f) ; TVA à 10 % des cessions de droits d'auteur ajoutée (BOFiP BOI-TVA-LIQ-30-20-100) ; cession de droits limitée à chaque droit cité (L131-3 CPI) ; deux liens morts remplacés (URSSAF versement libératoire, rapport 2025 de l'Observatoire des délais de paiement) ; libellé « logiciel de devis pour… » remplacé par « Deviso pour les… ».
+- Plus rien d'ouvert dans les annexes. Restent seulement les échéances datées ci-dessous.
+
+### Échéances à surveiller (les articles le disent déjà)
+
+- 1er janvier 2027 : TVA transférée au CIBS (19 articles et les mentions des factures, numéros d'articles à remplacer) ; fin du régime simplifié de TVA (CA12).
+- 1er septembre 2027 : émission et e-reporting pour les PME, TPE et micro-entreprises (les articles qui disent « au 27 novembre 2026, il reste… » seront à relire après cette date).
+- Tolérance de démarrage des sanctions : annoncée sans date de fin ; à mettre à jour si une date est publiée.
+- Liste des plateformes agréées : chiffres au 20 novembre 2026, la liste évolue.
+- Chaque 1er janvier et 1er juillet : taux des pénalités (BCE + 10 points) et taux d'intérêt légal ; chaque 1er janvier : seuils, taux de cotisations et plafond de revenu du versement libératoire.
 
 ## 4. Hors périmètre, signalé
 

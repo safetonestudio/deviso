@@ -259,10 +259,9 @@ export default function Page() {
                     Pourquoi ne pas se fier aux comparateurs sur ce point précis
                   </p>
                   <p className="text-gray-400">
-                    Une vingtaine de sites se sont créés autour de cette réforme, la plupart financés par
-                    l&apos;affiliation. Ils sont parfois utiles pour dégrossir, mais leurs chiffres se
-                    contredisent : le nombre de plateformes agréées y est annoncé entre 137 et 166 selon les
-                    pages, et certains attribuent à la même plateforme un statut définitif sur un site et « sous
+                    Des sites comparateurs se sont créés autour de cette réforme, certains financés par
+                    l&apos;affiliation. Ils sont parfois utiles pour dégrossir, mais leurs chiffres peuvent
+                    se contredire : le nombre de plateformes agréées varie d&apos;un site à l&apos;autre, et certains attribuent à la même plateforme un statut définitif sur un site et « sous
                     réserve » sur un autre. Ils ne peuvent pas tous avoir raison. Pour une question de
                     conformité, allez à la source, c&apos;est deux minutes.
                   </p>
@@ -317,8 +316,9 @@ export default function Page() {
               <p className="mb-4">
                 Appliquons-nous les trois questions. <strong className="text-ink">Deviso est une solution
                 compatible</strong>, adossée à <strong className="text-ink">Super PDP</strong>, qui est la
-                plateforme agréée. Nous ne transmettons rien directement à l&apos;administration : c&apos;est
-                Super PDP qui dépose vos factures et transmet les données.
+                plateforme agréée. Entre entreprises, c&apos;est Super PDP qui dépose vos factures et transmet les
+                données à l&apos;administration fiscale ; vers un client public, Deviso dépose la facture sur
+                Chorus Pro, le portail de l&apos;État prévu pour cela.
               </p>
               <p className="mb-4">
                 Nous l&apos;écrivons parce que c&apos;est la question qu&apos;on nous posera de toute façon, et

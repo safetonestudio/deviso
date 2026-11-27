@@ -34,7 +34,7 @@ const FAQ = [
   },
   {
     q: "Pourquoi je vois encore 250 € et 15 € un peu partout ?",
-    a: "Ce sont les montants d'avant la loi de finances pour 2026. L'e-reporting était à 250 €, l'émission à 15 €. La loi les a relevés, mais beaucoup de pages n'ont pas été mises à jour. Un site qui affiche encore ces chiffres est un site qui n'a pas suivi.",
+    a: "Ce sont les montants d'avant la loi de finances pour 2026. L'e-reporting était à 250 €, l'émission à 15 €. La loi les a relevés, mais certaines pages n'ont pas été mises à jour. Un site qui affiche encore ces chiffres n'a pas suivi la loi de finances pour 2026.",
   },
 ];
 
@@ -91,7 +91,7 @@ export default function Page() {
             <h1 className="text-3xl sm:text-4xl font-semibold text-ink leading-tight mb-4">{a.h1}</h1>
             <p className="text-lg text-gray-400 leading-relaxed">
               Vous voulez savoir ce que vous risquez vraiment, pas la version anxiogène ni la version périmée.
-              Les montants ont changé au 1<sup>er</sup> septembre 2026, et une grande partie du web affiche
+              Les montants ont changé au 1<sup>er</sup> septembre 2026, et certaines pages affichent
               encore les anciens. Voici les chiffres réels, la tolérance qui compte, et d&apos;où ils sortent.
             </p>
           </div>
@@ -180,8 +180,8 @@ export default function Page() {
                 500 € par manquement, et l&apos;émission de 15 à 50 € par facture.
               </p>
               <p>
-                C&apos;est la source de la confusion que vous croisez en ligne : une partie du web a été écrite
-                avant ce texte, et affiche encore les anciens chiffres. Sur un sujet où l&apos;exactitude est tout
+                C&apos;est la source de la confusion que vous croisez en ligne : certaines pages ont été écrites
+                avant ce texte, et affichent encore les anciens chiffres. Sur un sujet où l&apos;exactitude est tout
                 l&apos;intérêt, un montant périmé décrédibilise la page entière. Les valeurs de cet article sont
                 celles en vigueur, avec leur source en bas de page.
               </p>

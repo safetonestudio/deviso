@@ -64,7 +64,7 @@ const SECTIONS: Section[] = [
       ["Émettre des factures conformes et numérotées", "Produire un compte de résultat"],
       ["Tenir un registre des achats (si vente / hébergement)", "Déposer une liasse fiscale"],
       ["Conserver vos pièces 10 ans", "Collecter la TVA tant que vous êtes en franchise"],
-      ["Ouvrir un compte dédié au-delà de 10 000 € sur 2 ans", "Faire appel à un commissaire aux comptes"],
+      ["Ouvrir un compte dédié (au-delà de 10 000 € sur 2 ans, ou dès le début en activité commerciale)", "Faire appel à un commissaire aux comptes"],
     ],
   },
   {

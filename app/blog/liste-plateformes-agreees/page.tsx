@@ -88,7 +88,7 @@ const SECTIONS: Section[] = [
     titre: "Une liste qui bouge vite, et ce que ça implique",
     paragraphes: [
       `Les immatriculations vont du 11 décembre 2025 au 19 novembre 2026. Sur les ${IMMATRICULES} opérateurs, <strong>58 ont été immatriculés en 2025 et 101 en 2026</strong> : la liste a presque triplé en onze mois, et elle continue.`,
-      "La conséquence pratique est simple : <strong>tout article qui cite un nombre sans le dater est faux dès la semaine suivante</strong>, y compris celui-ci. C’est pourquoi la date de relevé est écrite en haut de cette page, et pourquoi la source est en bas. Si la date vous semble vieille, prenez trois minutes pour aller voir : le fichier fait 30 ko.",
+      "La conséquence pratique est simple : <strong>tout article qui cite un nombre sans le dater est faux dès la semaine suivante</strong>, y compris celui-ci. C’est pourquoi la date de relevé est écrite en haut de cette page, et pourquoi la source est en bas. Si la date vous semble vieille, prenez quelques minutes pour aller voir.",
     ],
   },
   {
@@ -205,7 +205,7 @@ export default function Page() {
       cta={{
         titre: "Deviso vous dit par où passent vos factures",
         texte:
-          "Devis, factures Factur-X et transmission via une plateforme agréée, sans que vous ayez à lire un fichier de la DGFiP. " + (BETA_OUVERTE ? APPEL.phrase : "Essai de 14 jours, sans carte bancaire."),
+          "Devis, factures Factur-X, achats, suivi du chiffre d’affaires et de la TVA, et transmission via une plateforme agréée, sans que vous ayez à lire un fichier de la DGFiP. " + (BETA_OUVERTE ? APPEL.phrase : "Essai de 14 jours, sans carte bancaire."),
       }}
     />
   );

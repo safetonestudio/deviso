@@ -2,6 +2,7 @@ import { PageSite } from "@/components/site/PageSite";
 import { DonneesStructurees } from "@/components/DonneesStructurees";
 import { Signature } from "@/components/blog/Signature";
 import { jsonLdArticle, metadonneesArticle } from "@/lib/blog/meta";
+import { article } from "@/lib/blog/registre";
 import Link from "next/link";
 import { WaitlistButton } from "@/components/landing/WaitlistButton";
 
@@ -17,7 +18,7 @@ export const metadata = metadonneesArticle(SLUG);
 const FAQ = [
   {
     q: "Comment calculer son TJM ?",
-    a: "La méthode la plus fiable : (1) Estimez votre revenu net mensuel cible, (2) Ajoutez vos charges (URSSAF, mutuelle, retraite, frais professionnels ; le taux de cotisations dépend de votre activité, voir les taux de l'URSSAF et le simulateur officiel mon-entreprise.urssaf.fr), (3) Divisez par votre nombre de jours facturables réels par mois (généralement 15-18 jours sur 20 jours ouvrés, en comptant les congés, la prospection, l'admin). Le résultat est votre TJM minimum. Ajoutez une marge selon votre positionnement et la demande.",
+    a: "La méthode la plus fiable : (1) Estimez votre revenu net mensuel cible, (2) Ajoutez vos charges (URSSAF, mutuelle, retraite, frais professionnels ; le taux de cotisations dépend de votre activité, voir les taux de l'URSSAF et le simulateur officiel mon-entreprise.urssaf.fr), (3) Divisez par votre nombre de jours facturables réels par mois (généralement 13 à 16 jours sur 20 jours ouvrés, en comptant les congés, la prospection, l'admin). Le résultat est votre TJM minimum. Ajoutez une marge selon votre positionnement et la demande.",
   },
   {
     q: "Faut-il afficher ses tarifs publiquement ?",
@@ -34,7 +35,11 @@ const metierLinks = [
   { label: "Traducteur freelance", href: "/freelance-traducteur" },
 ];
 
+const formaterDate = (iso: string) =>
+  new Date(iso).toLocaleDateString("fr-FR", { day: "numeric", month: "long", year: "numeric" });
+
 export default function Page() {
+  const art = article(SLUG);
   return (
     <PageSite actif="/blog">
       <DonneesStructurees donnees={jsonLdArticle(SLUG, FAQ)} />
@@ -60,11 +65,9 @@ export default function Page() {
           <div className="mb-10">
             <div className="flex items-center gap-3 mb-4">
               <span className="text-xs px-2.5 py-1 rounded-full bg-emerald-500/10 text-emerald-300 border border-emerald-500/20 font-medium">Tarification</span>
-              <span className="text-xs text-gray-400">29 juin 2026 · 7 min</span>
+              <span className="text-xs text-gray-400">Mis à jour le {formaterDate(art.misAJourLe)} · {art.dureeLecture} min</span>
             </div>
-            <h1 className="text-3xl sm:text-4xl font-semibold text-ink leading-tight mb-4">
-              Comment fixer ses tarifs en freelance : TJM, méthodes et erreurs à éviter
-            </h1>
+            <h1 className="text-3xl sm:text-4xl font-semibold text-ink leading-tight mb-4">{art.h1}</h1>
             <p className="text-lg text-gray-400 leading-relaxed">
               Pour un indépendant comme pour une société de services, sous-facturer, c&apos;est travailler pour rien. Sur-facturer sans le prouver, c&apos;est perdre des clients. La vérité : il existe une méthode rationnelle pour trouver le bon tarif, et elle n&apos;a rien à voir avec ce que pratique le voisin.
             </p>
@@ -86,10 +89,10 @@ export default function Page() {
                     <p>Revenu net mensuel souhaité : 3 000 €</p>
                     <p>+ Charges URSSAF + mutuelle + retraite (montant d&apos;exemple) : 2 455 €</p>
                     <p className="pt-1 mt-1">= CA mensuel nécessaire : 5 455 €</p>
-                    <p>÷ Jours facturables / mois (17 sur 20) : 17 jours</p>
-                    <p className="pt-1 mt-1 text-indigo-400 font-bold">= TJM minimum : 321 €/jour</p>
+                    <p>÷ Jours facturables / mois (15 sur 20) : 15 jours</p>
+                    <p className="pt-1 mt-1 text-indigo-400 font-bold">= TJM minimum : 364 €/jour</p>
                   </div>
-                  <p className="text-xs text-gray-400 mt-3">Ajoutez une marge de 20-30 % pour les périodes creuses, les formations, les imprévus. TJM recommandé ici : ~400 €/jour.</p>
+                  <p className="text-xs text-gray-400 mt-3">Ajoutez une marge de 20-30 % pour les périodes creuses, les formations, les imprévus. TJM recommandé ici : environ 450 €/jour.</p>
                 </div>
 
                 <div className="bg-ds-surface border border-ds-border rounded-xl p-6">

@@ -59,11 +59,11 @@ export default function Page() {
         },
         {
           title: "Oublier les conditions d'annulation",
-          desc: "Une entreprise qui annule une formation in-company 3 jours avant vous coûte une journée bloquée dans votre agenda, des supports imprimés et parfois un déplacement. Sans clause d'annulation dans le devis, vous n'avez aucun recours.",
+          desc: "Une entreprise qui annule une formation in-company 3 jours avant vous coûte une journée bloquée dans votre agenda, des supports imprimés et parfois un déplacement. Sans clause d'annulation dans le devis, il vous sera difficile d'obtenir une indemnisation.",
         },
         {
           title: "Confondre TVA applicable et exonération",
-          desc: "La formation professionnelle continue est exonérée de TVA à condition d'avoir votre numéro de déclaration d'activité et que la formation entre dans le champ de la formation professionnelle. Si ces conditions ne sont pas réunies, vous devez facturer la TVA au taux normal. Ne présumez pas de votre statut.",
+          desc: "La formation professionnelle continue est exonérée de TVA à condition d'avoir votre numéro de déclaration d'activité et que la formation entre dans le champ de la formation professionnelle. Si ces conditions ne sont pas réunies, la TVA au taux normal s'applique en principe, sauf franchise en base ou autre exonération. Ne présumez pas de votre statut.",
         },
         {
           title: "Ne pas anticiper la facture électronique (Chorus Pro et réforme)",
@@ -77,7 +77,7 @@ export default function Page() {
         },
         {
           q: "La TVA s'applique-t-elle sur une facture de formation professionnelle ?",
-          a: "Non, sous conditions. La formation professionnelle continue est exonérée de TVA si vous êtes déclaré comme organisme de formation (numéro de déclaration d'activité obtenu auprès de la DREETS) et si la prestation entre dans le champ de la formation professionnelle continue. Sans déclaration d'activité, vous devez appliquer la TVA au taux normal de 20 %.",
+          a: "Non, sous conditions. La formation professionnelle continue est exonérée de TVA si vous êtes déclaré comme organisme de formation (numéro de déclaration d'activité obtenu auprès de la DREETS) et si la prestation entre dans le champ de la formation professionnelle continue. Sans déclaration d'activité, l'exonération ne s'applique pas en principe : la TVA est alors due au taux normal de 20 %, sauf franchise en base de TVA ou autre exonération applicable à votre situation.",
         },
         {
           q: "Faut-il être certifié Qualiopi pour facturer des formations en 2026 ?",
@@ -85,7 +85,7 @@ export default function Page() {
         },
         {
           q: "Comment rédiger une convention de formation en plus du devis ?",
-          a: "La convention de formation est le contrat qui accompagne le devis pour les formations financées par OPCO. Elle reprend les éléments du devis et y ajoute : les coordonnées complètes des deux parties, le programme détaillé, les conditions d'accès et de suivi des stagiaires. Certains OPCO fournissent leurs propres modèles de convention. Deviso génère les devis, la convention peut être rédigée séparément ou intégrée au devis signé.",
+          a: "La convention de formation est le contrat qui accompagne le devis pour les formations financées par OPCO. Elle reprend les éléments du devis et y ajoute : les coordonnées complètes des deux parties, le programme détaillé, les conditions d'accès et de suivi des stagiaires. Certains OPCO fournissent leurs propres modèles de convention. Deviso vous aide à rédiger le devis, la convention peut être rédigée séparément ou intégrée au devis signé.",
         },
       ]}
     />

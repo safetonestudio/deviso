@@ -430,7 +430,7 @@ export default function Page() {
                   {
                     titre: "La mention légale manquante en franchise de TVA",
                     detail:
-                      "Si vous êtes en franchise en base, la mention « TVA non applicable, art. 293 B du CGI » doit figurer sur la facture. Et surtout : ne créez pas une ligne de TVA à 0 %, c'est l'erreur classique. Ce n'est pas la même chose qu'une exonération, et un contrôle automatique peut la rejeter.",
+                      "Si vous êtes en franchise en base, la mention « TVA non applicable, art. 293 B du CGI » doit figurer sur la facture. Et surtout : ne faites pas apparaître une TVA à 0 % comme si c'était un taux. La facture doit porter la mention d'exonération, et la donnée structurée la catégorie de TVA correspondante.",
                   },
                   {
                     titre: "L'arrondi qui ne tombe pas juste",

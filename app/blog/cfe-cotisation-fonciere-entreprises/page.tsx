@@ -86,7 +86,7 @@ const SECTIONS: Section[] = [
       {
         titre: "Payer au plus tard le 15 décembre",
         texte:
-          "Ou mettre en place le prélèvement mensuel pour les années suivantes, qui lisse la dépense.",
+          "Ou, pour une CFE de 3 000 € ou moins, opter pour le prélèvement mensuel, qui lisse la dépense : l&rsquo;option est possible jusqu&rsquo;au 30 juin pour l&rsquo;année en cours, jusqu&rsquo;au 30 novembre pour le prélèvement à l&rsquo;échéance (Service-Public, au 27 novembre 2026).",
       },
       {
         titre: "L&rsquo;intégrer à votre trésorerie",

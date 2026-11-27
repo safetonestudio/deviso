@@ -27,7 +27,7 @@ export default function Page() {
         },
         {
           title: "Droits de cession",
-          desc: "Mentionnez explicitement les droits cédés : support d'utilisation (web, print, publicité), durée de cession, zone géographique. Sans clause, vous conservez tous les droits par défaut, ce qui surprend souvent les clients.",
+          desc: "Mentionnez explicitement les droits cédés : support d'utilisation (web, print, publicité), durée de cession, zone géographique. Sans clause, vous conservez tous les droits par défaut, ce qui surprend souvent les clients. Chaque droit cédé doit être mentionné et son domaine délimité (art. L131-3 du Code de la propriété intellectuelle). Les cessions de droits d'auteur relèvent en principe du taux de TVA de 10 % (art. 279 g du CGI), la prestation de création restant à 20 % : à valider avec votre comptable.",
         },
         {
           title: "Prix HT, TVA et total TTC",
@@ -39,7 +39,7 @@ export default function Page() {
         },
         {
           title: "Durée de validité du devis",
-          desc: "30 jours est la norme. Sans cette mention, un client pourrait théoriquement accepter votre devis 6 mois plus tard au même tarif.",
+          desc: "30 jours est une durée courante. Sans durée de validité, vous restez engagé pendant un délai raisonnable : un client pourrait accepter votre devis longtemps après, au même tarif.",
         },
       ]}
       exampleClient="Startup fintech, Paris"

@@ -10,7 +10,7 @@ const SECTIONS: Section[] = [
     type: "texte",
     titre: "Deux logiques opposées",
     paragraphes: [
-      "Le régime <strong>micro</strong> applique un abattement forfaitaire sur vos recettes pour calculer votre bénéfice imposable : 71 %, 50 % ou 34 % selon l&rsquo;activité. Vous ne déduisez aucune charge réelle, mais en échange votre comptabilité se résume au livre des recettes.",
+      "Le régime <strong>micro</strong> applique un abattement forfaitaire sur vos recettes pour calculer votre bénéfice imposable : 71 %, 50 % ou 34 % selon l&rsquo;activité. Vous ne déduisez aucune charge réelle, mais en échange votre comptabilité se résume au livre des recettes (et au registre des achats pour une activité de vente).",
       "Le <strong>régime réel</strong> fait l&rsquo;inverse : vous déduisez vos charges pour de vrai (loyer, matériel, sous-traitance, véhicule), et vous êtes imposé sur le bénéfice qui reste. C&rsquo;est plus juste quand vos charges sont lourdes, mais cela suppose une véritable comptabilité.",
     ],
   },

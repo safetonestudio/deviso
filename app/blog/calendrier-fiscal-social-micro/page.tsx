@@ -26,7 +26,7 @@ const SECTIONS: Section[] = [
       ["Cotisation foncière (CFE)", "15 décembre", "Tous, sauf année de création et CA N-2 jusqu&rsquo;à 5 000 €"],
       ["Déclaration de TVA (CA12 ou CA3)", "Selon le régime", "Assujettis à la TVA"],
       ["Option / renonciation au versement libératoire", "Avant le 30 septembre", "Selon les choix"],
-      ["Changement de périodicité de déclaration", "Avant le 31 octobre", "Selon les choix"],
+      ["Changement de périodicité de déclaration", "Avant le 31 octobre (à confirmer dans votre espace URSSAF)", "Selon les choix"],
     ],
   },
   {
@@ -48,7 +48,7 @@ const SECTIONS: Section[] = [
       {
         titre: "Le 30 septembre pour vos options",
         texte:
-          "Opter pour le versement libératoire ou y renoncer se joue avant le 30 septembre pour l&rsquo;année suivante. Changer de périodicité de déclaration, avant le 31 octobre.",
+          "Opter pour le versement libératoire ou y renoncer se joue avant le 30 septembre pour l&rsquo;année suivante. Changer de périodicité de déclaration, avant le 31 octobre selon Service-Public (au 27 novembre 2026) : confirmez la date dans votre espace URSSAF.",
       },
       {
         titre: "La CFE de mi-décembre",
@@ -82,7 +82,7 @@ const FAQ = [
   },
   {
     q: "Jusqu'à quand changer d'option fiscale ou sociale ?",
-    a: "Avant le 30 septembre pour une application au 1er janvier suivant pour l'option ou la renonciation au versement libératoire. Pour changer de périodicité de déclaration, la demande est à faire avant le 31 octobre de l'année précédente.",
+    a: "Avant le 30 septembre pour une application au 1er janvier suivant pour l'option ou la renonciation au versement libératoire. Pour changer de périodicité de déclaration, la demande est à faire avant le 31 octobre de l'année précédente selon Service-Public (au 27 novembre 2026) : confirmez la date dans votre espace URSSAF.",
   },
   {
     q: "Dois-je déclarer même si je n'ai pas eu d'activité ?",
@@ -117,7 +117,7 @@ export default function Page() {
         "Déclaration de CA à l&rsquo;URSSAF <strong>chaque mois ou trimestre</strong>, due même à zéro.",
         "Déclaration de revenus au <strong>printemps</strong>, date selon le département.",
         "<strong>CFE au 15 décembre</strong>, sans avis papier, exonérée l&rsquo;année de création.",
-        "Versement libératoire à choisir avant le <strong>30 septembre</strong>, périodicité avant le <strong>31 octobre</strong>.",
+        "Versement libératoire à choisir avant le <strong>30 septembre</strong>, périodicité avant le <strong>31 octobre</strong> (à confirmer dans votre espace URSSAF).",
         "La CFE reste due chaque année après la création, <strong>même sans activité</strong>, sauf CA N-2 jusqu&rsquo;à 5 000 €.",
       ]}
       sections={SECTIONS}

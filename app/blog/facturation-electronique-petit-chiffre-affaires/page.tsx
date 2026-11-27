@@ -11,7 +11,7 @@ const SECTIONS: Section[] = [
     titre: "La question que personne ne pose à voix haute",
     paragraphes: [
       "Sur les forums de micro-entrepreneurs, la même inquiétude revient, formulée presque toujours de la même façon : <em>je fais 800 € de chiffre d&rsquo;affaires dans l&rsquo;année, on me parle d&rsquo;un abonnement à 15 ou 20 € par mois, est-ce que je ne devrais pas simplement arrêter ?</em>",
-      "C&rsquo;est une question légitime, et la réponse est non, mais pas parce qu&rsquo;il faudrait « faire un effort ». Parce que le calcul sur lequel repose l&rsquo;inquiétude est faux : une grande partie des très petites activités n&rsquo;a, en réalité, <strong>aucun abonnement à payer</strong>, et certaines ne sont même pas concernées par l&rsquo;obligation d&rsquo;émettre.",
+      "C&rsquo;est une question légitime, et la réponse est non, mais pas parce qu&rsquo;il faudrait « faire un effort ». Parce que le calcul sur lequel repose l&rsquo;inquiétude est faux : selon les offres, une très petite activité peut se mettre en règle <strong>sans abonnement mensuel</strong>, et certaines ne sont même pas concernées par l&rsquo;obligation d&rsquo;émettre.",
       "Le problème est que la réforme est presque toujours présentée en bloc. Découpée correctement, elle se réduit à deux ou trois questions simples. Le raisonnement vaut aussi pour une petite société dont l&rsquo;activité et le volume de factures restent faibles.",
     ],
   },
@@ -49,7 +49,7 @@ const SECTIONS: Section[] = [
         sousTitre: "le cas le plus fréquent",
         ton: "neutre",
         texte:
-          "Réception dès maintenant, émission électronique vers ces clients à partir de septembre 2027. Quelques factures par an : les offres gratuites ou à quelques euros suffisent largement. Le volume, pas le statut, détermine le coût.",
+          "Réception dès maintenant, émission électronique vers ces clients à partir de septembre 2027. Quelques factures par an : certaines offres gratuites ou à quelques euros peuvent suffire, à vérifier selon leurs conditions. Le volume, pas le statut, détermine le coût.",
       },
       {
         titre: "Activité dormante, zéro facture",
@@ -74,9 +74,9 @@ const SECTIONS: Section[] = [
     numerotee: true,
     items: [
       {
-        titre: "Réception seule : gratuit chez plusieurs acteurs",
+        titre: "Réception seule : gratuit chez certains acteurs",
         texte:
-          "Plusieurs plateformes ouvrent la réception sans frais, parce qu&rsquo;elle leur sert de point d&rsquo;entrée commercial. C&rsquo;est exactement ce dont a besoin une activité qui ne facture que des particuliers : une adresse où les factures de vos fournisseurs arrivent, et de quoi les lire.",
+          "Certaines plateformes proposent la réception sans frais, selon leurs conditions. C&rsquo;est exactement ce dont a besoin une activité qui ne facture que des particuliers : une adresse où les factures de vos fournisseurs arrivent, et de quoi les lire.",
       },
       {
         titre: "Très petits volumes : gratuit ou quelques euros",
@@ -86,7 +86,7 @@ const SECTIONS: Section[] = [
       {
         titre: "Abonnement complet : pour qui en a l&rsquo;usage",
         texte:
-          "Les 15 à 30 € par mois correspondent à un outil de gestion complet, devis, relances, suivi des encaissements, pilotage des seuils. C&rsquo;est cher pour 800 € de CA annuel, et ça n&rsquo;a rien d&rsquo;obligatoire. Ne payez pour un outil de gestion que si vous voulez un outil de gestion.",
+          "Un abonnement de 15 à 30 € par mois correspond à un outil de gestion complet (devis, relances, suivi des encaissements, pilotage des seuils) et n&rsquo;a rien d&rsquo;obligatoire : la loi impose de pouvoir recevoir, puis d&rsquo;émettre au bon format, pas de souscrire un abonnement précis. Ne prenez un outil de gestion que si vous avez besoin d&rsquo;un outil de gestion.",
       },
     ],
   },
@@ -149,7 +149,7 @@ const SECTIONS: Section[] = [
     ton: "succes",
     titre: "Ce qu&rsquo;il faut retenir si vous hésitez à continuer votre activité",
     texte:
-      "Une très petite activité n&rsquo;a pas à payer un abonnement mensuel pour être en règle. Elle a besoin d&rsquo;un <strong>canal de réception</strong>, souvent gratuit, et, seulement si elle facture des professionnels français, d&rsquo;un moyen d&rsquo;émettre au format requis d&rsquo;ici septembre 2027, pour un coût proportionné à son volume. Arrêter une activité rentable à cause d&rsquo;un abonnement qu&rsquo;on n&rsquo;est pas obligé de prendre serait la seule vraie mauvaise décision.",
+      "Une très petite activité n&rsquo;a pas à payer un abonnement mensuel pour être en règle. Elle a besoin d&rsquo;un <strong>canal de réception</strong>, parfois gratuit, et, seulement si elle facture des professionnels français, d&rsquo;un moyen d&rsquo;émettre au format requis d&rsquo;ici septembre 2027, pour un coût proportionné à son volume. Arrêter une activité rentable à cause d&rsquo;un abonnement qu&rsquo;on n&rsquo;est pas obligé de prendre serait la seule vraie mauvaise décision.",
   },
 ];
 
@@ -164,7 +164,7 @@ const FAQ = [
   },
   {
     q: "Puis-je être en règle sans payer d'abonnement mensuel ?",
-    a: "Dans beaucoup de cas, oui. Plusieurs plateformes agréées proposent la réception gratuitement, et des offres à l'unité ou avec un quota gratuit existent pour de très petits volumes d'émission. L'abonnement à 15 ou 30 € par mois correspond à un outil de gestion complet, pas au minimum légal.",
+    a: "Parfois. Certaines plateformes agréées proposent la réception gratuitement, et des offres à l'unité ou avec un quota gratuit existent chez certains éditeurs pour de très petits volumes d'émission. Un abonnement de 15 à 30 € par mois correspond à un outil de gestion complet, pas au minimum légal.",
   },
   {
     q: "Suis-je concerné si je n'ai émis aucune facture cette année ?",
@@ -180,7 +180,7 @@ const FAQ = [
   },
   {
     q: "Faut-il arrêter une toute petite activité à cause de la réforme ?",
-    a: "Le coût réel de la mise en conformité d'une très petite activité est souvent nul pour la réception et faible pour l'émission, à condition de comparer les offres sur le volume réel et non sur l'abonnement. Une seule sanction coûte généralement plus cher qu'une année d'outil adapté.",
+    a: "Le coût réel de la mise en conformité d'une très petite activité peut être faible, voire nul pour la réception chez certains éditeurs, à condition de comparer les offres sur le volume réel et non sur l'abonnement. Un seul manquement d'e-reporting (500 €) coûte plus cher qu'une année d'un outil adapté.",
   },
 ];
 
@@ -206,21 +206,21 @@ export default function Page() {
   return (
     <ArticleLong
       slug={SLUG}
-      chapeau="« Je fais 800 € par an, on me parle de 20 € par mois, est-ce que je ne devrais pas arrêter ? » La question revient sans cesse, et elle repose sur un calcul faux. Beaucoup de très petites activités n&rsquo;ont aucun abonnement à payer, et certaines ne sont pas concernées par l&rsquo;émission."
+      chapeau="« Je fais 800 € par an, on me parle de 20 € par mois, est-ce que je ne devrais pas arrêter ? » La question est légitime, mais elle repose sur un calcul faux. Certaines très petites activités n&rsquo;ont pas besoin d&rsquo;abonnement, et certaines ne sont pas concernées par l&rsquo;émission."
       enBref={[
         "<strong>Recevoir</strong> : obligatoire pour tous depuis le 1<sup>er</sup> septembre 2026. <strong>Émettre</strong> : septembre 2027 pour les TPE et micro-entreprises.",
         "Si vous ne facturez <strong>que des particuliers</strong>, vous n&rsquo;aurez jamais de facture électronique à émettre, seulement de l&rsquo;e-reporting.",
         "Le portail public de l&rsquo;État <strong>ne fournit pas</strong> de service gratuit d&rsquo;émission et de réception : ce rôle a été abandonné en 2024.",
-        "La <strong>réception est gratuite</strong> chez plusieurs plateformes agréées, et de petits volumes d&rsquo;émission se facturent à l&rsquo;unité.",
-        "Un seul manquement (50 € par facture, 500 € pour une absence de plateforme de réception après mise en demeure) coûte plus cher qu&rsquo;une année d&rsquo;outil adapté.",
+        "La <strong>réception est gratuite</strong> chez certaines plateformes agréées, et certaines offres facturent de petits volumes d&rsquo;émission à l&rsquo;unité.",
+        "Un seul manquement d&rsquo;e-reporting (500 €) coûte plus cher qu&rsquo;une année d&rsquo;un outil adapté.",
       ]}
       sections={SECTIONS}
       faq={FAQ}
       sources={SOURCES}
       cta={{
-        titre: "Un tarif qui suit votre volume, pas l&rsquo;inverse",
+        titre: "Un outil de gestion complet, conformité comprise",
         texte:
-          "Deviso est pensé pour les activités qui émettent quelques factures par mois : la conformité d&rsquo;abord, sans payer pour un outil de gestion dont vous n&rsquo;avez pas l&rsquo;usage.",
+          "Deviso réunit devis, factures, achats et factures fournisseurs, relances, suivi du chiffre d&rsquo;affaires et de la TVA, avec la plateforme agréée Super PDP comprise dans l&rsquo;abonnement. Si vous n&rsquo;avez besoin que de recevoir vos factures, une offre de réception seule peut suffire.",
       }}
     />
   );

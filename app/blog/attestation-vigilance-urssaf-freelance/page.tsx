@@ -156,6 +156,11 @@ const FAQ = [
 
 const SOURCES: Source[] = [
   {
+    libelle: "Service-Public Entreprendre, obtenir une attestation de vigilance",
+    url: "https://entreprendre.service-public.gouv.fr/vosdroits/F31422",
+    precision: "seuil de 5 000 € HT et vérification renouvelée tous les six mois",
+  },
+  {
     libelle: "URSSAF, Obtenir et vérifier une attestation de vigilance",
     url: "https://www.urssaf.fr/accueil/attestation-vigilance.html",
     precision: "délivrance, vérification par le donneur d'ordre, durée de validité",

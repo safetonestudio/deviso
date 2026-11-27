@@ -26,7 +26,7 @@ const FAQ = [
   },
   {
     q: "Puis-je au moins recevoir mes factures gratuitement ?",
-    a: "Souvent oui. La réception coûte peu à opérer, et beaucoup d'éditeurs la proposent sans frais. C'est déjà ce qui est obligatoire pour tout le monde depuis le 1er septembre 2026, avant même l'obligation d'émettre.",
+    a: "Chez certains éditeurs, oui : la réception est proposée sans frais, à vérifier offre par offre. C'est déjà ce qui est obligatoire pour tout le monde depuis le 1er septembre 2026, avant même l'obligation d'émettre.",
   },
   {
     q: "Existe-t-il une offre d'émission gratuite ?",
@@ -104,7 +104,7 @@ export default function Page() {
                   <span>
                     Résultat : tout le monde passe par un <strong className="text-ink">opérateur privé
                     agréé</strong>. Il n&apos;y a pas d&apos;option publique gratuite, mais il y a des options
-                    peu coûteuses, et la réception est souvent gratuite.
+                    peu coûteuses, et certains éditeurs proposent la réception sans frais.
                   </span>
                 </li>
               </ul>
@@ -170,9 +170,9 @@ export default function Page() {
               <div className="flex gap-3 bg-ds-surface border border-ds-border rounded-xl p-5">
                 <CircleCheck size={18} className="shrink-0 mt-0.5 text-emerald-400" />
                 <p className="text-gray-300">
-                  La bonne nouvelle : « passer par un opérateur privé » ne veut pas dire « payer cher ». La
-                  réception est très souvent gratuite, et pour une petite activité, l&apos;émission peut
-                  l&apos;être aussi. Le mot « obligatoire » a été beaucoup utilisé pour vendre de la peur ; la
+                  La bonne nouvelle : « passer par un opérateur privé » ne veut pas dire « payer cher ». Certains
+                  éditeurs proposent la réception sans frais, et pour une petite activité, l&apos;émission peut
+                  l&apos;être aussi chez certains d&apos;entre eux. Le mot « obligatoire » a été beaucoup utilisé pour vendre de la peur ; la
                   réalité des coûts est plus douce.
                 </p>
               </div>
@@ -191,8 +191,8 @@ export default function Page() {
                 <li className="flex gap-2">
                   <span className="text-emerald-400 shrink-0 mt-0.5">•</span>
                   <span>
-                    <strong className="text-ink">La réception est souvent gratuite.</strong> Elle coûte peu à
-                    opérer, et de nombreux éditeurs la proposent sans frais. C&apos;est déjà ce qui vous est
+                    <strong className="text-ink">La réception est parfois gratuite.</strong> Certains
+                    éditeurs la proposent sans frais, selon leurs conditions. C&apos;est déjà ce qui vous est
                     demandé depuis le 1<sup>er</sup> septembre 2026, avant même l&apos;obligation d&apos;émettre.
                   </span>
                 </li>
@@ -266,7 +266,7 @@ export default function Page() {
                     Méfiez-vous des pages qui vendent la peur
                   </p>
                   <p className="text-gray-400">
-                    Une partie du web qui traite ce sujet est financée par l&apos;affiliation : ces pages ont
+                    Certains sites qui traitent ce sujet sont financés par l&apos;affiliation : ils ont
                     intérêt à vous faire croire que la seule issue est un abonnement payant. La réforme est une
                     obligation réelle, mais elle n&apos;impose ni un tarif, ni un éditeur en particulier. Comparez
                     calmement, et allez vérifier l&apos;agrément à la source.

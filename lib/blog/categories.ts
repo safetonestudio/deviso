@@ -128,7 +128,7 @@ export const CATEGORIES = [
     titre: "Pour les experts-comptables",
     badge: "Experts-comptables",
     resume:
-      "Équiper ses clients indépendants et TPE pour la réforme, et suivre tout un portefeuille sans se connecter chez chacun.",
+      "Mandat et lettre de mission, trajectoire de conformité, échéance de 2027 : accompagner ses clients dans la réforme et suivre tout un portefeuille.",
     accent: "sky",
   },
 ] as const satisfies readonly FormeCategorie[];

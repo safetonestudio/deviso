@@ -31,7 +31,7 @@ export default function Page() {
         },
         {
           title: "Cession de droits",
-          desc: "En France, vous êtes auteur du contenu que vous rédigez. Sans clause de cession, votre client ne peut légalement pas publier votre texte en son nom. Indiquez explicitement la cession totale des droits d'exploitation après paiement.",
+          desc: "En France, vous êtes auteur du contenu que vous rédigez. Sans clause de cession, votre client ne peut légalement pas publier votre texte en son nom. Mentionnez chaque droit cédé (reproduction, représentation, adaptation), avec son étendue, sa destination, son lieu et sa durée (art. L131-3 du Code de la propriété intellectuelle), et prévoyez que la cession prend effet après paiement. Votre droit moral (nom, intégrité de l'œuvre) reste inaliénable.",
         },
         {
           title: "Délai de livraison",
@@ -51,7 +51,7 @@ export default function Page() {
         { desc: "Optimisation SEO on-page (balises, méta, maillage interne)", qty: "1 forfait", price: "200 €" },
       ]}
       exampleTotal="2 150 € HT"
-      exampleNote="2 cycles de révisions inclus par livrable. Brief client requis avant démarrage. Livraison sous 15 jours ouvrés après réception du brief. Cession totale des droits d'exploitation après paiement."
+      exampleNote="2 cycles de révisions inclus par livrable. Brief client requis avant démarrage. Livraison sous 15 jours ouvrés après réception du brief. Cession après paiement des droits de reproduction et de représentation du texte (web, print), France, 5 ans."
       mistakes={[
         {
           title: "Pas de limite sur les révisions",
@@ -81,7 +81,7 @@ export default function Page() {
         },
         {
           q: "Peut-on publier un article sous son propre nom même si on l'a écrit pour un client ?",
-          a: "Non, si vous avez cédé les droits dans votre devis. Le ghostwriting implique une cession totale des droits d'exploitation au client. Si vous souhaitez conserver un droit de portfolio (mentionner que vous êtes l'auteur dans votre book), précisez-le explicitement dans les conditions du devis.",
+          a: "Non, si vous avez cédé les droits dans votre devis. Le ghostwriting repose sur une cession large des droits d'exploitation au client, que le contrat doit délimiter droit par droit. Le droit moral du rédacteur (nom, intégrité de l'œuvre) est inaliénable : l'engagement de ne pas être cité doit être prévu expressément. Si vous souhaitez conserver un droit de portfolio (mentionner que vous êtes l'auteur dans votre book), précisez-le explicitement dans les conditions du devis.",
         },
         {
           q: "Faut-il demander un acompte pour une mission de rédaction ?",

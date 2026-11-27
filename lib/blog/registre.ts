@@ -256,7 +256,7 @@ export const ARTICLES: Article[] = [
         "Une solution compatible doit s'adosser à une plateforme agréée. La question à poser à votre éditeur n'est pas « êtes-vous conforme ? » mais « êtes-vous agréé, ou adossé à qui ? »",
     },
     publieLe: "2026-09-11",
-    misAJourLe: "2026-09-11",
+    misAJourLe: "2026-11-27",
     dureeLecture: 7,
     carte: {
       titre: "Plateforme agréée ou solution compatible ?",
@@ -762,7 +762,7 @@ export const ARTICLES: Article[] = [
     carte: { titre: "Graphiste freelance", resume: "Droits de cession, révisions, formats livrés" },
     metier: {
       landing: "/freelance-graphiste",
-      landingLabel: "logiciel de devis pour graphistes",
+      landingLabel: "Deviso pour les graphistes",
       profession: "graphiste freelance",
       professionPluriel: "graphistes freelances",
     },
@@ -786,7 +786,7 @@ export const ARTICLES: Article[] = [
     carte: { titre: "Développeur web", resume: "TJM vs forfait, scope creep, propriété du code" },
     metier: {
       landing: "/freelance-developpeur",
-      landingLabel: "logiciel de devis pour développeurs",
+      landingLabel: "Deviso pour les développeurs",
       profession: "développeur web freelance",
       professionPluriel: "développeurs web freelances",
     },
@@ -810,7 +810,7 @@ export const ARTICLES: Article[] = [
     carte: { titre: "Consultant indépendant", resume: "Propale efficace, régie vs forfait, grands comptes" },
     metier: {
       landing: "/freelance-consultant",
-      landingLabel: "logiciel de devis pour consultants",
+      landingLabel: "Deviso pour les consultants",
       profession: "consultant indépendant",
       professionPluriel: "consultants indépendants",
     },
@@ -834,7 +834,7 @@ export const ARTICLES: Article[] = [
     carte: { titre: "Photographe freelance", resume: "Droits d'auteur, acompte, conditions d'annulation" },
     metier: {
       landing: "/freelance-photographe",
-      landingLabel: "logiciel de devis pour photographes",
+      landingLabel: "Deviso pour les photographes",
       profession: "photographe freelance",
       professionPluriel: "photographes freelances",
     },
@@ -858,7 +858,7 @@ export const ARTICLES: Article[] = [
     carte: { titre: "Rédacteur & copywriter", resume: "Tarif au mot, révisions limitées, cession de droits" },
     metier: {
       landing: "/freelance-redacteur",
-      landingLabel: "logiciel de devis pour rédacteurs",
+      landingLabel: "Deviso pour les rédacteurs",
       profession: "rédacteur web freelance",
       professionPluriel: "rédacteurs web freelances",
     },
@@ -882,7 +882,7 @@ export const ARTICLES: Article[] = [
     carte: { titre: "Formateur indépendant", resume: "Mentions OPCO, exonération TVA, Qualiopi" },
     metier: {
       landing: "/freelance-formateur",
-      landingLabel: "logiciel de devis pour formateurs",
+      landingLabel: "Deviso pour les formateurs",
       profession: "formateur indépendant",
       professionPluriel: "formateurs indépendants",
     },
@@ -906,7 +906,7 @@ export const ARTICLES: Article[] = [
     carte: { titre: "Artisan BTP", resume: "TVA réduite, garantie décennale, acompte" },
     metier: {
       landing: "/freelance-artisan",
-      landingLabel: "logiciel de devis pour artisans",
+      landingLabel: "Deviso pour les artisans",
       profession: "artisan BTP",
       professionPluriel: "artisans BTP",
     },
@@ -930,7 +930,7 @@ export const ARTICLES: Article[] = [
     carte: { titre: "Community manager", resume: "Périmètre, forfait mensuel, résiliation" },
     metier: {
       landing: "/freelance-community-manager",
-      landingLabel: "logiciel de devis pour community managers",
+      landingLabel: "Deviso pour les community managers",
       profession: "community manager freelance",
       professionPluriel: "community managers freelances",
     },
@@ -954,7 +954,7 @@ export const ARTICLES: Article[] = [
     carte: { titre: "Coach freelance", resume: "TVA, conditions d'abandon de programme" },
     metier: {
       landing: "/freelance-coach",
-      landingLabel: "logiciel de devis pour coachs freelances",
+      landingLabel: "Deviso pour les coachs freelances",
       profession: "coach freelance",
       professionPluriel: "coachs freelances",
     },
@@ -978,7 +978,7 @@ export const ARTICLES: Article[] = [
     carte: { titre: "Traducteur freelance", resume: "Tarif au mot, droits sur la traduction, urgences" },
     metier: {
       landing: "/freelance-traducteur",
-      landingLabel: "logiciel de devis pour traducteurs freelances",
+      landingLabel: "Deviso pour les traducteurs freelances",
       profession: "traducteur freelance",
       professionPluriel: "traducteurs freelances",
     },
@@ -1024,7 +1024,7 @@ export const ARTICLES: Article[] = [
         "Aucune obligation en micro, mais TVA, régime réel, embauche ou contrôle changent la donne. Ce que vous pouvez garder pour vous.",
     },
     publieLe: "2026-11-02",
-    misAJourLe: "2026-11-02",
+    misAJourLe: "2026-11-27",
     dureeLecture: 7,
     carte: {
       titre: "Micro-entrepreneur : quand prendre un expert-comptable",
@@ -1049,7 +1049,7 @@ export const ARTICLES: Article[] = [
         "Ressaisie, relances, non-conformité : ce que le dossier micro mal tenu coûte au cabinet, et pourquoi la réforme rend l'équipement incontournable.",
     },
     publieLe: "2026-11-02",
-    misAJourLe: "2026-11-23",
+    misAJourLe: "2026-11-27",
     dureeLecture: 8,
     carte: {
       titre: "Experts-comptables : équiper ses clients micro",

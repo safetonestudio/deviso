@@ -63,7 +63,7 @@ export default function Page() {
         },
         {
           title: "Pas de conditions d'annulation ou de suspension",
-          desc: "Un client peut annuler une mission après que vous avez réservé 3 semaines dans votre agenda. Sans clause, vous n'avez aucun recours. Prévoyez : 'En cas d'annulation après démarrage, les jours réalisés sont dus, plus X% des jours restants planifiés'.",
+          desc: "Un client peut annuler une mission après que vous avez réservé 3 semaines dans votre agenda. Sans clause, il vous sera difficile d'obtenir une indemnisation. Prévoyez : 'En cas d'annulation après démarrage, les jours réalisés sont dus, plus X% des jours restants planifiés'.",
         },
         {
           title: "Ne pas anticiper la facturation grands comptes",
@@ -73,7 +73,7 @@ export default function Page() {
       faq={[
         {
           q: "Faut-il un bon de commande en plus du devis de consultant ?",
-          a: "Pas obligatoirement : le devis signé vaut contrat. Mais de nombreux grands comptes exigent leur propre bon de commande interne avant de déclencher un paiement. Acceptez-le, mais vérifiez qu'il reprend bien le montant, les conditions et le périmètre de votre devis. En cas de divergence, c'est votre devis signé qui prime juridiquement.",
+          a: "Pas obligatoirement : le devis signé vaut contrat. Mais de nombreux grands comptes exigent leur propre bon de commande interne avant de déclencher un paiement. Acceptez-le, mais vérifiez qu'il reprend bien le montant, les conditions et le périmètre de votre devis. Vérifiez que le bon de commande ne contredit pas votre devis : en cas d'écart, les conditions du document accepté en dernier peuvent prévaloir, d'où l'intérêt de les faire corriger avant de signer.",
         },
         {
           q: "Comment facturer une mission de conseil : à la régie ou au forfait ?",
@@ -85,7 +85,7 @@ export default function Page() {
         },
         {
           q: "Quelle est la durée de validité standard d'une propale de consultant ?",
-          a: "30 jours est la pratique courante. Sans mention de validité, un client pourrait théoriquement accepter votre devis 3 mois plus tard au même prix alors que votre agenda ou vos tarifs ont changé. Indiquez systématiquement : 'Devis valable 30 jours à compter de la date d'émission'.",
+          a: "30 jours est la pratique courante. Sans durée de validité, vous restez engagé pendant un délai raisonnable : un client pourrait accepter votre devis longtemps après, au même prix, alors que votre agenda ou vos tarifs ont changé. Indiquez systématiquement : 'Devis valable 30 jours à compter de la date d'émission'.",
         },
       ]}
     />

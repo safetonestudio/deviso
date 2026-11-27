@@ -31,7 +31,7 @@ const SECTIONS: Section[] = [
         ton: "neutre",
         sousTitre: "Tout le socle documentaire",
         texte:
-          "Mentions obligatoires, numérotation unique et continue, date d&rsquo;émission, identité et SIREN, désignation de la prestation, conditions de règlement, conservation pendant dix ans. Et depuis la réforme, les mêmes obligations de facturation électronique face à un client professionnel.",
+          "Mentions obligatoires, numérotation unique et continue, date d&rsquo;émission, identité et SIREN, désignation de la prestation, conditions de règlement, conservation pendant au moins six ans (délai fiscal). Et depuis la réforme, les mêmes obligations de facturation électronique face à un client professionnel.",
       },
       {
         titre: "Différent",
@@ -101,8 +101,8 @@ const SECTIONS: Section[] = [
     titre: "Et face à la facturation électronique ?",
     paragraphes: [
       "La réforme ne distingue pas les notes d&rsquo;honoraires des factures. Ce qui compte est la <strong>nature du client</strong>, pas l&rsquo;intitulé du document.",
-      "Vos patients particuliers relèvent du B2C : il n&rsquo;y a pas de facture électronique à leur transmettre, mais une obligation d&rsquo;<strong>e-reporting</strong>, la transmission des données de transaction à l&rsquo;administration, qui arrivera pour les micro-entreprises au 1<sup>er</sup> septembre 2027.",
-      "En revanche, si vous facturez une entreprise, une mutuelle, un centre de formation, une collectivité, autrement dit un professionnel, vous êtes dans le B2B, avec les obligations correspondantes. Et l&rsquo;obligation de <strong>pouvoir recevoir</strong> une facture électronique via une plateforme agréée, elle, s&rsquo;applique déjà depuis le 1<sup>er</sup> septembre 2026, à toute entreprise assujettie à la TVA, sans exception de taille ni de régime.",
+      "Les <strong>soins exonérés de TVA</strong> (article 261-4-1° du CGI), dispensés de facturation, sont hors du dispositif : ni facture électronique, ni <strong>e-reporting</strong> pour ces actes, quel que soit le patient (fiche DGFiP « Facturation électronique », 1-f).",
+      "Pour vos autres prestations, celles qui ne relèvent pas de cette exonération, la règle commune s&rsquo;applique. Un client particulier relève du B2C : pas de facture électronique à lui transmettre, mais l&rsquo;e-reporting des données de transaction, au 1<sup>er</sup> septembre 2027 pour les PME et les micro-entreprises. Si vous facturez une entreprise ou un centre de formation, autrement dit un professionnel, vous êtes dans le B2B, avec les obligations correspondantes. Une collectivité ou un établissement public, c&rsquo;est le B2G : la facture passe par Chorus Pro. Et l&rsquo;obligation de <strong>pouvoir recevoir</strong> les factures électroniques de vos fournisseurs via une plateforme agréée s&rsquo;applique déjà depuis le 1<sup>er</sup> septembre 2026, y compris si toute votre activité est exonérée.",
     ],
   },
   {
@@ -122,7 +122,7 @@ const SECTIONS: Section[] = [
       {
         titre: "Créer une ligne de TVA à 0 %",
         texte:
-          "Une exonération et une franchise en base ne sont pas « une TVA à zéro ». Ce sont des mentions, pas des taux. Une ligne à 0 % est une erreur visible, et un contrôle automatique de facturation électronique peut la rejeter.",
+          "Une exonération et une franchise en base ne sont pas « une TVA à zéro ». Ce sont des mentions, pas des taux. Le motif de l&rsquo;exonération ou de la franchise doit figurer sur la facture : un simple « 0 % » ne le remplace pas.",
       },
     ],
   },
@@ -131,7 +131,7 @@ const SECTIONS: Section[] = [
 const FAQ = [
   {
     q: "Une note d'honoraires a-t-elle la même valeur qu'une facture ?",
-    a: "Oui. Ce n'est pas une catégorie juridique distincte : c'est un usage de vocabulaire propre aux professions libérales. Dès que vous facturez un professionnel, les obligations de facturation s'appliquent à l'identique, quel que soit l'intitulé du document. Mentions obligatoires, numérotation continue, conservation pendant dix ans : tout est le même.",
+    a: "Oui. Ce n'est pas une catégorie juridique distincte : c'est un usage de vocabulaire propre aux professions libérales. Dès que vous facturez un professionnel, les obligations de facturation s'appliquent à l'identique, quel que soit l'intitulé du document. Mentions obligatoires, numérotation continue, conservation pendant au moins six ans (délai fiscal) : tout est le même.",
   },
   {
     q: "Quelle mention de TVA porter sur une note d'honoraires ?",
@@ -151,11 +151,16 @@ const FAQ = [
   },
   {
     q: "Les notes d'honoraires sont-elles concernées par la facturation électronique ?",
-    a: "Ce qui détermine l'obligation est la nature du client, pas l'intitulé du document. Des patients particuliers relèvent du B2C : pas de facture électronique à leur transmettre, mais un e-reporting des données de transaction, qui arrive au 1er septembre 2027 pour les micro-entreprises. Une entreprise, une mutuelle ou une collectivité relèvent du B2B. Et l'obligation de pouvoir recevoir une facture électronique via une plateforme agréée s'applique, elle, depuis le 1er septembre 2026 à toute entreprise assujettie à la TVA.",
+    a: "Ce qui détermine l'obligation est la nature du client, pas l'intitulé du document. Les soins exonérés de TVA (article 261-4-1° du CGI), dispensés de facturation, sont hors du dispositif : ni facture électronique ni e-reporting pour ces actes. Pour les autres prestations, un client particulier relève du B2C (e-reporting au 1er septembre 2027 pour les PME et les micro-entreprises) et une entreprise du B2B ; une collectivité ou un établissement public, c'est le B2G : la facture passe par Chorus Pro. Et l'obligation de pouvoir recevoir une facture électronique via une plateforme agréée s'applique, elle, depuis le 1er septembre 2026, même à une activité entièrement exonérée.",
   },
 ];
 
 const SOURCES: Source[] = [
+  {
+    libelle: "DGFiP, fiche « Facturation électronique » 1-f",
+    url: "https://www.impots.gouv.fr/sites/default/files/media/1_metier/2_professionnel/EV/2_gestion/290_facturation_electronique/fiches_reforme/fiche-1_f.pdf",
+    precision: "opérations exonérées et dispensées de facturation (art. 261 à 261 E) hors e-invoicing et e-reporting, réception obligatoire",
+  },
   {
     libelle: "Article 261-4-1° du Code général des impôts",
     url: "https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000051764761",

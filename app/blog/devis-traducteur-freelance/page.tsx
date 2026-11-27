@@ -39,7 +39,7 @@ export default function Page() {
         },
         {
           title: "Cession des droits sur la traduction",
-          desc: "En France, la traduction est une œuvre dérivée protégée par le droit d'auteur. Précisez les conditions de cession des droits patrimoniaux : durée (ex: 5 ans, ou définitive), territoire (France, monde entier), supports d'exploitation (web, print, broadcast). Sans mention expresse, les droits restent au traducteur.",
+          desc: "En France, la traduction est une œuvre dérivée protégée par le droit d'auteur. Précisez les conditions de cession des droits patrimoniaux : durée (ex : 5 ans, ou définitive), territoire (France, monde entier), supports d'exploitation (web, print, broadcast). Chaque droit cédé doit être mentionné et son domaine délimité (art. L131-3 du Code de la propriété intellectuelle). Sans mention expresse, les droits restent au traducteur.",
         },
         {
           title: "Confidentialité et clause NDA",
@@ -81,11 +81,11 @@ export default function Page() {
         },
         {
           q: "Les droits de traduction appartiennent-ils au traducteur ou au client ?",
-          a: "En France, la traduction est une œuvre de l'esprit protégée par le droit d'auteur (art. L112-3 CPI). Le traducteur en est l'auteur. La cession des droits patrimoniaux doit être explicitement prévue dans le contrat ou le devis : durée, territoire, supports d'exploitation. Sans mention expresse de cession, les droits restent au traducteur même si la traduction est payée. En pratique, la plupart des devis incluent une cession complète pour un usage professionnel standard.",
+          a: "En France, la traduction est une œuvre de l'esprit protégée par le droit d'auteur (art. L112-3 CPI). Le traducteur en est l'auteur. La cession des droits patrimoniaux doit être explicitement prévue dans le contrat ou le devis : durée, territoire, supports d'exploitation. Sans mention expresse de cession, les droits restent au traducteur même si la traduction est payée. Le droit moral du traducteur (nom, intégrité de la traduction) reste inaliénable. Les droits d'auteur perçus par les traducteurs relèvent en principe du taux de TVA de 10 % (art. 279 g du CGI), la prestation de traduction elle-même restant à 20 % : à valider avec votre comptable.",
         },
         {
           q: "Comment gérer un devis quand le client n'a pas encore le document final ?",
-          a: "Émettez un devis estimatif basé sur le volume communiqué (ex: 'environ 3 000 mots'). Précisez que le devis sera finalisé à réception du document final, et qu'une variation de plus de 10 % du volume entraînera un avenant. Pour les projets récurrents, négociez un tarif forfaitaire mensuel avec un volume inclus.",
+          a: "Émettez un devis estimatif basé sur le volume communiqué (ex : 'environ 3 000 mots'). Précisez que le devis sera finalisé à réception du document final, et qu'une variation de plus de 10 % du volume entraînera un avenant. Pour les projets récurrents, négociez un tarif forfaitaire mensuel avec un volume inclus.",
         },
         {
           q: "Faut-il mentionner l'utilisation d'outils de TAO ou d'IA dans le devis ?",

@@ -73,7 +73,7 @@ export default function Page() {
       faq={[
         {
           q: "Comment calculer les droits d'auteur sur un devis photo ?",
-          a: "Les droits d'auteur sont calculés selon le support (web, print, publicité), la zone géographique (France, Europe, monde), la durée d'utilisation et la diffusion estimée (tirage, impressions). Il n'existe pas de barème officiel : à titre indicatif, les photographes facturent souvent la cession des droits en plus de la prise de vue, d'autant plus cher que l'usage est large (publicité nationale plutôt que web simple). Précisez toujours le montant de la cession sur une ligne distincte du devis.",
+          a: "Les droits d'auteur sont calculés selon le support (web, print, publicité), la zone géographique (France, Europe, monde), la durée d'utilisation et la diffusion estimée (tirage, impressions). Il n'existe pas de barème officiel : à titre indicatif, les photographes facturent souvent la cession des droits en plus de la prise de vue, d'autant plus cher que l'usage est large (publicité nationale plutôt que web simple). Précisez toujours le montant de la cession sur une ligne distincte du devis, en mentionnant chaque droit cédé et son domaine (art. L131-3 du Code de la propriété intellectuelle). Le droit moral du photographe (nom, intégrité de l'œuvre) reste inaliénable. Les cessions de droits d'auteur relèvent en principe du taux de TVA de 10 % (art. 279 g du CGI), la prise de vue elle-même restant à 20 % : à valider avec votre comptable.",
         },
         {
           q: "Faut-il demander un acompte pour un shooting photo ?",

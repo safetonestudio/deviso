@@ -109,11 +109,6 @@ const FAQ = [
 
 const SOURCES: Source[] = [
   {
-    libelle: "Urssaf, Le versement libératoire de l'impôt sur le revenu",
-    url: "https://www.autoentrepreneur.urssaf.fr/portail/accueil/une-question/questions-sur-mes-impots.html",
-    precision: "taux, plafond de RFR et délais d'option 2026",
-  },
-  {
     libelle: "Service-public.gouv.fr, Régime fiscal de la micro-entreprise",
     url: "https://entreprendre.service-public.gouv.fr/vosdroits/F23267",
     precision: "taux, plafond de RFR N-2 (29 579 € pour une personne seule) et délais d'option",

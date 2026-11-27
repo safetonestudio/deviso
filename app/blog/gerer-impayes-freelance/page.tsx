@@ -2,6 +2,7 @@ import { PageSite } from "@/components/site/PageSite";
 import { DonneesStructurees } from "@/components/DonneesStructurees";
 import { Signature } from "@/components/blog/Signature";
 import { jsonLdArticle, metadonneesArticle } from "@/lib/blog/meta";
+import { article } from "@/lib/blog/registre";
 import Link from "next/link";
 import { WaitlistButton } from "@/components/landing/WaitlistButton";
 import { ShieldCheck } from "lucide-react";
@@ -35,7 +36,11 @@ const metierLinks = [
   { label: "Traducteur freelance", href: "/freelance-traducteur" },
 ];
 
+const formaterDate = (iso: string) =>
+  new Date(iso).toLocaleDateString("fr-FR", { day: "numeric", month: "long", year: "numeric" });
+
 export default function Page() {
+  const art = article(SLUG);
   return (
     <PageSite actif="/blog">
       <DonneesStructurees donnees={jsonLdArticle(SLUG, FAQ)} />
@@ -61,11 +66,9 @@ export default function Page() {
           <div className="mb-10">
             <div className="flex items-center gap-3 mb-4">
               <span className="text-xs px-2.5 py-1 rounded-full bg-rose-500/10 text-rose-300 border border-rose-500/20 font-medium">Problèmes courants</span>
-              <span className="text-xs text-gray-400">29 juin 2026 · 7 min</span>
+              <span className="text-xs text-gray-400">Mis à jour le {formaterDate(art.misAJourLe)} · {art.dureeLecture} min</span>
             </div>
-            <h1 className="text-3xl sm:text-4xl font-semibold text-ink leading-tight mb-4">
-              Gérer les impayés en freelance : de la relance à l&apos;injonction de payer
-            </h1>
+            <h1 className="text-3xl sm:text-4xl font-semibold text-ink leading-tight mb-4">{art.h1}</h1>
             <p className="text-lg text-gray-400 leading-relaxed">
               Un impayé peut toucher n&apos;importe quelle entreprise, de l&apos;indépendant à la société. La bonne nouvelle : la loi vous protège. La mauvaise : vous devez connaître les étapes pour l&apos;activer efficacement, et ne pas attendre 6 mois avant d&apos;agir.
             </p>
@@ -83,7 +86,7 @@ export default function Page() {
                   { icon: "✓", text: "Exigez un acompte de 30 à 50 % à la signature du devis, un client qui a payé un acompte est infiniment plus fiable." },
                   { icon: "✓", text: "Faites signer le devis avant de démarrer. Une signature électronique suffit et est juridiquement valable." },
                   { icon: "✓", text: "Mentionnez des pénalités de retard dans votre devis et vos conditions générales (obligatoire sur la facture en B2B). Elles dissuadent les mauvais payeurs." },
-                  { icon: "✓", text: "Pour les gros montants ou les nouveaux clients : vérifiez l'existence légale de l'entreprise sur Pappers.fr." },
+                  { icon: "✓", text: "Pour les gros montants ou les nouveaux clients : vérifiez l'existence légale de l'entreprise sur l'Annuaire des entreprises (annuaire-entreprises.data.gouv.fr)." },
                 ].map((item) => (
                   <div key={item.text} className="flex gap-3 bg-ds-elevated rounded-xl p-4 border border-ds-border">
                     <span className="text-emerald-400 font-bold shrink-0">{item.icon}</span>

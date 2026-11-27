@@ -43,7 +43,7 @@ const SECTIONS: Section[] = [
     ton: "info",
     titre: "L&rsquo;ACRE, si vous débutez",
     texte:
-      "L&rsquo;ACRE réduit vos cotisations en début d&rsquo;activité. Depuis le 1er juillet 2026, l&rsquo;exonération est de <strong>25 %</strong> des cotisations (contre 50 % auparavant), jusqu&rsquo;à la fin du 3<sup>e</sup> trimestre civil suivant le début d&rsquo;activité, sous conditions. Elle n&rsquo;est plus automatique : la demande se fait auprès de l&rsquo;URSSAF dans les 60 jours suivant le début d&rsquo;activité. Vos taux sont donc temporairement abaissés d&rsquo;un quart : pensez à vérifier qu&rsquo;elle est bien appliquée sur vos premières déclarations.",
+      "L&rsquo;ACRE réduit vos cotisations en début d&rsquo;activité. Au 27 novembre 2026, l&rsquo;exonération est de <strong>25 %</strong> des cotisations (taux minoré à 75 % du taux normal), jusqu&rsquo;à la fin du 3<sup>e</sup> trimestre civil suivant le début d&rsquo;activité, sous conditions. Elle n&rsquo;est plus automatique : la demande se fait auprès de l&rsquo;URSSAF dans les 60 jours suivant le début d&rsquo;activité. Vos taux sont donc temporairement abaissés d&rsquo;un quart : pensez à vérifier qu&rsquo;elle est bien appliquée sur vos premières déclarations.",
   },
   {
     type: "liste",
@@ -88,7 +88,7 @@ const FAQ = [
   },
   {
     q: "Qu'est-ce que l'ACRE et combien réduit-elle mes cotisations en 2026 ?",
-    a: "L'ACRE est une exonération partielle de cotisations en début d'activité. Depuis le 1er juillet 2026, elle est de 25 % des cotisations, contre 50 % auparavant, jusqu'à la fin du 3e trimestre civil suivant le début d'activité. Elle se demande à l'URSSAF dans les 60 jours suivant le début d'activité, sous conditions.",
+    a: "L'ACRE est une exonération partielle de cotisations en début d'activité. Au 27 novembre 2026, elle est de 25 % des cotisations (taux minoré à 75 % du taux normal), jusqu'à la fin du 3e trimestre civil suivant le début d'activité. Elle se demande à l'URSSAF dans les 60 jours suivant le début d'activité, sous conditions.",
   },
   {
     q: "Déclare-t-on le chiffre d'affaires encaissé ou facturé ?",
@@ -123,7 +123,7 @@ export default function Page() {
         "On déclare l&rsquo;<strong>encaissé</strong>, pas le facturé, et on déclare <strong>même à zéro</strong>.",
         "Taux 2026 : <strong>12,3 %</strong> (vente), <strong>21,2 %</strong> (services BIC), <strong>25,6 %</strong> (libéral), 23,2 % (Cipav).",
         "Déclaration <strong>mensuelle</strong> par défaut, ou trimestrielle sur option.",
-        "L&rsquo;<strong>ACRE</strong> réduit les cotisations de 25 % depuis le 1er juillet 2026, jusqu&rsquo;à la fin du 3<sup>e</sup> trimestre civil suivant le début d&rsquo;activité.",
+        "L&rsquo;<strong>ACRE</strong> réduit les cotisations de 25 % au 27 novembre 2026, jusqu&rsquo;à la fin du 3<sup>e</sup> trimestre civil suivant le début d&rsquo;activité.",
         "Une déclaration oubliée, même vide, entraîne une <strong>pénalité</strong>.",
       ]}
       sections={SECTIONS}

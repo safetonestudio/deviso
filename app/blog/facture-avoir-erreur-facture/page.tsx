@@ -55,7 +55,7 @@ const SECTIONS: Section[] = [
     type: "liste",
     titre: "Ce que doit contenir un avoir",
     intro:
-      "Un avoir est une facture. Il obéit donc aux mêmes mentions obligatoires, plus trois qui lui sont propres.",
+      "Un avoir est une facture. Il obéit donc aux mêmes mentions obligatoires, auxquelles s&rsquo;ajoutent, par bonne pratique, la mention d&rsquo;avoir, la référence à la facture annulée, le motif et la présentation en soustraction.",
     items: [
       {
         titre: "La mention « avoir » ou « facture d&rsquo;avoir »",

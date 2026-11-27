@@ -19,7 +19,7 @@ export default function Page() {
         },
         {
           title: "Régime de TVA et mention obligatoire",
-          desc: "Si vous êtes en franchise de TVA (auto-entrepreneur sous le seuil), indiquez 'TVA non applicable, art. 293 B du CGI'. À partir du 1er janvier 2027, les règles de TVA citées ici quittent le Code général des impôts pour le livre II du Code des impositions sur les biens et services (CIBS) : les numéros d'articles changeront. Si vous êtes assujetti, ajoutez votre numéro de TVA intracommunautaire. Attention : le life coaching et le coaching professionnel individuel ne bénéficient pas d'exonération de TVA en France (contrairement à la formation).",
+          desc: "Si vous êtes en franchise de TVA (auto-entrepreneur sous le seuil), indiquez 'TVA non applicable, art. 293 B du CGI'. À partir du 1er janvier 2027, les règles de TVA citées ici quittent le Code général des impôts pour le livre II du Code des impositions sur les biens et services (CIBS) : les numéros d'articles changeront. Si vous êtes assujetti, ajoutez votre numéro de TVA intracommunautaire. Attention : le life coaching et le coaching professionnel individuel ne bénéficient en principe pas d'exonération de TVA en France (contrairement à la formation).",
         },
         {
           title: "Description précise du programme ou des séances",
@@ -27,7 +27,7 @@ export default function Page() {
         },
         {
           title: "Objectifs du programme et livrables",
-          desc: "Sans transformer le devis en contrat de résultat, décrivez les objectifs du programme : 'Accompagnement à la définition du projet professionnel et à la prise de décision' ou 'Programme de développement du leadership pour manager opérationnel'. Précisez les livrables éventuels : bilan de compétences, plan d'action, accès à des ressources.",
+          desc: "Sans transformer le devis en contrat de résultat, décrivez les objectifs du programme : 'Accompagnement à la définition du projet professionnel et à la prise de décision' ou 'Programme de développement du leadership pour manager opérationnel'. Précisez les livrables éventuels : bilan de fin de programme, plan d'action, accès à des ressources.",
         },
         {
           title: "Conditions d'annulation et de report de séances",
@@ -35,7 +35,7 @@ export default function Page() {
         },
         {
           title: "Conditions d'abandon de programme",
-          desc: "C'est la clause la plus importante. Exemple : 'En cas d'arrêt anticipé du programme par le client, les séances réalisées sont facturées au tarif unitaire [X €/séance]. L'acompte versé à la signature n'est pas remboursable. Un préavis de 15 jours est requis.' Sans cette clause, vous n'aurez aucun recours légal.",
+          desc: "C'est la clause la plus importante. Exemple : 'En cas d'arrêt anticipé du programme par le client, les séances réalisées sont facturées au tarif unitaire [X €/séance]. L'acompte versé à la signature n'est pas remboursable. Un préavis de 15 jours est requis.' Sans cette clause, vous aurez peu de moyens de faire valoir votre créance.",
         },
         {
           title: "Modalités de paiement et échéancier",
@@ -59,7 +59,7 @@ export default function Page() {
         },
         {
           title: "Confondre coaching et formation (TVA)",
-          desc: "La formation professionnelle continue peut être exonérée de TVA (si vous êtes titulaire d'une déclaration d'activité de formation). Le coaching de vie et le coaching professionnel individuel ne le sont généralement pas. Se tromper et ne pas facturer la TVA quand elle est due expose à un redressement.",
+          desc: "La formation professionnelle continue peut être exonérée de TVA (si vous êtes titulaire d'une déclaration d'activité de formation). Le coaching de vie et le coaching professionnel individuel ne le sont en principe pas. Se tromper et ne pas facturer la TVA quand elle est due expose à un redressement.",
         },
         {
           title: "Devis qui promet des résultats",
@@ -73,7 +73,7 @@ export default function Page() {
       faq={[
         {
           q: "Un coach freelance doit-il facturer avec ou sans TVA ?",
-          a: "Si vous êtes auto-entrepreneur ou en franchise de TVA (seuil 2026 : 37 500 € de CA annuel pour les prestations de service), vous facturez sans TVA et mentionnez 'TVA non applicable, art. 293 B du CGI'. Au-delà du seuil, vous devez facturer la TVA à 20 %. Le coaching de vie et le coaching professionnel individuel ne sont pas exonérés de TVA en France. Seule la formation professionnelle continue peut l'être, sous conditions (numéro de prestataire de formation, enregistrement auprès du préfet de région).",
+          a: "Si vous êtes en franchise en base de TVA (seuil 2026 : 37 500 € de CA annuel pour les prestations de services, seuil majoré à 41 250 €), vous facturez sans TVA et mentionnez 'TVA non applicable, art. 293 B du CGI'. Au-delà du seuil, vous devez facturer la TVA à 20 %. Le coaching de vie et le coaching professionnel individuel ne sont en principe pas exonérés de TVA en France. Seule la formation professionnelle continue peut l'être, sous conditions (numéro de prestataire de formation, enregistrement auprès du préfet de région).",
         },
         {
           q: "Comment gérer l'abandon de programme dans un devis de coaching ?",

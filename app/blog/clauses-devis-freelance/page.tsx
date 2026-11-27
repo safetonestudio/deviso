@@ -2,6 +2,7 @@ import { PageSite } from "@/components/site/PageSite";
 import { DonneesStructurees } from "@/components/DonneesStructurees";
 import { Signature } from "@/components/blog/Signature";
 import { jsonLdArticle, metadonneesArticle } from "@/lib/blog/meta";
+import { article } from "@/lib/blog/registre";
 import Link from "next/link";
 import { WaitlistButton } from "@/components/landing/WaitlistButton";
 import { Lightbulb } from "lucide-react";
@@ -47,7 +48,7 @@ const clauses = [
       { label: "Coach freelance", href: "/freelance-coach" },
       { label: "Formateur indépendant", href: "/freelance-formateur" },
     ],
-    tip: "En B2B, 30 à 40 % est une pratique courante. Pour les particuliers, la loi réglemente les acomptes selon le type de prestation.",
+    tip: "En B2B, 30 à 40 % est une pratique courante. Face à un particulier, si le devis ne précise rien, la somme versée d'avance est en principe présumée être des arrhes : écrivez « acompte » au devis si c'est bien ce que vous voulez (service-public.fr, au 27 novembre 2026).",
   },
   {
     id: "revisions",
@@ -72,7 +73,7 @@ const clauses = [
     risk: "Utilisation non autorisée, litige sur les droits",
     color: "emerald",
     desc: "Par défaut en droit français, les créations intellectuelles appartiennent à leur auteur, pas au client. Sans clause de cession, votre client n'est pas légalement autorisé à utiliser votre travail pour des usages non convenus. Cette clause doit préciser ce qui est cédé : durée, territoire, supports, et à quelle condition (souvent : paiement intégral).",
-    formulation: "Les droits d'exploitation de la création réalisée dans le cadre de la présente mission sont cédés au client à titre exclusif, pour une durée de [X ans / indéfinie], sur le territoire [France / monde entier], pour les supports [web, print, broadcast...]. Cette cession est conditionnée au paiement intégral des sommes dues. En cas de non-paiement, le prestataire se réserve le droit de réclamer le retrait de toute utilisation de la création.",
+    formulation: "Les droits d'exploitation de la création réalisée dans le cadre de la présente mission sont cédés au client à titre exclusif, pour une durée de [X ans / la durée légale de protection des droits d'auteur], sur le territoire [France / monde entier], pour les supports [web, print, diffusion audiovisuelle]. Cette cession est conditionnée au paiement intégral des sommes dues. En cas de non-paiement, le prestataire se réserve le droit de réclamer le retrait de toute utilisation de la création.",
     professions: [
       { label: "Graphiste freelance", href: "/freelance-graphiste" },
       { label: "Photographe freelance", href: "/freelance-photographe" },
@@ -141,7 +142,7 @@ const clauses = [
       { label: "Développeur web", href: "/freelance-developpeur" },
       { label: "Traducteur freelance", href: "/freelance-traducteur" },
     ],
-    tip: "Pour les missions très sensibles (levée de fonds, fusion-acquisition, produit en stealth mode), demandez un NDA signé séparément avant même de commencer les discussions.",
+    tip: "Pour les missions très sensibles (levée de fonds, fusion-acquisition, produit non encore annoncé), demandez un NDA signé séparément avant même de commencer les discussions.",
   },
   {
     id: "force-majeure",
@@ -156,7 +157,7 @@ const clauses = [
       { label: "Formateur indépendant", href: "/freelance-formateur" },
       { label: "Photographe freelance", href: "/freelance-photographe" },
     ],
-    tip: "Depuis la pandémie de 2020, cette clause est devenue incontournable. Les tribunaux ont développé une jurisprudence claire sur ce qui constitue ou non un cas de force majeure.",
+    tip: "Depuis la pandémie de 2020, cette clause est devenue incontournable. La jurisprudence sur ce qui constitue ou non un cas de force majeure est abondante et souvent restrictive : ne comptez pas sur une qualification automatique.",
   },
 ];
 
@@ -226,7 +227,11 @@ const FAQ = [
   },
 ];
 
+const formaterDate = (iso: string) =>
+  new Date(iso).toLocaleDateString("fr-FR", { day: "numeric", month: "long", year: "numeric" });
+
 export default function Page() {
+  const art = article(SLUG);
   return (
     <PageSite actif="/blog">
       <DonneesStructurees donnees={jsonLdArticle(SLUG, FAQ)} />
@@ -256,11 +261,9 @@ export default function Page() {
           <div className="mb-10">
             <div className="flex items-center gap-3 mb-4">
               <span className="text-xs px-2.5 py-1 rounded-full bg-indigo-500/10 text-indigo-300 border border-indigo-500/20 font-medium">Guide complet</span>
-              <span className="text-xs text-gray-400">29 juin 2026 · 10 min</span>
+              <span className="text-xs text-gray-400">Mis à jour le {formaterDate(art.misAJourLe)} · {art.dureeLecture} min</span>
             </div>
-            <h1 className="text-3xl sm:text-4xl font-semibold text-ink leading-tight mb-4">
-              Les clauses indispensables dans un devis freelance
-            </h1>
+            <h1 className="text-3xl sm:text-4xl font-semibold text-ink leading-tight mb-4">{art.h1}</h1>
             <p className="text-lg text-gray-400 leading-relaxed">
               Un devis signé est un contrat. Sans les bonnes clauses, il peut se retourner contre votre entreprise. Voici les 9 clauses à inclure systématiquement, avec des formulations prêtes à l'emploi.
             </p>
@@ -275,7 +278,7 @@ export default function Page() {
                   <a href={`#${c.id}`} className="flex items-center gap-3 text-sm text-gray-400 hover:text-indigo-300 transition-colors group">
                     <span className={`font-mono text-xs font-bold ${numColorMap[c.color]} w-6`}>{c.num}</span>
                     <span className="group-hover:underline underline-offset-2">{c.title}</span>
-                    <span className="text-gray-400 text-xs">, {c.risk}</span>
+                    <span className="text-gray-400 text-xs">&nbsp;: {c.risk}</span>
                   </a>
                 </li>
               ))}

@@ -25,7 +25,7 @@ export const AUTEUR = {
 
   /** Une phrase, pour le bas d'un article. */
   resume:
-    "Développeur indépendant en Gironde, fondateur de Deviso. J'ai lu les spécifications externes de la DGFiP pour écrire le code qui s'y conforme : c'est de là que vient tout ce que vous lisez ici.",
+    "Développeur indépendant en Gironde, fondateur de Deviso. J'ai lu les spécifications externes de la DGFiP pour écrire le code qui s'y conforme. C'est de ce travail, et des sources officielles citées dans chaque guide, que vient ce que vous lisez ici.",
 
   /**
    * Ce qui rend la signature légitime. Chaque ligne est vérifiable : elle décrit

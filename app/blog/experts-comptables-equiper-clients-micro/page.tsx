@@ -45,7 +45,7 @@ const SECTIONS: Section[] = [
     ton: "info",
     titre: "La réforme fait de l&rsquo;équipement un sujet, pas un confort",
     texte:
-      "Depuis septembre 2026, les assujettis à la TVA doivent pouvoir <strong>recevoir</strong> des factures électroniques, et l&rsquo;émission arrive pour tous. Vos clients, micro-entrepreneurs comme sociétés, vont devoir s&rsquo;équiper d&rsquo;un outil compatible, qu&rsquo;ils le veuillent ou non. Autant que ce soit un outil <strong>que vous avez choisi</strong>, dont vous connaissez les exports, plutôt qu&rsquo;une solution différente par client.",
+      "Depuis septembre 2026, les entreprises assujetties à la TVA et établies en France doivent pouvoir <strong>recevoir</strong> des factures électroniques, et l&rsquo;émission devient obligatoire pour toutes au plus tard le 1<sup>er</sup> septembre 2027. Vos clients, micro-entrepreneurs comme sociétés, vont devoir s&rsquo;équiper d&rsquo;un outil compatible, qu&rsquo;ils le veuillent ou non. Autant que ce soit un outil <strong>que vous avez choisi</strong>, dont vous connaissez les exports, plutôt qu&rsquo;une solution différente par client.",
   },
   {
     type: "comparaison",
@@ -72,7 +72,7 @@ const SECTIONS: Section[] = [
     titre: "Équiper plutôt que subir",
     paragraphes: [
       "L&rsquo;idée est simple : donner à vos clients micro un outil de facturation qui produit, sans effort de leur part, exactement ce dont vous avez besoin. Côté client, une interface qu&rsquo;ils tiennent seuls au quotidien. Côté cabinet, une <strong>vue d&rsquo;ensemble</strong> de vos dossiers : conformité, échéances de TVA, points à traiter, exports prêts.",
-      "C&rsquo;est l&rsquo;approche que nous développons avec Deviso : un outil de devis et de facturation conçu pour les entreprises de toute forme, de l&rsquo;indépendant à la société avec équipe, doublé d&rsquo;un cockpit pour l&rsquo;expert-comptable qui suit plusieurs dossiers. Nous en parlons en détail sur notre page dédiée aux experts-comptables.",
+      "C&rsquo;est l&rsquo;approche que nous développons avec Deviso : un outil de gestion (devis, factures, achats, relances, suivi du chiffre d&rsquo;affaires et de la TVA) conçu pour les entreprises de toute forme, de l&rsquo;indépendant à la société avec équipe, doublé d&rsquo;un cockpit pour l&rsquo;expert-comptable qui suit plusieurs dossiers. Nous en parlons en détail sur notre page dédiée aux experts-comptables.",
     ],
   },
   {
@@ -91,7 +91,7 @@ const FAQ = [
   },
   {
     q: "La réforme de la facturation électronique oblige-t-elle mes clients micro à s'équiper ?",
-    a: "Oui. Depuis septembre 2026, les assujettis à la TVA doivent pouvoir recevoir des factures électroniques, et l'émission se généralise. Les clients, micro-entrepreneurs comme sociétés, devront disposer d'un outil compatible.",
+    a: "Oui. Depuis septembre 2026, les entreprises assujetties à la TVA et établies en France doivent pouvoir recevoir des factures électroniques, et l'émission devient obligatoire pour toutes au plus tard le 1er septembre 2027. Les clients, micro-entrepreneurs comme sociétés, devront disposer d'un outil compatible.",
   },
   {
     q: "Quel intérêt à choisir moi-même l'outil de mes clients ?",

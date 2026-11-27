@@ -3,6 +3,7 @@ import { APPEL, BETA_OUVERTE } from "@/lib/beta";
 import { DonneesStructurees } from "@/components/DonneesStructurees";
 import { Signature } from "@/components/blog/Signature";
 import { jsonLdArticle, metadonneesArticle } from "@/lib/blog/meta";
+import { article } from "@/lib/blog/registre";
 import Link from "next/link";
 import { WaitlistButton } from "@/components/landing/WaitlistButton";
 
@@ -42,19 +43,18 @@ const CHECKLIST: ChecklistItem[] = [
     action: "Contacter l'éditeur de votre logiciel et demander : « Générez-vous des factures Factur-X au profil EN 16931 ? »",
     details: [
       "Factur-X EN 16931 = le profil recommandé pour les PME, les TPE et les indépendants",
-      "Factur-X MINIMUM = très simplifié, limité à certains cas",
       "UBL et CII = les deux autres formats acceptés, en XML seul, sans PDF lisible",
     ],
   },
   {
     num: "03",
-    title: "Confirmer que votre logiciel sera connecté à une PDP avant votre date d'obligation",
+    title: "Confirmer que votre logiciel sera connecté à une plateforme agréée avant votre date d'obligation",
     description: "Le Portail Public de Facturation (PPF) ne fait plus transiter les factures : il est recentré sur l'annuaire et la collecte des données. Seules les plateformes agréées (anciennement appelées PDP), immatriculées par l'administration fiscale, peuvent transmettre vos e-factures à vos clients et les données à la DGFiP. Votre logiciel doit être une plateforme agréée ou connecté à l'une d'elles.",
     urgency: "high",
-    action: "Demander à votre éditeur logiciel : « Avez-vous un partenariat PDP ? Quelle PDP ? Pour quand ? »",
+    action: "Demander à votre éditeur logiciel : « Avez-vous un partenariat avec une plateforme agréée ? Laquelle ? Pour quand ? »",
     details: [
       "Si votre éditeur dit « on passera par le PPF » → c'est faux, le PPF n'assure plus l'échange des factures depuis le recentrage annoncé en octobre 2024",
-      "Vérifier que la PDP partenaire est bien immatriculée sur la liste DGFiP",
+      "Vérifier que la plateforme agréée partenaire est bien immatriculée sur la liste DGFiP",
       "Deviso est déjà raccordé à une Plateforme Agréée (Super PDP) et émet et reçoit déjà vos factures électroniques.",
     ],
   },
@@ -63,7 +63,7 @@ const CHECKLIST: ChecklistItem[] = [
     title: "Vérifier les mentions légales obligatoires sur vos factures",
     description: "La réforme impose des données structurées dans le XML Factur-X, et ajoute quatre mentions obligatoires, à porter dans la partie visible (PDF) ET dans les données XML : numéro SIREN du client, adresse de livraison si elle diffère, nature des opérations (biens, services ou les deux), option pour la TVA sur les débits le cas échéant.",
     urgency: "medium",
-    action: "Passer en revue vos modèles de facture et vous assurer que tous les champs requis par l'article 242 nonies A du CGI sont présents.",
+    action: "Passer en revue vos modèles de facture et vous assurer que tous les champs requis par l'article 242 nonies A de l'annexe II du CGI sont présents.",
     details: [
       "Numéro SIREN du client, s'il s'agit d'une entreprise",
       "Adresse de livraison des biens si elle est différente de l'adresse du client",
@@ -79,7 +79,7 @@ const CHECKLIST: ChecklistItem[] = [
     urgency: "medium",
     action: "Lister vos types de clients : B2B France, B2B étranger, B2C (particuliers), associations. Chaque catégorie a un traitement différent.",
     details: [
-      "B2B France → e-invoicing via PDP",
+      "B2B France → e-invoicing via une plateforme agréée",
       "B2C (particuliers) → e-reporting à la DGFiP",
       "B2B étranger → e-reporting à la DGFiP",
       "Associations (non assujetties TVA) → e-reporting généralement",
@@ -94,20 +94,20 @@ const CHECKLIST: ChecklistItem[] = [
     details: [
       "Seuil de franchise TVA en services (BIC et BNC) : 37 500 € de base, 41 250 € en seuil majoré",
       "Si CA > seuil franchise → vous facturez la TVA ; l'obligation de facturation électronique, elle, reste la même",
-      "Si franchise → e-reporting simplifié (modalités à préciser par décret)",
+      "Ventes aux particuliers ou à l'étranger → e-reporting, au même calendrier que l'émission",
     ],
   },
   {
     num: "07",
     title: "Planifier la formation et le test avant votre date d'obligation",
-    description: "La réforme introduit de nouveaux workflows : envoi via PDP, suivi des statuts (DEPOSEE, VALIDEE, REJETEE), gestion des rejets. Tester avant le go-live est indispensable pour éviter les incidents en production.",
+    description: "La réforme introduit de nouveaux workflows : envoi via une plateforme agréée, suivi des statuts de la facture, gestion des rejets. Tester avant le go-live est indispensable pour éviter les incidents en production.",
     urgency: "low",
-    action: "Demander à votre éditeur logiciel l'accès à un environnement de test (sandbox) et réaliser au moins 5 factures de test avec votre PDP avant septembre.",
+    action: "Émettre quelques factures de test de bout en bout (création, envoi, suivi du statut) avant votre date d'obligation, avec le logiciel que vous utiliserez réellement.",
     details: [
       "Tester une facture standard B2B",
       "Tester un avoir/note de crédit",
       "Tester une facture avec TVA à taux réduit et une en franchise",
-      "Vérifier le suivi de statuts (DEPOSEE → VALIDEE ou REJETEE)",
+      "Vérifier le suivi des statuts de la facture, y compris en cas de rejet",
       "Tester la réception d'une e-facture de fournisseur",
     ],
   },
@@ -141,23 +141,11 @@ export default function ChecklistReforme2026Page() {
             <span className="text-xs text-gray-400">10 min · Mis à jour novembre 2026</span>
           </div>
           <h1 className="text-3xl sm:text-4xl font-bold text-ink leading-tight mb-4">
-            Checklist réforme facturation 2026 : 7 points à vérifier pour être prêt
+            {article(SLUG).h1}
           </h1>
           <p className="text-lg text-gray-400 leading-relaxed">
             La réforme de la facturation électronique est complexe. Pour éviter de passer à côté d&apos;un point critique, nous avons condensé les actions essentielles en une checklist actionnable, à partager avec votre comptable.
           </p>
-        </div>
-
-        {/* Score global */}
-        <div className="mb-10 bg-ds-surface border border-ds-border rounded-2xl p-6">
-          <div className="flex items-center justify-between mb-4">
-            <h2 className="text-base font-semibold text-ink">Votre score de préparation</h2>
-            <span className="text-xs text-gray-500">7 points à cocher</span>
-          </div>
-          <div className="h-2 bg-ds-elevated rounded-full overflow-hidden">
-            <div className="h-full w-0 bg-linear-to-r/srgb from-indigo-600 to-violet-500 rounded-full" style={{ width: "0%" }} />
-          </div>
-          <p className="text-xs text-gray-400 mt-3 italic">Cochez les points au fur et à mesure dans cet article pour évaluer votre préparation.</p>
         </div>
 
         {/* Légende urgence */}
@@ -251,7 +239,7 @@ export default function ChecklistReforme2026Page() {
             {[
               { href: "/blog/facturation-electronique-2026", title: "Guide complet réforme facturation électronique 2026" },
               { href: "/blog/reforme-facturation-micro-entrepreneur", title: "Micro-entrepreneur : tout ce que la réforme change" },
-              { href: "/blog/choisir-plateforme-agreee-freelance", title: "Choisir sa PDP (plateforme agréée) : guide comparatif" },
+              { href: "/blog/choisir-plateforme-agreee-freelance", title: "Choisir sa plateforme agréée : guide comparatif" },
               { href: "/blog/e-reporting-freelance-2026", title: "E-reporting B2C : l'obligation oubliée de la réforme" },
             ].map(({ href, title }) => (
               <Link key={href} href={href} className="flex items-center gap-3 text-sm text-gray-400 hover:text-indigo-300 transition-colors group">

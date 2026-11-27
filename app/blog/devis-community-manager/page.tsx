@@ -9,7 +9,7 @@ export default function Page() {
   return (
     <BlogPost
       slug={SLUG}
-      intro="Un devis de community management vague, c'est la garantie de travailler deux fois plus que prévu sans être payé en conséquence. Périmètre flou, livrables non définis, absence de clause de résiliation, voici comment rédiger un devis CM freelance qui protège votre activité, que vous soyez indépendant ou en agence, et vous positionne comme un professionnel."
+      intro="Un devis de community management vague, c'est la garantie de travailler deux fois plus que prévu sans être payé en conséquence. Périmètre flou, livrables non définis, absence de clause de résiliation, voici comment rédiger un devis de community manager (CM) freelance qui protège votre activité, que vous soyez indépendant ou en agence, et vous positionne comme un professionnel."
       mandatoryTitle="Les mentions obligatoires d'un devis community manager freelance"
       mandatoryIntro="Au-delà des mentions légales classiques, un devis de community management doit détailler le périmètre de la mission avec précision :"
       mandatoryItems={[

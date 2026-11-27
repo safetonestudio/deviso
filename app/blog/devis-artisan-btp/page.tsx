@@ -77,7 +77,7 @@ export default function Page() {
         },
         {
           q: "La garantie décennale est-elle obligatoire sur un devis artisan ?",
-          a: "Oui. L'assurance décennale est obligatoire depuis la loi Spinetta de 1978, et tout artisan ou entrepreneur qui y est soumis doit en mentionner les références sur ses devis et ses factures (article 22-2 de la loi du 5 juillet 1996) : nom de l'assureur, numéro de police, et étendue géographique de la couverture. Sans cette mention, vous engagez votre responsabilité personnelle en cas de sinistre.",
+          a: "Oui. L'assurance décennale est obligatoire depuis la loi Spinetta de 1978, et tout artisan ou entrepreneur qui y est soumis doit en mentionner les références sur ses devis et ses factures (article 22-2 de la loi du 5 juillet 1996) : nom de l'assureur, numéro de police, et étendue géographique de la couverture. Sans cette mention, votre devis est incomplet, et votre client ne peut pas vérifier que vous êtes couvert. Ne pas être assuré est un manquement distinct, plus grave : il vous expose à des sanctions et à devoir financer seul les réparations.",
         },
         {
           q: "Peut-on demander plus de 30 % d'acompte à un particulier ?",

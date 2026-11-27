@@ -131,7 +131,7 @@ const SOURCES: Source[] = [
   },
   {
     libelle: "Banque de France, Observatoire des délais de paiement, rapport 2025",
-    url: "https://www.banque-france.fr/system/files/2026-07/ODP2025_WEB.pdf",
+    url: "https://www.banque-france.fr/fr/publications-et-statistiques/publications/rapport-de-lobservatoire-des-delais-de-paiement-2025",
     precision: "état des retards de paiement en France",
   },
 ];

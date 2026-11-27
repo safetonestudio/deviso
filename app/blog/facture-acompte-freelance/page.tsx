@@ -19,7 +19,7 @@ const SECTIONS: Section[] = [
     type: "liste",
     titre: "Ce qu&rsquo;une facture d&rsquo;acompte doit contenir",
     intro:
-      "Les mentions sont celles de toute facture, plus deux qui lui sont propres. Le reste, identité, numéro SIREN, date, coordonnées du client, ne change pas.",
+      "Les mentions sont celles de toute facture. S&rsquo;y ajoutent, par bonne pratique, la mention « facture d&rsquo;acompte » et la référence au devis, qui évitent un double comptage. Le reste, identité, numéro SIREN, date, coordonnées du client, ne change pas.",
     items: [
       {
         titre: "La mention « facture d&rsquo;acompte »",
@@ -44,7 +44,7 @@ const SECTIONS: Section[] = [
       {
         titre: "La désignation de la prestation",
         texte:
-          "Même si elle n&rsquo;est pas encore réalisée. « Acompte de 30 % sur refonte du site, devis n° 2026-014 » est suffisant et précis.",
+          "Même si elle n&rsquo;est pas encore réalisée. « Acompte de 30 % sur refonte du site, devis n° D-2026-014 » est suffisant et précis.",
       },
       {
         titre: "Le régime de TVA applicable",
@@ -58,7 +58,7 @@ const SECTIONS: Section[] = [
     ton: "alerte",
     titre: "La TVA sur un acompte de prestation de services est due à l&rsquo;encaissement",
     texte:
-      "Pour une prestation de services, la TVA devient exigible au moment où vous <strong>encaissez</strong>, pas à la livraison. Un acompte encaissé en décembre porte donc une TVA à déclarer sur décembre, même si la prestation n&rsquo;est exécutée qu&rsquo;en mars. C&rsquo;est l&rsquo;erreur la plus courante chez les prestataires qui viennent de sortir de la franchise en base. Pour une livraison de biens, la règle est différente : la TVA suit la livraison, pas l&rsquo;acompte.",
+      "Pour une prestation de services, la TVA devient exigible au moment où vous <strong>encaissez</strong>, pas à la livraison. Un acompte encaissé en décembre porte donc une TVA à déclarer sur décembre, même si la prestation n&rsquo;est exécutée qu&rsquo;en mars. C&rsquo;est une erreur fréquente chez les prestataires qui viennent de sortir de la franchise en base. Pour une livraison de biens, la règle est différente : la TVA suit la livraison, pas l&rsquo;acompte.",
   },
   {
     type: "texte",
@@ -75,16 +75,16 @@ const SECTIONS: Section[] = [
       "Mission à 3 000 € HT, acompte de 30 % à la signature, en franchise en base de TVA.",
     colonnes: ["Document", "Ce qu&rsquo;il porte", "Montant"],
     lignes: [
-      ["Devis n° 2026-014", "Refonte du site, 3 000 € HT, acompte de 30 % à la commande", "3 000 €"],
-      ["Facture d&rsquo;acompte n° 2026-015", "« Acompte 30 % sur devis n° 2026-014 du 3 mars 2026 »", "900 €"],
+      ["Devis n° D-2026-014", "Refonte du site, 3 000 € HT, acompte de 30 % à la commande", "3 000 €"],
+      ["Facture d&rsquo;acompte n° AC-2026-005", "« Acompte 30 % sur devis n° D-2026-014 du 3 mars 2026 »", "900 €"],
       [
         "Facture de solde n° 2026-031",
-        "Total 3 000 €, puis « Acompte déjà facturé, facture n° 2026-015 du 5 mars 2026 : −900 € »",
+        "Total 3 000 €, puis « Acompte déjà facturé, facture n° AC-2026-005 du 5 mars 2026 : −900 € »",
         "2 100 €",
       ],
     ],
     note:
-      "Exemple avec une série unique : l&rsquo;acompte consomme le 015, le solde prend le numéro courant au moment de son émission, il n&rsquo;est pas réservé à l&rsquo;avance. Avec une série distincte pour les acomptes, chacune des deux séries se suit sans trou.",
+      "Exemple avec une série distincte pour les devis (préfixe « D- ») et pour les acomptes (préfixe « AC- »), la facture de solde reprenant la série habituelle des factures. Chaque série se suit sans trou ; le solde prend le numéro courant au moment de son émission, il n&rsquo;est pas réservé à l&rsquo;avance. Avec une série unique pour les factures, l&rsquo;acompte consommerait simplement le numéro suivant.",
   },
   {
     type: "texte",
@@ -126,7 +126,7 @@ const SECTIONS: Section[] = [
     ton: "info",
     titre: "Acompte, arrhes, dépôt de garantie : ce ne sont pas des synonymes",
     texte:
-      "L&rsquo;<strong>acompte</strong> engage les deux parties : le contrat est formé, et celui qui renonce peut devoir des dommages. Les <strong>arrhes</strong> permettent au client de se dédire en les abandonnant, et à vous de vous dédire en les restituant au double. Le <strong>dépôt de garantie</strong> est une somme conservée puis rendue, qui ne paie rien. Ces trois mots n&rsquo;ont pas les mêmes effets : écrivez celui que vous voulez vraiment. Dans la grande majorité des commandes de prestations, c&rsquo;est un acompte.",
+      "L&rsquo;<strong>acompte</strong> engage les deux parties : le contrat est formé, et celui qui renonce peut devoir des dommages. Les <strong>arrhes</strong> permettent au client de se dédire en les abandonnant, et à vous de vous dédire en les restituant au double. Le <strong>dépôt de garantie</strong> est une somme conservée puis rendue, qui ne paie rien. Ces trois mots n&rsquo;ont pas les mêmes effets : écrivez celui que vous voulez vraiment. Face à un particulier, si le devis ne précise rien, la somme versée d&rsquo;avance est en principe présumée être des arrhes (service-public.fr, au 27 novembre 2026) : écrivez « acompte » au devis si c&rsquo;est bien ce que vous voulez.",
   },
 ];
 
@@ -141,7 +141,7 @@ const FAQ = [
   },
   {
     q: "Comment déduire l'acompte sur la facture finale ?",
-    a: "Sur la facture de solde, vous portez le total de la prestation, puis une ligne négative qui déduit l'acompte en citant le numéro et la date de la facture d'acompte. Par exemple : « Acompte déjà facturé, facture n° 2026-015 du 5 mars 2026 : −900 € ». Le net à payer est le reste. Cette mention explicite est ce qui évite de réclamer deux fois la même somme.",
+    a: "Sur la facture de solde, vous portez le total de la prestation, puis une ligne négative qui déduit l'acompte en citant le numéro et la date de la facture d'acompte. Par exemple : « Acompte déjà facturé, facture n° AC-2026-005 du 5 mars 2026 : −900 € ». Le net à payer est le reste. Cette mention explicite est ce qui évite de réclamer deux fois la même somme.",
   },
   {
     q: "Dois-je payer la TVA sur un acompte ?",
@@ -149,7 +149,7 @@ const FAQ = [
   },
   {
     q: "Quel pourcentage d'acompte demander ?",
-    a: "Il n'y a pas de règle légale pour une prestation de services : c'est contractuel. Dans la pratique, 30 % à la commande est la norme sur les missions courtes, et on monte à 40 ou 50 % quand la mission est longue, quand elle engage des frais que vous avancez, ou quand le client est nouveau. Le point qui compte davantage que le pourcentage : que la clause figure au devis, pour que l'acompte soit accepté et non quémandé.",
+    a: "Il n'y a pas de règle légale pour une prestation de services : c'est contractuel. Dans la pratique, 30 % à la commande est un niveau courant sur les missions courtes, et certains prestataires montent à 40 ou 50 % quand la mission est longue, quand elle engage des frais que vous avancez, ou quand le client est nouveau. Le point qui compte davantage que le pourcentage : que la clause figure au devis, pour que l'acompte soit accepté et non quémandé.",
   },
   {
     q: "L'acompte se déclare-t-il à l'URSSAF dès son encaissement ?",
@@ -182,6 +182,11 @@ const SOURCES: Source[] = [
     libelle: "Article 269 du Code général des impôts",
     url: "https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000044983827",
     precision: "exigibilité de la TVA à l'encaissement pour les prestations de services",
+  },
+  {
+    libelle: "Service-Public Entreprendre, devis obligatoire : activités concernées",
+    url: "https://entreprendre.service-public.gouv.fr/vosdroits/F31144",
+    precision: "acompte ou arrhes : somme présumée être des arrhes si le contrat ne précise rien",
   },
   {
     libelle: "Article 293 B du Code général des impôts",
